@@ -364,6 +364,28 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
+	public final void onClassExtends(Context context, ScopedName className) {
+		
+		logEnter(context);
+
+		final StackNamedClass stackNamedClass = get();
+		
+		stackNamedClass.addExtendedClass(new ResolveLaterTypeReference(context, className));
+		
+		logExit(context);
+	}
+	
+	public final void onClassImplements(Context context, ScopedName interfaceName) {
+		
+		logEnter(context);
+		
+		final StackNamedClass stackNamedClass = get();
+		
+		stackNamedClass.addImplementedInterface(new ResolveLaterTypeReference(context, interfaceName));
+		
+		logExit(context);
+	}
+	
 	public final void onClassEnd(Context context) {
 		
 		logEnter(context);
@@ -374,7 +396,13 @@ public abstract class BaseParserListener {
 
 		final ClassModifiers classModifiers = new ClassModifiers(context, entry.getModifiers());
 		
-		final ClassDefinition classDefinition = new ClassDefinition(context, classModifiers, new ClassName(entry.getName()), classCode);
+		final ClassDefinition classDefinition = new ClassDefinition(
+				context,
+				classModifiers,
+				new ClassName(entry.getName()),
+				entry.getExtendedClasses(),
+				entry.getImplementedInterfaces(),
+				classCode);
 		
 		mainStack.addElement(classDefinition);
 		
@@ -398,7 +426,7 @@ public abstract class BaseParserListener {
 		
 		final List<ComplexMemberDefinition> classCode = entry.getList();
 		
-		final ClassDefinition classDefinition = new ClassDefinition(context, null, null, classCode);
+		final ClassDefinition classDefinition = new ClassDefinition(context, null, null, null, null, classCode);
 		
 		mainStack.addElement(classDefinition);
 		
@@ -852,6 +880,17 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
+	public final void onInterfaceExtends(Context context, ScopedName interfaceName) {
+		
+		logEnter(context);
+		
+		final StackInterface entry = get();
+		
+		entry.addExtendedInterface(new ResolveLaterTypeReference(context, interfaceName));
+		
+		logExit(context);
+	}
+	
 	public final void onInterfaceEnd(Context context) {
 		
 		logEnter(context);
@@ -862,7 +901,12 @@ public abstract class BaseParserListener {
 
 		final InterfaceModifiers interfaceModifiers = new InterfaceModifiers(context, entry.getModifiers());
 		
-		final InterfaceDefinition classDefinition = new InterfaceDefinition(context, interfaceModifiers, new InterfaceName(entry.getName()), interfaceCode);
+		final InterfaceDefinition classDefinition = new InterfaceDefinition(
+				context,
+				interfaceModifiers,
+				new InterfaceName(entry.getName()),
+				entry.getExtendedInterfaces(),
+				interfaceCode);
 		
 		mainStack.addElement(classDefinition);
 		
@@ -878,6 +922,17 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
+	public final void onEnumImplements(Context context, ScopedName interfaceName) {
+		
+		logEnter(context);
+
+		final StackEnum stackEnum = get();
+		
+		stackEnum.addImplementedInterface(new ResolveLaterTypeReference(context, interfaceName));
+		
+		logExit(context);
+	}
+	
 	public final void onEnumConstantStart(Context context, String name) {
 		
 		logEnter(context);
@@ -919,6 +974,7 @@ public abstract class BaseParserListener {
 				context,
 				new ClassModifiers(context, stackEnum.getModifiers()),
 				new ClassName(stackEnum.getName()),
+				stackEnum.getImplementedInterfaces(),
 				stackEnum.getConstants(),
 				stackEnum.getList());
 		

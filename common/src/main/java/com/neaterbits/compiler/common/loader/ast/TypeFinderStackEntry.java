@@ -105,6 +105,6 @@ final class TypeFinderStackEntry {
 
 	@Override
 	public String toString() {
-		return element.toString();
+		return element.toString() + " extendsFrom=" + extendsFrom;
 	}
 }

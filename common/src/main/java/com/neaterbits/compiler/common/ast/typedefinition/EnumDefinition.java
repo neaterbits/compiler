@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
@@ -14,9 +15,10 @@ public final class EnumDefinition extends BaseClassDefinition {
 	private final ASTList<EnumConstantDefinition> constants;
 	
 	public EnumDefinition(Context context, ClassModifiers modifiers, ClassName name,
+			List<TypeReference> implementsInterfaces,
 			List<EnumConstantDefinition> constants,
 			List<ComplexMemberDefinition> members) {
-		super(context, modifiers, name, members);
+		super(context, modifiers, name, implementsInterfaces, members);
 	
 		Objects.requireNonNull(constants);
 		

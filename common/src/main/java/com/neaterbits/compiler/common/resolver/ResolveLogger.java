@@ -8,6 +8,7 @@ import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.ResolvedType;
+import com.neaterbits.compiler.common.loader.TypeDependency;
 
 public final class ResolveLogger {
 
@@ -28,12 +29,20 @@ public final class ResolveLogger {
 		out.println("Resolving file " + file.getName());
 	}
 	
-	void onResolveType(CompiledType type) {
+	void onResolveTypeStart(CompiledType type) {
 		out.println("Resolving type " + type.getScopedName());
+	}
+	
+	void onResolveTypeDependency(TypeDependency dependency, ResolvedType resolvedDependency) {
+		out.println("  Resolve dependency " + dependency.getScopedName() + " to " + resolvedDependency);
+	}
+	
+	void onResolveTypeEnd(ResolvedType type) {
+		out.println("Resolved type " + (type != null ? type.getScopedName() : "null"));
 	}
 
 	void onTryResolveExtendsFrom(ScopedName scopedName, ResolvedType resolvedType) {
-		out.println("Resolved " + scopedName + ": " + resolvedType);
+		out.println("  Try resolve extendsFrom " + scopedName + ": " + resolvedType);
 	}
 	
 	void onResolveFilesEnd() {

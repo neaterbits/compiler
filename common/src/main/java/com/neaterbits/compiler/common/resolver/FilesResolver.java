@@ -125,6 +125,7 @@ public final class FilesResolver {
 	
 	private void tryResolveAnyOtherUnresolvedReferences(FileSpec exceptThisOne, ResolvedTypeCodeMapImpl codeMap, ResolveState resolveState) {
 		
+		
 		resolveState.forEachUnresolved(fileSpec -> {
 			
 			if (!fileSpec.equals(exceptThisOne)) {
@@ -210,7 +211,7 @@ public final class FilesResolver {
 	
 	private ResolvedType resolveTypeDependencies(CompiledType type, FileSpec fileSpec, FileImports fileImports, ResolvedTypeCodeMapImpl codeMap, FileUnresolvedReferences fileUnresolvedReferences, FileCachedResolvedTypes cache) {
 
-		logger.onResolveType(type);
+		logger.onResolveTypeStart(type);
 
 		final List<ResolvedType> resolvedNestedTypes;
 		final List<ResolvedTypeDependency> resolvedExtendsFromList;
@@ -243,7 +244,7 @@ public final class FilesResolver {
 			
 			for (TypeDependency extendsFrom : type.getExtendsFrom()) {
 				
-				final ResolvedType resolvedExtendsFrom = resolveScopedName(extendsFrom.getScopedName(), fileImports, codeMap, cache);
+				final ResolvedType resolvedExtendsFrom = resolveScopedName(extendsFrom.getScopedName(), fileImports, type.getScopedName(), codeMap, cache);
 
 				logger.onTryResolveExtendsFrom(extendsFrom.getScopedName(), resolvedExtendsFrom);
 				
@@ -271,9 +272,10 @@ public final class FilesResolver {
 			
 			for (TypeDependency dependency : type.getDependencies()) {
 
-				System.out.println("## resolve type dependency " + dependency.getScopedName());
+				final ResolvedType resolvedDependency = resolveScopedName(dependency.getScopedName(), dependency.getReferenceType(), fileImports, type.getScopedName(), codeMap, cache);
 
-				final ResolvedType resolvedDependency = resolveScopedName(dependency.getScopedName(), dependency.getReferenceType(), fileImports, codeMap, cache);
+				logger.onResolveTypeDependency(dependency, resolvedDependency);
+
 				
 				if (resolvedDependency != null) {
 					resolvedDependencies.add(new ResolvedTypeDependencyImpl(
@@ -305,12 +307,14 @@ public final class FilesResolver {
 						resolvedDependencies)
 				: null;
 
+		logger.onResolveTypeEnd(resolvedType);
+						
 		return resolvedType;
 	}
 
-	private ResolvedType resolveScopedName(ScopedName scopedName, ReferenceType referenceType, FileImports fileImports, ResolvedTypeCodeMapImpl codeMap, FileCachedResolvedTypes cache) {
+	private ResolvedType resolveScopedName(ScopedName scopedName, ReferenceType referenceType, FileImports fileImports, ScopedName referencedFrom, ResolvedTypeCodeMapImpl codeMap, FileCachedResolvedTypes cache) {
 		
-		ResolvedType result = resolveScopedName(scopedName, fileImports, codeMap, cache);
+		ResolvedType result = resolveScopedName(scopedName, fileImports, referencedFrom, codeMap, cache);
 		
 		if (result == null && referenceType == ReferenceType.STATIC_OR_STATIC_INSTANCE_METHOD_CALL) {
 
@@ -321,9 +325,11 @@ public final class FilesResolver {
 				result = resolveScopedName(
 						updatedScopeName,
 						fileImports,
+						referencedFrom,
 						codeMap,
 						cache);
 			}
+			// Class name as part of scopedName
 			else if (scopedName.hasScope() && scopedName.getScope().size() == 1) {
 
 				final ScopedName updatedScopeName = new ScopedName(null, scopedName.getScope().get(0));
@@ -331,6 +337,7 @@ public final class FilesResolver {
 				result = resolveScopedName(
 						updatedScopeName,
 						fileImports,
+						referencedFrom,
 						codeMap,
 						cache);
 			}
@@ -339,15 +346,19 @@ public final class FilesResolver {
 		return result;
 	}
 
-	private ResolvedType resolveScopedName(ScopedName scopedName, FileImports fileImports, ResolvedTypeCodeMapImpl codeMap, FileCachedResolvedTypes cache) {
+	private ResolvedType resolveScopedName(ScopedName scopedName, FileImports fileImports, ScopedName referencedFrom, ResolvedTypeCodeMapImpl codeMap, FileCachedResolvedTypes cache) {
 		
 		final ResolvedType result;
 
 		final ResolvedType cached = cache.get(scopedName);
 		
+		final ResolvedType inSameNamespace;
+		
+		// Resolved and cached?
 		if (cached != null) {
 			result = cached;
 		}
+		// If has scope, try to look up in codeMap
 		else if (scopedName.hasScope()) {
 			result = codeMap.getType(scopedName);
 			
@@ -355,6 +366,14 @@ public final class FilesResolver {
 				cache.put(scopedName, result);
 			}
 		}
+		// Check same namespace as reference from
+		else if (referencedFrom.hasScope() && (null != (inSameNamespace = codeMap.getType(new ScopedName(referencedFrom.getScope(), scopedName.getName()))))) {
+			
+			result = inSameNamespace;
+
+			cache.put(scopedName, result);
+		}
+		// Try imports
 		else {
 			
 			// Only type name, must look at imports

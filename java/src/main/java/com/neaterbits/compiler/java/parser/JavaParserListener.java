@@ -124,6 +124,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onStrictfpClassModifier(context);
 	}
 	
+	public void onClassExtends(Context context, ScopedName className) {
+		delegate.onClassExtends(context, className);
+	}
+	
+	public void onClassImplements(Context context, ScopedName interfaceName) {
+		delegate.onClassImplements(context, interfaceName);
+	}
+	
 	public void onClassEnd(Context context) {
 		delegate.onClassEnd(context);
 	}
@@ -263,6 +271,10 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onStrictfpInterfaceModifier(context);
 	}
 	
+	public void onInterfaceExtends(Context context, ScopedName interfaceName) {
+		delegate.onInterfaceExtends(context, interfaceName);
+	}
+	
 	public void onInterfaceEnd(Context context) {
 		delegate.onInterfaceEnd(context);
 	}
@@ -306,6 +318,10 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onEnumStart(context, name);
 	}
 
+	public void onEnumImplements(Context context, ScopedName interfaceName) {
+		delegate.onEnumImplements(context, interfaceName);
+	}
+	
 	public void onEnumConstantStart(Context context, String name) {
 		delegate.onEnumConstantStart(context, name);
 	}

@@ -229,6 +229,18 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 
 	@Override
+	public void enterSuperclass(SuperclassContext ctx) {
+		delegate.onClassExtends(context(ctx), parseName(ctx.classType().getText()));
+	}
+
+	@Override
+	public void enterSuperinterfaces(com.neaterbits.compiler.java.Java8Parser.SuperinterfacesContext ctx) {
+		for (InterfaceTypeContext interfaceCtx : ctx.interfaceTypeList().interfaceType()) {
+			delegate.onClassImplements(context(ctx), parseName(interfaceCtx.getText()));
+		}
+	}
+
+	@Override
 	public void exitNormalClassDeclaration(NormalClassDeclarationContext ctx) {
 		delegate.onClassEnd(context(ctx));
 	}
@@ -510,6 +522,13 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitStrictfpInterfaceMethodModifier(StrictfpInterfaceMethodModifierContext ctx) {
 		delegate.onStrictfpInterfaceMethodModifier(context(ctx));
 	}
+	
+	@Override
+	public void enterExtendsInterfaces(ExtendsInterfacesContext ctx) {
+		for (InterfaceTypeContext interfaceCtx : ctx.interfaceTypeList().interfaceType()) {
+			delegate.onInterfaceExtends(context(ctx), parseName(interfaceCtx.getText()));
+		}
+	}
 
 	@Override
 	public void exitInterfaceMethodDeclaration(InterfaceMethodDeclarationContext ctx) {
@@ -522,6 +541,12 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void enterEnumDeclaration(EnumDeclarationContext ctx) {
 		delegate.onEnumStart(context(ctx), ctx.Identifier().getText());
+		
+		if (ctx.superinterfaces() != null) {
+			for (InterfaceTypeContext interfaceCtx : ctx.superinterfaces().interfaceTypeList().interfaceType()) {
+				delegate.onEnumImplements(context(ctx), parseName(interfaceCtx.getText()));
+			}
+		}
 	}
 
 	@Override

@@ -24,12 +24,12 @@ import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.BaseCompilationUnitEmitter;
 import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.FileSpec;
+import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.TypeDependency;
 import com.neaterbits.compiler.common.loader.ast.ProgramLoader;
 import com.neaterbits.compiler.common.parser.ParsedFile;
 import com.neaterbits.compiler.common.resolver.CodeMap;
 import com.neaterbits.compiler.common.resolver.FilesResolver;
-import com.neaterbits.compiler.common.resolver.MethodsResolver;
 import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.common.resolver.ResolveLogger;
 import com.neaterbits.compiler.common.util.Strings;
@@ -78,7 +78,17 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		if (!unresolved.isEmpty()) {
 			throw new IllegalStateException("Unresolved dependencies " + unresolved);
 		}
-
+		
+		final ResolvedType printstream = resolveResult.getResolvedFiles().stream()
+				.flatMap(file -> file.getTypes().stream())
+				.filter(type -> type.getFullTypeName().getName().getName().equals("PrintStream"))
+				.findFirst().get();
+				
+		assertThat(printstream).isNotNull();
+		
+		assertThat(printstream.getExtendsFrom()).isNotNull();
+		assertThat(printstream.getExtendsFrom().size()).isEqualTo(1);
+		
 		// Replaces all resolved type references within the AST
 		replaceUnresolvedTypeReferences(resolveResult);
 		

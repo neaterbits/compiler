@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -48,6 +49,14 @@ public class Strings {
 
 	public static String join(String[] strings, char separator) {
 		return join(strings, separator, strings.length);
+	}
+
+	public static String join(Collection<String> strings, char separator) {
+		return join(strings, separator, strings.size());
+	}
+
+	public static String join(Collection<String> strings, char separator, int count) {
+		return Strings.join(strings.toArray(new String[strings.size()]), separator, count);
 	}
 
 	public static String join(String[] strings, char separator, int count) {

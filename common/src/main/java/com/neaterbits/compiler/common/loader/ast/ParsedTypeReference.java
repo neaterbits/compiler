@@ -63,4 +63,11 @@ final class ParsedTypeReference implements CompiledTypeDependency {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "ParsedTypeReference [scopedName=" + scopedName + "]";
+	}
+	
+	
 }

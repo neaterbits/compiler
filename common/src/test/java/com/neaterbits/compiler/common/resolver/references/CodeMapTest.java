@@ -192,6 +192,8 @@ public class CodeMapTest extends BaseResolveTest {
 				context,
 				new ClassModifiers(context, Collections.emptyList()),
 				new ClassName(name),
+				null,
+				null,
 				Collections.emptyList());
 		
 		return new ClassType(
@@ -208,6 +210,7 @@ public class CodeMapTest extends BaseResolveTest {
 				context,
 				new InterfaceModifiers(context, Collections.emptyList()),
 				new InterfaceName(name),
+				null,
 				Collections.emptyList());
 		
 		return new InterfaceType(

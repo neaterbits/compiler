@@ -107,14 +107,13 @@ class TypeFinder {
 							final ScopedName name = typeReference.getTypeName();
 							
 							// Check where we are at in stack
-							final BaseASTElement lastElement = stack.getFromTop(1).getElement();
+							final TypeFinderStackEntry lastStackEntry = stack.getFromTop(1);
+							final BaseASTElement lastElement = lastStackEntry.getElement();
 							
-							final TypeFinderStackEntry curElement = stack.get();
-
 							final ReferenceType referenceType;
 							
 							if (lastElement instanceof ClassDefinition || lastElement instanceof InterfaceDefinition) {
-								curElement.addExtendsFrom(name, TypeVariant.CLASS, typeReference);
+								lastStackEntry.addExtendsFrom(name, TypeVariant.CLASS, typeReference);
 								
 								referenceType = null;
 							}

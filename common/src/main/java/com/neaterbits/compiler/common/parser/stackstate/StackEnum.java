@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
@@ -19,6 +20,7 @@ public final class StackEnum extends ListStackEntry<ComplexMemberDefinition> imp
 
 	private final String name;
 	private final List<ClassModifierHolder> modifiers;
+	private final List<TypeReference> implementedInterfaces;
 	private final List<EnumConstantDefinition> constants;
 	
 	public StackEnum(ParseLogger parseLogger, String name) {
@@ -28,6 +30,7 @@ public final class StackEnum extends ListStackEntry<ComplexMemberDefinition> imp
 
 		this.name = name;
 		this.modifiers = new ArrayList<>();
+		this.implementedInterfaces = new ArrayList<>();
 		this.constants = new ArrayList<>();
 	}
 
@@ -46,7 +49,17 @@ public final class StackEnum extends ListStackEntry<ComplexMemberDefinition> imp
 
 		modifiers.add(modifier);
 	}
-	
+
+	public List<TypeReference> getImplementedInterfaces() {
+		return implementedInterfaces;
+	}
+
+	public void addImplementedInterface(TypeReference implementedInterface) {
+		Objects.requireNonNull(implementedInterface);
+
+		implementedInterfaces.add(implementedInterface);
+	}
+
 	@Override
 	public void addConstructorMember(ConstructorMember constructor) {
 
@@ -73,4 +86,5 @@ public final class StackEnum extends ListStackEntry<ComplexMemberDefinition> imp
 
 		constants.add(constant);
 	}
+
 }
