@@ -131,7 +131,7 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 	}
 
 	@Override
-	public final Expression onStringLiteral(StringLiteral expression, T param) {
+	public Expression onStringLiteral(StringLiteral expression, T param) {
 
 		return new StringLiteral(
 				expression.getContext(),

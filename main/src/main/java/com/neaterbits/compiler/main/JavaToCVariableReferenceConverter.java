@@ -6,9 +6,7 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.PrimaryList;
-import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
-import com.neaterbits.compiler.common.ast.variables.NameReference;
 import com.neaterbits.compiler.common.ast.variables.PrimaryListVariableReference;
 import com.neaterbits.compiler.common.ast.variables.StaticMemberReference;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
@@ -24,19 +22,11 @@ final class JavaToCVariableReferenceConverter<T extends MappingJavaToCConverterS
 		
 		final Context context = staticMemberReference.getContext();
 		
-		final IntegerLiteral index = new IntegerLiteral(
+		final ArrayAccessExpression arrayAccessExpression = makeStaticArrayAccess(
 				context,
+				param.getClassStaticMembersArrayName(),
 				typeNo,
-				false,
-				32,
-				param.getIntType());
-		
-		final ArrayAccessExpression arrayAccessExpression = new ArrayAccessExpression(
-				context,
-				new NameReference(
-						context, 
-						param.getClassStaticMembersArrayName()),
-				index);
+				param);
 
 		final PrimaryList primaryList = new PrimaryList(
 				context,

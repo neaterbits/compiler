@@ -7,6 +7,7 @@ import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.resolver.codemap.MethodInfo;
 import com.neaterbits.compiler.common.resolver.codemap.TypeInfo;
@@ -14,7 +15,9 @@ import com.neaterbits.compiler.common.resolver.codemap.TypeInfo;
 public interface CodeMap {
 
 	ResolvedType getClassExtendsFrom(CompleteName classType);
-	
+
+	TypeInfo getClassExtendsFromTypeInfo(CompleteName classType);
+
 	Collection<ResolvedType> getInterfacesImplement(CompleteName classType);
 	
 	Collection<ResolvedType> getInterfacesExtendFrom(CompleteName interfaceType);
@@ -24,6 +27,8 @@ public interface CodeMap {
 	Collection<ResolvedType> getAllSubtypes(CompleteName type);
 	
 	TypeInfo getTypeInfo(BaseType type);
+	
+	ComplexType<?> getType(int typeNo);
 	
 	default int getMethodNo(ClassType classType, MethodName methodName, NamedType [] parameterTypes) {
 		

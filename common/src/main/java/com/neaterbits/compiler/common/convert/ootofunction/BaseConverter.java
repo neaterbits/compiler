@@ -3,15 +3,19 @@ package com.neaterbits.compiler.common.convert.ootofunction;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.block.Parameter;
+import com.neaterbits.compiler.common.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
+import com.neaterbits.compiler.common.ast.variables.NameReference;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.convert.ConverterState;
@@ -40,6 +44,35 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 	
 	protected Expression convertExpression(Expression expression, T state) {
 		return state.convertExpression(expression);
+	}
+
+	protected final List<Expression> convertExpressions(ASTList<Expression> expressions, T state) {
+		
+		final List<Expression> converted = new ArrayList<>(expressions.size());
+
+		for (Expression expression : expressions) {
+			converted.add(convertExpression(expression, state));
+		}
+		
+		return converted;
+	}
+
+	protected final ArrayAccessExpression makeStaticArrayAccess(Context context, String arrayName, int index, T state) {
+		final IntegerLiteral indexLiteral = new IntegerLiteral(
+				context,
+				index,
+				false,
+				32,
+				state.getIntType());
+		
+		final ArrayAccessExpression arrayAccessExpression = new ArrayAccessExpression(
+				context,
+				new NameReference(
+						context, 
+						arrayName),
+				indexLiteral);
+
+		return arrayAccessExpression;
 	}
 	
 	protected VariableModifiers convertModifiers(VariableModifiers modifiers) {

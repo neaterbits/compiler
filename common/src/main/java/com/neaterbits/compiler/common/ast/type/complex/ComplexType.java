@@ -5,13 +5,13 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
-import com.neaterbits.compiler.common.ast.type.NamedType;
+import com.neaterbits.compiler.common.ast.type.ResolvableType;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.DataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 
-public abstract class ComplexType<T extends ComplexTypeDefinition> extends NamedType {
+public abstract class ComplexType<T extends ComplexTypeDefinition> extends ResolvableType {
 
 	private final T definition;
 

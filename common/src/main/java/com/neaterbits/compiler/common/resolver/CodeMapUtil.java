@@ -19,7 +19,7 @@ import com.neaterbits.compiler.common.resolver.codemap.ResolvedTypeCodeMapImpl;
 
 final class CodeMapUtil extends ResolveUtil {
 
-	static ResolvedTypeCodeMapImpl makeCodeMap(List<ResolvedFile> resolvedFiles, Collection<? extends BuiltinType> builtinTypes) {
+	static ResolvedTypeCodeMapImpl makeCodeMap(List<ResolvedFile> resolvedFiles, Collection<? extends BuiltinType> builtinTypes, List<ResolvedType> typesInDependencyOrder) {
 		
 		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl(), builtinTypes);
 		
@@ -78,6 +78,10 @@ final class CodeMapUtil extends ResolveUtil {
 					codeMap.addType(type);
 					
 					iterator.remove();
+
+					if (typesInDependencyOrder != null) {
+						typesInDependencyOrder.add(type);
+					}
 				}
 			}
 		}

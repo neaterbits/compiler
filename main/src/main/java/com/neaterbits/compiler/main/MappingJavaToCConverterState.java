@@ -5,6 +5,7 @@ import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.type.primitive.IntType;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.Converters;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
@@ -59,10 +60,25 @@ public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState
 	public final StructName classToStructName(CompleteName completeName) {
 		return new StructName(className(completeName));
 	}
+	
+	@Override
+	public final FieldName getVTableBaseFieldName(CompleteName type) {
+		return new FieldName("base_" + className(type));
+	}
+
+	@Override
+	public final FieldName getVTableFunctionFieldName(MethodName methodName) {
+		return new FieldName(methodName.getName());
+	}
 
 	@Override
 	public final String getClassStaticMembersArrayName() {
 		return "class_static_members";
+	}
+
+	@Override
+	public String getClassStaticVTableArrayName() {
+		return "class_vtables";
 	}
 
 	@Override

@@ -10,11 +10,14 @@ import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 
 public abstract class ConverterState<T extends ConverterState<T>> {
+
+	public abstract IntType getIntType();
 
 	private final Converters<T> converters;
 

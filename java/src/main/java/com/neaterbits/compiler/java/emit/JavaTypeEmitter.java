@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.common.ast.type.PointerType;
 import com.neaterbits.compiler.common.ast.type.TypeDefType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
@@ -146,6 +147,11 @@ public final class JavaTypeEmitter implements TypeEmitter<EmitterState> {
 
 	@Override
 	public Void onStruct(StructType type, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public Void onFunctionPointer(FunctionPointerType type, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 

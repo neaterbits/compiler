@@ -1,6 +1,8 @@
 package com.neaterbits.compiler.common.resolver;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.neaterbits.compiler.common.BuiltinTypeReference;
 import com.neaterbits.compiler.common.ComplexTypeReference;
@@ -17,13 +19,17 @@ public class UnresolvedReferenceReplacer {
 	
 	public static ReplaceTypeReferencesResult replaceUnresolvedTypeReferences(ResolveFilesResult resolveFilesResult) {
 		
-		for (ResolvedFile resolvedFile : resolveFilesResult.getResolvedFiles()) {
+		final List<ResolvedFile> resolvedFiles = resolveFilesResult.getResolvedFiles();
+		
+		for (ResolvedFile resolvedFile : resolvedFiles) {
 			replaceUnresolvedTypeReferences(resolvedFile.getTypes(), resolveFilesResult.getResolvedTypesMap(), resolveFilesResult.getBuiltinTypesMap());
 		}
 		
-		final ResolvedTypeCodeMapImpl codeMap = CodeMapUtil.makeCodeMap(resolveFilesResult.getResolvedFiles(), resolveFilesResult.getBuiltinTypes());
+		final List<ResolvedType> typesInDependencyOrder = new ArrayList<>(resolvedFiles.size());
 		
-		return new ReplaceTypeReferencesResult(codeMap);
+		final ResolvedTypeCodeMapImpl codeMap = CodeMapUtil.makeCodeMap(resolveFilesResult.getResolvedFiles(), resolveFilesResult.getBuiltinTypes(), typesInDependencyOrder);
+		
+		return new ReplaceTypeReferencesResult(resolveFilesResult.getResolvedFiles(), codeMap, typesInDependencyOrder);
 	}
 	
 	static final void replaceUnresolvedTypeReferences(Collection<ResolvedType> resolvedTypes, ResolvedTypesMap resolvedTypesMap, BuiltinTypesMap builtinTypesMap) {

@@ -54,6 +54,8 @@ public interface TypeVisitor<T, R> {
 	R onArray(ArrayType type, T param);
 
 	R onStruct(StructType type, T param);
+
+	R onFunctionPointer(FunctionPointerType type, T param);
 	
 	R onTypeDef(TypeDefType type, T param);
 

@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.common.ast.type;
 
-public final class TypeDefType extends NamedType {
+public final class TypeDefType extends ResolvableType {
 
 	public TypeDefType(CompleteName completeName, BaseType delegate) {
 		super(completeName, delegate.isNullable());

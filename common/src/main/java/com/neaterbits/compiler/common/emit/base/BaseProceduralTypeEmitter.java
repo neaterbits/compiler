@@ -8,7 +8,9 @@ import com.neaterbits.compiler.common.ast.type.primitive.UnnamedVoidType;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.TypeEmitter;
 
-public abstract class BaseProceduralTypeEmitter<T extends EmitterState> implements TypeEmitter<T> {
+public abstract class BaseProceduralTypeEmitter<T extends EmitterState>
+		extends BaseEmitter<T>
+		implements TypeEmitter<T> {
 
 	@Override
 	public final Void onClass(ClassType type, T param) {

@@ -7,6 +7,7 @@ import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
+import com.neaterbits.compiler.common.ast.expression.FunctionPointerInvocationExpression;
 import com.neaterbits.compiler.common.ast.expression.LambdaExpressionParameters;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.common.ast.expression.SingleLambdaExpression;
@@ -77,6 +78,10 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		throw new UnsupportedOperationException();
 	}
 	
+	@Override
+	public Void onFunctionPointerInvocation(FunctionPointerInvocationExpression expression, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public Void onClassInstanceCreation(ClassInstanceCreationExpression expression, EmitterState state) {

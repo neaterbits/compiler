@@ -1,18 +1,35 @@
 package com.neaterbits.compiler.main;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.FunctionPointerTypeReference;
+import com.neaterbits.compiler.common.ast.block.ClassMethod;
+import com.neaterbits.compiler.common.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.common.ast.expression.ArrayCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
+import com.neaterbits.compiler.common.ast.expression.FunctionPointerInvocationExpression;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.common.ast.expression.ParameterList;
+import com.neaterbits.compiler.common.ast.expression.PrimaryList;
 import com.neaterbits.compiler.common.ast.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.common.ast.expression.literal.ClassExpression;
+import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.common.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.convert.MethodDispatch;
+import com.neaterbits.compiler.common.convert.OOToProceduralConverterUtil;
 import com.neaterbits.compiler.common.convert.ootofunction.BaseExpressionConverter;
+import com.neaterbits.compiler.common.parser.FieldAccessType;
 import com.neaterbits.compiler.common.resolver.codemap.MethodInfo;
+import com.neaterbits.compiler.java.JavaTypes;
 
 final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>> extends BaseExpressionConverter<T> {
 
@@ -22,9 +39,19 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 	}
 	
 	@Override
+	public Expression onFunctionPointerInvocation(FunctionPointerInvocationExpression expression, T param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public Expression onClassExpression(ClassExpression expression, T param) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Expression onStringLiteral(StringLiteral expression, T param) {
+		return new StringLiteral(expression.getContext(), expression.getValue(), JavaTypes.STRING_TYPE);
 	}
 
 	@Override
@@ -58,9 +85,10 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 		}
 		else {
 			// static invocation
+			throw new UnsupportedOperationException();
 		}
-		
-		throw new UnsupportedOperationException();
+
+		return converted;
 	}
 	
 	private Expression convertInstanceInvocation(MethodInvocationExpression expression, T param) {
@@ -70,6 +98,8 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 		final Expression converted;
 		
 		final ClassType classType = (ClassType)object.getType();
+		
+		final int typeNo = param.getTypeNo(classType);
 		
 		final MethodInfo methodInfo = param.getMethodInfo(
 				classType,
@@ -82,6 +112,8 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 		
 		final MethodDispatch methodDispatch = param.getMethodDispatch(methodInfo);
 		
+		final List<Expression> convertedParams = convertExpressions(expression.getParameters().getList(), param);
+		
 		switch (methodDispatch) {
 		case ONE_IMPLEMENTATION:
 		case NON_OVERRIDABLE:
@@ -93,7 +125,46 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 			throw new UnsupportedOperationException();
 			
 		case VTABLE:
-			throw new UnsupportedOperationException();
+			
+			final ArrayAccessExpression arrayAccessExpression = makeStaticArrayAccess(
+					expression.getContext(),
+					param.getClassStaticVTableArrayName(),
+					typeNo,
+					param);
+			
+			final List<Expression> params = new ArrayList<>(convertedParams.size() + 1);
+
+			params.add(object);
+			params.addAll(convertedParams);
+			
+			final ClassMethod classMethod = OOToProceduralConverterUtil.findMethod(classType, expression.getCallable(), expression.getParameters());
+			
+			final FunctionPointerType functionPointerType = OOToProceduralConverterUtil.makeFunctionPointerType(
+					classMethod,
+					type -> param.convertType(type));
+			
+			final Context context = expression.getContext();
+			
+			final PrimaryList primaryList = new PrimaryList(
+					context,
+					Arrays.asList(
+							arrayAccessExpression,
+							new FieldAccess(
+									context,
+									FieldAccessType.FIELD,
+									new FunctionPointerTypeReference(context, functionPointerType),
+									param.getVTableFunctionFieldName(expression.getCallable())))
+							);
+
+			final FunctionPointerInvocationExpression invocationExpression = new FunctionPointerInvocationExpression(
+					context,
+					functionPointerType,
+					primaryList,
+					new ParameterList(context, params));
+			
+			converted = invocationExpression;
+			
+			break;
 			
 			
 		default:

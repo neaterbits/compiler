@@ -13,6 +13,7 @@ import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
@@ -98,7 +99,23 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		
 		return typeNo != null ? resolvedTypes[typeNo] : null;
 	}
-	
+
+	private TypeInfo getTypeInfo(int typeNo) {
+		return new TypeInfo(typeNo, codeMap.getTypeVariant(typeNo));
+	}
+
+	@Override
+	public ComplexType<?> getType(int typeNo) {
+		return resolvedTypes[typeNo].getType();
+	}
+
+	@Override
+	public TypeInfo getClassExtendsFromTypeInfo(CompleteName classType) {
+		final int type = codeMap.getClassExtendsFrom(getTypeNo(classType));
+
+		return type < 0 ? null : getTypeInfo(type);
+	}
+
 	@Override
 	public ResolvedType getClassExtendsFrom(CompleteName classType) {
 
@@ -106,6 +123,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		
 		return type < 0 ? null : resolvedTypes[type];
 	}
+	
 
 	@Override
 	public Collection<ResolvedType> getInterfacesImplement(CompleteName classType) {
@@ -191,7 +209,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		final TypeInfo typeInfo;
 		
 		if (typeNo != null) {
-			typeInfo = new TypeInfo(typeNo, codeMap.getTypeVariant(typeNo));
+			typeInfo = getTypeInfo(typeNo);
 		}
 		else {
 			typeInfo = null;
@@ -199,7 +217,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		
 		return typeInfo;
 	}
-
+	
 	@Override
 	public MethodInfo getMethodInfo(ClassType type, MethodName methodName, NamedType [] parameterTypes) {
 		

@@ -6,6 +6,7 @@ import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
+import com.neaterbits.compiler.common.ast.expression.FunctionPointerInvocationExpression;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.common.ast.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
@@ -26,8 +27,10 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	private static final CStatementEmitter STATEMENT_EMITTER = new CStatementEmitter();
 	
+	private static final CVariableReferenceEmitter VARIABLE_REFERENCE_EMITTER = new CVariableReferenceEmitter();
+	
 	protected void emitVariableReference(VariableReference variable, EmitterState param) {
-		throw new UnsupportedOperationException();
+		variable.visit(VARIABLE_REFERENCE_EMITTER, param);
 	}
 
 	@Override
@@ -47,6 +50,20 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	public Void onFunctionCall(FunctionCallExpression expression, EmitterState state) {
 		
 		emitListTo(state, expression.getParameters().getList(), ", ", param -> emitExpression(param, state));
+		
+		return null;
+	}
+
+	@Override
+	public Void onFunctionPointerInvocation(FunctionPointerInvocationExpression expression, EmitterState state) {
+
+		emitExpression(expression.getFunctionPointer(), state);
+
+		state.append('(');
+		
+		emitListTo(state, expression.getParameters().getList(), ", ", param -> emitExpression(param, state));
+
+		state.append(')');
 		
 		return null;
 	}

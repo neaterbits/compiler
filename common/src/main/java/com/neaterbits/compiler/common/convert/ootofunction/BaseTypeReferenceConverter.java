@@ -2,11 +2,13 @@ package com.neaterbits.compiler.common.convert.ootofunction;
 
 import com.neaterbits.compiler.common.BuiltinTypeReference;
 import com.neaterbits.compiler.common.ComplexTypeReference;
+import com.neaterbits.compiler.common.FunctionPointerTypeReference;
 import com.neaterbits.compiler.common.PointerTypeReference;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.TypeDefTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.common.ast.type.PointerType;
 import com.neaterbits.compiler.common.ast.type.TypeDefType;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
@@ -39,6 +41,13 @@ public abstract class BaseTypeReferenceConverter<T extends ConverterState<T>> im
 		return new PointerTypeReference(
 				typeReference.getContext(),
 				(PointerType)convertType(typeReference.getType(), param));
+	}
+	
+	@Override
+	public TypeReference onFunctionPointerTypeReference(FunctionPointerTypeReference typeReference, T param) {
+		return new FunctionPointerTypeReference(
+				typeReference.getContext(),
+				(FunctionPointerType)convertType(typeReference.getType(), param));
 	}
 
 	@Override

@@ -6,13 +6,16 @@ import java.util.Map;
 
 import com.neaterbits.compiler.common.BuiltinTypeReference;
 import com.neaterbits.compiler.common.ComplexTypeReference;
+import com.neaterbits.compiler.common.FunctionPointerTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.block.Function;
 import com.neaterbits.compiler.common.ast.block.FunctionName;
 import com.neaterbits.compiler.common.ast.block.FunctionQualifiers;
+import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
+import com.neaterbits.compiler.common.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
@@ -20,11 +23,15 @@ import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
+import com.neaterbits.compiler.common.convert.OOToProceduralConverterUtil;
+import com.neaterbits.compiler.common.resolver.CodeMap;
+import com.neaterbits.compiler.common.resolver.codemap.TypeInfo;
 
 /**
  * Converts a class to C code
@@ -40,7 +47,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 
 	public static StructType convertClassFieldsToStruct(
 			ClassType classType,
-			Map<ComplexType<?>, StructType> map,
+			Map<ComplexType<?>, StructType> alreadyConvertedMap,
 			List<ComplexTypeReference> convertLaterList,
 			java.util.function.Function<TypeReference, TypeReference> convertFieldType,
 			java.util.function.Function<CompleteName, StructName> classToStructName) {
@@ -71,7 +78,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 					final BaseType type = complexTypeReference.getType();
 					
 					if (type instanceof ClassType) {
-						final StructType alreadyConverted = map.get(type);
+						final StructType alreadyConverted = alreadyConvertedMap.get(type);
 						
 						if (alreadyConverted != null) {
 							convertedTypeReference = new ComplexTypeReference(
@@ -110,6 +117,71 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 
 		final StructName structName = classToStructName.apply(classType.getCompleteName());
 		
+		final StructDefinition struct = new StructDefinition(
+				classDefinition.getContext(),
+				structName,
+				structMembers);
+		
+		return new StructType(struct);
+	}
+	
+	public static StructType convertClassMethodsToVTable(
+			ClassType classType,
+			Map<ComplexType<?>, StructType> alreadyConvertedMap,
+			CodeMap codeMap,
+			java.util.function.Function<BaseType, BaseType> convertMethodType,
+			java.util.function.Function<CompleteName, StructName> classToStructName,
+			java.util.function.Function<CompleteName, FieldName> classToFieldName,
+			java.util.function.Function<MethodName, FieldName> methodToFieldName) {
+		
+
+		final ClassDefinition classDefinition = classType.getDefinition();
+		
+		final int numMembers = classDefinition.getMembers().size();
+		final List<ComplexMemberDefinition> structMembers = new ArrayList<>(numMembers);
+
+		final TypeInfo extendsFromTypeInfo = codeMap.getClassExtendsFromTypeInfo(classType.getCompleteName());
+		
+		if (extendsFromTypeInfo != null) {
+			
+			final ComplexType<?> extendsFromType = codeMap.getType(extendsFromTypeInfo.getTypeNo());
+			
+			final StructType baseStructType = alreadyConvertedMap.get(extendsFromType);
+			
+			if (baseStructType == null) {
+				throw new IllegalStateException("No struct type for " + extendsFromType.getCompleteName());
+			}
+			
+			// Add a class member for the base type
+			final StructDataFieldMember structDataFieldMember = new StructDataFieldMember(
+					classDefinition.getContext(),
+					new ComplexTypeReference(classDefinition.getContext(), baseStructType),
+					classToFieldName.apply(extendsFromType.getCompleteName()));
+			
+			structMembers.add(structDataFieldMember);
+		}
+		
+		for (ComplexMemberDefinition memberDefinition : classDefinition.getMembers()) {
+			
+			if (memberDefinition instanceof ClassMethodMember) {
+				
+				final ClassMethodMember methodMember = (ClassMethodMember)memberDefinition;
+				
+				final ClassMethod method = methodMember.getMethod();
+				
+				final FunctionPointerType functionPointerType = OOToProceduralConverterUtil.makeFunctionPointerType(method, convertMethodType);
+				
+				final StructDataFieldMember structMember = new StructDataFieldMember(
+						methodMember.getContext(),
+						new FunctionPointerTypeReference(methodMember.getContext(), functionPointerType),
+						methodToFieldName.apply(methodMember.getMethod().getName()));
+				
+				structMembers.add(structMember);
+			}
+		}
+
+		final StructName structName = classToStructName.apply(classType.getCompleteName());
+
 		final StructDefinition struct = new StructDefinition(
 				classDefinition.getContext(),
 				structName,

@@ -1,13 +1,14 @@
 package com.neaterbits.compiler.common.convert;
 
 
+
 import com.neaterbits.compiler.common.ast.block.FunctionName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
-import com.neaterbits.compiler.common.ast.type.primitive.IntType;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.resolver.CodeMap;
 import com.neaterbits.compiler.common.resolver.codemap.MethodInfo;
@@ -19,10 +20,14 @@ public abstract class OOToProceduralConverterState<T extends OOToProceduralConve
 	public abstract FunctionName methodToFunctionName(CompleteName type, MethodName methodName);
 
 	public abstract StructName classToStructName(CompleteName type);
+	
+	public abstract FieldName getVTableBaseFieldName(CompleteName type);
+	
+	public abstract FieldName getVTableFunctionFieldName(MethodName methodName);
 
 	public abstract String getClassStaticMembersArrayName();
 	
-	public abstract IntType getIntType();
+	public abstract String getClassStaticVTableArrayName();
 	
 	private final CodeMap codeMap;
 	

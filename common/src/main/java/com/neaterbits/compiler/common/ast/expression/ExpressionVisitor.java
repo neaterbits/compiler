@@ -22,6 +22,8 @@ public interface ExpressionVisitor<T, R> {
 	
 	R onFunctionCall(FunctionCallExpression expression, T param);
 	
+	R onFunctionPointerInvocation(FunctionPointerInvocationExpression expression, T param);
+	
 	R onClassInstanceCreation(ClassInstanceCreationExpression expression, T param);
 	
 	R onMethodInvocation(MethodInvocationExpression expression, T param);

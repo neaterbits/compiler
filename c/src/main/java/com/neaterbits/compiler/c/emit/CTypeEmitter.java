@@ -1,6 +1,8 @@
 package com.neaterbits.compiler.c.emit;
 
+import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.PointerType;
 import com.neaterbits.compiler.common.ast.type.TypeDefType;
@@ -109,6 +111,25 @@ public class CTypeEmitter extends BaseProceduralTypeEmitter<EmitterState> {
 		
 		return null;
 	}
+	@Override
+	public Void onFunctionPointer(FunctionPointerType type, EmitterState param) {
+		
+		emitType(type.getReturnType(), param);
+		
+		param.append("(*)(");
+
+		emitListTo(param, type.getParameters(), ", ", parameter -> {
+			emitType(parameter.getType(), param);
+			
+			if (parameter.getName() != null) {
+				param.append(' ').append(parameter.getName().getName());
+			}
+		});
+		
+		param.append(')');
+		
+		return null;
+	}
 
 	@Override
 	public Void onChar8(Char8Type type, EmitterState param) {
@@ -149,5 +170,10 @@ public class CTypeEmitter extends BaseProceduralTypeEmitter<EmitterState> {
 		}
 		
 		return null;
+	}
+
+	@Override
+	protected void emitStatement(Statement statement, EmitterState state) {
+		throw new UnsupportedOperationException();
 	}
 }

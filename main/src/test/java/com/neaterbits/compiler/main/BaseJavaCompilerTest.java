@@ -32,14 +32,14 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.convert.ootofunction.ClassToFunctionsConverter;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.ProgramEmitter;
-import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.TypeVariant;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.DirectoryParser;
 import com.neaterbits.compiler.common.parser.FileTypeParser;
 import com.neaterbits.compiler.common.parser.ProgramParser;
-import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
+import com.neaterbits.compiler.common.resolver.CodeMap;
+import com.neaterbits.compiler.common.resolver.ReplaceTypeReferencesResult;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
@@ -174,20 +174,37 @@ public abstract class BaseJavaCompilerTest {
 	
 	
 	static <T extends MappingJavaToCConverterState<T>>
-	Map<ComplexType<?>, StructType> convertClassesAndInterfacesToStruct(ResolveFilesResult resolveResult, MappingJavaToCConverterState<T> converterState) {
+	Map<ComplexType<?>, StructType> convertClassesAndInterfacesToStruct(ReplaceTypeReferencesResult resolveResult, MappingJavaToCConverterState<T> converterState) {
 		
-		final Map<ComplexType<?>, StructType> map = new HashMap<>();
+		final Map<ComplexType<?>, StructType> classToStruct = new HashMap<>();
+		final Map<ComplexType<?>, StructType> classToVTable = new HashMap<>();
 		
 		final List<ComplexTypeReference> convertLaterTypeReferences = new ArrayList<>();
 
+		/*
 		for (ResolvedFile file : resolveResult.getResolvedFiles()) {
-			convertTypes(file.getTypes(), map, convertLaterTypeReferences, converterState);
+			convertTypes(
+					file.getTypes(),
+					resolveResult.getCodeMap(),
+					classToStruct,
+					classToVTable,
+					convertLaterTypeReferences,
+					converterState);
 		}
+		 */
+		
+		convertTypes(
+				resolveResult.getTypesInDependencyOrder(),
+				resolveResult.getCodeMap(),
+				classToStruct,
+				classToVTable,
+				convertLaterTypeReferences,
+				converterState);
 
 		// References to not-yet resolved fields in types
 		for (ComplexTypeReference reference : convertLaterTypeReferences) {
 		
-			final ComplexType<?> convertedStructType = map.get(reference.getType());
+			final ComplexType<?> convertedStructType = classToStruct.get(reference.getType());
 			
 			if (convertedStructType == null) {
 				final NamedType namedType = (NamedType)reference.getType();
@@ -201,12 +218,14 @@ public abstract class BaseJavaCompilerTest {
 			reference.replaceWith(structReference);
 		}
 		
-		return map;
+		return classToStruct;
 	}
 	
 	private static <T extends MappingJavaToCConverterState<T>> void convertTypes(
 			Collection<ResolvedType> types,
-			Map<ComplexType<?>, StructType> map,
+			CodeMap codeMap,
+			Map<ComplexType<?>, StructType> classToStruct,
+			Map<ComplexType<?>, StructType> vtableToStruct,
 			List<ComplexTypeReference> convertLaterTypeReferences,
 			MappingJavaToCConverterState<T> converterState) {
 		
@@ -217,22 +236,29 @@ public abstract class BaseJavaCompilerTest {
 				
 				final ClassType classType = (ClassType)resolvedType.getType();
 			
-				final StructType structType = ClassToFunctionsConverter.convertClassFieldsToStruct(
+				final StructType classStructType = ClassToFunctionsConverter.convertClassFieldsToStruct(
 						classType,
-						map,
+						classToStruct,
 						convertLaterTypeReferences,
 						fieldType -> converterState.convertTypeReference(fieldType),
 						converterState::classToStructName);
 				
-				if (structType == null) {
+				if (classStructType == null) {
 					throw new IllegalStateException();
 				}
 				
-				map.put(classType, structType);
+				classToStruct.put(classType, classStructType);
+
+				final StructType vtableStructType = ClassToFunctionsConverter.convertClassMethodsToVTable(
+						classType,
+						classToStruct,
+						codeMap,
+						methodType -> converterState.convertType(methodType),
+						converterState::classToStructName,
+						baseType -> converterState.getVTableBaseFieldName(baseType),
+						methodName -> converterState.getVTableFunctionFieldName(methodName)); 
 				
-				if (!map.containsKey(classType)) {
-					throw new IllegalStateException("Failed to look up on classType");
-				}
+				vtableToStruct.put(classType, vtableStructType);
 			}
 		}
 	}

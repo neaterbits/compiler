@@ -96,7 +96,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		final ReplaceTypeReferencesResult replaceTypeReferencesResult = UnresolvedReferenceReplacer.replaceUnresolvedTypeReferences(resolveResult);
 		
 		// First map classes to C structs so can access between compilation units
-		final Map<ComplexType<?>, StructType> complexToStruct = convertClassesAndInterfacesToStruct(resolveResult, new JavaToCClassToStructState());
+		final Map<ComplexType<?>, StructType> complexToStruct = convertClassesAndInterfacesToStruct(replaceTypeReferencesResult, new JavaToCClassToStructState());
 		
 		final CCompilationUnitEmitter emitter = new CCompilationUnitEmitter();
 		
