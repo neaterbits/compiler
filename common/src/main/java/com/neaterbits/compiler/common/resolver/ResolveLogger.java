@@ -7,8 +7,8 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.CompiledType;
+import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
 import com.neaterbits.compiler.common.loader.ResolvedType;
-import com.neaterbits.compiler.common.loader.TypeDependency;
 
 public final class ResolveLogger {
 
@@ -33,7 +33,7 @@ public final class ResolveLogger {
 		out.println("Resolving type " + type.getScopedName());
 	}
 	
-	void onResolveTypeDependency(TypeDependency dependency, ResolvedType resolvedDependency) {
+	void onResolveTypeDependency(CompiledTypeDependency dependency, ResolvedType resolvedDependency) {
 		out.println("  Resolve dependency " + dependency.getScopedName() + " to " + resolvedDependency);
 	}
 	

@@ -1,12 +1,14 @@
 package com.neaterbits.compiler.common.loader;
 
+import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.type.FullTypeName;
+import com.neaterbits.compiler.common.resolver.ReferenceType;
 
-public interface ResolvedTypeDependency extends TypeInfo, TypeDependency {
+public interface ResolvedTypeDependency {
 
-	default FullTypeName geFullTypeName() {
-		return getResolvedType().getFullTypeName();
-	}
+	FullTypeName getFullTypeName();
 	
-	ResolvedType getResolvedType();
+	ReferenceType getReferenceType();
+	
+	TypeReference getElement();
 }

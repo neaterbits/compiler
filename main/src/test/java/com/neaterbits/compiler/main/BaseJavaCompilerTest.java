@@ -42,6 +42,7 @@ import com.neaterbits.compiler.common.parser.DirectoryParser;
 import com.neaterbits.compiler.common.parser.FileTypeParser;
 import com.neaterbits.compiler.common.parser.ProgramParser;
 import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
+import com.neaterbits.compiler.common.resolver.ResolvedTypesMap;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
@@ -135,16 +136,15 @@ public abstract class BaseJavaCompilerTest {
 	final void replaceUnresolvedTypeReferences(ResolveFilesResult resolveFilesResult) {
 		
 		for (ResolvedFile resolvedFile : resolveFilesResult.getResolvedFiles()) {
-			replaceUnresolvedTypeReferences(resolvedFile.getTypes());
+			replaceUnresolvedTypeReferences(resolvedFile.getTypes(), resolveFilesResult.getResolvedTypesMap());
 		}
 	}
 	
-	final void replaceUnresolvedTypeReferences(Collection<ResolvedType> resolvedTypes) {
-		
+	final void replaceUnresolvedTypeReferences(Collection<ResolvedType> resolvedTypes, ResolvedTypesMap resolvedTypesMap) {
 		
 		for (ResolvedType resolvedType : resolvedTypes) {
 			if (resolvedType.getNestedTypes() != null) {
-				replaceUnresolvedTypeReferences(resolvedType.getNestedTypes());
+				replaceUnresolvedTypeReferences(resolvedType.getNestedTypes(), resolvedTypesMap);
 			}
 
 			if (resolvedType.getDependencies() != null) {
@@ -155,7 +155,9 @@ public abstract class BaseJavaCompilerTest {
 						throw new IllegalStateException();
 					}
 					
-					final ComplexType<?> type = typeDependency.getResolvedType().getType();
+					final ResolvedType dependencyType = resolvedTypesMap.lookupType(typeDependency.getFullTypeName());
+					
+					final ComplexType<?> type = dependencyType.getType();
 					
 					element.replaceWith(new ComplexTypeReference(element.getContext(), type));
 				}

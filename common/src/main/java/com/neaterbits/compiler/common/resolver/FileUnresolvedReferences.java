@@ -8,14 +8,14 @@ import java.util.Set;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.CompiledFile;
-import com.neaterbits.compiler.common.loader.TypeDependency;
+import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
 
 final class FileUnresolvedReferences {
 	private final CompiledFile fileToResolve;
-	private final Set<TypeDependency> extendsFrom;
-	private final Set<TypeDependency> dependencies;
+	private final Set<CompiledTypeDependency> extendsFrom;
+	private final Set<CompiledTypeDependency> dependencies;
 	
-	FileUnresolvedReferences(CompiledFile fileToResolve, Collection<TypeDependency> extendsFrom, Collection<TypeDependency> dependencies) {
+	FileUnresolvedReferences(CompiledFile fileToResolve, Collection<CompiledTypeDependency> extendsFrom, Collection<CompiledTypeDependency> dependencies) {
 		
 		Objects.requireNonNull(fileToResolve);
 		
@@ -36,18 +36,18 @@ final class FileUnresolvedReferences {
 		extendsFrom.remove(scopedName);
 	}
 
-	void removeDependency(TypeDependency dependency) {
+	void removeDependency(CompiledTypeDependency dependency) {
 		
 		Objects.requireNonNull(dependency);
 		
 		dependencies.remove(dependency);
 	}
 	
-	Set<TypeDependency> getExtendsFrom() {
+	Set<CompiledTypeDependency> getExtendsFrom() {
 		return Collections.unmodifiableSet(extendsFrom);
 	}
 	
-	Set<TypeDependency> getDependencies() {
+	Set<CompiledTypeDependency> getDependencies() {
 		return Collections.unmodifiableSet(dependencies);
 	}
 

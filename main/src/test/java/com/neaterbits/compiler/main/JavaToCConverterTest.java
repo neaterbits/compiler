@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Test;
 
@@ -23,15 +22,14 @@ import com.neaterbits.compiler.common.ast.type.complex.StructType;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.BaseCompilationUnitEmitter;
 import com.neaterbits.compiler.common.loader.CompiledFile;
-import com.neaterbits.compiler.common.loader.FileSpec;
 import com.neaterbits.compiler.common.loader.ResolvedType;
-import com.neaterbits.compiler.common.loader.TypeDependency;
 import com.neaterbits.compiler.common.loader.ast.ProgramLoader;
 import com.neaterbits.compiler.common.parser.ParsedFile;
 import com.neaterbits.compiler.common.resolver.CodeMap;
 import com.neaterbits.compiler.common.resolver.FilesResolver;
 import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.common.resolver.ResolveLogger;
+import com.neaterbits.compiler.common.resolver.UnresolvedDependencies;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.main.convert.ConvertClass;
@@ -74,7 +72,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		// This information will be used when figuring out how to do method dispatch for each call site 
 		final ResolveFilesResult resolveResult = resolveFiles(program);
 		
-		final Map<FileSpec, Set<TypeDependency>> unresolved = resolveResult.getUnresolvedDependencies();
+		final UnresolvedDependencies unresolved = resolveResult.getUnresolvedDependencies();
 		if (!unresolved.isEmpty()) {
 			throw new IllegalStateException("Unresolved dependencies " + unresolved);
 		}

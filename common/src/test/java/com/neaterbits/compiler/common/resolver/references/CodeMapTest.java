@@ -26,7 +26,6 @@ import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
 import com.neaterbits.compiler.common.loader.TypeVariant;
 import com.neaterbits.compiler.common.resolver.BaseResolveTest;
 import com.neaterbits.compiler.common.resolver.ReferenceType;
-import com.neaterbits.compiler.common.resolver.TestDependency;
 import com.neaterbits.compiler.common.resolver.TestResolvedFile;
 import com.neaterbits.compiler.common.resolver.TestResolvedType;
 import com.neaterbits.compiler.common.resolver.codemap.CodeMapImpl;
@@ -104,6 +103,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final List<String> classNamespace = Arrays.asList("com", "test");
 		final String className = "TestClass";
 		final ScopedName classScopedName = new ScopedName(classNamespace, className);
+		final ClassType classType = makeClassType(classNamespace, className);
 		
 		final List<String> interfaceNamespace = Arrays.asList("com", "test");
 		final String interfaceName = "TestInterface";
@@ -116,12 +116,12 @@ public class CodeMapTest extends BaseResolveTest {
 				TypeVariant.INTERFACE,
 				makeInterfaceType(interfaceNamespace, interfaceName));
 		
-		final ResolvedTypeDependency interfaceDependency = new TestDependency(resolvedInterface, ReferenceType.EXTENDS_FROM, null);
+		final ResolvedTypeDependency interfaceDependency = new TestResolvedTypeDependency(classType.getFullTypeName(), ReferenceType.EXTENDS_FROM);
 		final ResolvedType resolvedClass = new TestResolvedType(
 				classTestFile.getSpec(),
 				classScopedName,
 				TypeVariant.CLASS,
-				makeClassType(classNamespace, className),
+				classType,
 				null,
 				Arrays.asList(interfaceDependency),
 				null);

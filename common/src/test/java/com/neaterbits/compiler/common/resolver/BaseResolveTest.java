@@ -12,6 +12,7 @@ import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
 import com.neaterbits.compiler.common.loader.TypeSpec;
 import com.neaterbits.compiler.common.loader.TypeVariant;
+import com.neaterbits.compiler.common.resolver.references.TestResolvedTypeDependency;
 import com.neaterbits.compiler.common.util.Strings;
 
 public abstract class BaseResolveTest {
@@ -45,7 +46,7 @@ public abstract class BaseResolveTest {
 		final ScopedName scopedName = makeScopedName(name);
 		
 		final List<ResolvedTypeDependency> extendsFromDependencies = Arrays.stream(extendsFrom)
-				.map(type -> new TestDependency(type, ReferenceType.EXTENDS_FROM, null))
+				.map(type -> new TestResolvedTypeDependency(type.getFullTypeName(), ReferenceType.EXTENDS_FROM))
 				.collect(Collectors.toList());
 		
 		final ResolvedType resolvedType = new TestResolvedType(resolvedFile.getSpec(), scopedName, typeVariant, null, null, extendsFromDependencies, null);

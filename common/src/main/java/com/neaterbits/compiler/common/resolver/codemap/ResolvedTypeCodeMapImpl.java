@@ -48,7 +48,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 			int dstIdx = 0;
 			
 			for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
-				extendsFrom[dstIdx ++] = nameToTypeNoMap.getType(typeDependency.geFullTypeName());
+				extendsFrom[dstIdx ++] = nameToTypeNoMap.getType(typeDependency.getFullTypeName());
 			}
 		}
 		else {
@@ -101,6 +101,10 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 	public Collection<ResolvedType> getInterfacesExtendFrom(FullTypeName interfaceType) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public boolean hasType(FullTypeName fullTypeName) {
+		return nameToTypeNoMap.getType(fullTypeName) != null;
 	}
 
 	public Integer getTypeNo(FullTypeName type) {
