@@ -324,5 +324,4 @@ System.out.println("## name combinations: " + names + " for " + scopedName);
 
 		return result;
 	}
-	
 }

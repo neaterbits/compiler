@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -21,6 +23,8 @@ import com.neaterbits.compiler.common.ast.Program;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.BaseCompilationUnitEmitter;
 import com.neaterbits.compiler.common.loader.CompiledFile;
+import com.neaterbits.compiler.common.loader.FileSpec;
+import com.neaterbits.compiler.common.loader.TypeDependency;
 import com.neaterbits.compiler.common.loader.ast.ProgramLoader;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.DirectoryParser;
@@ -78,7 +82,13 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	
 		listProgram(program);
 		
-		resolveFiles(program);
+		final ResolveFilesResult resolveResult = resolveFiles(program);
+		
+		final Map<FileSpec, Set<TypeDependency>> unresolved = resolveResult.getUnresolvedDependencies();
+		
+		if (!unresolved.isEmpty()) {
+			throw new IllegalStateException("Unresolved dependencies " + unresolved);
+		}
 		
 		final CCompilationUnitEmitter emitter = new CCompilationUnitEmitter();
 		

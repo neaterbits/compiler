@@ -106,6 +106,22 @@ final class ResolveState {
 		return dependencies != null ? dependencies : Collections.emptySet();
 	}
 
+	Map<FileSpec, Set<TypeDependency>> getAllUnresolvedDependencies() {
+		
+		final Map<FileSpec, Set<TypeDependency>> map = new HashMap<>();
+		
+		for (Map.Entry<FileSpec, FileUnresolvedReferences> entry : unresolvedReferences.entrySet()) {
+			
+			final Set<TypeDependency> dependencies = entry.getValue().getDependencies();
+			
+			if (!dependencies.isEmpty()) {
+				map.put(entry.getKey(), dependencies);
+			}
+		}
+
+		return map;
+	}
+
 	FileCachedResolvedTypes getCache(FileSpec fileSpec) {
 		
 		Objects.requireNonNull(fileSpec);

@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.common.resolver;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -49,5 +50,8 @@ public final class ResolveFilesResult {
 		
 		return resolveState.getUnresolvedDependencies(fileSpec);
 	}
-
+	
+	public Map<FileSpec, Set<TypeDependency>> getUnresolvedDependencies() {
+		return resolveState.getAllUnresolvedDependencies();
+	}
 }

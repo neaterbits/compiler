@@ -46,4 +46,9 @@ final class CompiledFileImpl implements CompiledFile {
 	public FileImports getImports() {
 		return fileImports;
 	}
+
+	@Override
+	public String toString() {
+		return "CompiledFileImpl [spec=" + spec + ", types=" + types + "]";
+	}
 }

@@ -46,4 +46,13 @@ final class ParsedType extends BaseLoaderType implements CompiledType {
 	public Collection<CompiledTypeDependency> getDependencies() {
 		return dependencies;
 	}
+
+
+	@Override
+	public String toString() {
+		return "ParsedType [ " + super.toString() + " nestedTypes=" + nestedTypes + ", extendsFrom=" + extendsFrom + ", dependencies="
+				+ dependencies + "]";
+	}
+
+	
 }

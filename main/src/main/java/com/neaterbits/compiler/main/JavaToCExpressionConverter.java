@@ -33,7 +33,6 @@ final class JavaToCExpressionConverter extends BaseExpressionConverter<JavaToCCo
 			
 		}
 		
-		
 		return null;
 	}
 
