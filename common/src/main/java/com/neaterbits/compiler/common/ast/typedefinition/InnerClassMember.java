@@ -25,6 +25,11 @@ public final class InnerClassMember extends ComplexMemberDefinition {
 	}
 
 	@Override
+	protected ComplexMemberType getMemberType() {
+		return ComplexMemberType.INNER_CLASS;
+	}
+
+	@Override
 	public <T, R> R visit(CompilationCodeVisitor<T, R> visitor, T param) {
 		return visitor.onInnerClassMember(this, param);
 	}

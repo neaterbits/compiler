@@ -1,38 +1,43 @@
 package com.neaterbits.compiler.common.ast.type;
 
+import java.util.Objects;
+
 import com.neaterbits.compiler.common.ast.NamespaceReference;
 
 public abstract class NamedType extends BaseType {
 
-	private final NamespaceReference namespace;
-	private final TypeName name;
-
-	protected NamedType(NamespaceReference namespace, TypeName name, boolean nullable) {
+	private final FullTypeName fullTypeName;
+	
+	protected NamedType(FullTypeName fullTypeName, boolean nullable) {
 		super(nullable);
 
-		this.namespace = namespace;
-		this.name = name;
+		Objects.requireNonNull(fullTypeName);
+		
+		this.fullTypeName = fullTypeName;
 	}
 
 	public final NamespaceReference getNamespace() {
-		return namespace;
+		return fullTypeName.getNamespace();
 	}
 
 	public final TypeName getName() {
-		return name;
+		return fullTypeName.getName();
+	}
+	
+	public final FullTypeName getFullTypeName() {
+		return fullTypeName;
 	}
 
 	@Override
-	public final int hashCode() {
+	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+		result = prime * result + ((fullTypeName == null) ? 0 : fullTypeName.hashCode());
 		return result;
 	}
 
 	@Override
-	public final boolean equals(Object obj) {
+	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (!super.equals(obj))
@@ -40,15 +45,10 @@ public abstract class NamedType extends BaseType {
 		if (getClass() != obj.getClass())
 			return false;
 		NamedType other = (NamedType) obj;
-		if (name == null) {
-			if (other.name != null)
+		if (fullTypeName == null) {
+			if (other.fullTypeName != null)
 				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (namespace == null) {
-			if (other.namespace != null)
-				return false;
-		} else if (!namespace.equals(other.namespace))
+		} else if (!fullTypeName.equals(other.fullTypeName))
 			return false;
 		return true;
 	}

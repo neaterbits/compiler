@@ -1,21 +1,20 @@
 package com.neaterbits.compiler.common.ast.type.complex;
 
+import java.util.List;
+
 import com.neaterbits.compiler.common.ast.NamespaceReference;
+import com.neaterbits.compiler.common.ast.type.FullTypeName;
+import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 
-public final class ClassType extends ComplexType {
+public final class ClassType extends ComplexType<ClassDefinition> {
 	
-	private final ClassDefinition classDefinition;
-	
-	public ClassType(NamespaceReference namespace, ClassDefinition definition) {
-		super(namespace, definition.getName(), true);
-		
-		this.classDefinition = definition;
-	}
-
-	public ClassDefinition getClassDefinition() {
-		return classDefinition;
+	public ClassType(NamespaceReference namespace, List<TypeName> outerTypes, ClassDefinition definition) {
+		super(
+				new FullTypeName(namespace, outerTypes, definition.getName()),
+				true,
+				definition);
 	}
 
 	@Override

@@ -27,7 +27,9 @@ import com.neaterbits.compiler.common.loader.FileSpec;
 import com.neaterbits.compiler.common.loader.TypeDependency;
 import com.neaterbits.compiler.common.loader.ast.ProgramLoader;
 import com.neaterbits.compiler.common.parser.ParsedFile;
+import com.neaterbits.compiler.common.resolver.CodeMap;
 import com.neaterbits.compiler.common.resolver.FilesResolver;
+import com.neaterbits.compiler.common.resolver.MethodsResolver;
 import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.common.resolver.ResolveLogger;
 import com.neaterbits.compiler.common.util.Strings;
@@ -81,7 +83,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		replaceUnresolvedTypeReferences(resolveResult);
 		
 		// First map classes to C structs so can access between compilation units
-		final Map<ComplexType, StructType> complexToStruct = convertClassesAndInterfacesToStruct(resolveResult, new JavaToCClassToStructState());
+		final Map<ComplexType<?>, StructType> complexToStruct = convertClassesAndInterfacesToStruct(resolveResult, new JavaToCClassToStructState());
 		
 		final CCompilationUnitEmitter emitter = new CCompilationUnitEmitter();
 		
@@ -91,7 +93,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 			
 			for (ParsedFile parsedFile : module.getParsedFiles()) {
 				
-				final CompilationUnit converted = convert(parsedFile.getParsed(), complexToStruct);
+				final CompilationUnit converted = convert(parsedFile.getParsed(), complexToStruct, resolveResult.getCodeMap());
 				
 				System.out.println("### converted code:");
 
@@ -173,10 +175,10 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	}
 
 	
-	private CompilationUnit convert(CompilationUnit javaCompilationUnit, Map<ComplexType, StructType> classToStruct) {
+	private CompilationUnit convert(CompilationUnit javaCompilationUnit, Map<ComplexType<?>, StructType> classToStruct, CodeMap codeMap) {
 		final JavaToCConverter converter = new JavaToCConverter();
 
-		final CompilationUnit cCode = converter.convertCompilationUnit(javaCompilationUnit, new JavaToCConverterState(classToStruct));
+		final CompilationUnit cCode = converter.convertCompilationUnit(javaCompilationUnit, new JavaToCConverterState(classToStruct, codeMap));
 		
 		return cCode;
 	}

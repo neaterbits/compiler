@@ -153,13 +153,13 @@ public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEX
 
 			@Override
 			public void enterEveryRule(ParserRuleContext ctx) { // TODO
-				System.out.println("## Enter " + parser.getRuleNames()[ctx.getRuleIndex()] + " " + ctx.getText());
+				// System.out.println("## Enter " + parser.getRuleNames()[ctx.getRuleIndex()] + " " + ctx.getText());
 
 			}
 
 			@Override
 			public void exitEveryRule(ParserRuleContext ctx) {
-				System.out.println("## Exit " + parser.getRuleNames()[ctx.getRuleIndex()]);
+				// System.out.println("## Exit " + parser.getRuleNames()[ctx.getRuleIndex()]);
 			}
 		});
 			 

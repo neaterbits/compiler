@@ -8,6 +8,7 @@ import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
+import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
 import com.neaterbits.compiler.common.loader.TypeVariant;
@@ -17,19 +18,21 @@ final class TypeFinderStackEntry {
 	private final BaseASTElement element;
 	private final List<String> scope;
 	private final NamespaceReference namespace;
+	private final List<TypeName> outerTypes;
 	private final boolean mayHaveNestedTypes;
 	
 	private List<CompiledType> nestedTypes;
 	private List<CompiledTypeDependency> extendsFrom;
 	private List<CompiledTypeDependency> dependencies;
 	
-	TypeFinderStackEntry(BaseASTElement element, List<String> scope, NamespaceReference namespace, boolean mayHaveNestedTypes) {
+	TypeFinderStackEntry(BaseASTElement element, List<String> scope, NamespaceReference namespace, List<TypeName> outerTypes, boolean mayHaveNestedTypes) {
 
 		Objects.requireNonNull(element);
 		
 		this.element = element;
 		this.scope = scope;
 		this.namespace = namespace;
+		this.outerTypes = outerTypes;
 		this.mayHaveNestedTypes = mayHaveNestedTypes;
 	}
 	
@@ -39,6 +42,10 @@ final class TypeFinderStackEntry {
 
 	List<String> getScope() {
 		return scope;
+	}
+
+	List<TypeName> getOuterTypes() {
+		return outerTypes;
 	}
 
 	NamespaceReference getNamespace() {

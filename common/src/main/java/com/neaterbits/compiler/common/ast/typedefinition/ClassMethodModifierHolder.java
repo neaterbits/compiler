@@ -1,31 +1,17 @@
 package com.neaterbits.compiler.common.ast.typedefinition;
 
-import java.util.Objects;
-
 import com.neaterbits.compiler.common.Context;
-import com.neaterbits.compiler.common.ast.ASTIterator;
-import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.BaseASTElement;
 
-public final class ClassMethodModifierHolder extends BaseASTElement implements ClassMethodModifier {
-
-	private final ClassMethodModifier delegate;
+public final class ClassMethodModifierHolder extends BaseModifierHolder<ClassMethodModifier>
+			implements ClassMethodModifier {
 
 	public ClassMethodModifierHolder(Context context, ClassMethodModifier delegate) {
-		super(context);
-
-		Objects.requireNonNull(delegate);
-
-		this.delegate = delegate;
+		super(context, delegate);
 	}
+
 
 	@Override
 	public <T, R> R visit(ClassMethodModifierVisitor<T, R> visitor, T param) {
-		return delegate.visit(visitor, param);
-	}
-
-	@Override
-	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		
+		return getDelegate().visit(visitor, param);
 	}
 }

@@ -7,12 +7,13 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.Converters;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
+import com.neaterbits.compiler.common.resolver.CodeMap;
 import com.neaterbits.compiler.common.util.Strings;
 
 public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState<T>> extends OOToProceduralConverterState<T> {
 
-	public MappingJavaToCConverterState(Converters<T> converters) {
-		super(converters);
+	public MappingJavaToCConverterState(Converters<T> converters, CodeMap codeMap) {
+		super(converters, codeMap);
 	}
 	
 	@Override

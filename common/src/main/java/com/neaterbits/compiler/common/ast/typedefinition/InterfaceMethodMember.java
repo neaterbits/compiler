@@ -25,6 +25,11 @@ public final class InterfaceMethodMember extends ComplexMemberDefinition {
 	public InterfaceMethod getMethod() {
 		return method.get();
 	}
+	
+	@Override
+	protected ComplexMemberType getMemberType() {
+		return ComplexMemberType.INTERFACE_METHOD;
+	}
 
 	@Override
 	public <T, R> R visit(CompilationCodeVisitor<T, R> visitor, T param) {

@@ -10,27 +10,27 @@ import com.neaterbits.compiler.common.loader.FileSpec;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.TypeDependency;
-import com.neaterbits.compiler.common.resolver.references.References;
+import com.neaterbits.compiler.common.resolver.codemap.ResolvedTypeCodeMapImpl;
 
 public final class ResolveFilesResult {
-	private final References references;
+	private final ResolvedTypeCodeMapImpl codeMap;
 	private final ResolveState resolveState;
 	
-	ResolveFilesResult(References references, ResolveState resolveState) {
+	ResolveFilesResult(ResolvedTypeCodeMapImpl codeMap, ResolveState resolveState) {
 		
-		Objects.requireNonNull(references);
+		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(resolveState);
 		
-		this.references = references;
+		this.codeMap = codeMap;
 		this.resolveState = resolveState;
 	}
 
 	public CodeMap getCodeMap() {
-		return references;
+		return codeMap;
 	}
 	
 	ResolvedType getType(ScopedName scopedName) {
-		return references.getType(scopedName);
+		return codeMap.getType(scopedName);
 	}
 	
 	Set<TypeDependency> getUnresolvedExtendsFrom(FileSpec fileSpec) {

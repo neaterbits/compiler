@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.ast.block;
 
 
 import java.util.List;
+import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
@@ -11,6 +12,8 @@ public final class ClassMethod extends CallableCode<MethodName> {
 
 	public ClassMethod(Context context, TypeReference returnType, String name, List<Parameter> parameters, Block block) {
 		super(context, returnType, new MethodName(name), parameters, block);
+
+		Objects.requireNonNull(returnType);
 	}
 
 	@Override

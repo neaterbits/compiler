@@ -1,8 +1,10 @@
-package com.neaterbits.compiler.common.resolver.references;
+package com.neaterbits.compiler.common.resolver.codemap;
 
 import com.neaterbits.compiler.common.loader.ResolvedType;
 
-final class TypeReferences<TYPE extends ResolvedType> extends BaseReferences {
+import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.allocateIntArray;
+
+final class TypeReferences<TYPE extends ResolvedType> extends BaseCodeMap {
 
 	private int[][] fieldReferences;
 	private int[][] methodReferences;

@@ -9,7 +9,7 @@ import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.common.ast.block.Constructor;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
-public class ConstructorMember extends ComplexMemberDefinition {
+public final class ConstructorMember extends ComplexMemberDefinition {
 
 	private final ASTSingle<ConstructorModifiers> modifiers;
 	private final ASTSingle<Constructor> constructor;
@@ -30,6 +30,11 @@ public class ConstructorMember extends ComplexMemberDefinition {
 
 	public Constructor getConstructor() {
 		return constructor.get();
+	}
+
+	@Override
+	protected ComplexMemberType getMemberType() {
+		return ComplexMemberType.CONSTRUCTOR;
 	}
 
 	@Override

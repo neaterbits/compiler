@@ -32,6 +32,9 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 		if (expression.getObject() != null) {
 			
 		}
+		else {
+			// static invocation
+		}
 		
 		throw new UnsupportedOperationException();
 	}

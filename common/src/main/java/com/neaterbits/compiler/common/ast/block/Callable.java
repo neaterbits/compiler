@@ -20,7 +20,6 @@ public abstract class Callable<NAME extends CallableName> extends CompilationCod
 	protected Callable(Context context, TypeReference returnType, NAME name, List<Parameter> parameters) {
 		super(context);
 
-		Objects.requireNonNull(returnType);
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(parameters);
 

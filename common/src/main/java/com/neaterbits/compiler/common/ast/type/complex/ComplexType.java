@@ -1,12 +1,30 @@
 package com.neaterbits.compiler.common.ast.type.complex;
 
-import com.neaterbits.compiler.common.ast.NamespaceReference;
+import java.util.Objects;
+
+import com.neaterbits.compiler.common.ast.list.ASTList;
+import com.neaterbits.compiler.common.ast.type.FullTypeName;
 import com.neaterbits.compiler.common.ast.type.NamedType;
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.ComplexTypeDefinition;
 
-public abstract class ComplexType extends NamedType {
+public abstract class ComplexType<T extends ComplexTypeDefinition> extends NamedType {
 
-	public ComplexType(NamespaceReference namespace, TypeName name, boolean nullable) {
-		super(namespace, name, nullable);
+	private final T definition;
+
+	public ComplexType(FullTypeName name, boolean nullable, T definition) {
+		super(name, nullable);
+		
+		Objects.requireNonNull(definition);
+
+		this.definition = definition;
+	}
+	
+	public final T getDefinition() {
+		return definition;
+	}
+	
+	public final ASTList<ComplexMemberDefinition> getMembers() {
+		return definition.getMembers();
 	}
 }

@@ -10,6 +10,7 @@ public class JavaToCClassToStructState extends MappingJavaToCConverterState<Java
 				new JavaToCExpressionConverter<>(),
 				new JavaToCVariableReferenceConverter<>(),
 				new JavaToCTypeReferenceConverter<>(),
-				new JavaToCTypeConverterStruct()));
+				new JavaToCTypeConverterStruct()),
+				null);
 	}
 }

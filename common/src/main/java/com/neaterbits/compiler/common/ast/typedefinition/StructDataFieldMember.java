@@ -11,6 +11,12 @@ public final class StructDataFieldMember extends DataFieldMember {
 	}
 
 	@Override
+	protected ComplexMemberType getMemberType() {
+		return ComplexMemberType.FIELD;
+	}
+
+
+	@Override
 	public <T, R> R visit(CompilationCodeVisitor<T, R> visitor, T param) {
 		return visitor.onStructDataFieldMember(this, param);
 	}

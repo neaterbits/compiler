@@ -14,6 +14,7 @@ public final class Function extends CallableCode<FunctionName> {
 	public Function(Context context, FunctionQualifiers qualifiers, TypeReference returnType, FunctionName name, List<Parameter> parameters, Block block) {
 		super(context, returnType, name, parameters, block);
 		
+		Objects.requireNonNull(returnType);
 		Objects.requireNonNull(qualifiers);
 		
 		this.qualifiers = qualifiers;

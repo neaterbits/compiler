@@ -44,7 +44,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 	public static StructType convertClassFieldsToStruct(
 			NamespaceReference namespace,
 			ClassDefinition classDefinition,
-			Map<ComplexType, StructType> map,
+			Map<ComplexType<?>, StructType> map,
 			List<ComplexTypeReference> convertLaterList,
 			java.util.function.Function<TypeReference, TypeReference> convertFieldType,
 			java.util.function.BiFunction<NamespaceReference, ClassName, StructName> classToStructName) {

@@ -1,12 +1,13 @@
 package com.neaterbits.compiler.common.ast.type.complex;
 
+import com.neaterbits.compiler.common.ast.type.FullTypeName;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
 
-public final class StructType extends ComplexType {
+public final class StructType extends ComplexType<StructDefinition> {
 
 	public StructType(StructDefinition definition) {
-		super(null, definition.getName(), true);
+		super(new FullTypeName(null, null, definition.getName()), true, definition);
 	}
 
 	@Override

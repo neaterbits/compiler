@@ -18,6 +18,7 @@ import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
+import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.ast.type.complex.EnumType;
@@ -25,9 +26,11 @@ import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
 import com.neaterbits.compiler.common.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethod;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceName;
 import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.FileSpec;
@@ -178,7 +181,7 @@ class TypeFinder {
 	}
 	
 	interface ProcessTypeElement<R> {
-		R onTypeElement(String name, TypeVariant typeVariant, ComplexType type);
+		R onTypeElement(String name, TypeVariant typeVariant, ComplexType<?> type);
 	}
 	
 	private static <R> R processIfTypeElement(TypeFinderStackEntry stackEntry, boolean createType, ProcessTypeElement<R> process) {
@@ -192,14 +195,24 @@ class TypeFinder {
 			final ClassDefinition classDefinition = (ClassDefinition)element;
 			final String name = classDefinition.getName().getName();
 			
-			result = process.onTypeElement(name, TypeVariant.CLASS, createType ? new ClassType(stackEntry.getNamespace(), classDefinition) : null);
+			result = process.onTypeElement(
+					name,
+					TypeVariant.CLASS,
+					createType
+						? new ClassType(stackEntry.getNamespace(), stackEntry.getOuterTypes(), classDefinition)
+						: null);
 		}
 		else if (element instanceof InterfaceDefinition) {
 			
 			final InterfaceDefinition interfaceDefinition = (InterfaceDefinition)element;
 			final String name = interfaceDefinition.getName().getName();
 
-			result = process.onTypeElement(name, TypeVariant.INTERFACE, createType ? new InterfaceType(stackEntry.getNamespace(), interfaceDefinition) : null);
+			result = process.onTypeElement(
+					name,
+					TypeVariant.INTERFACE, 
+					createType
+						? new InterfaceType(stackEntry.getNamespace(), stackEntry.getOuterTypes(), interfaceDefinition)
+						: null);
 		}
 		else if (element instanceof EnumDefinition) {
 		
@@ -207,7 +220,12 @@ class TypeFinder {
 			
 			final String name = enumDefinition.getName().getName();
 			
-			result = process.onTypeElement(name, TypeVariant.ENUM, createType ? new EnumType(stackEntry.getNamespace(), enumDefinition) : null);
+			result = process.onTypeElement(
+					name,
+					TypeVariant.ENUM,
+					createType 
+						? new EnumType(stackEntry.getNamespace(), stackEntry.getOuterTypes(), enumDefinition)
+						: null);
 		}
 		else {
 			result = null;
@@ -221,12 +239,11 @@ class TypeFinder {
 		return processIfTypeElement(stackEntry, true, (name, typeVariant, type) -> makeParsedType(file, stack, stackEntry, name, typeVariant, type));
 	}
 	
-	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry, String name, TypeVariant typeVariant, ComplexType type) {
+	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry, String name, TypeVariant typeVariant, ComplexType<?> type) {
 
 		return new ParsedType(
 				file,
 				makeTypeSpec(stack, name, TypeVariant.CLASS),
-				stackEntry.getNamespace(),
 				type,
 				stackEntry.getNestedTypes(),
 				stackEntry.getExtendsFrom(),
@@ -265,11 +282,15 @@ class TypeFinder {
 		
 		final NamespaceReference namespaceReference;
 		
+		final TypeName typeName;
+		
 		if (element instanceof Namespace) {
 
 			final Namespace namespace = (Namespace)element;
 
 			scope = Arrays.asList(namespace.getReference().getParts());
+			
+			typeName = null;
 			
 			namespaceReference = namespace.getReference();
 			
@@ -284,6 +305,8 @@ class TypeFinder {
 				final ClassDefinition classDefinition = (ClassDefinition)element;
 				final String name = classDefinition.getName().getName();
 				
+				typeName = new ClassName(name);
+				
 				scope = Arrays.asList(name);
 				
 				mayHaveNestedTypes = true;
@@ -293,6 +316,8 @@ class TypeFinder {
 				final InterfaceDefinition interfaceDefinition = (InterfaceDefinition)element;
 				final String name = interfaceDefinition.getName().getName();
 				
+				typeName = new InterfaceName(name);
+
 				scope = Arrays.asList(name);
 				
 				mayHaveNestedTypes = true;
@@ -302,18 +327,38 @@ class TypeFinder {
 				final EnumDefinition enumDefinition = (EnumDefinition)element;
 				final String name = enumDefinition.getName().getName();
 				
+				typeName = new ClassName(name);
+				
 				scope = Arrays.asList(name);
 				
 				mayHaveNestedTypes = true;
 			}
 			else {
+				
+				typeName = null;
+				
 				scope = null;
 				
 				mayHaveNestedTypes = false;
 			}
 		}
 		
-		return new TypeFinderStackEntry(element, scope, namespaceReference, mayHaveNestedTypes);
+		final List<TypeName> outerTypes;
+		
+		if (typeName == null) {
+			outerTypes = last != null ? last.getOuterTypes() : null;
+		}
+		else {
+		
+			if (last != null && last.getOuterTypes() != null) {
+				outerTypes = new ArrayList<>(last.getOuterTypes());
+				outerTypes.add(typeName);
+			}
+			else {
+				outerTypes = Arrays.asList(typeName);
+			}
+		}
+		
+		return new TypeFinderStackEntry(element, scope, namespaceReference, outerTypes, mayHaveNestedTypes);
 	}
-
 }

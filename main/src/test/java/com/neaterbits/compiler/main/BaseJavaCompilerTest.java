@@ -155,7 +155,7 @@ public abstract class BaseJavaCompilerTest {
 						throw new IllegalStateException();
 					}
 					
-					final ComplexType type = typeDependency.getResolvedType().getType();
+					final ComplexType<?> type = typeDependency.getResolvedType().getType();
 					
 					element.replaceWith(new ComplexTypeReference(element.getContext(), type));
 				}
@@ -207,9 +207,9 @@ public abstract class BaseJavaCompilerTest {
 	
 	
 	static <T extends MappingJavaToCConverterState<T>>
-	Map<ComplexType, StructType> convertClassesAndInterfacesToStruct(ResolveFilesResult resolveResult, MappingJavaToCConverterState<T> converterState) {
+	Map<ComplexType<?>, StructType> convertClassesAndInterfacesToStruct(ResolveFilesResult resolveResult, MappingJavaToCConverterState<T> converterState) {
 		
-		final Map<ComplexType, StructType> map = new HashMap<>();
+		final Map<ComplexType<?>, StructType> map = new HashMap<>();
 		
 		final List<ComplexTypeReference> convertLaterTypeReferences = new ArrayList<>();
 
@@ -220,7 +220,7 @@ public abstract class BaseJavaCompilerTest {
 		// References to not-yet resolved fields in types
 		for (ComplexTypeReference reference : convertLaterTypeReferences) {
 		
-			final ComplexType convertedStructType = map.get(reference.getType());
+			final ComplexType<?> convertedStructType = map.get(reference.getType());
 			
 			if (convertedStructType == null) {
 				final NamedType namedType = (NamedType)reference.getType();
@@ -239,7 +239,7 @@ public abstract class BaseJavaCompilerTest {
 	
 	private static <T extends MappingJavaToCConverterState<T>> void convertTypes(
 			Collection<ResolvedType> types,
-			Map<ComplexType, StructType> map,
+			Map<ComplexType<?>, StructType> map,
 			List<ComplexTypeReference> convertLaterTypeReferences,
 			MappingJavaToCConverterState<T> converterState) {
 		
@@ -252,7 +252,7 @@ public abstract class BaseJavaCompilerTest {
 			
 				final StructType structType = ClassToFunctionsConverter.convertClassFieldsToStruct(
 						resolvedType.getNamespace(),
-						classType.getClassDefinition(),
+						classType.getDefinition(),
 						map,
 						convertLaterTypeReferences,
 						fieldType -> converterState.convertTypeReference(fieldType),

@@ -33,6 +33,11 @@ public final class ClassMethodMember extends ComplexMemberDefinition {
 	}
 
 	@Override
+	protected ComplexMemberType getMemberType() {
+		return ComplexMemberType.CLASS_METHOD;
+	}
+
+	@Override
 	public <T, R> R visit(CompilationCodeVisitor<T, R> visitor, T param) {
 		return visitor.onClassMethodMember(this, param);
 	}

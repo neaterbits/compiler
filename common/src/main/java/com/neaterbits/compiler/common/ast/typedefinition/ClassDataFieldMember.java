@@ -31,6 +31,11 @@ public final class ClassDataFieldMember extends DataFieldMember {
 	}
 
 	@Override
+	protected ComplexMemberType getMemberType() {
+		return ComplexMemberType.FIELD;
+	}
+
+	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
 		doIterate(modifiers, recurseMode, iterator);

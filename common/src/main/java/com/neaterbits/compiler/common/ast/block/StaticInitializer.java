@@ -8,6 +8,7 @@ import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberType;
 
 public final class StaticInitializer extends ComplexMemberDefinition {
 
@@ -23,6 +24,11 @@ public final class StaticInitializer extends ComplexMemberDefinition {
 	
 	public Block getBlock() {
 		return block.get();
+	}
+
+	@Override
+	protected ComplexMemberType getMemberType() {
+		return ComplexMemberType.STATIC_INITIALIZER;
 	}
 
 	@Override

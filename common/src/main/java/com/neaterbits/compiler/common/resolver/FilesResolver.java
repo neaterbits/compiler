@@ -19,7 +19,8 @@ import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
 import com.neaterbits.compiler.common.loader.TypeDependency;
 import com.neaterbits.compiler.common.loader.TypeVariant;
-import com.neaterbits.compiler.common.resolver.references.References;
+import com.neaterbits.compiler.common.resolver.codemap.CodeMapImpl;
+import com.neaterbits.compiler.common.resolver.codemap.ResolvedTypeCodeMapImpl;
 
 public final class FilesResolver {
 
@@ -34,14 +35,18 @@ public final class FilesResolver {
 
 	public ResolveFilesResult resolveFiles(Collection<CompiledFile> allFiles) {
 
-		final References references = new References();
+		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl());
 		
-		final ResolveState resolveState = resolveFiles(allFiles, references);
+		final ResolveState resolveState = resolveFiles(allFiles, codeMap);
 		
-		return new ResolveFilesResult(references, resolveState);
+		final MethodsResolver methodsResolver = new MethodsResolver(codeMap);
+
+		methodsResolver.resolveMethodsForAllTypes(resolveState.getResolvedFiles());
+		
+		return new ResolveFilesResult(codeMap, resolveState);
 	}
 	
-	private ResolveState resolveFiles(Collection<CompiledFile> startFiles, References references) {
+	private ResolveState resolveFiles(Collection<CompiledFile> startFiles, ResolvedTypeCodeMapImpl codeMap) {
 
 		logger.onResolveFilesStart(startFiles);
 		
@@ -71,9 +76,9 @@ public final class FilesResolver {
 			final FileUnresolvedReferences unresolvedReferences = new FileUnresolvedReferences(fileToResolve, allExtendsFrom, allDependencies);
 			final FileCachedResolvedTypes cache = resolveState.getCache(fileSpec);
 
-			tryResolveTypes(fileToResolve, references, resolveState, unresolvedReferences, cache);
+			tryResolveTypes(fileToResolve, codeMap, resolveState, unresolvedReferences, cache);
 			
-			tryResolveAnyOtherUnresolvedReferences(fileSpec, references, resolveState);
+			tryResolveAnyOtherUnresolvedReferences(fileSpec, codeMap, resolveState);
 			
 			resolveState.removeFromToProcess(fileSpec);
 		}
@@ -83,11 +88,16 @@ public final class FilesResolver {
 		return resolveState;
 	}
 	
-	private void tryResolveTypes(CompiledFile fileToResolve, References references, ResolveState resolveState, FileUnresolvedReferences unresolvedReferences, FileCachedResolvedTypes cache) {
+	private void tryResolveTypes(
+			CompiledFile fileToResolve,
+			ResolvedTypeCodeMapImpl codeMap,
+			ResolveState resolveState,
+			FileUnresolvedReferences unresolvedReferences,
+			FileCachedResolvedTypes cache) {
 		
 		final FileSpec fileSpec = fileToResolve.getSpec();
 		
-		final List<ResolvedType> resolvedTypes = resolveTypes(fileToResolve.getTypes(), fileSpec, fileToResolve.getImports(), references, unresolvedReferences, cache);
+		final List<ResolvedType> resolvedTypes = resolveTypes(fileToResolve.getTypes(), fileSpec, fileToResolve.getImports(), codeMap, unresolvedReferences, cache);
 		
 		if (unresolvedReferences.isEmpty()) {
 			
@@ -95,18 +105,25 @@ public final class FilesResolver {
 
 			resolveState.addResolved(resolvedFile);
 			
-			final int fileNo = references.addFile(resolvedFile);
-
+			final int [] typeNos = new int[resolvedTypes.size()];
+			
+			int dstIdx = 0;
+			
 			for (ResolvedType resolvedType : resolvedTypes) {
-				references.addType(fileNo, resolvedType);
+				final int typeNo = codeMap.addType(resolvedType);
+
+				typeNos[dstIdx ++] = typeNo;
 			}
+			
+			codeMap.addFile(resolvedFile, typeNos);
 		}
 		else {
 			resolveState.addUnresolvedReferences(fileSpec, unresolvedReferences);
 		}
 	}
 	
-	private void tryResolveAnyOtherUnresolvedReferences(FileSpec exceptThisOne, References references, ResolveState resolveState) {
+	
+	private void tryResolveAnyOtherUnresolvedReferences(FileSpec exceptThisOne, ResolvedTypeCodeMapImpl codeMap, ResolveState resolveState) {
 		
 		resolveState.forEachUnresolved(fileSpec -> {
 			
@@ -117,7 +134,7 @@ public final class FilesResolver {
 				
 				final CompiledFile fileToResolve = unresolvedReferences.getFileToResolve();
 				
-				tryResolveTypes(fileToResolve, references, resolveState, unresolvedReferences, cache);
+				tryResolveTypes(fileToResolve, codeMap, resolveState, unresolvedReferences, cache);
 			}
 		});
 	}
@@ -139,13 +156,13 @@ public final class FilesResolver {
 		}
 	}
 
-	private List<ResolvedType> resolveTypes(Collection<CompiledType> types, FileSpec fileSpec, FileImports fileImports, References references, FileUnresolvedReferences unresolvedReferences, FileCachedResolvedTypes cache) {
+	private List<ResolvedType> resolveTypes(Collection<CompiledType> types, FileSpec fileSpec, FileImports fileImports, ResolvedTypeCodeMapImpl codeMap, FileUnresolvedReferences unresolvedReferences, FileCachedResolvedTypes cache) {
 
 		final List<ResolvedType> resolvedTypes = new ArrayList<>(types.size());
 		
 		for (CompiledType type : types) {
 
-			final ResolvedType resolvedType = resolveTypeDependencies(type, fileSpec, fileImports, references, unresolvedReferences, cache);
+			final ResolvedType resolvedType = resolveTypeDependencies(type, fileSpec, fileImports, codeMap, unresolvedReferences, cache);
 			
 			if (resolvedType != null) {
 				resolvedTypes.add(resolvedType);
@@ -191,7 +208,7 @@ public final class FilesResolver {
 		}
 	}
 	
-	private ResolvedType resolveTypeDependencies(CompiledType type, FileSpec fileSpec, FileImports fileImports, References references, FileUnresolvedReferences fileUnresolvedReferences, FileCachedResolvedTypes cache) {
+	private ResolvedType resolveTypeDependencies(CompiledType type, FileSpec fileSpec, FileImports fileImports, ResolvedTypeCodeMapImpl codeMap, FileUnresolvedReferences fileUnresolvedReferences, FileCachedResolvedTypes cache) {
 
 		logger.onResolveType(type);
 
@@ -206,7 +223,7 @@ public final class FilesResolver {
 			resolvedNestedTypes = new ArrayList<>(type.getNestedTypes().size());
 			
 			for (CompiledType nestedType : type.getNestedTypes()) {
-				final ResolvedType resolvedNestedType = resolveTypeDependencies(nestedType, fileSpec, fileImports, references, fileUnresolvedReferences, cache);
+				final ResolvedType resolvedNestedType = resolveTypeDependencies(nestedType, fileSpec, fileImports, codeMap, fileUnresolvedReferences, cache);
 				
 				if (resolvedNestedType != null) {
 					resolvedNestedTypes.add(resolvedNestedType);
@@ -226,7 +243,7 @@ public final class FilesResolver {
 			
 			for (TypeDependency extendsFrom : type.getExtendsFrom()) {
 				
-				final ResolvedType resolvedExtendsFrom = resolveScopedName(extendsFrom.getScopedName(), fileImports, references, cache);
+				final ResolvedType resolvedExtendsFrom = resolveScopedName(extendsFrom.getScopedName(), fileImports, codeMap, cache);
 
 				logger.onTryResolveExtendsFrom(extendsFrom.getScopedName(), resolvedExtendsFrom);
 				
@@ -256,7 +273,7 @@ public final class FilesResolver {
 
 				System.out.println("## resolve type dependency " + dependency.getScopedName());
 
-				final ResolvedType resolvedDependency = resolveScopedName(dependency.getScopedName(), dependency.getReferenceType(), fileImports, references, cache);
+				final ResolvedType resolvedDependency = resolveScopedName(dependency.getScopedName(), dependency.getReferenceType(), fileImports, codeMap, cache);
 				
 				if (resolvedDependency != null) {
 					resolvedDependencies.add(new ResolvedTypeDependencyImpl(
@@ -291,9 +308,9 @@ public final class FilesResolver {
 		return resolvedType;
 	}
 
-	private ResolvedType resolveScopedName(ScopedName scopedName, ReferenceType referenceType, FileImports fileImports, References references, FileCachedResolvedTypes cache) {
+	private ResolvedType resolveScopedName(ScopedName scopedName, ReferenceType referenceType, FileImports fileImports, ResolvedTypeCodeMapImpl codeMap, FileCachedResolvedTypes cache) {
 		
-		ResolvedType result = resolveScopedName(scopedName, fileImports, references, cache);
+		ResolvedType result = resolveScopedName(scopedName, fileImports, codeMap, cache);
 		
 		if (result == null && referenceType == ReferenceType.STATIC_OR_STATIC_INSTANCE_METHOD_CALL) {
 
@@ -304,7 +321,7 @@ public final class FilesResolver {
 				result = resolveScopedName(
 						updatedScopeName,
 						fileImports,
-						references,
+						codeMap,
 						cache);
 			}
 			else if (scopedName.hasScope() && scopedName.getScope().size() == 1) {
@@ -314,7 +331,7 @@ public final class FilesResolver {
 				result = resolveScopedName(
 						updatedScopeName,
 						fileImports,
-						references,
+						codeMap,
 						cache);
 			}
 		}
@@ -322,7 +339,7 @@ public final class FilesResolver {
 		return result;
 	}
 
-	private ResolvedType resolveScopedName(ScopedName scopedName, FileImports fileImports, References references, FileCachedResolvedTypes cache) {
+	private ResolvedType resolveScopedName(ScopedName scopedName, FileImports fileImports, ResolvedTypeCodeMapImpl codeMap, FileCachedResolvedTypes cache) {
 		
 		final ResolvedType result;
 
@@ -332,7 +349,7 @@ public final class FilesResolver {
 			result = cached;
 		}
 		else if (scopedName.hasScope()) {
-			result = references.getType(scopedName);
+			result = codeMap.getType(scopedName);
 			
 			if (result != null) {
 				cache.put(scopedName, result);
@@ -350,7 +367,7 @@ System.out.println("## name combinations: " + names + " for " + scopedName);
 			
 			if (names != null) {
 				for (ScopedName name : names) {
-					final ResolvedType type = references.getType(name);
+					final ResolvedType type = codeMap.getType(name);
 					
 					if (type != null) {
 						// Make sure class-part matches

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.loader.FileSpec;
@@ -17,7 +16,7 @@ import com.neaterbits.compiler.common.loader.ast.BaseLoaderType;
 
 final class ResolvedTypeImpl extends BaseLoaderType implements ResolvedType {
 
-	private final ComplexType type;
+	private final ComplexType<?> type;
 	
 	private final List<ResolvedType> nestedTypes;
 	private final List<ResolvedTypeDependency> extendsFrom;
@@ -27,7 +26,7 @@ final class ResolvedTypeImpl extends BaseLoaderType implements ResolvedType {
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
-			ComplexType type,
+			ComplexType<?> type,
 			List<ResolvedType> nestedTypes,
 			List<ResolvedTypeDependency> extendsFrom,
 			List<ResolvedTypeDependency> dependencies) {
@@ -45,12 +44,7 @@ final class ResolvedTypeImpl extends BaseLoaderType implements ResolvedType {
 	}
 
 	@Override
-	public NamespaceReference getNamespace() {
-		return type.getNamespace();
-	}
-
-	@Override
-	public ComplexType getType() {
+	public ComplexType<?> getType() {
 		return type;
 	}
 
