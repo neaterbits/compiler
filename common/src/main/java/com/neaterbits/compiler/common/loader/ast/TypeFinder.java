@@ -12,6 +12,7 @@ import com.neaterbits.compiler.common.StackDelegator;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.Namespace;
+import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.block.Parameter;
@@ -85,7 +86,7 @@ class TypeFinder {
 		
 		parsedFile.iterateNodeFirstWithStack(
 				stackWrapper,
-				e -> makeStackEntry(stack, e),
+				e -> makeStackEntry(stack, e, stack.isEmpty() ? null : stack.get()),
 				
 				e -> {
 					if (e instanceof TypeReference) {
@@ -191,14 +192,14 @@ class TypeFinder {
 			final ClassDefinition classDefinition = (ClassDefinition)element;
 			final String name = classDefinition.getName().getName();
 			
-			result = process.onTypeElement(name, TypeVariant.CLASS, createType ? new ClassType(classDefinition) : null);
+			result = process.onTypeElement(name, TypeVariant.CLASS, createType ? new ClassType(stackEntry.getNamespace(), classDefinition) : null);
 		}
 		else if (element instanceof InterfaceDefinition) {
 			
 			final InterfaceDefinition interfaceDefinition = (InterfaceDefinition)element;
 			final String name = interfaceDefinition.getName().getName();
 
-			result = process.onTypeElement(name, TypeVariant.INTERFACE, createType ? new InterfaceType(interfaceDefinition) : null);
+			result = process.onTypeElement(name, TypeVariant.INTERFACE, createType ? new InterfaceType(stackEntry.getNamespace(), interfaceDefinition) : null);
 		}
 		else if (element instanceof EnumDefinition) {
 		
@@ -206,7 +207,7 @@ class TypeFinder {
 			
 			final String name = enumDefinition.getName().getName();
 			
-			result = process.onTypeElement(name, TypeVariant.ENUM, createType ? new EnumType(enumDefinition) : null);
+			result = process.onTypeElement(name, TypeVariant.ENUM, createType ? new EnumType(stackEntry.getNamespace(), enumDefinition) : null);
 		}
 		else {
 			result = null;
@@ -225,6 +226,7 @@ class TypeFinder {
 		return new ParsedType(
 				file,
 				makeTypeSpec(stack, name, TypeVariant.CLASS),
+				stackEntry.getNamespace(),
 				type,
 				stackEntry.getNestedTypes(),
 				stackEntry.getExtendsFrom(),
@@ -255,11 +257,13 @@ class TypeFinder {
 		return scopedName;
 	}
 
-	private static TypeFinderStackEntry makeStackEntry(TypeFinderStack stack, BaseASTElement element) {
+	private static TypeFinderStackEntry makeStackEntry(TypeFinderStack stack, BaseASTElement element, TypeFinderStackEntry last) {
 		
 		final List<String> scope;
 		
 		final boolean mayHaveNestedTypes;
+		
+		final NamespaceReference namespaceReference;
 		
 		if (element instanceof Namespace) {
 
@@ -267,42 +271,49 @@ class TypeFinder {
 
 			scope = Arrays.asList(namespace.getReference().getParts());
 			
+			namespaceReference = namespace.getReference();
+			
 			mayHaveNestedTypes = false;
-		}
-		else if (element instanceof ClassDefinition) {
-
-			final ClassDefinition classDefinition = (ClassDefinition)element;
-			final String name = classDefinition.getName().getName();
-			
-			scope = Arrays.asList(name);
-			
-			mayHaveNestedTypes = true;
-		}
-		else if (element instanceof InterfaceDefinition) {
-			
-			final InterfaceDefinition interfaceDefinition = (InterfaceDefinition)element;
-			final String name = interfaceDefinition.getName().getName();
-			
-			scope = Arrays.asList(name);
-			
-			mayHaveNestedTypes = true;
-		}
-		else if (element instanceof EnumDefinition) {
-		
-			final EnumDefinition enumDefinition = (EnumDefinition)element;
-			final String name = enumDefinition.getName().getName();
-			
-			scope = Arrays.asList(name);
-			
-			mayHaveNestedTypes = true;
 		}
 		else {
-			scope = null;
 			
-			mayHaveNestedTypes = false;
+			namespaceReference = last != null ? last.getNamespace() : null;
+			
+			if (element instanceof ClassDefinition) {
+	
+				final ClassDefinition classDefinition = (ClassDefinition)element;
+				final String name = classDefinition.getName().getName();
+				
+				scope = Arrays.asList(name);
+				
+				mayHaveNestedTypes = true;
+			}
+			else if (element instanceof InterfaceDefinition) {
+				
+				final InterfaceDefinition interfaceDefinition = (InterfaceDefinition)element;
+				final String name = interfaceDefinition.getName().getName();
+				
+				scope = Arrays.asList(name);
+				
+				mayHaveNestedTypes = true;
+			}
+			else if (element instanceof EnumDefinition) {
+			
+				final EnumDefinition enumDefinition = (EnumDefinition)element;
+				final String name = enumDefinition.getName().getName();
+				
+				scope = Arrays.asList(name);
+				
+				mayHaveNestedTypes = true;
+			}
+			else {
+				scope = null;
+				
+				mayHaveNestedTypes = false;
+			}
 		}
 		
-		return new TypeFinderStackEntry(element, scope, mayHaveNestedTypes);
+		return new TypeFinderStackEntry(element, scope, namespaceReference, mayHaveNestedTypes);
 	}
 
 }

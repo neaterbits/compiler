@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.resolver;
 
 import java.util.Collection;
 
+import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.loader.CompiledType;
@@ -47,6 +48,11 @@ public class TestCompiledType extends BaseLoaderType implements CompiledType {
 		this(file, new TypeSpec(scopedName, typeVariant), type, nestedTypes, extendsFrom, dependencies);
 	}
 	
+	@Override
+	public NamespaceReference getNamespace() {
+		return null;
+	}
+
 	@Override
 	public ComplexType getType() {
 		return type;

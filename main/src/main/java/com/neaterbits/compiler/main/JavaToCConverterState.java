@@ -1,30 +1,28 @@
 package com.neaterbits.compiler.main;
 
-import com.neaterbits.compiler.common.ast.Namespace;
-import com.neaterbits.compiler.common.ast.block.FunctionName;
-import com.neaterbits.compiler.common.ast.block.MethodName;
-import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
-import com.neaterbits.compiler.common.ast.typedefinition.StructName;
-import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
-import com.neaterbits.compiler.common.util.Strings;
+import java.util.Map;
+import java.util.Objects;
 
-final class JavaToCConverterState extends OOToProceduralConverterState<JavaToCConverterState> {
+import com.neaterbits.compiler.common.ast.type.complex.ClassType;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.common.ast.type.complex.StructType;
+
+final class JavaToCConverterState extends MappingJavaToCConverterState<JavaToCConverterState> {
 	
-	public JavaToCConverterState() {
-		super(
-				new JavaToCStatementConverter(),
-				new JavaToCExpressionConverter(),
-				new JavaToCVariableReferenceConverter(),
-				new JavaToCTypeConverter());
+	private final Map<ComplexType, StructType> complexToStruct;
+	
+	public JavaToCConverterState(Map<ComplexType, StructType> complexToStruct) {
+		super(new JavaToCConverters()
+		);
+
+		Objects.requireNonNull(complexToStruct);
+	
+		this.complexToStruct = complexToStruct;
 	}
 
-	@Override
-	public FunctionName methodToFunctionName(Namespace namespace, MethodName methodName) {
-		return new FunctionName(Strings.join(namespace.getParts(), '_') + '_' + methodName.getName());
-	}
-
-	@Override
-	public StructName classToStructName(Namespace namespace, ClassName className) {
-		return new StructName(Strings.join(namespace.getParts(), '_') + '_' + className.getName());
+	StructType getStructTypeForClass(ClassType classType) {
+		Objects.requireNonNull(classType);
+		
+		return complexToStruct.get(classType);
 	}
 }

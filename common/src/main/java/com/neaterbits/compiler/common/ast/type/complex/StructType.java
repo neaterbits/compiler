@@ -5,8 +5,8 @@ import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
 
 public final class StructType extends ComplexType {
 
-	public StructType(StructDefinition definition, boolean nullable) {
-		super(definition.getName(), nullable);
+	public StructType(StructDefinition definition) {
+		super(null, definition.getName(), true);
 	}
 
 	@Override

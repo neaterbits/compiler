@@ -71,7 +71,7 @@ public class CTypeEmitter extends BaseProceduralTypeEmitter<EmitterState> {
 	@Override
 	public Void onPointer(PointerType type, EmitterState param) {
 		
-		final NamedType delegate = (NamedType)type.getDelegate().getType();
+		final NamedType delegate = (NamedType)type.getDelegate();
 		
 		if (delegate instanceof StructType) {
 			param.append("struct ");

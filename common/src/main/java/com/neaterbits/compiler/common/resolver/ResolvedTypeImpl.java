@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.loader.FileSpec;
@@ -41,6 +42,11 @@ final class ResolvedTypeImpl extends BaseLoaderType implements ResolvedType {
 		this.nestedTypes = nestedTypes != null ? Collections.unmodifiableList(nestedTypes) : null;
 		this.extendsFrom = extendsFrom != null ? Collections.unmodifiableList(extendsFrom) : null;
 		this.dependencies = dependencies != null ? Collections.unmodifiableList(dependencies) : null;
+	}
+
+	@Override
+	public NamespaceReference getNamespace() {
+		return type.getNamespace();
 	}
 
 	@Override

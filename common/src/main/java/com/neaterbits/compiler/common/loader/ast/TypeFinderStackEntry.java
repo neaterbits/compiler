@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
+import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
@@ -15,18 +16,20 @@ import com.neaterbits.compiler.common.resolver.ReferenceType;
 final class TypeFinderStackEntry {
 	private final BaseASTElement element;
 	private final List<String> scope;
+	private final NamespaceReference namespace;
 	private final boolean mayHaveNestedTypes;
 	
 	private List<CompiledType> nestedTypes;
 	private List<CompiledTypeDependency> extendsFrom;
 	private List<CompiledTypeDependency> dependencies;
 	
-	TypeFinderStackEntry(BaseASTElement element, List<String> scope, boolean mayHaveNestedTypes) {
+	TypeFinderStackEntry(BaseASTElement element, List<String> scope, NamespaceReference namespace, boolean mayHaveNestedTypes) {
 
 		Objects.requireNonNull(element);
 		
 		this.element = element;
 		this.scope = scope;
+		this.namespace = namespace;
 		this.mayHaveNestedTypes = mayHaveNestedTypes;
 	}
 	
@@ -36,6 +39,10 @@ final class TypeFinderStackEntry {
 
 	List<String> getScope() {
 		return scope;
+	}
+
+	NamespaceReference getNamespace() {
+		return namespace;
 	}
 
 	boolean mayHaveNestedTypes() {

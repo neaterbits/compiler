@@ -1,12 +1,13 @@
 package com.neaterbits.compiler.common.ast.type.complex;
 
+import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
 
 public final class InterfaceType extends ComplexType {
 
-	public InterfaceType(InterfaceDefinition interfaceDefinition) {
-		super(interfaceDefinition.getName(), true);
+	public InterfaceType(NamespaceReference namespace, InterfaceDefinition interfaceDefinition) {
+		super(namespace, interfaceDefinition.getName(), true);
 	}
 
 	@Override

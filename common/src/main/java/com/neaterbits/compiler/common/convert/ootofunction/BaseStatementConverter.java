@@ -121,7 +121,7 @@ public abstract class BaseStatementConverter<T extends ConverterState<T>>
 		
 		return new VariableDeclarationStatement(
 				statement.getContext(),
-				statement.getModifiers(),
+				convertModifiers(statement.getModifiers()),
 				convertedDeclarations);
 	}
 

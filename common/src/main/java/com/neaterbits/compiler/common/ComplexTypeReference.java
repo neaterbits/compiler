@@ -7,7 +7,7 @@ import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 
-public class ComplexTypeReference extends ResolvedTypeReference {
+public final class ComplexTypeReference extends ResolvedTypeReference {
 
 	private final ComplexType type;
 
@@ -22,6 +22,11 @@ public class ComplexTypeReference extends ResolvedTypeReference {
 	@Override
 	public BaseType getType() {
 		return type;
+	}
+	
+	@Override
+	public <T, R> R visit(TypeReferenceVisitor<T, R> visitor, T param) {
+		return visitor.onComplexTypeReference(this, param);
 	}
 
 	@Override

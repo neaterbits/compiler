@@ -51,7 +51,7 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 		return new AssignmentExpression(
 				expression.getContext(),
 				convertVariableReference(expression.getVariable(), param),
-				expression.getExpression());
+				convertExpression(expression.getExpression(), param));
 	}
 
 	@Override

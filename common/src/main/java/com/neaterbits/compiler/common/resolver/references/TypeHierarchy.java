@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.common.resolver.references;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,21 +48,9 @@ final class TypeHierarchy<TYPE extends ResolvedType> extends BaseReferences {
 	}
 	
 	private void setExtendedBy(int extendedTypeNo, int typeNo, TypeVariant typeVariant) {
-		int [] extendedBy = this.extendedByEncoded[extendedTypeNo];
-		
-		if (extendedBy == null) {
-			extendedBy = this.extendedByEncoded[extendedTypeNo] = new int[5];
-		}
 
-		final int numEntries = extendedBy[0];
+		addToSubIntArray(this.extendedByEncoded, extendedTypeNo, encodeType(typeNo, typeVariant), 5);
 
-		if (numEntries + 1 + 1> extendedBy.length) {
-			this.extendedByEncoded[typeNo] = extendedBy = Arrays.copyOf(extendedBy, extendedBy.length * 2);
-		}
-
-		extendedBy[numEntries + 1] = encodeType(typeNo, typeVariant);
-
-		++ extendedBy[0];
 	}
 	
 	TYPE getType(int typeNo) {

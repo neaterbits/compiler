@@ -2,23 +2,22 @@ package com.neaterbits.compiler.common.convert.ootofunction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import com.neaterbits.compiler.common.Context;
-import com.neaterbits.compiler.common.PointerTypeReference;
+import com.neaterbits.compiler.common.BuiltinTypeReference;
+import com.neaterbits.compiler.common.ComplexTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.Namespace;
+import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.block.Function;
 import com.neaterbits.compiler.common.ast.block.FunctionName;
 import com.neaterbits.compiler.common.ast.block.FunctionQualifiers;
-import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.type.BaseType;
-import com.neaterbits.compiler.common.ast.type.PointerType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
-import com.neaterbits.compiler.common.ast.type.complex.EnumType;
-import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
-import com.neaterbits.compiler.common.ast.type.primitive.StringType;
+import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
@@ -26,6 +25,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition
 import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
 
 /**
@@ -37,56 +37,91 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 	extends IterativeConverter<T> {
 
 	
-	private final BaseTypeConverter TYPE_CONVERSION_VISITOR = new BaseTypeConverter() {
-			
-		@Override
-		public TypeReference onString(StringType type, Context param) {
-			throw new UnsupportedOperationException();
-		}
+	private TypeReference convertTypeReference(TypeReference toConvert, T state) {
+		return state.convertTypeReference(toConvert);
+	}
+
+	public static StructType convertClassFieldsToStruct(
+			NamespaceReference namespace,
+			ClassDefinition classDefinition,
+			Map<ComplexType, StructType> map,
+			List<ComplexTypeReference> convertLaterList,
+			java.util.function.Function<TypeReference, TypeReference> convertFieldType,
+			java.util.function.BiFunction<NamespaceReference, ClassName, StructName> classToStructName) {
 		
-		@Override
-		public TypeReference onPointer(PointerType type, Context param) {
-			
-			final PointerType convertedType = new PointerType(
-					convertType(type.getDelegate()),
-					type.getLevels());
-			
-			return new PointerTypeReference(param, convertedType);
+		
+		final int numMembers = classDefinition.getMembers().size();
+		final List<ComplexMemberDefinition> structMembers = new ArrayList<>(numMembers);
+
+		for (ComplexMemberDefinition memberDefinition : classDefinition.getMembers()) {
+		
+			if (memberDefinition instanceof ClassDataFieldMember) {
+				
+				final ClassDataFieldMember field = (ClassDataFieldMember)memberDefinition;
+				
+				final TypeReference fieldType = field.getType();
+				
+				final TypeReference convertedTypeReference;
+				
+				if (fieldType instanceof BuiltinTypeReference) {
+					 convertedTypeReference = convertFieldType.apply(fieldType);
+					
+				}
+				else if (fieldType instanceof ComplexTypeReference) {
+					
+					final ComplexTypeReference complexTypeReference = (ComplexTypeReference)fieldType;
+
+					final BaseType type = complexTypeReference.getType();
+					
+					if (type instanceof ClassType) {
+						final StructType alreadyConverted = map.get(type);
+						
+						if (alreadyConverted != null) {
+							convertedTypeReference = new ComplexTypeReference(
+									fieldType.getContext(),
+									alreadyConverted);
+						}
+						else {
+							// Must swap this later, when we have converted the reference class
+							
+							final ComplexTypeReference convertLaterReference = new ComplexTypeReference(
+									fieldType.getContext(),
+									(ClassType)type);
+							
+							convertedTypeReference = convertLaterReference;
+							
+							convertLaterList.add(convertLaterReference);
+						}
+					}
+					else {
+						throw new UnsupportedOperationException();
+					}
+				}
+				else {
+					throw new UnsupportedOperationException("Unknown field type " + fieldType);
+				}
+				
+				
+				final StructDataFieldMember structField = new StructDataFieldMember(
+						field.getContext(),
+						convertedTypeReference,
+						field.getName());
+				
+				structMembers.add(structField);
+			}
 		}
 
-		@Override
-		public TypeReference onClass(ClassType type, Context param) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public TypeReference onInterface(InterfaceType type, Context param) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public TypeReference onEnum(EnumType type, Context param) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public TypeReference onStruct(StructType type, Context param) {
-			throw new UnsupportedOperationException();
-		}
-	};
+		final StructDefinition struct = new StructDefinition(
+				classDefinition.getContext(),
+				classToStructName.apply(namespace, (ClassName)classDefinition.getName()),
+				structMembers);
+		
+		return new StructType(struct);
+	}
 	
-	private TypeReference convertType(TypeReference toConvert) {
-		return convertType(toConvert.getType(), toConvert.getContext());
-	}
-
-	private TypeReference convertType(BaseType toConvert, Context state) {
-		return toConvert.visit(TYPE_CONVERSION_VISITOR, state);
-	}
-
 	List<CompilationCode> convertClass(ClassDefinition classDefinition, T state) {
 
 		final int numMembers = classDefinition.getMembers().size();
-		final List<ComplexMemberDefinition> structMembers = new ArrayList<>(numMembers);
 		final List<Function> functions = new ArrayList<>(numMembers);
 
 		System.out.println("### convert class " + classDefinition.getName());
@@ -95,20 +130,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 
 		for (ComplexMemberDefinition memberDefinition : classDefinition.getMembers()) {
 			
-			if (memberDefinition instanceof ClassDataFieldMember) {
-				
-				final ClassDataFieldMember field = (ClassDataFieldMember)memberDefinition;
-				
-				final StructDataFieldMember structField = new StructDataFieldMember(
-						field.getContext(),
-						state.convertTypeReference(field.getType()),
-						field.getName());
-				
-				structMembers.add(structField);
-				
-				System.out.println("## add struct field " + structField.getName());
-			}
-			else if (memberDefinition instanceof ClassMethodMember) {
+			if (memberDefinition instanceof ClassMethodMember) {
 				
 				// TODO dispatch tables
 				
@@ -116,31 +138,28 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 				
 				final ClassMethod method = methodMember.getMethod();
 				
-				final FunctionName functionName = state.methodToFunctionName(namespace, method.getName());
+				final FunctionName functionName = state.methodToFunctionName(namespace.getReference(), method.getName());
 				
 				final Function function = new Function(
 						methodMember.getContext(),
 						new FunctionQualifiers(false),
-						convertType(method.getReturnType()),
+						convertTypeReference(method.getReturnType(), state),
 						functionName,
-						convertParameters(method.getParameters(), typeReference -> convertType(typeReference)),
+						convertParameters(method.getParameters(), typeReference -> convertTypeReference(typeReference, state)),
 						convertBlock(method.getBlock(), state));
 				
 				functions.add(function);
+			}
+			else if (memberDefinition instanceof ClassDataFieldMember) {
+				// Already converted
 			}
 			else {
 				throw new UnsupportedOperationException("Unknown class member type " + memberDefinition.getClass());
 			}
 		}
 		
-		final StructDefinition struct = new StructDefinition(
-				classDefinition.getContext(),
-				state.classToStructName(namespace, (ClassName)classDefinition.getName()),
-				structMembers);
-		
 		final List<CompilationCode> result = new ArrayList<>(1 + functions.size());
 		
-		result.add(struct);
 		result.addAll(functions);
 		
 		System.out.println("## return functions " + result);

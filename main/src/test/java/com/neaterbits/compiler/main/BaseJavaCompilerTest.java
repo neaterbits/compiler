@@ -7,7 +7,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.neaterbits.compiler.common.ComplexTypeReference;
 import com.neaterbits.compiler.common.ModuleId;
@@ -23,13 +25,18 @@ import com.neaterbits.compiler.common.ast.Module;
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.Program;
 import com.neaterbits.compiler.common.ast.ScopedName;
+import com.neaterbits.compiler.common.ast.type.NamedType;
+import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.common.ast.type.complex.StructType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.common.convert.ootofunction.ClassToFunctionsConverter;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.ProgramEmitter;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
+import com.neaterbits.compiler.common.loader.TypeVariant;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.DirectoryParser;
 import com.neaterbits.compiler.common.parser.FileTypeParser;
@@ -117,7 +124,7 @@ public abstract class BaseJavaCompilerTest {
 		final Program program = programParser.parseProgram(
 				modules,
 				getSystemModule(),
-				systemModule -> renamePackages(systemModule, SYSTEM_LIB_PLACEHOLDER_CLASS.getPackage()),
+				systemModule -> renameSystemPackages(systemModule, SYSTEM_LIB_PLACEHOLDER_CLASS.getPackage()),
 				new ParseLogger(System.out));
 		
 		assertThat(program).isNotNull();
@@ -156,7 +163,8 @@ public abstract class BaseJavaCompilerTest {
 		}
 	}
 	
-	private final void renamePackages(Module systemModule, Package basePackage) {
+	// Since we cannot override system packages, they are in a different package and we rename after compilation
+	private final void renameSystemPackages(Module systemModule, Package basePackage) {
 		
 		final String [] scopeToRename = Strings.split(basePackage.getName(), '.');
 
@@ -198,7 +206,70 @@ public abstract class BaseJavaCompilerTest {
 	}
 	
 	
+	static <T extends MappingJavaToCConverterState<T>>
+	Map<ComplexType, StructType> convertClassesAndInterfacesToStruct(ResolveFilesResult resolveResult, MappingJavaToCConverterState<T> converterState) {
+		
+		final Map<ComplexType, StructType> map = new HashMap<>();
+		
+		final List<ComplexTypeReference> convertLaterTypeReferences = new ArrayList<>();
+
+		for (ResolvedFile file : resolveResult.getResolvedFiles()) {
+			convertTypes(file.getTypes(), map, convertLaterTypeReferences, converterState);
+		}
+
+		// References to not-yet resolved fields in types
+		for (ComplexTypeReference reference : convertLaterTypeReferences) {
+		
+			final ComplexType convertedStructType = map.get(reference.getType());
+			
+			if (convertedStructType == null) {
+				final NamedType namedType = (NamedType)reference.getType();
+				
+				throw new IllegalStateException("Non-converted type " + namedType.getName());
+			}
+			
+			
+			final ComplexTypeReference structReference = new ComplexTypeReference(reference.getContext(), convertedStructType);
+
+			reference.replaceWith(structReference);
+		}
+		
+		return map;
+	}
 	
+	private static <T extends MappingJavaToCConverterState<T>> void convertTypes(
+			Collection<ResolvedType> types,
+			Map<ComplexType, StructType> map,
+			List<ComplexTypeReference> convertLaterTypeReferences,
+			MappingJavaToCConverterState<T> converterState) {
+		
+		
+		for (ResolvedType resolvedType : types) {
+			
+			if (resolvedType.getTypeVariant() == TypeVariant.CLASS) {
+				
+				final ClassType classType = (ClassType)resolvedType.getType();
+			
+				final StructType structType = ClassToFunctionsConverter.convertClassFieldsToStruct(
+						resolvedType.getNamespace(),
+						classType.getClassDefinition(),
+						map,
+						convertLaterTypeReferences,
+						fieldType -> converterState.convertTypeReference(fieldType),
+						converterState::classToStructName);
+				
+				if (structType == null) {
+					throw new IllegalStateException();
+				}
+				
+				map.put(classType, structType);
+				
+				if (!map.containsKey(classType)) {
+					throw new IllegalStateException("Failed to look up on classType");
+				}
+			}
+		}
+	}
 
 	static String emitCompilationUnit(CompilationUnit compilationUnit, ProgramEmitter<EmitterState> emitter) {
 		final EmitterState emitterState = new EmitterState('\n');

@@ -40,6 +40,11 @@ public final class ResolveLaterTypeReference extends TypeReference {
 	}
 
 	@Override
+	public <T, R> R visit(TypeReferenceVisitor<T, R> visitor, T param) {
+		return visitor.onResolveLaterTypeReference(this, param);
+	}
+
+	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 	}

@@ -39,7 +39,7 @@ public final class MethodInvocationExpression extends Call<MethodName> {
 	}
 
 	public Expression getObject() {
-		return object.get();
+		return object != null ? object.get() : null;
 	}
 
 	@Override

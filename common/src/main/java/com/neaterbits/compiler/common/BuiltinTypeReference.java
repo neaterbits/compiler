@@ -30,6 +30,11 @@ public final class BuiltinTypeReference extends ResolvedTypeReference {
 	}
 
 	@Override
+	public <T, R> R visit(TypeReferenceVisitor<T, R> visitor, T param) {
+		return visitor.onBuiltinTypeReference(this, param);
+	}
+
+	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 	}

@@ -9,6 +9,8 @@ import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.Statement;
+import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierHolder;
+import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.convert.ConverterState;
@@ -33,6 +35,17 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 	
 	protected Expression convertExpression(Expression expression, T state) {
 		return state.convertExpression(expression);
+	}
+	
+	protected VariableModifiers convertModifiers(VariableModifiers modifiers) {
+
+		final List<VariableModifierHolder> list = new ArrayList<>(modifiers.getModifiers().size());
+		
+		for (VariableModifierHolder modifierHolder : modifiers.getModifierHolders()) {
+			list.add(new VariableModifierHolder(modifierHolder.getContext(), modifierHolder.getDelegate()));
+		}
+
+		return new VariableModifiers(modifiers.getContext(), list);
 	}
 
 	protected final VariableReference convertVariableReference(VariableReference variableReference, T state) {

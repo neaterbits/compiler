@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
@@ -14,6 +15,7 @@ final class ParsedType extends BaseLoaderType implements CompiledType {
 
 	private final ComplexType type;
 	
+	private final NamespaceReference namespace;
 	private final List<CompiledType> nestedTypes;
 	private final List<CompiledTypeDependency> extendsFrom;
 	private final List<CompiledTypeDependency> dependencies;
@@ -21,6 +23,7 @@ final class ParsedType extends BaseLoaderType implements CompiledType {
 	ParsedType(
 			FileSpec file,
 			TypeSpec typeSpec,
+			NamespaceReference namespace,
 			ComplexType type,
 			List<CompiledType> nestedTypes,
 			List<CompiledTypeDependency> extendsFrom,
@@ -29,8 +32,10 @@ final class ParsedType extends BaseLoaderType implements CompiledType {
 		super(file, typeSpec);
 		
 		Objects.requireNonNull(file);
+		Objects.requireNonNull(namespace);
 		Objects.requireNonNull(type);
 		
+		this.namespace = namespace;
 		this.type = type;
 		
 		this.nestedTypes = nestedTypes;
@@ -38,6 +43,11 @@ final class ParsedType extends BaseLoaderType implements CompiledType {
 		this.dependencies = dependencies;
 	}
 
+	
+	@Override
+	public NamespaceReference getNamespace() {
+		return namespace;
+	}
 
 	@Override
 	public ComplexType getType() {

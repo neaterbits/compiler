@@ -3,6 +3,7 @@ package com.neaterbits.compiler.common.resolver;
 import java.util.Collection;
 import java.util.List;
 
+import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.loader.FileSpec;
@@ -45,6 +46,11 @@ public class TestResolvedType extends BaseLoaderType implements ResolvedType {
 			ComplexType type) {
 	
 		this(file, scopedName, typeVariant, type, null, null, null);
+	}
+
+	@Override
+	public NamespaceReference getNamespace() {
+		return null;
 	}
 
 	@Override

@@ -17,4 +17,6 @@ public interface CodeMap {
 	
 	Collection<ResolvedType> getAllSubtypes(TypeSpec type);
 	
+	
+	
 }

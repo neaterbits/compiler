@@ -6,56 +6,50 @@ import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.statement.Statement;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 
 public abstract class ConverterState<T extends ConverterState<T>> {
 
-	private final StatementConverter<T> statementConverter;
-	private final ExpressionConverter<T> expressionConverter;
-	private final VariableReferenceConverter<T> variableReferenceConverter;
-	private final TypeConverter typeConverter;
+	private final Converters<T> converters;
 
 	private Namespace currentNamespace;
 
-	public ConverterState(
-			StatementConverter<T> statementConverter,
-			ExpressionConverter<T> expressionConverter,
-			VariableReferenceConverter<T> variableReferenceConverter,
-			TypeConverter typeConverter) {
+	public ConverterState(Converters<T> converters) {
+
+		Objects.requireNonNull(converters);
 		
-		Objects.requireNonNull(statementConverter);
-		Objects.requireNonNull(expressionConverter);
-		Objects.requireNonNull(variableReferenceConverter);
-		Objects.requireNonNull(typeConverter);
-		
-		this.statementConverter = statementConverter;
-		this.expressionConverter = expressionConverter;
-		this.variableReferenceConverter = variableReferenceConverter;
-		this.typeConverter = typeConverter;
+		this.converters = converters;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public final Statement convertStatement(Statement statement) {
-		return statement.visit(statementConverter, (T)this);
+		return converters.convertStatement(statement, (T)this);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public final Expression convertExpression(Expression expression) {
-		return expression.visit(expressionConverter, (T)this);
+		return converters.convertExpression(expression, (T)this);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public final TypeReference convertTypeReference(TypeReference type) {
-		return type.getType().visit(typeConverter, type.getContext());
+		return converters.convertTypeReference(type, (T)this);
 	}
 
+	@SuppressWarnings("unchecked")
+	public final BaseType convertType(BaseType type) {
+		return converters.convertType(type, (T)this);
+	}
+	
 	public final VariableDeclaration mapVariableDeclaration(VariableDeclaration variableDeclaration) {
 		throw new UnsupportedOperationException();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public final VariableReference convertVariableReference(VariableReference reference) {
-		return reference.visit(variableReferenceConverter, (T)this);
+		return converters.convertVariableReference(reference, (T)this);
 	}
 	
 	public final Namespace getCurrentNamespace() {

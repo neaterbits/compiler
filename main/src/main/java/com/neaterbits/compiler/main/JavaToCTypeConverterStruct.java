@@ -9,42 +9,35 @@ import com.neaterbits.compiler.common.ast.type.complex.StructType;
 import com.neaterbits.compiler.common.ast.type.primitive.StringType;
 import com.neaterbits.compiler.common.convert.ootofunction.BaseTypeConverter;
 
-final class JavaToCTypeConverter extends BaseTypeConverter<JavaToCConverterState> {
+public class JavaToCTypeConverterStruct extends BaseTypeConverter<JavaToCClassToStructState> {
 
 	@Override
-	public BaseType onString(StringType type, JavaToCConverterState param) {
+	public BaseType onString(StringType type, JavaToCClassToStructState param) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public BaseType onPointer(PointerType type, JavaToCConverterState param) {
+	public BaseType onPointer(PointerType type, JavaToCClassToStructState param) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public BaseType onClass(ClassType type, JavaToCConverterState param) {
-
-		StructType structType = param.getStructTypeForClass(type);
-		
-		if (structType == null) {
-			throw new IllegalStateException("No struct type for " + type.getName());
-		}
-
-		return new PointerType(structType, 1);
-	}
-
-	@Override
-	public BaseType onInterface(InterfaceType type, JavaToCConverterState param) {
+	public BaseType onClass(ClassType type, JavaToCClassToStructState param) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public BaseType onEnum(EnumType type, JavaToCConverterState param) {
+	public BaseType onInterface(InterfaceType type, JavaToCClassToStructState param) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public BaseType onStruct(StructType type, JavaToCConverterState param) {
+	public BaseType onEnum(EnumType type, JavaToCClassToStructState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public BaseType onStruct(StructType type, JavaToCClassToStructState param) {
 		throw new UnsupportedOperationException();
 	}
 }

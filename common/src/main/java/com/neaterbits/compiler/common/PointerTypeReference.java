@@ -29,6 +29,11 @@ public final class PointerTypeReference extends ResolvedTypeReference {
 	}
 
 	@Override
+	public <T, R> R visit(TypeReferenceVisitor<T, R> visitor, T param) {
+		return visitor.onPointerTypeReference(this, param);
+	}
+
+	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 	}

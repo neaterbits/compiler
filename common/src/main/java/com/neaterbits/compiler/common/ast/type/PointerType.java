@@ -1,19 +1,17 @@
 package com.neaterbits.compiler.common.ast.type;
 
-import com.neaterbits.compiler.common.TypeReference;
-
 public final class PointerType extends BaseType {
-	private final TypeReference delegate;
+	private final BaseType delegate;
 	private final int levels; // 1 is normal pointer, 2 is int ** etc 
 
-	public PointerType(TypeReference delegate, int levels) {
+	public PointerType(BaseType delegate, int levels) {
 		super(true); // pointers are always nullable
 
 		this.delegate = delegate;
 		this.levels = levels;
 	}
 
-	public TypeReference getDelegate() {
+	public BaseType getDelegate() {
 		return delegate;
 	}
 

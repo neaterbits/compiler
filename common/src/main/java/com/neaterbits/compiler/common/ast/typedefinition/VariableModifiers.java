@@ -25,6 +25,10 @@ public final class VariableModifiers extends BaseASTElement {
 		return modifiers;
 	}
 
+	public ASTList<VariableModifierHolder> getModifierHolders() {
+		return modifiers;
+	}
+
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		doIterate(modifiers, recurseMode, iterator);

@@ -1,12 +1,13 @@
 package com.neaterbits.compiler.common.ast.type.complex;
 
+import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 
 public final class EnumType extends ComplexType {
 
-	public EnumType(EnumDefinition enumDefinition) {
-		super(enumDefinition.getName(), true);
+	public EnumType(NamespaceReference namespace, EnumDefinition enumDefinition) {
+		super(namespace, enumDefinition.getName(), true);
 	}
 
 	@Override

@@ -19,6 +19,10 @@ public final class VariableModifierHolder extends BaseASTElement implements Vari
 		this.delegate = delegate;
 	}
 
+	public VariableModifier getDelegate() {
+		return delegate;
+	}
+
 	@Override
 	public <T, R> R visit(VariableModifierVisitor<T, R> visitor, T param) {
 		return delegate.visit(visitor, param);

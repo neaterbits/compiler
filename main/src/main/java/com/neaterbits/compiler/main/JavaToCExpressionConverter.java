@@ -11,21 +11,21 @@ import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.common.ast.expression.literal.ClassExpression;
 import com.neaterbits.compiler.common.convert.ootofunction.BaseExpressionConverter;
 
-final class JavaToCExpressionConverter extends BaseExpressionConverter<JavaToCConverterState> {
+final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>> extends BaseExpressionConverter<T> {
 
 	@Override
-	public Expression onFunctionCall(FunctionCallExpression expression, JavaToCConverterState param) {
+	public Expression onFunctionCall(FunctionCallExpression expression, T param) {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public Expression onClassExpression(ClassExpression expression, JavaToCConverterState param) {
+	public Expression onClassExpression(ClassExpression expression, T param) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Expression onMethodInvocation(MethodInvocationExpression expression, JavaToCConverterState param) {
+	public Expression onMethodInvocation(MethodInvocationExpression expression, T param) {
 
 		final Expression converted;
 		
@@ -33,36 +33,31 @@ final class JavaToCExpressionConverter extends BaseExpressionConverter<JavaToCCo
 			
 		}
 		
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Expression onClassInstanceCreation(ClassInstanceCreationExpression expression, JavaToCConverterState param) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression onClassInstanceCreation(ClassInstanceCreationExpression expression, T param) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Expression onArrayCreationExpression(ArrayCreationExpression expression, JavaToCConverterState param) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression onArrayCreationExpression(ArrayCreationExpression expression, T param) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Expression onThis(ThisPrimary expression, JavaToCConverterState param) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression onThis(ThisPrimary expression, T param) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Expression onSingleLambdaExpression(SingleLambdaExpression expression, JavaToCConverterState param) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression onSingleLambdaExpression(SingleLambdaExpression expression, T param) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Expression onBlockLambdaExpression(BlockLambdaExpression expression, JavaToCConverterState param) {
-		// TODO Auto-generated method stub
-		return null;
+	public Expression onBlockLambdaExpression(BlockLambdaExpression expression, T param) {
+		throw new UnsupportedOperationException();
 	}
 }

@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.common.ast.statement;
 
+import java.util.Objects;
+
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
@@ -13,6 +15,8 @@ public final class ExpressionStatement extends Statement {
 	public ExpressionStatement(Context context, Expression expression) {
 		super(context);
 
+		Objects.requireNonNull(expression);
+		
 		this.expression = makeSingle(expression);
 	}
 

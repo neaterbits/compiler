@@ -18,6 +18,8 @@ import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Module;
 import com.neaterbits.compiler.common.ast.Program;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.common.ast.type.complex.StructType;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.BaseCompilationUnitEmitter;
 import com.neaterbits.compiler.common.loader.CompiledFile;
@@ -37,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
 	@Test
-	public void testJavaToC() throws IOException {
+	public void testIfStatements() throws IOException {
 
 		// final String fileName = "src/test/java/com/neaterbits/compiler/main/JavaToCConverterTest.java";
 		//final String fileName = "../common/src/main/java/com/neaterbits/compiler/common/ModuleSpec.java";
@@ -51,14 +53,6 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		final String emitted = emitCompilationUnit(compilationUnit, javaEmitter);
 		
 		System.out.println("Java code:\n" + emitted);
-
-		final CompilationUnit cCode = convert(compilationUnit);
-
-		final CCompilationUnitEmitter cEmitter = new CCompilationUnitEmitter();
-		
-		final String cSourceCode = emitCompilationUnit(cCode, cEmitter);
-		
-		System.out.println("Emitted code:\n" + cSourceCode);
 	}
 
 	@Test
@@ -72,15 +66,22 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		listProgram(program);
 		
+		// Uses imports to resolve all type references to their class implementations that should now have been loaded
+
+		// Also builds map of all extended by/extends relationships for classes and interfaces and methods thereof
+		// This information will be used when figuring out how to do method dispatch for each call site 
 		final ResolveFilesResult resolveResult = resolveFiles(program);
 		
 		final Map<FileSpec, Set<TypeDependency>> unresolved = resolveResult.getUnresolvedDependencies();
-		
 		if (!unresolved.isEmpty()) {
 			throw new IllegalStateException("Unresolved dependencies " + unresolved);
 		}
-		
+
+		// Replaces all resolved type references within the AST
 		replaceUnresolvedTypeReferences(resolveResult);
+		
+		// First map classes to C structs so can access between compilation units
+		final Map<ComplexType, StructType> complexToStruct = convertClassesAndInterfacesToStruct(resolveResult, new JavaToCClassToStructState());
 		
 		final CCompilationUnitEmitter emitter = new CCompilationUnitEmitter();
 		
@@ -90,7 +91,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 			
 			for (ParsedFile parsedFile : module.getParsedFiles()) {
 				
-				final CompilationUnit converted = convert(parsedFile.getParsed());
+				final CompilationUnit converted = convert(parsedFile.getParsed(), complexToStruct);
 				
 				System.out.println("### converted code:");
 
@@ -172,10 +173,10 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	}
 
 	
-	private CompilationUnit convert(CompilationUnit javaCompilationUnit) {
+	private CompilationUnit convert(CompilationUnit javaCompilationUnit, Map<ComplexType, StructType> classToStruct) {
 		final JavaToCConverter converter = new JavaToCConverter();
 
-		final CompilationUnit cCode = converter.convertCompilationUnit(javaCompilationUnit, new JavaToCConverterState());
+		final CompilationUnit cCode = converter.convertCompilationUnit(javaCompilationUnit, new JavaToCConverterState(classToStruct));
 		
 		return cCode;
 	}
