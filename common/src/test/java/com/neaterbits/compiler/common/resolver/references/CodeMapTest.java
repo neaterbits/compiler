@@ -36,7 +36,7 @@ public class CodeMapTest extends BaseResolveTest {
 	@Test
 	public void testClassCodeMap() {
 
-		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl());
+		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl(), Collections.emptyList());
 		
 		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
 
@@ -66,7 +66,7 @@ public class CodeMapTest extends BaseResolveTest {
 	@Test
 	public void testInterfaceCodeMap() {
 
-		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl());
+		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl(), Collections.emptyList());
 		
 		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
 
@@ -94,7 +94,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 	@Test
 	public void testClassImplementingInterface() {
-		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl());
+		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl(), Collections.emptyList());
 		
 		final TestResolvedFile classTestFile = new TestResolvedFile("TestClass.java");
 

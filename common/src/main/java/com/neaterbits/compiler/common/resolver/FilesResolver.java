@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
+import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
@@ -35,23 +36,22 @@ public final class FilesResolver {
 		this.logger = logger;
 	}
 
-	public ResolveFilesResult resolveFiles(Collection<CompiledFile> allFiles) {
+	public ResolveFilesResult resolveFiles(Collection<CompiledFile> allFiles, Collection<? extends BuiltinType> builtinTypes) {
 
-		
 		final ResolvedTypesMap resolvedTypesMap = new ResolvedTypesMap();
 
 		final UnresolvedDependencies unresolvedDependencies = new UnresolvedDependencies();
 
 		final List<ResolvedFile> resolvedFiles = resolveFiles(allFiles, resolvedTypesMap, unresolvedDependencies);
 		
-		final ResolvedTypeCodeMapImpl codeMap = makeCodeMap(resolvedFiles);
+		final ResolvedTypeCodeMapImpl codeMap = makeCodeMap(resolvedFiles, builtinTypes);
 		
 		return new ResolveFilesResult(resolvedFiles, codeMap, resolvedTypesMap, unresolvedDependencies);
 	}
 
-	private static ResolvedTypeCodeMapImpl makeCodeMap(List<ResolvedFile> resolvedFiles) {
+	private static ResolvedTypeCodeMapImpl makeCodeMap(List<ResolvedFile> resolvedFiles, Collection<? extends BuiltinType> builtinTypes) {
 		
-		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl());
+		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl(), builtinTypes);
 		
 		final Map<CompleteName, ResolvedType> resolvedTypesByName = new HashMap<>();
 		

@@ -179,8 +179,8 @@ final class MethodMap extends BaseCodeMap {
 
 		final int encodedMethod = encodeMethod(methodIndex, typeVariant, methodVariant);
 		
-		this.methodsByType = allocateIntArray(this.methodsByType, typeNoEncoded + 1, false);
-		addToSubIntArray(methodsByType, typeNoEncoded, encodedMethod, 5);
+		this.methodsByType = allocateIntArray(this.methodsByType, typeNo + 1, false);
+		addToSubIntArray(methodsByType, typeNo, encodedMethod, 5);
 		
 		this.typeByMethod = allocateIntArray(this.typeByMethod, numMethods);
 		this.typeByMethod[methodIndex] = typeNoEncoded;

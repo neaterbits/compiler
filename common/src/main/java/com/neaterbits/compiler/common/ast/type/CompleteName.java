@@ -33,12 +33,17 @@ public final class CompleteName {
 	}
 	
 	public ScopedName toScopedName() {
-		final List<String> scope = new ArrayList<>(namespace.getParts().length + (outerTypes != null ? outerTypes.size() : 0));
+		final List<String> scope = new ArrayList<>(
+				
+				  (namespace != null ? namespace.getParts().length : 0)
+				+ (outerTypes != null ? outerTypes.size() : 0));
 
-		final String [] namespaceParts = namespace.getParts();
-		
-		for (int i = 0; i < namespaceParts.length; ++ i) {
-			scope.add(namespaceParts[i]);
+		if (namespace != null) {
+			final String [] namespaceParts = namespace.getParts();
+			
+			for (int i = 0; i < namespaceParts.length; ++ i) {
+				scope.add(namespaceParts[i]);
+			}
 		}
 		
 		if (outerTypes != null) {
@@ -85,5 +90,10 @@ public final class CompleteName {
 		} else if (!outerTypes.equals(other.outerTypes))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "CompleteName [namespace=" + namespace + ", outerTypes=" + outerTypes + ", name=" + name + "]";
 	}
 }

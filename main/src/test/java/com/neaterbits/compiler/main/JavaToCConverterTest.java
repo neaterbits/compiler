@@ -31,6 +31,7 @@ import com.neaterbits.compiler.common.resolver.ResolveLogger;
 import com.neaterbits.compiler.common.resolver.UnresolvedDependencies;
 import com.neaterbits.compiler.common.resolver.CodeMap;
 import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.main.convert.ConvertClass;
 
@@ -144,7 +145,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 			System.out.println("File " + compiledFile.getSpec() + " with types " + compiledFile.getTypes());
 		}
 		
-		return resolver.resolveFiles(allFiles);
+		return resolver.resolveFiles(allFiles, JavaTypes.getBuiltinTypes());
 	}
 	
 	@Test

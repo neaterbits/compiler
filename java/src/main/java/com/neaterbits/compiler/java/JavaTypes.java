@@ -1,7 +1,11 @@
 package com.neaterbits.compiler.java;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
+import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
 import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
 import com.neaterbits.compiler.common.ast.type.primitive.DoubleType;
@@ -25,4 +29,20 @@ public class JavaTypes {
 	public static final StringType  STRING_TYPE = new StringType(new TypeName("String"), true);
 	public static final NamedVoidType VOID_TYPE = new NamedVoidType(new TypeName("void"));
 
+	private static final Collection<? extends BuiltinType> builtinTypes = Arrays.asList(
+			BYTE_TYPE,
+			SHORT_TYPE,
+			INT_TYPE,
+			LONG_TYPE,
+			CHAR_TYPE,
+			FLOAT_TYPE,
+			DOUBLE_TYPE,
+			BOOLEAN_TYPE,
+			STRING_TYPE,
+			VOID_TYPE
+		);
+	
+	public static Collection<? extends BuiltinType> getBuiltinTypes() {
+		return builtinTypes;
+	}
 }

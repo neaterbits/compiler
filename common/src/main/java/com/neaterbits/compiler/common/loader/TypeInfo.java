@@ -8,9 +8,15 @@ public interface TypeInfo {
 	
 	TypeVariant getTypeVariant();
 
-	boolean isInterface();
+	default boolean isInterface() {
+		return getTypeVariant() == TypeVariant.INTERFACE;
+	}
 	
-	boolean isClass();
+	default boolean isClass() {
+		return getTypeVariant() == TypeVariant.CLASS;
+	}
 	
-	boolean isEnum();
+	default boolean isEnum() {
+		return getTypeVariant() == TypeVariant.ENUM;
+	}
 }

@@ -24,4 +24,9 @@ final class NameToTypeNoMap {
 
 		return typesByScopedName.get(typeName);
 	}
+
+	@Override
+	public String toString() {
+		return typesByScopedName.toString();
+	}
 }

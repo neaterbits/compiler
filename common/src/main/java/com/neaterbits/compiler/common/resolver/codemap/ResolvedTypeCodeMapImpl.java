@@ -13,6 +13,7 @@ import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
+import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
@@ -31,7 +32,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 	
 	private ResolvedType [] resolvedTypes;
 	
-	public ResolvedTypeCodeMapImpl(CodeMapImpl codeMap) {
+	public ResolvedTypeCodeMapImpl(CodeMapImpl codeMap, Collection<? extends BuiltinType> builtinTypes) {
 		
 		Objects.requireNonNull(codeMap);
 
@@ -39,6 +40,14 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		this.nameToTypeNoMap = new NameToTypeNoMap();
 		this.scopedNameMap = new HashMap<>();
 		this.methodMapCache = new MethodMapCache();
+		
+		// Add all builtin types
+		for (BuiltinType builtinType : builtinTypes) {
+			
+			final ResolvedType resolvedBuiltinType = new ResolvedTypeBuiltin(builtinType);
+			
+			addType(resolvedBuiltinType);
+		}
 	}
 
 	public int addFile(ResolvedFile file, int [] types) {
@@ -208,7 +217,15 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 			parameterTypeNos = new int[parameterTypes.length];
 		
 			for (int i = 0; i < parameterTypes.length; ++ i) {
-				parameterTypeNos[i] = getTypeNo(parameterTypes[i].getCompleteName());
+
+				final CompleteName typeName = parameterTypes[i].getCompleteName();
+				final Integer parameterTypeNo = getTypeNo(typeName);
+				
+				if (parameterTypeNo == null) {
+					throw new IllegalStateException("No typeNo for type " + typeName);
+				}
+				
+				parameterTypeNos[i] = parameterTypeNo;
 			}
 		}
 		

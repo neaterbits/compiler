@@ -38,7 +38,7 @@ class Encode {
 
 	
 	static {
-		if (TypeVariant.values().length >= (1 << TYPEVARIANT_BITS)) {
+		if (TypeVariant.values().length > (1 << TYPEVARIANT_BITS)) {
 			throw new IllegalStateException("More bits required for type variant");
 		}
 	}
