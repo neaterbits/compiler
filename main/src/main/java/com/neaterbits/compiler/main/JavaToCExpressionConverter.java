@@ -41,6 +41,12 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 			}
 			break;
 			
+		case NAMED_CLASS_STATIC_OR_STATIC_VAR:
+			
+			System.out.println("## typeReference: " + expression.getClassType().getDebugName());
+			
+			break;
+			
 		default:
 			throw new UnsupportedOperationException("Unknown method type " + expression.getInvocationType()
 						+ " for " + expression.getCallable().getName());

@@ -3,10 +3,13 @@ package com.neaterbits.compiler.common.loader.ast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.BuiltinTypeReference;
+import com.neaterbits.compiler.common.ComplexTypeReference;
+import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.StackDelegator;
 import com.neaterbits.compiler.common.TypeReference;
@@ -16,8 +19,14 @@ import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.block.Parameter;
+import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.common.ast.expression.ParameterList;
+import com.neaterbits.compiler.common.ast.expression.PrimaryList;
+import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
+import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.ast.type.complex.EnumType;
@@ -28,17 +37,22 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethod;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceName;
 import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
+import com.neaterbits.compiler.common.ast.variables.StaticMemberReference;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.FileSpec;
 import com.neaterbits.compiler.common.loader.TypeSpec;
 import com.neaterbits.compiler.common.loader.TypeVariant;
+import com.neaterbits.compiler.common.parser.FieldAccessType;
 import com.neaterbits.compiler.common.parser.MethodInvocationType;
 import com.neaterbits.compiler.common.parser.ParsedFile;
 import com.neaterbits.compiler.common.resolver.ReferenceType;
+import com.neaterbits.compiler.common.util.Strings;
+
 
 class TypeFinder {
 
@@ -112,34 +126,84 @@ class TypeFinder {
 							
 							final ReferenceType referenceType;
 							
+							final BiConsumer<BaseType, TypeResolveMode> updateOnResolve;
+							
 							if (lastElement instanceof ClassDefinition || lastElement instanceof InterfaceDefinition) {
 								lastStackEntry.addExtendsFrom(name, TypeVariant.CLASS, typeReference);
 								
 								referenceType = null;
+								updateOnResolve = null;
 							}
 							else if (lastElement instanceof Parameter) {
 								referenceType = ReferenceType.PARAMETER;
+								updateOnResolve = null;
 							}
 							else if (lastElement instanceof ClassMethod || lastElement instanceof InterfaceMethod) {
 								referenceType = ReferenceType.RETURNTYPE;
+								updateOnResolve = null;
 							}
 							else if (lastElement instanceof MethodInvocationExpression) {
 								final MethodInvocationExpression methodInvocationExpression = (MethodInvocationExpression)lastElement;
 								
-								if (methodInvocationExpression.getInvocationType() != MethodInvocationType.NAMED_CLASS_STATIC) {
+								if (methodInvocationExpression.getInvocationType() != MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR) {
 									throw new UnsupportedOperationException("Expected static class invocation");
 								}
+								
+								final ScopedName toResolve = typeReference.getTypeName();
+								
+								updateOnResolve = (type, resolveMode) -> {
+									final NamedType namedType = (NamedType)type;
+									
+									final ScopedName typeScopedName = namedType.getCompleteName().toScopedName();
+									
+									final String [] toResolveParts = toResolve.getParts();
+									final String [] typeScopedNameParts = typeScopedName.getParts();
+
+									final String [] expressionPart = findExpressionPart(resolveMode, toResolveParts, typeScopedNameParts);
+									
+									final ParameterList parameters = methodInvocationExpression.getParameters();
+									
+									parameters.take();
+									
+									final ComplexType<?> complexType = (ComplexType<?>)type;
+									
+									final MethodInvocationExpression updatedExpression;
+									
+									if (expressionPart != null && expressionPart.length != 0) {
+										updatedExpression = new MethodInvocationExpression(
+											methodInvocationExpression.getContext(),
+											MethodInvocationType.PRIMARY,
+											new ComplexTypeReference(methodInvocationExpression.getContext(), complexType),
+											makePrimary(methodInvocationExpression.getContext(), complexType, expressionPart),
+											methodInvocationExpression.getCallable(),
+											parameters);
+									}
+									else {
+										updatedExpression = new MethodInvocationExpression(
+												methodInvocationExpression.getContext(),
+												MethodInvocationType.NAMED_CLASS_STATIC,
+												new ComplexTypeReference(methodInvocationExpression.getContext(), complexType),
+												null,
+												methodInvocationExpression.getCallable(),
+												parameters);
+									}
+									
+									methodInvocationExpression.replaceWith(updatedExpression);
+								};
 								
 								referenceType = ReferenceType.STATIC_OR_STATIC_INSTANCE_METHOD_CALL;
 							}
 							else if (lastElement instanceof InitializerVariableDeclarationElement) {
 								referenceType = ReferenceType.VARIABLE_INITIALIZER;
+								updateOnResolve = null;
 							}
 							else if (lastElement instanceof ClassDataFieldMember) {
 								referenceType = ReferenceType.FIELD;
+								updateOnResolve = null;
 							}
 							else if (lastElement instanceof CatchBlock) {
 								referenceType = ReferenceType.CATCH_EXCEPTION;
+								updateOnResolve = null;
 							}
 							else {
 								throw new UnsupportedOperationException("Unknown scope for type reference " + typeReference.getTypeName()
@@ -151,7 +215,7 @@ class TypeFinder {
 
 								final TypeFinderStackEntry typeFrame = findTypeFrame(stack);
 								
-								typeFrame.addDependency(name, referenceType, typeReference);
+								typeFrame.addDependency(name, referenceType, typeReference, updateOnResolve);
 							}
 						}
 						else {
@@ -162,6 +226,117 @@ class TypeFinder {
 		);
 
 		return parsedTypes;
+	}
+	
+	static Primary makePrimary(Context context, ComplexType<?> type, String [] expressionPart) {
+		
+		final Primary primary;
+		
+		if (expressionPart.length == 1) {
+			primary = new StaticMemberReference(
+					context,
+					new ComplexTypeReference(context, type),
+					expressionPart[0]);
+		}
+		else {
+			
+			final List<Primary> primaries = new ArrayList<>(expressionPart.length);
+			
+			primaries.add(new StaticMemberReference(
+					context,
+					new ComplexTypeReference(context, type),
+					expressionPart[0]));
+			
+			ComplexType<?> fieldHolderType = type;
+			
+			for (int i = 1; i < expressionPart.length; ++ i) {
+				
+				final String fieldNameString = expressionPart[i];
+				
+				final FieldName fieldName = new FieldName(fieldNameString);
+				
+				primaries.add(new FieldAccess(
+						context,
+						FieldAccessType.FIELD,
+						new ComplexTypeReference(context, fieldHolderType),
+						fieldName));
+
+				if (i < expressionPart.length - 1) {
+					fieldHolderType = (ComplexType<?>)fieldHolderType.getFieldType(fieldName);
+				}
+			}
+			
+			primary = new PrimaryList(context, primaries);
+		}
+		
+		return primary;
+	}
+	
+	static String [] findExpressionPart(TypeResolveMode resolveMode, String [] toResolveParts, String [] typeScopedNameParts) {
+		
+		final String [] expressionPart;
+
+		switch (resolveMode) {
+		case CLASSNAME_TO_COMPLETE: 
+			
+			if (typeScopedNameParts.length < toResolveParts.length) {
+				throw new IllegalStateException();
+			}
+			else {
+				// Class and static instances, eg. SomeClass.someStaticInstance or SomeClass.someStaticInstance.someField
+
+				// eg. com.test.SomeClass.staticVariable and SomeClass.staticVariable
+				// typeScopedNameParts would then contain com.test.SomeClass
+
+				// or com.test.SomeClass.staticVariable and SomeClass.SomeOtherClass.staticVariable.someField
+				// typeScopedNameParts would then contain com.test.SomeClass.SomeOtherClass
+
+				String [] foundExpressionPart = null;
+
+				for (int i = typeScopedNameParts.length - 1; i >= 0; -- i) {
+					
+					final int numParts = typeScopedNameParts.length - i;
+					
+					
+					final String [] lastOfType = Strings.lastOf(typeScopedNameParts, numParts);
+					final String [] firstOfToResolve = Arrays.copyOf(toResolveParts, numParts);
+					
+					if (Arrays.equals(lastOfType, firstOfToResolve)) {
+						final int remainingOfToResolve = toResolveParts.length - firstOfToResolve.length;
+					
+						if (remainingOfToResolve == 0) {
+							foundExpressionPart = null;
+						}
+						else {
+							foundExpressionPart = Strings.lastOf(toResolveParts, remainingOfToResolve);
+						}
+						break;
+					}
+				}
+
+				expressionPart = foundExpressionPart;
+			}
+			break;
+			
+		case COMPLETE_TO_COMPLETE:
+			if (typeScopedNameParts.length > toResolveParts.length) {
+				throw new IllegalStateException("Length mismatch: "
+							+ Arrays.toString(typeScopedNameParts) + "/"
+						    + Arrays.toString(toResolveParts));
+			}
+			else if (typeScopedNameParts.length == toResolveParts.length) {
+				expressionPart = null;
+			}
+			else {
+				expressionPart = Strings.lastOf(toResolveParts, toResolveParts.length - typeScopedNameParts.length);
+			}
+			break;
+			
+		default:
+			throw new UnsupportedOperationException();
+		}
+
+		return expressionPart;
 	}
 
 	private static TypeFinderStackEntry findTypeFrame(TypeFinderStack stack) {

@@ -20,6 +20,7 @@ import com.neaterbits.compiler.common.loader.FileImports;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
+import com.neaterbits.compiler.common.loader.ast.TypeResolveMode;
 import com.neaterbits.compiler.common.resolver.codemap.CodeMapImpl;
 import com.neaterbits.compiler.common.resolver.codemap.ResolvedTypeCodeMapImpl;
 
@@ -251,6 +252,19 @@ public final class FilesResolver {
 					compiledTypesMap);
 
 			if (foundType != null) {
+				
+				if (compiledTypeDependency.getUpdateOnResolve() != null) {
+					
+					final TypeResolveMode typeResolveMode = 
+							   compiledTypeDependency.getScopedName().hasScope()
+							&& compiledTypeDependency.getScopedName().scopeStartsWith(foundType.getType().getCompleteName().toScopedName().getParts())
+							
+							? TypeResolveMode.COMPLETE_TO_COMPLETE
+							: TypeResolveMode.CLASSNAME_TO_COMPLETE;
+					
+					compiledTypeDependency.getUpdateOnResolve().accept(foundType.getType(), typeResolveMode);
+				}
+				
 				final ResolvedTypeDependency resolvedTypeDependency = new ResolvedTypeDependencyImpl(
 						foundType.getCompleteName(),
 						compiledTypeDependency.getReferenceType(),

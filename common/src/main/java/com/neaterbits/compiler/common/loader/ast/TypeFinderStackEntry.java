@@ -3,11 +3,13 @@ package com.neaterbits.compiler.common.loader.ast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
@@ -86,12 +88,12 @@ final class TypeFinderStackEntry {
 			this.extendsFrom = new ArrayList<>();
 		}
 		
-		this.extendsFrom.add(new ParsedTypeReference(extendsFrom, ReferenceType.EXTENDS_FROM, element));
+		this.extendsFrom.add(new ParsedTypeReference(extendsFrom, ReferenceType.EXTENDS_FROM, element, null));
 	}
 	
-	void addDependency(ScopedName scopedName, ReferenceType type, ResolveLaterTypeReference element) {
+	void addDependency(ScopedName scopedName, ReferenceType type, ResolveLaterTypeReference element, BiConsumer<BaseType, TypeResolveMode> updateOnResolve) {
 
-		final ParsedTypeReference dependency = new ParsedTypeReference(scopedName, type, element);
+		final ParsedTypeReference dependency = new ParsedTypeReference(scopedName, type, element, updateOnResolve);
 		
 		Objects.requireNonNull(dependency);
 		Objects.requireNonNull(type);

@@ -43,6 +43,22 @@ public final class ScopedName {
 	public boolean hasScope() {
 		return scope != null;
 	}
+	
+	public String [] getParts() {
+		
+		final String [] parts;
+		
+		if (scope != null) {
+			parts = scope.toArray(new String[scope.size() + 1]);
+
+			parts[parts.length - 1] = name;
+		}
+		else {
+			parts = new String [] { name };
+		}
+		
+		return parts;
+	}
 
 	public String getName() {
 		return name;

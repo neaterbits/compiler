@@ -1,9 +1,11 @@
 package com.neaterbits.compiler.common.ast.type;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import com.neaterbits.compiler.common.ast.NamespaceReference;
+import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 
 public final class CompleteName {
@@ -28,6 +30,24 @@ public final class CompleteName {
 
 	public TypeName getName() {
 		return name;
+	}
+	
+	public ScopedName toScopedName() {
+		final List<String> scope = new ArrayList<>(namespace.getParts().length + (outerTypes != null ? outerTypes.size() : 0));
+
+		final String [] namespaceParts = namespace.getParts();
+		
+		for (int i = 0; i < namespaceParts.length; ++ i) {
+			scope.add(namespaceParts[i]);
+		}
+		
+		if (outerTypes != null) {
+			for (DefinitionName name : outerTypes) {
+				scope.add(name.getName());
+			}
+		}
+		
+		return new ScopedName(scope, name.getName());
 	}
 
 	@Override

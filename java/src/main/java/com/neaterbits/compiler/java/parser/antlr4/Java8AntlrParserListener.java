@@ -788,7 +788,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterStaticMethodInvocation_lfno_primary(StaticMethodInvocation_lfno_primaryContext ctx) {
 		delegate.onMethodInvocationStart(
 				context(ctx),
-				MethodInvocationType.NAMED_CLASS_STATIC,
+				MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR,
 				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
 				ctx.Identifier().getText());
 	}
@@ -846,7 +846,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterStaticMethodInvocation(StaticMethodInvocationContext ctx) {
 		delegate.onMethodInvocationStart(
 				context(ctx),
-				MethodInvocationType.NAMED_CLASS_STATIC,
+				MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR,
 				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
 				ctx.Identifier().getText());
 	}

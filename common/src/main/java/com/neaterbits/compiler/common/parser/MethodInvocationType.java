@@ -3,6 +3,7 @@ package com.neaterbits.compiler.common.parser;
 public enum MethodInvocationType {
 	NO_OBJECT(false), // May be on this or on static-method if called from a static context
 	NAMED_CLASS_STATIC(true),
+	NAMED_CLASS_STATIC_OR_STATIC_VAR(true),
 	VARIABLE_REFERENCE(false),
 	PRIMARY(false),
 	SUPER(false),

@@ -9,6 +9,8 @@ public interface VariableReferenceVisitor<T, R> {
 	R onArrayAccessReference(ArrayAccessReference variableReference, T param);
 	
 	R onFieldAccessReference(FieldAccessReference fieldAccessReference, T param);
+
+	R onStaticMemberReference(StaticMemberReference staticMemberReference, T param);
 	
 	R onPrimaryList(PrimaryListVariableReference primaryListVariableReference, T param);
 }
