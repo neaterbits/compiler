@@ -79,7 +79,7 @@ class TypeFinder {
 				
 				final TypeFinderStackEntry stackEntry = super.pop();
 
-				final ParsedType parsedType = makeParsedType(compiledFileSpec, stack, stackEntry);
+				final ParsedType parsedType = makeParsedType(compiledFileSpec, stack, stackEntry, stack.isEmpty() ? null : stack.get());
 				
 				if (parsedType != null) {
 					parsedTypes.add(parsedType);
@@ -343,8 +343,9 @@ class TypeFinder {
 		for (int i = stack.size() - 1; i >= 0; -- i) {
 			
 			final TypeFinderStackEntry stackEntry = stack.get(i);
+			final TypeFinderStackEntry lastStackEntry = i > 0 ? stack.get(i - 1) : null;
 			
-			final TypeVariant typeVariant = processIfTypeElement(stackEntry, false, (n, v, t) -> v);
+			final TypeVariant typeVariant = processIfTypeElement(stackEntry, lastStackEntry, false, (n, v, t) -> v);
 			
 			if (typeVariant != null) {
 				return stackEntry;
@@ -358,11 +359,13 @@ class TypeFinder {
 		R onTypeElement(String name, TypeVariant typeVariant, ComplexType<?> type);
 	}
 	
-	private static <R> R processIfTypeElement(TypeFinderStackEntry stackEntry, boolean createType, ProcessTypeElement<R> process) {
+	private static <R> R processIfTypeElement(TypeFinderStackEntry stackEntry, TypeFinderStackEntry lastStackEntry, boolean createType, ProcessTypeElement<R> process) {
 		
 		final BaseASTElement element = stackEntry.getElement();
 		
 		final R result;
+		
+		final List<DefinitionName> outerTypes = lastStackEntry != null ? lastStackEntry.getOuterTypes() : null;
 		
 		if (element instanceof ClassDefinition) {
 
@@ -373,7 +376,7 @@ class TypeFinder {
 					name,
 					TypeVariant.CLASS,
 					createType
-						? new ClassType(stackEntry.getNamespace(), stackEntry.getOuterTypes(), classDefinition)
+						? new ClassType(stackEntry.getNamespace(), outerTypes, classDefinition)
 						: null);
 		}
 		else if (element instanceof InterfaceDefinition) {
@@ -385,7 +388,7 @@ class TypeFinder {
 					name,
 					TypeVariant.INTERFACE, 
 					createType
-						? new InterfaceType(stackEntry.getNamespace(), stackEntry.getOuterTypes(), interfaceDefinition)
+						? new InterfaceType(stackEntry.getNamespace(), outerTypes, interfaceDefinition)
 						: null);
 		}
 		else if (element instanceof EnumDefinition) {
@@ -398,7 +401,7 @@ class TypeFinder {
 					name,
 					TypeVariant.ENUM,
 					createType 
-						? new EnumType(stackEntry.getNamespace(), stackEntry.getOuterTypes(), enumDefinition)
+						? new EnumType(stackEntry.getNamespace(), outerTypes, enumDefinition)
 						: null);
 		}
 		else {
@@ -409,8 +412,8 @@ class TypeFinder {
 	}
 
 	
-	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry) {
-		return processIfTypeElement(stackEntry, true, (name, typeVariant, type) -> makeParsedType(file, stack, stackEntry, name, typeVariant, type));
+	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry, TypeFinderStackEntry lastStackEntry) {
+		return processIfTypeElement(stackEntry, lastStackEntry, true, (name, typeVariant, type) -> makeParsedType(file, stack, stackEntry, name, typeVariant, type));
 	}
 	
 	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry, String name, TypeVariant typeVariant, ComplexType<?> type) {
