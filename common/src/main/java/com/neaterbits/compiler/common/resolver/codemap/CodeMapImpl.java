@@ -59,6 +59,10 @@ public final class CodeMapImpl extends BaseCodeMap {
 	private int getEncodedTypeNo(int typeNo) {
 		return encodeType(typeNo, typeHierarchy.getTypeVariantForType(typeNo));
 	}
+
+	TypeVariant getTypeVariant(int typeNo) {
+		return typeHierarchy.getTypeVariantForType(typeNo);
+	}
 	
 	public int addMethod(int typeNo, String name, int [] parameterTypes, MethodVariant methodVariant, MethodMapCache methodMapCache) {
 		

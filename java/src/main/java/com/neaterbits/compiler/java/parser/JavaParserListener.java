@@ -16,20 +16,9 @@ import com.neaterbits.compiler.common.ast.operator.Arithmetic;
 import com.neaterbits.compiler.common.ast.operator.Notation;
 import com.neaterbits.compiler.common.ast.operator.Operator;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
-import com.neaterbits.compiler.common.ast.type.TypeName;
-import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
-import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
-import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
-import com.neaterbits.compiler.common.ast.type.primitive.DoubleType;
-import com.neaterbits.compiler.common.ast.type.primitive.FloatType;
-import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.type.primitive.IntegerType;
-import com.neaterbits.compiler.common.ast.type.primitive.LongType;
 import com.neaterbits.compiler.common.ast.type.primitive.ScalarType;
-import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
-import com.neaterbits.compiler.common.ast.type.primitive.StringType;
-import com.neaterbits.compiler.common.ast.type.primitive.NamedVoidType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
@@ -43,6 +32,7 @@ import com.neaterbits.compiler.common.parser.FieldAccessType;
 import com.neaterbits.compiler.common.parser.MethodInvocationType;
 import com.neaterbits.compiler.common.parser.iterative.BaseIterativeOOParserListener;
 import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.compiler.java.JavaTypes;
 
 /**
  * Listener for the Java grammars
@@ -488,19 +478,19 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		switch (bits) {
 		case 8:
-			type = BYTE_TYPE;
+			type = JavaTypes.BYTE_TYPE;
 			break;
 			
 		case 16:
-			type = SHORT_TYPE;
+			type = JavaTypes.SHORT_TYPE;
 			break;
 			
 		case 32:
-			type = INT_TYPE;
+			type = JavaTypes.INT_TYPE;
 			break;
 			
 		case 64:
-			type = LONG_TYPE;
+			type = JavaTypes.LONG_TYPE;
 			break;
 			
 		default:
@@ -538,7 +528,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new IllegalStateException("Not a boolean literal: " + literal);
 		}
 
-		delegate.onBooleanLiteral(context, value, BOOLEAN_TYPE);
+		delegate.onBooleanLiteral(context, value, JavaTypes.BOOLEAN_TYPE);
 	}
 	
 	public void onJavaCharacterLiteral(Context context, String literal) {
@@ -549,7 +539,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 		final String s = literal.substring(1, literal.length() - 1);
 		
-		delegate.onCharacterLiteral(context, s.charAt(0), CHAR_TYPE);
+		delegate.onCharacterLiteral(context, s.charAt(0), JavaTypes.CHAR_TYPE);
 	}
 	
 	public void onJavaStringLiteral(Context context, String literal) {
@@ -557,7 +547,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new IllegalStateException("Not a String literal");
 		}
 
-		delegate.onStringLiteral(context, literal.substring(1, literal.length() - 1), STRING_TYPE);
+		delegate.onStringLiteral(context, literal.substring(1, literal.length() - 1), JavaTypes.STRING_TYPE);
 	}
 	
 	public void onJavaNullLiteral(Context context, String literal) {
@@ -699,31 +689,21 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onVariableName(context, name, numDims);
 	}
 
-	private static final ByteType 	BYTE_TYPE 	= new ByteType	(new TypeName("byte"), false);
-	private static final ShortType 	SHORT_TYPE 	= new ShortType	(new TypeName("short"), false);
-	private static final IntType 	INT_TYPE 	= new IntType	(new TypeName("int"), false);
-	private static final LongType 	LONG_TYPE 	= new LongType	(new TypeName("long"), false);
-	private static final Char16Type CHAR_TYPE 	= new Char16Type(new TypeName("char"), false);
-	private static final FloatType 	FLOAT_TYPE 	= new FloatType	(new TypeName("float"), false);
-	private static final DoubleType DOUBLE_TYPE = new DoubleType(new TypeName("double"), false);
-	private static final BooleanType BOOLEAN_TYPE = new BooleanType(new TypeName("boolean"), false);
-	private static final StringType STRING_TYPE = new StringType(new TypeName("String"), true);
-	private static final NamedVoidType VOID_TYPE = new NamedVoidType(new TypeName("void"));
 	
 	public void onJavaPrimitiveType(Context context, JavaPrimitiveType type) {
 		
 		final BuiltinType genericType;
 		
 		switch (type) {
-		case BYTE:	genericType = BYTE_TYPE; break;
-		case SHORT:	genericType = SHORT_TYPE; break;
-		case INT:	genericType = INT_TYPE; break;
-		case LONG:	genericType = LONG_TYPE; break;
-		case CHAR:	genericType = CHAR_TYPE; break;
-		case FLOAT:	genericType = FLOAT_TYPE; break;
-		case DOUBLE:  genericType = DOUBLE_TYPE; break;
-		case BOOLEAN: genericType = BOOLEAN_TYPE; break;
-		case VOID:	genericType = VOID_TYPE; break;
+		case BYTE:	genericType = JavaTypes.BYTE_TYPE; break;
+		case SHORT:	genericType = JavaTypes.SHORT_TYPE; break;
+		case INT:	genericType = JavaTypes.INT_TYPE; break;
+		case LONG:	genericType = JavaTypes.LONG_TYPE; break;
+		case CHAR:	genericType = JavaTypes.CHAR_TYPE; break;
+		case FLOAT:	genericType = JavaTypes.FLOAT_TYPE; break;
+		case DOUBLE:  genericType = JavaTypes.DOUBLE_TYPE; break;
+		case BOOLEAN: genericType = JavaTypes.BOOLEAN_TYPE; break;
+		case VOID:	genericType = JavaTypes.VOID_TYPE; break;
 		
 		default:
 			throw new UnsupportedOperationException("Unknown type " + type);
@@ -738,14 +718,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		switch (typeString) {
 		
-		case "byte": 	type = BYTE_TYPE; break;
-		case "short": 	type = SHORT_TYPE; break;
-		case "int": 	type = INT_TYPE; break;
-		case "long": 	type = LONG_TYPE; break;
-		case "char": 	type = CHAR_TYPE; break;
-		case "float": 	type = FLOAT_TYPE; break;
-		case "double": 	type = DOUBLE_TYPE; break;
-		case "boolean": type = BOOLEAN_TYPE; break;
+		case "byte": 	type = JavaTypes.BYTE_TYPE; break;
+		case "short": 	type = JavaTypes.SHORT_TYPE; break;
+		case "int": 	type = JavaTypes.INT_TYPE; break;
+		case "long": 	type = JavaTypes.LONG_TYPE; break;
+		case "char": 	type = JavaTypes.CHAR_TYPE; break;
+		case "float": 	type = JavaTypes.FLOAT_TYPE; break;
+		case "double": 	type = JavaTypes.DOUBLE_TYPE; break;
+		case "boolean": type = JavaTypes.BOOLEAN_TYPE; break;
 		
 		default:
 			throw new UnsupportedOperationException("Unknown type " + typeString);

@@ -102,8 +102,11 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 	}
 
 	@Override
-	public Expression onVariableReference(VariableReference expression, T param) {
-		throw new UnsupportedOperationException();
+	public final Expression onVariableReference(VariableReference expression, T param) {
+		
+		final VariableReference convertedVariableReference = convertVariableReference(expression, param);
+		
+		return convertedVariableReference;
 	}
 
 	@Override

@@ -4,11 +4,13 @@ import com.neaterbits.compiler.common.ast.block.FunctionName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.Converters;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.common.resolver.CodeMap;
 import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.compiler.java.JavaTypes;
 
 public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState<T>> extends OOToProceduralConverterState<T> {
 
@@ -50,5 +52,15 @@ public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState
 	@Override
 	public final StructName classToStructName(CompleteName completeName) {
 		return new StructName(className(completeName));
+	}
+
+	@Override
+	public final String getClassStaticMembersArrayName() {
+		return "class_static_members";
+	}
+
+	@Override
+	public final IntType getIntType() {
+		return JavaTypes.INT_TYPE;
 	}
 }

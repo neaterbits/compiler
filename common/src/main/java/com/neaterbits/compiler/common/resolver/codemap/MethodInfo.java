@@ -2,7 +2,7 @@ package com.neaterbits.compiler.common.resolver.codemap;
 
 import java.util.Objects;
 
-public class MethodInfo {
+public final class MethodInfo {
 
 	private final int methodNo;
 	private final MethodVariant methodVariant;

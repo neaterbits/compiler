@@ -9,6 +9,7 @@ import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.parser.FieldAccessType;
 
@@ -43,7 +44,10 @@ public final class FieldAccess extends Primary {
 	
 	@Override
 	public BaseType getType() {
-		throw new UnsupportedOperationException();
+		
+		final ComplexType<?> type = (ComplexType<?>)classType.get().getType();
+
+		return type.getFieldType(fieldName);
 	}
 
 	@Override

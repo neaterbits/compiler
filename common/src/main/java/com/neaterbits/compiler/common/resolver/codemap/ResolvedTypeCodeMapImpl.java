@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
@@ -169,6 +170,25 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		}
 
 		return result;
+	}
+	
+	@Override
+	public TypeInfo getTypeInfo(BaseType type) {
+
+		final NamedType namedType = (NamedType)type;
+		
+		final Integer typeNo = getTypeNo(namedType.getCompleteName());
+		
+		final TypeInfo typeInfo;
+		
+		if (typeNo != null) {
+			typeInfo = new TypeInfo(typeNo, codeMap.getTypeVariant(typeNo));
+		}
+		else {
+			typeInfo = null;
+		}
+		
+		return typeInfo;
 	}
 
 	@Override
