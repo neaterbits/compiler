@@ -94,6 +94,6 @@ public final class CompleteName {
 
 	@Override
 	public String toString() {
-		return "CompleteName [namespace=" + namespace + ", outerTypes=" + outerTypes + ", name=" + name + "]";
+		return toScopedName().toString();
 	}
 }

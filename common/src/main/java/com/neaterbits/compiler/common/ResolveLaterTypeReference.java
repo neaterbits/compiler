@@ -33,7 +33,7 @@ public final class ResolveLaterTypeReference extends TypeReference {
 	public BaseType getType() {
 		
 		if (resolved == null) {
-			throw new IllegalStateException("Not yet resolved");
+			throw new IllegalStateException("Not yet resolved: " + typeName);
 		}
 
 		return resolved;

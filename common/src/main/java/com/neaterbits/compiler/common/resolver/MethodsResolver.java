@@ -71,8 +71,6 @@ public final class MethodsResolver {
 		while (!toResolve.isEmpty()) {
 
 			final TypeSpec typeSpec = toResolve.iterator().next();
-		
-			System.out.println("## resolving " + typeSpec);
 			
 			resolveAllMethods(map, typeSpec);
 
@@ -103,9 +101,7 @@ public final class MethodsResolver {
 		
 		switch (resolvedType.getTypeVariant()) {
 		case CLASS:
-			
-			System.out.println("## resolve type " + resolvedType.getCompleteName().getName());
-			
+
 			final ClassType classType = (ClassType)resolvedType.getType();
 
 			addClassMembers(classType, typeNo);
@@ -184,8 +180,6 @@ public final class MethodsResolver {
 			
 			parameterTypes[i ++] = namedType.getCompleteName();
 		}
-		
-		System.out.println("## addMethod " + typeNo + "/" + classMethod.getName());
 		
 		final int methodNo = codeMap.addMethod(
 				typeNo,

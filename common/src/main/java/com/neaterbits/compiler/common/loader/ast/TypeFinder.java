@@ -163,6 +163,10 @@ class TypeFinder {
 									
 									final ParameterList parameters = methodInvocationExpression.getParameters();
 									
+									if (parameters == null) {
+										throw new IllegalStateException();
+									}
+									
 									parameters.take();
 									
 									final ComplexType<?> complexType = (ComplexType<?>)type;

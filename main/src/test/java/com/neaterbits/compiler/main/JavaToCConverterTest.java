@@ -26,9 +26,11 @@ import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ast.ProgramLoader;
 import com.neaterbits.compiler.common.parser.ParsedFile;
 import com.neaterbits.compiler.common.resolver.FilesResolver;
+import com.neaterbits.compiler.common.resolver.ReplaceTypeReferencesResult;
 import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.common.resolver.ResolveLogger;
 import com.neaterbits.compiler.common.resolver.UnresolvedDependencies;
+import com.neaterbits.compiler.common.resolver.UnresolvedReferenceReplacer;
 import com.neaterbits.compiler.common.resolver.CodeMap;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.JavaTypes;
@@ -78,6 +80,8 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 			throw new IllegalStateException("Unresolved dependencies " + unresolved);
 		}
 		
+		System.out.println("## resolved files: " + resolveResult.getResolvedFiles());
+		
 		final ResolvedType printstream = resolveResult.getResolvedFiles().stream()
 				.flatMap(file -> file.getTypes().stream())
 				.filter(type -> type.getCompleteName().getName().getName().equals("PrintStream"))
@@ -89,7 +93,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		assertThat(printstream.getExtendsFrom().size()).isEqualTo(1);
 		
 		// Replaces all resolved type references within the AST
-		replaceUnresolvedTypeReferences(resolveResult);
+		final ReplaceTypeReferencesResult replaceTypeReferencesResult = UnresolvedReferenceReplacer.replaceUnresolvedTypeReferences(resolveResult);
 		
 		// First map classes to C structs so can access between compilation units
 		final Map<ComplexType<?>, StructType> complexToStruct = convertClassesAndInterfacesToStruct(resolveResult, new JavaToCClassToStructState());
@@ -102,7 +106,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 			
 			for (ParsedFile parsedFile : module.getParsedFiles()) {
 				
-				final CompilationUnit converted = convert(parsedFile.getParsed(), complexToStruct, resolveResult.getCodeMap());
+				final CompilationUnit converted = convert(parsedFile.getParsed(), complexToStruct, replaceTypeReferencesResult.getCodeMap());
 				
 				System.out.println("### converted code:");
 
@@ -130,14 +134,13 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 	}
 	
-	
 	private ResolveFilesResult resolveFiles(Program program) {
 
 		final ProgramLoader programLoader = new ProgramLoader(program);
 		
 		final ResolveLogger logger = new ResolveLogger(System.out);
 		
-		final FilesResolver resolver = new FilesResolver(logger);
+		final FilesResolver resolver = new FilesResolver(logger, JavaTypes.getBuiltinTypes());
 		
 		final Collection<CompiledFile> allFiles = programLoader.getAllFiles();
 		
@@ -145,7 +148,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 			System.out.println("File " + compiledFile.getSpec() + " with types " + compiledFile.getTypes());
 		}
 		
-		return resolver.resolveFiles(allFiles, JavaTypes.getBuiltinTypes());
+		return resolver.resolveFiles(allFiles);
 	}
 	
 	@Test

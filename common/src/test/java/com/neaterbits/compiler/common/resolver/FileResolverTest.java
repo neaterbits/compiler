@@ -26,7 +26,7 @@ public class FileResolverTest extends BaseResolveTest {
 		
 		final ResolveLogger resolveLogger = new ResolveLogger(loggerStream);
 
-		final FilesResolver filesResolver = new FilesResolver(resolveLogger);
+		final FilesResolver filesResolver = new FilesResolver(resolveLogger, Collections.emptyList());
 
 		final FileSpec testFileSpec = new TestFileSpec("TestClass.java");
 		final ScopedName testClass = makeScopedName("com.test.TestClass");
@@ -47,12 +47,12 @@ public class FileResolverTest extends BaseResolveTest {
 				anotherTestFile
 		);
 
-		final ResolveFilesResult result = filesResolver.resolveFiles(compiledFiles, Collections.emptyList());
+		final ResolveFilesResult result = filesResolver.resolveFiles(compiledFiles);
 		
 		assertThat(result).isNotNull();
 		
-		assertThat(result.getType(testClass)).isNotNull();
-		assertThat(result.getType(anotherTestClass)).isNotNull();
+		assertThat(result.getType(testType.getCompleteName())).isNotNull();
+		assertThat(result.getType(anotherTestType.getCompleteName())).isNotNull();
 		
 		/*
 		assertThat(result.getUnresolvedExtendsFrom(testFileSpec)).isEmpty();

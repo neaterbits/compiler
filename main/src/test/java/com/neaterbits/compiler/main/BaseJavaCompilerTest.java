@@ -17,7 +17,6 @@ import com.neaterbits.compiler.common.ModuleSpec;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.SourceModuleSpec;
 import com.neaterbits.compiler.common.antlr4.AntlrError;
-import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
@@ -35,14 +34,12 @@ import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.ProgramEmitter;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
-import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
 import com.neaterbits.compiler.common.loader.TypeVariant;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.DirectoryParser;
 import com.neaterbits.compiler.common.parser.FileTypeParser;
 import com.neaterbits.compiler.common.parser.ProgramParser;
 import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
-import com.neaterbits.compiler.common.resolver.ResolvedTypesMap;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
@@ -131,38 +128,6 @@ public abstract class BaseJavaCompilerTest {
 		assertThat(program).isNotNull();
 
 		return program;
-	}
-	
-	final void replaceUnresolvedTypeReferences(ResolveFilesResult resolveFilesResult) {
-		
-		for (ResolvedFile resolvedFile : resolveFilesResult.getResolvedFiles()) {
-			replaceUnresolvedTypeReferences(resolvedFile.getTypes(), resolveFilesResult.getResolvedTypesMap());
-		}
-	}
-	
-	final void replaceUnresolvedTypeReferences(Collection<ResolvedType> resolvedTypes, ResolvedTypesMap resolvedTypesMap) {
-		
-		for (ResolvedType resolvedType : resolvedTypes) {
-			if (resolvedType.getNestedTypes() != null) {
-				replaceUnresolvedTypeReferences(resolvedType.getNestedTypes(), resolvedTypesMap);
-			}
-
-			if (resolvedType.getDependencies() != null) {
-				for (ResolvedTypeDependency typeDependency : resolvedType.getDependencies()) {
-					final BaseASTElement element = typeDependency.getElement();
-
-					if (!(element instanceof ResolveLaterTypeReference)) {
-						throw new IllegalStateException();
-					}
-					
-					final ResolvedType dependencyType = resolvedTypesMap.lookupType(typeDependency.getCompleteName());
-					
-					final ComplexType<?> type = dependencyType.getType();
-					
-					element.replaceWith(new ComplexTypeReference(element.getContext(), type));
-				}
-			}
-		}
 	}
 	
 	// Since we cannot override system packages, they are in a different package and we rename after compilation

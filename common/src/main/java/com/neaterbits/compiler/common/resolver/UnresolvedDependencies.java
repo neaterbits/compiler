@@ -10,10 +10,14 @@ import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
 import com.neaterbits.compiler.common.loader.FileSpec;
 
 public final class UnresolvedDependencies {
-
+	
+	private int count;
+	
 	private final Map<FileSpec, Set<CompiledTypeDependency>> map;
 	
 	UnresolvedDependencies() {
+		
+		this.count = 0;
 		this.map = new HashMap<>();
 	}
 	
@@ -30,10 +34,35 @@ public final class UnresolvedDependencies {
 			map.put(fileSpec, dependencies);
 		}
 
-		dependencies.add(dependency);
+		if (dependencies.add(dependency)) {
+			++ count;
+		}
 	}
 
+	void remove(FileSpec fileSpec, CompiledTypeDependency dependency) {
+		
+		Objects.requireNonNull(fileSpec);
+		Objects.requireNonNull(dependency);
+		
+		final Set<CompiledTypeDependency> dependencies = map.get(dependency);
+		
+		if (dependencies != null) {
+			if (dependencies.remove(dependency)) {
+				-- count;
+			}
+		}
+	}
+	
+	int getCount() {
+		return count;
+	}
+	
 	public boolean isEmpty() {
 		return map.isEmpty();
+	}
+
+	@Override
+	public String toString() {
+		return "UnresolvedDependencies [count=" + count + ", map=" + map + "]";
 	}
 }
