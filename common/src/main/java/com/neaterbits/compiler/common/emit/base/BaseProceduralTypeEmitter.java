@@ -1,6 +1,8 @@
 package com.neaterbits.compiler.common.emit.base;
 
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
+import com.neaterbits.compiler.common.ast.type.complex.EnumType;
+import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.TypeEmitter;
 
@@ -8,6 +10,16 @@ public abstract class BaseProceduralTypeEmitter<T extends EmitterState> implemen
 
 	@Override
 	public final Void onClass(ClassType type, T param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onInterface(InterfaceType type, T param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onEnum(EnumType type, T param) {
 		throw new UnsupportedOperationException();
 	}
 }

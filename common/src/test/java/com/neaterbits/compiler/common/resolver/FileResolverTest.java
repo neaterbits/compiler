@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.CompiledType;
+import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
 import com.neaterbits.compiler.common.loader.FileSpec;
 import com.neaterbits.compiler.common.loader.TypeVariant;
 
@@ -28,12 +29,16 @@ public class FileResolverTest extends BaseResolveTest {
 
 		final FileSpec testFileSpec = new TestFileSpec("TestClass.java");
 		final ScopedName testClass = makeScopedName("com.test.TestClass");
-		final CompiledType testType = new TestCompiledType(testFileSpec, testClass, TypeVariant.CLASS, null, null, null);
+		final CompiledType testType = new TestCompiledType(testFileSpec, testClass, TypeVariant.CLASS, null, null, null, null);
 		final TestCompiledFile testFile = new TestCompiledFile(testFileSpec, new TestFileImports(), testType);
 
 		final FileSpec anotherTestFileSpec = new TestFileSpec("AnotherTestClass.java");
 		final ScopedName anotherTestClass = makeScopedName("com.test.AnotherTestClass");
-		final CompiledType anotherTestType = new TestCompiledType(anotherTestFileSpec, anotherTestClass, TypeVariant.CLASS, null, Arrays.asList(testClass), null);
+		final CompiledType anotherTestType = new TestCompiledType(anotherTestFileSpec, anotherTestClass, TypeVariant.CLASS, null,
+					null,
+					Arrays.asList(makeExtendsFromDependency(testClass)),
+					null);
+
 		final TestCompiledFile anotherTestFile = new TestCompiledFile(anotherTestFileSpec, new TestFileImports(), anotherTestType);
 		
 		final List<CompiledFile> compiledFiles = Arrays.asList(
@@ -53,5 +58,9 @@ public class FileResolverTest extends BaseResolveTest {
 
 		assertThat(result.getUnresolvedExtendsFrom(anotherTestFileSpec)).isEmpty();
 		assertThat(result.getUnresolvedTypeDependencies(anotherTestFileSpec)).isEmpty();
+	}
+	
+	private static CompiledTypeDependency makeExtendsFromDependency(ScopedName scopedName) {
+		return new TestCompiledTypeDependency(scopedName, TypeVariant.CLASS, ReferenceType.EXTENDS_FROM);
 	}
 }

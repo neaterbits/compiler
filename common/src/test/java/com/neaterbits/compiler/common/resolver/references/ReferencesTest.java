@@ -32,7 +32,7 @@ public class ReferencesTest extends BaseResolveTest {
 
 		final ScopedName scopedName = new ScopedName(Arrays.asList("com", "test"), "TestClass");
 		
-		final ResolvedType resolvedClass = new TestResolvedType(testFile.getSpec(), scopedName, TypeVariant.CLASS);
+		final ResolvedType resolvedClass = new TestResolvedType(testFile.getSpec(), scopedName, TypeVariant.CLASS, null);
 
 		references.addType(fileNo, resolvedClass);
 
@@ -59,7 +59,7 @@ public class ReferencesTest extends BaseResolveTest {
 
 		final ScopedName scopedName = new ScopedName(Arrays.asList("com", "test"), "TestInterface");
 		
-		final ResolvedType resolvedInterface = new TestResolvedType(testFile.getSpec(), scopedName, TypeVariant.INTERFACE);
+		final ResolvedType resolvedInterface = new TestResolvedType(testFile.getSpec(), scopedName, TypeVariant.INTERFACE, null);
 
 		references.addType(fileNo, resolvedInterface);
 
@@ -89,10 +89,10 @@ public class ReferencesTest extends BaseResolveTest {
 		final ScopedName classScopedName = new ScopedName(Arrays.asList("com", "test"), "TestClass");
 		final ScopedName interfaceScopedName = new ScopedName(Arrays.asList("com", "test"), "TestInterface");
 		
-		final ResolvedType resolvedInterface = new TestResolvedType(interfaceTestFile.getSpec(), interfaceScopedName, TypeVariant.INTERFACE);
+		final ResolvedType resolvedInterface = new TestResolvedType(interfaceTestFile.getSpec(), interfaceScopedName, TypeVariant.INTERFACE, null);
 		
-		final ResolvedTypeDependency interfaceDependency = new TestDependency(resolvedInterface, ReferenceType.EXTENDS_FROM);
-		final ResolvedType resolvedClass = 	   new TestResolvedType(classTestFile.getSpec(), classScopedName, TypeVariant.CLASS, null, Arrays.asList(interfaceDependency), null);
+		final ResolvedTypeDependency interfaceDependency = new TestDependency(resolvedInterface, ReferenceType.EXTENDS_FROM, null);
+		final ResolvedType resolvedClass = 	   new TestResolvedType(classTestFile.getSpec(), classScopedName, TypeVariant.CLASS, null, null, Arrays.asList(interfaceDependency), null);
 
 		final int interfaceTypeNo = references.addType(interfaceFileNo, resolvedInterface);
 		final int classTypeNo = references.addType(classFileNo, resolvedClass);

@@ -65,6 +65,10 @@ public final class ASTMutableList<T extends ASTNode> extends ASTList<T> {
 	public final void add(ASTNode node) {
 		Objects.requireNonNull(node);
 
+		if (node.nodeHolder != null) {
+			throw new IllegalArgumentException("Node already in list");
+		}
+
 		node.last = tail.last;
 		node.next = tail;
 
@@ -76,12 +80,35 @@ public final class ASTMutableList<T extends ASTNode> extends ASTList<T> {
 		node.nodeHolder = this;
 	}
 	
+	private void removeNode(ASTNode node) {
+		Objects.requireNonNull(node);
+
+		-- size;
+
+		node.last.next = node.next;
+		node.next.last = node.last;
+	}
 
 	@Override
 	void onRemove(ASTNode node) {
-		Objects.requireNonNull(node);
+		removeNode(node);
+	}
+	
+	@Override
+	void onTake(ASTNode node) {
+		removeNode(node);
+	}
+
+	@Override
+	ASTNodeHolder onReplace(ASTNode toRemove, ASTNode toAdd) {
+
+		toAdd.last = toRemove.last;
+		toAdd.next = toRemove.next;
 		
-		-- size;
+		toRemove.last.next = toAdd;
+		toRemove.next.last = toAdd;
+
+		return this;
 	}
 
 	@Override

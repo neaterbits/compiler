@@ -8,7 +8,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.FileSpec;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
@@ -80,11 +79,11 @@ final class ResolveState {
 		this.unresolvedReferences.put(fileSpec, unresolvedReferences);
 	}
 	
-	Set<ScopedName> getUnresolvedExtendsFrom(FileSpec fileSpec) {
+	Set<TypeDependency> getUnresolvedExtendsFrom(FileSpec fileSpec) {
 		
 		final FileUnresolvedReferences refs = unresolvedReferences.get(fileSpec);
 		
-		Set<ScopedName> extendsFrom = null;
+		Set<TypeDependency> extendsFrom = null;
 		
 		if (refs != null) {
 			extendsFrom = refs.getExtendsFrom();
@@ -140,5 +139,9 @@ final class ResolveState {
 	void removeFromToProcess(FileSpec fileSpec) {
 
 		toProcess.remove(fileSpec);
+	}
+	
+	Collection<ResolvedFile> getResolvedFiles() {
+		return Collections.unmodifiableCollection(resolved.values());
 	}
 }

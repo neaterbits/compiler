@@ -1,11 +1,14 @@
 package com.neaterbits.compiler.common.ast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class ScopedName {
+import com.neaterbits.compiler.common.util.Strings;
+
+public final class ScopedName {
 
 	private final List<String> scope;
 	private final String name;
@@ -43,6 +46,18 @@ public class ScopedName {
 
 	public String getName() {
 		return name;
+	}
+	
+	public boolean scopeStartsWith(String [] parts) {
+		return scope != null ? Strings.startsWith(scope, parts) : false;
+	}
+	
+	public ScopedName removeFromScope(String [] parts) {
+		if (!scopeStartsWith(parts)) {
+			throw new IllegalArgumentException("Does not start with scope " + Arrays.toString(parts));
+		}
+
+		return new ScopedName(scope.subList(parts.length, scope.size()), name);
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.loader.FileSpec;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
@@ -15,6 +16,8 @@ import com.neaterbits.compiler.common.loader.ast.BaseLoaderType;
 
 final class ResolvedTypeImpl extends BaseLoaderType implements ResolvedType {
 
+	private final ComplexType type;
+	
 	private final List<ResolvedType> nestedTypes;
 	private final List<ResolvedTypeDependency> extendsFrom;
 	private final List<ResolvedTypeDependency> dependencies;
@@ -23,6 +26,7 @@ final class ResolvedTypeImpl extends BaseLoaderType implements ResolvedType {
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
+			ComplexType type,
 			List<ResolvedType> nestedTypes,
 			List<ResolvedTypeDependency> extendsFrom,
 			List<ResolvedTypeDependency> dependencies) {
@@ -30,10 +34,18 @@ final class ResolvedTypeImpl extends BaseLoaderType implements ResolvedType {
 		super(file, new TypeSpec(scopedName, typeVariant));
 		
 		Objects.requireNonNull(file);
+		Objects.requireNonNull(type);
+		
+		this.type = type;
 		
 		this.nestedTypes = nestedTypes != null ? Collections.unmodifiableList(nestedTypes) : null;
 		this.extendsFrom = extendsFrom != null ? Collections.unmodifiableList(extendsFrom) : null;
 		this.dependencies = dependencies != null ? Collections.unmodifiableList(dependencies) : null;
+	}
+
+	@Override
+	public ComplexType getType() {
+		return type;
 	}
 
 	@Override

@@ -301,7 +301,6 @@ public abstract class BaseParserListener {
 
 		final Namespace nameSpace = new Namespace(
 				context,
-				stackNamespace.getName(),
 				stackNamespace.getParts(),
 				new CompilationCodeLines(context, namespaceCode));
 		
@@ -774,12 +773,22 @@ public abstract class BaseParserListener {
 		final StackClass stackClass = get();
 
 		for (InitializerVariableDeclarationElement element : stackFieldDeclarationList.getList()) {
+			
+			final Expression initializer = element.getInitializer();
+			final TypeReference typeReference = element.getTypeReference();
+
+			if (initializer != null) {
+				initializer.take();
+			}
+
+			typeReference.take();
+			
 			final ClassDataFieldMember dataFieldMember = new ClassDataFieldMember(
 					context,
 					new FieldModifiers(context, stackFieldDeclarationList.getModifiers()),
-					element.getTypeReference(),
+					typeReference,
 					new FieldName(element.getName().getName()),
-					element.getInitializer());
+					initializer);
 			
 			stackClass.add(dataFieldMember);
 		}

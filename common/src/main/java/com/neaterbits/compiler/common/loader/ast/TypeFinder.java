@@ -3,7 +3,6 @@ package com.neaterbits.compiler.common.loader.ast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
@@ -18,7 +17,12 @@ import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
+import com.neaterbits.compiler.common.ast.type.complex.ClassType;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.common.ast.type.complex.EnumType;
+import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
 import com.neaterbits.compiler.common.ast.type.primitive.ScalarType;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
@@ -106,7 +110,7 @@ class TypeFinder {
 							final ReferenceType referenceType;
 							
 							if (lastElement instanceof ClassDefinition || lastElement instanceof InterfaceDefinition) {
-								curElement.addExtendsFrom(name);
+								curElement.addExtendsFrom(name, TypeVariant.CLASS, typeReference);
 								
 								referenceType = null;
 							}
@@ -128,6 +132,9 @@ class TypeFinder {
 							else if (lastElement instanceof InitializerVariableDeclarationElement) {
 								referenceType = ReferenceType.VARIABLE_INITIALIZER;
 							}
+							else if (lastElement instanceof ClassDataFieldMember) {
+								referenceType = ReferenceType.FIELD;
+							}
 							else if (lastElement instanceof CatchBlock) {
 								referenceType = ReferenceType.CATCH_EXCEPTION;
 							}
@@ -141,11 +148,11 @@ class TypeFinder {
 
 								final TypeFinderStackEntry typeFrame = findTypeFrame(stack);
 								
-								typeFrame.addDependency(name, referenceType);
+								typeFrame.addDependency(name, referenceType, typeReference);
 							}
 						}
 						else {
-							throw new UnsupportedOperationException("Unknown typre reference " + e.getClass().getName());
+							throw new UnsupportedOperationException("Unknown type reference " + e.getClass().getName());
 						}
 					}
 				}
@@ -159,7 +166,7 @@ class TypeFinder {
 			
 			final TypeFinderStackEntry stackEntry = stack.get(i);
 			
-			final TypeVariant typeVariant = processIfTypeElement(stackEntry, (n, t) -> t);
+			final TypeVariant typeVariant = processIfTypeElement(stackEntry, false, (n, v, t) -> v);
 			
 			if (typeVariant != null) {
 				return stackEntry;
@@ -169,7 +176,11 @@ class TypeFinder {
 		return null;
 	}
 	
-	private static <R> R processIfTypeElement(TypeFinderStackEntry stackEntry, BiFunction<String, TypeVariant, R> process) {
+	interface ProcessTypeElement<R> {
+		R onTypeElement(String name, TypeVariant typeVariant, ComplexType type);
+	}
+	
+	private static <R> R processIfTypeElement(TypeFinderStackEntry stackEntry, boolean createType, ProcessTypeElement<R> process) {
 		
 		final BaseASTElement element = stackEntry.getElement();
 		
@@ -180,14 +191,14 @@ class TypeFinder {
 			final ClassDefinition classDefinition = (ClassDefinition)element;
 			final String name = classDefinition.getName().getName();
 			
-			result = process.apply(name, TypeVariant.CLASS);
+			result = process.onTypeElement(name, TypeVariant.CLASS, createType ? new ClassType(classDefinition) : null);
 		}
 		else if (element instanceof InterfaceDefinition) {
 			
 			final InterfaceDefinition interfaceDefinition = (InterfaceDefinition)element;
 			final String name = interfaceDefinition.getName().getName();
 
-			result = process.apply(name, TypeVariant.INTERFACE);
+			result = process.onTypeElement(name, TypeVariant.INTERFACE, createType ? new InterfaceType(interfaceDefinition) : null);
 		}
 		else if (element instanceof EnumDefinition) {
 		
@@ -195,7 +206,7 @@ class TypeFinder {
 			
 			final String name = enumDefinition.getName().getName();
 			
-			result = process.apply(name, TypeVariant.ENUM);
+			result = process.onTypeElement(name, TypeVariant.ENUM, createType ? new EnumType(enumDefinition) : null);
 		}
 		else {
 			result = null;
@@ -206,14 +217,15 @@ class TypeFinder {
 
 	
 	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry) {
-		return processIfTypeElement(stackEntry, (name, typeVariant) -> makeParsedType(file, stack, stackEntry, name, typeVariant));
+		return processIfTypeElement(stackEntry, true, (name, typeVariant, type) -> makeParsedType(file, stack, stackEntry, name, typeVariant, type));
 	}
 	
-	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry, String name, TypeVariant typeVariant) {
+	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry, String name, TypeVariant typeVariant, ComplexType type) {
 
 		return new ParsedType(
 				file,
 				makeTypeSpec(stack, name, TypeVariant.CLASS),
+				type,
 				stackEntry.getNestedTypes(),
 				stackEntry.getExtendsFrom(),
 				stackEntry.getDependencies());

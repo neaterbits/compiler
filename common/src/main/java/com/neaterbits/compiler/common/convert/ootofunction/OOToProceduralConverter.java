@@ -28,9 +28,11 @@ public abstract class OOToProceduralConverter<T extends OOToProceduralConverterS
 				convertCode(namespace.getLines(), converterState, convertedCode);
 			}
 			else {
-				convertOOCode(code, converterState, convertedCode);
+			//	convertOOCode(code, converterState, convertedCode);
 			}
 		}
+		
+		System.out.println("### converted code list " + convertedCode);
 
 		return new CompilationUnit(compilationUnit.getContext(), Collections.emptyList(), convertedCode);
 	}
@@ -38,30 +40,18 @@ public abstract class OOToProceduralConverter<T extends OOToProceduralConverterS
 	private void convertCode(CompilationCodeLines codeLines, T converterState, List<CompilationCode> allCode) {
 		
 		for (CompilationCode compilationCode : codeLines.getCode()) {
-			final List<CompilationCode> convertedCode = convertOOCode(compilationCode, converterState, allCode);
-			
-			allCode.addAll(convertedCode);
-		}
-	}
-	
-	
-	private List<CompilationCode> convertOOCode(CompilationCode code, T converterState, List<CompilationCode> allCode) {
 
-		System.out.println("### convert OO code " + code);
-
-		if (code instanceof ClassDefinition) {
-			final ClassToFunctionsConverter<T> classToFunctionsConverter = new ClassToFunctionsConverter<>();
-			
-			final List<CompilationCode> converted = classToFunctionsConverter.convertClass((ClassDefinition)code, converterState);
-			
-			allCode.addAll(converted);
+			if (compilationCode instanceof ClassDefinition) {
+				
+				final ClassToFunctionsConverter<T> classToFunctionsConverter = new ClassToFunctionsConverter<>();
+				
+				final List<CompilationCode> converted = classToFunctionsConverter.convertClass((ClassDefinition)compilationCode, converterState);
+				
+				allCode.addAll(converted);
+			}
+			else {
+				throw new UnsupportedOperationException("Unknown code type " + compilationCode.getClass());
+			}
 		}
-		else {
-			throw new UnsupportedOperationException("Unknown code type " + code.getClass());
-		}
-		
-		System.out.println("## return allCode " + allCode);
-		
-		return allCode;
 	}
 }

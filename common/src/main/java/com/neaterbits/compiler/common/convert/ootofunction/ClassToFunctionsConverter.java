@@ -15,6 +15,8 @@ import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.PointerType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
+import com.neaterbits.compiler.common.ast.type.complex.EnumType;
+import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
 import com.neaterbits.compiler.common.ast.type.primitive.StringType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
@@ -54,7 +56,17 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 
 		@Override
 		public TypeReference onClass(ClassType type, Context param) {
-			return null;
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public TypeReference onInterface(InterfaceType type, Context param) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public TypeReference onEnum(EnumType type, Context param) {
+			throw new UnsupportedOperationException();
 		}
 
 		@Override

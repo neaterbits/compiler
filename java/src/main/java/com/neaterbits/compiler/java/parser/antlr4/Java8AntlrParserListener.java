@@ -29,7 +29,7 @@ import com.neaterbits.compiler.common.ast.operator.Logical;
 import com.neaterbits.compiler.common.ast.operator.Notation;
 import com.neaterbits.compiler.common.ast.operator.Relational;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
-import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
@@ -129,13 +129,13 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 		final String [] parts = Arrays.copyOf(names, names.length - 1);
 		
-		return new NamespaceReference(Strings.join(names, '.', names.length - 1), parts);
+		return new NamespaceReference(parts);
 	}
 
-	private static ClassName className(String typeName) {
+	private static ClassOrInterfaceName classOrInterfaceName(String typeName) {
 		final String [] names = Strings.split(typeName, '.');
 		
-		return new ClassName(names[names.length - 1]);
+		return new ClassOrInterfaceName(names[names.length - 1]);
 	}
 	
 	@Override
@@ -146,7 +146,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		final Import importStatement = new Import(
 				context(ctx),
 				namespaceReference(typeName),
-				className(typeName));
+				classOrInterfaceName(typeName));
 		
 		delegate.onImport(importStatement);
 	}
@@ -169,7 +169,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		final Import importStatement = new Import(
 				context(ctx),
 				namespaceReference(typeName),
-				className(typeName),
+				classOrInterfaceName(typeName),
 				new MethodName(ctx.Identifier().getText()));
 		
 		delegate.onImport(importStatement);
@@ -182,7 +182,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		final Import importStatement = new Import(
 				context(ctx),
 				namespaceReference(typeName),
-				className(typeName),
+				classOrInterfaceName(typeName),
 				null);
 		
 		delegate.onImport(importStatement);

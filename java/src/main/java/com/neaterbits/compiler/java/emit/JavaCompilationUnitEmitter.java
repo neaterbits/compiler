@@ -50,6 +50,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.BaseOOCompilationUnitEmitter;
+import com.neaterbits.compiler.common.util.Strings;
 
 public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<EmitterState> {
 
@@ -453,7 +454,10 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 
 	@Override
 	public Void onNamespace(Namespace namespace, EmitterState param) {
-		param.append("package ").append(namespace.getName()).append(';').newline();
+		
+		final String namespaceName = Strings.join(namespace.getParts(), '.');
+		
+		param.append("package ").append(namespaceName).append(';').newline();
 		
 		emitCode(namespace.getLines(), param);
 

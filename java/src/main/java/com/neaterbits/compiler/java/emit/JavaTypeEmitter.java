@@ -2,6 +2,8 @@ package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.ast.type.PointerType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
+import com.neaterbits.compiler.common.ast.type.complex.EnumType;
+import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
 import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
@@ -104,6 +106,20 @@ public final class JavaTypeEmitter implements TypeEmitter<EmitterState> {
 	public Void onClass(ClassType type, EmitterState param) {
 		param.append(type.getName().getName());
 		
+		return null;
+	}
+
+	@Override
+	public Void onInterface(InterfaceType type, EmitterState param) {
+		param.append(type.getName().getName());
+
+		return null;
+	}
+
+	@Override
+	public Void onEnum(EnumType type, EmitterState param) {
+		param.append(type.getName().getName());
+
 		return null;
 	}
 

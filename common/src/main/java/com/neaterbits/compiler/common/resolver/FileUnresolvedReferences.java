@@ -12,10 +12,10 @@ import com.neaterbits.compiler.common.loader.TypeDependency;
 
 final class FileUnresolvedReferences {
 	private final CompiledFile fileToResolve;
-	private final Set<ScopedName> extendsFrom;
+	private final Set<TypeDependency> extendsFrom;
 	private final Set<TypeDependency> dependencies;
 	
-	FileUnresolvedReferences(CompiledFile fileToResolve, Collection<ScopedName> extendsFrom, Collection<TypeDependency> dependencies) {
+	FileUnresolvedReferences(CompiledFile fileToResolve, Collection<TypeDependency> extendsFrom, Collection<TypeDependency> dependencies) {
 		
 		Objects.requireNonNull(fileToResolve);
 		
@@ -43,7 +43,7 @@ final class FileUnresolvedReferences {
 		dependencies.remove(dependency);
 	}
 	
-	Set<ScopedName> getExtendsFrom() {
+	Set<TypeDependency> getExtendsFrom() {
 		return Collections.unmodifiableSet(extendsFrom);
 	}
 	

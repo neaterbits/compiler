@@ -6,17 +6,39 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import com.neaterbits.compiler.common.ComplexTypeReference;
+import com.neaterbits.compiler.common.ModuleId;
+import com.neaterbits.compiler.common.ModuleSpec;
+import com.neaterbits.compiler.common.ResolveLaterTypeReference;
+import com.neaterbits.compiler.common.SourceModuleSpec;
 import com.neaterbits.compiler.common.antlr4.AntlrError;
+import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
+import com.neaterbits.compiler.common.ast.Import;
+import com.neaterbits.compiler.common.ast.Module;
 import com.neaterbits.compiler.common.ast.Namespace;
+import com.neaterbits.compiler.common.ast.Program;
+import com.neaterbits.compiler.common.ast.ScopedName;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.ProgramEmitter;
+import com.neaterbits.compiler.common.loader.ResolvedFile;
+import com.neaterbits.compiler.common.loader.ResolvedType;
+import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
 import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.common.parser.DirectoryParser;
+import com.neaterbits.compiler.common.parser.FileTypeParser;
+import com.neaterbits.compiler.common.parser.ProgramParser;
+import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
+import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
+import com.neaterbits.compiler.main.lib.LibPlaceholder;
 
 public abstract class BaseJavaCompilerTest {
 	
@@ -60,7 +82,124 @@ public abstract class BaseJavaCompilerTest {
 		return (ClassDefinition)namespaceCode;
 	}
 
+	static String getPackageDir(Class<?> cl) {
+
+		final String [] path = Strings.split(cl.getPackage().getName(), '.');
+		final String baseDir = Strings.join(path, '/');
+
+		return baseDir;
+	}
+
+	private static final String SYSTEM_MODULE_ID = "system";
+
+	private static final Class<?> SYSTEM_LIB_PLACEHOLDER_CLASS = LibPlaceholder.class;
 	
+	private static final SourceModuleSpec SYSTEM_MODULE = new SourceModuleSpec(
+			new ModuleId(SYSTEM_MODULE_ID),
+			null,
+			new File("src/main/java/" + getPackageDir(SYSTEM_LIB_PLACEHOLDER_CLASS)));
+
+	private static final SourceModuleSpec getSystemModule() {
+		return SYSTEM_MODULE;
+	}
+	
+	final Program parseProgram(List<ModuleSpec> modules) throws IOException {
+		
+		final FileTypeParser<JavaParserListener> javaParser = new FileTypeParser<>(
+				new Java8AntlrParser(true),
+				logger -> new JavaParserListener(logger), 
+				".java");
+
+		final DirectoryParser directoryParser = new DirectoryParser(javaParser);
+		
+		final ProgramParser programParser = new ProgramParser(directoryParser);
+		
+		final Program program = programParser.parseProgram(
+				modules,
+				getSystemModule(),
+				systemModule -> renamePackages(systemModule, SYSTEM_LIB_PLACEHOLDER_CLASS.getPackage()),
+				new ParseLogger(System.out));
+		
+		assertThat(program).isNotNull();
+
+		return program;
+	}
+	
+	final void replaceUnresolvedTypeReferences(ResolveFilesResult resolveFilesResult) {
+		
+		for (ResolvedFile resolvedFile : resolveFilesResult.getResolvedFiles()) {
+			replaceUnresolvedTypeReferences(resolvedFile.getTypes());
+		}
+	}
+	
+	final void replaceUnresolvedTypeReferences(Collection<ResolvedType> resolvedTypes) {
+		
+		
+		for (ResolvedType resolvedType : resolvedTypes) {
+			if (resolvedType.getNestedTypes() != null) {
+				replaceUnresolvedTypeReferences(resolvedType.getNestedTypes());
+			}
+
+			if (resolvedType.getDependencies() != null) {
+				for (ResolvedTypeDependency typeDependency : resolvedType.getDependencies()) {
+					final BaseASTElement element = typeDependency.getElement();
+
+					if (!(element instanceof ResolveLaterTypeReference)) {
+						throw new IllegalStateException();
+					}
+					
+					final ComplexType type = typeDependency.getResolvedType().getType();
+					
+					element.replaceWith(new ComplexTypeReference(element.getContext(), type));
+				}
+			}
+		}
+	}
+	
+	private final void renamePackages(Module systemModule, Package basePackage) {
+		
+		final String [] scopeToRename = Strings.split(basePackage.getName(), '.');
+
+		systemModule.iterateNodeFirst(e -> {
+			if (e instanceof ResolveLaterTypeReference) {
+				final ResolveLaterTypeReference typeReference = (ResolveLaterTypeReference)e;
+				
+				if (typeReference.getTypeName().scopeStartsWith(scopeToRename)) {
+			
+					final ScopedName renamedScope = typeReference.getTypeName().removeFromScope(scopeToRename);
+					
+					typeReference.replaceWith(
+							new ResolveLaterTypeReference(
+									typeReference.getContext(),
+									renamedScope));
+					
+				}
+			}
+			else if (e instanceof Import) {
+				
+				final Import importStatement = (Import)e;
+
+				if (importStatement.startsWith(scopeToRename)) {
+					importStatement.replaceWith(importStatement.removeFromNamespace(scopeToRename));
+				}
+			}
+			else if (e instanceof Namespace) {
+				final Namespace namespace = (Namespace)e;
+				
+				if (namespace.getReference().startsWith(scopeToRename)) {
+					namespace.replaceWith(
+							new Namespace(
+									namespace.getContext(),
+									namespace.getReference().removeFromNamespace(scopeToRename),
+									namespace.getLines().take()));
+				}
+			}
+		});
+	}
+	
+	
+	
+
 	static String emitCompilationUnit(CompilationUnit compilationUnit, ProgramEmitter<EmitterState> emitter) {
 		final EmitterState emitterState = new EmitterState('\n');
 

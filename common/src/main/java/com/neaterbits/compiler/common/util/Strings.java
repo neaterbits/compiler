@@ -1,7 +1,9 @@
 package com.neaterbits.compiler.common.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -60,6 +62,45 @@ public class Strings {
 		}
 
 		return sb.toString();
+	}
+	
+	public static boolean startsWith(String [] strings, String [] parts) {
+		return startsWith(Arrays.asList(strings), parts);
+	}
+	
+	public static boolean startsWith(List<String> strings, String [] parts) {
+
+		Objects.requireNonNull(strings);
+		Objects.requireNonNull(parts);
+
+		final boolean startsWith;
+		
+		if (parts.length > strings.size()) {
+			startsWith = false;
+		}
+		else {
+			
+			boolean matches = true;
+			
+			for (int i = 0; i < parts.length; ++ i) {
+				if (!parts[i].equals(strings.get(i))) {
+					matches = false;
+					break;
+				}
+			}
+			
+			startsWith = matches;
+		}
+
+		return startsWith;
+	}
+	
+	public static String [] lastOf(String [] parts, int num) {
+		final String [] updated = new String[num];
+		
+		System.arraycopy(parts, parts.length - num, updated, 0, updated.length);
+		
+		return updated;
 	}
 	
 	public static int countOccurencesOf(String s, String toFind) {

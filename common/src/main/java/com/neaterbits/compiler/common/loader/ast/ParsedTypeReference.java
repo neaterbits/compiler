@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.loader.ast;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
 import com.neaterbits.compiler.common.resolver.ReferenceType;
@@ -10,14 +11,17 @@ final class ParsedTypeReference implements CompiledTypeDependency {
 
 	private final ScopedName scopedName;
 	private final ReferenceType type;
+	private final TypeReference element;
 	
-	ParsedTypeReference(ScopedName scopedName, ReferenceType type) {
+	ParsedTypeReference(ScopedName scopedName, ReferenceType type, TypeReference element) {
 	
 		Objects.requireNonNull(scopedName);
 		Objects.requireNonNull(type);
+		Objects.requireNonNull(element);
 		
 		this.scopedName = scopedName;
 		this.type = type;
+		this.element = element;
 	}
 
 	@Override
@@ -28,6 +32,11 @@ final class ParsedTypeReference implements CompiledTypeDependency {
 	@Override
 	public ReferenceType getReferenceType() {
 		return type;
+	}
+	
+	@Override
+	public TypeReference getElement() {
+		return element;
 	}
 
 	@Override

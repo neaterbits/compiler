@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,7 +12,6 @@ import org.junit.Test;
 
 import com.neaterbits.compiler.c.emit.CCompilationUnitEmitter;
 import com.neaterbits.compiler.common.ModuleId;
-import com.neaterbits.compiler.common.ModuleSpec;
 import com.neaterbits.compiler.common.SourceModuleSpec;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.CompilationCode;
@@ -26,18 +24,12 @@ import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.FileSpec;
 import com.neaterbits.compiler.common.loader.TypeDependency;
 import com.neaterbits.compiler.common.loader.ast.ProgramLoader;
-import com.neaterbits.compiler.common.log.ParseLogger;
-import com.neaterbits.compiler.common.parser.DirectoryParser;
-import com.neaterbits.compiler.common.parser.FileTypeParser;
 import com.neaterbits.compiler.common.parser.ParsedFile;
-import com.neaterbits.compiler.common.parser.ProgramParser;
 import com.neaterbits.compiler.common.resolver.FilesResolver;
 import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.common.resolver.ResolveLogger;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
-import com.neaterbits.compiler.java.parser.JavaParserListener;
-import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
 import com.neaterbits.compiler.main.convert.ConvertClass;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,14 +64,12 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	@Test
 	public void testConvertCode() throws IOException {
 		
-		final String [] path = Strings.split(ConvertClass.class.getPackage().getName(), '.');
-
-		final String directory = Strings.join(path, '/');
-		
-		final SourceModuleSpec moduleSpec = new SourceModuleSpec(new ModuleId("testconvert"), null, new File("src/test/java/" + directory));
+		final SourceModuleSpec moduleSpec = new SourceModuleSpec(new ModuleId("testconvert"), null, new File("src/test/java/" + getPackageDir(ConvertClass.class)));
 
 		final Program program = parseProgram(Arrays.asList(moduleSpec));
-	
+
+		assertThat(program).isNotNull();
+		
 		listProgram(program);
 		
 		final ResolveFilesResult resolveResult = resolveFiles(program);
@@ -89,6 +79,8 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		if (!unresolved.isEmpty()) {
 			throw new IllegalStateException("Unresolved dependencies " + unresolved);
 		}
+		
+		replaceUnresolvedTypeReferences(resolveResult);
 		
 		final CCompilationUnitEmitter emitter = new CCompilationUnitEmitter();
 		
@@ -126,24 +118,6 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 	}
 	
-
-	private Program parseProgram(List<ModuleSpec> modules) {
-
-		final FileTypeParser<JavaParserListener> javaParser = new FileTypeParser<>(
-				new Java8AntlrParser(true),
-				logger -> new JavaParserListener(logger), 
-				".java");
-
-		final DirectoryParser directoryParser = new DirectoryParser(javaParser);
-		
-		final ProgramParser programParser = new ProgramParser(directoryParser);
-		
-		final Program program = programParser.parseProgram(modules, new ParseLogger(System.out));
-		
-		assertThat(program).isNotNull();
-
-		return program;
-	}
 	
 	private ResolveFilesResult resolveFiles(Program program) {
 

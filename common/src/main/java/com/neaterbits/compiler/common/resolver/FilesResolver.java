@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.BaseTypeInfo;
 import com.neaterbits.compiler.common.loader.CompiledFile;
@@ -62,7 +63,7 @@ public final class FilesResolver {
 				throw new IllegalStateException();
 			}
 
-			final List<ScopedName> allExtendsFrom = new ArrayList<>();
+			final List<TypeDependency> allExtendsFrom = new ArrayList<>();
 			final List<TypeDependency> allDependencies = new ArrayList<>();
 			
 			getExtendsFromAndDependencies(fileToResolve.getTypes(), allExtendsFrom, allDependencies);
@@ -121,7 +122,7 @@ public final class FilesResolver {
 		});
 	}
 	
-	private void getExtendsFromAndDependencies(Collection<CompiledType> types, List<ScopedName> extendsFrom, List<TypeDependency> dependencies) {
+	private void getExtendsFromAndDependencies(Collection<CompiledType> types, List<TypeDependency> extendsFrom, List<TypeDependency> dependencies) {
 		
 		for (CompiledType type : types) {
 			if (type.getExtendsFrom() != null) {
@@ -154,21 +155,39 @@ public final class FilesResolver {
 		return resolvedTypes;
 	}
 	
+	
+	
 	private static final class ResolvedTypeDependencyImpl extends BaseTypeInfo implements ResolvedTypeDependency {
 
 		private final ReferenceType referenceType;
+		private final TypeReference element;
+		private final ResolvedType resolvedType;
 		
-		public ResolvedTypeDependencyImpl(ScopedName scopedName, TypeVariant typeVariant, ReferenceType referenceType) {
+		public ResolvedTypeDependencyImpl(ScopedName scopedName, TypeVariant typeVariant, ReferenceType referenceType, TypeReference element, ResolvedType resolvedType) {
 			super(scopedName, typeVariant);
 			
 			Objects.requireNonNull(referenceType);
+			Objects.requireNonNull(element);
+			Objects.requireNonNull(resolvedType);
 
 			this.referenceType = referenceType;
+			this.element = element;
+			this.resolvedType = resolvedType;
 		}
 
 		@Override
 		public ReferenceType getReferenceType() {
 			return referenceType;
+		}
+
+		@Override
+		public TypeReference getElement() {
+			return element;
+		}
+
+		@Override
+		public ResolvedType getResolvedType() {
+			return resolvedType;
 		}
 	}
 	
@@ -205,19 +224,21 @@ public final class FilesResolver {
 			
 			resolvedExtendsFromList = new ArrayList<>(type.getExtendsFrom().size());
 			
-			for (ScopedName extendsFrom : type.getExtendsFrom()) {
+			for (TypeDependency extendsFrom : type.getExtendsFrom()) {
 				
-				final ResolvedType resolvedExtendsFrom = resolveScopedName(extendsFrom, fileImports, references, cache);
+				final ResolvedType resolvedExtendsFrom = resolveScopedName(extendsFrom.getScopedName(), fileImports, references, cache);
 
-				logger.onTryResolveExtendsFrom(extendsFrom, resolvedExtendsFrom);
+				logger.onTryResolveExtendsFrom(extendsFrom.getScopedName(), resolvedExtendsFrom);
 				
 				if (resolvedExtendsFrom != null) {
 					resolvedExtendsFromList.add(new ResolvedTypeDependencyImpl(
-							extendsFrom,
+							extendsFrom.getScopedName(),
 							resolvedExtendsFrom.getSpec().getTypeVariant(),
-							ReferenceType.EXTENDS_FROM));
+							ReferenceType.EXTENDS_FROM,
+							extendsFrom.getElement(),
+							resolvedExtendsFrom));
 					
-					fileUnresolvedReferences.removeExtendsFrom(extendsFrom);
+					fileUnresolvedReferences.removeExtendsFrom(extendsFrom.getScopedName());
 				}
 				else {
 					resolvedOk = false;
@@ -232,14 +253,18 @@ public final class FilesResolver {
 			resolvedDependencies = new ArrayList<>(type.getDependencies().size());
 			
 			for (TypeDependency dependency : type.getDependencies()) {
-				
-				final ResolvedType resolvedDependency = resolveScopedName(dependency.getScopedName(), fileImports, references, cache);
+
+				System.out.println("## resolve type dependency " + dependency.getScopedName());
+
+				final ResolvedType resolvedDependency = resolveScopedName(dependency.getScopedName(), dependency.getReferenceType(), fileImports, references, cache);
 				
 				if (resolvedDependency != null) {
-					resolvedExtendsFromList.add(new ResolvedTypeDependencyImpl(
+					resolvedDependencies.add(new ResolvedTypeDependencyImpl(
 							dependency.getScopedName(),
 							resolvedDependency.getSpec().getTypeVariant(),
-							dependency.getReferenceType()));
+							dependency.getReferenceType(),
+							dependency.getElement(),
+							resolvedDependency));
 					
 					fileUnresolvedReferences.removeDependency(dependency);
 				}
@@ -257,6 +282,7 @@ public final class FilesResolver {
 						fileSpec,
 						type.getScopedName(),
 						type.getSpec().getTypeVariant(),
+						type.getType(),
 						resolvedNestedTypes,
 						resolvedExtendsFromList,
 						resolvedDependencies)
@@ -264,7 +290,38 @@ public final class FilesResolver {
 
 		return resolvedType;
 	}
-	
+
+	private ResolvedType resolveScopedName(ScopedName scopedName, ReferenceType referenceType, FileImports fileImports, References references, FileCachedResolvedTypes cache) {
+		
+		ResolvedType result = resolveScopedName(scopedName, fileImports, references, cache);
+		
+		if (result == null && referenceType == ReferenceType.STATIC_OR_STATIC_INSTANCE_METHOD_CALL) {
+
+			if (scopedName.hasScope() && scopedName.getScope().size() > 1) {
+			
+				final ScopedName updatedScopeName = new ScopedName(scopedName.getScope().subList(0, scopedName.getScope().size() - 1), scopedName.getName());
+				
+				result = resolveScopedName(
+						updatedScopeName,
+						fileImports,
+						references,
+						cache);
+			}
+			else if (scopedName.hasScope() && scopedName.getScope().size() == 1) {
+
+				final ScopedName updatedScopeName = new ScopedName(null, scopedName.getScope().get(0));
+				
+				result = resolveScopedName(
+						updatedScopeName,
+						fileImports,
+						references,
+						cache);
+			}
+		}
+		
+		return result;
+	}
+
 	private ResolvedType resolveScopedName(ScopedName scopedName, FileImports fileImports, References references, FileCachedResolvedTypes cache) {
 		
 		final ResolvedType result;

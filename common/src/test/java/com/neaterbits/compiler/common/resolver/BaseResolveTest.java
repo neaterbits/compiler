@@ -24,6 +24,7 @@ public abstract class BaseResolveTest {
 		return scopedName;
 	}
 
+	
 	protected static CompiledType makeCompiledType(CompiledFile compiledFile, String name, TypeVariant typeVariant, ScopedName ... extendsFrom) {
 		final ScopedName scopedName = makeScopedName(name);
 
@@ -31,7 +32,11 @@ public abstract class BaseResolveTest {
 				compiledFile.getSpec(),
 				new TypeSpec(scopedName, typeVariant),
 				null,
-				Arrays.asList(extendsFrom), null);
+				null,
+				Arrays.stream(extendsFrom)
+					.map(extendsFromName -> new TestCompiledTypeDependency(extendsFromName, TypeVariant.CLASS, ReferenceType.EXTENDS_FROM))
+					.collect(Collectors.toList()),
+				null);
 
 		return compiledType;
 	}
@@ -40,10 +45,10 @@ public abstract class BaseResolveTest {
 		final ScopedName scopedName = makeScopedName(name);
 		
 		final List<ResolvedTypeDependency> extendsFromDependencies = Arrays.stream(extendsFrom)
-				.map(type -> new TestDependency(type, ReferenceType.EXTENDS_FROM))
+				.map(type -> new TestDependency(type, ReferenceType.EXTENDS_FROM, null))
 				.collect(Collectors.toList());
 		
-		final ResolvedType resolvedType = new TestResolvedType(resolvedFile.getSpec(), scopedName, typeVariant, null, extendsFromDependencies, null);
+		final ResolvedType resolvedType = new TestResolvedType(resolvedFile.getSpec(), scopedName, typeVariant, null, null, extendsFromDependencies, null);
 
 		return resolvedType;
 	}

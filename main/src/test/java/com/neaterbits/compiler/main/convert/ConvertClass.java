@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.main.convert;
 
+import java.lang.System;
+
 public class ConvertClass {
 	
 	private int field;

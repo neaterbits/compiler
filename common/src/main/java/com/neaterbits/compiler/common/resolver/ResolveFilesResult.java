@@ -1,11 +1,13 @@
 package com.neaterbits.compiler.common.resolver;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.FileSpec;
+import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.TypeDependency;
 import com.neaterbits.compiler.common.resolver.references.References;
@@ -31,7 +33,7 @@ public final class ResolveFilesResult {
 		return references.getType(scopedName);
 	}
 	
-	Set<ScopedName> getUnresolvedExtendsFrom(FileSpec fileSpec) {
+	Set<TypeDependency> getUnresolvedExtendsFrom(FileSpec fileSpec) {
 		Objects.requireNonNull(fileSpec);
 		
 		if (!resolveState.hasFile(fileSpec)) {
@@ -53,5 +55,9 @@ public final class ResolveFilesResult {
 	
 	public Map<FileSpec, Set<TypeDependency>> getUnresolvedDependencies() {
 		return resolveState.getAllUnresolvedDependencies();
+	}
+
+	public Collection<ResolvedFile> getResolvedFiles() {
+		return resolveState.getResolvedFiles();
 	}
 }

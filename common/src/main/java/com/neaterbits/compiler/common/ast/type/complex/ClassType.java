@@ -3,14 +3,14 @@ package com.neaterbits.compiler.common.ast.type.complex;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 
-public class ClassType extends ComplexType {
+public final class ClassType extends ComplexType {
 	
-	public ClassType(ClassDefinition definition, boolean nullable) {
-		super(definition.getName(), nullable);
+	public ClassType(ClassDefinition definition) {
+		super(definition.getName(), true);
 	}
 
 	@Override
 	public <T, R> R visit(TypeVisitor<T, R> visitor, T param) {
-		return null;
+		return visitor.onClass(this, param);
 	}
 }

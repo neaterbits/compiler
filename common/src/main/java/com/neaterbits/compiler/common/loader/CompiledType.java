@@ -2,7 +2,7 @@ package com.neaterbits.compiler.common.loader;
 
 import java.util.Collection;
 
-import com.neaterbits.compiler.common.ast.ScopedName;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 
 public interface CompiledType extends TypeInfo {
 
@@ -10,9 +10,11 @@ public interface CompiledType extends TypeInfo {
 	
 	FileSpec getFile();
 	
+	ComplexType getType();
+	
 	Collection<CompiledType> getNestedTypes();
 
-	Collection<ScopedName> getExtendsFrom();
+	Collection<CompiledTypeDependency> getExtendsFrom();
 	
 	Collection<CompiledTypeDependency> getDependencies();
 

@@ -1,6 +1,8 @@
 package com.neaterbits.compiler.common.ast.type;
 
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
+import com.neaterbits.compiler.common.ast.type.complex.EnumType;
+import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
 import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
@@ -41,6 +43,10 @@ public interface TypeVisitor<T, R> {
 	R onPointer(PointerType type, T param);
 
 	R onClass(ClassType type, T param);
+	
+	R onInterface(InterfaceType type, T param);
+
+	R onEnum(EnumType type, T param);
 
 	R onStruct(StructType type, T param);
 }

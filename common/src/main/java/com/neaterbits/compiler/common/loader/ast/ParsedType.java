@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ast.ScopedName;
+import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
 import com.neaterbits.compiler.common.loader.FileSpec;
@@ -12,20 +12,26 @@ import com.neaterbits.compiler.common.loader.TypeSpec;
 
 final class ParsedType extends BaseLoaderType implements CompiledType {
 
+	private final ComplexType type;
+	
 	private final List<CompiledType> nestedTypes;
-	private final List<ScopedName> extendsFrom;
+	private final List<CompiledTypeDependency> extendsFrom;
 	private final List<CompiledTypeDependency> dependencies;
 
 	ParsedType(
 			FileSpec file,
 			TypeSpec typeSpec,
+			ComplexType type,
 			List<CompiledType> nestedTypes,
-			List<ScopedName> extendsFrom,
+			List<CompiledTypeDependency> extendsFrom,
 			List<CompiledTypeDependency> dependencies) {
 
 		super(file, typeSpec);
 		
 		Objects.requireNonNull(file);
+		Objects.requireNonNull(type);
+		
+		this.type = type;
 		
 		this.nestedTypes = nestedTypes;
 		this.extendsFrom = extendsFrom;
@@ -34,12 +40,17 @@ final class ParsedType extends BaseLoaderType implements CompiledType {
 
 
 	@Override
+	public ComplexType getType() {
+		return type;
+	}
+
+	@Override
 	public Collection<CompiledType> getNestedTypes() {
 		return nestedTypes;
 	}
 
 	@Override
-	public Collection<ScopedName> getExtendsFrom() {
+	public Collection<CompiledTypeDependency> getExtendsFrom() {
 		return extendsFrom;
 	}
 

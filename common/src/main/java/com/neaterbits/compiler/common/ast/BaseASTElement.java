@@ -159,7 +159,9 @@ public abstract class BaseASTElement extends ASTNode {
 		case VISIT_NODE_FIRST:
 			iterator.onElement(element);
 			
-			element.doRecurse(recurseMode, iterator);
+			if (element.isInList()) {
+				element.doRecurse(recurseMode, iterator);
+			}
 			break;
 			
 		case VISIT_NODE_LAST:
