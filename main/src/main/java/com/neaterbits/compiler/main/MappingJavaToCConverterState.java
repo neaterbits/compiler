@@ -35,6 +35,12 @@ public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState
 				sb.append('_').append(typeName.getName());
 			}
 		}
+		
+		if (sb.length() > 0) {
+			sb.append('_');
+		}
+		
+		sb.append(type.getName().getName());
 	}
 	
 	@Override
