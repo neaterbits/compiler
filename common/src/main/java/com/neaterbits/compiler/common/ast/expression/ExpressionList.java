@@ -40,7 +40,7 @@ public final class ExpressionList extends Expression {
 	
 	@Override
 	public BaseType getType() {
-		throw new UnsupportedOperationException();
+		return expressions.iterator().next().getType();
 	}
 
 	@Override
