@@ -3,6 +3,7 @@ package com.neaterbits.compiler.c.emit;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.PointerType;
+import com.neaterbits.compiler.common.ast.type.TypeDefType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
 import com.neaterbits.compiler.common.ast.type.primitive.ArrayType;
 import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
@@ -89,6 +90,14 @@ public class CTypeEmitter extends BaseProceduralTypeEmitter<EmitterState> {
 		for (int i = 0; i < type.getLevels(); ++ i) {
 			param.append('*');
 		}
+		
+		return null;
+	}
+
+	@Override
+	public Void onTypeDef(TypeDefType type, EmitterState param) {
+		
+		param.append(type.getName().getName());
 		
 		return null;
 	}

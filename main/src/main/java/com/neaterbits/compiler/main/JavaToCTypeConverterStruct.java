@@ -2,6 +2,7 @@ package com.neaterbits.compiler.main;
 
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.PointerType;
+import com.neaterbits.compiler.common.ast.type.TypeDefType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.EnumType;
 import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
@@ -18,6 +19,11 @@ public class JavaToCTypeConverterStruct extends BaseTypeConverter<JavaToCClassTo
 
 	@Override
 	public BaseType onPointer(PointerType type, JavaToCClassToStructState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public BaseType onTypeDef(TypeDefType type, JavaToCClassToStructState param) {
 		throw new UnsupportedOperationException();
 	}
 

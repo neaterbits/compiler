@@ -2,6 +2,7 @@ package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.PointerType;
+import com.neaterbits.compiler.common.ast.type.TypeDefType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.EnumType;
 import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
@@ -155,6 +156,11 @@ public final class JavaTypeEmitter implements TypeEmitter<EmitterState> {
 
 	@Override
 	public Void onUnnamedVoidType(UnnamedVoidType type, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onTypeDef(TypeDefType type, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 }

@@ -8,5 +8,7 @@ public interface TypeReferenceVisitor<T, R> {
 	
 	R onPointerTypeReference(PointerTypeReference typeReference, T param);
 	
+	R onTypeDefTypeReference(TypeDefTypeReference typeReference, T param);
+	
 	R onResolveLaterTypeReference(ResolveLaterTypeReference typeReference, T param);
 }
