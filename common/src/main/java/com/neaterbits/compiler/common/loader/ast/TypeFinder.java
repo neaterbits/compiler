@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.common.ArrayStack;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
-import com.neaterbits.compiler.common.ResolvedTypeReference;
+import com.neaterbits.compiler.common.BuiltinTypeReference;
 import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.StackDelegator;
 import com.neaterbits.compiler.common.TypeReference;
@@ -138,8 +138,8 @@ class TypeFinder {
 				e -> {
 					if (e instanceof TypeReference) {
 						
-						if (e instanceof ResolvedTypeReference) {
-							final ResolvedTypeReference typeReference = (ResolvedTypeReference)e;
+						if (e instanceof BuiltinTypeReference) {
+							final BuiltinTypeReference typeReference = (BuiltinTypeReference)e;
 							
 							if (!(typeReference.getType() instanceof ScalarType)) {
 								throw new IllegalStateException("Expected only scalar types to be resolved");

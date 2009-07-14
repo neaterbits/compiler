@@ -15,11 +15,10 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
-import com.neaterbits.compiler.common.ResolvedTypeReference;
+import com.neaterbits.compiler.common.BuiltinTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.antlr4.Antlr4;
 import com.neaterbits.compiler.common.ast.Import;
-import com.neaterbits.compiler.common.ast.NamespaceName;
 import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
@@ -123,12 +122,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void exitPackageDeclaration(PackageDeclarationContext ctx) {
 		delegate.onPackageDeclaration(context(ctx), ctx.packageName().getText());
-	}
-
-	private static NamespaceName namespace(String typeName) {
-		final String [] names = Strings.split(typeName, '.');
-		
-		return new NamespaceName(Strings.join(names, '.', names.length - 1));
 	}
 
 	private static NamespaceReference namespaceReference(String typeName) {
@@ -245,7 +238,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		delegate.onClassMethodStart(context(ctx));
 	}
-
+	
 	@Override
 	public void enterResult(ResultContext ctx) {
 		delegate.onMethodReturnTypeStart(context(ctx));
@@ -915,7 +908,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	// Array creation
 
 	private TypeReference parsePrimitiveType(Context context, String typeString) {
-		return new ResolvedTypeReference(context, delegate.parseJavaPrimitiveType(typeString));
+		return new BuiltinTypeReference(context, delegate.parseJavaPrimitiveType(typeString));
 	}
 	
 	@Override
@@ -1434,6 +1427,14 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), scopedName);
 	}
 	
+	@Override
+	public void enterVoidResult(VoidResultContext ctx) {
+		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.VOID);
+	}
+
+	void method() {
+		
+	}
 	
 	// Statements
 

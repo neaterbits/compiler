@@ -16,8 +16,10 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
+import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.neaterbits.compiler.common.log.ParseLogger;
 
@@ -132,32 +134,35 @@ public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEX
 		 * " og type " + token.getType()); }
 		 */
 
-		/*
-		 * parser.addParseListener(new ParseTreeListener() {
-		 * 
-		 * @Override public void visitTerminal(TerminalNode node) {
-		 * System.out.println("## Token " +
-		 * lexer.getTokenErrorDisplay(node.getSymbol())); }
-		 * 
-		 * @Override public void visitErrorNode(ErrorNode node) { // TODO
-		 * Auto-generated method stub
-		 * 
-		 * }
-		 * 
-		 * @Override public void exitEveryRule(ParserRuleContext ctx) {
-		 * System.out.println("## Enter " +
-		 * parser.getRuleNames()[ctx.getRuleIndex()]);
-		 * 
-		 * }
-		 * 
-		 * @Override public void enterEveryRule(ParserRuleContext ctx) { // TODO
-		 * Auto-generated method stub
-		 * 
-		 * } });
-		 */
+		
+		 
 
 		final PARSER parser = parserInstantiator.getParserForInput(stream, parserFactory);
 		
+		parser.addParseListener(new ParseTreeListener() {
+
+			@Override
+			public void visitTerminal(TerminalNode node) {
+				// System.out.println("## Token " + lexer.getTokenErrorDisplay(node.getSymbol()));
+			}
+
+			@Override
+			public void visitErrorNode(ErrorNode node) { // TODO
+
+			}
+
+			@Override
+			public void enterEveryRule(ParserRuleContext ctx) { // TODO
+				System.out.println("## Enter " + parser.getRuleNames()[ctx.getRuleIndex()] + " " + ctx.getText());
+
+			}
+
+			@Override
+			public void exitEveryRule(ParserRuleContext ctx) {
+				System.out.println("## Exit " + parser.getRuleNames()[ctx.getRuleIndex()]);
+			}
+		});
+			 
 		parser.addErrorListener(new ANTLRErrorListener() {
 
 			@Override

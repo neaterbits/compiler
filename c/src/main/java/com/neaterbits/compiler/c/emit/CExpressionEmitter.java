@@ -1,6 +1,5 @@
 package com.neaterbits.compiler.c.emit;
 
-import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.ArrayCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
@@ -25,15 +24,8 @@ import com.neaterbits.compiler.common.emit.base.c.CLikeExpressionEmitter;
 
 final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
-	private static final CConditionEmitter CONDITION_EMITTER = new CConditionEmitter();
-
 	private static final CStatementEmitter STATEMENT_EMITTER = new CStatementEmitter();
 	
-	@Override
-	protected void emitCondition(Condition condition, EmitterState param) {
-		condition.visit(CONDITION_EMITTER, param);
-	}
-
 	protected void emitVariableReference(VariableReference variable, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}

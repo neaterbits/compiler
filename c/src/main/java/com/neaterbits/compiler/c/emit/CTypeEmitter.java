@@ -13,6 +13,7 @@ import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.type.primitive.LongType;
 import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.common.ast.type.primitive.StringType;
+import com.neaterbits.compiler.common.ast.type.primitive.VoidType;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.BaseProceduralTypeEmitter;
 
@@ -112,6 +113,13 @@ public class CTypeEmitter extends BaseProceduralTypeEmitter<EmitterState> {
 	@Override
 	public Void onBoolean(BooleanType type, EmitterState param) {
 		param.append("bool");
+
+		return null;
+	}
+
+	@Override
+	public Void onVoid(VoidType type, EmitterState param) {
+		param.append("void");
 
 		return null;
 	}

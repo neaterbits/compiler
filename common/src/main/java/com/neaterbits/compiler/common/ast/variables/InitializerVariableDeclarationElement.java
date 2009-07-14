@@ -19,7 +19,7 @@ public class InitializerVariableDeclarationElement extends VariableDeclarationEl
 	}
 	
 	public final Expression getInitializer() {
-		return initializer.get();
+		return initializer != null ? initializer.get() : null;
 	}
 
 	@Override

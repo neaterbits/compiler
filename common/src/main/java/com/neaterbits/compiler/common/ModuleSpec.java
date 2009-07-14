@@ -17,7 +17,7 @@ public abstract class ModuleSpec {
 		Objects.requireNonNull(moduleId);
 		
 		this.moduleId = moduleId;
-		this.dependencies = Collections.unmodifiableList(new ArrayList<>(dependencies));
+		this.dependencies = dependencies != null ? Collections.unmodifiableList(new ArrayList<>(dependencies)) : Collections.emptyList();
 	}
 
 	

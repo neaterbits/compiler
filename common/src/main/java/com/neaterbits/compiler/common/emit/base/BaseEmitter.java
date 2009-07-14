@@ -13,6 +13,8 @@ public abstract class BaseEmitter<T extends EmitterState> extends EmitterUtil<T>
 		
 		for (Statement statement : block.getStatements()) {
 			emitStatement(statement, state);
+			
+			state.newline();
 		}
 	}
 

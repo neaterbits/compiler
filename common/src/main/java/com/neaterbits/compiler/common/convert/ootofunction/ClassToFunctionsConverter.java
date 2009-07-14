@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.neaterbits.compiler.common.Context;
-import com.neaterbits.compiler.common.ResolvedTypeReference;
+import com.neaterbits.compiler.common.PointerTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.Namespace;
@@ -31,8 +31,10 @@ import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
  */
 
 
-public class ClassToFunctionsConverter extends IterativeConverter {
+public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>>
+	extends IterativeConverter<T> {
 
+	
 	private final BaseTypeConverter TYPE_CONVERSION_VISITOR = new BaseTypeConverter() {
 			
 		@Override
@@ -47,13 +49,11 @@ public class ClassToFunctionsConverter extends IterativeConverter {
 					convertType(type.getDelegate()),
 					type.getLevels());
 			
-			return new ResolvedTypeReference(param, convertedType);
+			return new PointerTypeReference(param, convertedType);
 		}
 
 		@Override
 		public TypeReference onClass(ClassType type, Context param) {
-			
-			
 			return null;
 		}
 
@@ -71,12 +71,14 @@ public class ClassToFunctionsConverter extends IterativeConverter {
 		return toConvert.visit(TYPE_CONVERSION_VISITOR, state);
 	}
 
-	List<CompilationCode> convertClass(ClassDefinition classDefinition, OOToProceduralConverterState state) {
+	List<CompilationCode> convertClass(ClassDefinition classDefinition, T state) {
 
 		final int numMembers = classDefinition.getMembers().size();
 		final List<ComplexMemberDefinition> structMembers = new ArrayList<>(numMembers);
 		final List<Function> functions = new ArrayList<>(numMembers);
 
+		System.out.println("### convert class " + classDefinition.getName());
+		
 		final Namespace namespace = state.getCurrentNamespace();
 
 		for (ComplexMemberDefinition memberDefinition : classDefinition.getMembers()) {
@@ -91,6 +93,8 @@ public class ClassToFunctionsConverter extends IterativeConverter {
 						field.getName());
 				
 				structMembers.add(structField);
+				
+				System.out.println("## add struct field " + structField.getName());
 			}
 			else if (memberDefinition instanceof ClassMethodMember) {
 				
@@ -108,7 +112,7 @@ public class ClassToFunctionsConverter extends IterativeConverter {
 						convertType(method.getReturnType()),
 						functionName,
 						convertParameters(method.getParameters(), typeReference -> convertType(typeReference)),
-						convertBlock(method.getBlock()));
+						convertBlock(method.getBlock(), state));
 				
 				functions.add(function);
 			}
@@ -126,6 +130,8 @@ public class ClassToFunctionsConverter extends IterativeConverter {
 		
 		result.add(struct);
 		result.addAll(functions);
+		
+		System.out.println("## return functions " + result);
 		
 		return result;
 	}

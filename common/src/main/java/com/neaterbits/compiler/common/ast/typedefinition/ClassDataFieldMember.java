@@ -8,7 +8,7 @@ import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
-public class ClassDataFieldMember extends DataFieldMember {
+public final class ClassDataFieldMember extends DataFieldMember {
 
 	private final ASTSingle<FieldModifiers> modifiers; 
 	private final ASTSingle<Expression> initializer;
@@ -17,9 +17,14 @@ public class ClassDataFieldMember extends DataFieldMember {
 		super(context, type, name);
 		
 		this.modifiers = makeSingle(modifiers);
-		this.initializer = makeSingle(initializer);
+		this.initializer = initializer != null ? makeSingle(initializer) : null;
 	}
 
+	public Expression getInitializer() {
+		return initializer != null ? initializer.get() : null;
+	}
+	
+	
 	@Override
 	public <T, R> R visit(CompilationCodeVisitor<T, R> visitor, T param) {
 		return visitor.onClassDataFieldMember(this, param);
@@ -32,6 +37,8 @@ public class ClassDataFieldMember extends DataFieldMember {
 
 		super.doRecurse(recurseMode, iterator);
 
-		doIterate(initializer, recurseMode, iterator);
+		if (initializer != null) {
+			doIterate(initializer, recurseMode, iterator);
+		}
 	}
 }

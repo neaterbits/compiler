@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
-import com.neaterbits.compiler.common.ResolvedTypeReference;
+import com.neaterbits.compiler.common.BuiltinTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.antlr4.ModelParserListener;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
@@ -18,6 +18,7 @@ import com.neaterbits.compiler.common.ast.operator.Operator;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
+import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
 import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
 import com.neaterbits.compiler.common.ast.type.primitive.DoubleType;
@@ -26,6 +27,7 @@ import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.type.primitive.LongType;
 import com.neaterbits.compiler.common.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
+import com.neaterbits.compiler.common.ast.type.primitive.VoidType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
@@ -655,10 +657,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	private static final FloatType 	FLOAT_TYPE 	= new FloatType	(new TypeName("float"), false);
 	private static final DoubleType DOUBLE_TYPE = new DoubleType(new TypeName("double"), false);
 	private static final BooleanType BOOLEAN_TYPE = new BooleanType(new TypeName("boolean"), false);
+	private static final VoidType VOID_TYPE = new VoidType(new TypeName("void"));
 	
 	public void onJavaPrimitiveType(Context context, JavaPrimitiveType type) {
 		
-		final ScalarType genericType;
+		final BuiltinType genericType;
 		
 		switch (type) {
 		case BYTE:	genericType = BYTE_TYPE; break;
@@ -669,12 +672,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		case FLOAT:	genericType = FLOAT_TYPE; break;
 		case DOUBLE:  genericType = DOUBLE_TYPE; break;
 		case BOOLEAN: genericType = BOOLEAN_TYPE; break;
+		case VOID:	genericType = VOID_TYPE; break;
 		
 		default:
 			throw new UnsupportedOperationException("Unknown type " + type);
 		}
 
-		delegate.onTypeReference(context, new ResolvedTypeReference(context, genericType));
+		delegate.onTypeReference(context, new BuiltinTypeReference(context, genericType));
 	}
 	
 	public ScalarType parseJavaPrimitiveType(String typeString) {

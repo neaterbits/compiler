@@ -1,8 +1,10 @@
 package com.neaterbits.compiler.c.emit;
 
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.block.Function;
 import com.neaterbits.compiler.common.ast.statement.Statement;
+import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.EnumConstantDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDataFieldMember;
@@ -10,7 +12,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.BaseProceduralProgramEmitter;
 
-public class CCompilationUnitEmmiter extends BaseProceduralProgramEmitter<EmitterState> {
+public class CCompilationUnitEmitter extends BaseProceduralProgramEmitter<EmitterState> {
 
 	private static final CStatementEmitter STATEMENT_EMITTER = new CStatementEmitter(); 
 	
@@ -18,6 +20,10 @@ public class CCompilationUnitEmmiter extends BaseProceduralProgramEmitter<Emitte
 	
 	private void emitType(TypeReference typeReference, EmitterState param) {
 		typeReference.getType().visit(TYPE_EMITTER, param);
+	}
+	
+	private void emitCode(CompilationCode code, EmitterState param) {
+		code.visit(this, param);
 	}
 	
 	@Override
@@ -30,37 +36,52 @@ public class CCompilationUnitEmmiter extends BaseProceduralProgramEmitter<Emitte
 
 		if (function.getQualifiers().isFileLocal()) {
 			param.append("static ");
-		
-			emitType(function.getReturnType(), param);
-			
-			param.append(' ');
-
-			param.append(function.getName().getName());
-			
-			param.append('(');
-			
-			function.getParameters().foreachWithIndex((parameter, i) -> {
-				if (i > 0) {
-					param.append(", ");
-				}
-				
-				emitType(parameter.getType(), param);
-				
-				param.append(' ').append(parameter.getName().getName());
-			});
-
-			param.append(") {");
-			
-			emitIndentedBlock(function.getBlock(), param);
-			
-			param.append('}').newline();
 		}
+		
+		emitType(function.getReturnType(), param);
+		
+		param.append(' ');
+
+		param.append(function.getName().getName());
+		
+		param.append('(');
+		
+		function.getParameters().foreachWithIndex((parameter, i) -> {
+			if (i > 0) {
+				param.append(", ");
+			}
+			
+			emitType(parameter.getType(), param);
+			
+			param.append(' ').append(parameter.getName().getName());
+		});
+
+		param.append(") {").newline();
+		
+		emitIndentedBlock(function.getBlock(), param);
+		
+		param.append('}').newline();
 		
 		return null;
 	}
 
 	@Override
 	public Void onStructDefinition(StructDefinition structDefinition, EmitterState param) {
+
+		param.append("struct ").append(structDefinition.getName().getName()).append(" {").newline();
+		
+		param.addIndent();
+
+		for (ComplexMemberDefinition memberDefinition : structDefinition.getMembers()) {
+			
+			System.out.println("## emit field " + memberDefinition);
+			
+			emitCode(memberDefinition, param);
+		}
+		
+		param.subIndent();
+
+		param.append("};").newline();
 
 		return null;
 	}
@@ -92,7 +113,7 @@ public class CCompilationUnitEmmiter extends BaseProceduralProgramEmitter<Emitte
 		
 		param.subIndent();
 		
-		param.append('}');
+		param.append('}').newline();
 		
 		return null;
 	}
@@ -104,6 +125,12 @@ public class CCompilationUnitEmmiter extends BaseProceduralProgramEmitter<Emitte
 
 	@Override
 	public Void onStructDataFieldMember(StructDataFieldMember field, EmitterState param) {
+		
+		emitType(field.getType(), param);
+		
+		param.append(' ').append(field.getName().getName());
+		
+		param.append(';').newline();
 		
 		return null;
 	}

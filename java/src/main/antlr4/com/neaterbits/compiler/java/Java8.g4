@@ -441,9 +441,13 @@ methodHeader
 	|	typeParameters annotation* result methodDeclarator throws_?
 	;
 
-result
-	:	unannType
-	|	'void'
+result :
+	resultType
+	;
+
+resultType
+	:	unannType	# unannTypeResultToken
+	|	'void'		# voidResult
 	;
 
 methodDeclarator

@@ -12,6 +12,7 @@ import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.type.primitive.LongType;
 import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.common.ast.type.primitive.StringType;
+import com.neaterbits.compiler.common.ast.type.primitive.VoidType;
 
 public interface TypeVisitor<T, R> {
 	
@@ -32,6 +33,8 @@ public interface TypeVisitor<T, R> {
 	R onDouble(DoubleType type, T param);
 	
 	R onBoolean(BooleanType type, T param);
+	
+	R onVoid(VoidType type, T param);
 	
 	R onString(StringType type, T param);
 	

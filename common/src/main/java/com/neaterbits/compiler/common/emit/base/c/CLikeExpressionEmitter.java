@@ -1,9 +1,7 @@
 package com.neaterbits.compiler.common.emit.base.c;
 
-import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
-import com.neaterbits.compiler.common.ast.expression.ConditionExpression;
 import com.neaterbits.compiler.common.ast.expression.ConditionalExpression;
 import com.neaterbits.compiler.common.ast.expression.NestedExpression;
 import com.neaterbits.compiler.common.ast.expression.arithemetic.binary.ArithmeticBinaryExpression;
@@ -22,15 +20,6 @@ import com.neaterbits.compiler.common.emit.base.BaseInfixExpressionEmitter;
 
 public abstract class CLikeExpressionEmitter<T extends EmitterState> extends BaseInfixExpressionEmitter<T> {
 
-	protected abstract void emitCondition(Condition condition, EmitterState param);
-
-	@Override
-	public final Void onConditionExpression(ConditionExpression expression, T param) {
-
-		emitCondition(expression.getCondition(), param);
-		
-		return null;
-	}
 
 	@Override
 	public final Void onPreIncrement(PreIncrementExpression expression, T param) {

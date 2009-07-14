@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.TypeReference;
-import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.ArrayCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
@@ -30,18 +29,12 @@ import com.neaterbits.compiler.common.util.Strings;
 
 final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
-	private static final JavaConditionEmitter CONDITION_EMITTER = new JavaConditionEmitter();
 
 	private static final JavaStatementEmitter STATEMENT_EMITTER = new JavaStatementEmitter();
 	
 	private static final JavaTypeEmitter TYPE_EMITTER = new JavaTypeEmitter();
 
 	private static final JavaVariableReferenceEmitter VARIABLE_REFERENCE_EMITTER = new JavaVariableReferenceEmitter();
-
-	@Override
-	protected void emitCondition(Condition condition, EmitterState param) {
-		condition.visit(CONDITION_EMITTER, param);
-	}
 
 	@Override
 	protected void emitStatement(Statement statement, EmitterState state) {

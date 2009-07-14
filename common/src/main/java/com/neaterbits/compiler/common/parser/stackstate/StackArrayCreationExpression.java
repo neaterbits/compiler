@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ResolvedTypeReference;
+import com.neaterbits.compiler.common.BuiltinTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.log.ParseLogger;
@@ -51,7 +51,7 @@ public final class StackArrayCreationExpression extends StackEntry implements Ty
 		
 		Objects.requireNonNull(typeReference);
 
-		if (typeReference instanceof ResolvedTypeReference) {
+		if (typeReference instanceof BuiltinTypeReference) {
 			if (!typeReference.equals(type)) {
 				throw new IllegalStateException("Type mismatch: " + type + "/" + typeReference);
 			}

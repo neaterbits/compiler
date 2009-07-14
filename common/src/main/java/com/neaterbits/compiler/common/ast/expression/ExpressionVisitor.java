@@ -28,8 +28,6 @@ public interface ExpressionVisitor<T, R> {
 
 	R onArrayCreationExpression(ArrayCreationExpression expression, T param);
 	
-	R onConditionExpression(ConditionExpression expression, T param);
-	
 	R onExpressionList(ExpressionList expression, T param);
 	
 	R onPrimaryList(PrimaryList expression, T param);

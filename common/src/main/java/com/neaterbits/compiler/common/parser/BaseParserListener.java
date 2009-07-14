@@ -65,6 +65,7 @@ import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.WhileStatement;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierHolder;
@@ -85,6 +86,8 @@ import com.neaterbits.compiler.common.ast.typedefinition.EnumConstantDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.EnumConstantName;
 import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldModifierHolder;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldStatic;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
@@ -711,17 +714,17 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	private void addFieldModifier(FieldModifier modifier) {
+	private void addFieldModifier(Context context, FieldModifier modifier) {
 		final StackFieldDeclarationList stackFieldDeclarationList = get();
 
-		stackFieldDeclarationList.addFieldModifier(modifier);
+		stackFieldDeclarationList.addFieldModifier(new FieldModifierHolder(context, modifier));
 	}
 	
 	public final void onVisibilityFieldModifier(Context context, FieldVisibility visibility) {
 		
 		logEnter(context);
 		
-		addFieldModifier(visibility);
+		addFieldModifier(context, visibility);
 		
 		logExit(context);
 	}
@@ -730,7 +733,7 @@ public abstract class BaseParserListener {
 		
 		logEnter(context);
 		
-		addFieldModifier(new FieldStatic());
+		addFieldModifier(context, new FieldStatic());
 		
 		logExit(context);
 	}
@@ -739,7 +742,7 @@ public abstract class BaseParserListener {
 		
 		logEnter(context);
 		
-		addFieldModifier(mutability);
+		addFieldModifier(context, mutability);
 		
 		logExit(context);
 	}
@@ -748,7 +751,7 @@ public abstract class BaseParserListener {
 		
 		logEnter(context);
 		
-		addFieldModifier(new FieldTransient());
+		addFieldModifier(context, new FieldTransient());
 		
 		logExit(context);
 	}
@@ -757,7 +760,7 @@ public abstract class BaseParserListener {
 		
 		logEnter(context);
 		
-		addFieldModifier(new FieldVolatile());
+		addFieldModifier(context, new FieldVolatile());
 		
 		logExit(context);
 	}
@@ -767,7 +770,20 @@ public abstract class BaseParserListener {
 		logEnter(context);
 		
 		final StackFieldDeclarationList stackFieldDeclarationList = pop();
+		
+		final StackClass stackClass = get();
 
+		for (InitializerVariableDeclarationElement element : stackFieldDeclarationList.getList()) {
+			final ClassDataFieldMember dataFieldMember = new ClassDataFieldMember(
+					context,
+					new FieldModifiers(context, stackFieldDeclarationList.getModifiers()),
+					element.getTypeReference(),
+					new FieldName(element.getName().getName()),
+					element.getInitializer());
+			
+			stackClass.add(dataFieldMember);
+		}
+		
 		logExit(context);
 	}
 

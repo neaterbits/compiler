@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.common.emit.base.c;
 
 import com.neaterbits.compiler.common.TypeReference;
-import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.AssignmentStatement;
@@ -26,7 +25,6 @@ import com.neaterbits.compiler.common.emit.base.BaseStatementEmitter;
 public abstract class CLikeStatementEmitter<T extends EmitterState>
 	extends BaseStatementEmitter<T> implements StatementEmitter<T> {
 
-	protected abstract void emitCondition(Condition condition, T param);
 	protected abstract void emitExpression(Expression expression, T param);
 	protected abstract void emitType(TypeReference typeReference, T param);
 	
@@ -35,6 +33,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 	protected abstract void emitSwitchCaseLabel(SwitchCaseLabel label, T param);
 
 	protected final void emitVariableDeclaration(TypeReference typeReference, VarName varName, T param) {
+
 		emitType(typeReference, param);
 		
 		param.append(' ');
@@ -61,6 +60,8 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		emitListTo(param, elements, ", ", e -> {
 			emitVariableDeclarationElement(e, param);
 		});
+
+		param.append(';');
 	}
 	
 	@Override
@@ -128,9 +129,8 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 			
 		});
 		
-		
 		param.append('}');
-		
+
 		return null;
 	}
 	@Override
