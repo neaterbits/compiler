@@ -1,12 +1,26 @@
 package com.neaterbits.compiler.common.ast.variables;
 
+import java.util.Objects;
+
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.expression.ArrayAccessExpression;
 
 public final class ArrayAccessReference extends VariableReference {
-	public ArrayAccessReference(Context context) {
+	
+	private final ArrayAccessExpression expression;
+	
+	public ArrayAccessReference(Context context, ArrayAccessExpression expression) {
 		super(context);
+		
+		Objects.requireNonNull(expression);
+		
+		this.expression = expression;
+	}
+	
+	public ArrayAccessExpression getExpression() {
+		return expression;
 	}
 
 	@Override

@@ -3,10 +3,11 @@ package com.neaterbits.compiler.common.ast.expression;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 
-public final class VariableExpression extends Expression {
+public final class VariableExpression extends Primary {
 
 	private final ASTSingle<VariableReference> reference;
 

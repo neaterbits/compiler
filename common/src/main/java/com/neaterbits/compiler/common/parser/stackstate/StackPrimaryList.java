@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.common.ast.expression.NestedExpression;
 import com.neaterbits.compiler.common.ast.expression.PrimaryList;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
+import com.neaterbits.compiler.common.ast.variables.ArrayAccessReference;
 import com.neaterbits.compiler.common.ast.variables.PrimaryListVariableReference;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.log.ParseLogger;
@@ -81,8 +83,11 @@ public class StackPrimaryList extends ListStackEntry<Primary>
 			if (primary instanceof VariableReference) {
 				variableReference = (VariableReference)primary;
 			}
+			else if (primary instanceof ArrayAccessExpression) {
+				variableReference = new ArrayAccessReference(context, (ArrayAccessExpression)primary);
+			}
 			else {
-				throw new UnsupportedOperationException();
+				throw new UnsupportedOperationException("Unknown primary type " + primary.getClass().getSimpleName());
 			}
 		}
 		else {

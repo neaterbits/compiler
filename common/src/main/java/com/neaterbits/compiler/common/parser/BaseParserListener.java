@@ -23,6 +23,7 @@ import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
 import com.neaterbits.compiler.common.ast.block.ConstructorInvocationStatement;
 import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.block.ParameterName;
+import com.neaterbits.compiler.common.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.common.ast.expression.ArrayCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
@@ -129,6 +130,7 @@ import com.neaterbits.compiler.common.parser.stackstate.BaseStackVariableDeclara
 import com.neaterbits.compiler.common.parser.stackstate.CallableStackEntry;
 import com.neaterbits.compiler.common.parser.stackstate.StackAnnotation;
 import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
+import com.neaterbits.compiler.common.parser.stackstate.StackArrayAccess;
 import com.neaterbits.compiler.common.parser.stackstate.StackArrayCreationExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
@@ -1072,6 +1074,7 @@ public abstract class BaseParserListener {
 	}
 	
 	// Field access
+	
 	public final void onPrimaryStart(Context context) {
 		
 		logEnter(context);
@@ -1082,12 +1085,61 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
+	public final void onArrayAccessStart(Context context) {
+		
+		logEnter(context);
+
+		push(new StackArrayAccess(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onArrayIndexStart(Context context) {
+		
+		logEnter(context);
+		
+		push(new StackExpressionList(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onArrayIndexEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackExpressionList stackExpressionList = pop();
+		
+		final StackArrayAccess stackArrayAccess = get();
+		
+		stackArrayAccess.addExpression(stackExpressionList.makeExpression(context));
+		
+		logExit(context);
+	}
+	
+	public final void onArrayAccessEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackArrayAccess stackArrayAccess = pop();
+
+		final ArrayAccessExpression expression = new ArrayAccessExpression(
+				context,
+				stackArrayAccess.getArray(context),
+				stackArrayAccess.getIndex());
+		
+		final PrimarySetter primarySetter = get();
+		
+		primarySetter.addPrimary(expression);
+		
+		logExit(context);
+	}
+	
 	
 	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, String fieldName) {
 		
 		logEnter(context);
 		
-		final StackPrimaryList stackPrimaryList = get();
+		final PrimarySetter primarySetter = get();
 		
 		final FieldAccess fieldAccess = new FieldAccess(
 				context,
@@ -1095,7 +1147,7 @@ public abstract class BaseParserListener {
 				typeName != null ? new ResolveLaterTypeReference(context, typeName) : null,
 				new FieldName(fieldName));
 		
-		stackPrimaryList.add(fieldAccess);
+		primarySetter.addPrimary(fieldAccess);
 		
 		logExit(context);
 	}

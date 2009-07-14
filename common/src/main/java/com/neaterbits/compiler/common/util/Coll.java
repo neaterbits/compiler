@@ -1,15 +1,14 @@
 package com.neaterbits.compiler.common.util;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Predicate;
-
-import org.assertj.core.util.Objects;
 
 public class Coll {
 
 	public static <T> boolean has(T [] array, T item) {
 		for (int i = 0; i < array.length; ++ i) {
-			if (Objects.areEqual(array[i], item)) {
+			if (Objects.equals(array[i], item)) {
 				return true;
 			}
 		}

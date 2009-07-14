@@ -34,6 +34,8 @@ public interface ExpressionVisitor<T, R> {
 	
 	R onPrimaryList(PrimaryList expression, T param);
 	
+	R onArrayAccessExpression(ArrayAccessExpression expression, T param);
+	
 	R onClassExpression(ClassExpression expression, T param);
 	
 	R onFieldAccess(FieldAccess expression, T param);

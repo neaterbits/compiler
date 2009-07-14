@@ -1069,35 +1069,39 @@ fieldAccess
 	;
 
 fieldAccess_lf_primary
-	:	'.' Identifier
+	:	'.' Identifier							# dotIdentifierFieldAccess
 	;
 
 fieldAccess_lfno_primary
-	:	'super' '.' Identifier
-	|	typeName '.' 'super' '.' Identifier
+	:	'super' '.' Identifier					# superDotIdentifierFieldAccess_fieldAccess_lfno_primary
+	|	typeName '.' 'super' '.' Identifier		# typeNameDotSuperDotIdentifierFieldAccess_fieldAccess_lfno_primary
 	;
 
 arrayAccess
-	:	(	expressionName '[' expression ']'
-		|	primaryNoNewArray_lfno_arrayAccess '[' expression ']'
+	:	(	expressionName '[' arrayIndex ']'
+		|	primaryNoNewArray_lfno_arrayAccess '[' arrayIndex ']'
 		)
-		(	primaryNoNewArray_lf_arrayAccess '[' expression ']'
+		(	primaryNoNewArray_lf_arrayAccess '[' arrayIndex ']'
 		)*
 	;
 
 arrayAccess_lf_primary
-	:	(	primaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primary '[' expression ']'
+	:	(	primaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primary '[' arrayIndex ']'
 		)
-		(	primaryNoNewArray_lf_primary_lf_arrayAccess_lf_primary '[' expression ']'
+		(	primaryNoNewArray_lf_primary_lf_arrayAccess_lf_primary '[' arrayIndex ']'
 		)*
 	;
 
 arrayAccess_lfno_primary
-	:	(	expressionName '[' expression ']'
-		|	primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary '[' expression ']'
+	:	(	expressionName '[' arrayIndex ']'
+		|	primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary '[' arrayIndex ']'
 		)
-		(	primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary '[' expression ']'
+		(	primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary '[' arrayIndex ']'
 		)*
+	;
+	
+arrayIndex
+	: expression
 	;
 
 methodInvocation

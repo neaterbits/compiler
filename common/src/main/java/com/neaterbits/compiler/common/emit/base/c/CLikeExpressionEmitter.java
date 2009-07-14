@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.common.emit.base.c;
 
 import com.neaterbits.compiler.common.ast.condition.Condition;
+import com.neaterbits.compiler.common.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.ConditionExpression;
 import com.neaterbits.compiler.common.ast.expression.ConditionalExpression;
@@ -177,6 +178,21 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 
 		param.append(' ').append(operator).append(' ');
 
+		return null;
+	}
+
+	
+	@Override
+	public Void onArrayAccessExpression(ArrayAccessExpression expression, T param) {
+
+		emitExpression(expression.getArray(), param);
+		
+		param.append('[');
+		
+		emitExpression(expression.getIndex(), param);
+		
+		param.append(']');
+		
 		return null;
 	}
 

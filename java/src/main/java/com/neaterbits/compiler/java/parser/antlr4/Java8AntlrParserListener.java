@@ -1139,6 +1139,46 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 
 	@Override
+	public void enterArrayAccess(ArrayAccessContext ctx) {
+		delegate.onArrayAccessStart(context(ctx));
+	}
+
+	@Override
+	public void enterArrayIndex(ArrayIndexContext ctx) {
+		delegate.onArrayIndexStart(context(ctx));
+	}
+
+	@Override
+	public void exitArrayIndex(ArrayIndexContext ctx) {
+		delegate.onArrayIndexEnd(context(ctx));
+	}
+
+	@Override
+	public void exitArrayAccess(ArrayAccessContext ctx) {
+		delegate.onArrayAccessEnd(context(ctx));
+	}
+
+	@Override
+	public void enterArrayAccess_lf_primary(ArrayAccess_lf_primaryContext ctx) {
+		delegate.onArrayAccessStart(context(ctx));
+	}
+
+	@Override
+	public void exitArrayAccess_lf_primary(ArrayAccess_lf_primaryContext ctx) {
+		delegate.onArrayAccessEnd(context(ctx));
+	}
+
+	@Override
+	public void enterArrayAccess_lfno_primary(ArrayAccess_lfno_primaryContext ctx) {
+		delegate.onArrayAccessStart(context(ctx));
+	}
+
+	@Override
+	public void exitArrayAccess_lfno_primary(ArrayAccess_lfno_primaryContext ctx) {
+		delegate.onArrayAccessEnd(context(ctx));
+	}
+
+	@Override
 	public void exitPrimaryDotIdentifierFieldAccess(PrimaryDotIdentifierFieldAccessContext ctx) {
 		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, ctx.Identifier().getText());
 	}
@@ -1153,7 +1193,23 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, ctx.Identifier().getText());
 	}
 
+	@Override
+	public void exitDotIdentifierFieldAccess(DotIdentifierFieldAccessContext ctx) {
+		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitSuperDotIdentifierFieldAccess_fieldAccess_lfno_primary(
+			SuperDotIdentifierFieldAccess_fieldAccess_lfno_primaryContext ctx) {
+		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, ctx.Identifier().getText());
+	}
 	
+	@Override
+	public void exitTypeNameDotSuperDotIdentifierFieldAccess_fieldAccess_lfno_primary(
+			TypeNameDotSuperDotIdentifierFieldAccess_fieldAccess_lfno_primaryContext ctx) {
+		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, ctx.Identifier().getText());
+	}
+
 	@Override
 	public void exitThisExpression_primaryNoNewArray(ThisExpression_primaryNoNewArrayContext ctx) {
 
