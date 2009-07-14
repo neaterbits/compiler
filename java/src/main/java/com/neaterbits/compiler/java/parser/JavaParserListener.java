@@ -133,6 +133,19 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onAnonymousClassEnd(Context context) {
 		delegate.onAnonymousClassEnd(context);
 	}
+
+	public void onStaticInitializerStart(Context context) {
+		
+		statementsStack.push();
+		
+		delegate.onStaticInitializerStart(context);
+	}
+	
+	public void onStaticInitializerEnd(Context context) {
+		delegate.onStaticInitializerEnd(context);
+		
+		statementsStack.pop();
+	}
 	
 	public void onConstructorStart(Context context) {
 		
@@ -162,7 +175,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.pop();
 	}
-
+	
 	public void onClassMethodStart(Context context) {
 		
 		statementsStack.push();

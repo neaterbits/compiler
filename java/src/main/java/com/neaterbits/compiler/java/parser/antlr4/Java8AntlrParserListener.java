@@ -257,6 +257,16 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 
 	@Override
+	public void enterStaticInitializer(StaticInitializerContext ctx) {
+		delegate.onStaticInitializerStart(context(ctx));
+	}
+
+	@Override
+	public void exitStaticInitializer(StaticInitializerContext ctx) {
+		delegate.onStaticInitializerEnd(context(ctx));
+	}
+
+	@Override
 	public void enterConstructorDeclaration(ConstructorDeclarationContext ctx) {
 		delegate.onConstructorStart(context(ctx));
 	}

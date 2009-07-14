@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.emit.base;
 
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.block.Constructor;
+import com.neaterbits.compiler.common.ast.block.StaticInitializer;
 import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
@@ -19,6 +20,11 @@ public abstract class BaseProceduralProgramEmitter<T extends EmitterState> exten
 	public final Void onClassDefinition(ClassDefinition classDefinition, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
+	
+	@Override
+	public final Void onStaticInitializer(StaticInitializer initializer, T param) {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public final Void onConstructor(Constructor constructor, T param) {
@@ -26,7 +32,7 @@ public abstract class BaseProceduralProgramEmitter<T extends EmitterState> exten
 	}
 
 	@Override
-	public Void onConstructorMember(ConstructorMember constructor, T param) {
+	public final Void onConstructorMember(ConstructorMember constructor, T param) {
 		throw new UnsupportedOperationException();
 	}
 

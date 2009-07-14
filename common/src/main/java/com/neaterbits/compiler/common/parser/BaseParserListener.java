@@ -23,6 +23,7 @@ import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
 import com.neaterbits.compiler.common.ast.block.ConstructorInvocationStatement;
 import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.block.ParameterName;
+import com.neaterbits.compiler.common.ast.block.StaticInitializer;
 import com.neaterbits.compiler.common.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.common.ast.expression.ArrayCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
@@ -135,6 +136,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackArrayCreationExpres
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
 import com.neaterbits.compiler.common.parser.stackstate.StackCatchBlock;
+import com.neaterbits.compiler.common.parser.stackstate.StackClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
@@ -165,6 +167,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackParameterSignature;
 import com.neaterbits.compiler.common.parser.stackstate.StackPrimaryList;
 import com.neaterbits.compiler.common.parser.stackstate.StackResource;
 import com.neaterbits.compiler.common.parser.stackstate.StackReturnType;
+import com.neaterbits.compiler.common.parser.stackstate.StackStaticInitializer;
 import com.neaterbits.compiler.common.parser.stackstate.StackThrowStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryCatchFinallyStatement;
@@ -400,6 +403,34 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
+	public final void onStaticInitializerStart(Context context) {
+		
+		logEnter(context);
+		
+		pushVariableScope();
+		
+		push(new StackStaticInitializer(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onStaticInitializerEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackStaticInitializer stackStaticInitializer = pop();
+		
+		final StaticInitializer initializer = new StaticInitializer(context, new Block(context, stackStaticInitializer.getList()));
+		
+		final StackClass stackClass = get();
+		
+		stackClass.add(initializer);
+		
+		popVariableScope();
+		
+		logExit(context);
+	}
+
 	public final void onConstructorStart(Context context) {
 		
 		logEnter(context);

@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.ast;
 
 import com.neaterbits.compiler.common.ast.block.Constructor;
 import com.neaterbits.compiler.common.ast.block.Function;
+import com.neaterbits.compiler.common.ast.block.StaticInitializer;
 import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
@@ -40,6 +41,8 @@ public interface CompilationCodeVisitor<T, R> {
 	R onClassMethodMember(ClassMethodMember method, T param);
 
 	R onClassDataFieldMember(ClassDataFieldMember field, T param);
+	
+	R onStaticInitializer(StaticInitializer initializer, T param);
 
 	R onInterfaceDefinition(InterfaceDefinition interfaceDefinition, T param);
 	

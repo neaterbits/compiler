@@ -2,6 +2,7 @@ package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.block.Constructor;
+import com.neaterbits.compiler.common.ast.block.StaticInitializer;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.list.ASTList;
@@ -320,6 +321,17 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 	}
 
 
+	@Override
+	public Void onStaticInitializer(StaticInitializer initializer, EmitterState param) {
+
+		param.append("static {").newline();
+		
+		emitIndentedBlock(initializer.getBlock(), param);
+		
+		param.append('}');
+
+		return null;
+	}
 
 	@Override
 	public Void onConstructor(Constructor constructor, EmitterState param) {
