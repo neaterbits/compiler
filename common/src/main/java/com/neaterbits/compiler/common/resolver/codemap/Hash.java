@@ -159,7 +159,7 @@ final class Hash {
 				final long mapValue = hashMap[i];
 				
 				if (mapValue == undefValue) {
-					throw new IllegalStateException();
+					return values.getDefaultValue();
 				}
 				
 				if (values.getKey(mapValue) == key) {
@@ -171,7 +171,7 @@ final class Hash {
 				final long mapValue = hashMap[i];
 				
 				if (mapValue == undefValue) {
-					throw new IllegalStateException();
+					return values.getDefaultValue();
 				}
 				
 				if (values.getKey(mapValue) == key) {

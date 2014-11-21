@@ -21,7 +21,6 @@ import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.TypeSpec;
-import com.neaterbits.compiler.common.resolver.codemap.MethodMapCache;
 import com.neaterbits.compiler.common.resolver.codemap.MethodVariant;
 import com.neaterbits.compiler.common.resolver.codemap.ResolvedTypeCodeMapImpl;
 
@@ -67,8 +66,6 @@ public final class MethodsResolver {
 	
 	private void resolveAllMethods(Map<TypeSpec, ResolvedType> map) {
 		
-		final MethodMapCache methodMapCache = new MethodMapCache();
-		
 		final Set<TypeSpec> toResolve = new HashSet<>(map.keySet());
 
 		while (!toResolve.isEmpty()) {
@@ -77,23 +74,23 @@ public final class MethodsResolver {
 		
 			System.out.println("## resolving " + typeSpec);
 			
-			resolveAllMethods(map, typeSpec, methodMapCache);
+			resolveAllMethods(map, typeSpec);
 
 			toResolve.remove(typeSpec);
 		}
 	}
 	
-	private void resolveAllMethods(Map<TypeSpec, ResolvedType> map, TypeSpec typeSpec, MethodMapCache methodMapCache) {
+	private void resolveAllMethods(Map<TypeSpec, ResolvedType> map, TypeSpec typeSpec) {
 	
 		Objects.requireNonNull(typeSpec);
 		
 		final ResolvedType resolvedType = map.get(typeSpec);
 		
-		addTypeAndMethods(resolvedType, methodMapCache);
+		addTypeAndMethods(resolvedType);
 	}
 	
 	
-	private void addTypeAndMethods(ResolvedType resolvedType, MethodMapCache methodMapCache) {
+	private void addTypeAndMethods(ResolvedType resolvedType) {
 		
 		Objects.requireNonNull(resolvedType);
 		
@@ -111,7 +108,7 @@ public final class MethodsResolver {
 			
 			final ClassType classType = (ClassType)resolvedType.getType();
 
-			addClassMembers(classType, typeNo, methodMapCache);
+			addClassMembers(classType, typeNo);
 
 			// Have added all methods, compute extends from/by
 			codeMap.computeMethodExtends(classType.getFullTypeName());
@@ -122,7 +119,7 @@ public final class MethodsResolver {
 		}
 	}
 	
-	private void addClassMembers(ClassType classType, int typeNo, MethodMapCache methodMapCache) {
+	private void addClassMembers(ClassType classType, int typeNo) {
 		
 		final Subclassing subclassing = classType.getDefinition().getModifiers().getModifier(Subclassing.class);
 		
@@ -134,7 +131,7 @@ public final class MethodsResolver {
 				
 				final MethodVariant methodVariant = findMethodVariant(classMethodMember, subclassing);
 				
-				addClassMethod(typeNo, classMethodMember, methodVariant, methodMapCache);
+				addClassMethod(typeNo, classMethodMember, methodVariant);
 			}
 		}
 	}
@@ -172,7 +169,7 @@ public final class MethodsResolver {
 		return methodVariant;
 	}
 	
-	private int addClassMethod(int typeNo, ClassMethodMember classMethodMember, MethodVariant methodVariant, MethodMapCache methodMapCache) {
+	private int addClassMethod(int typeNo, ClassMethodMember classMethodMember, MethodVariant methodVariant) {
 
 		final ClassMethod classMethod = classMethodMember.getMethod();
 		
@@ -194,8 +191,7 @@ public final class MethodsResolver {
 				typeNo,
 				classMethod.getName().getName(),
 				parameterTypes,
-				methodVariant,
-				methodMapCache);
+				methodVariant);
 
 		return methodNo;
 	}

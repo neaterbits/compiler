@@ -56,6 +56,13 @@ public class MethodMapTest {
 
 		assertThat(overrideMethodNo).isEqualTo(2);
 
+		assertThat(methodMap.getMethodNo(1, "someMethod", new int [] { paramType1, paramType2 }, cache)).isEqualTo(0);
+		assertThat(methodMap.getMethodNo(1, "notSomeMethod", new int [] { paramType1, paramType2 }, cache)).isEqualTo(-1);
+
+		assertThat(methodMap.getMethodNo(1, "someMethod", new int [] { paramType1 }, cache)).isEqualTo(-1);
+		assertThat(methodMap.getMethodNo(1, "someOtherMethod", new int [] { paramType1 }, cache)).isEqualTo(1);
+		assertThat(methodMap.getMethodNo(4, "someMethod", new int [] { paramType1, paramType2 }, cache)).isEqualTo(2);
+
 		assertThat(methodMap.getMethodName(methodNo)).isEqualTo("someMethod");
 		assertThat(methodMap.getMethodName(anotherMethodNo)).isEqualTo("someOtherMethod");
 		assertThat(methodMap.getMethodName(overrideMethodNo)).isEqualTo("someMethod");

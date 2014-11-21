@@ -172,6 +172,10 @@ public final class CodeMapImpl extends BaseCodeMap {
 		return result;
 	}
 	
+	MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes, MethodMapCache methodMapCache) {
+		return methodMap.getMethodInfo(typeNo, methodName, parameterTypes, methodMapCache);
+	}
+	
 	private void getAllSubtypes(int [] types, Collection<Integer> allTypes) {
 		
 		for (int type : types) {

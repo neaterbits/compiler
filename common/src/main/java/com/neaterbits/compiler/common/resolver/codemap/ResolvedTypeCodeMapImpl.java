@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
+import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.type.FullTypeName;
+import com.neaterbits.compiler.common.ast.type.NamedType;
+import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
@@ -23,6 +26,8 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 	
 	private final Map<ScopedName, Integer> scopedNameMap;
 	
+	private final MethodMapCache methodMapCache;
+	
 	private ResolvedType [] resolvedTypes;
 	
 	public ResolvedTypeCodeMapImpl(CodeMapImpl codeMap) {
@@ -32,6 +37,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		this.codeMap = codeMap;
 		this.nameToTypeNoMap = new NameToTypeNoMap();
 		this.scopedNameMap = new HashMap<>();
+		this.methodMapCache = new MethodMapCache();
 	}
 
 	public int addFile(ResolvedFile file, int [] types) {
@@ -114,7 +120,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		return nameToTypeNoMap.getType(type);
 	}
 	
-	public int addMethod(int type, String name, FullTypeName [] parameterTypes, MethodVariant methodVariant, MethodMapCache methodMapCache) {
+	public int addMethod(int type, String name, FullTypeName [] parameterTypes, MethodVariant methodVariant) {
 		
 		final int [] parameterTypeNos = new int[parameterTypes.length];
 		
@@ -163,5 +169,29 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		}
 
 		return result;
+	}
+
+	@Override
+	public MethodInfo getMethodInfo(ClassType type, MethodName methodName, NamedType [] parameterTypes) {
+		
+		Objects.requireNonNull(type);
+		Objects.requireNonNull(methodName);
+		
+		final int typeNo = getTypeNo(type.getFullTypeName());
+		
+		final int [] parameterTypeNos;
+		
+		if (parameterTypes == null) {
+			parameterTypeNos = null;
+		}
+		else {
+			parameterTypeNos = new int[parameterTypes.length];
+		
+			for (int i = 0; i < parameterTypes.length; ++ i) {
+				parameterTypeNos[i] = getTypeNo(parameterTypes[i].getFullTypeName());
+			}
+		}
+		
+		return codeMap.getMethodInfo(typeNo, methodName.getName(), parameterTypeNos, methodMapCache);
 	}
 }

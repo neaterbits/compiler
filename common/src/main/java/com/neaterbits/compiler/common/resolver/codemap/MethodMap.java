@@ -29,6 +29,8 @@ import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.su
 
 final class MethodMap extends BaseCodeMap {
 
+	private static final int NO_PARAM_TYPES_INDEX = 0;
+	
 	// Sequence number for methods
 	// Each method has their own methodNo even if same signature
 	// (eg. multiple implementations of same interface)
@@ -48,8 +50,6 @@ final class MethodMap extends BaseCodeMap {
 	// Unique method signatures, 32 bits for name and 32 bits for parameters
 	private long [] methodSignatures;
 	
-
-	
 	private int [][] extendedMethodsByExtending; // Map from methodNo to an array of methods that are extended by this one
 	private int [][] extendingMethodsByExtended;  // Map from methodNo to an array of methods that are extending this one
 	
@@ -67,6 +67,8 @@ final class MethodMap extends BaseCodeMap {
 	
 	MethodMap() {
 		this.typeAndMethodSignatureToMethodHash = Hash.makeHashMap(10000, HASH_UNDEF);
+		
+		this.parameterSignatureNo = NO_PARAM_TYPES_INDEX + 1;
 	}
 	
 	
@@ -240,6 +242,59 @@ final class MethodMap extends BaseCodeMap {
 
 		addToSubIntArray(extendingMethodsByExtended, extendedMethod, 	extendingMethodEncoded, 3);
 		addToSubIntArray(extendedMethodsByExtending, extendingMethod, 	extendedMethodEncoded, 3);
+	}
+	
+	MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes, MethodMapCache methodMapCache) {
+
+		final Integer nameIndex = methodMapCache.getNameIndex(methodName);
+
+		final MethodInfo methodInfo;
+
+		if (nameIndex == null) {
+			methodInfo = null;
+		}
+		else {
+			
+			final Integer paramIndex;
+			
+			if (parameterTypes == null || parameterTypes.length == 0) {
+				paramIndex = NO_PARAM_TYPES_INDEX;
+			}
+			else {
+				paramIndex = methodMapCache.getParamsIndex(parameterTypes);
+			}
+
+			if (paramIndex == null) {
+				methodInfo = null;
+			}
+			else {
+				final long signatureNo = methodMapCache.getSignatureNo(nameIndex, paramIndex);
+				
+				final long key = typeAndSignatureKey(typeNo, (int)signatureNo);
+				
+				final long method = Hash.hashGet(typeAndMethodSignatureToMethodHash, key, HASH_UNDEF, TYPE_AND_METHOD_SIGNATURE_HASH);
+				
+				if (method == HASH_UNDEF) {
+					methodInfo = null;
+				}
+				else {
+					final int methodEncoded = (int)method;
+					
+					methodInfo = new MethodInfo(decodeMethodNo(methodEncoded), getMethodVariant(methodEncoded));
+				}
+			}
+			
+			return methodInfo;
+		}
+		
+		return methodInfo;
+	}
+	
+	int getMethodNo(int typeNo, String methodName, int [] parameterTypes, MethodMapCache methodMapCache) {
+
+		final MethodInfo methodInfo = getMethodInfo(typeNo, methodName, parameterTypes, methodMapCache);
+		
+		return methodInfo != null ? methodInfo.getMethodNo() : -1;
 	}
 	
 	int getNumberOfMethodsDirectlyExtending(int methodNo) {
