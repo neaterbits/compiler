@@ -6,6 +6,7 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public final class ConditionalExpression extends Expression {
 
@@ -36,6 +37,19 @@ public final class ConditionalExpression extends Expression {
 
 	public Expression getPart3() {
 		return part3.get();
+	}
+	
+	@Override
+	public BaseType getType() {
+		
+		final BaseType type1 = part2.get().getType();
+		final BaseType type2 = part3.get().getType();
+		
+		if (!type1.equals(type2)) {
+			throw new IllegalStateException();
+		}
+		
+		return type1;
 	}
 
 	@Override

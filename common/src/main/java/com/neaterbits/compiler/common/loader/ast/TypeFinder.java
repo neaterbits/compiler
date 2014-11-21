@@ -126,7 +126,7 @@ class TypeFinder {
 							else if (lastElement instanceof MethodInvocationExpression) {
 								final MethodInvocationExpression methodInvocationExpression = (MethodInvocationExpression)lastElement;
 								
-								if (methodInvocationExpression.getType() != MethodInvocationType.NAMED_CLASS_STATIC) {
+								if (methodInvocationExpression.getInvocationType() != MethodInvocationType.NAMED_CLASS_STATIC) {
 									throw new UnsupportedOperationException("Expected static class invocation");
 								}
 								

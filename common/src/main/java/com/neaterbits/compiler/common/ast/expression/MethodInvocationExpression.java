@@ -30,7 +30,7 @@ public final class MethodInvocationExpression extends Call<MethodName> {
 		this.object = object != null ? makeSingle(object) : null;
 	}
 
-	public MethodInvocationType getType() {
+	public MethodInvocationType getInvocationType() {
 		return type;
 	}
 

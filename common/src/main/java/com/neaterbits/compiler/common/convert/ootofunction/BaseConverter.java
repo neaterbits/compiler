@@ -9,6 +9,7 @@ import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.Statement;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
@@ -23,6 +24,10 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 
 	protected final TypeReference convertType(TypeReference typeReference, T state) {
 		return state.convertTypeReference(typeReference);
+	}
+
+	protected final BaseType convertType(BaseType type, T state) {
+		return state.convertType(type);
 	}
 
 	protected final VariableDeclaration mapVariableDeclaration(VariableDeclaration variableDeclaration, T state) {

@@ -4,13 +4,14 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.expression.ExpressionVisitor;
+import com.neaterbits.compiler.common.ast.type.primitive.StringType;
 
 public final class StringLiteral extends Literal {
 
 	private final String value;
 	
-	public StringLiteral(Context context, String value) {
-		super(context);
+	public StringLiteral(Context context, String value, StringType type) {
+		super(context, type);
 
 		Objects.requireNonNull(value);
 		

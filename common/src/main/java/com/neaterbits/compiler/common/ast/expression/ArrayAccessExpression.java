@@ -5,6 +5,8 @@ import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
+import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.primitive.ArrayType;
 
 public final class ArrayAccessExpression extends Primary {
 
@@ -24,6 +26,13 @@ public final class ArrayAccessExpression extends Primary {
 
 	public Expression getIndex() {
 		return index.get();
+	}
+
+	@Override
+	public BaseType getType() {
+		final ArrayType arrayType = (ArrayType)array.get().getType();
+		
+		return arrayType.getElementType();
 	}
 
 	@Override

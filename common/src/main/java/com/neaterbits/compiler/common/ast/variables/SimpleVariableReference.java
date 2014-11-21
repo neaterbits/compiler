@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public final class SimpleVariableReference extends VariableReference {
 	
@@ -24,6 +25,11 @@ public final class SimpleVariableReference extends VariableReference {
 	
 	public VarName getName() {
 		return declaration.getName();
+	}
+
+	@Override
+	public BaseType getType() {
+		return declaration.getType();
 	}
 
 	@Override

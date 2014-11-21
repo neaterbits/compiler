@@ -24,10 +24,12 @@ import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
 import com.neaterbits.compiler.common.ast.type.primitive.DoubleType;
 import com.neaterbits.compiler.common.ast.type.primitive.FloatType;
 import com.neaterbits.compiler.common.ast.type.primitive.IntType;
+import com.neaterbits.compiler.common.ast.type.primitive.IntegerType;
 import com.neaterbits.compiler.common.ast.type.primitive.LongType;
 import com.neaterbits.compiler.common.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
-import com.neaterbits.compiler.common.ast.type.primitive.VoidType;
+import com.neaterbits.compiler.common.ast.type.primitive.StringType;
+import com.neaterbits.compiler.common.ast.type.primitive.NamedVoidType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
@@ -480,7 +482,39 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 		final JavaInteger javaInteger = JavaParserUtil.parseIntegerLiteral(literal);
 		
-		delegate.onIntegerLiteral(context, BigInteger.valueOf(javaInteger.getValue()), javaInteger.getBase(), true, javaInteger.getBits());
+		final int bits = javaInteger.getBits();
+		
+		final IntegerType type;
+		
+		switch (bits) {
+		case 8:
+			type = BYTE_TYPE;
+			break;
+			
+		case 16:
+			type = SHORT_TYPE;
+			break;
+			
+		case 32:
+			type = INT_TYPE;
+			break;
+			
+		case 64:
+			type = LONG_TYPE;
+			break;
+			
+		default:
+			throw new UnsupportedOperationException();
+		}
+		
+		
+		delegate.onIntegerLiteral(
+				context,
+				BigInteger.valueOf(javaInteger.getValue()),
+				javaInteger.getBase(),
+				true,
+				bits,
+				type);
 	}
 
 	public void onJavaFloatingPointLiteral(Context context, String literal) {
@@ -504,7 +538,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new IllegalStateException("Not a boolean literal: " + literal);
 		}
 
-		delegate.onBooleanLiteral(context, value);
+		delegate.onBooleanLiteral(context, value, BOOLEAN_TYPE);
 	}
 	
 	public void onJavaCharacterLiteral(Context context, String literal) {
@@ -515,7 +549,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 		final String s = literal.substring(1, literal.length() - 1);
 		
-		delegate.onCharacterLiteral(context, s.charAt(0));
+		delegate.onCharacterLiteral(context, s.charAt(0), CHAR_TYPE);
 	}
 	
 	public void onJavaStringLiteral(Context context, String literal) {
@@ -523,7 +557,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new IllegalStateException("Not a String literal");
 		}
 
-		delegate.onStringLiteral(context, literal.substring(1, literal.length() - 1));
+		delegate.onStringLiteral(context, literal.substring(1, literal.length() - 1), STRING_TYPE);
 	}
 	
 	public void onJavaNullLiteral(Context context, String literal) {
@@ -673,7 +707,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	private static final FloatType 	FLOAT_TYPE 	= new FloatType	(new TypeName("float"), false);
 	private static final DoubleType DOUBLE_TYPE = new DoubleType(new TypeName("double"), false);
 	private static final BooleanType BOOLEAN_TYPE = new BooleanType(new TypeName("boolean"), false);
-	private static final VoidType VOID_TYPE = new VoidType(new TypeName("void"));
+	private static final StringType STRING_TYPE = new StringType(new TypeName("String"), true);
+	private static final NamedVoidType VOID_TYPE = new NamedVoidType(new TypeName("void"));
 	
 	public void onJavaPrimitiveType(Context context, JavaPrimitiveType type) {
 		

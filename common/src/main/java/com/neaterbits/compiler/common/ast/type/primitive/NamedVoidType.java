@@ -3,9 +3,9 @@ package com.neaterbits.compiler.common.ast.type.primitive;
 import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 
-public class VoidType extends ScalarType {
+public class NamedVoidType extends ScalarType {
 
-	public VoidType(TypeName typeName) {
+	public NamedVoidType(TypeName typeName) {
 		super(typeName, false);
 	}
 

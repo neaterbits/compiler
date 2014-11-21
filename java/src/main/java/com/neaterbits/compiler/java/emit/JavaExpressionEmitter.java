@@ -82,7 +82,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	public Void onClassInstanceCreation(ClassInstanceCreationExpression expression, EmitterState state) {
 		state.append("new ");
 		
-		emitType(expression.getType(), state);
+		emitType(expression.getTypeReference(), state);
 		
 		state.append('(');
 
@@ -97,7 +97,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	@Override
 	public Void onMethodInvocation(MethodInvocationExpression expression, EmitterState param) {
 		
-		switch (expression.getType()) {
+		switch (expression.getInvocationType()) {
 		case NO_OBJECT:
 			break;
 			
@@ -123,7 +123,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 			break;
 			
 		default:
-			throw new UnsupportedOperationException("Unknown method invocation type " + expression.getType());
+			throw new UnsupportedOperationException("Unknown method invocation type " + expression.getInvocationType());
 		}
 
 		param.append(expression.getCallable().getName());
@@ -141,7 +141,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 		param.append("new ");
 		
-		emitType(expression.getType(), param);
+		emitType(expression.getTypeReference(), param);
 		
 		param.append(' ');
 		
@@ -177,7 +177,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	@Override
 	public Void onFieldAccess(FieldAccess expression, EmitterState param) {
 
-		switch (expression.getType()) {
+		switch (expression.getFieldAccessType()) {
 		case FIELD:
 			param.append('.').append(expression.getFieldName().getName());
 			break;

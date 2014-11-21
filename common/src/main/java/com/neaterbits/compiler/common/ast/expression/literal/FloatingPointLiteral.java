@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.ExpressionVisitor;
+import com.neaterbits.compiler.common.ast.type.primitive.FloatingPointType;
 
 public final class FloatingPointLiteral extends Literal {
 
@@ -13,8 +14,8 @@ public final class FloatingPointLiteral extends Literal {
 	private final Base base;
 	private final int bits;
 
-	public FloatingPointLiteral(Context context, BigDecimal value, Base base, int bits) {
-		super(context);
+	public FloatingPointLiteral(Context context, BigDecimal value, Base base, int bits, FloatingPointType type) {
+		super(context, type);
 
 		Objects.requireNonNull(value);
 		Objects.requireNonNull(base);

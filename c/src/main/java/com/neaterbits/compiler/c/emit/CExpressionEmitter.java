@@ -84,7 +84,7 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	@Override
 	public Void onFieldAccess(FieldAccess expression, EmitterState param) {
 
-		switch (expression.getType()) {
+		switch (expression.getFieldAccessType()) {
 		case FIELD:
 			param.append('.').append(expression.getFieldName().getName());
 			break;

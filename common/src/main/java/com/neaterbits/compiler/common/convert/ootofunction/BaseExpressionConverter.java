@@ -24,6 +24,11 @@ import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
+import com.neaterbits.compiler.common.ast.type.primitive.CharacterType;
+import com.neaterbits.compiler.common.ast.type.primitive.FloatingPointType;
+import com.neaterbits.compiler.common.ast.type.primitive.IntegerType;
+import com.neaterbits.compiler.common.ast.type.primitive.StringType;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.convert.ConverterState;
 import com.neaterbits.compiler.common.convert.ExpressionConverter;
@@ -91,7 +96,7 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 	public final Expression onFieldAccess(FieldAccess expression, T param) {
 		return new FieldAccess(
 				expression.getContext(),
-				expression.getType(),
+				expression.getFieldAccessType(),
 				mapComplexType(expression.getClassType(), param),
 				expression.getFieldName());
 	}
@@ -118,28 +123,43 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 				expression.getValue(),
 				expression.getBase(),
 				expression.isSigned(),
-				expression.getBits());
+				expression.getBits(),
+				(IntegerType)convertType(expression.getType(), param));
 	}
 
 	@Override
 	public final Expression onStringLiteral(StringLiteral expression, T param) {
 
-		return new StringLiteral(expression.getContext(), expression.getValue());
+		return new StringLiteral(
+				expression.getContext(),
+				expression.getValue(),
+				(StringType)convertType(expression.getType(), param));
 	}
 
 	@Override
 	public final Expression onFloatingPointLiteral(FloatingPointLiteral expression, T param) {
-		return new FloatingPointLiteral(expression.getContext(), expression.getValue(), expression.getBase(), expression.getBits());
+		return new FloatingPointLiteral(
+				expression.getContext(),
+				expression.getValue(),
+				expression.getBase(),
+				expression.getBits(),
+				(FloatingPointType)convertType(expression.getType(), param));
 	}
 
 	@Override
 	public final Expression onBooleanLiteral(BooleanLiteral expression, T param) {
-		return new BooleanLiteral(expression.getContext(), expression.getValue());
+		return new BooleanLiteral(
+				expression.getContext(),
+				expression.getValue(),
+				(BooleanType)convertType(expression.getType(), param));
 	}
 
 	@Override
 	public final Expression onCharacterLiteral(CharacterLiteral expression, T param) {
-		return new CharacterLiteral(expression.getContext(), expression.getValue());
+		return new CharacterLiteral(
+				expression.getContext(),
+				expression.getValue(),
+				(CharacterType)convertType(expression.getType(), param));
 	}
 
 	@Override

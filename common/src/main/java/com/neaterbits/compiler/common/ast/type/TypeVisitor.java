@@ -4,6 +4,7 @@ import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.EnumType;
 import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
+import com.neaterbits.compiler.common.ast.type.primitive.ArrayType;
 import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
 import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
@@ -12,9 +13,11 @@ import com.neaterbits.compiler.common.ast.type.primitive.DoubleType;
 import com.neaterbits.compiler.common.ast.type.primitive.FloatType;
 import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.type.primitive.LongType;
+import com.neaterbits.compiler.common.ast.type.primitive.NullType;
 import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.common.ast.type.primitive.StringType;
-import com.neaterbits.compiler.common.ast.type.primitive.VoidType;
+import com.neaterbits.compiler.common.ast.type.primitive.UnnamedVoidType;
+import com.neaterbits.compiler.common.ast.type.primitive.NamedVoidType;
 
 public interface TypeVisitor<T, R> {
 	
@@ -36,7 +39,7 @@ public interface TypeVisitor<T, R> {
 	
 	R onBoolean(BooleanType type, T param);
 	
-	R onVoid(VoidType type, T param);
+	R onVoid(NamedVoidType type, T param);
 	
 	R onString(StringType type, T param);
 	
@@ -47,6 +50,12 @@ public interface TypeVisitor<T, R> {
 	R onInterface(InterfaceType type, T param);
 
 	R onEnum(EnumType type, T param);
+	
+	R onArray(ArrayType type, T param);
 
 	R onStruct(StructType type, T param);
+
+	R onNullType(NullType type, T param);
+	
+	R onUnnamedVoidType(UnnamedVoidType type, T param);
 }

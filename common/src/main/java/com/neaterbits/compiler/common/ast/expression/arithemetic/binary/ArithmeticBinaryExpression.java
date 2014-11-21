@@ -7,6 +7,7 @@ import com.neaterbits.compiler.common.ast.expression.BinaryExpression;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.ExpressionVisitor;
 import com.neaterbits.compiler.common.ast.operator.Arithmetic;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public class ArithmeticBinaryExpression extends BinaryExpression {
 
@@ -22,6 +23,11 @@ public class ArithmeticBinaryExpression extends BinaryExpression {
 
 	public final Arithmetic getOperator() {
 		return operator;
+	}
+
+	@Override
+	public BaseType getType() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public final class SingleLambdaExpression extends LambdaExpression {
 
@@ -21,6 +22,11 @@ public final class SingleLambdaExpression extends LambdaExpression {
 
 	public Expression getExpression() {
 		return expression.get();
+	}
+
+	@Override
+	public BaseType getType() {
+		return expression.get().getType();
 	}
 
 	@Override

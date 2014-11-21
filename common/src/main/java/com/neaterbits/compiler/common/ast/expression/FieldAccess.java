@@ -8,6 +8,7 @@ import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.parser.FieldAccessType;
 
@@ -28,7 +29,7 @@ public final class FieldAccess extends Primary {
 		this.fieldName = fieldName;
 	}
 
-	public FieldAccessType getType() {
+	public FieldAccessType getFieldAccessType() {
 		return type;
 	}
 
@@ -38,6 +39,11 @@ public final class FieldAccess extends Primary {
 
 	public FieldName getFieldName() {
 		return fieldName;
+	}
+	
+	@Override
+	public BaseType getType() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

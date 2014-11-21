@@ -20,7 +20,7 @@ public final class ClassInstanceCreationExpression extends Call<ConstructorName>
 		this.type = makeSingle(type);
 	}
 
-	public TypeReference getType() {
+	public TypeReference getTypeReference() {
 		return type.get();
 	}
 

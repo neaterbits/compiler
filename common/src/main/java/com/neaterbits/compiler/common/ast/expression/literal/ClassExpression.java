@@ -6,6 +6,7 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.expression.ExpressionVisitor;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassOrInterfaceName;
 
 public final class ClassExpression extends Primary {
@@ -28,6 +29,11 @@ public final class ClassExpression extends Primary {
 
 	public int getNumArrayDims() {
 		return numArrayDims;
+	}
+
+	@Override
+	public BaseType getType() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

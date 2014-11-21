@@ -9,6 +9,7 @@ import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.operator.Operator;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public final class ExpressionList extends Expression {
 
@@ -35,6 +36,11 @@ public final class ExpressionList extends Expression {
 
 	public ASTList<Expression> getExpressions() {
 		return expressions;
+	}
+	
+	@Override
+	public BaseType getType() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

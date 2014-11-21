@@ -8,6 +8,7 @@ import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.block.CallableName;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public abstract class Call<N extends CallableName>
 		extends Primary {
@@ -31,6 +32,11 @@ public abstract class Call<N extends CallableName>
 
 	public final ParameterList getParameters() {
 		return parameters.get();
+	}
+	
+	@Override
+	public final BaseType getType() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

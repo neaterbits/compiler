@@ -16,4 +16,6 @@ public abstract class ASTList<T extends ASTNode> extends ASTNodeHolder implement
 	public final boolean contains(Predicate<T> predicate) {
 		return find(predicate) != null;
 	}
+	
+	public abstract T getLast();
 }

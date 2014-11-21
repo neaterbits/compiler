@@ -7,6 +7,7 @@ import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public final class FieldAccessReference extends VariableReference {
 
@@ -22,6 +23,11 @@ public final class FieldAccessReference extends VariableReference {
 	
 	public FieldAccess getExpression() {
 		return expression.get();
+	}
+	
+	@Override
+	public BaseType getType() {
+		return expression.get().getType();
 	}
 
 	@Override

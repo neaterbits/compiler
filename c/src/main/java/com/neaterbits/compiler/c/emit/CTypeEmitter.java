@@ -1,8 +1,10 @@
 package com.neaterbits.compiler.c.emit;
 
+import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.PointerType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
+import com.neaterbits.compiler.common.ast.type.primitive.ArrayType;
 import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
 import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
@@ -13,11 +15,15 @@ import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.type.primitive.LongType;
 import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.common.ast.type.primitive.StringType;
-import com.neaterbits.compiler.common.ast.type.primitive.VoidType;
+import com.neaterbits.compiler.common.ast.type.primitive.NamedVoidType;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.BaseProceduralTypeEmitter;
 
 public class CTypeEmitter extends BaseProceduralTypeEmitter<EmitterState> {
+
+	private void emitType(BaseType type, EmitterState param) {
+		type.visit(this, param);
+	}
 
 	@Override
 	public Void onByte(ByteType type, EmitterState param) {
@@ -118,9 +124,21 @@ public class CTypeEmitter extends BaseProceduralTypeEmitter<EmitterState> {
 	}
 
 	@Override
-	public Void onVoid(VoidType type, EmitterState param) {
+	public Void onVoid(NamedVoidType type, EmitterState param) {
 		param.append("void");
 
+		return null;
+	}
+
+	@Override
+	public Void onArray(ArrayType type, EmitterState param) {
+		
+		emitType(type.getElementType(), param);
+		
+		for (int i = 0; i < type.getNumDims(); ++ i) {
+			param.append("[]");
+		}
+		
 		return null;
 	}
 }

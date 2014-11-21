@@ -3,8 +3,9 @@ package com.neaterbits.compiler.common.ast.variables;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
-public class NameReference extends VariableReference {
+public final class NameReference extends VariableReference {
 
 	private final String name;
 
@@ -16,6 +17,11 @@ public class NameReference extends VariableReference {
 	
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public BaseType getType() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.expression.PrimaryList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public final class PrimaryListVariableReference extends VariableReference {
 
@@ -22,6 +23,11 @@ public final class PrimaryListVariableReference extends VariableReference {
 
 	public PrimaryList getList() {
 		return list.get();
+	}
+	
+	@Override
+	public BaseType getType() {
+		return list.get().getType();
 	}
 
 	@Override

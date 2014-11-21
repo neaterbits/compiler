@@ -10,6 +10,7 @@ import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public final class ArrayCreationExpression extends Primary {
 
@@ -28,8 +29,13 @@ public final class ArrayCreationExpression extends Primary {
 		this.numDims = numDims;
 	}
 	
-	public TypeReference getType() {
+	public TypeReference getTypeReference() {
 		return type.get();
+	}
+
+	@Override
+	public BaseType getType() {
+		return getTypeReference().getType();
 	}
 
 	public ASTList<Expression> getDimExpressions() {

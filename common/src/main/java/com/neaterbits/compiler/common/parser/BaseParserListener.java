@@ -64,6 +64,11 @@ import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.WhileStatement;
+import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
+import com.neaterbits.compiler.common.ast.type.primitive.CharacterType;
+import com.neaterbits.compiler.common.ast.type.primitive.FloatingPointType;
+import com.neaterbits.compiler.common.ast.type.primitive.IntegerType;
+import com.neaterbits.compiler.common.ast.type.primitive.StringType;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
@@ -1270,7 +1275,9 @@ public abstract class BaseParserListener {
 		
 		final StackPrimaryList stackPrimaryList = get();
 		
-		stackPrimaryList.add(new ThisPrimary(context));
+		final StackNamedClass stackClass = mainStack.getFromTop(StackNamedClass.class);
+		
+		stackPrimaryList.add(new ThisPrimary(context, new ResolveLaterTypeReference(context, new ScopedName(null, stackClass.getName()))));
 		
 		logExit(context);
 	}
@@ -1386,57 +1393,57 @@ public abstract class BaseParserListener {
 	
 	// Literals
 	
-	public final void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits) {
+	public final void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits, IntegerType type) {
 		
 		logEnter(context);
 		
 		final PrimarySetter primarySetter = get();
 		
-		primarySetter.addPrimary(new IntegerLiteral(context, value, base, signed, bits));
+		primarySetter.addPrimary(new IntegerLiteral(context, value, base, signed, bits, type));
 		
 		logExit(context);
 	}
 	
-	public final void onFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits) {
+	public final void onFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits, FloatingPointType type) {
 		
 		logEnter(context);
 		
 		final PrimarySetter primarySetter = get();
 		
-		primarySetter.addPrimary(new FloatingPointLiteral(context, value, base, bits));
+		primarySetter.addPrimary(new FloatingPointLiteral(context, value, base, bits, type));
 		
 		logExit(context);
 	}
 	
-	public final void onBooleanLiteral(Context context, boolean value) {
+	public final void onBooleanLiteral(Context context, boolean value, BooleanType type) {
 		
 		logEnter(context);
 		
 		final PrimarySetter primarySetter = get();
 		
-		primarySetter.addPrimary(new BooleanLiteral(context, value));
+		primarySetter.addPrimary(new BooleanLiteral(context, value, type));
 		
 		logExit(context);
 	}
 	
-	public final void onCharacterLiteral(Context context, char value) {
+	public final void onCharacterLiteral(Context context, char value, CharacterType type) {
 		
 		logEnter(context);
 		
 		final PrimarySetter expressionSetter = get();
 		
-		expressionSetter.addPrimary(new CharacterLiteral(context, value));
+		expressionSetter.addPrimary(new CharacterLiteral(context, value, type));
 		
 		logExit(context);
 	}
 	
-	public final void onStringLiteral(Context context, String value) {
+	public final void onStringLiteral(Context context, String value, StringType type) {
 		
 		logEnter(context);
 		
 		final PrimarySetter primarySetter = get();
 		
-		primarySetter.addPrimary(new StringLiteral(context, value));
+		primarySetter.addPrimary(new StringLiteral(context, value, type));
 		
 		logExit(context);
 	}

@@ -5,6 +5,7 @@ import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 
 public final class VariableExpression extends Primary {
@@ -19,6 +20,11 @@ public final class VariableExpression extends Primary {
 
 	public final VariableReference getReference() {
 		return reference.get();
+	}
+	
+	@Override
+	public BaseType getType() {
+		return reference.get().getType();
 	}
 
 	@Override

@@ -117,6 +117,16 @@ public final class ASTMutableList<T extends ASTNode> extends ASTList<T> {
 		
 		return new IteratorImpl<>(head);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public T getLast() {
+		if (size == 0) {
+			throw new IllegalStateException("Empty list");
+		}
+		
+		return (T)tail.last;
+	}
 
 	@Override
 	public final int size() {

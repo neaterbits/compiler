@@ -6,7 +6,12 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.block.Block;
+import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
+import com.neaterbits.compiler.common.ast.statement.ReturnStatement;
+import com.neaterbits.compiler.common.ast.statement.Statement;
+import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.primitive.UnnamedVoidType;
 
 public final class BlockLambdaExpression extends LambdaExpression {
 
@@ -22,6 +27,31 @@ public final class BlockLambdaExpression extends LambdaExpression {
 
 	public Block getBlock() {
 		return block.get();
+	}
+
+	@Override
+	public BaseType getType() {
+		
+		final ASTList<Statement> statements = this.block.get().getStatements();
+		
+		final BaseType type;
+		
+		if (statements.isEmpty()) {
+			type = UnnamedVoidType.INSTANCE;
+		}
+		else if (statements.getLast() instanceof ReturnStatement) {
+			
+			final ReturnStatement returnStatement = (ReturnStatement)statements.getLast();
+
+			type = returnStatement.getExpression() != null
+					? returnStatement.getExpression().getType()
+					: UnnamedVoidType.INSTANCE;
+		}
+		else {
+			type = UnnamedVoidType.INSTANCE;
+		}
+
+		return type;
 	}
 
 	@Override

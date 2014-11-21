@@ -7,6 +7,7 @@ import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTList;
+import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public final class PrimaryList extends Primary {
 
@@ -24,6 +25,11 @@ public final class PrimaryList extends Primary {
 
 	public ASTList<Primary> getPrimaries() {
 		return primaries;
+	}
+	
+	@Override
+	public BaseType getType() {
+		return primaries.getLast().getType();
 	}
 
 	@Override
