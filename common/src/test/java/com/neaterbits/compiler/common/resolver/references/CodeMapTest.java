@@ -197,7 +197,7 @@ public class CodeMapTest extends BaseResolveTest {
 				Collections.emptyList());
 		
 		return new ClassType(
-				new NamespaceReference(namespace.toArray(new String[namespace.size()])),
+				new NamespaceReference(namespace),
 				null,
 				classDefinition);
 	}
@@ -214,7 +214,7 @@ public class CodeMapTest extends BaseResolveTest {
 				Collections.emptyList());
 		
 		return new InterfaceType(
-				new NamespaceReference(namespace.toArray(new String[namespace.size()])),
+				new NamespaceReference(namespace),
 				null,
 				interfaceDefinition);
 	}

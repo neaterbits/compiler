@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.common.ast;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import com.neaterbits.compiler.common.util.Strings;
 
@@ -10,6 +11,10 @@ public final class NamespaceReference {
 
 	public NamespaceReference(String [] parts) {
 		this.parts = Arrays.copyOf(parts, parts.length);
+	}
+	
+	public NamespaceReference(Collection<String> parts) {
+		this.parts = parts.toArray(new String[parts.size()]);
 	}
 
 	public String [] getParts() {
