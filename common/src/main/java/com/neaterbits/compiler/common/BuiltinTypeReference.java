@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
 
 public final class BuiltinTypeReference extends ResolvedTypeReference {
@@ -18,6 +19,12 @@ public final class BuiltinTypeReference extends ResolvedTypeReference {
 		
 		this.type = type;
 	}
+
+	@Override
+	public String getDebugName() {
+		return ((NamedType)type).getName().getName();
+	}
+
 
 	@Override
 	public BaseType getType() {

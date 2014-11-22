@@ -4,28 +4,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ast.type.FullTypeName;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 
 public final class ResolvedTypesMap {
 
-	private final Map<FullTypeName, ResolvedType> map;
+	private final Map<CompleteName, ResolvedType> map;
 	
 	ResolvedTypesMap() {
 		this.map = new HashMap<>();
 	}
 	
 	
-	void addMapping(FullTypeName typeName, ResolvedType type) {
+	void addMapping(CompleteName typeName, ResolvedType type) {
 		Objects.requireNonNull(typeName);
 		Objects.requireNonNull(type);
 		
 		map.put(typeName, type);
 	}
 	
-	public ResolvedType lookupType(FullTypeName fullTypeName) {
-		Objects.requireNonNull(fullTypeName);
+	public ResolvedType lookupType(CompleteName completeName) {
+		Objects.requireNonNull(completeName);
 		
-		return map.get(fullTypeName);
+		return map.get(completeName);
 	}
 }

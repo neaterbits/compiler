@@ -15,6 +15,8 @@ public abstract class TypeReference extends BaseASTElement {
 
 	public abstract BaseType getType();
 	
+	public abstract String getDebugName();
+	
 	public abstract <T, R> R visit(TypeReferenceVisitor<T, R> visitor, T param);
 	
 }

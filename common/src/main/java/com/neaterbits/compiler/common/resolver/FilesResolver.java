@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
-import com.neaterbits.compiler.common.ast.type.FullTypeName;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
@@ -52,34 +52,34 @@ public final class FilesResolver {
 		
 		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl());
 		
-		final Map<FullTypeName, ResolvedType> resolvedTypesByName = new HashMap<>();
+		final Map<CompleteName, ResolvedType> resolvedTypesByName = new HashMap<>();
 		
 		for (ResolvedFile resolvedFile : resolvedFiles) {
-			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> resolvedTypesByName.put(type.getFullTypeName(), type));
+			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> resolvedTypesByName.put(type.getCompleteName(), type));
 		}
 		
-		final Set<FullTypeName> toAdd = new HashSet<>(resolvedTypesByName.keySet());
+		final Set<CompleteName> toAdd = new HashSet<>(resolvedTypesByName.keySet());
 		
 		// Since types extend from other types, we can only add those were we have added all base classes
 		while (!toAdd.isEmpty()) {
 			
-			final Iterator<FullTypeName> iterator = toAdd.iterator();
+			final Iterator<CompleteName> iterator = toAdd.iterator();
 			
 			while (iterator.hasNext()) {
 
-				final FullTypeName fullTypeName = iterator.next();
+				final CompleteName completeName = iterator.next();
 				
-				if (codeMap.hasType(fullTypeName)) {
+				if (codeMap.hasType(completeName)) {
 					throw new IllegalStateException();
 				}
 	
-				final ResolvedType type = resolvedTypesByName.get(fullTypeName);
+				final ResolvedType type = resolvedTypesByName.get(completeName);
 				
 				boolean allExtendsFromAdded = true;
 				
 				if (type.getExtendsFrom() != null) {
 					for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
-						if (!codeMap.hasType(typeDependency.getFullTypeName())) {
+						if (!codeMap.hasType(typeDependency.getCompleteName())) {
 							allExtendsFromAdded = false;
 							break;
 						}
@@ -98,7 +98,7 @@ public final class FilesResolver {
 			
 		for (ResolvedFile resolvedFile : resolvedFiles) {
 			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> {
-				typeNosList.add(codeMap.getTypeNo(type.getFullTypeName()));
+				typeNosList.add(codeMap.getTypeNo(type.getCompleteName()));
 			});
 			
 			final int [] typeNos = new int[typeNosList.size()];
@@ -223,7 +223,7 @@ public final class FilesResolver {
 
 			resolvedTypes.add(resolvedType);
 
-			resolvedTypesMap.addMapping(type.getFullTypeName(), resolvedType);
+			resolvedTypesMap.addMapping(type.getCompleteName(), resolvedType);
 		}
 		
 		return resolved ? resolvedTypes : null;
@@ -252,7 +252,7 @@ public final class FilesResolver {
 
 			if (foundType != null) {
 				final ResolvedTypeDependency resolvedTypeDependency = new ResolvedTypeDependencyImpl(
-						foundType.getFullTypeName(),
+						foundType.getCompleteName(),
 						compiledTypeDependency.getReferenceType(),
 						compiledTypeDependency.getElement());
 				

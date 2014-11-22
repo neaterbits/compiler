@@ -7,7 +7,7 @@ import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 
-public abstract class ComplexTypeDefinition extends TypeDefinition {
+public abstract class ComplexTypeDefinition extends TypeDefinition<DefinitionName> {
 
 	private final ASTList<ComplexMemberDefinition> members;
 	

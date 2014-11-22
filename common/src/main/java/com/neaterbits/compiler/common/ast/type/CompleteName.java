@@ -4,14 +4,15 @@ import java.util.Collections;
 import java.util.List;
 
 import com.neaterbits.compiler.common.ast.NamespaceReference;
+import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 
-public final class FullTypeName {
+public final class CompleteName {
 
 	private final NamespaceReference namespace; // "package" in Java
-	private final List<TypeName> outerTypes; // If this is an inner class
+	private final List<DefinitionName> outerTypes; // If this is an inner class
 	private final TypeName name; // Name of the type itself
 
-	public FullTypeName(NamespaceReference namespace, List<TypeName> outerTypes, TypeName name) {
+	public CompleteName(NamespaceReference namespace, List<DefinitionName> outerTypes, TypeName name) {
 		this.namespace = namespace;
 		this.outerTypes = outerTypes != null ? Collections.unmodifiableList(outerTypes) : null;
 		this.name = name;
@@ -21,7 +22,7 @@ public final class FullTypeName {
 		return namespace;
 	}
 
-	public List<TypeName> getOuterTypes() {
+	public List<DefinitionName> getOuterTypes() {
 		return outerTypes;
 	}
 
@@ -47,7 +48,7 @@ public final class FullTypeName {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		FullTypeName other = (FullTypeName) obj;
+		CompleteName other = (CompleteName) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

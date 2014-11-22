@@ -155,7 +155,7 @@ public abstract class BaseJavaCompilerTest {
 						throw new IllegalStateException();
 					}
 					
-					final ResolvedType dependencyType = resolvedTypesMap.lookupType(typeDependency.getFullTypeName());
+					final ResolvedType dependencyType = resolvedTypesMap.lookupType(typeDependency.getCompleteName());
 					
 					final ComplexType<?> type = dependencyType.getType();
 					
@@ -253,8 +253,7 @@ public abstract class BaseJavaCompilerTest {
 				final ClassType classType = (ClassType)resolvedType.getType();
 			
 				final StructType structType = ClassToFunctionsConverter.convertClassFieldsToStruct(
-						resolvedType.getNamespace(),
-						classType.getDefinition(),
+						classType,
 						map,
 						convertLaterTypeReferences,
 						fieldType -> converterState.convertTypeReference(fieldType),

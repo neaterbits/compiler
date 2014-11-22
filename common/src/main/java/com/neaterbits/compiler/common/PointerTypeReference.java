@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.PointerType;
 
 public final class PointerTypeReference extends ResolvedTypeReference {
@@ -21,6 +22,11 @@ public final class PointerTypeReference extends ResolvedTypeReference {
 
 	public PointerType getPointerType() {
 		return pointerType;
+	}
+
+	@Override
+	public String getDebugName() {
+		return ((NamedType)pointerType.getDelegate()).getName().getName() + "_ptr";
 	}
 
 	@Override

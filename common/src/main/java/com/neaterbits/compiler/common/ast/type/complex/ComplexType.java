@@ -3,7 +3,7 @@ package com.neaterbits.compiler.common.ast.type.complex;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.list.ASTList;
-import com.neaterbits.compiler.common.ast.type.FullTypeName;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexTypeDefinition;
@@ -12,7 +12,7 @@ public abstract class ComplexType<T extends ComplexTypeDefinition> extends Named
 
 	private final T definition;
 
-	public ComplexType(FullTypeName name, boolean nullable, T definition) {
+	public ComplexType(CompleteName name, boolean nullable, T definition) {
 		super(name, nullable);
 		
 		Objects.requireNonNull(definition);

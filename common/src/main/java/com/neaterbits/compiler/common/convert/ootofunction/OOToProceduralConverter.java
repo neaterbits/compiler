@@ -45,7 +45,12 @@ public abstract class OOToProceduralConverter<T extends OOToProceduralConverterS
 				
 				final ClassToFunctionsConverter<T> classToFunctionsConverter = new ClassToFunctionsConverter<>();
 				
-				final List<CompilationCode> converted = classToFunctionsConverter.convertClass((ClassDefinition)compilationCode, converterState);
+				final ClassDefinition classDefinition = (ClassDefinition)compilationCode;
+				
+				final List<CompilationCode> converted = classToFunctionsConverter.convertClass(
+						converterState.makeCompleteName(classDefinition.getName()),
+						classDefinition,
+						converterState);
 				
 				allCode.addAll(converted);
 			}

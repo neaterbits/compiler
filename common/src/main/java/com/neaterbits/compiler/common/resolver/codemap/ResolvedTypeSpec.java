@@ -2,15 +2,15 @@ package com.neaterbits.compiler.common.resolver.codemap;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ast.type.FullTypeName;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.loader.TypeVariant;
 
 final class ResolvedTypeSpec {
 
-	private final FullTypeName name;
+	private final CompleteName name;
 	private final TypeVariant typeVariant;
 
-	ResolvedTypeSpec(FullTypeName name, TypeVariant typeVariant) {
+	ResolvedTypeSpec(CompleteName name, TypeVariant typeVariant) {
 		
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(typeVariant);

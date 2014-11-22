@@ -9,7 +9,7 @@ import java.util.Set;
 
 import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.block.Parameter;
-import com.neaterbits.compiler.common.ast.type.FullTypeName;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
@@ -95,23 +95,23 @@ public final class MethodsResolver {
 		Objects.requireNonNull(resolvedType);
 		
 		// Pass typeNo to references since faster lookup
-		final Integer typeNo = codeMap.getTypeNo(resolvedType.getFullTypeName());
+		final Integer typeNo = codeMap.getTypeNo(resolvedType.getCompleteName());
 		
 		if (typeNo == null) {
-			throw new IllegalArgumentException("No typeNo for " + resolvedType.getFullTypeName().getName());
+			throw new IllegalArgumentException("No typeNo for " + resolvedType.getCompleteName().getName());
 		}
 		
 		switch (resolvedType.getTypeVariant()) {
 		case CLASS:
 			
-			System.out.println("## resolve type " + resolvedType.getFullTypeName().getName());
+			System.out.println("## resolve type " + resolvedType.getCompleteName().getName());
 			
 			final ClassType classType = (ClassType)resolvedType.getType();
 
 			addClassMembers(classType, typeNo);
 
 			// Have added all methods, compute extends from/by
-			codeMap.computeMethodExtends(classType.getFullTypeName());
+			codeMap.computeMethodExtends(classType.getCompleteName());
 			break;
 			
 		default:
@@ -173,7 +173,7 @@ public final class MethodsResolver {
 
 		final ClassMethod classMethod = classMethodMember.getMethod();
 		
-		final FullTypeName [] parameterTypes = new FullTypeName[classMethod.getParameters().size()];
+		final CompleteName [] parameterTypes = new CompleteName[classMethod.getParameters().size()];
 		
 		// final int [] parameterTypes = new int[classMethod.getParameters().size()]; 
 		
@@ -182,7 +182,7 @@ public final class MethodsResolver {
 		for (Parameter parameter : classMethod.getParameters()) {
 			final NamedType namedType = (NamedType)parameter.getType().getType();
 			
-			parameterTypes[i ++] = namedType.getFullTypeName();
+			parameterTypes[i ++] = namedType.getCompleteName();
 		}
 		
 		System.out.println("## addMethod " + typeNo + "/" + classMethod.getName());

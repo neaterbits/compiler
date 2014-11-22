@@ -44,4 +44,26 @@ public final class VariableDeclaration {
 	public int getNumDims() {
 		return numDims;
 	}
+
+	@Override
+	public String toString() {
+		
+		final StringBuilder sb = new StringBuilder();
+		
+		if (!modifiers.getModifiers().isEmpty()) {
+			modifiers.getModifiers().foreachWithIndex((modifier, index) -> {
+				sb.append(modifier.getClass().getSimpleName());
+				
+				sb.append(' ');
+			});
+		}
+		
+		sb.append(type.getDebugName()).append(' ').append(name.getName());
+		
+		for (int i = 0; i < numDims; ++ i) {
+			sb.append("[]");
+		}
+
+		return sb.toString();
+	}
 }

@@ -18,7 +18,6 @@ import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
-import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.ast.type.complex.EnumType;
@@ -27,6 +26,7 @@ import com.neaterbits.compiler.common.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
+import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethod;
@@ -281,7 +281,7 @@ class TypeFinder {
 		
 		final NamespaceReference namespaceReference;
 		
-		final TypeName typeName;
+		final DefinitionName typeName;
 		
 		if (element instanceof Namespace) {
 
@@ -342,7 +342,7 @@ class TypeFinder {
 			}
 		}
 		
-		final List<TypeName> outerTypes;
+		final List<DefinitionName> outerTypes;
 		
 		if (typeName == null) {
 			outerTypes = last != null ? last.getOuterTypes() : null;

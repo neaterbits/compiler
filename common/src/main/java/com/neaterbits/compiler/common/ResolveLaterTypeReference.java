@@ -25,6 +25,11 @@ public final class ResolveLaterTypeReference extends TypeReference {
 	}
 
 	@Override
+	public String getDebugName() {
+		return typeName.getName();
+	}
+
+	@Override
 	public BaseType getType() {
 		
 		if (resolved == null) {

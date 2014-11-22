@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.common.convert;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.TypeReference;
@@ -7,6 +8,9 @@ import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
+import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 
@@ -15,6 +19,7 @@ public abstract class ConverterState<T extends ConverterState<T>> {
 	private final Converters<T> converters;
 
 	private Namespace currentNamespace;
+	private List<DefinitionName> outerTypes;
 
 	public ConverterState(Converters<T> converters) {
 
@@ -58,5 +63,12 @@ public abstract class ConverterState<T extends ConverterState<T>> {
 
 	public final void setCurrentNamespace(Namespace currentNamespace) {
 		this.currentNamespace = currentNamespace;
+	}
+	
+	public final CompleteName makeCompleteName(TypeName name) {
+		
+		Objects.requireNonNull(name);
+		
+		return new CompleteName(currentNamespace.getReference(), outerTypes, name);
 	}
 }

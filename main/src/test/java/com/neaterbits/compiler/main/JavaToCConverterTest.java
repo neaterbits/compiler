@@ -25,11 +25,11 @@ import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ast.ProgramLoader;
 import com.neaterbits.compiler.common.parser.ParsedFile;
-import com.neaterbits.compiler.common.resolver.CodeMap;
 import com.neaterbits.compiler.common.resolver.FilesResolver;
 import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.common.resolver.ResolveLogger;
 import com.neaterbits.compiler.common.resolver.UnresolvedDependencies;
+import com.neaterbits.compiler.common.resolver.CodeMap;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.main.convert.ConvertClass;
@@ -79,7 +79,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		final ResolvedType printstream = resolveResult.getResolvedFiles().stream()
 				.flatMap(file -> file.getTypes().stream())
-				.filter(type -> type.getFullTypeName().getName().getName().equals("PrintStream"))
+				.filter(type -> type.getCompleteName().getName().getName().equals("PrintStream"))
 				.findFirst().get();
 				
 		assertThat(printstream).isNotNull();

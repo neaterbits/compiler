@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.main;
 
-import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.block.FunctionName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
-import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
+import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.Converters;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
@@ -15,14 +15,40 @@ public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState
 	public MappingJavaToCConverterState(Converters<T> converters, CodeMap codeMap) {
 		super(converters, codeMap);
 	}
+
+	private static String className(CompleteName type) {
+		final StringBuilder sb = new StringBuilder();
+
+		className(type, sb);
+		
+		return sb.toString();
+	}
+
+	private static void className(CompleteName type, StringBuilder sb) {
+		
+		sb.append(Strings.join(type.getNamespace().getParts(), '_'));
+		
+		if (type.getOuterTypes() != null) {
+			for (TypeName typeName : type.getOuterTypes()) {
+				sb.append('_').append(typeName.getName());
+			}
+		}
+	}
 	
 	@Override
-	public final FunctionName methodToFunctionName(NamespaceReference namespace, MethodName methodName) {
-		return new FunctionName(Strings.join(namespace.getParts(), '_') + '_' + methodName.getName());
+	public final FunctionName methodToFunctionName(CompleteName type, MethodName methodName) {
+
+		final StringBuilder sb = new StringBuilder();
+		
+		className(type, sb);
+		
+		sb.append('_').append(methodName.getName());
+		
+		return new FunctionName(sb.toString());
 	}
 
 	@Override
-	public final StructName classToStructName(NamespaceReference namespace, ClassName className) {
-		return new StructName(Strings.join(namespace.getParts(), '_') + '_' + className.getName());
+	public final StructName classToStructName(CompleteName completeName) {
+		return new StructName(className(completeName));
 	}
 }

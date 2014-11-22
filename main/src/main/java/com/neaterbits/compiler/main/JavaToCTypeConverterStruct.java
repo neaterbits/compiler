@@ -35,7 +35,7 @@ public class JavaToCTypeConverterStruct extends BaseTypeConverter<JavaToCClassTo
 	public BaseType onEnum(EnumType type, JavaToCClassToStructState param) {
 		throw new UnsupportedOperationException();
 	}
-
+	
 	@Override
 	public BaseType onStruct(StructType type, JavaToCClassToStructState param) {
 		throw new UnsupportedOperationException();

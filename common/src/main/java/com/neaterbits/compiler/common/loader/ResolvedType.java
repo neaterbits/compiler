@@ -3,7 +3,7 @@ package com.neaterbits.compiler.common.loader;
 import java.util.Collection;
 
 import com.neaterbits.compiler.common.ast.NamespaceReference;
-import com.neaterbits.compiler.common.ast.type.FullTypeName;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
 
@@ -17,8 +17,8 @@ public interface ResolvedType extends TypeInfo {
 		return getType() != null ? getType().getNamespace() : null;
 	}
 	
-	default FullTypeName getFullTypeName() {
-		return getType() != null ? getType().getFullTypeName() : null;
+	default CompleteName getCompleteName() {
+		return getType() != null ? getType().getCompleteName() : null;
 	}
 	
 	ComplexType<?> getType();

@@ -3,16 +3,16 @@ package com.neaterbits.compiler.common.ast.type.complex;
 import java.util.List;
 
 import com.neaterbits.compiler.common.ast.NamespaceReference;
-import com.neaterbits.compiler.common.ast.type.FullTypeName;
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 
-public final class ClassType extends ComplexType<ClassDefinition> {
+public final class ClassType extends InvocableType<ClassDefinition> {
 	
-	public ClassType(NamespaceReference namespace, List<TypeName> outerTypes, ClassDefinition definition) {
+	public ClassType(NamespaceReference namespace, List<DefinitionName> outerTypes, ClassDefinition definition) {
 		super(
-				new FullTypeName(namespace, outerTypes, definition.getName()),
+				new CompleteName(namespace, outerTypes, definition.getName()),
 				true,
 				definition);
 	}

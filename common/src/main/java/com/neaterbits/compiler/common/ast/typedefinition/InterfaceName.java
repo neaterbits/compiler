@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.common.ast.typedefinition;
 
-public final class InterfaceName extends DefinitionName {
+public final class InterfaceName extends InvocableName {
 
 	public InterfaceName(String name) {
 		super(name);

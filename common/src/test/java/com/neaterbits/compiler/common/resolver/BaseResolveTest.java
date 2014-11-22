@@ -46,7 +46,7 @@ public abstract class BaseResolveTest {
 		final ScopedName scopedName = makeScopedName(name);
 		
 		final List<ResolvedTypeDependency> extendsFromDependencies = Arrays.stream(extendsFrom)
-				.map(type -> new TestResolvedTypeDependency(type.getFullTypeName(), ReferenceType.EXTENDS_FROM))
+				.map(type -> new TestResolvedTypeDependency(type.getCompleteName(), ReferenceType.EXTENDS_FROM))
 				.collect(Collectors.toList());
 		
 		final ResolvedType resolvedType = new TestResolvedType(resolvedFile.getSpec(), scopedName, typeVariant, null, null, extendsFromDependencies, null);

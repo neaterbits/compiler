@@ -6,33 +6,33 @@ import com.neaterbits.compiler.common.ast.NamespaceReference;
 
 public abstract class NamedType extends BaseType {
 
-	private final FullTypeName fullTypeName;
+	private final CompleteName completeName;
 	
-	protected NamedType(FullTypeName fullTypeName, boolean nullable) {
+	protected NamedType(CompleteName completeName, boolean nullable) {
 		super(nullable);
 
-		Objects.requireNonNull(fullTypeName);
+		Objects.requireNonNull(completeName);
 		
-		this.fullTypeName = fullTypeName;
+		this.completeName = completeName;
 	}
 
 	public final NamespaceReference getNamespace() {
-		return fullTypeName.getNamespace();
+		return completeName.getNamespace();
 	}
 
 	public final TypeName getName() {
-		return fullTypeName.getName();
+		return completeName.getName();
 	}
 	
-	public final FullTypeName getFullTypeName() {
-		return fullTypeName;
+	public final CompleteName getCompleteName() {
+		return completeName;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((fullTypeName == null) ? 0 : fullTypeName.hashCode());
+		result = prime * result + ((completeName == null) ? 0 : completeName.hashCode());
 		return result;
 	}
 
@@ -45,10 +45,10 @@ public abstract class NamedType extends BaseType {
 		if (getClass() != obj.getClass())
 			return false;
 		NamedType other = (NamedType) obj;
-		if (fullTypeName == null) {
-			if (other.fullTypeName != null)
+		if (completeName == null) {
+			if (other.completeName != null)
 				return false;
-		} else if (!fullTypeName.equals(other.fullTypeName))
+		} else if (!completeName.equals(other.completeName))
 			return false;
 		return true;
 	}

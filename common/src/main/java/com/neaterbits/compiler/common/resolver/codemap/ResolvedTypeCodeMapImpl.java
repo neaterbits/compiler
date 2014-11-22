@@ -9,7 +9,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
-import com.neaterbits.compiler.common.ast.type.FullTypeName;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
@@ -54,7 +54,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 			int dstIdx = 0;
 			
 			for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
-				extendsFrom[dstIdx ++] = nameToTypeNoMap.getType(typeDependency.getFullTypeName());
+				extendsFrom[dstIdx ++] = nameToTypeNoMap.getType(typeDependency.getCompleteName());
 			}
 		}
 		else {
@@ -70,14 +70,14 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		
 		resolvedTypes[typeNo] = type;
 		
-		nameToTypeNoMap.addMapping(type.getFullTypeName(), typeNo);
+		nameToTypeNoMap.addMapping(type.getCompleteName(), typeNo);
 		scopedNameMap.put(type.getScopedName(), typeNo);
 		
 		return typeNo;
 	}
 	
-	public ResolvedType getType(FullTypeName fullTypeName) {
-		final int typeNo = getTypeNo(fullTypeName);
+	public ResolvedType getType(CompleteName completeName) {
+		final int typeNo = getTypeNo(completeName);
 		
 		return resolvedTypes[typeNo];
 	}
@@ -90,7 +90,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 	}
 	
 	@Override
-	public ResolvedType getClassExtendsFrom(FullTypeName classType) {
+	public ResolvedType getClassExtendsFrom(CompleteName classType) {
 
 		final int type = codeMap.getClassExtendsFrom(getTypeNo(classType));
 		
@@ -98,29 +98,29 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 	}
 
 	@Override
-	public Collection<ResolvedType> getInterfacesImplement(FullTypeName classType) {
+	public Collection<ResolvedType> getInterfacesImplement(CompleteName classType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Collection<ResolvedType> getInterfacesExtendFrom(FullTypeName interfaceType) {
+	public Collection<ResolvedType> getInterfacesExtendFrom(CompleteName interfaceType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	public boolean hasType(FullTypeName fullTypeName) {
-		return nameToTypeNoMap.getType(fullTypeName) != null;
+	public boolean hasType(CompleteName completeName) {
+		return nameToTypeNoMap.getType(completeName) != null;
 	}
 
-	public Integer getTypeNo(FullTypeName type) {
+	public Integer getTypeNo(CompleteName type) {
 		
 		Objects.requireNonNull(type);
 		
 		return nameToTypeNoMap.getType(type);
 	}
 	
-	public int addMethod(int type, String name, FullTypeName [] parameterTypes, MethodVariant methodVariant) {
+	public int addMethod(int type, String name, CompleteName [] parameterTypes, MethodVariant methodVariant) {
 		
 		final int [] parameterTypeNos = new int[parameterTypes.length];
 		
@@ -131,12 +131,12 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		return codeMap.addMethod(type, name, parameterTypeNos, methodVariant, methodMapCache);
 	}
 
-	public void computeMethodExtends(FullTypeName fullTypeName) {
-		codeMap.computeMethodExtends(getTypeNo(fullTypeName));
+	public void computeMethodExtends(CompleteName completeName) {
+		codeMap.computeMethodExtends(getTypeNo(completeName));
 	}
 
 	@Override
-	public List<ResolvedType> getDirectSubtypes(FullTypeName type) {
+	public List<ResolvedType> getDirectSubtypes(CompleteName type) {
 		
 		Objects.requireNonNull(type);
 		
@@ -154,7 +154,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 	}
 
 	@Override
-	public List<ResolvedType> getAllSubtypes(FullTypeName type) {
+	public List<ResolvedType> getAllSubtypes(CompleteName type) {
 		
 		Objects.requireNonNull(type);
 		
@@ -177,7 +177,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(methodName);
 		
-		final int typeNo = getTypeNo(type.getFullTypeName());
+		final int typeNo = getTypeNo(type.getCompleteName());
 		
 		final int [] parameterTypeNos;
 		
@@ -188,7 +188,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 			parameterTypeNos = new int[parameterTypes.length];
 		
 			for (int i = 0; i < parameterTypes.length; ++ i) {
-				parameterTypeNos[i] = getTypeNo(parameterTypes[i].getFullTypeName());
+				parameterTypeNos[i] = getTypeNo(parameterTypes[i].getCompleteName());
 			}
 		}
 		

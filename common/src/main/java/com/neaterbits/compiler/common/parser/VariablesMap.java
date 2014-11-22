@@ -34,4 +34,9 @@ public final class VariablesMap {
 
 		variables.put(name, declaration);
 	}
+
+	@Override
+	public String toString() {
+		return variables.toString();
+	}
 }

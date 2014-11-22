@@ -8,19 +8,17 @@ import com.neaterbits.compiler.common.BuiltinTypeReference;
 import com.neaterbits.compiler.common.ComplexTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.CompilationCode;
-import com.neaterbits.compiler.common.ast.Namespace;
-import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.block.Function;
 import com.neaterbits.compiler.common.ast.block.FunctionName;
 import com.neaterbits.compiler.common.ast.block.FunctionQualifiers;
 import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
 import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
-import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDataFieldMember;
@@ -32,7 +30,6 @@ import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
  * Converts a class to C code
  */
 
-
 public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>>
 	extends IterativeConverter<T> {
 
@@ -42,13 +39,13 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 	}
 
 	public static StructType convertClassFieldsToStruct(
-			NamespaceReference namespace,
-			ClassDefinition classDefinition,
+			ClassType classType,
 			Map<ComplexType<?>, StructType> map,
 			List<ComplexTypeReference> convertLaterList,
 			java.util.function.Function<TypeReference, TypeReference> convertFieldType,
-			java.util.function.BiFunction<NamespaceReference, ClassName, StructName> classToStructName) {
-		
+			java.util.function.Function<CompleteName, StructName> classToStructName) {
+
+		final ClassDefinition classDefinition = classType.getDefinition();
 		
 		final int numMembers = classDefinition.getMembers().size();
 		final List<ComplexMemberDefinition> structMembers = new ArrayList<>(numMembers);
@@ -111,23 +108,24 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 			}
 		}
 
+		final StructName structName = classToStructName.apply(classType.getCompleteName());
+		
 		final StructDefinition struct = new StructDefinition(
 				classDefinition.getContext(),
-				classToStructName.apply(namespace, (ClassName)classDefinition.getName()),
+				structName,
 				structMembers);
 		
 		return new StructType(struct);
 	}
 	
-	List<CompilationCode> convertClass(ClassDefinition classDefinition, T state) {
+	List<CompilationCode> convertClass(CompleteName completeTypeName, ClassDefinition classDefinition, T state) {
+		
 
 		final int numMembers = classDefinition.getMembers().size();
 		final List<Function> functions = new ArrayList<>(numMembers);
 
 		System.out.println("### convert class " + classDefinition.getName());
 		
-		final Namespace namespace = state.getCurrentNamespace();
-
 		for (ComplexMemberDefinition memberDefinition : classDefinition.getMembers()) {
 			
 			if (memberDefinition instanceof ClassMethodMember) {
@@ -138,7 +136,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 				
 				final ClassMethod method = methodMember.getMethod();
 				
-				final FunctionName functionName = state.methodToFunctionName(namespace.getReference(), method.getName());
+				final FunctionName functionName = state.methodToFunctionName(completeTypeName, method.getName());
 				
 				final Function function = new Function(
 						methodMember.getContext(),

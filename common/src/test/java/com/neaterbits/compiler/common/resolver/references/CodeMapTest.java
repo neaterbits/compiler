@@ -51,13 +51,13 @@ public class CodeMapTest extends BaseResolveTest {
 		final int fileNo = codeMap.addFile(testFile, new int [] { typeNo });
 		assertThat(fileNo).isGreaterThanOrEqualTo(0);
 
-		final Collection<ResolvedType> directSubtypes = codeMap.getDirectSubtypes(resolvedClass.getFullTypeName());
+		final Collection<ResolvedType> directSubtypes = codeMap.getDirectSubtypes(resolvedClass.getCompleteName());
 		assertThat(directSubtypes).isNotNull();
 		assertThat(directSubtypes.isEmpty());
 		
-		assertThat(codeMap.getClassExtendsFrom(resolvedClass.getFullTypeName())).isNull();
+		assertThat(codeMap.getClassExtendsFrom(resolvedClass.getCompleteName())).isNull();
 
-		final Collection<ResolvedType> allSubtypes = codeMap.getAllSubtypes(resolvedClass.getFullTypeName());
+		final Collection<ResolvedType> allSubtypes = codeMap.getAllSubtypes(resolvedClass.getCompleteName());
 		assertThat(allSubtypes).isNotNull();
 		assertThat(allSubtypes).isEmpty();
 		
@@ -81,13 +81,13 @@ public class CodeMapTest extends BaseResolveTest {
 		final int fileNo = codeMap.addFile(testFile, new int [] { typeNo });
 		assertThat(fileNo).isGreaterThanOrEqualTo(0);
 
-		final Collection<ResolvedType> directSubtypes = codeMap.getDirectSubtypes(resolvedInterface.getFullTypeName());
+		final Collection<ResolvedType> directSubtypes = codeMap.getDirectSubtypes(resolvedInterface.getCompleteName());
 		assertThat(directSubtypes).isNotNull();
 		assertThat(directSubtypes.isEmpty());
 		
-		assertThat(codeMap.getClassExtendsFrom(resolvedInterface.getFullTypeName())).isNull();
+		assertThat(codeMap.getClassExtendsFrom(resolvedInterface.getCompleteName())).isNull();
 
-		final Collection<ResolvedType> allSubtypes = codeMap.getAllSubtypes(resolvedInterface.getFullTypeName());
+		final Collection<ResolvedType> allSubtypes = codeMap.getAllSubtypes(resolvedInterface.getCompleteName());
 		assertThat(allSubtypes).isNotNull();
 		assertThat(allSubtypes).isEmpty();
 	}
@@ -116,7 +116,7 @@ public class CodeMapTest extends BaseResolveTest {
 				TypeVariant.INTERFACE,
 				makeInterfaceType(interfaceNamespace, interfaceName));
 		
-		final ResolvedTypeDependency interfaceDependency = new TestResolvedTypeDependency(classType.getFullTypeName(), ReferenceType.EXTENDS_FROM);
+		final ResolvedTypeDependency interfaceDependency = new TestResolvedTypeDependency(classType.getCompleteName(), ReferenceType.EXTENDS_FROM);
 		final ResolvedType resolvedClass = new TestResolvedType(
 				classTestFile.getSpec(),
 				classScopedName,
@@ -137,29 +137,29 @@ public class CodeMapTest extends BaseResolveTest {
 		final int interfaceFileNo = codeMap.addFile(interfaceTestFile, new int [] { interfaceTypeNo });
 		assertThat(interfaceFileNo).isEqualTo(classFileNo + 1);
 
-		final List<ResolvedType> directSubtypes = codeMap.getDirectSubtypes(resolvedInterface.getFullTypeName());
+		final List<ResolvedType> directSubtypes = codeMap.getDirectSubtypes(resolvedInterface.getCompleteName());
 		assertThat(directSubtypes).isNotNull();
 		assertThat(directSubtypes.size()).isEqualTo(1);
 		assertThat(directSubtypes.iterator().next()).isSameAs(resolvedClass);
 
-		final List<ResolvedType> allSubtypes = codeMap.getAllSubtypes(resolvedInterface.getFullTypeName());
+		final List<ResolvedType> allSubtypes = codeMap.getAllSubtypes(resolvedInterface.getCompleteName());
 		assertThat(allSubtypes).isNotNull();
 		assertThat(allSubtypes.size()).isEqualTo(1);
 		assertThat(allSubtypes.iterator().next()).isSameAs(resolvedClass);
 
-		assertThat(codeMap.getClassExtendsFrom(resolvedInterface.getFullTypeName())).isNull();
+		assertThat(codeMap.getClassExtendsFrom(resolvedInterface.getCompleteName())).isNull();
 
 		final ResolvedType anotherClass = addType(codeMap, "AnotherTestClass.java", "com.test.AnotherTestClass", TypeVariant.CLASS, resolvedClass);
 		final ResolvedType anotherInterface = addType(codeMap, "AnotherTestInterface.java", "com.test.AnotherTestInterface", TypeVariant.INTERFACE, resolvedInterface);
 
-		final List<ResolvedType> directSubtypesUpdated = codeMap.getDirectSubtypes(resolvedInterface.getFullTypeName());
+		final List<ResolvedType> directSubtypesUpdated = codeMap.getDirectSubtypes(resolvedInterface.getCompleteName());
 
 		assertThat(directSubtypesUpdated).isNotNull();
 		assertThat(directSubtypesUpdated.size()).isEqualTo(2);
 		assertThat(directSubtypesUpdated.get(0)).isSameAs(resolvedClass);
 		assertThat(directSubtypesUpdated.get(1)).isSameAs(anotherInterface);
 
-		final List<ResolvedType> allSubtypesUpdated = codeMap.getAllSubtypes(resolvedInterface.getFullTypeName());
+		final List<ResolvedType> allSubtypesUpdated = codeMap.getAllSubtypes(resolvedInterface.getCompleteName());
 
 		assertThat(allSubtypesUpdated).isNotNull();
 		
