@@ -17,6 +17,8 @@
 
 	<modules>
 		<module>common</module>
+		<module>main</module>
+		<module>c</module>
 		<module>java</module>
 		<module>javascript</module>
 	</modules>

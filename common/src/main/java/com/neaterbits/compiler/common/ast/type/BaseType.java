@@ -1,17 +1,12 @@
 package com.neaterbits.compiler.common.ast.type;
 
-public class BaseType {
-
-	private final String name;
+public abstract class BaseType {
 	private final boolean nullable;
 
-	protected BaseType(String name, boolean nullable) {
-		this.name = name;
-		this.nullable = nullable;
-	}
+	public abstract <T, R> R visit(TypeVisitor<T, R> visitor, T param);
 
-	public final String getName() {
-		return name;
+	protected BaseType(boolean nullable) {
+		this.nullable = nullable;
 	}
 
 	public final boolean isNullable() {

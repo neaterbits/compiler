@@ -2,6 +2,7 @@ package com.neaterbits.compiler.java.parser.antlr4;
 
 import com.neaterbits.compiler.java.Java8BaseListener;
 import com.neaterbits.compiler.java.Java8Parser.CompilationUnitContext;
+import com.neaterbits.compiler.java.Java8Parser.NormalClassDeclarationContext;
 import com.neaterbits.compiler.java.Java8Parser.PackageNameContext;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 
@@ -28,5 +29,15 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void exitPackageName(PackageNameContext ctx) {
 		delegate.onPackageDeclaration(context(ctx), ctx.getText());
+	}
+
+	@Override
+	public void enterNormalClassDeclaration(NormalClassDeclarationContext ctx) {
+		delegate.onClassStart(ctx.name.getText());
+	}
+
+	@Override
+	public void exitNormalClassDeclaration(NormalClassDeclarationContext ctx) {
+		delegate.onClassEnd(context(ctx));
 	}
 }

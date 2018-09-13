@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.common.ast;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,10 @@ public class CompilationCodeLines extends BaseASTElement {
 		
 		Objects.requireNonNull(code);
 		
-		this.code = code;
+		this.code = Collections.unmodifiableList(code);
+	}
+
+	public final List<CompilationCode> getCode() {
+		return code;
 	}
 }

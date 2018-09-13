@@ -12,4 +12,8 @@ public abstract class LoopStatement extends Statement {
 
 		this.block = block;
 	}
+
+	public final Block getBlock() {
+		return block;
+	}
 }

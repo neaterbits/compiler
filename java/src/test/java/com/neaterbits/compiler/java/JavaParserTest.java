@@ -19,7 +19,7 @@ public class JavaParserTest {
 			"class TestClass {\n" +
 		    "}\n";
 		
-		final Java8AntlrParser parser = new Java8AntlrParser(true, new Java8Lexer(null), new Java8Parser(null));
+		final Java8AntlrParser parser = new Java8AntlrParser(true);
 
 		final List<AntlrError> errors = new ArrayList<>();
 		

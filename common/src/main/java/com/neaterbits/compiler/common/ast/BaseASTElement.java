@@ -8,4 +8,8 @@ public abstract class BaseASTElement {
 	public BaseASTElement(Context context) {
 		this.context = context;
 	}
+
+	public final Context getContext() {
+		return context;
+	}
 }

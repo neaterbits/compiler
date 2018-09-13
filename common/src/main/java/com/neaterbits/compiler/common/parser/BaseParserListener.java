@@ -9,6 +9,7 @@ import com.neaterbits.compiler.common.ast.CompilationCodeLines;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 
 public abstract class BaseParserListener {
 	
@@ -49,10 +50,10 @@ public abstract class BaseParserListener {
 		mainStack.push(new CodeStackEntry());
 	}
 	
-	public final void onNameSpaceEnd(Context context, String name) {
+	public final void onNameSpaceEnd(Context context, String name, String [] parts) {
 		final List<CompilationCode> namespaceCode = mainStack.pop().getList();
 
-		final Namespace nameSpace = new Namespace(context, name, new CompilationCodeLines(context, namespaceCode));
+		final Namespace nameSpace = new Namespace(context, name, parts, new CompilationCodeLines(context, namespaceCode));
 		
 		mainStack.addElement(nameSpace);
 	}
@@ -67,7 +68,7 @@ public abstract class BaseParserListener {
 		
 		final List<CompilationCode> classCode = entry.getList();
 
-		final ClassDefinition classDefinition = new ClassDefinition(context, entry.name, cast(classCode));
+		final ClassDefinition classDefinition = new ClassDefinition(context, new ClassName(entry.name), cast(classCode));
 		
 		mainStack.addElement(classDefinition);
 	}

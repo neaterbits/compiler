@@ -274,7 +274,7 @@ classDeclaration
 	;
 
 normalClassDeclaration
-	:	classModifier* 'class' Identifier typeParameters? superclass? superinterfaces? classBody
+	:	classModifier* 'class' name = Identifier typeParameters? superclass? superinterfaces? classBody
 	;
 
 classModifier
