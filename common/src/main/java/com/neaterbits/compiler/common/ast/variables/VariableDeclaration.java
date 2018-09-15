@@ -9,14 +9,16 @@ public final class VariableDeclaration {
 
 	private final TypeReference type;
 	private final VarName name;
+	private final int numDims;
 
-	public VariableDeclaration(TypeReference type, VarName name) {
+	public VariableDeclaration(TypeReference type, VarName name, int numDims) {
 		
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(name);
 		
 		this.type = type;
 		this.name = name;
+		this.numDims = numDims;
 	}
 
 	public TypeReference getTypeReference() {
@@ -29,5 +31,9 @@ public final class VariableDeclaration {
 
 	public VarName getName() {
 		return name;
+	}
+
+	public int getNumDims() {
+		return numDims;
 	}
 }

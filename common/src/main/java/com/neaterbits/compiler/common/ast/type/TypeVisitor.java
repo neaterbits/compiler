@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.ast.type;
 
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
+import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
 import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
 import com.neaterbits.compiler.common.ast.type.primitive.Char8Type;
@@ -29,6 +30,8 @@ public interface TypeVisitor<T, R> {
 	R onFloat(FloatType type, T param);
 
 	R onDouble(DoubleType type, T param);
+	
+	R onBoolean(BooleanType type, T param);
 	
 	R onString(StringType type, T param);
 	

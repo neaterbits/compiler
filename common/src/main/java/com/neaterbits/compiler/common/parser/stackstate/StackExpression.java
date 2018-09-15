@@ -6,7 +6,7 @@ import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.parser.ExpressionSetter;
 import com.neaterbits.compiler.common.parser.StackEntry;
 
-public final class StackExpression extends StackEntry implements ExpressionSetter {
+public class StackExpression extends StackEntry implements ExpressionSetter {
 
 	private Expression expression;
 	
@@ -18,12 +18,12 @@ public final class StackExpression extends StackEntry implements ExpressionSette
 		}
 	}
 
-	public Expression getExpression() {
+	public final Expression getExpression() {
 		return expression;
 	}
 
 	@Override
-	public void add(Expression expression) {
+	public final void add(Expression expression) {
 		setExpression(expression);
 	}
 }

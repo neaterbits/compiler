@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationCodeLines;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
@@ -14,12 +15,15 @@ import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
+import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
+import com.neaterbits.compiler.common.ast.statement.VariableMutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifiers;
@@ -38,6 +42,11 @@ import com.neaterbits.compiler.common.ast.typedefinition.MethodStrictfp;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodSynchronized;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
+import com.neaterbits.compiler.common.ast.typedefinition.VariableModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
+import com.neaterbits.compiler.common.ast.variables.VarName;
+import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
+import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
 import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
@@ -46,6 +55,8 @@ import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
+import com.neaterbits.compiler.common.parser.stackstate.StackVariableDeclaration;
+import com.neaterbits.compiler.common.parser.stackstate.StackVariableDeclarationList;
 
 public abstract class BaseParserListener {
 	
@@ -237,10 +248,10 @@ public abstract class BaseParserListener {
 		
 	}
 	
-	public final void onIntegerLiteral(Context context, BigInteger value, Base base, int bits) {
+	public final void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits) {
 		final ExpressionSetter expressionSetter = get();
 		
-		expressionSetter.add(new IntegerLiteral(context, value, base, true, bits));
+		expressionSetter.add(new IntegerLiteral(context, value, base, signed, bits));
 	}
 	
 	public final void onFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits) {
@@ -273,6 +284,66 @@ public abstract class BaseParserListener {
 		expressionSetter.add(new NullLiteral(context));
 	}
 
+	// Statements
+	
+	public final void onMutabilityVariableModifier(VariableMutability mutability) {
+		addVariableModifier(mutability);
+	}
+
+	private void addVariableModifier(VariableModifier modifier) {
+		Objects.requireNonNull(modifier);
+
+		final VariableModifierSetter modifierSetter = get();
+
+		modifierSetter.addModifier(modifier);
+	}
+	
+	public void onVariableDeclarationStatementStart(Context context) {
+		push(new StackVariableDeclarationList());
+	}
+	
+	public void onVariableDeclarationStatementEnd(Context context) {
+		final StackVariableDeclarationList variableDeclaration = pop();
+		
+		final StatementSetter statementSetter = get();
+		
+		final VariableDeclarationStatement statement = new VariableDeclarationStatement(
+				context,
+				new VariableModifiers(variableDeclaration.getModifiers()), 
+				variableDeclaration.getList());
+		
+		statementSetter.addStatement(statement);
+	}
+
+	public void onVariableDeclaratorStart(Context context, String name, int numDims) {
+		push(new StackVariableDeclaration(name, numDims));
+	}
+	
+	public void onVariableDeclaratorEnd(Context context) {
+		final StackVariableDeclaration stackDeclaration = pop();
+		
+		final Expression initializer = stackDeclaration.getExpression();
+		
+		final StackVariableDeclarationList declarationList = get();
+		
+		final VariableDeclaration variableDeclaration = new VariableDeclaration(
+				declarationList.getTypeReference(),
+				new VarName(stackDeclaration.getName()),
+				stackDeclaration.getNumDims());
+		
+		declarationList.add(new VariableDeclarationElement(context, variableDeclaration, initializer));
+	}
+
+	public final void onTypeReference(Context context, TypeReference typeReference) {
+		
+		Objects.requireNonNull(typeReference);
+		
+		final TypeReferenceSetter typeReferenceSetter = get();
+		
+		typeReferenceSetter.setTypeReference(typeReference);
+	}
+	
+	
 	private void push(StackEntry element) {
 		
 		Objects.requireNonNull(element);
@@ -282,6 +353,7 @@ public abstract class BaseParserListener {
 		mainStack.push(element);
 	}
 	
+
 	@SuppressWarnings("unchecked")
 	private <T extends StackEntry> T pop() {
 		final T result = (T)mainStack.pop();

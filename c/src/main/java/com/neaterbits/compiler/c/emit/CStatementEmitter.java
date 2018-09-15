@@ -4,6 +4,7 @@ package com.neaterbits.compiler.c.emit;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.StatementEmitter;
 import com.neaterbits.compiler.common.emit.base.c.CLikeStatementEmitter;
@@ -29,5 +30,10 @@ final class CStatementEmitter extends CLikeStatementEmitter<EmitterState> implem
 	@Override
 	protected void emitType(TypeReference typeReference, EmitterState param) {
 		typeReference.getType().visit(TYPE_EMITTER, param);
+	}
+
+	@Override
+	protected void emitVariableModifiers(VariableModifiers modifiers, EmitterState param) {
+		throw new UnsupportedOperationException("");
 	}
 }

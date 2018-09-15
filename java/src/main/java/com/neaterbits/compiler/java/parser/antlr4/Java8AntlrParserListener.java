@@ -7,7 +7,12 @@ import com.neaterbits.compiler.java.Java8Parser.AbstractMethodModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.AssertStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.AssignmentContext;
 import com.neaterbits.compiler.java.Java8Parser.BlockContext;
+import com.neaterbits.compiler.java.Java8Parser.BooleanLiteralContext;
+import com.neaterbits.compiler.java.Java8Parser.BooleanTypeContext;
 import com.neaterbits.compiler.java.Java8Parser.BreakStatementContext;
+import com.neaterbits.compiler.java.Java8Parser.ByteTypeContext;
+import com.neaterbits.compiler.java.Java8Parser.CharTypeContext;
+import com.neaterbits.compiler.java.Java8Parser.CharacterLiteralContext;
 import com.neaterbits.compiler.java.Java8Parser.ClassInstanceCreationExpression_lfno_primaryContext;
 import com.neaterbits.compiler.java.Java8Parser.CompilationUnitContext;
 import com.neaterbits.compiler.java.Java8Parser.ConditionalAndExpressionContext;
@@ -16,10 +21,14 @@ import com.neaterbits.compiler.java.Java8Parser.ConstantExpressionSwitchLabelCon
 import com.neaterbits.compiler.java.Java8Parser.ContinueStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.DefaultSwitchLabelContext;
 import com.neaterbits.compiler.java.Java8Parser.DoStatementContext;
+import com.neaterbits.compiler.java.Java8Parser.DoubleTypeContext;
 import com.neaterbits.compiler.java.Java8Parser.EnumConstantNameSwitchLabelContext;
 import com.neaterbits.compiler.java.Java8Parser.ExpressionStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.FinalClassModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.FinalMethodModifierContext;
+import com.neaterbits.compiler.java.Java8Parser.FinalVariableModifierContext;
+import com.neaterbits.compiler.java.Java8Parser.FloatTypeContext;
+import com.neaterbits.compiler.java.Java8Parser.FloatingPointLiteralContext;
 import com.neaterbits.compiler.java.Java8Parser.ForInitContext;
 import com.neaterbits.compiler.java.Java8Parser.ForStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.ForStatementNoShortIfContext;
@@ -27,11 +36,16 @@ import com.neaterbits.compiler.java.Java8Parser.ForUpdateContext;
 import com.neaterbits.compiler.java.Java8Parser.IfThenElseStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.IfThenElseStatementNoShortIfContext;
 import com.neaterbits.compiler.java.Java8Parser.IfThenStatementContext;
+import com.neaterbits.compiler.java.Java8Parser.IntTypeContext;
+import com.neaterbits.compiler.java.Java8Parser.IntegerLiteralContext;
 import com.neaterbits.compiler.java.Java8Parser.LeftHandSideContext;
+import com.neaterbits.compiler.java.Java8Parser.LocalVariableDeclarationStatementContext;
+import com.neaterbits.compiler.java.Java8Parser.LongTypeContext;
 import com.neaterbits.compiler.java.Java8Parser.MethodDeclarationContext;
 import com.neaterbits.compiler.java.Java8Parser.MethodDeclaratorContext;
 import com.neaterbits.compiler.java.Java8Parser.NativeMethodModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.NormalClassDeclarationContext;
+import com.neaterbits.compiler.java.Java8Parser.NullLiteralContext;
 import com.neaterbits.compiler.java.Java8Parser.PackageDeclarationContext;
 import com.neaterbits.compiler.java.Java8Parser.PrivateClassModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.PrivateMethodModifierContext;
@@ -40,6 +54,7 @@ import com.neaterbits.compiler.java.Java8Parser.ProtectedMethodModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.PublicClassModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.PublicMethodMofifierContext;
 import com.neaterbits.compiler.java.Java8Parser.ReturnStatementContext;
+import com.neaterbits.compiler.java.Java8Parser.ShortTypeContext;
 import com.neaterbits.compiler.java.Java8Parser.SingleStaticImportDeclarationContext;
 import com.neaterbits.compiler.java.Java8Parser.SingleTypeImportDeclarationContext;
 import com.neaterbits.compiler.java.Java8Parser.StaticClassModifierContext;
@@ -47,6 +62,7 @@ import com.neaterbits.compiler.java.Java8Parser.StaticImportOnDemandDeclarationC
 import com.neaterbits.compiler.java.Java8Parser.StaticMethodModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.StrictfpClassModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.StrictfpMethodModifierContext;
+import com.neaterbits.compiler.java.Java8Parser.StringLiteralContext;
 import com.neaterbits.compiler.java.Java8Parser.SwitchBlockContext;
 import com.neaterbits.compiler.java.Java8Parser.SwitchBlockStatementGroupContext;
 import com.neaterbits.compiler.java.Java8Parser.SwitchLabelsContext;
@@ -57,9 +73,11 @@ import com.neaterbits.compiler.java.Java8Parser.TryCatchContext;
 import com.neaterbits.compiler.java.Java8Parser.TryCatchFinallyContext;
 import com.neaterbits.compiler.java.Java8Parser.TryWithResourcesContext;
 import com.neaterbits.compiler.java.Java8Parser.TypeImportOnDemandDeclarationContext;
+import com.neaterbits.compiler.java.Java8Parser.VariableDeclaratorContext;
 import com.neaterbits.compiler.java.Java8Parser.WhileStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.WhileStatementNoShortIfContext;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
+import com.neaterbits.compiler.java.parser.JavaPrimitiveType;
 
 import static com.neaterbits.compiler.common.antlr4.Antlr4.context;
 
@@ -68,6 +86,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.NamespaceName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
+import com.neaterbits.compiler.common.ast.statement.VariableMutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
@@ -175,12 +194,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onImport(importStatement);
 	}
 
-
 	@Override
 	public void enterNormalClassDeclaration(NormalClassDeclarationContext ctx) {
 		delegate.onClassStart(ctx.Identifier().getText());
 	}
-	
 	
 	@Override
 	public void exitPublicClassModifier(PublicClassModifierContext ctx) {
@@ -348,14 +365,126 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		// TODO Auto-generated method stub
 		super.enterConditionalAndExpression(ctx);
 	}
+	
+	
+	@Override
+	public void exitIntegerLiteral(IntegerLiteralContext ctx) {
+		delegate.onJavaIntegerLiteral(context(ctx), ctx.getText());
+	}
 
+	@Override
+	public void exitFloatingPointLiteral(FloatingPointLiteralContext ctx) {
+		delegate.onJavaFloatingPointLiteral(context(ctx), ctx.getText());
+	}
+
+	@Override
+	public void exitBooleanLiteral(BooleanLiteralContext ctx) {
+		delegate.onJavaBooleanLiteral(context(ctx), ctx.getText());
+	}
+	
+	@Override
+	public void exitCharacterLiteral(CharacterLiteralContext ctx) {
+		delegate.onJavaCharacterLiteral(context(ctx), ctx.getText());
+	}
+
+	@Override
+	public void exitStringLiteral(StringLiteralContext ctx) {
+		delegate.onJavaStringLiteral(context(ctx), ctx.getText());
+	}
+
+	@Override
+	public void exitNullLiteral(NullLiteralContext ctx) {
+		delegate.onJavaNullLiteral(context(ctx), ctx.getText());
+	}
+
+	// Types
+
+	@Override
+	public void exitByteType(ByteTypeContext ctx) {
+		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.BYTE);
+	}
+
+	@Override
+	public void exitShortType(ShortTypeContext ctx) {
+		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.SHORT);
+	}
+
+	@Override
+	public void exitIntType(IntTypeContext ctx) {
+		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.INT);
+	}
+
+	@Override
+	public void exitLongType(LongTypeContext ctx) {
+		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.LONG);
+	}
+
+	@Override
+	public void exitCharType(CharTypeContext ctx) {
+		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.CHAR);
+	}
+
+	@Override
+	public void exitFloatType(FloatTypeContext ctx) {
+		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.FLOAT);
+	}
+
+	@Override
+	public void exitDoubleType(DoubleTypeContext ctx) {
+		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.DOUBLE);
+	}
+
+	@Override
+	public void exitBooleanType(BooleanTypeContext ctx) {
+		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.BOOLEAN);
+	}
+
+	
 	// Statements
+
+	@Override
+	public void exitFinalVariableModifier(FinalVariableModifierContext ctx) {
+		delegate.onMutabilityVariableModifier(VariableMutability.VALUE_OR_REF_IMMUTABLE);
+	}
+
+	@Override
+	public void enterLocalVariableDeclarationStatement(LocalVariableDeclarationStatementContext ctx) {
+		delegate.onVariableDeclarationStatementStart(context(ctx));
+	}
+
+	@Override
+	public void exitLocalVariableDeclarationStatement(LocalVariableDeclarationStatementContext ctx) {
+		delegate.onVariableDeclarationStatementEnd(context(ctx));
+	}
+
+	private static final int countDims(String text) {
+		return Strings.countOccurencesOf(text, "[]");
+	}
+	
+	@Override
+	public void enterVariableDeclarator(VariableDeclaratorContext ctx) {
+		delegate.onVariableDeclaratorStart(
+				context(ctx),
+				ctx.variableDeclaratorId().Identifier().getText(),
+				ctx.variableDeclaratorId().dims() != null
+					? countDims(ctx.variableDeclaratorId().dims().getText())
+					: 0);
+	}
+
+	@Override
+	public void exitVariableDeclarator(VariableDeclaratorContext ctx) {
+		delegate.onVariableDeclaratorEnd(context(ctx));
+	}
+	
 	
 	// Hack to construct proper if-else if-else sequences
+
+
 	@Override
 	public void enterIfThenStatement(IfThenStatementContext ctx) {
 		delegate.onJavaIfStatementStart(context(ctx));
 	}
+
 
 	@Override
 	public void exitIfThenStatement(IfThenStatementContext ctx) {

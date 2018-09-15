@@ -59,7 +59,35 @@ public class Strings {
 		return sb.toString();
 	}
 	
-	private static final char hex(int hex) {
+	public static int countOccurencesOf(String s, String toFind) {
+		
+		int occurences = 0;
+		int nextIndex = 0;
+
+		if (!s.isEmpty()) {
+
+			for (;;) {
+
+				int index = s.indexOf(toFind, nextIndex);
+				
+				if (index < 0) {
+					break;
+				}
+
+				++ occurences;
+				
+				nextIndex += index + toFind.length();
+				
+				if (nextIndex + toFind.length() > s.length()) {
+					break;
+				}
+			}
+		}
+
+		return occurences;
+	}
+	
+	private static char hex(int hex) {
 		
 		final char c;
 

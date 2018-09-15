@@ -3,6 +3,7 @@ package com.neaterbits.compiler.java.emit;
 import com.neaterbits.compiler.common.ast.type.PointerType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.StructType;
+import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
 import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
 import com.neaterbits.compiler.common.ast.type.primitive.Char8Type;
@@ -67,6 +68,14 @@ public final class JavaTypeEmitter implements TypeEmitter<EmitterState> {
 	@Override
 	public Void onDouble(DoubleType type, EmitterState param) {
 		param.append("double");
+
+		return null;
+	}
+
+	
+	@Override
+	public Void onBoolean(BooleanType type, EmitterState param) {
+		param.append("bool");
 
 		return null;
 	}

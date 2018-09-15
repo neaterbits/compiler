@@ -11,4 +11,6 @@ public interface StatementVisitor<T, R> {
 	R onCFor(CForStatement statement, T param);
 
 	R onAssignment(AssignmentStatement statement, T param);
+
+	R onVariableDeclaration(VariableDeclarationStatement statement, T param);
 }

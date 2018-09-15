@@ -71,8 +71,8 @@ literal
  */
 
 primitiveType
-	:	annotation* numericType
-	|	annotation* 'boolean'
+	:	annotation* numericType	# numericTypeToken
+	|	annotation* 'boolean'	# booleanType
 	;
 
 numericType
@@ -81,16 +81,16 @@ numericType
 	;
 
 integralType
-	:	'byte'
-	|	'short'
-	|	'int'
-	|	'long'
-	|	'char'
+	:	'byte'	# byteType
+	|	'short'	# shortType
+	|	'int'	# intType
+	|	'long'	# longType
+	|	'char'	# charType
 	;
 
 floatingPointType
-	:	'float'
-	|	'double'
+	:	'float'		# floatType
+	|	'double'	# doubleType
 	;
 
 referenceType
@@ -466,8 +466,8 @@ formalParameter
 	;
 
 variableModifier
-	:	annotation
-	|	'final'
+	:	annotation	# annotationVariableModifier
+	|	'final'		# finalVariableModifier
 	;
 
 lastFormalParameter

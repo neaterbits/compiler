@@ -7,8 +7,9 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.parser.NamedListStackEntry;
+import com.neaterbits.compiler.common.parser.StatementSetter;
 
-public abstract class CallableStackEntry extends NamedListStackEntry<Statement> {
+public abstract class CallableStackEntry extends NamedListStackEntry<Statement> implements StatementSetter {
 	private final List<Parameter> parameters;
 
 	public CallableStackEntry() {
@@ -27,7 +28,12 @@ public abstract class CallableStackEntry extends NamedListStackEntry<Statement> 
 		parameters.add(parameter);
 	}
 
-	public List<Parameter> getParameters() {
+	public final List<Parameter> getParameters() {
 		return parameters;
+	}
+
+	@Override
+	public final void addStatement(Statement statement) {
+		super.add(statement);
 	}
 }

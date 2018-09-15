@@ -3,6 +3,7 @@ package com.neaterbits.compiler.common.convert.ootofunction;
 import com.neaterbits.compiler.common.ResolvedTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
+import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
 import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
 import com.neaterbits.compiler.common.ast.type.primitive.Char8Type;
@@ -53,6 +54,11 @@ public abstract class BaseTypeConverter<STATE extends ConverterState>
 
 	@Override
 	public final TypeReference onChar16(Char16Type type, STATE param) {
+		return new ResolvedTypeReference(type);
+	}
+
+	@Override
+	public TypeReference onBoolean(BooleanType type, STATE param) {
 		return new ResolvedTypeReference(type);
 	}
 }

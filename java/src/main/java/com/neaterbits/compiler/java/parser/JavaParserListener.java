@@ -1,10 +1,25 @@
 package com.neaterbits.compiler.java.parser;
 
+import java.math.BigInteger;
+
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ResolvedTypeReference;
 import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.antlr4.ModelParserListener;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
+import com.neaterbits.compiler.common.ast.statement.VariableMutability;
+import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
+import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
+import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
+import com.neaterbits.compiler.common.ast.type.primitive.DoubleType;
+import com.neaterbits.compiler.common.ast.type.primitive.FloatType;
+import com.neaterbits.compiler.common.ast.type.primitive.IntType;
+import com.neaterbits.compiler.common.ast.type.primitive.LongType;
+import com.neaterbits.compiler.common.ast.type.primitive.ScalarType;
+import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
@@ -37,7 +52,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	// before we pass them to the delegate
 
 	// We use delegation instead of subclassing to make sure that we handle all methods in this class
-	
+
 	private final JavaIterativeListener delegate;
 	private final Stack<StackStatements> statementsStack; 
 
@@ -151,11 +166,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 	// Literals
 	public void onJavaIntegerLiteral(Context context, String literal) {
+
+		final JavaInteger javaInteger = JavaParserUtil.parseIntegerLiteral(literal);
 		
+		delegate.onIntegerLiteral(context, BigInteger.valueOf(javaInteger.getValue()), javaInteger.getBase(), true, javaInteger.getBits());
 	}
 
 	public void onJavaFloatingPointLiteral(Context context, String literal) {
-		
+		throw new UnsupportedOperationException();
 	}
 
 	public void onJavaBooleanLiteral(Context context, String literal) {
@@ -217,6 +235,56 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		this.compilationUnit = compilationUnit;
 		
 		return compilationUnit;
+	}
+
+	public void onMutabilityVariableModifier(VariableMutability mutability) {
+		delegate.onMutabilityVariableModifier(mutability);
+	}
+	
+	public void onVariableDeclarationStatementStart(Context context) {
+		delegate.onVariableDeclarationStatementStart(context);
+	}
+	
+	public void onVariableDeclarationStatementEnd(Context context) {
+		delegate.onVariableDeclarationStatementEnd(context);
+	}
+	
+	public void onVariableDeclaratorStart(Context context, String name, int numDims) {
+		delegate.onVariableDeclaratorStart(context, name, numDims);
+	}
+	
+	public void onVariableDeclaratorEnd(Context context) {
+		delegate.onVariableDeclaratorEnd(context);
+	}
+	
+	private static final ByteType 	BYTE_TYPE 	= new ByteType	(new TypeName("byte"), false);
+	private static final ShortType 	SHORT_TYPE 	= new ShortType	(new TypeName("short"), false);
+	private static final IntType 	INT_TYPE 	= new IntType	(new TypeName("int"), false);
+	private static final LongType 	LONG_TYPE 	= new LongType	(new TypeName("long"), false);
+	private static final Char16Type CHAR_TYPE 	= new Char16Type(new TypeName("char"), false);
+	private static final FloatType 	FLOAT_TYPE 	= new FloatType	(new TypeName("float"), false);
+	private static final DoubleType DOUBLE_TYPE = new DoubleType(new TypeName("double"), false);
+	private static final BooleanType BOOLEAN_TYPE = new BooleanType(new TypeName("boolean"), false);
+	
+	public void onJavaPrimitiveType(Context context, JavaPrimitiveType type) {
+		
+		final ScalarType genericType;
+		
+		switch (type) {
+		case BYTE:	genericType = BYTE_TYPE; break;
+		case SHORT:	genericType = SHORT_TYPE; break;
+		case INT:	genericType = INT_TYPE; break;
+		case LONG:	genericType = LONG_TYPE; break;
+		case CHAR:	genericType = CHAR_TYPE; break;
+		case FLOAT:	genericType = FLOAT_TYPE; break;
+		case DOUBLE:  genericType = DOUBLE_TYPE; break;
+		case BOOLEAN: genericType = BOOLEAN_TYPE; break;
+		
+		default:
+			throw new UnsupportedOperationException("Unknown type " + type);
+		}
+
+		delegate.onTypeReference(context, new ResolvedTypeReference(genericType));
 	}
 	
 	public void onJavaIfStatementStart(Context context) {
