@@ -5,10 +5,18 @@ import java.util.List;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 
-public class ClassDefinition extends ComplexTypeDefinition {
+public final class ClassDefinition extends ComplexTypeDefinition {
 
-	public ClassDefinition(Context context, ClassName name, List<ComplexMemberDefinition> members) {
+	private final ClassModifiers modifiers;
+	
+	public ClassDefinition(Context context, ClassModifiers modifiers, ClassName name, List<ComplexMemberDefinition> members) {
 		super(context, name, members);
+
+		this.modifiers = modifiers;
+	}
+
+	public ClassModifiers getModifiers() {
+		return modifiers;
 	}
 
 	@Override

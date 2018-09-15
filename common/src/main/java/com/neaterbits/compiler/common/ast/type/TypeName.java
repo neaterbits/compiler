@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.common.ast.type;
 
-import com.neaterbits.compiler.common.ast.block.Name;
+import com.neaterbits.compiler.common.ast.Name;
 
 public class TypeName extends Name {
 

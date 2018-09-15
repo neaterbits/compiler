@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.common.convert.ootofunction;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.neaterbits.compiler.common.ast.CompilationCode;
@@ -26,9 +27,8 @@ public class OOToProceduralConverter {
 			}
 		}
 		
-		return new CompilationUnit(compilationUnit.getContext(), convertedCode);
+		return new CompilationUnit(compilationUnit.getContext(), Collections.emptyList(), convertedCode);
 	}
-	
 	
 	
 	private List<CompilationCode> convertOOCode(CompilationCode code, OOToProceduralConverterState converterState, List<CompilationCode> allCode) {

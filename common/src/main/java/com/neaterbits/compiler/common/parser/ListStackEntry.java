@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 
-public abstract class ListStackEntry<T extends BaseASTElement> {
+public abstract class ListStackEntry<T extends BaseASTElement> extends StackEntry {
 	private final List<T> list;
 	
 	protected ListStackEntry() {

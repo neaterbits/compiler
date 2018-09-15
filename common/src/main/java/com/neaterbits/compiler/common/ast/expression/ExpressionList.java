@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
-import com.neaterbits.compiler.common.ast.operator.NumericOperator;
+import com.neaterbits.compiler.common.ast.operator.Operator;
 
-public final class NestedExpression extends Expression {
+public final class ExpressionList extends Expression {
 
-	private final List<NumericOperator> operators;
+	private final List<Operator> operators;
 	private final List<Expression> expressions;
 	
-	public NestedExpression(Context context, List<NumericOperator> operators, List<Expression> expressions) {
+	public ExpressionList(Context context, List<Operator> operators, List<Expression> expressions) {
 		super(context);
 
 		Objects.requireNonNull(operators);
@@ -28,7 +28,7 @@ public final class NestedExpression extends Expression {
 
 	
 	
-	public List<NumericOperator> getOperators() {
+	public List<Operator> getOperators() {
 		return operators;
 	}
 
@@ -38,6 +38,6 @@ public final class NestedExpression extends Expression {
 
 	@Override
 	public <T, R> R visit(ExpressionVisitor<T, R> visitor, T param) {
-		return visitor.onNestedExpression(this, param);
+		return visitor.onExpressionList(this, param);
 	}
 }

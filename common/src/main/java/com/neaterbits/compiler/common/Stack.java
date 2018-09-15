@@ -25,7 +25,20 @@ public class Stack<T> {
 	public final T get() {
 		return list.get(list.size() - 1);
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public final <E extends T> E get(Class<E> cl) {
+		for (int i = list.size() - 1; i >= 0; -- i) {
+			final T element = list.get(i);
+			
+			if (element.getClass().equals(cl)) {
+				return (E)element;
+			}
+		}
+
+		return null;
+	}
+
 	public final boolean isEmpty() {
 		return list.isEmpty();
 	}

@@ -6,11 +6,13 @@ import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
-import com.neaterbits.compiler.common.emit.BaseProceduralProgramEmitter;
 import com.neaterbits.compiler.common.emit.EmitterState;
+import com.neaterbits.compiler.common.emit.base.BaseProceduralProgramEmitter;
 
-public class CProgramEmmiter extends BaseProceduralProgramEmitter<EmitterState> {
+public class CCompilationUnitEmmiter extends BaseProceduralProgramEmitter<EmitterState> {
 
+	private static final CStatementEmitter STATEMENT_EMITTER = new CStatementEmitter(); 
+	
 	private static final CTypeEmitter TYPE_EMITTER = new CTypeEmitter();
 	
 	private void emitType(TypeReference typeReference, EmitterState param) {
@@ -19,13 +21,7 @@ public class CProgramEmmiter extends BaseProceduralProgramEmitter<EmitterState> 
 	
 	@Override
 	protected void emitStatement(Statement statement, EmitterState state) {
-		
-	}
-	
-
-	@Override
-	public Void onStatement(Statement statement, EmitterState param) {
-		return null;
+		statement.visit(STATEMENT_EMITTER, state);
 	}
 
 	@Override

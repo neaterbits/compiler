@@ -3,6 +3,7 @@ package com.neaterbits.compiler.common.ast.block;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.Name;
 
 public final class Parameter {
 

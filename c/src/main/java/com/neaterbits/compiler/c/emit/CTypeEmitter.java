@@ -12,8 +12,8 @@ import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.type.primitive.LongType;
 import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.common.ast.type.primitive.StringType;
-import com.neaterbits.compiler.common.emit.BaseProceduralTypeEmitter;
 import com.neaterbits.compiler.common.emit.EmitterState;
+import com.neaterbits.compiler.common.emit.base.BaseProceduralTypeEmitter;
 
 public class CTypeEmitter extends BaseProceduralTypeEmitter<EmitterState> {
 

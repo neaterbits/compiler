@@ -35,4 +35,10 @@ public final class Context {
 	public int getEndPos() {
 		return endPos;
 	}
+
+	@Override
+	public String toString() {
+		return "Context [file=" + file + ", startLine=" + startLine + ", startPos=" + startPos + ", endLine=" + endLine
+				+ ", endPos=" + endPos + "]";
+	}
 }

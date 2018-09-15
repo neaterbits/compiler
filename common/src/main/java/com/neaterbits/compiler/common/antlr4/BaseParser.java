@@ -189,13 +189,19 @@ public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEX
 
 			}
 		});
-
-		final ParseTreeListener parseTreeListener = makeParseTreeListener(listener);
+		
+		parser.setBuildParseTree(true);
 
 		final ParserRuleContext root = getMainContext(parser);
 
 		final int numErrors = parser.getNumberOfSyntaxErrors();
 
-		ParseTreeWalker.DEFAULT.walk(parseTreeListener, root);
+		final ParseTreeListener parseTreeListener = makeParseTreeListener(listener);
+
+		new ParseTreeWalker(){
+			
+			
+		}.walk(parseTreeListener, root);
 	}
 }
+

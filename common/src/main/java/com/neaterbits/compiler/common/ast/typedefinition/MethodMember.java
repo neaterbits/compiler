@@ -8,14 +8,21 @@ import com.neaterbits.compiler.common.ast.block.Method;
 
 public final class MethodMember extends ComplexMemberDefinition {
 
+	private final MethodModifiers modifiers;
 	private final Method method;
 
-	public MethodMember(Context context, Method method) {
+	public MethodMember(Context context, MethodModifiers modifiers, Method method) {
 		super(context);
 		
+		Objects.requireNonNull(modifiers);
 		Objects.requireNonNull(method);
 		
+		this.modifiers = modifiers;
 		this.method = method;
+	}
+
+	public MethodModifiers getModifiers() {
+		return modifiers;
 	}
 
 	public Method getMethod() {

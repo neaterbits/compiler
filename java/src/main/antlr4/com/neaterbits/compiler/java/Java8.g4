@@ -58,12 +58,12 @@ grammar Java8;
  */
 
 literal
-	:	IntegerLiteral
-	|	FloatingPointLiteral
-	|	BooleanLiteral
-	|	CharacterLiteral
-	|	StringLiteral
-	|	NullLiteral
+	:	IntegerLiteral			# integerLiteral
+	|	FloatingPointLiteral	# floatingPointLiteral
+	|	BooleanLiteral			# booleanLiteral
+	|	CharacterLiteral		# characterLiteral
+	|	StringLiteral			# stringLiteral
+	|	NullLiteral				# nullLiteral
 	;
 
 /*
@@ -274,18 +274,18 @@ classDeclaration
 	;
 
 normalClassDeclaration
-	:	classModifier* 'class' name = Identifier typeParameters? superclass? superinterfaces? classBody
+	:	classModifier* 'class' Identifier typeParameters? superclass? superinterfaces? classBody
 	;
 
 classModifier
-	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
-	|	'abstract'
-	|	'static'
-	|	'final'
-	|	'strictfp'
+	:	annotation		# classAnnotation
+	|	'public'		# publicClassModifier 
+	|	'protected'		# protectedClassModifier
+	|	'private'		# privateClassModifier
+	|	'abstract'		# abstractClassModifier
+	|	'static'		# staticClassModifier
+	|	'final'			# finalClassModifier
+	|	'strictfp'		# strictfpClassModifier
 	;
 
 typeParameters
@@ -424,16 +424,16 @@ methodDeclaration
 	;
 
 methodModifier
-	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
-	|	'abstract'
-	|	'static'
-	|	'final'
-	|	'synchronized'
-	|	'native'
-	|	'strictfp'
+	:	annotation		# methodAnnotation
+	|	'public'		# publicMethodMofifier
+	|	'protected'		# protectedMethodModifier
+	|	'private'		# privateMethodModifier
+	|	'abstract'		# abstractMethodModifier
+	|	'static'		# staticMethodModifier
+	|	'final'			# finalMethodModifier
+	|	'synchronized'	# synchronizedMethodModifier
+	|	'native'		# nativeMethodModifier
+	|	'strictfp'		# strictfpMethodModifier
 	;
 
 methodHeader
@@ -822,9 +822,9 @@ switchLabels
 	;
 
 switchLabel
-	:	'case' constantExpression ':'
-	|	'case' enumConstantName ':'
-	|	'default' ':'
+	:	'case' constantExpression ':'	# constantExpressionSwitchLabel
+	|	'case' enumConstantName ':'		# enumConstantNameSwitchLabel
+	|	'default' ':'					# defaultSwitchLabel
 	;
 
 enumConstantName
@@ -903,9 +903,9 @@ synchronizedStatement
 	;
 
 tryStatement
-	:	'try' block catches
-	|	'try' block catches? finally_
-	|	tryWithResourcesStatement
+	:	'try' block catches				# tryCatch
+	|	'try' block catches? finally_	# tryCatchFinally
+	|	tryWithResourcesStatement		# tryWithResources
 	;
 
 catches

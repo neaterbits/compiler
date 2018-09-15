@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.common.ast.block;
+package com.neaterbits.compiler.common.ast;
 
 import java.util.Objects;
 

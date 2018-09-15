@@ -1,6 +1,9 @@
 package com.neaterbits.compiler.common.emit;
 
+import java.math.BigInteger;
 import java.util.Objects;
+
+import com.neaterbits.compiler.common.ast.expression.Base;
 
 public class EmitterState {
 
@@ -27,6 +30,13 @@ public class EmitterState {
 			
 			this.atStartOfLine = false;
 		}
+	}
+	
+	public final EmitterState append(BigInteger bigInt, Base base) {
+
+		append(bigInt.toString(base.getRadix()));
+
+		return this;
 	}
 	
 	public final EmitterState append(String s) {

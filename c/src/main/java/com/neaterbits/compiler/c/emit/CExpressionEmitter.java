@@ -3,37 +3,31 @@ package com.neaterbits.compiler.c.emit;
 import java.util.List;
 
 import com.neaterbits.compiler.common.ast.condition.Condition;
-import com.neaterbits.compiler.common.ast.expression.ConditionExpression;
+import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
-import com.neaterbits.compiler.common.ast.expression.NestedExpression;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
-import com.neaterbits.compiler.common.ast.expression.arithemetic.binary.ArithmeticBinaryExpression;
-import com.neaterbits.compiler.common.ast.expression.arithemetic.unary.PostDecrementExpression;
-import com.neaterbits.compiler.common.ast.expression.arithemetic.unary.PostIncrementExpression;
-import com.neaterbits.compiler.common.ast.expression.arithemetic.unary.PreDecrementExpression;
-import com.neaterbits.compiler.common.ast.expression.arithemetic.unary.PreIncrementExpression;
-import com.neaterbits.compiler.common.ast.operator.Arithmetic;
-import com.neaterbits.compiler.common.ast.operator.Bitwise;
-import com.neaterbits.compiler.common.ast.operator.NumericOperator;
+import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
+import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
+import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLiteral;
+import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
+import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
+import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.emit.EmitterState;
-import com.neaterbits.compiler.common.emit.ExpressionEmitter;
+import com.neaterbits.compiler.common.emit.base.c.CLikeExpressionEmitter;
 
-public final class CExpressionEmitter implements ExpressionEmitter<EmitterState> {
+final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	private static final CConditionEmitter CONDITION_EMITTER = new CConditionEmitter();
 
-	private void emitCondition(Condition condition, EmitterState param) {
+	@Override
+	protected void emitCondition(Condition condition, EmitterState param) {
 		condition.visit(CONDITION_EMITTER, param);
 	}
 
-	private void emitExpression(Expression expression, EmitterState param) {
-		expression.visit(this, param);
-	}
-	
 	private void emitVariableReference(VariableReference variable, EmitterState param) {
-		param.append(variable.getName().getName());
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -62,122 +56,78 @@ public final class CExpressionEmitter implements ExpressionEmitter<EmitterState>
 	}
 
 	@Override
-	public Void onConditionExpression(ConditionExpression expression, EmitterState param) {
+	public Void onIntegerLiteral(IntegerLiteral expression, EmitterState param) {
 
-		emitCondition(expression.getCondition(), param);
+		switch (expression.getBase()) {
+		case BINARY:
+			param.append("0x").append(expression.getValue(), Base.HEX);
+			break;
 		
-		return null;
-	}
-
-	@Override
-	public Void onPreIncrement(PreIncrementExpression expression, EmitterState param) {
-
-		param.append("++");
-		
-		emitExpression(expression.getExpression(), param);
-		
-		return null;
-	}
-
-	@Override
-	public Void onPreDecrement(PreDecrementExpression expression, EmitterState param) {
-
-		param.append("--");
-
-		emitExpression(expression.getExpression(), param);
-		
-		return null;
-	}
-
-	@Override
-	public Void onPostIncrement(PostIncrementExpression expression, EmitterState param) {
-
-		emitExpression(expression.getExpression(), param);
-		
-		param.append("++");
-		
-		return null;
-	}
-
-	@Override
-	public Void onPostDecrement(PostDecrementExpression expression, EmitterState param) {
-
-		emitExpression(expression.getExpression(), param);
-		
-		param.append("--");
-		
-		return null;
-	}
-	
-	private static final char getCArithmeticOperator(Arithmetic arithmetic) {
-		final char operator;
-		
-		switch (arithmetic) {
-		case PLUS: 		operator = '+'; break;
-		case MINUS: 	operator = '-'; break;
-		case MULTIPLY: 	operator = '*'; break;
-		case DIVIDE: 	operator = '/'; break;
-		case MODULUS: 	operator = '%'; break;
-		
-		default:
-			throw new UnsupportedOperationException("Not a binary arithemetic operator: " + arithmetic);
+		case OCTAL:
+			param.append('0').append(expression.getValue(), Base.OCTAL);
+			break;
+			
+		case DECIMAL:
+			param.append(expression.getValue(), Base.DECIMAL);
+			break;
+			
+		case HEX:
+			param.append("0x").append(expression.getValue(), Base.HEX);
+			break;
 		}
 
-		return operator;
-	}
-
-	private static final String getCBitwiseOperator(Bitwise bitwise) {
-		
-		final String operator;
-		
-		switch (bitwise) {
-		case AND: 			operator = "&"; break;
-		case OR: 			operator = "|"; break;
-		case XOR: 			operator = "^"; break;
-		case LEFTSHIFT: 	operator = "<<"; break;
-		case RIGHTSHIFT: 	operator = ">>"; break;
-		
-		default:
-			throw new UnsupportedOperationException("Not a binary bitwise operator: " + bitwise);
+		if (expression.getBits() == 64) {
+			param.append(expression.isSigned() ? "l" : "ul");
 		}
-
-		return operator;
+		
+		return null;
 	}
 
 	@Override
-	public Void onArithmeticBinary(ArithmeticBinaryExpression expression, EmitterState param) {
+	public Void onFloatingPointLiteral(FloatingPointLiteral expression, EmitterState param) {
+
+		param.append(expression.getValue().toPlainString());
 		
-		final char operator = getCArithmeticOperator(expression.getOperator());
+		if (expression.getBits() == 32) {
+			param.append('f');
+		}
+		
+		return null;
+	}
 
-		emitExpression(expression.getLhs(), param);
+	@Override
+	public Void onBooleanLiteral(BooleanLiteral expression, EmitterState param) {
+		
+		param.append(expression.getValue() ? "TRUE" : "FALSE");
+		
+		return null;
+	}
 
-		param.append(' ').append(operator).append(' ');
+	@Override
+	public Void onCharacterLiteral(CharacterLiteral expression, EmitterState param) {
+
+		if (expression.getValue() > 255) {
+			throw new IllegalArgumentException("Not utf8 char");
+		}
+
+		param.append("'\\" + (int)expression.getValue() + "'");
 
 		return null;
 	}
 
 	@Override
-	public Void onNestedExpression(NestedExpression expression, EmitterState param) {
+	public Void onStringLiteral(StringLiteral expression, EmitterState param) {
+
+		param.append('"').append(expression.getValue()).append('"');
 		
-		final List<Expression> expressions = expression.getExpressions();
+		return null;
+	}
+
+	@Override
+	public Void onNullLiteral(NullLiteral expression, EmitterState param) {
 		
-		for (int i = 0; i < expressions.size(); ++ i) {
-			if (i < expressions.size() - 1) {
-				final NumericOperator numericOperator = expression.getOperators().get(i);
-				
-				param.append(' ');
-				
-				if (numericOperator.getArithmetic() != null) {
-					param.append(getCArithmeticOperator(numericOperator.getArithmetic()));
-				}
-				else if (numericOperator.getBitwise() != null) {
-					param.append(getCBitwiseOperator(numericOperator.getBitwise()));
-				}
-				
-				param.append(' ');
-			}
-		}
-		
+		param.append("NULL");
+
 		return null;
 	}
 }

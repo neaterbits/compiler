@@ -8,7 +8,7 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 
-public abstract class Block extends BaseASTElement {
+public class Block extends BaseASTElement {
 	
 	private final List<Statement> statements;
 	

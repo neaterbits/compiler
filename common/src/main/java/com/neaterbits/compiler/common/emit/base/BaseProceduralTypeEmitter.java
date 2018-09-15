@@ -1,6 +1,8 @@
-package com.neaterbits.compiler.common.emit;
+package com.neaterbits.compiler.common.emit.base;
 
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
+import com.neaterbits.compiler.common.emit.EmitterState;
+import com.neaterbits.compiler.common.emit.TypeEmitter;
 
 public abstract class BaseProceduralTypeEmitter<T extends EmitterState> implements TypeEmitter<T> {
 

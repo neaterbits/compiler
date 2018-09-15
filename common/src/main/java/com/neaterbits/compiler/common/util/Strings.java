@@ -42,9 +42,13 @@ public class Strings {
 	}
 
 	public static String join(String[] strings, char separator) {
+		return join(strings, separator, strings.length);
+	}
+
+	public static String join(String[] strings, char separator, int count) {
 		final StringBuilder sb = new StringBuilder();
 
-		for (int i = 0; i < strings.length; ++i) {
+		for (int i = 0; i < count; ++i) {
 			if (i > 0) {
 				sb.append(separator);
 			}
@@ -53,5 +57,62 @@ public class Strings {
 		}
 
 		return sb.toString();
+	}
+	
+	private static final char hex(int hex) {
+		
+		final char c;
+
+		switch (hex) {
+		case 0: c = '0'; break;
+		case 1: c = '1'; break;
+		case 2: c = '2'; break;
+		case 3: c = '3'; break;
+		case 4: c = '4'; break;
+		case 5: c = '5'; break;
+		case 6: c = '6'; break;
+		case 7: c = '7'; break;
+		case 8: c = '8'; break;
+		case 9: c = '9'; break;
+		case 10: c = 'A'; break;
+		case 11: c = 'B'; break;
+		case 12: c = 'C'; break;
+		case 13: c = 'D'; break;
+		case 14: c = 'E'; break;
+		case 15: c = 'F'; break;
+		
+		default:
+			throw new UnsupportedOperationException("Unknown hex digit: " + hex);
+		}
+		
+		return c;
+	}
+	
+	public static String toHexString(int number, int chars, boolean pad) {
+		final double maxNum = Math.pow(16, chars);
+		
+		if (number > maxNum) {
+			throw new IllegalArgumentException("Not room for " + number + " in " + chars + " chars");
+		}
+
+		final StringBuilder sb = new StringBuilder(chars);
+
+		do {
+			final int digit = number % 16;
+			
+			number /= 16;
+			
+			sb.append(hex(digit));
+		} while(number != 0);
+		
+		if (pad) {
+			final int num = chars - sb.length();
+			
+			for (int i = 0; i < num; ++ i) {
+				sb.append('0');
+			}
+		}
+
+		return sb.reverse().toString();
 	}
 }
