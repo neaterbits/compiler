@@ -2,7 +2,7 @@ package com.neaterbits.compiler.common.ast.statement;
 
 public interface StatementVisitor<T, R> {
 
-	R onIf(IfStatement statement, T param);
+	R onIf(IfElseIfElseStatement statement, T param);
 
 	R onWhile(WhileStatement statement, T param);
 

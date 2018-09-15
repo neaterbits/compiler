@@ -5,14 +5,14 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.block.Block;
-import com.neaterbits.compiler.common.ast.condition.Condition;
+import com.neaterbits.compiler.common.ast.expression.Expression;
 
 public final class ConditionBlock extends BaseASTElement {
 
-	private final Condition condition;
+	private final Expression condition;
 	private final Block block;
 	
-	public ConditionBlock(Context context, Condition condition, Block block) {
+	public ConditionBlock(Context context, Expression condition, Block block) {
 		super(context);
 		
 		Objects.requireNonNull(condition);
@@ -22,7 +22,7 @@ public final class ConditionBlock extends BaseASTElement {
 		this.block = block;
 	}
 
-	public Condition getCondition() {
+	public Expression getCondition() {
 		return condition;
 	}
 

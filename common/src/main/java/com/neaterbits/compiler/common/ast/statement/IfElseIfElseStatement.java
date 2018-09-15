@@ -7,12 +7,12 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.block.Block;
 
-public final class IfStatement extends ConditionStatement {
+public final class IfElseIfElseStatement extends ConditionStatement {
 
 	private final List<ConditionBlock> conditions;
 	private final Block elseBlock;
 	
-	public IfStatement(Context context, List<ConditionBlock> conditions, Block elseBlock) {
+	public IfElseIfElseStatement(Context context, List<ConditionBlock> conditions, Block elseBlock) {
 		super(context);
 		
 		Objects.requireNonNull(conditions);

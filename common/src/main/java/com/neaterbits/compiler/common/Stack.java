@@ -26,6 +26,10 @@ public class Stack<T> {
 		return list.get(list.size() - 1);
 	}
 
+	public final T getFromTop(int count) {
+		return list.get(list.size() - count - 1);
+	}
+
 	@SuppressWarnings("unchecked")
 	public final <E extends T> E get(Class<E> cl) {
 		for (int i = list.size() - 1; i >= 0; -- i) {

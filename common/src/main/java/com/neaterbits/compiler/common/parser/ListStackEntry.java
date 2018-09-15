@@ -20,6 +20,10 @@ public abstract class ListStackEntry<T extends BaseASTElement> extends StackEntr
 		this.list.add(entry);
 	}
 	
+	public final T getLast() {
+		return list.get(list.size() - 1);
+	}
+	
 	public final List<T> getList() {
 		return Collections.unmodifiableList(list);
 	}

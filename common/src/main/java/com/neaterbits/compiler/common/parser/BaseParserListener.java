@@ -344,7 +344,7 @@ public abstract class BaseParserListener {
 	}
 	
 	
-	private void push(StackEntry element) {
+	protected final void push(StackEntry element) {
 		
 		Objects.requireNonNull(element);
 		
@@ -355,7 +355,7 @@ public abstract class BaseParserListener {
 	
 
 	@SuppressWarnings("unchecked")
-	private <T extends StackEntry> T pop() {
+	protected final <T extends StackEntry> T pop() {
 		final T result = (T)mainStack.pop();
 		
 		System.out.println("## pop " + result.getClass());
@@ -364,7 +364,7 @@ public abstract class BaseParserListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends StackEntry> T get() {
+	protected final <T extends StackEntry> T get() {
 		return (T)mainStack.get();
 	}
 

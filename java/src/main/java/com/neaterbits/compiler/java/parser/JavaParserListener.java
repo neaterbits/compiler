@@ -1,6 +1,9 @@
 package com.neaterbits.compiler.java.parser;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolvedTypeReference;
@@ -9,7 +12,6 @@ import com.neaterbits.compiler.common.antlr4.ModelParserListener;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.statement.VariableMutability;
-import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
@@ -25,7 +27,6 @@ import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.parser.iterative.BaseIterativeOOParserListener;
-import com.neaterbits.compiler.common.parser.stackstate.StackStatements;
 import com.neaterbits.compiler.common.util.Strings;
 
 /**
@@ -53,12 +54,80 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 	// We use delegation instead of subclassing to make sure that we handle all methods in this class
 
+	
+	enum JavaStatement {
+		VARIABLE_DECLARATION,
+		ASSIGNMENT,
+		EXPRESSION,
+		ASSERT,
+		IF_THEN,
+		IF_THEN_ELSE,
+		SWITCH,
+		WHILE,
+		DO,
+		FOR
+	}
+	
+	private static class JavaStatements {
+		private final List<JavaStatement> statements;
+
+		JavaStatements() {
+			this.statements = new ArrayList<>();
+		}
+		
+		void add(JavaStatement statement) {
+			Objects.requireNonNull(statement);
+		}
+
+		JavaStatement getLast() {
+			return statements.get(statements.size() - 1);
+		}
+
+		JavaStatement getLast(int fromLast) {
+			return statements.get(statements.size() - fromLast - 1);
+		}
+	}
+	
+	private static class StatementsStack {
+		private final Stack<JavaStatements> stack;
+
+		StatementsStack() {
+			this.stack = new Stack<>();
+		}
+		
+		void push() {
+			stack.push(new JavaStatements());
+		}
+		
+		void add(JavaStatement statement) {
+			Objects.requireNonNull(statement);
+			
+			stack.get().add(statement);
+		}
+		
+		JavaStatement getLastFromTopFrame() {
+			return stack.get().getLast();
+		}
+
+		JavaStatement getLastFromFrame(int frame) {
+			return stack.getFromTop(frame).getLast();
+		}
+
+		JavaStatement getLastFromFrame(int frame, int fromLast) {
+			return stack.getFromTop(frame).getLast(fromLast);
+		}
+
+		void pop() {
+			stack.pop();
+		}
+	}
+	
 	private final JavaIterativeListener delegate;
-	private final Stack<StackStatements> statementsStack; 
+	private final StatementsStack statementsStack; 
 
 	public JavaParserListener() {
 		this.delegate = new JavaIterativeListener();
-		this.statementsStack = new Stack<>();
+		this.statementsStack = new StatementsStack();
 	}
 
 	@Override
@@ -287,28 +356,76 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onTypeReference(context, new ResolvedTypeReference(genericType));
 	}
 	
-	public void onJavaIfStatementStart(Context context) {
+	public void onJavaIfThenStatementStart(Context context) {
+
+		statementsStack.add(JavaStatement.IF_THEN);
 		
+		statementsStack.push();
+		
+		delegate.onIfStatementStart(context);
 	}
 
-	public void onJavaIfStatementEnd(Context context) {
+	public void onJavaIfThenStatementEnd(Context context) {
+		delegate.onIfStatementInitialBlockEnd(context);
+		delegate.onEndIfStatement(context);
 		
+		statementsStack.pop();
 	}
 
 	public void onJavaIfThenElseStatementStart(Context context) {
-		
+
+		if (statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE) {
+			
+			// Continuation of last if-statement
+			if (statementsStack.getLastFromFrame(1, 1) == JavaStatement.IF_THEN_ELSE) {
+				// Previous was an else-if
+				delegate.onElseIfStatementEnd(context);
+			}
+			else {
+				// Previous was an if
+				delegate.onIfStatementInitialBlockEnd(context);
+			}
+					
+			statementsStack.pop();
+			
+			statementsStack.push();
+			
+			delegate.onElseIfStatementStart(context);
+		}
+		else {
+			// New statment
+			statementsStack.add(JavaStatement.IF_THEN_ELSE);
+			statementsStack.push();
+
+			delegate.onIfStatementStart(context);
+		}
 	}
 
 	public void onJavaIfThenElseStatementEnd(Context context) {
 		
+		statementsStack.pop();
 	}
 	
 	public void onJavaBlockStart(Context context) {
-		
+		if (statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE) {
+			// a block-statement after else, so this is a true else-block
+			delegate.onElseStatementStart(context);
+		}
+		else {
+			// Do nothing, blocks are handled separately in parser
+		}
 	}
 	
 	public void onJavaBlockEnd(Context context) {
-		
+		if (statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE) {
+			// a block-statement after else, so this is a true else-block
+			delegate.onElseStatementEnd(context);
+			
+			delegate.onEndIfStatement(context);
+		}
+		else {
+			// Do nothing, blocks are handled separately in parser
+		}
 	}
 
 	public void onJavaAssertStatementStart(Context context) {

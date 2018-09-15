@@ -482,13 +482,13 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterIfThenStatement(IfThenStatementContext ctx) {
-		delegate.onJavaIfStatementStart(context(ctx));
+		delegate.onJavaIfThenStatementStart(context(ctx));
 	}
 
 
 	@Override
 	public void exitIfThenStatement(IfThenStatementContext ctx) {
-		delegate.onJavaIfStatementEnd(context(ctx));
+		delegate.onJavaIfThenStatementEnd(context(ctx));
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import com.neaterbits.compiler.common.ast.statement.AssignmentStatement;
 import com.neaterbits.compiler.common.ast.statement.CForStatement;
 import com.neaterbits.compiler.common.ast.statement.ConditionBlock;
 import com.neaterbits.compiler.common.ast.statement.DoWhileStatement;
-import com.neaterbits.compiler.common.ast.statement.IfStatement;
+import com.neaterbits.compiler.common.ast.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.WhileStatement;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
@@ -43,7 +43,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		return null;
 	}
 	@Override
-	public final Void onIf(IfStatement statement, T param) {
+	public final Void onIf(IfElseIfElseStatement statement, T param) {
 		
 		for (int i = 0; i < statement.getConditions().size(); ++ i) {
 			param.append(i == 0 ? "if" : "else if");
@@ -52,7 +52,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 			
 			final ConditionBlock conditionBlock = statement.getConditions().get(i);
 			
-			emitCondition(conditionBlock.getCondition(), param);
+			emitExpression(conditionBlock.getCondition(), param);
 			
 			param.append(") {").newline();
 			
