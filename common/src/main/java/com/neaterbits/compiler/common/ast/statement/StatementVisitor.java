@@ -19,4 +19,6 @@ public interface StatementVisitor<T, R> {
 	R onVariableDeclaration(VariableDeclarationStatement statement, T param);
 
 	R onExpressionStatement(ExpressionStatement statement, T param);
+
+	R onReturnStatement(ReturnStatement statement, T param);
 }

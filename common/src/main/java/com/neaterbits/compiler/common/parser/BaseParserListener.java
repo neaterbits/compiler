@@ -33,6 +33,7 @@ import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
+import com.neaterbits.compiler.common.ast.statement.ReturnStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableMutability;
@@ -72,6 +73,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
+import com.neaterbits.compiler.common.parser.stackstate.StackExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackFinallyBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethod;
@@ -665,7 +667,24 @@ public abstract class BaseParserListener {
 		
 		statementSetter.addStatement(statement);
 	}
+	
+	public final void onReturnStatementStart(Context context) {
+		push(new StackExpression(logger));
+	}
 
+	public final void onReturnStatementEnd(Context context) {
+
+		final StackExpression stackExpression = pop();
+
+		final ReturnStatement returnStatement = new ReturnStatement(context, stackExpression.getExpression());
+
+		final StatementSetter statementSetter = get();
+
+		statementSetter.addStatement(returnStatement);
+	}
+
+	// Stack methods
+	
 	protected final void push(StackEntry element) {
 		
 		Objects.requireNonNull(element);

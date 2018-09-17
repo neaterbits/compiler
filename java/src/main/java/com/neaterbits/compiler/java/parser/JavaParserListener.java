@@ -623,11 +623,11 @@ System.out.println("## onJavaTypeVariableReferenceType");
 	}
 	
 	public void onReturnStatementStart(Context context) {
-		
+		delegate.onReturnStatementStart(context);
 	}
 	
 	public void onReturnStatementEnd(Context context) {
-		
+		delegate.onReturnStatementEnd(context);
 	}
 	
 	public void onJavaSynchronizedStatementStart(Context context) {

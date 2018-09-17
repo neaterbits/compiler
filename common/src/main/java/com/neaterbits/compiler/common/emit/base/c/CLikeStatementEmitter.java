@@ -11,6 +11,7 @@ import com.neaterbits.compiler.common.ast.statement.ConditionBlock;
 import com.neaterbits.compiler.common.ast.statement.DoWhileStatement;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
 import com.neaterbits.compiler.common.ast.statement.IfElseIfElseStatement;
+import com.neaterbits.compiler.common.ast.statement.ReturnStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.WhileStatement;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
@@ -166,6 +167,16 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 	@Override
 	public Void onExpressionStatement(ExpressionStatement statement, T param) {
 		emitExpression(statement.getExpression(), param);
+
+		return null;
+	}
+	@Override
+	public Void onReturnStatement(ReturnStatement statement, T param) {
+		param.append("return ");
+		
+		emitExpression(statement.getExpression(), param);
+
+		param.append(';');
 
 		return null;
 	}
