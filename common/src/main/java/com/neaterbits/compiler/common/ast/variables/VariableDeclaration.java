@@ -4,21 +4,29 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.type.BaseType;
+import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 
 public final class VariableDeclaration {
 
+	private final VariableModifiers modifiers;
 	private final TypeReference type;
 	private final VarName name;
 	private final int numDims;
 
-	public VariableDeclaration(TypeReference type, VarName name, int numDims) {
+	public VariableDeclaration(VariableModifiers modifiers, TypeReference type, VarName name, int numDims) {
 		
+		Objects.requireNonNull(modifiers);
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(name);
 		
+		this.modifiers = modifiers;
 		this.type = type;
 		this.name = name;
 		this.numDims = numDims;
+	}
+
+	public VariableModifiers getModifiers() {
+		return modifiers;
 	}
 
 	public TypeReference getTypeReference() {

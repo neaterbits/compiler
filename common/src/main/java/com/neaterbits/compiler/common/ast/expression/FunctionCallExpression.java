@@ -1,29 +1,12 @@
 package com.neaterbits.compiler.common.ast.expression;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.neaterbits.compiler.common.Context;
-import com.neaterbits.compiler.common.ast.block.Function;
+import com.neaterbits.compiler.common.ast.block.FunctionName;
 
-public final class FunctionCallExpression extends Expression {
+public final class FunctionCallExpression extends CallExpression<FunctionName> {
 
-	private final Function function;
-	private final List<Expression> parameters;
-	
-	public FunctionCallExpression(Context context, Function function, List<Expression> parameters) {
-		super(context);
-
-		this.function = function;
-		this.parameters = Collections.unmodifiableList(parameters);
-	}
-
-	public Function getFunction() {
-		return function;
-	}
-	
-	public List<Expression> getParameters() {
-		return parameters;
+	public FunctionCallExpression(Context context, FunctionName function, ParameterList parameters) {
+		super(context, function, parameters);
 	}
 
 	@Override

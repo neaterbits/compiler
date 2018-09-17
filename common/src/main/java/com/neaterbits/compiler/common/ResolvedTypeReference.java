@@ -8,7 +8,8 @@ public final class ResolvedTypeReference extends TypeReference {
 
 	private final BaseType type;
 
-	public ResolvedTypeReference(BaseType type) {
+	public ResolvedTypeReference(Context context, BaseType type) {
+		super(context);
 
 		Objects.requireNonNull(type);
 		
@@ -18,5 +19,10 @@ public final class ResolvedTypeReference extends TypeReference {
 	@Override
 	public BaseType getType() {
 		return type;
+	}
+
+	@Override
+	public String toString() {
+		return "ResolvedTypeReference [type=" + type + "]";
 	}
 }

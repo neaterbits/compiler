@@ -10,4 +10,9 @@ public abstract class Expression extends BaseASTElement {
 	public Expression(Context context) {
 		super(context);
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName().toString();
+	}
 }

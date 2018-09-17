@@ -370,9 +370,9 @@ unannPrimitiveType
 	;
 
 unannReferenceType
-	:	unannClassOrInterfaceType
-	|	unannTypeVariable
-	|	unannArrayType
+	:	unannClassOrInterfaceType	# classOrInterfaceReferenceType
+	|	unannTypeVariable			# typeVariableReferenceType
+	|	unannArrayType				# arrayReferenceType
 	;
 
 unannClassOrInterfaceType
@@ -1007,18 +1007,18 @@ primaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primary
 	;
 
 primaryNoNewArray_lfno_primary
-	:	literal
-	|	typeName ('[' ']')* '.' 'class'
-	|	unannPrimitiveType ('[' ']')* '.' 'class'
-	|	'void' '.' 'class'
-	|	'this'
-	|	typeName '.' 'this'
-	|	'(' expression ')'
-	|	classInstanceCreationExpression_lfno_primary
-	|	fieldAccess_lfno_primary
-	|	arrayAccess_lfno_primary
-	|	methodInvocation_lfno_primary
-	|	methodReference_lfno_primary
+	:	literal										# literalToken
+	|	typeName ('[' ']')* '.' 'class'				# typeNameClassExpression
+	|	unannPrimitiveType ('[' ']')* '.' 'class'	# primitiveTypeNameClassExpression
+	|	'void' '.' 'class'							# voidClassExpression
+	|	'this'										# thisExpression
+	|	typeName '.' 'this'							# typeNameThisExpression
+	|	'(' expression ')'							# nestedExpression
+	|	classInstanceCreationExpression_lfno_primary	# javaClassInstanceCreationExpression
+	|	fieldAccess_lfno_primary					# fieldAccessExpression
+	|	arrayAccess_lfno_primary					# arrayAccessExpression
+	|	methodInvocation_lfno_primary				# methodInvocationExpression
+	|	methodReference_lfno_primary				# methodReferenceExpression
 	;
 
 primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary
@@ -1046,12 +1046,12 @@ classInstanceCreationExpression
 	;
 
 classInstanceCreationExpression_lf_primary
-	:	'.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+	:	'.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?							# classInstanceCreationExpressionSimple
 	;
 
 classInstanceCreationExpression_lfno_primary
-	:	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
-	|	expressionName '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?
+	:	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?	# classInstanceCreationExpressionMultipleIdentifiers
+	|	expressionName '.' 'new' typeArguments? annotation* Identifier typeArgumentsOrDiamond? '(' argumentList? ')' classBody?				# classInstanceCreationExpressionWithExpressionName
 	;
 
 typeArgumentsOrDiamond
@@ -1224,18 +1224,18 @@ conditionalExpression
 	;
 
 conditionalOrExpression
-	:	conditionalAndExpression
-	|	conditionalOrExpression '||' conditionalAndExpression
+	:	conditionalAndExpression								# conditionalAndExpressionToken
+	|	conditionalOrExpression '||' conditionalAndExpression	# logicalOrExpression
 	;
 
 conditionalAndExpression
-	:	inclusiveOrExpression
-	|	conditionalAndExpression '&&' inclusiveOrExpression
+	:	inclusiveOrExpression								# inclusiveOrExpressionToken
+	|	conditionalAndExpression '&&' inclusiveOrExpression	# logicalAndExpression
 	;
 
 inclusiveOrExpression
-	:	exclusiveOrExpression
-	|	inclusiveOrExpression '|' exclusiveOrExpression
+	:	exclusiveOrExpression								# exclusiveOrExpressionToken
+	|	inclusiveOrExpression '|' exclusiveOrExpression		# bitwiseOrExpression
 	;
 
 exclusiveOrExpression
@@ -1249,9 +1249,9 @@ andExpression
 	;
 
 equalityExpression
-	:	relationalExpression
-	|	equalityExpression '==' relationalExpression
-	|	equalityExpression '!=' relationalExpression
+	:	relationalExpression							# relationalExpressionToken
+	|	equalityExpression '==' relationalExpression	# relationalEqualsExpression
+	|	equalityExpression '!=' relationalExpression	# relationalNotEqualsExpression
 	;
 
 relationalExpression

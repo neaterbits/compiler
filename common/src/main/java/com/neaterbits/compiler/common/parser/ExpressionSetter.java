@@ -4,6 +4,6 @@ import com.neaterbits.compiler.common.ast.expression.Expression;
 
 public interface ExpressionSetter {
 
-	void add(Expression expression);
+	void addExpression(Expression expression);
 	
 }

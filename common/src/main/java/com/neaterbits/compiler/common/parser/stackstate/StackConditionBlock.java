@@ -5,13 +5,16 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.statement.Statement;
+import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.StatementSetter;
 
-public final class StackConditionBlock extends StackExpression implements StatementSetter {
+public final class StackConditionBlock extends StackExpressionList implements StatementSetter {
 
 	private final List<Statement> statements;
 
-	public StackConditionBlock() {
+	public StackConditionBlock(ParseLogger parseLogger) {
+		super(parseLogger);
+
 		this.statements = new ArrayList<>();
 	}
 

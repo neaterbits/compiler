@@ -12,4 +12,9 @@ public abstract class BaseType {
 	public final boolean isNullable() {
 		return nullable;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
+	}
 }

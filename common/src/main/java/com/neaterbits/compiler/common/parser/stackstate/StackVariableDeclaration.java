@@ -2,12 +2,15 @@ package com.neaterbits.compiler.common.parser.stackstate;
 
 import java.util.Objects;
 
-public final class StackVariableDeclaration extends StackExpression {
+import com.neaterbits.compiler.common.log.ParseLogger;
+
+public final class StackVariableDeclaration extends StackExpressionList {
 
 	private final String name;
 	private final int numDims;
 
-	public StackVariableDeclaration(String name, int numDims) {
+	public StackVariableDeclaration(ParseLogger parseLogger, String name, int numDims) {
+		super(parseLogger);
 		
 		Objects.requireNonNull(name);
 		

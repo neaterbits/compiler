@@ -1,6 +1,8 @@
 package com.neaterbits.compiler.java.emit;
 
+import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
+import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
@@ -16,12 +18,18 @@ import com.neaterbits.compiler.common.util.Strings;
 final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	private static final JavaConditionEmitter CONDITION_EMITTER = new JavaConditionEmitter();
+	
+	private static final JavaTypeEmitter TYPE_EMITTER = new JavaTypeEmitter();
 
 	@Override
 	protected void emitCondition(Condition condition, EmitterState param) {
 		condition.visit(CONDITION_EMITTER, param);
 	}
 
+	private void emitType(TypeReference type, EmitterState param) {
+		type.getType().visit(TYPE_EMITTER, param);
+	}
+	
 	@Override
 	public Void onVariable(VariableExpression expression, EmitterState param) {
 		throw new UnsupportedOperationException();
@@ -30,6 +38,22 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	@Override
 	public Void onFunctionCall(FunctionCallExpression expression, EmitterState param) {
 		throw new UnsupportedOperationException();
+	}
+	
+
+	@Override
+	public Void onClassInstanceCreation(ClassInstanceCreationExpression expression, EmitterState state) {
+		state.append("new ");
+		
+		emitType(expression.getType(), state);
+		
+		state.append('(');
+
+		emitListTo(state, expression.getParameters().getList(), ", ", param -> emitExpression(param, state));
+		
+		state.append(')');
+		
+		return null;
 	}
 
 	@Override

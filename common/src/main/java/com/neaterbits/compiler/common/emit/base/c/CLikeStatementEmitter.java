@@ -7,11 +7,11 @@ import com.neaterbits.compiler.common.ast.statement.AssignmentStatement;
 import com.neaterbits.compiler.common.ast.statement.CForStatement;
 import com.neaterbits.compiler.common.ast.statement.ConditionBlock;
 import com.neaterbits.compiler.common.ast.statement.DoWhileStatement;
+import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
 import com.neaterbits.compiler.common.ast.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.WhileStatement;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
-import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.StatementEmitter;
 import com.neaterbits.compiler.common.emit.base.BaseStatementEmitter;
@@ -31,13 +31,12 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		emitVariableModifiers(statement.getModifiers(), param);
 
 		emitListTo(param, statement.getDeclarations(), ", ", e -> {
-			final VariableDeclaration declaration = e.getDeclaration();
 
-			emitType(declaration.getTypeReference(), param);
+			emitType(e.getTypeReference(), param);
 			
 			param.append(' ');
 			
-			param.append(declaration.getName().getName());
+			param.append(e.getName().getName());
 		});
 		
 		return null;
@@ -139,6 +138,13 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		param.append(';');
 		
 		param.newline();
+
+		return null;
+	}
+
+	@Override
+	public Void onExpressionStatement(ExpressionStatement statement, T param) {
+		emitExpression(statement.getExpression(), param);
 
 		return null;
 	}

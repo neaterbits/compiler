@@ -6,13 +6,16 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.Import;
+import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.ListStackEntry;
 
 public final class StackCompilationUnit extends ListStackEntry<CompilationCode> {
 
 	private final List<Import> imports;
 
-	public StackCompilationUnit() {
+	public StackCompilationUnit(ParseLogger parseLogger) {
+		super(parseLogger);
+
 		this.imports = new ArrayList<>();
 	}
 	

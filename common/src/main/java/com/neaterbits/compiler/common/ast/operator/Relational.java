@@ -2,14 +2,25 @@ package com.neaterbits.compiler.common.ast.operator;
 
 public enum Relational implements Operator {
 	
-	EQUALS,
-	NOT_EQUALS,
+	EQUALS(Arity.BINARY),
+	NOT_EQUALS(Arity.BINARY),
 	
-	LESS_THAN,
-	LESS_THAN_OR_EQUALS,
+	LESS_THAN(Arity.BINARY),
+	LESS_THAN_OR_EQUALS(Arity.BINARY),
 	
-	GREATER_THAN,
-	GREATER_THAN_OR_EQUALS;
+	GREATER_THAN(Arity.BINARY),
+	GREATER_THAN_OR_EQUALS(Arity.BINARY);
+	
+	private final Arity arity;
+
+	private Relational(Arity arity) {
+		this.arity = arity;
+	}
+
+	@Override
+	public Arity getArity() {
+		return arity;
+	}
 
 	@Override
 	public <T, R> R visit(OperatorVisitor<T, R> visitor, T param) {

@@ -8,4 +8,5 @@ public interface OperatorVisitor<T, R> {
 	
 	R onRelational(Relational relational, T param);
 	
+	R onLogical(Logical logical, T param);
 }

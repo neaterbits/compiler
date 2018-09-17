@@ -25,6 +25,10 @@ public class Stack<T> {
 	public final T get() {
 		return list.get(list.size() - 1);
 	}
+	
+	public final T get(int index) {
+		return list.get(index);
+	}
 
 	public final T getFromTop(int count) {
 		return list.get(list.size() - count - 1);
@@ -45,5 +49,14 @@ public class Stack<T> {
 
 	public final boolean isEmpty() {
 		return list.isEmpty();
+	}
+	
+	public final int size() {
+		return list.size();
+	}
+
+	@Override
+	public String toString() {
+		return list.toString();
 	}
 }

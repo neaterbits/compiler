@@ -6,18 +6,21 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.statement.Statement;
+import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.NamedListStackEntry;
 import com.neaterbits.compiler.common.parser.StatementSetter;
 
 public abstract class CallableStackEntry extends NamedListStackEntry<Statement> implements StatementSetter {
 	private final List<Parameter> parameters;
 
-	public CallableStackEntry() {
+	public CallableStackEntry(ParseLogger parseLogger) {
+		super(parseLogger);
+
 		this.parameters = new ArrayList<>();
 	}
 
-	public CallableStackEntry(String name) {
-		super(name);
+	public CallableStackEntry(ParseLogger parseLogger, String name) {
+		super(parseLogger, name);
 
 		this.parameters = new ArrayList<>();
 	}

@@ -4,27 +4,21 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 
-public class SimpleVariableReference extends VariableReference {
+public final class SimpleVariableReference extends VariableReference {
 	private final VariableDeclaration declaration;
-	private final boolean declaredHere;
 
-	public SimpleVariableReference(Context context, VariableDeclaration declaration, boolean declaredHere) {
+	public SimpleVariableReference(Context context, VariableDeclaration declaration) {
 		super(context);
 
 		Objects.requireNonNull(declaration);
 
 		this.declaration = declaration;
-		this.declaredHere = declaredHere;
 	}
 
 	public VariableDeclaration getDeclaration() {
 		return declaration;
 	}
 	
-	public boolean isDeclaredHere() {
-		return declaredHere;
-	}
-
 	public VarName getName() {
 		return declaration.getName();
 	}

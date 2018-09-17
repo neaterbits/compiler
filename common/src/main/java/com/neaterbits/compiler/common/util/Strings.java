@@ -2,6 +2,9 @@ package com.neaterbits.compiler.common.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Strings {
 
@@ -86,6 +89,22 @@ public class Strings {
 
 		return occurences;
 	}
+
+	public static final <T, V> void outputList(List<V> list, String separator, Function<V, String> convert, Consumer<String> append) {
+		outputList(null, list, separator, convert, (state, string) -> append.accept(string));
+	}
+	
+	public static final <T, V> void outputList(T state, List<V> list, String separator, Function<V, String> convert, BiConsumer<T, String> append) {
+		
+		for (int i = 0; i < list.size(); ++ i) {
+			if (i > 0) {
+				append.accept(state, separator);
+			}
+
+			append.accept(state, convert.apply(list.get(i)));
+		}
+	}
+
 	
 	private static char hex(int hex) {
 		

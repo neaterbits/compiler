@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.common.convert.ootofunction;
 
+import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolvedTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
@@ -12,53 +13,52 @@ import com.neaterbits.compiler.common.ast.type.primitive.FloatType;
 import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.type.primitive.LongType;
 import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
-import com.neaterbits.compiler.common.convert.ConverterState;
 
-public abstract class BaseTypeConverter<STATE extends ConverterState>
-	implements TypeVisitor<STATE, TypeReference> {
+public abstract class BaseTypeConverter
+	implements TypeVisitor<Context, TypeReference> {
 
 	@Override
-	public final TypeReference onByte(ByteType type, STATE param) {
-		return new ResolvedTypeReference(type);
+	public final TypeReference onByte(ByteType type, Context context) {
+		return new ResolvedTypeReference(context, type);
 	}
 
 	@Override
-	public final TypeReference onShort(ShortType type, STATE param) {
-		return new ResolvedTypeReference(type);
+	public final TypeReference onShort(ShortType type, Context context) {
+		return new ResolvedTypeReference(context, type);
 	}
 
 	@Override
-	public final TypeReference onInt(IntType type, STATE param) {
-		return new ResolvedTypeReference(type);
+	public final TypeReference onInt(IntType type, Context context) {
+		return new ResolvedTypeReference(context, type);
 	}
 
 	@Override
-	public final TypeReference onLong(LongType type, STATE param) {
-		return new ResolvedTypeReference(type);
+	public final TypeReference onLong(LongType type, Context context) {
+		return new ResolvedTypeReference(context, type);
 	}
 
 	@Override
-	public final TypeReference onFloat(FloatType type, STATE param) {
-		return new ResolvedTypeReference(type);
+	public final TypeReference onFloat(FloatType type, Context context) {
+		return new ResolvedTypeReference(context, type);
 	}
 
 	@Override
-	public final TypeReference onDouble(DoubleType type, STATE param) {
-		return new ResolvedTypeReference(type);
+	public final TypeReference onDouble(DoubleType type, Context context) {
+		return new ResolvedTypeReference(context, type);
 	}
 
 	@Override
-	public final TypeReference onChar8(Char8Type type, STATE param) {
-		return new ResolvedTypeReference(type);
+	public final TypeReference onChar8(Char8Type type, Context context) {
+		return new ResolvedTypeReference(context, type);
 	}
 
 	@Override
-	public final TypeReference onChar16(Char16Type type, STATE param) {
-		return new ResolvedTypeReference(type);
+	public final TypeReference onChar16(Char16Type type, Context context) {
+		return new ResolvedTypeReference(context, type);
 	}
 
 	@Override
-	public TypeReference onBoolean(BooleanType type, STATE param) {
-		return new ResolvedTypeReference(type);
+	public TypeReference onBoolean(BooleanType type, Context context) {
+		return new ResolvedTypeReference(context, type);
 	}
 }

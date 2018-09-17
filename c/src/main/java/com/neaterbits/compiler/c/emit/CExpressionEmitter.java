@@ -1,10 +1,8 @@
 package com.neaterbits.compiler.c.emit;
 
-import java.util.List;
-
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Base;
-import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
@@ -39,20 +37,16 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	}
 
 	@Override
-	public Void onFunctionCall(FunctionCallExpression expression, EmitterState param) {
+	public Void onFunctionCall(FunctionCallExpression expression, EmitterState state) {
 		
-		final List<Expression> parameters = expression.getParameters();
-		
-		for (int i = 0; i < parameters.size(); ++ i) {
-			
-			if (i > 0) {
-				param.append(", ");
-			}
-
-			emitExpression(parameters.get(i), param);
-		}
+		emitListTo(state, expression.getParameters().getList(), ", ", param -> emitExpression(param, state));
 		
 		return null;
+	}
+
+	@Override
+	public Void onClassInstanceCreation(ClassInstanceCreationExpression expression, EmitterState param) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

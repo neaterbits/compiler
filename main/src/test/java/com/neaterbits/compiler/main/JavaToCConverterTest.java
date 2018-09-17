@@ -30,13 +30,13 @@ public class JavaToCConverterTest {
 
 	@Test
 	public void testJavaToC() throws IOException {
-		
+
 		int i = 1 | 2;
-		
-		if ("xyz" == "zyx" || "xyz" == "zyx" || "xyz" == "zyx" || "xyz" == "zyx" || i == "xyz".length()) {
+
+		if ("xyz" == "zyx" || "xyz" == "zyx" || i == "xyz".length()) {
 			++ i;
 		}
-		
+
 		final Java8AntlrParser parser = new Java8AntlrParser(true);
 
 		final List<AntlrError> errors = new ArrayList<>();

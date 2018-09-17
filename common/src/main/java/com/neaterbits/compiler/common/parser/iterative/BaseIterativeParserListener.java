@@ -4,23 +4,29 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.statement.ConditionBlock;
 import com.neaterbits.compiler.common.ast.statement.IfElseIfElseStatement;
-import com.neaterbits.compiler.common.parser.BaseParserListener;
+import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.common.parser.BaseInfixParserListener;
 import com.neaterbits.compiler.common.parser.StatementSetter;
 import com.neaterbits.compiler.common.parser.stackstate.StackBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackConditionBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackIfElseIfElse;
 
 public abstract class BaseIterativeParserListener
-	extends BaseParserListener {
+	extends BaseInfixParserListener {
 	
+	protected BaseIterativeParserListener(ParseLogger logger) {
+		super(logger);
+	}
+
 	public final void onIfStatementStart(Context context) {
 		
-		push(new StackIfElseIfElse());
-		push(new StackConditionBlock());
+		push(new StackIfElseIfElse(getLogger()));
+		push(new StackConditionBlock(getLogger()));
 		
+		pushVariableScope();
 	}
 	
-	private void addConditionBlock(Context context) {
+	private void popAndAddConditionBlock(Context context) {
 		
 		final StackConditionBlock stackConditionBlock = pop();
 		
@@ -28,38 +34,52 @@ public abstract class BaseIterativeParserListener
 		
 		final ConditionBlock conditionBlock = new ConditionBlock(
 				context,
-				stackConditionBlock.getExpression(),
+				stackConditionBlock.makeExpression(context),
 				new Block(context, stackConditionBlock.getStatements()));
-		
-		ifElseIfElse.add(conditionBlock);
 
+		ifElseIfElse.add(conditionBlock);
 	}
 	
-	// End of initial if-statement
+	// End of initial if-statement and block
 	public final void onIfStatementInitialBlockEnd(Context context) {
-		
-		addConditionBlock(context);
+
+		popAndAddConditionBlock(context);
+
+		popVariableScope();
 		
 	}
 
 	public final void onElseIfStatementStart(Context context) {
 		
-		push(new StackConditionBlock());
+		push(new StackConditionBlock(getLogger()));
+		
+		pushVariableScope();
 	}
 	
 	public final void onElseIfStatementEnd(Context context) {
 		
-		addConditionBlock(context);
-		
+		popVariableScope();
 	}
 
+	
+	/*
+	public final void onIfElseIfExpressionEnd(Context context) {
+		popAndAddConditionBlock(context);
+	}
+	*/
+
 	public final void onElseStatementStart(Context context) {
-		push(new StackBlock());
+		push(new StackBlock(getLogger()));
+		
+		pushVariableScope();
 	}
 	
 	public final void onElseStatementEnd(Context context) {
 
 		final StackBlock stackBlock = pop();
+
+		popVariableScope();
+
 		final StackIfElseIfElse ifElseIfElse = get();
 		
 		ifElseIfElse.setElseBlock(new Block(context, stackBlock.getList()));

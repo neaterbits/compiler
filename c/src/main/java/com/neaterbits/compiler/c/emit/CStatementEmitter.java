@@ -14,9 +14,9 @@ final class CStatementEmitter extends CLikeStatementEmitter<EmitterState> implem
 	private static final CConditionEmitter CONDITION_EMITTER = new CConditionEmitter();
 
 	private static final CExpressionEmitter EXPRESSION_EMITTER = new CExpressionEmitter();
-	
+
 	private static final CTypeEmitter TYPE_EMITTER = new CTypeEmitter();
-	
+
 	@Override
 	protected void emitCondition(Condition condition, EmitterState param) {
 		condition.visit(CONDITION_EMITTER, param);

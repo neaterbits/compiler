@@ -1,16 +1,15 @@
 package com.neaterbits.compiler.java.parser;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.ResolvedTypeReference;
-import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.antlr4.ModelParserListener;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
+import com.neaterbits.compiler.common.ast.operator.Operator;
 import com.neaterbits.compiler.common.ast.statement.VariableMutability;
 import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
@@ -26,6 +25,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
+import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.iterative.BaseIterativeOOParserListener;
 import com.neaterbits.compiler.common.util.Strings;
 
@@ -37,14 +37,16 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 	// Delegate to make sure make all special handling here
 	private static class JavaIterativeListener extends BaseIterativeOOParserListener {
-		
+
+		JavaIterativeListener(ParseLogger logger) {
+			super(logger);
+		}
 	}
 
 	// Cache packagename
 	private String packageName;
 
 	private CompilationUnit compilationUnit;
-
 
 	// Workaround for Java grammar oddities where 'else if' is specified like
 	// ifThenElseStatement [ ifThenElseStatement ]
@@ -54,79 +56,15 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 	// We use delegation instead of subclassing to make sure that we handle all methods in this class
 
-	
-	enum JavaStatement {
-		VARIABLE_DECLARATION,
-		ASSIGNMENT,
-		EXPRESSION,
-		ASSERT,
-		IF_THEN,
-		IF_THEN_ELSE,
-		SWITCH,
-		WHILE,
-		DO,
-		FOR
-	}
-	
-	private static class JavaStatements {
-		private final List<JavaStatement> statements;
-
-		JavaStatements() {
-			this.statements = new ArrayList<>();
-		}
-		
-		void add(JavaStatement statement) {
-			Objects.requireNonNull(statement);
-		}
-
-		JavaStatement getLast() {
-			return statements.get(statements.size() - 1);
-		}
-
-		JavaStatement getLast(int fromLast) {
-			return statements.get(statements.size() - fromLast - 1);
-		}
-	}
-	
-	private static class StatementsStack {
-		private final Stack<JavaStatements> stack;
-
-		StatementsStack() {
-			this.stack = new Stack<>();
-		}
-		
-		void push() {
-			stack.push(new JavaStatements());
-		}
-		
-		void add(JavaStatement statement) {
-			Objects.requireNonNull(statement);
-			
-			stack.get().add(statement);
-		}
-		
-		JavaStatement getLastFromTopFrame() {
-			return stack.get().getLast();
-		}
-
-		JavaStatement getLastFromFrame(int frame) {
-			return stack.getFromTop(frame).getLast();
-		}
-
-		JavaStatement getLastFromFrame(int frame, int fromLast) {
-			return stack.getFromTop(frame).getLast(fromLast);
-		}
-
-		void pop() {
-			stack.pop();
-		}
-	}
-	
 	private final JavaIterativeListener delegate;
 	private final StatementsStack statementsStack; 
 
-	public JavaParserListener() {
-		this.delegate = new JavaIterativeListener();
+	private void printStack(String statement) {
+		System.out.println("stack at " + statement + " " + statementsStack);
+	}
+	
+	public JavaParserListener(ParseLogger logger) {
+		this.delegate = new JavaIterativeListener(logger);
 		this.statementsStack = new StatementsStack();
 	}
 
@@ -182,6 +120,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 	
 	public void onMethodStart(Context context) {
+		
+		statementsStack.push();
+		
 		delegate.onMethodStart(context);
 	}
 	
@@ -215,10 +156,16 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	
 	public void onMethodEnd(Context context) {
 		delegate.onMethodEnd(context);
+		
+		statementsStack.pop();
 	}
 	
 	public void onEnterAssignmentExpression(Context context) {
 		delegate.onEnterAssignmentExpression(context);
+	}
+	
+	public void onVariableReference(Context context, String name) {
+		delegate.onVariableReference(context, name);
 	}
 
 	public void onEnterAssignmentLHS(Context context) {
@@ -233,11 +180,17 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onExitAssignmentExpression(context);
 	}
 
+	public void onExpressionBinaryOperator(Context context, Operator operator) {
+		delegate.onExpressionBinaryOperator(context, operator);
+	}
+	
 	// Literals
 	public void onJavaIntegerLiteral(Context context, String literal) {
 
 		final JavaInteger javaInteger = JavaParserUtil.parseIntegerLiteral(literal);
 		
+		System.out.println("--- integer literal " + javaInteger);
+
 		delegate.onIntegerLiteral(context, BigInteger.valueOf(javaInteger.getValue()), javaInteger.getBase(), true, javaInteger.getBits());
 	}
 
@@ -292,6 +245,23 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		delegate.onNullLiteral(context);
 	}
+	
+	public void onJavaClassInstanceCreationExpressionStart(Context context) {
+		delegate.onClassInstanceCreationExpressionStart(context);
+	}
+
+	public void onJavaClassInstanceCreationConstructorName(Context context, List<String> name) {
+
+		delegate.onClassInstanceCreationTypeAndConstructorName(
+				context,
+				new ResolveLaterTypeReference(context, name),
+				name);
+	}
+
+	public void onJavaClassInstanceCreationExpressionEnd(Context context) {
+		delegate.onClassInstanceCreationExpressionEnd(context);
+	}
+	
 	
 	public CompilationUnit onCompilationUnitEnd(Context context) {
 		
@@ -353,26 +323,45 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new UnsupportedOperationException("Unknown type " + type);
 		}
 
-		delegate.onTypeReference(context, new ResolvedTypeReference(genericType));
+		delegate.onTypeReference(context, new ResolvedTypeReference(context, genericType));
+	}
+
+	public void onJavaClassOrInterfaceReferenceType(Context context, String typeName) {
+		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName));
+	}
+	
+	public void onJavaTypeVariableReferenceType(Context context, String typeName) {
+		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName));
 	}
 	
 	public void onJavaIfThenStatementStart(Context context) {
+		
+		printStack("javaIfThenStatementStart");
 
 		statementsStack.add(JavaStatement.IF_THEN);
 		
 		statementsStack.push();
 		
 		delegate.onIfStatementStart(context);
+
+		printStack("javaIfThenStatementStart - exit");
 	}
 
 	public void onJavaIfThenStatementEnd(Context context) {
+		printStack("javaIfThenStatementStart");
+
 		delegate.onIfStatementInitialBlockEnd(context);
+		
 		delegate.onEndIfStatement(context);
 		
 		statementsStack.pop();
+
+		printStack("javaIfThenStatementEnd after pop");
 	}
 
 	public void onJavaIfThenElseStatementStart(Context context) {
+
+		printStack("javaIfThenElseStatementStart");
 
 		if (statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE) {
 			
@@ -404,12 +393,31 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onJavaIfThenElseStatementEnd(Context context) {
 		
 		statementsStack.pop();
+
+		printStack("javaIfThenElseStatementEnd");
 	}
 	
 	public void onJavaBlockStart(Context context) {
-		if (statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE) {
-			// a block-statement after else, so this is a true else-block
-			delegate.onElseStatementStart(context);
+		
+		printStack("javaBlockStart");
+
+		if (statementsStack.size() > 1 && statementsStack.getSizeOfFrame(1) > 0) {
+			
+			switch (statementsStack.getLastFromFrame(1)) {
+			case IF_THEN:
+				// delegate.onIfElseIfExpressionEnd(context);
+				break;
+
+			case IF_THEN_ELSE:
+				// delegate.onIfElseIfExpressionEnd(context);
+
+				// a block-statement after else, so this is a true else-block
+				delegate.onElseStatementStart(context);
+				break;
+				
+			default:
+				break;
+			}
 		}
 		else {
 			// Do nothing, blocks are handled separately in parser
@@ -417,7 +425,10 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 	
 	public void onJavaBlockEnd(Context context) {
-		if (statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE) {
+		if (   statementsStack.size() > 1
+			&& statementsStack.getSizeOfFrame(1) > 0
+			&& statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE) {
+			
 			// a block-statement after else, so this is a true else-block
 			delegate.onElseStatementEnd(context);
 			
@@ -426,6 +437,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		else {
 			// Do nothing, blocks are handled separately in parser
 		}
+		
+		printStack("javaBlockEnd");
+
 	}
 
 	public void onJavaAssertStatementStart(Context context) {
@@ -435,13 +449,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onJavaAssertStatementEnd(Context context) {
 		
 	}
-	
+
 	public void onJavaExpressionStatementStart(Context context) {
-		
+		delegate.onExpressionStatementStart(context);
 	}
-	
+
 	public void onJavaExpressionStatementEnd(Context context) {
-		
+		delegate.onExpressionStatementEnd(context);
 	}
 	
 	public void onSwitchStatementStart(Context context) {
@@ -600,4 +614,3 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 	}
 }
-

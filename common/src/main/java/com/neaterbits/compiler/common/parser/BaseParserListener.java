@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationCodeLines;
@@ -15,13 +16,17 @@ import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
+import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.expression.ParameterList;
+import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableMutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
@@ -32,6 +37,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassStatic;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassStrictfp;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorName;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodModifiers;
@@ -44,27 +50,59 @@ import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
+import com.neaterbits.compiler.common.ast.variables.SimpleVariableReference;
 import com.neaterbits.compiler.common.ast.variables.VarName;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
+import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
 import com.neaterbits.compiler.common.parser.stackstate.StackClass;
+import com.neaterbits.compiler.common.parser.stackstate.StackClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
+import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
 import com.neaterbits.compiler.common.parser.stackstate.StackVariableDeclaration;
 import com.neaterbits.compiler.common.parser.stackstate.StackVariableDeclarationList;
 
 public abstract class BaseParserListener {
+
+	private final ParseLogger logger;
 	
 	// Stack for the main elements of a program
 	private final ListStack mainStack;
-	
-	protected BaseParserListener() {
+
+	// Scope for variables
+	private final Stack<VariablesMap> variableScopes;
+
+	protected BaseParserListener(ParseLogger logger) {
+		
+		this.logger = logger;
+		
 		this.mainStack = new ListStack();
+		
+		this.variableScopes = new Stack<>();
+	}
+	
+	protected final ParseLogger getLogger() {
+		return logger;
+	}
+	
+	protected final VariableDeclaration findVariableDeclaration(String name) {
+		Objects.requireNonNull(name);
+
+		for (int i = variableScopes.size() - 1; i >=0; -- i) {
+			final VariableDeclaration variableDeclaration = variableScopes.get(i).findVariable(name);
+
+			if (variableDeclaration != null) {
+				return variableDeclaration;
+			}
+		}
+
+		return null;
 	}
 	
 	public final void onCompilationUnitStart() {
@@ -73,7 +111,7 @@ public abstract class BaseParserListener {
 			throw new IllegalStateException("Expected empty stack");
 		}
 		
-		push(new StackCompilationUnit());
+		push(new StackCompilationUnit(logger));
 	}
 	
 	public CompilationUnit onCompilationUnitEnd(Context context) {
@@ -92,7 +130,7 @@ public abstract class BaseParserListener {
 	}
 	
 	public final void onNamespaceStart(Context context, String name, String [] parts) {
-		push(new StackNamespace(name, parts));
+		push(new StackNamespace(logger, name, parts));
 	}
 	
 	public final void onNameSpaceEnd(Context context) {
@@ -111,7 +149,7 @@ public abstract class BaseParserListener {
 	}
 	
 	public final void onClassStart(String name) {
-		push(new StackNamedClass(name));
+		push(new StackNamedClass(logger, name));
 	}
 
 	private void addClassModifier(ClassModifier modifier) {
@@ -150,7 +188,7 @@ public abstract class BaseParserListener {
 	}
 
 	public final void onAnonymousClassStart(Context context) {
-		push(new StackAnonymousClass());
+		push(new StackAnonymousClass(logger));
 	}
 
 	public final void onAnonymousClassEnd(Context context) {
@@ -164,9 +202,11 @@ public abstract class BaseParserListener {
 	}
 
 	public final void onMethodStart(Context context) {
-		final StackMethod method = new StackMethod();
+		final StackMethod method = new StackMethod(logger);
 
 		push(method);
+		
+		pushVariableScope();
 	}
 	
 	public final void onMethodName(Context context, String methodName) {
@@ -210,6 +250,9 @@ public abstract class BaseParserListener {
 	}
 	
 	public final void onMethodEnd(Context context) {
+		
+		popVariableScope();
+		
 		final StackMethod method = pop();
 
 		final StackClass stackClass = get();
@@ -221,11 +264,11 @@ public abstract class BaseParserListener {
 	// Expressions
 	public final void onEnterAssignmentExpression(Context context) {
 		
-		push(new StackAssignmentExpression());
+		push(new StackAssignmentExpression(logger));
 	}
 	
 	public final void onEnterAssignmentLHS(Context context) {
-		push(new StackAssignmentLHS());
+		push(new StackAssignmentLHS(logger));
 	}
 
 	public final void onExitAssignmentLHS(Context context) {
@@ -241,47 +284,88 @@ public abstract class BaseParserListener {
 
 		final ExpressionSetter expressionSetter = get();
 		
-		expressionSetter.add(new AssignmentExpression(
+		expressionSetter.addExpression(new AssignmentExpression(
 				context,
 				stackAssignmentExpression.getLHS(),
 				stackAssignmentExpression.getRHS()));
-		
+	}
+
+	public void onVariableReference(Context context, String name) {
+
+		final ExpressionSetter expressionSetter = get();
+
+		final VariableDeclaration declaration = findVariableDeclaration(name);
+
+		if (declaration == null) {
+			throw new CompileException(context, "No variable declared for name " + name);
+		}
+
+		final SimpleVariableReference variableReference = new SimpleVariableReference(context, declaration);
+		final VariableExpression variableExpression = new VariableExpression(context, variableReference);
+
+		expressionSetter.addExpression(variableExpression);
 	}
 	
 	public final void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits) {
 		final ExpressionSetter expressionSetter = get();
 		
-		expressionSetter.add(new IntegerLiteral(context, value, base, signed, bits));
+		expressionSetter.addExpression(new IntegerLiteral(context, value, base, signed, bits));
 	}
 	
 	public final void onFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits) {
 		final ExpressionSetter expressionSetter = get();
 		
-		expressionSetter.add(new FloatingPointLiteral(context, value, base, bits));
+		expressionSetter.addExpression(new FloatingPointLiteral(context, value, base, bits));
 	}
 	
 	public final void onBooleanLiteral(Context context, boolean value) {
 		final ExpressionSetter expressionSetter = get();
 		
-		expressionSetter.add(new BooleanLiteral(context, value));
+		expressionSetter.addExpression(new BooleanLiteral(context, value));
 	}
 	
 	public final void onCharacterLiteral(Context context, char value) {
 		final ExpressionSetter expressionSetter = get();
 		
-		expressionSetter.add(new CharacterLiteral(context, value));
+		expressionSetter.addExpression(new CharacterLiteral(context, value));
 	}
 	
 	public final void onStringLiteral(Context context, String value) {
 		final ExpressionSetter expressionSetter = get();
 		
-		expressionSetter.add(new StringLiteral(context, value));
+		expressionSetter.addExpression(new StringLiteral(context, value));
 	}
 	
 	public final void onNullLiteral(Context context) {
 		final ExpressionSetter expressionSetter = get();
 		
-		expressionSetter.add(new NullLiteral(context));
+		expressionSetter.addExpression(new NullLiteral(context));
+	}
+	
+	public final void onClassInstanceCreationExpressionStart(Context context) {
+		push(new StackClassInstanceCreationExpression(logger));
+	}
+	
+	public final void onClassInstanceCreationTypeAndConstructorName(Context context, TypeReference type, List<String> name) {
+		
+		final StackClassInstanceCreationExpression stackClassInstanceCreationExpression = get();
+		
+		stackClassInstanceCreationExpression.setType(type);
+		stackClassInstanceCreationExpression.setConstructorName(new ConstructorName(name));
+	}
+	
+	public final void onClassInstanceCreationExpressionEnd(Context context) {
+		final StackClassInstanceCreationExpression classInstanceCreationExpression = pop();
+		
+		final ClassInstanceCreationExpression expression = new ClassInstanceCreationExpression(
+				context,
+				classInstanceCreationExpression.getType(),
+				classInstanceCreationExpression.getConstructorName(),
+				new ParameterList(classInstanceCreationExpression.getList()));
+		
+		final ExpressionSetter expressionSetter = get();
+		
+		expressionSetter.addExpression(expression);
 	}
 
 	// Statements
@@ -299,7 +383,7 @@ public abstract class BaseParserListener {
 	}
 	
 	public void onVariableDeclarationStatementStart(Context context) {
-		push(new StackVariableDeclarationList());
+		push(new StackVariableDeclarationList(logger));
 	}
 	
 	public void onVariableDeclarationStatementEnd(Context context) {
@@ -307,48 +391,75 @@ public abstract class BaseParserListener {
 		
 		final StatementSetter statementSetter = get();
 		
+		final VariableModifiers modifiers = new VariableModifiers(variableDeclaration.getModifiers());
+		
 		final VariableDeclarationStatement statement = new VariableDeclarationStatement(
 				context,
-				new VariableModifiers(variableDeclaration.getModifiers()), 
+				modifiers, 
 				variableDeclaration.getList());
+
+		variableDeclaration.getList().forEach(e -> {
+			
+			System.out.println("-- adding variable name " + e.getName().getName());
+			
+			
+			variableScopes.get().add(e.getName().getName(), e.makeVariableDeclaration(modifiers));
+		});
 		
 		statementSetter.addStatement(statement);
 	}
 
 	public void onVariableDeclaratorStart(Context context, String name, int numDims) {
-		push(new StackVariableDeclaration(name, numDims));
+		push(new StackVariableDeclaration(logger, name, numDims));
 	}
 	
 	public void onVariableDeclaratorEnd(Context context) {
 		final StackVariableDeclaration stackDeclaration = pop();
 		
-		final Expression initializer = stackDeclaration.getExpression();
+		final Expression initializer = stackDeclaration.makeExpressionOrNull(context);
 		
 		final StackVariableDeclarationList declarationList = get();
 		
-		final VariableDeclaration variableDeclaration = new VariableDeclaration(
+		final VariableDeclarationElement variableDeclarationElement = new VariableDeclarationElement(
+				context,
 				declarationList.getTypeReference(),
 				new VarName(stackDeclaration.getName()),
-				stackDeclaration.getNumDims());
+				stackDeclaration.getNumDims(),
+				initializer);
 		
-		declarationList.add(new VariableDeclarationElement(context, variableDeclaration, initializer));
+		declarationList.add(variableDeclarationElement);
 	}
 
 	public final void onTypeReference(Context context, TypeReference typeReference) {
-		
+
 		Objects.requireNonNull(typeReference);
-		
+
 		final TypeReferenceSetter typeReferenceSetter = get();
-		
+
 		typeReferenceSetter.setTypeReference(typeReference);
 	}
-	
-	
+
+	public final void onExpressionStatementStart(Context context) {
+
+		push(new StackExpressionStatement(logger));
+	}
+
+	public final void onExpressionStatementEnd(Context context) {
+		
+		final StackExpressionStatement statement = pop();
+		
+		final ExpressionStatement expressionStatement = new ExpressionStatement(context, statement.makeExpression(context));
+		
+		final StatementSetter statementSetter = get();
+		
+		statementSetter.addStatement(expressionStatement);
+	}
+
 	protected final void push(StackEntry element) {
 		
 		Objects.requireNonNull(element);
 		
-		System.out.println("## push " + element.getClass());
+		logger.onStackPush(element.getClass().getSimpleName());
 		
 		mainStack.push(element);
 	}
@@ -357,9 +468,9 @@ public abstract class BaseParserListener {
 	@SuppressWarnings("unchecked")
 	protected final <T extends StackEntry> T pop() {
 		final T result = (T)mainStack.pop();
-		
-		System.out.println("## pop " + result.getClass());
-		
+
+		logger.onStackPop(result.getClass().getSimpleName());
+
 		return result;
 	}
 
@@ -371,7 +482,15 @@ public abstract class BaseParserListener {
 	private <T extends StackEntry> T get(Class<T> cl) {
 		return mainStack.get(cl);
 	}
-	
+
+	protected final void pushVariableScope() {
+		variableScopes.push(new VariablesMap());
+	}
+
+	protected final void popVariableScope() {
+		variableScopes.pop();
+	}
+
 	@SuppressWarnings("unchecked")
 	private static <S, T extends S, C extends Collection<S>> List<T> cast(C collection) {
 		return (List<T>)collection;

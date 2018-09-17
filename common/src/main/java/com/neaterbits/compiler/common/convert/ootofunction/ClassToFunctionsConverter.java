@@ -3,6 +3,7 @@ package com.neaterbits.compiler.common.convert.ootofunction;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolvedTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.CompilationCode;
@@ -32,41 +33,41 @@ import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
 
 public class ClassToFunctionsConverter extends IterativeConverter {
 
-	private final BaseTypeConverter<OOToProceduralConverterState> TYPE_CONVERSION_VISITOR = new BaseTypeConverter<OOToProceduralConverterState>() {
+	private final BaseTypeConverter TYPE_CONVERSION_VISITOR = new BaseTypeConverter() {
 			
 		@Override
-		public TypeReference onString(StringType type, OOToProceduralConverterState param) {
+		public TypeReference onString(StringType type, Context param) {
 			throw new UnsupportedOperationException();
 		}
 		
 		@Override
-		public TypeReference onPointer(PointerType type, OOToProceduralConverterState param) {
+		public TypeReference onPointer(PointerType type, Context param) {
 			
 			final PointerType convertedType = new PointerType(
-					convertType(type.getDelegate(), param),
+					convertType(type.getDelegate()),
 					type.getLevels());
 			
-			return new ResolvedTypeReference(convertedType);
+			return new ResolvedTypeReference(param, convertedType);
 		}
 
 		@Override
-		public TypeReference onClass(ClassType type, OOToProceduralConverterState param) {
+		public TypeReference onClass(ClassType type, Context param) {
 			
 			
 			return null;
 		}
 
 		@Override
-		public TypeReference onStruct(StructType type, OOToProceduralConverterState param) {
+		public TypeReference onStruct(StructType type, Context param) {
 			throw new UnsupportedOperationException();
 		}
 	};
 	
-	private TypeReference convertType(TypeReference toConvert, OOToProceduralConverterState state) {
-		return convertType(toConvert.getType(), state);
+	private TypeReference convertType(TypeReference toConvert) {
+		return convertType(toConvert.getType(), toConvert.getContext());
 	}
 
-	private TypeReference convertType(BaseType toConvert, OOToProceduralConverterState state) {
+	private TypeReference convertType(BaseType toConvert, Context state) {
 		return toConvert.visit(TYPE_CONVERSION_VISITOR, state);
 	}
 
@@ -104,9 +105,9 @@ public class ClassToFunctionsConverter extends IterativeConverter {
 				final Function function = new Function(
 						methodMember.getContext(),
 						new FunctionQualifiers(false),
-						convertType(method.getReturnType(), state),
+						convertType(method.getReturnType()),
 						functionName,
-						convertParameters(method.getParameters(), typeReference -> convertType(typeReference, state)),
+						convertParameters(method.getParameters(), typeReference -> convertType(typeReference)),
 						convertBlock(method.getBlock()));
 				
 				functions.add(function);

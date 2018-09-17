@@ -12,7 +12,6 @@ public final class VariableDeclarationStatement extends Statement {
 	private final VariableModifiers modifiers;
 	private final List<VariableDeclarationElement> declarations;
 	
-	
 	public VariableDeclarationStatement(
 			Context context,
 			VariableModifiers modifiers,

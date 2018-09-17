@@ -13,4 +13,6 @@ public interface StatementVisitor<T, R> {
 	R onAssignment(AssignmentStatement statement, T param);
 
 	R onVariableDeclaration(VariableDeclarationStatement statement, T param);
+
+	R onExpressionStatement(ExpressionStatement statement, T param);
 }

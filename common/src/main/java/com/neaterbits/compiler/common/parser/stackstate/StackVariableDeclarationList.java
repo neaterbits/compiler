@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifier;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
+import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.ListStackEntry;
 import com.neaterbits.compiler.common.parser.TypeReferenceSetter;
 import com.neaterbits.compiler.common.parser.VariableModifierSetter;
@@ -18,7 +19,9 @@ public final class StackVariableDeclarationList
 	private final List<VariableModifier> modifiers;
 	private TypeReference typeReference;
 
-	public StackVariableDeclarationList() {
+	public StackVariableDeclarationList(ParseLogger parseLogger) {
+		super(parseLogger);
+
 		this.modifiers = new ArrayList<>();
 	}
 
@@ -38,6 +41,8 @@ public final class StackVariableDeclarationList
 		if (this.typeReference != null) {
 			throw new IllegalStateException("typeReference already set");
 		}
+		
+		getParseLogger().onStackSetElement(typeReference.toString());
 
 		this.typeReference = typeReference;
 	}

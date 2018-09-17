@@ -12,4 +12,9 @@ public abstract class BaseASTElement {
 	public final Context getContext() {
 		return context;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
+	}
 }

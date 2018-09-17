@@ -19,14 +19,12 @@ public final class ExpressionList extends Expression {
 		Objects.requireNonNull(expressions);
 
 		if (operators.size() != expressions.size() - 1) {
-			throw new IllegalArgumentException("Expected one less operator than expression");
+			throw new IllegalArgumentException("Expected one less operator than expression: " + operators.size() + "/" + expressions.size() + ": " + expressions);
 		}
 
 		this.operators 	 = Collections.unmodifiableList(operators);
 		this.expressions = Collections.unmodifiableList(expressions);
 	}
-
-	
 	
 	public List<Operator> getOperators() {
 		return operators;

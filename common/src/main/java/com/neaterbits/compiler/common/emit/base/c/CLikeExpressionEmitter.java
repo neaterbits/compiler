@@ -10,6 +10,7 @@ import com.neaterbits.compiler.common.ast.expression.arithemetic.unary.PreDecrem
 import com.neaterbits.compiler.common.ast.expression.arithemetic.unary.PreIncrementExpression;
 import com.neaterbits.compiler.common.ast.operator.Arithmetic;
 import com.neaterbits.compiler.common.ast.operator.Bitwise;
+import com.neaterbits.compiler.common.ast.operator.Logical;
 import com.neaterbits.compiler.common.ast.operator.Operator;
 import com.neaterbits.compiler.common.ast.operator.OperatorVisitor;
 import com.neaterbits.compiler.common.ast.operator.Relational;
@@ -121,6 +122,21 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 		
 		return operator;
 	}
+	
+	private static final String getCLogicalOperator(Logical logical) {
+		final String operator;
+		
+		switch (logical) {
+		case AND: 	operator = "&&"; break;
+		case OR: 	operator = "||"; break;
+		case NOT: 	operator = "!"; break;
+		
+		default:
+			throw new UnsupportedOperationException("Not a logical operator: " + logical);
+		}
+
+		return operator;
+	}
 
 	private static final OperatorVisitor<Void, String> OPERATOR_TO_STRING_VISITOR = new OperatorVisitor<Void, String>() {
 		
@@ -137,6 +153,11 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 		@Override
 		public String onArithmetic(Arithmetic arithmetic, Void param) {
 			return "" + getCArithmeticOperator(arithmetic);
+		}
+
+		@Override
+		public String onLogical(Logical logical, Void param) {
+			return getCLogicalOperator(logical);
 		}
 	};
 	

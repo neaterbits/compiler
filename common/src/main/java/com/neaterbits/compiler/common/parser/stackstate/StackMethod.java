@@ -8,17 +8,20 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.block.Method;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodModifier;
+import com.neaterbits.compiler.common.log.ParseLogger;
 
 public final class StackMethod extends CallableStackEntry {
 
 	private final List<MethodModifier> modifiers;
 	
-	public StackMethod() {
+	public StackMethod(ParseLogger parseLogger) {
+		super(parseLogger);
+		
 		this.modifiers = new ArrayList<>();
 	}
 
-	public StackMethod(String name) {
-		super(name);
+	public StackMethod(ParseLogger parseLogger, String name) {
+		super(parseLogger, name);
 
 		this.modifiers = new ArrayList<>();
 	}

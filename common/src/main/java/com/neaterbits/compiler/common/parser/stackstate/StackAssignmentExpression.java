@@ -2,12 +2,17 @@ package com.neaterbits.compiler.common.parser.stackstate;
 
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
+import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.StackEntry;
 
 public class StackAssignmentExpression extends StackEntry {
 
 	private VariableReference lhs;
 	private Expression rhs;
+	
+	public StackAssignmentExpression(ParseLogger parseLogger) {
+		super(parseLogger);
+	}
 
 	public VariableReference getLHS() {
 		return lhs;

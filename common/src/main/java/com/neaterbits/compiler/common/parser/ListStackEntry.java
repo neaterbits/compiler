@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.BaseASTElement;
+import com.neaterbits.compiler.common.log.ParseLogger;
 
 public abstract class ListStackEntry<T extends BaseASTElement> extends StackEntry {
 	private final List<T> list;
 	
-	protected ListStackEntry() {
+	protected ListStackEntry(ParseLogger parseLogger) {
+		super(parseLogger);
+
 		this.list = new ArrayList<>();
 	}
 	
