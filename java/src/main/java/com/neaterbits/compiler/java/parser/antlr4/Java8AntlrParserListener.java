@@ -4,6 +4,7 @@ import com.neaterbits.compiler.java.Java8BaseListener;
 import com.neaterbits.compiler.java.Java8Parser;
 import com.neaterbits.compiler.java.Java8Parser.AbstractClassModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.AbstractMethodModifierContext;
+import com.neaterbits.compiler.java.Java8Parser.ArgumentListContext;
 import com.neaterbits.compiler.java.Java8Parser.AssertStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.AssignmentContext;
 import com.neaterbits.compiler.java.Java8Parser.BitwiseOrExpressionContext;
@@ -25,6 +26,7 @@ import com.neaterbits.compiler.java.Java8Parser.DefaultSwitchLabelContext;
 import com.neaterbits.compiler.java.Java8Parser.DoStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.DoubleTypeContext;
 import com.neaterbits.compiler.java.Java8Parser.EnumConstantNameSwitchLabelContext;
+import com.neaterbits.compiler.java.Java8Parser.ExpressionMethodInvocationContext;
 import com.neaterbits.compiler.java.Java8Parser.ExpressionNameContext;
 import com.neaterbits.compiler.java.Java8Parser.ExpressionStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.FinalClassModifierContext;
@@ -50,8 +52,12 @@ import com.neaterbits.compiler.java.Java8Parser.LongTypeContext;
 import com.neaterbits.compiler.java.Java8Parser.MethodDeclarationContext;
 import com.neaterbits.compiler.java.Java8Parser.MethodDeclaratorContext;
 import com.neaterbits.compiler.java.Java8Parser.NativeMethodModifierContext;
+import com.neaterbits.compiler.java.Java8Parser.NoObjectMethodInvocationContext;
+import com.neaterbits.compiler.java.Java8Parser.NoObjectMethodInvocation_lfno_primaryContext;
 import com.neaterbits.compiler.java.Java8Parser.NormalClassDeclarationContext;
 import com.neaterbits.compiler.java.Java8Parser.NullLiteralContext;
+import com.neaterbits.compiler.java.Java8Parser.ObjectMethodInvocationContext;
+import com.neaterbits.compiler.java.Java8Parser.ObjectMethodInvocation_lfno_primaryContext;
 import com.neaterbits.compiler.java.Java8Parser.PackageDeclarationContext;
 import com.neaterbits.compiler.java.Java8Parser.PrivateClassModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.PrivateMethodModifierContext;
@@ -69,10 +75,14 @@ import com.neaterbits.compiler.java.Java8Parser.SingleStaticImportDeclarationCon
 import com.neaterbits.compiler.java.Java8Parser.SingleTypeImportDeclarationContext;
 import com.neaterbits.compiler.java.Java8Parser.StaticClassModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.StaticImportOnDemandDeclarationContext;
+import com.neaterbits.compiler.java.Java8Parser.StaticMethodInvocationContext;
+import com.neaterbits.compiler.java.Java8Parser.StaticMethodInvocation_lfno_primaryContext;
 import com.neaterbits.compiler.java.Java8Parser.StaticMethodModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.StrictfpClassModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.StrictfpMethodModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.StringLiteralContext;
+import com.neaterbits.compiler.java.Java8Parser.SuperMethodInvocationContext;
+import com.neaterbits.compiler.java.Java8Parser.SuperMethodInvocation_lfno_primaryContext;
 import com.neaterbits.compiler.java.Java8Parser.SwitchBlockContext;
 import com.neaterbits.compiler.java.Java8Parser.SwitchBlockStatementGroupContext;
 import com.neaterbits.compiler.java.Java8Parser.SwitchLabelsContext;
@@ -83,6 +93,8 @@ import com.neaterbits.compiler.java.Java8Parser.TryCatchContext;
 import com.neaterbits.compiler.java.Java8Parser.TryCatchFinallyContext;
 import com.neaterbits.compiler.java.Java8Parser.TryWithResourcesContext;
 import com.neaterbits.compiler.java.Java8Parser.TypeImportOnDemandDeclarationContext;
+import com.neaterbits.compiler.java.Java8Parser.TypeSuperMethodInvocationContext;
+import com.neaterbits.compiler.java.Java8Parser.TypeSuperMethodInvocation_lfno_primaryContext;
 import com.neaterbits.compiler.java.Java8Parser.TypeVariableReferenceTypeContext;
 import com.neaterbits.compiler.java.Java8Parser.VariableDeclaratorContext;
 import com.neaterbits.compiler.java.Java8Parser.VariableDeclaratorIdContext;
@@ -98,6 +110,7 @@ import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.NamespaceName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
@@ -111,6 +124,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.common.parser.MethodInvocationType;
 import com.neaterbits.compiler.common.util.Strings;
 
 public class Java8AntlrParserListener extends Java8BaseListener {
@@ -363,6 +377,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterJavaClassInstanceCreationExpression(JavaClassInstanceCreationExpressionContext ctx) {
 		delegate.onJavaClassInstanceCreationExpressionStart(context(ctx));
 	}
+	
 	@Override
 	public void enterClassInstanceCreationExpressionSimple(ClassInstanceCreationExpressionSimpleContext ctx) {
 		
@@ -391,6 +406,142 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onJavaClassInstanceCreationExpressionEnd(context(ctx));
 	}
 
+	@Override
+	public void enterNoObjectMethodInvocation_lfno_primary(NoObjectMethodInvocation_lfno_primaryContext ctx) {
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, ctx.methodName().getText());
+	}
+
+	@Override
+	public void exitNoObjectMethodInvocation_lfno_primary(NoObjectMethodInvocation_lfno_primaryContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+	
+	@Override
+	public void enterStaticMethodInvocation_lfno_primary(StaticMethodInvocation_lfno_primaryContext ctx) {
+		delegate.onMethodInvocationStart(
+				context(ctx),
+				MethodInvocationType.NAMED_CLASS_STATIC,
+				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), ctx.typeName().getText()),
+				ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitStaticMethodInvocation_lfno_primary(StaticMethodInvocation_lfno_primaryContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+
+	@Override
+	public void enterObjectMethodInvocation_lfno_primary(ObjectMethodInvocation_lfno_primaryContext ctx) {
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitObjectMethodInvocation_lfno_primary(ObjectMethodInvocation_lfno_primaryContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+	
+	@Override
+	public void enterSuperMethodInvocation_lfno_primary(SuperMethodInvocation_lfno_primaryContext ctx) {
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitSuperMethodInvocation_lfno_primary(SuperMethodInvocation_lfno_primaryContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+
+	@Override
+	public void enterTypeSuperMethodInvocation_lfno_primary(TypeSuperMethodInvocation_lfno_primaryContext ctx) {
+		delegate.onMethodInvocationStart(
+				context(ctx),
+				MethodInvocationType.TYPED_SUPER,
+				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), ctx.typeName().getText()),
+				ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitTypeSuperMethodInvocation_lfno_primary(TypeSuperMethodInvocation_lfno_primaryContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+
+	@Override
+	public void enterNoObjectMethodInvocation(NoObjectMethodInvocationContext ctx) {
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, ctx.methodName().getText());
+	}
+
+	@Override
+	public void exitNoObjectMethodInvocation(NoObjectMethodInvocationContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+	
+	@Override
+	public void enterStaticMethodInvocation(StaticMethodInvocationContext ctx) {
+		delegate.onMethodInvocationStart(
+				context(ctx),
+				MethodInvocationType.NAMED_CLASS_STATIC,
+				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), ctx.typeName().getText()),
+				ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitStaticMethodInvocation(StaticMethodInvocationContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+
+	@Override
+	public void enterObjectMethodInvocation(ObjectMethodInvocationContext ctx) {
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitObjectMethodInvocation(ObjectMethodInvocationContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+	
+	@Override
+	public void enterExpressionMethodInvocation(ExpressionMethodInvocationContext ctx) {
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.EXPRESSION, null, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitExpressionMethodInvocation(ExpressionMethodInvocationContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+
+	@Override
+	public void enterSuperMethodInvocation(SuperMethodInvocationContext ctx) {
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitSuperMethodInvocation(SuperMethodInvocationContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+
+	@Override
+	public void enterTypeSuperMethodInvocation(TypeSuperMethodInvocationContext ctx) {
+		delegate.onMethodInvocationStart(
+				context(ctx),
+				MethodInvocationType.TYPED_SUPER,
+				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), ctx.typeName().getText()),
+				ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitTypeSuperMethodInvocation(TypeSuperMethodInvocationContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
+
+	@Override
+	public void enterArgumentList(ArgumentListContext ctx) {
+		delegate.onParametersStart(context(ctx));
+	}
+
+	@Override
+	public void exitArgumentList(ArgumentListContext ctx) {
+		delegate.onParametersEnd(context(ctx));
+	}
+	
 	// Conditions
 	
 
@@ -545,7 +696,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterIfThenStatement(IfThenStatementContext ctx) {
 		delegate.onJavaIfThenStatementStart(context(ctx));
 	}
-
 
 	@Override
 	public void exitIfThenStatement(IfThenStatementContext ctx) {

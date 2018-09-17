@@ -1015,10 +1015,10 @@ primaryNoNewArray_lfno_primary
 	|	typeName '.' 'this'							# typeNameThisExpression
 	|	'(' expression ')'							# nestedExpression
 	|	classInstanceCreationExpression_lfno_primary	# javaClassInstanceCreationExpression
-	|	fieldAccess_lfno_primary					# fieldAccessExpression
-	|	arrayAccess_lfno_primary					# arrayAccessExpression
-	|	methodInvocation_lfno_primary				# methodInvocationExpression
-	|	methodReference_lfno_primary				# methodReferenceExpression
+	|	fieldAccess_lfno_primary					# fieldAccessExpressionToken
+	|	arrayAccess_lfno_primary					# arrayAccessExpressionToken
+	|	methodInvocation_lfno_primary				# methodInvocationExpressionToken
+	|	methodReference_lfno_primary				# methodReferenceExpressionToken
 	;
 
 primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary
@@ -1098,12 +1098,12 @@ arrayAccess_lfno_primary
 	;
 
 methodInvocation
-	:	methodName '(' argumentList? ')'
-	|	typeName '.' typeArguments? Identifier '(' argumentList? ')'
-	|	expressionName '.' typeArguments? Identifier '(' argumentList? ')'
-	|	primary '.' typeArguments? Identifier '(' argumentList? ')'
-	|	'super' '.' typeArguments? Identifier '(' argumentList? ')'
-	|	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')'
+	:	methodName '(' argumentList? ')'									# noObjectMethodInvocation
+	|	typeName '.' typeArguments? Identifier '(' argumentList? ')'		# staticMethodInvocation
+	|	expressionName '.' typeArguments? Identifier '(' argumentList? ')'	# objectMethodInvocation
+	|	primary '.' typeArguments? Identifier '(' argumentList? ')'			# expressionMethodInvocation
+	|	'super' '.' typeArguments? Identifier '(' argumentList? ')'			# superMethodInvocation
+	|	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')'	# typeSuperMethodInvocation
 	;
 
 methodInvocation_lf_primary
@@ -1111,11 +1111,11 @@ methodInvocation_lf_primary
 	;
 
 methodInvocation_lfno_primary
-	:	methodName '(' argumentList? ')'
-	|	typeName '.' typeArguments? Identifier '(' argumentList? ')'
-	|	expressionName '.' typeArguments? Identifier '(' argumentList? ')'
-	|	'super' '.' typeArguments? Identifier '(' argumentList? ')'
-	|	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')'
+	:	methodName '(' argumentList? ')'									# noObjectMethodInvocation_lfno_primary
+	|	typeName '.' typeArguments? Identifier '(' argumentList? ')'		# staticMethodInvocation_lfno_primary
+	|	expressionName '.' typeArguments? Identifier '(' argumentList? ')'	# objectMethodInvocation_lfno_primary
+	|	'super' '.' typeArguments? Identifier '(' argumentList? ')'			# superMethodInvocation_lfno_primary
+	|	typeName '.' 'super' '.' typeArguments? Identifier '(' argumentList? ')' # typeSuperMethodInvocation_lfno_primary
 	;
 
 argumentList

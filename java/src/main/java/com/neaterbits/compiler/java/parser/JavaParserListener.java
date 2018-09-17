@@ -6,6 +6,7 @@ import java.util.List;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.ResolvedTypeReference;
+import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.antlr4.ModelParserListener;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
@@ -26,7 +27,9 @@ import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.common.parser.MethodInvocationType;
 import com.neaterbits.compiler.common.parser.iterative.BaseIterativeOOParserListener;
+import com.neaterbits.compiler.common.parser.stackstate.StackMethodInvocation;
 import com.neaterbits.compiler.common.util.Strings;
 
 /**
@@ -262,7 +265,22 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onClassInstanceCreationExpressionEnd(context);
 	}
 	
+	public void onMethodInvocationStart(Context context, MethodInvocationType type, TypeReference classType, String methodName) {
+		delegate.onMethodInvocationStart(context, type, classType, methodName);
+	}
 	
+	public void onMethodInvocationEnd(Context context) {
+		delegate.onMethodInvocationEnd(context);
+	}
+	
+	public void onParametersStart(Context context) {
+		delegate.onParametersStart(context);
+	}
+	
+	public void onParametersEnd(Context context) {
+		delegate.onParametersEnd(context);
+	}
+
 	public CompilationUnit onCompilationUnitEnd(Context context) {
 		
 		// Trigger namespace end here since namespace contains code
@@ -424,6 +442,9 @@ System.out.println("## onJavaTypeVariableReferenceType");
 				delegate.onElseStatementStart(context);
 				break;
 				
+			case TRY_WITH_RESOURCES:
+				break;
+
 			default:
 				break;
 			}
@@ -434,14 +455,25 @@ System.out.println("## onJavaTypeVariableReferenceType");
 	}
 	
 	public void onJavaBlockEnd(Context context) {
-		if (   statementsStack.size() > 1
-			&& statementsStack.getSizeOfFrame(1) > 0
-			&& statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE) {
+		if (statementsStack.size() > 1 && statementsStack.getSizeOfFrame(1) > 0) {
+
+			switch (statementsStack.getLastFromFrame(1)) {
 			
-			// a block-statement after else, so this is a true else-block
-			delegate.onElseStatementEnd(context);
+			case IF_THEN_ELSE:
 			
-			delegate.onEndIfStatement(context);
+				// a block-statement after else, so this is a true else-block
+				delegate.onElseStatementEnd(context);
+				
+				delegate.onEndIfStatement(context);
+				break;
+				
+			case TRY_WITH_RESOURCES:
+				delegate.onTryBlockEnd(context);
+				break;
+				
+			default:
+				break;
+			}
 		}
 		else {
 			// Do nothing, blocks are handled separately in parser
@@ -600,6 +632,11 @@ System.out.println("## onJavaTypeVariableReferenceType");
 	}
 	
 	public void onJavaTryWithResourcesStart(Context context) {
+		
+		statementsStack.add(JavaStatement.TRY_WITH_RESOURCES);
+
+		statementsStack.push();
+
 		delegate.onTryWithResourcesStatementStart(context);
 	}
 	
@@ -620,6 +657,9 @@ System.out.println("## onJavaTypeVariableReferenceType");
 	}
 	
 	public void onJavaTryWithResourcesEnd(Context context) {
+		
+		statementsStack.pop();
+		
 		delegate.onTryWithResourcesEnd(context);
 	}
 	

@@ -4,6 +4,7 @@ import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
+import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
@@ -46,6 +47,11 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	@Override
 	public Void onClassInstanceCreation(ClassInstanceCreationExpression expression, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onMethodInvocation(MethodInvocationExpression expression, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -4,6 +4,7 @@ import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
+import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
@@ -52,6 +53,49 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		emitListTo(state, expression.getParameters().getList(), ", ", param -> emitExpression(param, state));
 		
 		state.append(')');
+		
+		return null;
+	}
+
+	
+	@Override
+	public Void onMethodInvocation(MethodInvocationExpression expression, EmitterState param) {
+		
+		switch (expression.getType()) {
+		case NO_OBJECT:
+			break;
+			
+		case NAMED_CLASS_STATIC:
+			emitType(expression.getClassType(), param);
+			param.append('.');
+			break;
+
+		case VARIABLE_REFERENCE:
+		case EXPRESSION:
+			emitExpression(expression.getObject(), param);
+			param.append('.');
+			break;
+			
+		case SUPER:
+			param.append("super").append('.');
+			break;
+			
+		case TYPED_SUPER:
+			emitType(expression.getClassType(), param);
+			param.append('.');
+			param.append("super").append('.');
+			break;
+			
+		default:
+			throw new UnsupportedOperationException("Unknown method invocation type " + expression.getType());
+		}
+
+		param.append(expression.getCallable().getName());
+		param.append('(');
+		
+		emitListTo(param, expression.getParameters().getList(), ", ", e -> emitExpression(e, param));
+
+		param.append(')');
 		
 		return null;
 	}

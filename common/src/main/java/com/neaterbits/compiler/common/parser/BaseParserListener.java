@@ -3,6 +3,7 @@ package com.neaterbits.compiler.common.parser;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +20,7 @@ import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.common.ast.expression.ParameterList;
 import com.neaterbits.compiler.common.ast.expression.Resource;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
@@ -70,7 +72,9 @@ import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackFinallyBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethod;
+import com.neaterbits.compiler.common.parser.stackstate.StackMethodInvocation;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
+import com.neaterbits.compiler.common.parser.stackstate.StackParameterList;
 import com.neaterbits.compiler.common.parser.stackstate.StackResource;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryCatchFinallyStatement;
@@ -371,11 +375,51 @@ public abstract class BaseParserListener {
 				context,
 				classInstanceCreationExpression.getType(),
 				classInstanceCreationExpression.getConstructorName(),
-				new ParameterList(classInstanceCreationExpression.getList()));
+				new ParameterList(
+						classInstanceCreationExpression.getParameters() != null
+							? classInstanceCreationExpression.getParameters()
+							: Collections.emptyList()));
 		
 		final ExpressionSetter expressionSetter = get();
 		
 		expressionSetter.addExpression(expression);
+	}
+	
+	public final void onMethodInvocationStart(Context context, MethodInvocationType type, TypeReference classType, String methodName) {
+		push(new StackMethodInvocation(logger, type, classType, methodName));
+	}
+	
+	public final void onParametersStart(Context context) {
+		push(new StackParameterList(logger));
+	}
+	
+	public final void onParametersEnd(Context context) {
+
+		final StackParameterList stackParameterList = pop();
+
+		final ParametersSetter parametersSetter = get();
+
+		parametersSetter.setParameters(stackParameterList.getList());
+	}
+	
+	public final void onMethodInvocationEnd(Context context) {
+
+		final StackMethodInvocation stackMethodInvocation = pop();
+
+		final MethodInvocationExpression methodInvocation = new MethodInvocationExpression(
+				context,
+				stackMethodInvocation.getType(),
+				stackMethodInvocation.getClassType(),
+				stackMethodInvocation.getObject(),
+				stackMethodInvocation.getName(),
+				new ParameterList(
+						stackMethodInvocation.getParameters() != null
+							? stackMethodInvocation.getParameters()
+							: Collections.emptyList()));
+		
+		final ExpressionSetter expressionSetter = get();
+		
+		expressionSetter.addExpression(methodInvocation);
 	}
 
 	// Statements
