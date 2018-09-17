@@ -288,14 +288,18 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onVariableDeclarationStatementEnd(context);
 	}
 	
-	public void onVariableDeclaratorStart(Context context, String name, int numDims) {
-		delegate.onVariableDeclaratorStart(context, name, numDims);
+	public void onVariableDeclaratorStart(Context context) {
+		delegate.onVariableDeclaratorStart(context);
 	}
 	
 	public void onVariableDeclaratorEnd(Context context) {
 		delegate.onVariableDeclaratorEnd(context);
 	}
-	
+
+	public void onVariableName(Context context, String name, int numDims) {
+		delegate.onVariableName(context, name, numDims);
+	}
+
 	private static final ByteType 	BYTE_TYPE 	= new ByteType	(new TypeName("byte"), false);
 	private static final ShortType 	SHORT_TYPE 	= new ShortType	(new TypeName("short"), false);
 	private static final IntType 	INT_TYPE 	= new IntType	(new TypeName("int"), false);
@@ -327,10 +331,15 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 
 	public void onJavaClassOrInterfaceReferenceType(Context context, String typeName) {
+System.out.println("## onJavaClassOrInterfaceReferenceType");		
+		
 		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName));
 	}
 	
 	public void onJavaTypeVariableReferenceType(Context context, String typeName) {
+
+System.out.println("## onJavaTypeVariableReferenceType");
+		
 		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName));
 	}
 	
@@ -591,11 +600,27 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 	
 	public void onJavaTryWithResourcesStart(Context context) {
-		
+		delegate.onTryWithResourcesStatementStart(context);
+	}
+	
+	public void onJavaTryWithResourcesSpecificationStart(Context context) {
+		delegate.onTryWithResourcesSpecificationStart(context);
+	}
+	
+	public void onJavaResourceStart(Context context) {
+		delegate.onResourceStart(context);
+	}
+	
+	public void onJavaResourceEnd(Context context) {
+		delegate.onResourceEnd(context);
+	}
+
+	public void onJavaTryWithResourcesSpecificationEnd(Context context) {
+		delegate.onTryWithResourcesSpecificationEnd(context);
 	}
 	
 	public void onJavaTryWithResourcesEnd(Context context) {
-		
+		delegate.onTryWithResourcesEnd(context);
 	}
 	
 	public void onCatchStart(Context context) {

@@ -61,6 +61,8 @@ import com.neaterbits.compiler.java.Java8Parser.PublicClassModifierContext;
 import com.neaterbits.compiler.java.Java8Parser.PublicMethodMofifierContext;
 import com.neaterbits.compiler.java.Java8Parser.RelationalEqualsExpressionContext;
 import com.neaterbits.compiler.java.Java8Parser.RelationalNotEqualsExpressionContext;
+import com.neaterbits.compiler.java.Java8Parser.ResourceContext;
+import com.neaterbits.compiler.java.Java8Parser.ResourceSpecificationContext;
 import com.neaterbits.compiler.java.Java8Parser.ReturnStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.ShortTypeContext;
 import com.neaterbits.compiler.java.Java8Parser.SingleStaticImportDeclarationContext;
@@ -83,6 +85,7 @@ import com.neaterbits.compiler.java.Java8Parser.TryWithResourcesContext;
 import com.neaterbits.compiler.java.Java8Parser.TypeImportOnDemandDeclarationContext;
 import com.neaterbits.compiler.java.Java8Parser.TypeVariableReferenceTypeContext;
 import com.neaterbits.compiler.java.Java8Parser.VariableDeclaratorContext;
+import com.neaterbits.compiler.java.Java8Parser.VariableDeclaratorIdContext;
 import com.neaterbits.compiler.java.Java8Parser.WhileStatementContext;
 import com.neaterbits.compiler.java.Java8Parser.WhileStatementNoShortIfContext;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
@@ -519,20 +522,24 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterVariableDeclarator(VariableDeclaratorContext ctx) {
-		delegate.onVariableDeclaratorStart(
-				context(ctx),
-				ctx.variableDeclaratorId().Identifier().getText(),
-				ctx.variableDeclaratorId().dims() != null
-					? countDims(ctx.variableDeclaratorId().dims().getText())
-					: 0);
+		delegate.onVariableDeclaratorStart(context(ctx));
 	}
 
 	@Override
 	public void exitVariableDeclarator(VariableDeclaratorContext ctx) {
 		delegate.onVariableDeclaratorEnd(context(ctx));
 	}
-
 	
+	@Override
+	public void exitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
+		delegate.onVariableName(
+				context(ctx),
+				ctx.Identifier().getText(),
+				ctx.dims() != null
+					? countDims(ctx.dims().getText())
+					: 0);
+	}
+
 	// Hack to construct proper if-else if-else sequences
 	@Override
 	public void enterIfThenStatement(IfThenStatementContext ctx) {
@@ -783,6 +790,26 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void enterTryWithResources(TryWithResourcesContext ctx) {
 		delegate.onJavaTryWithResourcesStart(context(ctx));
+	}
+
+	@Override
+	public void enterResourceSpecification(ResourceSpecificationContext ctx) {
+		delegate.onJavaTryWithResourcesSpecificationStart(context(ctx));
+	}
+	
+	@Override
+	public void enterResource(ResourceContext ctx) {
+		delegate.onJavaResourceStart(context(ctx));
+	}
+
+	@Override
+	public void exitResource(ResourceContext ctx) {
+		delegate.onJavaResourceEnd(context(ctx));
+	}
+
+	@Override
+	public void exitResourceSpecification(ResourceSpecificationContext ctx) {
+		delegate.onJavaTryWithResourcesSpecificationEnd(context(ctx));
 	}
 
 	@Override

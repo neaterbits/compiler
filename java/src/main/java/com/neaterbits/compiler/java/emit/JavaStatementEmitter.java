@@ -1,8 +1,14 @@
 package com.neaterbits.compiler.java.emit;
 
+import java.util.List;
+
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.statement.BaseTryCatchFinallyStatement;
+import com.neaterbits.compiler.common.ast.statement.CatchBlock;
+import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
+import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableMutability;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
@@ -43,5 +49,68 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 	@Override
 	protected void emitVariableModifiers(VariableModifiers modifiers, EmitterState param) {
 		emitList(param, modifiers.getModifiers(), " ", modifier -> modifier.visit(VARIABLEMODIFIER_TO_STRING, null));
+	}
+
+	
+	private void emitCatchBlocks(List<CatchBlock> catchBlocks, EmitterState state) {
+		
+		for (CatchBlock catchBlock : catchBlocks) {
+			state.append("} catch(");
+			
+			emitListTo(state, catchBlock.getExceptionTypes(), "|", type -> emitType(type, state));
+			
+			state.append(' ');
+			
+			state.append(catchBlock.getExceptionVarName().getName());
+			
+			state.append(") {").newline();
+			
+			emitIndentedBlock(catchBlock.getBlock(), state);
+		}
+	}
+	
+	private void emitTryCatchAndFinallyBlocks(BaseTryCatchFinallyStatement statement, EmitterState param) {
+		emitIndentedBlock(statement.getTryBlock(), param);
+		
+		emitCatchBlocks(statement.getCatchBlocks(), param);
+		
+		if (statement.getFinallyBlock() != null) {
+			emitIndentedBlock(statement.getFinallyBlock(), param);
+		}
+	}
+	
+	@Override
+	public Void onTryCatchFinallyStatement(TryCatchFinallyStatement statement, EmitterState param) {
+
+		param.append("try {").newline();
+			
+		emitTryCatchAndFinallyBlocks(statement, param);
+
+		param.append('}').newline();
+		
+		return null;
+	}
+
+	@Override
+	public Void onTryWithResourcesStatement(TryWithResourcesStatement statement, EmitterState param) {
+
+		param.append("try (");
+
+		emitListTo(param, statement.getResources().getList(), "; ", r -> {
+			emitVariableModifiers(r.getModifiers(), param);
+
+			param.append(' ');
+
+			emitVariableDeclaration(r.getTypeReference(), r.getName(), param);
+			
+		});
+		
+		emitVariableDeclarationElements(statement.getResources().getList(), param);
+		
+		param.append(") {").newline();
+		
+		emitTryCatchAndFinallyBlocks(statement, param);
+		
+		return null;
 	}
 }

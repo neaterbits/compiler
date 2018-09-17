@@ -4,6 +4,8 @@ package com.neaterbits.compiler.c.emit;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
+import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.StatementEmitter;
@@ -34,6 +36,16 @@ final class CStatementEmitter extends CLikeStatementEmitter<EmitterState> implem
 
 	@Override
 	protected void emitVariableModifiers(VariableModifiers modifiers, EmitterState param) {
-		throw new UnsupportedOperationException("");
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onTryCatchFinallyStatement(TryCatchFinallyStatement statement, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onTryWithResourcesStatement(TryWithResourcesStatement statement, EmitterState param) {
+		throw new UnsupportedOperationException();
 	}
 }

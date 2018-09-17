@@ -8,7 +8,7 @@ import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 
-public final class VariableDeclarationElement extends BaseASTElement {
+public class VariableDeclarationElement extends BaseASTElement {
 
 	private final TypeReference type;
 	private final VarName name;
@@ -28,23 +28,23 @@ public final class VariableDeclarationElement extends BaseASTElement {
 		this.initializer = initializer;
 	}
 
-	public TypeReference getTypeReference() {
+	public final TypeReference getTypeReference() {
 		return type;
 	}
 
-	public VarName getName() {
+	public final VarName getName() {
 		return name;
 	}
 
-	public int getNumDims() {
+	public final int getNumDims() {
 		return numDims;
 	}
 
-	public Expression getInitializer() {
+	public final Expression getInitializer() {
 		return initializer;
 	}
 	
-	public VariableDeclaration makeVariableDeclaration(VariableModifiers modifiers) {
+	public final VariableDeclaration makeVariableDeclaration(VariableModifiers modifiers) {
 
 		final VariableDeclaration variableDeclaration = new VariableDeclaration(
 				modifiers,

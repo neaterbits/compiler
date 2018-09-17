@@ -14,19 +14,22 @@ import com.neaterbits.compiler.common.ast.CompilationCodeLines;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.Namespace;
+import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.ParameterList;
-import com.neaterbits.compiler.common.ast.expression.VariableExpression;
+import com.neaterbits.compiler.common.ast.expression.Resource;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.common.ast.statement.CatchBlock;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
+import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableMutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
@@ -55,18 +58,26 @@ import com.neaterbits.compiler.common.ast.variables.VarName;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
 import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.common.parser.stackstate.BaseStackTryCatchFinally;
 import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
+import com.neaterbits.compiler.common.parser.stackstate.StackCatchBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
+import com.neaterbits.compiler.common.parser.stackstate.StackFinallyBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
+import com.neaterbits.compiler.common.parser.stackstate.StackResource;
+import com.neaterbits.compiler.common.parser.stackstate.StackTryBlock;
+import com.neaterbits.compiler.common.parser.stackstate.StackTryCatchFinallyStatement;
+import com.neaterbits.compiler.common.parser.stackstate.StackTryWithResourcesStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackVariableDeclaration;
 import com.neaterbits.compiler.common.parser.stackstate.StackVariableDeclarationList;
+import com.neaterbits.compiler.common.parser.stackstate.VariableNameSetter;
 
 public abstract class BaseParserListener {
 
@@ -292,7 +303,7 @@ public abstract class BaseParserListener {
 
 	public void onVariableReference(Context context, String name) {
 
-		final ExpressionSetter expressionSetter = get();
+		final VariableReferenceSetter variableReferenceSetter = get();
 
 		final VariableDeclaration declaration = findVariableDeclaration(name);
 
@@ -301,9 +312,8 @@ public abstract class BaseParserListener {
 		}
 
 		final SimpleVariableReference variableReference = new SimpleVariableReference(context, declaration);
-		final VariableExpression variableExpression = new VariableExpression(context, variableReference);
 
-		expressionSetter.addExpression(variableExpression);
+		variableReferenceSetter.setVariableReference(variableReference);
 	}
 	
 	public final void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits) {
@@ -409,8 +419,8 @@ public abstract class BaseParserListener {
 		statementSetter.addStatement(statement);
 	}
 
-	public void onVariableDeclaratorStart(Context context, String name, int numDims) {
-		push(new StackVariableDeclaration(logger, name, numDims));
+	public void onVariableDeclaratorStart(Context contex) {
+		push(new StackVariableDeclaration(logger));
 	}
 	
 	public void onVariableDeclaratorEnd(Context context) {
@@ -453,6 +463,121 @@ public abstract class BaseParserListener {
 		final StatementSetter statementSetter = get();
 		
 		statementSetter.addStatement(expressionStatement);
+	}
+	
+	public final void onTryWithResourcesStatementStart(Context context) {
+		
+		push(new StackTryWithResourcesStatement(logger));
+		
+		pushVariableScope(); // for the variables in resources
+	}
+	
+	public final void onTryWithResourcesSpecificationStart(Context context) {
+		push(new StackResourceList(logger));
+	}
+	
+	public final void onResourceStart(Context context) {
+		push(new StackResource(logger));
+	}
+
+	public final void onVariableName(Context context, String name, int numDims) {
+		final VariableNameSetter variableNameSetter = get();
+
+		variableNameSetter.init(name, numDims);
+	}
+	
+	public final void onResourceEnd(Context context) {
+		final StackResource stackResource = pop();
+		
+		final Resource resource = new Resource(
+				context,
+				new VariableModifiers(stackResource.getModifiers()),
+				stackResource.getTypeReference(),
+				new VarName(stackResource.getName()),
+				stackResource.getNumDims(),
+				stackResource.getInitializer());
+		
+		System.out.println("-- adding resource name " + resource.getName().getName());
+		
+		variableScopes.get().add(resource.getName().getName(), resource.makeVariableDeclaration());
+	
+		final StackResourceList stackResourceList = get();
+		
+		stackResourceList.add(resource);
+	}
+	
+	public final void onTryWithResourcesSpecificationEnd(Context context) {
+
+		final StackResourceList stackResourceList = pop();
+		
+		final StackTryWithResourcesStatement stackTryWithResourcesStatement = get();
+		
+		stackTryWithResourcesStatement.setResources(stackResourceList.getList());
+		
+		// Must push try-block to collect statements
+		push(new StackTryBlock(logger));
+	}
+	
+	public final void onTryStatementStart(Context context) {
+		push(new StackTryCatchFinallyStatement(logger));
+	}
+	
+	public final void onTryBlockEnd(Context context) {
+		final StackTryBlock tryBlock = pop();
+		
+		final BaseStackTryCatchFinally baseStackTryCatchFinally = get();
+		
+		baseStackTryCatchFinally.setTryBlock(new Block(context, tryBlock.getList()));
+	}
+
+	public final void onCatchStart(Context context) {
+		push(new StackCatchBlock(logger));
+	}
+	
+	public final void onCatchEnd(Context context) {
+		final StackCatchBlock stackCatchBlock = pop();
+		
+		final BaseStackTryCatchFinally baseStackTryCatchFinally = get();
+		
+		final CatchBlock catchBlock = new CatchBlock(
+				context,
+				stackCatchBlock.getExceptionTypes(),
+				stackCatchBlock.getExceptionVarName(),
+				new Block(context, stackCatchBlock.getList()));
+		
+		baseStackTryCatchFinally.addCatchBlock(catchBlock);
+	}
+	
+	public final void onFinallyStart(Context context) {
+		push(new StackFinallyBlock(logger));
+	}
+	
+	public final void onFinallyEnd(Context context) {
+		final StackFinallyBlock stackFinallyBlock = pop();
+		
+		final BaseStackTryCatchFinally baseStackTryCatchFinally = get();
+		
+		final Block finallyBlock = new Block(context, stackFinallyBlock.getList());
+		
+		baseStackTryCatchFinally.setFinallyBlock(finallyBlock);
+	}
+	
+	public final void onTryWithResourcesEnd(Context context) {
+		
+		popVariableScope();
+		
+		final StackTryWithResourcesStatement stackTryWithResourcesStatement = pop();
+		
+		final TryWithResourcesStatement statement = new TryWithResourcesStatement(
+				context,
+				stackTryWithResourcesStatement.getResources(),
+				stackTryWithResourcesStatement.getTryBlock(),
+				stackTryWithResourcesStatement.getCatchBlocks(),
+				stackTryWithResourcesStatement.getFinallyBlock());
+		
+		final StatementSetter statementSetter = get();
+		
+		statementSetter.addStatement(statement);
 	}
 
 	protected final void push(StackEntry element) {

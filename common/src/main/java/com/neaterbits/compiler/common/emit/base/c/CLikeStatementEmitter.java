@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.common.emit.base.c;
 
+import java.util.List;
+
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
@@ -12,6 +14,8 @@ import com.neaterbits.compiler.common.ast.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.WhileStatement;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
+import com.neaterbits.compiler.common.ast.variables.VarName;
+import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.StatementEmitter;
 import com.neaterbits.compiler.common.emit.base.BaseStatementEmitter;
@@ -25,19 +29,36 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 	
 	protected abstract void emitVariableModifiers(VariableModifiers modifiers, T param);
 	
+
+	protected final void emitVariableDeclaration(TypeReference typeReference, VarName varName, T param) {
+		emitType(typeReference, param);
+		
+		param.append(' ');
+		
+		param.append(varName.getName());
+	}
+
+	
+	protected final void emitVariableDeclarationElement(VariableDeclarationElement element, T param) {
+		
+		emitVariableDeclaration(element.getTypeReference(), element.getName(), param);
+
+	}
+
+	protected final <E extends VariableDeclarationElement>
+
+	void emitVariableDeclarationElements(List<E> elements, T param) {
+
+		emitListTo(param, elements, ", ", e -> {
+			emitVariableDeclarationElement(e, param);
+		});
+	}
+	
 	@Override
 	public final Void onVariableDeclaration(VariableDeclarationStatement statement, T param) {
 
 		emitVariableModifiers(statement.getModifiers(), param);
-
-		emitListTo(param, statement.getDeclarations(), ", ", e -> {
-
-			emitType(e.getTypeReference(), param);
-			
-			param.append(' ');
-			
-			param.append(e.getName().getName());
-		});
+		emitVariableDeclarationElements(statement.getDeclarations(), param);
 		
 		return null;
 	}

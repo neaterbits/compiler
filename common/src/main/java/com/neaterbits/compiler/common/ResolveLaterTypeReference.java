@@ -38,4 +38,9 @@ public final class ResolveLaterTypeReference extends TypeReference {
 
 		return resolved;
 	}
+
+	@Override
+	public String toString() {
+		return "ResolveLaterTypeReference [typeName=" + typeName + ", resolved=" + resolved + "]";
+	}
 }

@@ -10,5 +10,9 @@ enum JavaStatement {
 	SWITCH,
 	WHILE,
 	DO,
-	FOR;
+	FOR,
+	
+	TRY_CATCH,
+	TRY_CATCH_FINALLY,
+	TRY_WITH_RESOURCES;
 }

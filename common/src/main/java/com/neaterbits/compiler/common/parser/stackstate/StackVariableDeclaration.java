@@ -4,25 +4,32 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.log.ParseLogger;
 
-public final class StackVariableDeclaration extends StackExpressionList {
+public class StackVariableDeclaration extends StackExpressionList implements VariableNameSetter {
 
-	private final String name;
-	private final int numDims;
+	private String name;
+	private int numDims;
 
-	public StackVariableDeclaration(ParseLogger parseLogger, String name, int numDims) {
+	public StackVariableDeclaration(ParseLogger parseLogger) {
 		super(parseLogger);
-		
+	}
+
+	@Override
+	public void init(String name, int numDims) {
 		Objects.requireNonNull(name);
+
+		if (this.name != null) {
+			throw new IllegalStateException("Name already set");
+		}
 		
 		this.name = name;
 		this.numDims = numDims;
 	}
 
-	public String getName() {
+	public final String getName() {
 		return name;
 	}
 
-	public int getNumDims() {
+	public final int getNumDims() {
 		return numDims;
 	}
 }
