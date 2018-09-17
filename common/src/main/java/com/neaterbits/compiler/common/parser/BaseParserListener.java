@@ -76,6 +76,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackMethodInvocation;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
 import com.neaterbits.compiler.common.parser.stackstate.StackParameterList;
 import com.neaterbits.compiler.common.parser.stackstate.StackResource;
+import com.neaterbits.compiler.common.parser.stackstate.StackReturnType;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryCatchFinallyStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryWithResourcesStatement;
@@ -222,6 +223,18 @@ public abstract class BaseParserListener {
 		push(method);
 		
 		pushVariableScope();
+	}
+	
+	public final void onMethodReturnTypeStart(Context context) {
+		push(new StackReturnType(logger));
+	}
+	
+	public final void onMethodReturnTypeEnd(Context context) {
+		final StackReturnType stackReturnType = pop();
+		
+		final StackMethod stackMethod = get();
+		
+		stackMethod.setReturnType(stackReturnType.getType());
 	}
 	
 	public final void onMethodName(Context context, String methodName) {

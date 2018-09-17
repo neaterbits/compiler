@@ -29,7 +29,6 @@ import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.MethodInvocationType;
 import com.neaterbits.compiler.common.parser.iterative.BaseIterativeOOParserListener;
-import com.neaterbits.compiler.common.parser.stackstate.StackMethodInvocation;
 import com.neaterbits.compiler.common.util.Strings;
 
 /**
@@ -129,6 +128,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onMethodStart(context);
 	}
 	
+	public void onMethodReturnTypeStart(Context context) {
+		delegate.onMethodReturnTypeStart(context);
+	}
+	
+	public void onMethodReturnTypeEnd(Context context) {
+		delegate.onMethodReturnTypeEnd(context);
+	}
+
 	public void onMethodName(Context context, String methodName) {
 		delegate.onMethodName(context, methodName);
 	}

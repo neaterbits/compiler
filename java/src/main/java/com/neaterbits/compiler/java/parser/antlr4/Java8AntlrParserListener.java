@@ -2,104 +2,7 @@ package com.neaterbits.compiler.java.parser.antlr4;
 
 import com.neaterbits.compiler.java.Java8BaseListener;
 import com.neaterbits.compiler.java.Java8Parser;
-import com.neaterbits.compiler.java.Java8Parser.AbstractClassModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.AbstractMethodModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.ArgumentListContext;
-import com.neaterbits.compiler.java.Java8Parser.AssertStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.AssignmentContext;
-import com.neaterbits.compiler.java.Java8Parser.BitwiseOrExpressionContext;
-import com.neaterbits.compiler.java.Java8Parser.BlockContext;
-import com.neaterbits.compiler.java.Java8Parser.BooleanLiteralContext;
-import com.neaterbits.compiler.java.Java8Parser.BooleanTypeContext;
-import com.neaterbits.compiler.java.Java8Parser.BreakStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.ByteTypeContext;
-import com.neaterbits.compiler.java.Java8Parser.CharTypeContext;
-import com.neaterbits.compiler.java.Java8Parser.CharacterLiteralContext;
-import com.neaterbits.compiler.java.Java8Parser.ClassInstanceCreationExpressionMultipleIdentifiersContext;
-import com.neaterbits.compiler.java.Java8Parser.ClassInstanceCreationExpressionSimpleContext;
-import com.neaterbits.compiler.java.Java8Parser.ClassInstanceCreationExpressionWithExpressionNameContext;
-import com.neaterbits.compiler.java.Java8Parser.ClassOrInterfaceReferenceTypeContext;
-import com.neaterbits.compiler.java.Java8Parser.CompilationUnitContext;
-import com.neaterbits.compiler.java.Java8Parser.ConstantExpressionSwitchLabelContext;
-import com.neaterbits.compiler.java.Java8Parser.ContinueStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.DefaultSwitchLabelContext;
-import com.neaterbits.compiler.java.Java8Parser.DoStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.DoubleTypeContext;
-import com.neaterbits.compiler.java.Java8Parser.EnumConstantNameSwitchLabelContext;
-import com.neaterbits.compiler.java.Java8Parser.ExpressionMethodInvocationContext;
-import com.neaterbits.compiler.java.Java8Parser.ExpressionNameContext;
-import com.neaterbits.compiler.java.Java8Parser.ExpressionStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.FinalClassModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.FinalMethodModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.FinalVariableModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.FloatTypeContext;
-import com.neaterbits.compiler.java.Java8Parser.FloatingPointLiteralContext;
-import com.neaterbits.compiler.java.Java8Parser.ForInitContext;
-import com.neaterbits.compiler.java.Java8Parser.ForStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.ForStatementNoShortIfContext;
-import com.neaterbits.compiler.java.Java8Parser.ForUpdateContext;
-import com.neaterbits.compiler.java.Java8Parser.IfThenElseStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.IfThenElseStatementNoShortIfContext;
-import com.neaterbits.compiler.java.Java8Parser.IfThenStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.IntTypeContext;
-import com.neaterbits.compiler.java.Java8Parser.IntegerLiteralContext;
-import com.neaterbits.compiler.java.Java8Parser.JavaClassInstanceCreationExpressionContext;
-import com.neaterbits.compiler.java.Java8Parser.LeftHandSideContext;
-import com.neaterbits.compiler.java.Java8Parser.LocalVariableDeclarationStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.LogicalAndExpressionContext;
-import com.neaterbits.compiler.java.Java8Parser.LogicalOrExpressionContext;
-import com.neaterbits.compiler.java.Java8Parser.LongTypeContext;
-import com.neaterbits.compiler.java.Java8Parser.MethodDeclarationContext;
-import com.neaterbits.compiler.java.Java8Parser.MethodDeclaratorContext;
-import com.neaterbits.compiler.java.Java8Parser.NativeMethodModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.NoObjectMethodInvocationContext;
-import com.neaterbits.compiler.java.Java8Parser.NoObjectMethodInvocation_lfno_primaryContext;
-import com.neaterbits.compiler.java.Java8Parser.NormalClassDeclarationContext;
-import com.neaterbits.compiler.java.Java8Parser.NullLiteralContext;
-import com.neaterbits.compiler.java.Java8Parser.ObjectMethodInvocationContext;
-import com.neaterbits.compiler.java.Java8Parser.ObjectMethodInvocation_lfno_primaryContext;
-import com.neaterbits.compiler.java.Java8Parser.PackageDeclarationContext;
-import com.neaterbits.compiler.java.Java8Parser.PrivateClassModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.PrivateMethodModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.ProtectedClassModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.ProtectedMethodModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.PublicClassModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.PublicMethodMofifierContext;
-import com.neaterbits.compiler.java.Java8Parser.RelationalEqualsExpressionContext;
-import com.neaterbits.compiler.java.Java8Parser.RelationalNotEqualsExpressionContext;
-import com.neaterbits.compiler.java.Java8Parser.ResourceContext;
-import com.neaterbits.compiler.java.Java8Parser.ResourceSpecificationContext;
-import com.neaterbits.compiler.java.Java8Parser.ReturnStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.ShortTypeContext;
-import com.neaterbits.compiler.java.Java8Parser.SingleStaticImportDeclarationContext;
-import com.neaterbits.compiler.java.Java8Parser.SingleTypeImportDeclarationContext;
-import com.neaterbits.compiler.java.Java8Parser.StaticClassModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.StaticImportOnDemandDeclarationContext;
-import com.neaterbits.compiler.java.Java8Parser.StaticMethodInvocationContext;
-import com.neaterbits.compiler.java.Java8Parser.StaticMethodInvocation_lfno_primaryContext;
-import com.neaterbits.compiler.java.Java8Parser.StaticMethodModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.StrictfpClassModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.StrictfpMethodModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.StringLiteralContext;
-import com.neaterbits.compiler.java.Java8Parser.SuperMethodInvocationContext;
-import com.neaterbits.compiler.java.Java8Parser.SuperMethodInvocation_lfno_primaryContext;
-import com.neaterbits.compiler.java.Java8Parser.SwitchBlockContext;
-import com.neaterbits.compiler.java.Java8Parser.SwitchBlockStatementGroupContext;
-import com.neaterbits.compiler.java.Java8Parser.SwitchLabelsContext;
-import com.neaterbits.compiler.java.Java8Parser.SwitchStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.SynchronizedMethodModifierContext;
-import com.neaterbits.compiler.java.Java8Parser.SynchronizedStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.TryCatchContext;
-import com.neaterbits.compiler.java.Java8Parser.TryCatchFinallyContext;
-import com.neaterbits.compiler.java.Java8Parser.TryWithResourcesContext;
-import com.neaterbits.compiler.java.Java8Parser.TypeImportOnDemandDeclarationContext;
-import com.neaterbits.compiler.java.Java8Parser.TypeSuperMethodInvocationContext;
-import com.neaterbits.compiler.java.Java8Parser.TypeSuperMethodInvocation_lfno_primaryContext;
-import com.neaterbits.compiler.java.Java8Parser.TypeVariableReferenceTypeContext;
-import com.neaterbits.compiler.java.Java8Parser.VariableDeclaratorContext;
-import com.neaterbits.compiler.java.Java8Parser.VariableDeclaratorIdContext;
-import com.neaterbits.compiler.java.Java8Parser.WhileStatementContext;
-import com.neaterbits.compiler.java.Java8Parser.WhileStatementNoShortIfContext;
+import com.neaterbits.compiler.java.Java8Parser.*;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.JavaPrimitiveType;
 
@@ -274,7 +177,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitNormalClassDeclaration(NormalClassDeclarationContext ctx) {
 		delegate.onClassEnd(context(ctx));
 	}
-	
 
 	@Override
 	public void enterMethodDeclaration(MethodDeclarationContext ctx) {
@@ -283,12 +185,21 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		delegate.onMethodStart(context(ctx));
 	}
-	
+
+	@Override
+	public void enterResult(ResultContext ctx) {
+		delegate.onMethodReturnTypeStart(context(ctx));
+	}
+
+	@Override
+	public void exitResult(ResultContext ctx) {
+		delegate.onMethodReturnTypeEnd(context(ctx));
+	}
+
 	@Override
 	public void enterMethodDeclarator(MethodDeclaratorContext ctx) {
 		delegate.onMethodName(context(ctx), ctx.Identifier().getText());
 	}
-
 
 	@Override
 	public void exitPublicMethodMofifier(PublicMethodMofifierContext ctx) {

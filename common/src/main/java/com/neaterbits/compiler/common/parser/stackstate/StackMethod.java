@@ -37,6 +37,6 @@ public final class StackMethod extends CallableStackEntry {
 	}
 
 	public Method makeMethod(Context context) {
-		return new Method(context, null, getName(), getParameters(), new Block(context, getList()));
+		return new Method(context, getReturnType(), getName(), getParameters(), new Block(context, getList()));
 	}
 }
