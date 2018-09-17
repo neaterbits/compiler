@@ -8,13 +8,13 @@ import com.neaterbits.compiler.common.ast.Name;
 public final class Parameter {
 
 	private final TypeReference type;
-	private final String name;
+	private final ParameterName name;
 
-	public Parameter(TypeReference type, String name) {
+	public Parameter(TypeReference type, ParameterName name) {
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(name);
 		
-		Name.check(name);
+		Name.check(name.getName());
 
 		this.type = type;
 		this.name = name;
@@ -24,7 +24,7 @@ public final class Parameter {
 		return type;
 	}
 	
-	public String getName() {
+	public ParameterName getName() {
 		return name;
 	}
 }

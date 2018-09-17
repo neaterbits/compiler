@@ -16,6 +16,8 @@ import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.block.Block;
+import com.neaterbits.compiler.common.ast.block.Parameter;
+import com.neaterbits.compiler.common.ast.block.ParameterName;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
@@ -61,6 +63,7 @@ import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.stackstate.BaseStackTryCatchFinally;
+import com.neaterbits.compiler.common.parser.stackstate.CallableStackEntry;
 import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
@@ -75,6 +78,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethodInvocation;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
 import com.neaterbits.compiler.common.parser.stackstate.StackParameterList;
+import com.neaterbits.compiler.common.parser.stackstate.StackParameterSignature;
 import com.neaterbits.compiler.common.parser.stackstate.StackResource;
 import com.neaterbits.compiler.common.parser.stackstate.StackReturnType;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryBlock;
@@ -245,6 +249,31 @@ public abstract class BaseParserListener {
 		System.out.println("Set methodname: " + methodName);
 		
 		method.setName(methodName);
+	}
+	
+	public final void onMethodSignatureParametersStart(Context context) {
+		
+	}
+
+	public final void onMethodSignatureParameterStart(Context context) {
+		push(new StackParameterSignature(logger));
+	}
+
+	public final void onMethodSignatureParameterEnd(Context context) {
+		final StackParameterSignature stackParameterSignature = pop();
+		
+		final CallableStackEntry stackCallable = get();
+		
+		final Parameter parameter = new Parameter(
+				stackParameterSignature.getType(),
+				new ParameterName(stackParameterSignature.getName()));
+
+		stackCallable.addParameter(parameter);
+	}
+
+	
+	public final void onMethodSignatureParametersEnd(Context context) {
+		
 	}
 
 	private void addMethodModifier(MethodModifier modifier) {

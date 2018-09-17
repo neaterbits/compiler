@@ -47,7 +47,7 @@ public class CCompilationUnitEmmiter extends BaseProceduralProgramEmitter<Emitte
 				
 				emitType(parameter.getType(), param);
 				
-				param.append(' ').append(parameter.getName());
+				param.append(' ').append(parameter.getName().getName());
 			}
 
 			param.append(") {");

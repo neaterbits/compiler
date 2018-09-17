@@ -200,6 +200,26 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterMethodDeclarator(MethodDeclaratorContext ctx) {
 		delegate.onMethodName(context(ctx), ctx.Identifier().getText());
 	}
+	
+	@Override
+	public void enterFormalParameterList(FormalParameterListContext ctx) {
+		delegate.onMethodSignatureParametersStart(context(ctx));
+	}
+
+	@Override
+	public void enterFormalParameter(FormalParameterContext ctx) {
+		delegate.onMethodSignatureParameterStart(context(ctx));
+	}
+
+	@Override
+	public void exitFormalParameter(FormalParameterContext ctx) {
+		delegate.onMethodSignatureParameterEnd(context(ctx));
+	}
+
+	@Override
+	public void exitFormalParameterList(FormalParameterListContext ctx) {
+		delegate.onMethodSignatureParametersEnd(context(ctx));
+	}
 
 	@Override
 	public void exitPublicMethodMofifier(PublicMethodMofifierContext ctx) {

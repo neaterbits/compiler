@@ -139,7 +139,23 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onMethodName(Context context, String methodName) {
 		delegate.onMethodName(context, methodName);
 	}
-	
+
+	public void onMethodSignatureParametersStart(Context context) {
+		delegate.onMethodSignatureParametersStart(context);
+	}
+
+	public void onMethodSignatureParameterStart(Context context) {
+		delegate.onMethodSignatureParameterStart(context);
+	}
+
+	public void onMethodSignatureParameterEnd(Context context) {
+		delegate.onMethodSignatureParameterEnd(context);
+	}
+
+	public void onMethodSignatureParametersEnd(Context context) {
+		delegate.onMethodSignatureParametersEnd(context);
+	}
+
 	public void onVisibilityMethodModifier(MethodVisibility visibility) {
 		delegate.onVisibilityMethodModifier(visibility);
 	}
