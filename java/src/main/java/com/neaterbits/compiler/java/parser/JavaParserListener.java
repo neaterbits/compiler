@@ -508,6 +508,8 @@ System.out.println("## onJavaTypeVariableReferenceType");
 
 	public void onJavaAssertStatementStart(Context context) {
 		
+		statementsStack.add(JavaStatement.ASSERT);
+		
 	}
 
 	public void onJavaAssertStatementEnd(Context context) {
@@ -515,6 +517,9 @@ System.out.println("## onJavaTypeVariableReferenceType");
 	}
 
 	public void onJavaExpressionStatementStart(Context context) {
+		
+		statementsStack.add(JavaStatement.EXPRESSION);
+		
 		delegate.onExpressionStatementStart(context);
 	}
 
@@ -523,6 +528,8 @@ System.out.println("## onJavaTypeVariableReferenceType");
 	}
 	
 	public void onSwitchStatementStart(Context context) {
+		
+		statementsStack.add(JavaStatement.SWITCH);
 		
 	}
 	
@@ -588,6 +595,8 @@ System.out.println("## onJavaTypeVariableReferenceType");
 	
 	public void onDoStatementStart(Context context) {
 		
+		statementsStack.add(JavaStatement.DO);
+		
 	}
 	
 	public void onDoStatementEnd(Context context) {
@@ -595,6 +604,8 @@ System.out.println("## onJavaTypeVariableReferenceType");
 	}
 	
 	public void onForStatementStart(Context context) {
+		
+		statementsStack.add(JavaStatement.FOR);
 		
 	}
 	
@@ -623,6 +634,9 @@ System.out.println("## onJavaTypeVariableReferenceType");
 	}
 	
 	public void onReturnStatementStart(Context context) {
+		
+		statementsStack.add(JavaStatement.RETURN);
+		
 		delegate.onReturnStatementStart(context);
 	}
 	
