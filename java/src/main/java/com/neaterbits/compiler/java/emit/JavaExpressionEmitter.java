@@ -12,6 +12,7 @@ import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLitera
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.c.CLikeExpressionEmitter;
 import com.neaterbits.compiler.common.util.Strings;
@@ -22,6 +23,8 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	
 	private static final JavaTypeEmitter TYPE_EMITTER = new JavaTypeEmitter();
 
+	private static final JavaVariableReferenceEmitter VARIABLE_REFERENCE_EMITTER = new JavaVariableReferenceEmitter();
+
 	@Override
 	protected void emitCondition(Condition condition, EmitterState param) {
 		condition.visit(CONDITION_EMITTER, param);
@@ -31,9 +34,16 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		type.getType().visit(TYPE_EMITTER, param);
 	}
 	
+	private void emitVariableReference(VariableReference reference, EmitterState param) {
+		reference.visit(VARIABLE_REFERENCE_EMITTER, param);
+	}
+	
 	@Override
 	public Void onVariable(VariableExpression expression, EmitterState param) {
-		throw new UnsupportedOperationException();
+		
+		emitVariableReference(expression.getReference(), param);
+
+		return null;
 	}
 
 	@Override

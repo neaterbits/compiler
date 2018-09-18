@@ -22,4 +22,9 @@ public final class SimpleVariableReference extends VariableReference {
 	public VarName getName() {
 		return declaration.getName();
 	}
+
+	@Override
+	public <T, R> R visit(VariableReferenceVisitor<T, R> visitor, T param) {
+		return visitor.onSimpleVariableReference(this, param);
+	}
 }
