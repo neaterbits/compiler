@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.neaterbits.compiler.common.antlr4.AntlrError;
+import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.javascript.parser.antlr4.JavascriptAntlrParser;
 
 public class JavascriptParserTest {
@@ -22,7 +23,7 @@ public class JavascriptParserTest {
 
 		final List<AntlrError> errors = new ArrayList<>();
 		
-		parser.parse(source, errors);
+		parser.parse(source, errors, new ParseLogger(System.out));
 		
 		assertThat(errors.isEmpty()).isTrue();
 	}

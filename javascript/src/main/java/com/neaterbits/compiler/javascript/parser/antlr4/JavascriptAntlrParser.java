@@ -16,16 +16,12 @@ public class JavascriptAntlrParser extends BaseParser<
 			JavaScriptLexer,
 			JavaScriptParser> {
 
-	private final ParseLogger logger;
-	
 	public JavascriptAntlrParser(boolean debug) {
 		super(debug, new JavaScriptLexer(null), new JavaScriptParser(null));
-		
-		this.logger = new ParseLogger();
 	}
 
 	@Override
-	protected JSParserListener createListener() {
+	protected JSParserListener createListener(ParseLogger logger) {
 		return new JSParserListener(logger);
 	}
 
@@ -35,7 +31,7 @@ public class JavascriptAntlrParser extends BaseParser<
 	}
 
 	@Override
-	protected ParseTreeListener makeParseTreeListener(JSParserListener listener) {
+	protected ParseTreeListener makeParseTreeListener(JSParserListener listener, ParseLogger logger) {
 		return new JavascriptAntlrParserListener(listener);
 	}
 }

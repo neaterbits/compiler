@@ -19,16 +19,20 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
+import com.neaterbits.compiler.common.log.ParseLogger;
+
 import org.antlr.v4.runtime.ANTLRErrorListener;
 
 public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEXER extends Lexer, PARSER extends Parser>
 		implements AntlrParser<T, LISTENER> {
 
-	protected abstract LISTENER createListener();
+	protected abstract LISTENER createListener(ParseLogger parseLogger);
 
 	protected abstract ParserRuleContext getMainContext(PARSER parser);
 	
-	protected abstract ParseTreeListener makeParseTreeListener(LISTENER listener);
+	protected abstract ParseTreeListener makeParseTreeListener(LISTENER listener, ParseLogger parseLogger);
+	
 	
 
 	private final LEXER lexer;
@@ -64,60 +68,60 @@ public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEX
 
 	@Override
 	public final T parse(String string) {
-		return parse(new ANTLRInputStream(string), new ArrayList<AntlrError>());
+		return parse(new ANTLRInputStream(string), new ArrayList<AntlrError>(), new ParseLogger(System.out));
 	}
 
 	@Override
 	public final T parse(InputStream stream) throws IOException {
-		return parse(new ANTLRInputStream(stream), new ArrayList<AntlrError>());
+		return parse(new ANTLRInputStream(stream), new ArrayList<AntlrError>(), new ParseLogger(System.out));
 	}
 
 	@Override
-	public T parse(String string, Collection<AntlrError> errors) {
-		final LISTENER listener = createListener();
+	public T parse(String string, Collection<AntlrError> errors, ParseLogger parseLogger) {
+		final LISTENER listener = createListener(parseLogger);
 
-		parse(new ANTLRInputStream(string), listener, errors);
+		parse(new ANTLRInputStream(string), listener, errors, parseLogger);
 
 		return listener.getResult();
 	}
 
 	@Override
-	public T parse(InputStream stream, Collection<AntlrError> errors) throws IOException {
-		final LISTENER listener = createListener();
+	public T parse(InputStream stream, Collection<AntlrError> errors, ParseLogger parseLogger) throws IOException {
+		final LISTENER listener = createListener(parseLogger);
 
-		parse(new ANTLRInputStream(stream), listener, errors);
+		parse(new ANTLRInputStream(stream), listener, errors, parseLogger);
 
 		return listener.getResult();
 	}
 
-	private T parse(ANTLRInputStream stream, Collection<AntlrError> errors) {
+	private T parse(ANTLRInputStream stream, Collection<AntlrError> errors, ParseLogger parseLogger) {
 
-		final LISTENER listener = createListener();
+		final LISTENER listener = createListener(parseLogger);
 
-		parse(stream, listener, errors);
+		parse(stream, listener, errors, parseLogger);
 
 		return listener.getResult();
 	}
 
 	@Override
-	public final Collection<AntlrError> parse(String string, LISTENER listener) {
-		return parse(new ANTLRInputStream(string), listener);
+	public final Collection<AntlrError> parse(String string, LISTENER listener, ParseLogger parseLogger) {
+		return parse(new ANTLRInputStream(string), listener, parseLogger);
 	}
 
 	@Override
-	public final Collection<AntlrError> parse(InputStream stream, LISTENER listener) throws IOException {
-		return parse(new ANTLRInputStream(stream), listener);
+	public final Collection<AntlrError> parse(InputStream stream, LISTENER listener, ParseLogger parseLogger) throws IOException {
+		return parse(new ANTLRInputStream(stream), listener, parseLogger);
 	}
 
-	private final Collection<AntlrError> parse(ANTLRInputStream stream, LISTENER listener) {
+	private final Collection<AntlrError> parse(ANTLRInputStream stream, LISTENER listener, ParseLogger parseLogger) {
 		final List<AntlrError> errors = new ArrayList<AntlrError>();
 
-		parse(stream, listener, errors);
+		parse(stream, listener, errors, parseLogger);
 
 		return errors;
 	}
 
-	private final void parse(ANTLRInputStream stream, LISTENER listener, final Collection<AntlrError> errors) {
+	private final void parse(ANTLRInputStream stream, LISTENER listener, final Collection<AntlrError> errors, ParseLogger parseLogger) {
 
 		if (listener == null) {
 			throw new IllegalArgumentException("listener == null");
@@ -196,7 +200,7 @@ public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEX
 
 		final int numErrors = parser.getNumberOfSyntaxErrors();
 
-		final ParseTreeListener parseTreeListener = makeParseTreeListener(listener);
+		final ParseTreeListener parseTreeListener = makeParseTreeListener(listener, parseLogger);
 
 		new ParseTreeWalker(){
 			

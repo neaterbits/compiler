@@ -16,9 +16,14 @@ public final class ParseLogger {
 	
 	private int stackLevel;
 	
-	private final PrintStream out = System.out;
+	private final PrintStream out;
 
-	public ParseLogger() {
+	public ParseLogger(PrintStream out) {
+
+		Objects.requireNonNull(out);
+		
+		this.out = out;
+
 		this.antlrRules = new ArrayList<>();
 	}
 	

@@ -2,7 +2,9 @@ package com.neaterbits.compiler.common.antlr4;
 
 import org.antlr.v4.runtime.RecognitionException;
 
-public final class AntlrError {
+import com.neaterbits.compiler.common.CompileError;
+
+public final class AntlrError extends CompileError {
     private final int line;
     private final int charPositionInLine;
     private final String msg;

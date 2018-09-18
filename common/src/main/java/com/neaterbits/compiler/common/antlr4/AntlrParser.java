@@ -4,18 +4,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
+import com.neaterbits.compiler.common.log.ParseLogger;
+
 public interface AntlrParser<T, LISTENER extends ModelParserListener<T>> {
 
 	T parse(String string);
 
 	T parse(InputStream stream) throws IOException;
 
-	T parse(String string, Collection<AntlrError> errors);
+	T parse(String string, Collection<AntlrError> errors, ParseLogger parseLogger);
 
-	T parse(InputStream stream, Collection<AntlrError> errors) throws IOException;
+	T parse(InputStream stream, Collection<AntlrError> errors, ParseLogger parseLogger) throws IOException;
 
-	Collection<AntlrError> parse(String string, LISTENER listener);
+	Collection<AntlrError> parse(String string, LISTENER listener, ParseLogger parseLogger);
 
-	Collection<AntlrError> parse(InputStream stream, LISTENER listener) throws IOException;
+	Collection<AntlrError> parse(InputStream stream, LISTENER listener, ParseLogger parseLogger) throws IOException;
 
 }

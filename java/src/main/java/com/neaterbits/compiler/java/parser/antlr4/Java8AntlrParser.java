@@ -12,14 +12,12 @@ import com.neaterbits.compiler.java.parser.JavaParserListener;
 
 public class Java8AntlrParser extends BaseParser<CompilationUnit, JavaParserListener, Java8Lexer, Java8Parser> {
 
-	private final ParseLogger parseLogger = new ParseLogger();
-	
 	public Java8AntlrParser(boolean debug) {
 		super(debug, new Java8Lexer(null), new Java8Parser(null));
 	}
 
 	@Override
-	protected JavaParserListener createListener() {
+	protected JavaParserListener createListener(ParseLogger parseLogger) {
 		return new JavaParserListener(parseLogger);
 	}
 
@@ -29,7 +27,7 @@ public class Java8AntlrParser extends BaseParser<CompilationUnit, JavaParserList
 	}
 
 	@Override
-	protected ParseTreeListener makeParseTreeListener(JavaParserListener listener) {
+	protected ParseTreeListener makeParseTreeListener(JavaParserListener listener, ParseLogger parseLogger) {
 		return new Java8AntlrParserListener(listener, parseLogger);
 	}
 }
