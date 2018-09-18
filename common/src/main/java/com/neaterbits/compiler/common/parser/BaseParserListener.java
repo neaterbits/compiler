@@ -314,9 +314,13 @@ public abstract class BaseParserListener {
 		
 		final StackMethod method = pop();
 
-		final StackClass stackClass = get();
+		final MethodMemberSetter methodMemberSetter = get();
 		
-		stackClass.add(new MethodMember(context, new MethodModifiers(method.getModifiers()), method.makeMethod(context)));
+		final MethodMember methodMember = new MethodMember(
+				context,
+				new MethodModifiers(method.getModifiers()), method.makeMethod(context));
+
+		methodMemberSetter.addMethod(methodMember);
 	}
 	
 	
