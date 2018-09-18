@@ -510,10 +510,10 @@ constructorDeclaration
 	;
 
 constructorModifier
-	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
+	:	annotation		# annotationConstructorModifier
+	|	'public'		# publicConstructorModifier
+	|	'protected'		# protectedConstructorModifier
+	|	'private'		# privateConstructorModifier
 	;
 
 constructorDeclarator

@@ -1,9 +1,11 @@
 package com.neaterbits.compiler.common.emit.base;
 
 import com.neaterbits.compiler.common.ast.Namespace;
+import com.neaterbits.compiler.common.ast.block.Constructor;
 import com.neaterbits.compiler.common.ast.block.Method;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorMember;
 import com.neaterbits.compiler.common.ast.typedefinition.InnerClassMember;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
 import com.neaterbits.compiler.common.emit.EmitterState;
@@ -12,6 +14,16 @@ public abstract class BaseProceduralProgramEmitter<T extends EmitterState> exten
 
 	@Override
 	public final Void onClassDefinition(ClassDefinition classDefinition, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public final Void onConstructor(Constructor constructor, T param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onConstructorMember(ConstructorMember constructor, T param) {
 		throw new UnsupportedOperationException();
 	}
 

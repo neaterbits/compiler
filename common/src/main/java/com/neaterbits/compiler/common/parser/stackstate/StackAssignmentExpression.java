@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.common.parser.stackstate;
 
+import java.util.Objects;
+
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
@@ -22,6 +24,9 @@ public class StackAssignmentExpression extends StackEntry implements ExpressionS
 	}
 
 	public void setLHS(VariableReference lhs) {
+		
+		Objects.requireNonNull(lhs);
+		
 		this.lhs = lhs;
 	}
 
@@ -30,9 +35,11 @@ public class StackAssignmentExpression extends StackEntry implements ExpressionS
 	}
 
 	public void setRHS(Expression rhs) {
+		
+		Objects.requireNonNull(rhs);
+		
 		this.rhs = rhs;
 	}
-
 	
 	@Override
 	public void setVariableReference(VariableReference variableReference) {
@@ -40,7 +47,7 @@ public class StackAssignmentExpression extends StackEntry implements ExpressionS
 		if (this.lhs == null) {
 			throw new IllegalStateException("Invoked only for rhs");
 		}
-		
+
 		addExpression(new VariableExpression(variableReference.getContext(), variableReference));
 	}
 
@@ -53,6 +60,4 @@ public class StackAssignmentExpression extends StackEntry implements ExpressionS
 
 		this.rhs = expression;
 	}
-	
-	
 }

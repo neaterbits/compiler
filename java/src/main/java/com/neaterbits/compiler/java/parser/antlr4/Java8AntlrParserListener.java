@@ -23,6 +23,7 @@ import com.neaterbits.compiler.common.ast.operator.Relational;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
@@ -195,6 +196,36 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void exitResult(ResultContext ctx) {
 		delegate.onMethodReturnTypeEnd(context(ctx));
+	}
+
+	@Override
+	public void enterConstructorDeclaration(ConstructorDeclarationContext ctx) {
+		delegate.onConstructorStart(context(ctx));
+	}
+	
+	@Override
+	public void exitPublicConstructorModifier(PublicConstructorModifierContext ctx) {
+		delegate.onConstructorVisibilityModifier(context(ctx), ConstructorVisibility.PUBLIC);
+	}
+	
+	@Override
+	public void exitProtectedConstructorModifier(ProtectedConstructorModifierContext ctx) {
+		delegate.onConstructorVisibilityModifier(context(ctx), ConstructorVisibility.NAMESPACE_AND_SUBCLASSES);
+	}
+	
+	@Override
+	public void exitPrivateConstructorModifier(PrivateConstructorModifierContext ctx) {
+		delegate.onConstructorVisibilityModifier(context(ctx), ConstructorVisibility.PRIVATE);
+	}
+	
+	@Override
+	public void enterConstructorDeclarator(ConstructorDeclaratorContext ctx) {
+		delegate.onConstructorName(context(ctx), ctx.simpleTypeName().getText());
+	}
+
+	@Override
+	public void exitConstructorDeclaration(ConstructorDeclarationContext ctx) {
+		delegate.onConstructorEnd(context(ctx));
 	}
 
 	@Override

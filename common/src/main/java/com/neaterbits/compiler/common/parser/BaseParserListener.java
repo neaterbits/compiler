@@ -16,6 +16,7 @@ import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.block.Block;
+import com.neaterbits.compiler.common.ast.block.Constructor;
 import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.block.ParameterName;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
@@ -49,7 +50,12 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassStatic;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassStrictfp;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorMember;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifierHolder;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorName;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldStatic;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
@@ -80,9 +86,11 @@ import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
 import com.neaterbits.compiler.common.parser.stackstate.StackCatchBlock;
+import com.neaterbits.compiler.common.parser.stackstate.StackClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
+import com.neaterbits.compiler.common.parser.stackstate.StackConstructor;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackFieldDeclarationList;
@@ -234,6 +242,55 @@ public abstract class BaseParserListener {
 		
 		mainStack.addElement(classDefinition);
 	}
+	
+	public final void onConstructorStart(Context context) {
+		push(new StackConstructor(logger));
+		
+		pushVariableScope();
+	}
+	
+	private void addConstructorModifier(Context context, ConstructorModifier modifier) {
+		final StackConstructor stackConstructor = get();
+		
+		stackConstructor.addModifier(new ConstructorModifierHolder(context, modifier));
+	}
+	
+	public final void onConstructorVisibilityModifier(Context context, ConstructorVisibility visibility) {
+		addConstructorModifier(context, visibility);
+	}
+
+	public final void onConstructorName(Context context, String constructorName) {
+		
+		final StackConstructor constructor = get();
+		
+		System.out.println("Set constructorname: " + constructorName);
+		
+		constructor.setName(constructorName);
+	}
+
+	public final void onConstructorEnd(Context context) {
+
+		popVariableScope();
+		
+		final StackConstructor stackConstructor = pop();
+		
+		final StackClass stackClass = get();
+		
+		final Constructor constructor = new Constructor(
+				context,
+				new ConstructorName(stackConstructor.getName()),
+				stackConstructor.getParameters(),
+				new Block(context, stackConstructor.getList()));
+
+		
+		final ConstructorMember constructorMember = new ConstructorMember(
+				context,
+				new ConstructorModifiers(context, stackConstructor.getModifiers()),
+				constructor);
+		
+		stackClass.add(constructorMember);
+		
+	}
 
 	public final void onMethodStart(Context context) {
 		final StackMethod method = new StackMethod(logger);
@@ -256,7 +313,6 @@ public abstract class BaseParserListener {
 	}
 	
 	public final void onMethodName(Context context, String methodName) {
-		
 		
 		final StackMethod method = get();
 		

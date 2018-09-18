@@ -28,6 +28,10 @@ public class NamedListStackEntry<T extends BaseASTElement> extends ListStackEntr
 	public final void setName(String name) {
 		Objects.requireNonNull(name);
 		
+		if (this.name != null) {
+			throw new IllegalStateException("Name already set");
+		}
+		
 		this.name = name;
 	}
 }

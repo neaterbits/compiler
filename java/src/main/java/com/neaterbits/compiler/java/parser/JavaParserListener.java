@@ -23,6 +23,7 @@ import com.neaterbits.compiler.common.ast.type.primitive.LongType;
 import com.neaterbits.compiler.common.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
@@ -122,6 +123,27 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onAnonymousClassEnd(context);
 	}
 	
+	public void onConstructorStart(Context context) {
+		
+		statementsStack.push();
+		
+		delegate.onConstructorStart(context);
+	}
+
+	public void onConstructorVisibilityModifier(Context context, ConstructorVisibility visibility) {
+		delegate.onConstructorVisibilityModifier(context, visibility);
+	}
+	
+	public void onConstructorName(Context context, String constructorName) {
+		delegate.onConstructorName(context, constructorName);
+	}
+
+	public void onConstructorEnd(Context context) {
+		delegate.onConstructorEnd(context);
+		
+		statementsStack.pop();
+	}
+
 	public void onMethodStart(Context context) {
 		
 		statementsStack.push();

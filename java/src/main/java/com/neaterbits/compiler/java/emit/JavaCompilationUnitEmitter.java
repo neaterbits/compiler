@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.ast.Namespace;
+import com.neaterbits.compiler.common.ast.block.Constructor;
 import com.neaterbits.compiler.common.ast.block.Method;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.Statement;
@@ -11,6 +12,10 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassStatic;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassStrictfp;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorMember;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifierHolder;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifierVisitor;
+import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.InnerClassMember;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodModifierHolder;
@@ -78,6 +83,26 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 			return s;
 		}
 	};
+	
+	private static final ConstructorModifierVisitor<Void, String> CONSTRUCTORMODIFIER_TO_NAME = new ConstructorModifierVisitor<Void, String>() {
+
+		@Override
+		public String onVisibility(ConstructorVisibility visibility, Void param) {
+			
+			final String s;
+			
+			switch (visibility) {
+			case PUBLIC: s = "public"; break;
+			case NAMESPACE_AND_SUBCLASSES: s = "protected"; break;
+			case PRIVATE: s = "private"; break;
+			
+			default:
+				throw new UnsupportedOperationException("Unknown constructor visibility " + visibility);
+			}
+			
+			return s;
+		}
+	}; 
 
 	private static final MethodModifierVisitor<Void, String> METHODMODIFIER_TO_NAME = new MethodModifierVisitor<Void, String>() {
 		
@@ -157,6 +182,36 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 		
 		return null;
 	}
+	
+	@Override
+	public Void onConstructor(Constructor constructor, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onConstructorMember(ConstructorMember constructorMember, EmitterState param) {
+		
+		final ASTList<ConstructorModifierHolder> modifiers = constructorMember.getModifiers().getModifiers();
+		
+		emitList(param, modifiers, " ", modifier -> modifier.visit(CONSTRUCTORMODIFIER_TO_NAME, null));
+		
+		if (!modifiers.isEmpty()) {
+			param.append(' ');
+		}
+
+		final Constructor constructor = constructorMember.getConstructor();
+
+		param.append(constructor.getName().getName()).append('(');
+		
+		param.append(") {").newline();
+		
+		emitBlock(constructor.getBlock(), param);
+		
+		param.append('}').newline();
+
+		return null;
+	}
+
 
 	@Override
 	public Void onMethod(Method method, EmitterState param) {
