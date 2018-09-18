@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.common.ast.typedefinition;
 
-import com.neaterbits.compiler.common.ast.statement.VariableMutability;
+import com.neaterbits.compiler.common.ast.statement.Mutability;
 
 public interface VariableModifierVisitor<T, R> {
 
-	R onVariableMutability(VariableMutability mutability, T param);
+	R onVariableMutability(Mutability mutability, T param);
 	
 }

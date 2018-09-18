@@ -9,7 +9,7 @@ import com.neaterbits.compiler.common.ast.statement.CatchBlock;
 import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
 import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
-import com.neaterbits.compiler.common.ast.statement.VariableMutability;
+import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.emit.EmitterState;
@@ -41,7 +41,7 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 	private static final VariableModifierVisitor<Void, String> VARIABLEMODIFIER_TO_STRING = new VariableModifierVisitor<Void, String>() {
 		
 		@Override
-		public String onVariableMutability(VariableMutability mutability, Void param) {
+		public String onVariableMutability(Mutability mutability, Void param) {
 			return "final";
 		}
 	};

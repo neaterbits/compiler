@@ -332,14 +332,14 @@ fieldDeclaration
 	;
 
 fieldModifier
-	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
-	|	'static'
-	|	'final'
-	|	'transient'
-	|	'volatile'
+	:	annotation	# fieldAnnotation
+	|	'public'	# publicFieldModifier
+	|	'protected'	# protectedFieldModifier
+	|	'private'	# privateFieldModifier
+	|	'static'	# staticFieldModifier
+	|	'final'		# finalFieldModifier
+	|	'transient'	# transientFieldModifier
+	|	'volatile'	# volatileFieldModifier
 	;
 
 variableDeclaratorList

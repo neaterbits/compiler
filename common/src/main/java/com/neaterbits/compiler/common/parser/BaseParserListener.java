@@ -33,11 +33,13 @@ import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
+import com.neaterbits.compiler.common.ast.statement.FieldTransient;
+import com.neaterbits.compiler.common.ast.statement.FieldVolatile;
 import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
 import com.neaterbits.compiler.common.ast.statement.ReturnStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
-import com.neaterbits.compiler.common.ast.statement.VariableMutability;
+import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierHolder;
@@ -48,6 +50,9 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassStrictfp;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorName;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldStatic;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodModifierHolder;
@@ -69,6 +74,7 @@ import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarati
 import com.neaterbits.compiler.common.ast.variables.ModifiersVariableDeclarationElement;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.stackstate.BaseStackTryCatchFinally;
+import com.neaterbits.compiler.common.parser.stackstate.BaseStackVariableDeclarationList;
 import com.neaterbits.compiler.common.parser.stackstate.CallableStackEntry;
 import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
@@ -79,6 +85,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
+import com.neaterbits.compiler.common.parser.stackstate.StackFieldDeclarationList;
 import com.neaterbits.compiler.common.parser.stackstate.StackFinallyBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackIteratorForStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethod;
@@ -290,7 +297,6 @@ public abstract class BaseParserListener {
 	private void addMethodModifier(Context context, MethodModifier modifier) {
 		final StackMethod stackMethod = get();
 		
-		
 		stackMethod.addModifier(new MethodModifierHolder(context, modifier));
 	}
 	
@@ -331,6 +337,42 @@ public abstract class BaseParserListener {
 				new MethodModifiers(context, method.getModifiers()), method.makeMethod(context));
 
 		methodMemberSetter.addMethod(methodMember);
+	}
+	
+	public final void onFieldDeclarationStart(Context context) {
+		push(new StackFieldDeclarationList(logger));
+	}
+	
+	private void addFieldModifier(FieldModifier modifier) {
+		final StackFieldDeclarationList stackFieldDeclarationList = get();
+
+		stackFieldDeclarationList.addFieldModifier(modifier);
+	}
+	
+	public final void onVisibilityFieldModifier(Context context, FieldVisibility visibility) {
+		addFieldModifier(visibility);
+	}
+	
+	public final void onStaticFieldModifier(Context context) {
+		addFieldModifier(new FieldStatic());
+	}
+	
+	public final void onMutabilityFieldModifier(Context context, Mutability mutability) {
+		addFieldModifier(mutability);
+	}
+	
+	public final void onTransientFieldModifier(Context context) {
+		addFieldModifier(new FieldTransient());
+	}
+	
+	public final void onVolatileFieldModifier(Context context) {
+		addFieldModifier(new FieldVolatile());
+	}
+	
+	public final void onFieldDeclarationEnd(Context context) {
+		final StackFieldDeclarationList stackFieldDeclarationList = pop();
+
+		
 	}
 	
 	
@@ -484,7 +526,7 @@ public abstract class BaseParserListener {
 
 	// Statements
 	
-	public final void onMutabilityVariableModifier(Context context, VariableMutability mutability) {
+	public final void onMutabilityVariableModifier(Context context, Mutability mutability) {
 		addVariableModifier(context, mutability);
 	}
 
@@ -532,7 +574,7 @@ public abstract class BaseParserListener {
 		
 		final Expression initializer = stackDeclaration.makeExpressionOrNull(context);
 		
-		final StackVariableDeclarationList declarationList = get();
+		final BaseStackVariableDeclarationList declarationList = get();
 		
 		final InitializerVariableDeclarationElement variableDeclarationElement = new InitializerVariableDeclarationElement(
 				context,

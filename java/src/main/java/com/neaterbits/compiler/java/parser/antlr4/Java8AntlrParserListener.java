@@ -20,9 +20,10 @@ import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.operator.Bitwise;
 import com.neaterbits.compiler.common.ast.operator.Logical;
 import com.neaterbits.compiler.common.ast.operator.Relational;
-import com.neaterbits.compiler.common.ast.statement.VariableMutability;
+import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
@@ -271,6 +272,51 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		System.out.println("## exitMethodDeclaration: " + ctx.getText());
 
 		delegate.onMethodEnd(context(ctx));
+	}
+	
+	@Override
+	public void enterFieldDeclaration(FieldDeclarationContext ctx) {
+		delegate.onFieldDeclarationStart(context(ctx));
+	}
+
+	@Override
+	public void exitPublicFieldModifier(PublicFieldModifierContext ctx) {
+		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.PUBLIC);
+	}
+
+	@Override
+	public void exitProtectedFieldModifier(ProtectedFieldModifierContext ctx) {
+		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.NAMESPACE_AND_SUBCLASSES);
+	}
+	
+	@Override
+	public void exitPrivateFieldModifier(PrivateFieldModifierContext ctx) {
+		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.PRIVATE);
+	}
+	
+	@Override
+	public void exitStaticFieldModifier(StaticFieldModifierContext ctx) {
+		delegate.onStaticFieldModifier(context(ctx));
+	}
+	
+	@Override
+	public void exitFinalFieldModifier(FinalFieldModifierContext ctx) {
+		delegate.onMutabilityFieldModifier(context(ctx), Mutability.VALUE_OR_REF_IMMUTABLE);
+	}
+	
+	@Override
+	public void exitTransientFieldModifier(TransientFieldModifierContext ctx) {
+		delegate.onTransientFieldModifier(context(ctx));
+	}
+
+	@Override
+	public void exitVolatileFieldModifier(VolatileFieldModifierContext ctx) {
+		delegate.onVolatileFieldModifier(context(ctx));
+	}
+
+	@Override
+	public void exitFieldDeclaration(FieldDeclarationContext ctx) {
+		delegate.onFieldDeclarationEnd(context(ctx));
 	}
 
 	// Expressions
@@ -585,7 +631,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitFinalVariableModifier(FinalVariableModifierContext ctx) {
-		delegate.onMutabilityVariableModifier(context(ctx), VariableMutability.VALUE_OR_REF_IMMUTABLE);
+		delegate.onMutabilityVariableModifier(context(ctx), Mutability.VALUE_OR_REF_IMMUTABLE);
 	}
 
 	@Override

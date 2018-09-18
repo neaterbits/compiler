@@ -45,7 +45,7 @@ public class DirectoryParser {
 	}
 	
 
-	public List<ParsedFile> parseDirectory(File directory) {
+	public List<ParsedFile> parseDirectory(File directory, ParseLogger debugParseLogger) {
 
 		final List<ParsedFile> parsedFiles = new ArrayList<>();
 		
@@ -61,6 +61,8 @@ public class DirectoryParser {
 				String log = null;
 
 				try (FileInputStream fileInputStream = new FileInputStream(file)) {
+
+					System.out.println("## compiling " + file.getName());
 					
 					final Collection<AntlrError> antlrErrors = new ArrayList<>();
 
@@ -70,7 +72,7 @@ public class DirectoryParser {
 					
 					final ParseLogger parseLogger = new ParseLogger(printStream);
 					
-					compilationUnit = parser.parse(fileInputStream, antlrErrors, parseLogger);
+					compilationUnit = parser.parse(fileInputStream, antlrErrors, debugParseLogger != null ? debugParseLogger : parseLogger);
 					
 					printStream.flush();
 					

@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import com.neaterbits.compiler.c.emit.CCompilationUnitEmmiter;
 import com.neaterbits.compiler.common.ModuleId;
-import com.neaterbits.compiler.common.ModuleSpec;
 import com.neaterbits.compiler.common.SourceModuleSpec;
 import com.neaterbits.compiler.common.antlr4.AntlrError;
 import com.neaterbits.compiler.common.ast.CompilationCode;
@@ -127,7 +126,9 @@ public class JavaToCConverterTest {
 
 		final DirectoryParser directoryParser = new DirectoryParser(javaParser);
 		
-		final List<ParsedFile> parsedFiles = directoryParser.parseDirectory(commonModuleSpec.getBaseDirectory());
+		final List<ParsedFile> parsedFiles = directoryParser.parseDirectory(
+				commonModuleSpec.getBaseDirectory(),
+				new ParseLogger(System.out));
 		
 	}
 }

@@ -11,7 +11,7 @@ import com.neaterbits.compiler.common.antlr4.ModelParserListener;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.operator.Operator;
-import com.neaterbits.compiler.common.ast.statement.VariableMutability;
+import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.type.TypeName;
 import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
@@ -23,6 +23,7 @@ import com.neaterbits.compiler.common.ast.type.primitive.LongType;
 import com.neaterbits.compiler.common.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
@@ -186,6 +187,35 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		statementsStack.pop();
 	}
 	
+	public final void onFieldDeclarationStart(Context context) {
+		delegate.onFieldDeclarationStart(context);
+	}
+
+	public void onVisibilityFieldModifier(Context context, FieldVisibility visibility) {
+		delegate.onVisibilityFieldModifier(context, visibility);
+	}
+	
+	public void onStaticFieldModifier(Context context) {
+		delegate.onStaticFieldModifier(context);
+	}
+	
+	public void onMutabilityFieldModifier(Context context, Mutability mutability) {
+		delegate.onMutabilityFieldModifier(context, mutability);
+	}
+	
+	public void onTransientFieldModifier(Context context) {
+		delegate.onTransientFieldModifier(context);
+	}
+	
+	public void onVolatileFieldModifier(Context context) {
+		delegate.onVolatileFieldModifier(context);
+	}
+
+	public final void onFieldDeclarationEnd(Context context) {
+		delegate.onFieldDeclarationEnd(context);
+	}
+
+	
 	public void onEnterAssignmentExpression(Context context) {
 		delegate.onEnterAssignmentExpression(context);
 	}
@@ -317,7 +347,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		return compilationUnit;
 	}
 
-	public void onMutabilityVariableModifier(Context context, VariableMutability mutability) {
+	public void onMutabilityVariableModifier(Context context, Mutability mutability) {
 		delegate.onMutabilityVariableModifier(context, mutability);
 	}
 	
