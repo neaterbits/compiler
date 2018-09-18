@@ -1,21 +1,25 @@
 package com.neaterbits.compiler.common.ast.typedefinition;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public final class VariableModifiers {
+import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.BaseASTElement;
+import com.neaterbits.compiler.common.ast.list.ASTList;
 
-	private final List<VariableModifier> modifiers;
+public final class VariableModifiers extends BaseASTElement {
 
-	public VariableModifiers(List<VariableModifier> modifiers) {
-		
+	private final ASTList<VariableModifierHolder> modifiers;
+
+	public VariableModifiers(Context context, List<VariableModifierHolder> modifiers) {
+		super(context);
+
 		Objects.requireNonNull(modifiers);
 		
-		this.modifiers = Collections.unmodifiableList(modifiers);
+		this.modifiers = makeList(modifiers);
 	}
 
-	public List<VariableModifier> getModifiers() {
+	public ASTList<? extends VariableModifier> getModifiers() {
 		return modifiers;
 	}
 }

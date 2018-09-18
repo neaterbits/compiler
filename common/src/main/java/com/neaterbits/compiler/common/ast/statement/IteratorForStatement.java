@@ -5,12 +5,13 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.variables.ModifiersVariableDeclarationElement;
 
 public final class IteratorForStatement extends LoopStatement {
 
-	private final ModifiersVariableDeclarationElement variableDeclaration;
-	private final Expression collectionExpression;
+	private final ASTSingle<ModifiersVariableDeclarationElement> variableDeclaration;
+	private final ASTSingle<Expression> collectionExpression;
 
 	public IteratorForStatement(
 			Context context,
@@ -23,16 +24,16 @@ public final class IteratorForStatement extends LoopStatement {
 		Objects.requireNonNull(variableDeclaration);
 		Objects.requireNonNull(collectionExpression);
 
-		this.variableDeclaration = variableDeclaration;
-		this.collectionExpression = collectionExpression;
+		this.variableDeclaration = makeSingle(variableDeclaration);
+		this.collectionExpression = makeSingle(collectionExpression);
 	}
 
 	public final ModifiersVariableDeclarationElement getVariableDeclaration() {
-		return variableDeclaration;
+		return variableDeclaration.get();
 	}
 
 	public final Expression getCollectionExpression() {
-		return collectionExpression;
+		return collectionExpression.get();
 	}
 
 	@Override

@@ -93,20 +93,20 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onClassStart(name);
 	}
 	
-	public void onVisibilityClassModifier(ClassVisibility visibility) {
-		delegate.onVisibilityClassModifier(visibility);
+	public void onVisibilityClassModifier(Context context, ClassVisibility visibility) {
+		delegate.onVisibilityClassModifier(context, visibility);
 	}
 	
-	public void onSubclassingModifier(Subclassing subclassing) {
-		delegate.onSubclassingModifier(subclassing);
+	public void onSubclassingModifier(Context context, Subclassing subclassing) {
+		delegate.onSubclassingModifier(context, subclassing);
 	}
 	
-	public void onStaticClassModifier() {
-		delegate.onStaticClassModifier();
+	public void onStaticClassModifier(Context context) {
+		delegate.onStaticClassModifier(context);
 	}
 	
-	public void onStrictfpClassModifier() {
-		delegate.onStrictfpClassModifier();
+	public void onStrictfpClassModifier(Context context) {
+		delegate.onStrictfpClassModifier(context);
 	}
 	
 	public void onClassEnd(Context context) {
@@ -156,28 +156,28 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onMethodSignatureParametersEnd(context);
 	}
 
-	public void onVisibilityMethodModifier(MethodVisibility visibility) {
-		delegate.onVisibilityMethodModifier(visibility);
+	public void onVisibilityMethodModifier(Context context, MethodVisibility visibility) {
+		delegate.onVisibilityMethodModifier(context, visibility);
 	}
 	
-	public void onOverrideModifier(MethodOverride methodOverride) {
-		delegate.onOverrideModifier(methodOverride);
+	public void onOverrideModifier(Context context, MethodOverride methodOverride) {
+		delegate.onOverrideModifier(context, methodOverride);
 	}
 	
-	public void onStaticMethodModifier() {
-		delegate.onStaticMethodModifier();
+	public void onStaticMethodModifier(Context context) {
+		delegate.onStaticMethodModifier(context);
 	}
 
-	public void onStrictfpMethodModifier() {
-		delegate.onStrictfpMethodModifier();
+	public void onStrictfpMethodModifier(Context context) {
+		delegate.onStrictfpMethodModifier(context);
 	}
 	
-	public void onSynchronizedMethodModifier() {
-		delegate.onSynchronizedMethodModifier();
+	public void onSynchronizedMethodModifier(Context context) {
+		delegate.onSynchronizedMethodModifier(context);
 	}
 
-	public void onNativeMethodModifier() {
-		delegate.onNativeMethodModifier();
+	public void onNativeMethodModifier(Context context) {
+		delegate.onNativeMethodModifier(context);
 	}
 	
 	public void onMethodEnd(Context context) {
@@ -317,8 +317,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		return compilationUnit;
 	}
 
-	public void onMutabilityVariableModifier(VariableMutability mutability) {
-		delegate.onMutabilityVariableModifier(mutability);
+	public void onMutabilityVariableModifier(Context context, VariableMutability mutability) {
+		delegate.onMutabilityVariableModifier(context, mutability);
 	}
 	
 	public void onVariableDeclarationStatementStart(Context context) {

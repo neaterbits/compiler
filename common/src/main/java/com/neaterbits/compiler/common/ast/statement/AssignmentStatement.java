@@ -4,21 +4,22 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public final class AssignmentStatement extends Statement {
 
-	private final AssignmentExpression expression;
+	private final ASTSingle<AssignmentExpression> expression;
 
 	public AssignmentStatement(Context context, AssignmentExpression expression) {
 		super(context);
 
 		Objects.requireNonNull(expression);
 
-		this.expression = expression;
+		this.expression = makeSingle(expression);
 	}
 
 	public AssignmentExpression getExpression() {
-		return expression;
+		return expression.get();
 	}
 
 	@Override

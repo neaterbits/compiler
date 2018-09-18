@@ -5,25 +5,28 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 
 public abstract class VariableDeclarationElement extends BaseASTElement {
-	private final TypeReference type;
+	
+	private final ASTSingle<TypeReference> type;
 	private final VarName name;
 	private final int numDims;
+	
 	public VariableDeclarationElement(Context context, TypeReference type, VarName name, int numDims) {
 		super(context);
 
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(name);
 
-		this.type = type;
+		this.type = makeSingle(type);
 		this.name = name;
 		this.numDims = numDims;
 	}
 
 	public final TypeReference getTypeReference() {
-		return type;
+		return type.get();
 	}
 
 	public final VarName getName() {
@@ -38,7 +41,7 @@ public abstract class VariableDeclarationElement extends BaseASTElement {
 
 		final VariableDeclaration variableDeclaration = new VariableDeclaration(
 				modifiers,
-				type,
+				type.get(),
 				name,
 				numDims);
 

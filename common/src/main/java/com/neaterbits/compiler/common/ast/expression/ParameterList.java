@@ -1,17 +1,22 @@
 package com.neaterbits.compiler.common.ast.expression;
 
-import java.util.Collections;
 import java.util.List;
 
-public final class ParameterList {
+import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.BaseASTElement;
+import com.neaterbits.compiler.common.ast.list.ASTList;
 
-	private final List<Expression> list;
+public final class ParameterList extends BaseASTElement {
 
-	public ParameterList(List<Expression> list) {
-		this.list = Collections.unmodifiableList(list);
+	private final ASTList<Expression> list;
+
+	public ParameterList(Context context, List<Expression> list) {
+		super(context);
+
+		this.list = makeList(list);
 	}
 
-	public List<Expression> getList() {
+	public ASTList<Expression> getList() {
 		return list;
 	}
 }

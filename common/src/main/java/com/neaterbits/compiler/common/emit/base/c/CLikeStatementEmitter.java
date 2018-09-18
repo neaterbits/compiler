@@ -1,13 +1,11 @@
 package com.neaterbits.compiler.common.emit.base.c;
 
-import java.util.List;
-
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.AssignmentStatement;
 import com.neaterbits.compiler.common.ast.statement.CForStatement;
-import com.neaterbits.compiler.common.ast.statement.ConditionBlock;
 import com.neaterbits.compiler.common.ast.statement.DoWhileStatement;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
 import com.neaterbits.compiler.common.ast.statement.IfElseIfElseStatement;
@@ -48,7 +46,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 
 	protected final <E extends InitializerVariableDeclarationElement>
 
-	void emitVariableDeclarationElements(List<E> elements, T param) {
+	void emitVariableDeclarationElements(ASTList<E> elements, T param) {
 
 		emitListTo(param, elements, ", ", e -> {
 			emitVariableDeclarationElement(e, param);
@@ -66,19 +64,18 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 	@Override
 	public final Void onIf(IfElseIfElseStatement statement, T param) {
 		
-		for (int i = 0; i < statement.getConditions().size(); ++ i) {
+		
+		statement.getConditions().foreachWithIndex((conditionBlock, i) -> {
 			param.append(i == 0 ? "if" : "else if");
 			
 			param.append(" (");
-			
-			final ConditionBlock conditionBlock = statement.getConditions().get(i);
 			
 			emitExpression(conditionBlock.getCondition(), param);
 			
 			param.append(") {").newline();
 			
 			emitIndentedBlock(conditionBlock.getBlock(), param);
-		}
+		});
 
 		if (statement.getElseBlock() != null) {
 			param.append("else {").newline();

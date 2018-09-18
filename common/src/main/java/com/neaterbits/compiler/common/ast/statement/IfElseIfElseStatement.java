@@ -1,16 +1,17 @@
 package com.neaterbits.compiler.common.ast.statement;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.block.Block;
+import com.neaterbits.compiler.common.ast.list.ASTList;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public final class IfElseIfElseStatement extends ConditionStatement {
 
-	private final List<ConditionBlock> conditions;
-	private final Block elseBlock;
+	private final ASTList<ConditionBlock> conditions;
+	private final ASTSingle<Block> elseBlock;
 	
 	public IfElseIfElseStatement(Context context, List<ConditionBlock> conditions, Block elseBlock) {
 		super(context);
@@ -21,16 +22,16 @@ public final class IfElseIfElseStatement extends ConditionStatement {
 			throw new IllegalArgumentException("conditions is empty");
 		}
 		
-		this.conditions = Collections.unmodifiableList(conditions);
-		this.elseBlock = elseBlock;
+		this.conditions = makeList(conditions);
+		this.elseBlock = elseBlock != null ? makeSingle(elseBlock) : null;
 	}
 
-	public List<ConditionBlock> getConditions() {
+	public ASTList<ConditionBlock> getConditions() {
 		return conditions;
 	}
 
 	public Block getElseBlock() {
-		return elseBlock;
+		return elseBlock != null ? elseBlock.get() : null;
 	}
 
 	@Override

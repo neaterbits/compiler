@@ -1,34 +1,35 @@
 package com.neaterbits.compiler.common.ast.statement;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.block.Block;
+import com.neaterbits.compiler.common.ast.list.ASTList;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public abstract class BaseTryCatchFinallyStatement extends Statement {
 
-	private final Block tryBlock;
-	private final List<CatchBlock> catchBlocks;
-	private final Block finallyBlock;
+	private final ASTSingle<Block> tryBlock;
+	private final ASTList<CatchBlock> catchBlocks;
+	private final ASTSingle<Block> finallyBlock;
 	
 	public BaseTryCatchFinallyStatement(Context context, Block tryBlock, List<CatchBlock> catchBlocks, Block finallyBlock) {
 		super(context);
 		
-		this.tryBlock = tryBlock;
-		this.catchBlocks = Collections.unmodifiableList(catchBlocks);
-		this.finallyBlock = finallyBlock;
+		this.tryBlock = makeSingle(tryBlock);
+		this.catchBlocks = makeList(catchBlocks);
+		this.finallyBlock = finallyBlock != null ? makeSingle(finallyBlock) : null;
 	}
 
-	public Block getTryBlock() {
-		return tryBlock;
+	public final Block getTryBlock() {
+		return tryBlock.get();
 	}
 
-	public List<CatchBlock> getCatchBlocks() {
+	public final ASTList<CatchBlock> getCatchBlocks() {
 		return catchBlocks;
 	}
 
-	public Block getFinallyBlock() {
-		return finallyBlock;
+	public final Block getFinallyBlock() {
+		return finallyBlock != null ? finallyBlock.get() : null;
 	}
 }

@@ -1,21 +1,25 @@
 package com.neaterbits.compiler.common.ast.typedefinition;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class ClassModifiers {
-	
-	private final List<ClassModifier> modifiers;
+import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.BaseASTElement;
+import com.neaterbits.compiler.common.ast.list.ASTList;
 
-	public ClassModifiers(List<ClassModifier> modifiers) {
-		
+public class ClassModifiers extends BaseASTElement {
+	
+	private final ASTList<ClassModifierHolder> modifiers;
+
+	public ClassModifiers(Context context, List<ClassModifierHolder> modifiers) {
+		super(context);
+
 		Objects.requireNonNull(modifiers);
 
-		this.modifiers = Collections.unmodifiableList(modifiers);
+		this.modifiers = makeList(modifiers);
 	}
 
-	public List<ClassModifier> getModifiers() {
+	public ASTList<? extends ClassModifier> getModifiers() {
 		return modifiers;
 	}
 }

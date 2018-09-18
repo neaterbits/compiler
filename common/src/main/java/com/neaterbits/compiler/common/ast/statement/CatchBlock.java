@@ -7,11 +7,12 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.block.Block;
+import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.variables.VarName;
 
 public final class CatchBlock extends BaseASTElement {
 
-	private final List<TypeReference> exceptionTypes;
+	private final ASTList<TypeReference> exceptionTypes;
 	private final VarName exceptionVarName;
 	
 	private final Block block;
@@ -28,12 +29,12 @@ public final class CatchBlock extends BaseASTElement {
 		Objects.requireNonNull(exceptionVarName);
 		Objects.requireNonNull(block);
 
-		this.exceptionTypes = exceptionTypes;
+		this.exceptionTypes = makeList(exceptionTypes);
 		this.exceptionVarName = exceptionVarName;
 		this.block = block;
 	}
 
-	public List<TypeReference> getExceptionTypes() {
+	public ASTList<TypeReference> getExceptionTypes() {
 		return exceptionTypes;
 	}
 

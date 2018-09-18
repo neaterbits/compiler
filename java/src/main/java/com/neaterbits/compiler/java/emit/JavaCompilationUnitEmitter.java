@@ -1,9 +1,8 @@
 package com.neaterbits.compiler.java.emit;
 
-import java.util.List;
-
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.block.Method;
+import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
@@ -14,7 +13,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassStrictfp;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.InnerClassMember;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.MethodModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodModifierVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodNative;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
@@ -138,7 +137,7 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 	@Override
 	public Void onClassDefinition(ClassDefinition classDefinition, EmitterState param) {
 
-		final List<ClassModifier> modifiers = classDefinition.getModifiers().getModifiers();
+		final ASTList<? extends ClassModifier> modifiers = classDefinition.getModifiers().getModifiers();
 		
 		emitList(param, modifiers, " ", modifier -> modifier.visit(CLASSMODIFIER_TO_NAME, null));
 		
@@ -167,7 +166,7 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 	@Override
 	public Void onMethodMember(MethodMember methodMember, EmitterState param) {
 		
-		final List<MethodModifier> modifiers = methodMember.getModifiers().getModifiers();
+		final ASTList<MethodModifierHolder> modifiers = methodMember.getModifiers().getModifiers();
 		
 		emitList(param, modifiers, " ", modifier -> modifier.visit(METHODMODIFIER_TO_NAME, null));
 		

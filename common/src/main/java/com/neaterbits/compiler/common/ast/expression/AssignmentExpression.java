@@ -3,11 +3,12 @@ package com.neaterbits.compiler.common.ast.expression;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 
 public class AssignmentExpression extends Expression {
-	private final VariableReference variable;
-	private final Expression expression;
+	private final ASTSingle<VariableReference> variable;
+	private final ASTSingle<Expression> expression;
 	
 	public AssignmentExpression(Context context, VariableReference variable, Expression expression) {
 		super(context);
@@ -15,16 +16,16 @@ public class AssignmentExpression extends Expression {
 		Objects.requireNonNull(variable);
 		Objects.requireNonNull(expression);
 		
-		this.variable = variable;
-		this.expression = expression;
+		this.variable = makeSingle(variable);
+		this.expression = makeSingle(expression);
 	}
 
 	public VariableReference getVariable() {
-		return variable;
+		return variable.get();
 	}
 
 	public Expression getExpression() {
-		return expression;
+		return expression.get();
 	}
 
 	@Override

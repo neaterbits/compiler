@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.list.ASTList;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
 
 public final class VariableDeclarationStatement extends Statement {
 
-	private final VariableModifiers modifiers;
-	private final List<InitializerVariableDeclarationElement> declarations;
+	private final ASTSingle<VariableModifiers> modifiers;
+	private final ASTList<InitializerVariableDeclarationElement> declarations;
 	
 	public VariableDeclarationStatement(
 			Context context,
@@ -22,15 +24,15 @@ public final class VariableDeclarationStatement extends Statement {
 		Objects.requireNonNull(modifiers);
 		Objects.requireNonNull(declarations);
 
-		this.modifiers = modifiers;
-		this.declarations = declarations;
+		this.modifiers = makeSingle(modifiers);
+		this.declarations = makeList(declarations);
 	}
 
 	public VariableModifiers getModifiers() {
-		return modifiers;
+		return modifiers.get();
 	}
 
-	public List<InitializerVariableDeclarationElement> getDeclarations() {
+	public ASTList<InitializerVariableDeclarationElement> getDeclarations() {
 		return declarations;
 	}
 

@@ -1,10 +1,9 @@
 package com.neaterbits.compiler.java.emit;
 
-import java.util.List;
-
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.BaseTryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
 import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
@@ -53,7 +52,7 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 	}
 
 	
-	private void emitCatchBlocks(List<CatchBlock> catchBlocks, EmitterState state) {
+	private void emitCatchBlocks(ASTList<CatchBlock> catchBlocks, EmitterState state) {
 		
 		for (CatchBlock catchBlock : catchBlocks) {
 			state.append("} catch(");

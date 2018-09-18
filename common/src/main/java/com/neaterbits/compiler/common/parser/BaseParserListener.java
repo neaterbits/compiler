@@ -40,6 +40,7 @@ import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement
 import com.neaterbits.compiler.common.ast.statement.VariableMutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassStatic;
@@ -49,6 +50,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorName;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.MethodModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodNative;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
@@ -58,6 +60,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.MethodSynchronized;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.ast.variables.SimpleVariableReference;
 import com.neaterbits.compiler.common.ast.variables.VarName;
@@ -176,26 +179,26 @@ public abstract class BaseParserListener {
 		push(new StackNamedClass(logger, name));
 	}
 
-	private void addClassModifier(ClassModifier modifier) {
+	private void addClassModifier(Context context, ClassModifier modifier) {
 		final StackNamedClass stackClass = (StackNamedClass)mainStack.get();
 		
-		stackClass.addModifier(modifier);
+		stackClass.addModifier(new ClassModifierHolder(context, modifier));
 	}
 	
-	public final void onVisibilityClassModifier(ClassVisibility visibility) {
-		addClassModifier(visibility);
+	public final void onVisibilityClassModifier(Context context, ClassVisibility visibility) {
+		addClassModifier(context, visibility);
 	}
 	
-	public final void onSubclassingModifier(Subclassing subclassing) {
-		addClassModifier(subclassing);
+	public final void onSubclassingModifier(Context context, Subclassing subclassing) {
+		addClassModifier(context, subclassing);
 	}
 	
-	public final void onStaticClassModifier() {
-		addClassModifier(new ClassStatic());
+	public final void onStaticClassModifier(Context context) {
+		addClassModifier(context, new ClassStatic());
 	}
 
-	public final void onStrictfpClassModifier() {
-		addClassModifier(new ClassStrictfp());
+	public final void onStrictfpClassModifier(Context context) {
+		addClassModifier(context, new ClassStrictfp());
 	}
 	
 	public final void onClassEnd(Context context) {
@@ -204,7 +207,7 @@ public abstract class BaseParserListener {
 		
 		final List<ComplexMemberDefinition> classCode = entry.getList();
 
-		final ClassModifiers classModifiers = new ClassModifiers(entry.getModifiers());
+		final ClassModifiers classModifiers = new ClassModifiers(context, entry.getModifiers());
 		
 		final ClassDefinition classDefinition = new ClassDefinition(context, classModifiers, new ClassName(entry.getName()), classCode);
 		
@@ -274,7 +277,7 @@ public abstract class BaseParserListener {
 
 		stackCallable.addParameter(parameter);
 		
-		final VariableDeclaration variableDeclaration = stackParameterSignature.makeVariableDeclaration();
+		final VariableDeclaration variableDeclaration = stackParameterSignature.makeVariableDeclaration(context);
 
 		variableScopes.get().add(stackParameterSignature.getName(), variableDeclaration);
 	}
@@ -283,34 +286,35 @@ public abstract class BaseParserListener {
 		
 	}
 
-	private void addMethodModifier(MethodModifier modifier) {
+	private void addMethodModifier(Context context, MethodModifier modifier) {
 		final StackMethod stackMethod = get();
 		
-		stackMethod.addModifier(modifier);
+		
+		stackMethod.addModifier(new MethodModifierHolder(context, modifier));
 	}
 	
-	public final void onVisibilityMethodModifier(MethodVisibility visibility) {
-		addMethodModifier(visibility);
+	public final void onVisibilityMethodModifier(Context context, MethodVisibility visibility) {
+		addMethodModifier(context, visibility);
 	}
 	
-	public final void onOverrideModifier(MethodOverride methodOverride) {
-		addMethodModifier(methodOverride);
+	public final void onOverrideModifier(Context context, MethodOverride methodOverride) {
+		addMethodModifier(context, methodOverride);
 	}
 	
-	public final void onStaticMethodModifier() {
-		addMethodModifier(new MethodStatic());
+	public final void onStaticMethodModifier(Context context) {
+		addMethodModifier(context, new MethodStatic());
 	}
 
-	public final void onStrictfpMethodModifier() {
-		addMethodModifier(new MethodStrictfp());
+	public final void onStrictfpMethodModifier(Context context) {
+		addMethodModifier(context, new MethodStrictfp());
 	}
 
-	public final void onSynchronizedMethodModifier() {
-		addMethodModifier(new MethodSynchronized());
+	public final void onSynchronizedMethodModifier(Context context) {
+		addMethodModifier(context, new MethodSynchronized());
 	}
 
-	public final void onNativeMethodModifier() {
-		addMethodModifier(new MethodNative());
+	public final void onNativeMethodModifier(Context context) {
+		addMethodModifier(context, new MethodNative());
 	}
 	
 	public final void onMethodEnd(Context context) {
@@ -323,7 +327,7 @@ public abstract class BaseParserListener {
 		
 		final MethodMember methodMember = new MethodMember(
 				context,
-				new MethodModifiers(method.getModifiers()), method.makeMethod(context));
+				new MethodModifiers(context, method.getModifiers()), method.makeMethod(context));
 
 		methodMemberSetter.addMethod(methodMember);
 	}
@@ -429,6 +433,7 @@ public abstract class BaseParserListener {
 				classInstanceCreationExpression.getType(),
 				classInstanceCreationExpression.getConstructorName(),
 				new ParameterList(
+						context,
 						classInstanceCreationExpression.getParameters() != null
 							? classInstanceCreationExpression.getParameters()
 							: Collections.emptyList()));
@@ -466,6 +471,7 @@ public abstract class BaseParserListener {
 				stackMethodInvocation.getObject(),
 				stackMethodInvocation.getName(),
 				new ParameterList(
+						context,
 						stackMethodInvocation.getParameters() != null
 							? stackMethodInvocation.getParameters()
 							: Collections.emptyList()));
@@ -477,16 +483,16 @@ public abstract class BaseParserListener {
 
 	// Statements
 	
-	public final void onMutabilityVariableModifier(VariableMutability mutability) {
-		addVariableModifier(mutability);
+	public final void onMutabilityVariableModifier(Context context, VariableMutability mutability) {
+		addVariableModifier(context, mutability);
 	}
 
-	private void addVariableModifier(VariableModifier modifier) {
+	private void addVariableModifier(Context context, VariableModifier modifier) {
 		Objects.requireNonNull(modifier);
 
 		final VariableModifierSetter modifierSetter = get();
 
-		modifierSetter.addModifier(modifier);
+		modifierSetter.addModifier(new VariableModifierHolder(context, modifier));
 	}
 	
 	public void onVariableDeclarationStatementStart(Context context) {
@@ -498,7 +504,7 @@ public abstract class BaseParserListener {
 		
 		final StatementSetter statementSetter = get();
 		
-		final VariableModifiers modifiers = new VariableModifiers(variableDeclaration.getModifiers());
+		final VariableModifiers modifiers = new VariableModifiers(context, variableDeclaration.getModifiers());
 		
 		final VariableDeclarationStatement statement = new VariableDeclarationStatement(
 				context,
@@ -576,7 +582,7 @@ public abstract class BaseParserListener {
 		final VarName varName = new VarName(stackIteratorForStatement.getName());
 		
 		// Must add variable declarations to scope so that can be found further down in parsing
-		final VariableDeclaration variableDeclaration = stackIteratorForStatement.makeVariableDeclaration();
+		final VariableDeclaration variableDeclaration = stackIteratorForStatement.makeVariableDeclaration(context);
 
 		System.out.println("## add to scope: " + varName);
 		
@@ -592,7 +598,7 @@ public abstract class BaseParserListener {
 		
 		final ModifiersVariableDeclarationElement variableDeclarationElement = new ModifiersVariableDeclarationElement(
 				context,
-				new VariableModifiers(stackIteratorForStatement.getModifiers()),
+				new VariableModifiers(context, stackIteratorForStatement.getModifiers()),
 				stackIteratorForStatement.getTypeReference(),
 				new VarName(stackIteratorForStatement.getName()),
 				stackIteratorForStatement.getNumDims()); 
@@ -634,7 +640,7 @@ public abstract class BaseParserListener {
 		
 		final Resource resource = new Resource(
 				context,
-				new VariableModifiers(stackResource.getModifiers()),
+				new VariableModifiers(context, stackResource.getModifiers()),
 				stackResource.getTypeReference(),
 				new VarName(stackResource.getName()),
 				stackResource.getNumDims(),

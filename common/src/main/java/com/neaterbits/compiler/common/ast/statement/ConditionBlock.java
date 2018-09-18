@@ -6,11 +6,12 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public final class ConditionBlock extends BaseASTElement {
 
-	private final Expression condition;
-	private final Block block;
+	private final ASTSingle<Expression> condition;
+	private final ASTSingle<Block> block;
 	
 	public ConditionBlock(Context context, Expression condition, Block block) {
 		super(context);
@@ -18,15 +19,15 @@ public final class ConditionBlock extends BaseASTElement {
 		Objects.requireNonNull(condition);
 		Objects.requireNonNull(block);
 		
-		this.condition = condition;
-		this.block = block;
+		this.condition = makeSingle(condition);
+		this.block = makeSingle(block);
 	}
 
 	public Expression getCondition() {
-		return condition;
+		return condition.get();
 	}
 
 	public Block getBlock() {
-		return block;
+		return block.get();
 	}
 }

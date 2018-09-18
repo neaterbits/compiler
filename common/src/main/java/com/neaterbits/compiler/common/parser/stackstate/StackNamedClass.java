@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ast.typedefinition.ClassModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.common.log.ParseLogger;
 
 public final class StackNamedClass extends StackClass {
 
 	private final String name;
-	private final List<ClassModifier> modifiers;
+	private final List<ClassModifierHolder> modifiers;
 	
 	public StackNamedClass(ParseLogger parseLogger, String name) {
 		super(parseLogger);
@@ -21,7 +21,7 @@ public final class StackNamedClass extends StackClass {
 		this.modifiers = new ArrayList<>();
 	}
 	
-	public void addModifier(ClassModifier modifier) {
+	public void addModifier(ClassModifierHolder modifier) {
 		Objects.requireNonNull(modifiers);
 
 		modifiers.add(modifier);
@@ -31,7 +31,7 @@ public final class StackNamedClass extends StackClass {
 		return name;
 	}
 
-	public List<ClassModifier> getModifiers() {
+	public List<ClassModifierHolder> getModifiers() {
 		return modifiers;
 	}
 }

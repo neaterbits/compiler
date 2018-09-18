@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.Context;
 
 public final class SimpleVariableReference extends VariableReference {
+	
 	private final VariableDeclaration declaration;
 
 	public SimpleVariableReference(Context context, VariableDeclaration declaration) {

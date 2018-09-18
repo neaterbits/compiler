@@ -1,6 +1,5 @@
 package com.neaterbits.compiler.common.emit.base;
 
-import java.util.List;
 
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationCodeLines;
@@ -23,7 +22,7 @@ public abstract class BaseCompilationUnitEmitter<T extends EmitterState>
 		emitCode(code.getCode(), param);
 	}
 
-	protected final void emitCode(List<? extends CompilationCode> code, T param) {
+	protected final void emitCode(Iterable<? extends CompilationCode> code, T param) {
 		for (CompilationCode c : code) {
 			c.visit(this, param);
 		}

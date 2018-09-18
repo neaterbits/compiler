@@ -140,37 +140,37 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void exitPublicClassModifier(PublicClassModifierContext ctx) {
-		delegate.onVisibilityClassModifier(ClassVisibility.PUBLIC);
+		delegate.onVisibilityClassModifier(context(ctx), ClassVisibility.PUBLIC);
 	}
 
 	@Override
 	public void exitProtectedClassModifier(ProtectedClassModifierContext ctx) {
-		delegate.onVisibilityClassModifier(ClassVisibility.NAMESPACE);
+		delegate.onVisibilityClassModifier(context(ctx), ClassVisibility.NAMESPACE);
 	}
 
 	@Override
 	public void exitPrivateClassModifier(PrivateClassModifierContext ctx) {
-		delegate.onVisibilityClassModifier(ClassVisibility.PRIVATE);
+		delegate.onVisibilityClassModifier(context(ctx), ClassVisibility.PRIVATE);
 	}
 
 	@Override
 	public void exitAbstractClassModifier(AbstractClassModifierContext ctx) {
-		delegate.onSubclassingModifier(Subclassing.ABSTRACT);
+		delegate.onSubclassingModifier(context(ctx), Subclassing.ABSTRACT);
 	}
 	
 	@Override
 	public void exitFinalClassModifier(FinalClassModifierContext ctx) {
-		delegate.onSubclassingModifier(Subclassing.FINAL);
+		delegate.onSubclassingModifier(context(ctx), Subclassing.FINAL);
 	}
 
 	@Override
 	public void exitStaticClassModifier(StaticClassModifierContext ctx) {
-		delegate.onStaticClassModifier();
+		delegate.onStaticClassModifier(context(ctx));
 	}
 
 	@Override
 	public void exitStrictfpClassModifier(StrictfpClassModifierContext ctx) {
-		delegate.onStrictfpClassModifier();
+		delegate.onStrictfpClassModifier(context(ctx));
 	}
 
 	@Override
@@ -223,47 +223,47 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitPublicMethodMofifier(PublicMethodMofifierContext ctx) {
-		delegate.onVisibilityMethodModifier(MethodVisibility.PUBLIC);
+		delegate.onVisibilityMethodModifier(context(ctx), MethodVisibility.PUBLIC);
 	}
 
 	@Override
 	public void exitProtectedMethodModifier(ProtectedMethodModifierContext ctx) {
-		delegate.onVisibilityMethodModifier(MethodVisibility.NAMESPACE_AND_SUBCLASSES);
+		delegate.onVisibilityMethodModifier(context(ctx), MethodVisibility.NAMESPACE_AND_SUBCLASSES);
 	}
 
 	@Override
 	public void exitPrivateMethodModifier(PrivateMethodModifierContext ctx) {
-		delegate.onVisibilityMethodModifier(MethodVisibility.PRIVATE);
+		delegate.onVisibilityMethodModifier(context(ctx), MethodVisibility.PRIVATE);
 	}
 	
 	@Override
 	public void exitAbstractMethodModifier(AbstractMethodModifierContext ctx) {
-		delegate.onOverrideModifier(MethodOverride.ABSTRACT);
+		delegate.onOverrideModifier(context(ctx), MethodOverride.ABSTRACT);
 	}
 
 	@Override
 	public void exitFinalMethodModifier(FinalMethodModifierContext ctx) {
-		delegate.onOverrideModifier(MethodOverride.FINAL);
+		delegate.onOverrideModifier(context(ctx), MethodOverride.FINAL);
 	}
 
 	@Override
 	public void exitStaticMethodModifier(StaticMethodModifierContext ctx) {
-		delegate.onStaticMethodModifier();
+		delegate.onStaticMethodModifier(context(ctx));
 	}
 
 	@Override
 	public void exitStrictfpMethodModifier(StrictfpMethodModifierContext ctx) {
-		delegate.onStrictfpMethodModifier();
+		delegate.onStrictfpMethodModifier(context(ctx));
 	}
 	
 	@Override
 	public void exitSynchronizedMethodModifier(SynchronizedMethodModifierContext ctx) {
-		delegate.onSynchronizedMethodModifier();
+		delegate.onSynchronizedMethodModifier(context(ctx));
 	}
 	
 	@Override
 	public void exitNativeMethodModifier(NativeMethodModifierContext ctx) {
-		delegate.onNativeMethodModifier();
+		delegate.onNativeMethodModifier(context(ctx));
 	}
 
 	@Override
@@ -585,7 +585,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitFinalVariableModifier(FinalVariableModifierContext ctx) {
-		delegate.onMutabilityVariableModifier(VariableMutability.VALUE_OR_REF_IMMUTABLE);
+		delegate.onMutabilityVariableModifier(context(ctx), VariableMutability.VALUE_OR_REF_IMMUTABLE);
 	}
 
 	@Override

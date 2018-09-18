@@ -5,11 +5,12 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.common.ast.block.Method;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public final class MethodMember extends ComplexMemberDefinition {
 
-	private final MethodModifiers modifiers;
-	private final Method method;
+	private final ASTSingle<MethodModifiers> modifiers;
+	private final ASTSingle<Method> method;
 
 	public MethodMember(Context context, MethodModifiers modifiers, Method method) {
 		super(context);
@@ -17,16 +18,16 @@ public final class MethodMember extends ComplexMemberDefinition {
 		Objects.requireNonNull(modifiers);
 		Objects.requireNonNull(method);
 		
-		this.modifiers = modifiers;
-		this.method = method;
+		this.modifiers = makeSingle(modifiers);
+		this.method = makeSingle(method);
 	}
 
 	public MethodModifiers getModifiers() {
-		return modifiers;
+		return modifiers.get();
 	}
 
 	public Method getMethod() {
-		return method;
+		return method.get();
 	}
 
 	@Override

@@ -1,21 +1,21 @@
 package com.neaterbits.compiler.common.ast;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.list.ASTList;
 
 public class CompilationUnit extends CompilationCodeLines {
 
-	private final List<Import> imports;
+	private final ASTList<Import> imports;
 	
 	public CompilationUnit(Context context, List<Import> imports, List<CompilationCode> code) {
 		super(context, code);
 		
-		this.imports = Collections.unmodifiableList(imports);
+		this.imports = makeList(imports);
 	}
 
-	public List<Import> getImports() {
+	public ASTList<Import> getImports() {
 		return imports;
 	}
 }

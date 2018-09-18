@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.TypeReference;
-import com.neaterbits.compiler.common.ast.typedefinition.VariableModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierHolder;
 import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.ListStackEntry;
@@ -16,7 +16,7 @@ public final class StackVariableDeclarationList
 	extends ListStackEntry<InitializerVariableDeclarationElement>
 	implements VariableModifierSetter, TypeReferenceSetter {
 
-	private final List<VariableModifier> modifiers;
+	private final List<VariableModifierHolder> modifiers;
 	private TypeReference typeReference;
 
 	public StackVariableDeclarationList(ParseLogger parseLogger) {
@@ -25,12 +25,12 @@ public final class StackVariableDeclarationList
 		this.modifiers = new ArrayList<>();
 	}
 
-	public List<VariableModifier> getModifiers() {
+	public List<VariableModifierHolder> getModifiers() {
 		return modifiers;
 	}
 
 	@Override
-	public void addModifier(VariableModifier modifier) {
+	public void addModifier(VariableModifierHolder modifier) {
 		Objects.requireNonNull(modifier);
 		
 		modifiers.add(modifier);

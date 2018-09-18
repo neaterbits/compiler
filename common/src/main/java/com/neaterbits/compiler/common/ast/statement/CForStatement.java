@@ -3,12 +3,13 @@ package com.neaterbits.compiler.common.ast.statement;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.condition.Condition;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public final class CForStatement extends LoopStatement {
 
-	private final Statement initialStatement;
-	private final Condition condition;
-	private final Statement eachStatement;
+	private final ASTSingle<Statement> initialStatement;
+	private final ASTSingle<Condition> condition;
+	private final ASTSingle<Statement> eachStatement;
 	
 	public CForStatement(
 			Context context,
@@ -19,21 +20,21 @@ public final class CForStatement extends LoopStatement {
 		
 		super(context, block);
 		
-		this.initialStatement = initialStatement;
-		this.condition = condition;
-		this.eachStatement = eachStatement;
+		this.initialStatement = makeSingle(initialStatement);
+		this.condition = makeSingle(condition);
+		this.eachStatement = makeSingle(eachStatement);
 	}
 
 	public Statement getInitialStatement() {
-		return initialStatement;
+		return initialStatement.get();
 	}
 
 	public Condition getCondition() {
-		return condition;
+		return condition.get();
 	}
 
 	public Statement getEachStatement() {
-		return eachStatement;
+		return eachStatement.get();
 	}
 
 	@Override
