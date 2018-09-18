@@ -7,9 +7,9 @@ import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.ast.variables.VarName;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
-import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
+import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
 
-public final class Resource extends VariableDeclarationElement {
+public final class Resource extends InitializerVariableDeclarationElement {
 
 	private final VariableModifiers modifiers;
 	
@@ -21,7 +21,7 @@ public final class Resource extends VariableDeclarationElement {
 		this.modifiers = modifiers;
 	}
 	
-	public Resource(VariableModifiers modifiers, VariableDeclarationElement element) {
+	public Resource(VariableModifiers modifiers, InitializerVariableDeclarationElement element) {
 		this(element.getContext(), modifiers, element.getTypeReference(), element.getName(), element.getNumDims(), element.getInitializer());
 	}
 

@@ -33,6 +33,7 @@ import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
+import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
 import com.neaterbits.compiler.common.ast.statement.ReturnStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
@@ -61,7 +62,8 @@ import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.ast.variables.SimpleVariableReference;
 import com.neaterbits.compiler.common.ast.variables.VarName;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
-import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
+import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
+import com.neaterbits.compiler.common.ast.variables.ModifiersVariableDeclarationElement;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.stackstate.BaseStackTryCatchFinally;
 import com.neaterbits.compiler.common.parser.stackstate.CallableStackEntry;
@@ -69,13 +71,13 @@ import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
 import com.neaterbits.compiler.common.parser.stackstate.StackCatchBlock;
-import com.neaterbits.compiler.common.parser.stackstate.StackClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackFinallyBlock;
+import com.neaterbits.compiler.common.parser.stackstate.StackIteratorForStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethodInvocation;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
@@ -267,12 +269,15 @@ public abstract class BaseParserListener {
 		final CallableStackEntry stackCallable = get();
 		
 		final Parameter parameter = new Parameter(
-				stackParameterSignature.getType(),
+				stackParameterSignature.getTypeReference(),
 				new ParameterName(stackParameterSignature.getName()));
 
 		stackCallable.addParameter(parameter);
-	}
+		
+		final VariableDeclaration variableDeclaration = stackParameterSignature.makeVariableDeclaration();
 
+		variableScopes.get().add(stackParameterSignature.getName(), variableDeclaration);
+	}
 	
 	public final void onMethodSignatureParametersEnd(Context context) {
 		
@@ -522,7 +527,7 @@ public abstract class BaseParserListener {
 		
 		final StackVariableDeclarationList declarationList = get();
 		
-		final VariableDeclarationElement variableDeclarationElement = new VariableDeclarationElement(
+		final InitializerVariableDeclarationElement variableDeclarationElement = new InitializerVariableDeclarationElement(
 				context,
 				declarationList.getTypeReference(),
 				new VarName(stackDeclaration.getName()),
@@ -555,6 +560,52 @@ public abstract class BaseParserListener {
 		final StatementSetter statementSetter = get();
 		
 		statementSetter.addStatement(expressionStatement);
+	}
+	
+	public final void onIteratorForStatementStart(Context context) {
+
+		push(new StackIteratorForStatement(logger));
+		
+		pushVariableScope();
+	}
+	
+	public final void onIteratorForTestEnd(Context context) {
+		
+		final StackIteratorForStatement stackIteratorForStatement = get();
+		
+		final VarName varName = new VarName(stackIteratorForStatement.getName());
+		
+		// Must add variable declarations to scope so that can be found further down in parsing
+		final VariableDeclaration variableDeclaration = stackIteratorForStatement.makeVariableDeclaration();
+
+		System.out.println("## add to scope: " + varName);
+		
+		variableScopes.get().add(varName.getName(), variableDeclaration);
+	}
+
+	
+	public final void onIteratorForStatementEnd(Context context) {
+		
+		popVariableScope();
+		
+		final StackIteratorForStatement stackIteratorForStatement = pop();
+		
+		final ModifiersVariableDeclarationElement variableDeclarationElement = new ModifiersVariableDeclarationElement(
+				context,
+				new VariableModifiers(stackIteratorForStatement.getModifiers()),
+				stackIteratorForStatement.getTypeReference(),
+				new VarName(stackIteratorForStatement.getName()),
+				stackIteratorForStatement.getNumDims()); 
+
+		final IteratorForStatement statement = new IteratorForStatement(
+				context,
+				variableDeclarationElement,
+				stackIteratorForStatement.getExpression(),
+				new Block(context, stackIteratorForStatement.getStatements()));
+		
+		final StatementSetter statementSetter = get();
+		
+		statementSetter.addStatement(statement);
 	}
 	
 	public final void onTryWithResourcesStatementStart(Context context) {

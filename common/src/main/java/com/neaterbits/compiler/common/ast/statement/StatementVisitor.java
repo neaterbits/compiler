@@ -9,6 +9,8 @@ public interface StatementVisitor<T, R> {
 	R onDoWhile(DoWhileStatement statement, T param);
 
 	R onCFor(CForStatement statement, T param);
+	
+	R onIteratorFor(IteratorForStatement statement, T param);
 
 	R onTryCatchFinallyStatement(TryCatchFinallyStatement statement, T param);
 	

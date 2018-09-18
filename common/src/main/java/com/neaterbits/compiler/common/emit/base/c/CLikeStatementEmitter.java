@@ -16,7 +16,7 @@ import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement
 import com.neaterbits.compiler.common.ast.statement.WhileStatement;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.ast.variables.VarName;
-import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
+import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.StatementEmitter;
 import com.neaterbits.compiler.common.emit.base.BaseStatementEmitter;
@@ -40,13 +40,13 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 	}
 
 	
-	protected final void emitVariableDeclarationElement(VariableDeclarationElement element, T param) {
+	protected final void emitVariableDeclarationElement(InitializerVariableDeclarationElement element, T param) {
 		
 		emitVariableDeclaration(element.getTypeReference(), element.getName(), param);
 
 	}
 
-	protected final <E extends VariableDeclarationElement>
+	protected final <E extends InitializerVariableDeclarationElement>
 
 	void emitVariableDeclarationElements(List<E> elements, T param) {
 

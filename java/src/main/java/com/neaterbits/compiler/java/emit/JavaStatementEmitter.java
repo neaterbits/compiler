@@ -7,6 +7,7 @@ import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.statement.BaseTryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
+import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
 import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableMutability;
@@ -79,6 +80,34 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 		}
 	}
 	
+	@Override
+	public Void onIteratorFor(IteratorForStatement statement, EmitterState param) {
+		
+		param.append("for (");
+		
+		emitVariableModifiers(statement.getVariableDeclaration().getModifiers(), param);
+		
+		param.append(' ');
+		
+		emitType(statement.getVariableDeclaration().getTypeReference(), param);
+
+		param.append(' ');
+
+		param.append(statement.getVariableDeclaration().getName().getName());
+
+		param.append(" : ");
+
+		emitExpression(statement.getCollectionExpression(), param);
+		
+		param.append(") }").newline();
+
+		emitIndentedBlock(statement.getBlock(), param);
+		
+		param.append('}').newline();
+		
+		return null;
+	}
+
 	@Override
 	public Void onTryCatchFinallyStatement(TryCatchFinallyStatement statement, EmitterState param) {
 

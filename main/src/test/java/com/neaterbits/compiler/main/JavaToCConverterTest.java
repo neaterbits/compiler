@@ -81,7 +81,7 @@ public class JavaToCConverterTest {
 
 	private static final String emitCompilationUnit(CompilationUnit compilationUnit, ProgramEmitter<EmitterState> emitter) {
 		final EmitterState emitterState = new EmitterState('\n');
-		
+
 		for (CompilationCode code : compilationUnit.getCode()) {
 			code.visit(emitter, emitterState);
 		}

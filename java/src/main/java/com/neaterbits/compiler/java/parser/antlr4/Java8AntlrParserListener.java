@@ -802,6 +802,26 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitForStatementNoShortIf(ForStatementNoShortIfContext ctx) {
 		delegate.onForStatementEnd(context(ctx));
 	}
+	
+	@Override
+	public void enterEnhancedForStatement(EnhancedForStatementContext ctx) {
+		delegate.onIteratorForStatementStart(context(ctx));
+	}
+
+	@Override
+	public void exitEnhancedForStatement(EnhancedForStatementContext ctx) {
+		delegate.onIteratorForStatementEnd(context(ctx));
+	}
+
+	@Override
+	public void enterEnhancedForStatementNoShortIf(EnhancedForStatementNoShortIfContext ctx) {
+		delegate.onIteratorForStatementStart(context(ctx));
+	}
+
+	@Override
+	public void exitEnhancedForStatementNoShortIf(EnhancedForStatementNoShortIfContext ctx) {
+		delegate.onIteratorForStatementEnd(context(ctx));
+	}
 
 	@Override
 	public void enterForInit(ForInitContext ctx) {

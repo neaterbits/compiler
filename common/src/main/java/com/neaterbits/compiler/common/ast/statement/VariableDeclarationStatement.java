@@ -5,17 +5,17 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
-import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
+import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
 
 public final class VariableDeclarationStatement extends Statement {
 
 	private final VariableModifiers modifiers;
-	private final List<VariableDeclarationElement> declarations;
+	private final List<InitializerVariableDeclarationElement> declarations;
 	
 	public VariableDeclarationStatement(
 			Context context,
 			VariableModifiers modifiers,
-			List<VariableDeclarationElement> declarations) {
+			List<InitializerVariableDeclarationElement> declarations) {
 		
 		super(context);
 		
@@ -30,7 +30,7 @@ public final class VariableDeclarationStatement extends Statement {
 		return modifiers;
 	}
 
-	public List<VariableDeclarationElement> getDeclarations() {
+	public List<InitializerVariableDeclarationElement> getDeclarations() {
 		return declarations;
 	}
 

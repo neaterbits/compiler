@@ -453,6 +453,9 @@ System.out.println("## onJavaTypeVariableReferenceType");
 
 		if (statementsStack.size() > 1 && statementsStack.getSizeOfFrame(1) > 0) {
 			
+			System.out.println(" --- last statement in stack " + statementsStack.getLastFromFrame(1));
+			
+			
 			switch (statementsStack.getLastFromFrame(1)) {
 			case IF_THEN:
 				// delegate.onIfElseIfExpressionEnd(context);
@@ -463,6 +466,11 @@ System.out.println("## onJavaTypeVariableReferenceType");
 
 				// a block-statement after else, so this is a true else-block
 				delegate.onElseStatementStart(context);
+				break;
+				
+			case ENHANCED_FOR:
+System.out.println("-- matched enhanced for");
+				delegate.onIteratorForTestEnd(context);
 				break;
 				
 			case TRY_WITH_RESOURCES:
@@ -629,6 +637,22 @@ System.out.println("## onJavaTypeVariableReferenceType");
 		
 	}
 	
+	public void onIteratorForStatementStart(Context context) {
+		
+		statementsStack.add(JavaStatement.ENHANCED_FOR);
+		
+		statementsStack.push();
+		
+		delegate.onIteratorForStatementStart(context);
+	}
+	
+	public void onIteratorForStatementEnd(Context context) {
+		
+		statementsStack.pop();
+		
+		delegate.onIteratorForStatementEnd(context);
+	}
+
 	public void onContinueStatement(Context context, String label) {
 		
 	}

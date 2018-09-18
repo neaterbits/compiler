@@ -23,7 +23,11 @@ public final class VariablesMap {
 	public final void add(String name, VariableDeclaration declaration) {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(declaration);
-		
+
+		if (variables.containsKey(name)) {
+			throw new IllegalStateException("Already added " + name);
+		}
+
 		variables.put(name, declaration);
 	}
 }

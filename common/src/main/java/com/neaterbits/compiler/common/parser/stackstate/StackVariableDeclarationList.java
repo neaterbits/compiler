@@ -6,14 +6,14 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifier;
-import com.neaterbits.compiler.common.ast.variables.VariableDeclarationElement;
+import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.ListStackEntry;
 import com.neaterbits.compiler.common.parser.TypeReferenceSetter;
 import com.neaterbits.compiler.common.parser.VariableModifierSetter;
 
 public final class StackVariableDeclarationList
-	extends ListStackEntry<VariableDeclarationElement>
+	extends ListStackEntry<InitializerVariableDeclarationElement>
 	implements VariableModifierSetter, TypeReferenceSetter {
 
 	private final List<VariableModifier> modifiers;
