@@ -18,4 +18,12 @@ public class CompilationUnit extends CompilationCodeLines {
 	public ASTList<Import> getImports() {
 		return imports;
 	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+
+		doIterate(imports, recurseMode, visitor);
+		
+		super.doRecurse(recurseMode, visitor);
+	}
 }

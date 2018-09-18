@@ -1,6 +1,8 @@
 package com.neaterbits.compiler.common.ast.statement;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
@@ -40,6 +42,16 @@ public final class CForStatement extends LoopStatement {
 	@Override
 	public <T, R> R visit(StatementVisitor<T, R> visitor, T param) {
 		return visitor.onCFor(this, param);
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		
+		doIterate(initialStatement, recurseMode, visitor);
+		doIterate(condition, recurseMode, visitor);
+		doIterate(eachStatement, recurseMode, visitor);
+
+		super.doRecurse(recurseMode, visitor);
 	}
 }
 

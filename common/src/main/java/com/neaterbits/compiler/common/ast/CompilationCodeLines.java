@@ -21,4 +21,11 @@ public class CompilationCodeLines extends BaseASTElement {
 	public final ASTList<CompilationCode> getCode() {
 		return code;
 	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		
+		doIterate(code, recurseMode, visitor);
+
+	}
 }

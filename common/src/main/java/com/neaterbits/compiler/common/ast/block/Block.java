@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.Statement;
@@ -22,5 +24,10 @@ public class Block extends BaseASTElement {
 
 	public final ASTList<Statement> getStatements() {
 		return statements;
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		doIterate(statements, recurseMode, visitor);
 	}
 }

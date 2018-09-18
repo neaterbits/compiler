@@ -4,11 +4,12 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorName;
 
 public final class ClassInstanceCreationExpression extends CallExpression<ConstructorName> {
 
-	private final TypeReference type;
+	private final ASTSingle<TypeReference> type;
 
 	public ClassInstanceCreationExpression(Context context, TypeReference type, ConstructorName name, ParameterList parameters) {
 		super(context, name, parameters);
@@ -16,11 +17,11 @@ public final class ClassInstanceCreationExpression extends CallExpression<Constr
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(parameters);
 
-		this.type = type;
+		this.type = makeSingle(type);
 	}
 
 	public TypeReference getType() {
-		return type;
+		return type.get();
 	}
 
 	@Override

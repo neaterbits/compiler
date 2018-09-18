@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 
@@ -21,5 +23,12 @@ public final class ModifiersVariableDeclarationElement extends VariableDeclarati
 
 	public VariableModifiers getModifiers() {
 		return modifiers.get();
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		doIterate(modifiers, recurseMode, visitor);
+		
+		super.doRecurse(recurseMode, visitor);
 	}
 }

@@ -3,6 +3,8 @@ package com.neaterbits.compiler.common.ast.typedefinition;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 
 public final class MethodModifierHolder extends BaseASTElement implements MethodModifier {
@@ -20,5 +22,10 @@ public final class MethodModifierHolder extends BaseASTElement implements Method
 	@Override
 	public <T, R> R visit(MethodModifierVisitor<T, R> visitor, T param) {
 		return delegate.visit(visitor, param);
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		
 	}
 }

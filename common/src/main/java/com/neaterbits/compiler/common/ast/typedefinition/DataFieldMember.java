@@ -2,6 +2,8 @@ package com.neaterbits.compiler.common.ast.typedefinition;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public abstract class DataFieldMember extends ComplexMemberDefinition {
@@ -22,5 +24,10 @@ public abstract class DataFieldMember extends ComplexMemberDefinition {
 
 	public final String getName() {
 		return name;
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		doIterate(type, recurseMode, visitor);
 	}
 }

@@ -3,19 +3,20 @@ package com.neaterbits.compiler.common.ast;
 import java.util.Arrays;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
-public class Namespace extends CompilationCode {
+public final class Namespace extends CompilationCode {
 
 	private final String name;
 	private final String [] parts;
-	private final CompilationCodeLines lines;
+	private final ASTSingle<CompilationCodeLines> lines;
 	
 	public Namespace(Context context, String name, String [] parts, CompilationCodeLines lines) {
 		super(context);
 		
 		this.name = name;
 		this.parts = Arrays.copyOf(parts, parts.length);
-		this.lines = lines;
+		this.lines = makeSingle(lines);
 	}
 
 	@Override
@@ -33,6 +34,11 @@ public class Namespace extends CompilationCode {
 	}
 
 	public final CompilationCodeLines getLines() {
-		return lines;
+		return lines.get();
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		doIterate(lines, recurseMode, visitor);
 	}
 }

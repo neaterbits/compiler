@@ -272,6 +272,7 @@ public abstract class BaseParserListener {
 		final CallableStackEntry stackCallable = get();
 		
 		final Parameter parameter = new Parameter(
+				context,
 				stackParameterSignature.getTypeReference(),
 				new ParameterName(stackParameterSignature.getName()));
 

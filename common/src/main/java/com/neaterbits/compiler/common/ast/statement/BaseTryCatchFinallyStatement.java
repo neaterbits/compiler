@@ -3,6 +3,8 @@ package com.neaterbits.compiler.common.ast.statement;
 import java.util.List;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
@@ -31,5 +33,15 @@ public abstract class BaseTryCatchFinallyStatement extends Statement {
 
 	public final Block getFinallyBlock() {
 		return finallyBlock != null ? finallyBlock.get() : null;
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		doIterate(tryBlock, recurseMode, visitor);
+		doIterate(catchBlocks, recurseMode, visitor);
+		
+		if (finallyBlock != null) {
+			doIterate(finallyBlock, recurseMode, visitor);
+		}
 	}
 }

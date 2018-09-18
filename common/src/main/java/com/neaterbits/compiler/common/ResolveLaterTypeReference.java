@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public final class ResolveLaterTypeReference extends TypeReference {
@@ -42,5 +44,10 @@ public final class ResolveLaterTypeReference extends TypeReference {
 	@Override
 	public String toString() {
 		return "ResolveLaterTypeReference [typeName=" + typeName + ", resolved=" + resolved + "]";
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		
 	}
 }

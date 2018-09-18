@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
@@ -39,5 +41,12 @@ public final class VariableDeclarationStatement extends Statement {
 	@Override
 	public <T, R> R visit(StatementVisitor<T, R> visitor, T param) {
 		return visitor.onVariableDeclaration(this, param);
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		
+		doIterate(modifiers, recurseMode, visitor);
+		doIterate(declarations, recurseMode, visitor);
 	}
 }

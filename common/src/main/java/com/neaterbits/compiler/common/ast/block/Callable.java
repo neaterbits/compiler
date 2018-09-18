@@ -1,19 +1,22 @@
 package com.neaterbits.compiler.common.ast.block;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.CompilationCode;
+import com.neaterbits.compiler.common.ast.list.ASTList;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public abstract class Callable<NAME extends CallableName> extends CompilationCode  {
 
-	private final TypeReference returnType;
+	private final ASTSingle<TypeReference> returnType;
 	private final NAME name;
-	private final List<Parameter> parameters;
-	private final Block block;
+	private final ASTList<Parameter> parameters;
+	private final ASTSingle<Block> block;
 
 	Callable(Context context, TypeReference returnType, NAME name, List<Parameter> parameters, Block block) {
 		super(context);
@@ -22,14 +25,14 @@ public abstract class Callable<NAME extends CallableName> extends CompilationCod
 		Objects.requireNonNull(parameters);
 		Objects.requireNonNull(block);
 
-		this.returnType = returnType;
+		this.returnType = returnType != null ? makeSingle(returnType) : null;
 		this.name = name;
-		this.parameters = Collections.unmodifiableList(parameters);
-		this.block = block;
+		this.parameters = makeList(parameters);
+		this.block = makeSingle(block);
 	}
 	
 	public final TypeReference getReturnType() {
-		return returnType;
+		return returnType != null ? returnType.get() : null;
 	}
 
 	public final NAME getName() {
@@ -37,10 +40,20 @@ public abstract class Callable<NAME extends CallableName> extends CompilationCod
 	}
 
 	public final Block getBlock() {
-		return block;
+		return block.get();
 	}
 
-	public final List<Parameter> getParameters() {
+	public final ASTList<Parameter> getParameters() {
 		return parameters;
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		if (returnType != null) {
+			doIterate(returnType, recurseMode, visitor);
+		}
+
+		doIterate(parameters, recurseMode, visitor);
+		doIterate(block, recurseMode, visitor);
 	}
 }

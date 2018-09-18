@@ -5,9 +5,12 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.list.ASTList;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.variables.VarName;
 
 public final class CatchBlock extends BaseASTElement {
@@ -15,7 +18,7 @@ public final class CatchBlock extends BaseASTElement {
 	private final ASTList<TypeReference> exceptionTypes;
 	private final VarName exceptionVarName;
 	
-	private final Block block;
+	private final ASTSingle<Block> block;
 	
 	public CatchBlock(Context context, List<TypeReference> exceptionTypes, VarName exceptionVarName, Block block) {
 		super(context);
@@ -31,7 +34,7 @@ public final class CatchBlock extends BaseASTElement {
 
 		this.exceptionTypes = makeList(exceptionTypes);
 		this.exceptionVarName = exceptionVarName;
-		this.block = block;
+		this.block = makeSingle(block);
 	}
 
 	public ASTList<TypeReference> getExceptionTypes() {
@@ -43,6 +46,12 @@ public final class CatchBlock extends BaseASTElement {
 	}
 
 	public Block getBlock() {
-		return block;
+		return block.get();
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		doIterate(exceptionTypes, recurseMode, visitor);
+		doIterate(block, recurseMode, visitor);
 	}
 }

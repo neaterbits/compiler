@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.operator.Relational;
 
 public final class ConditionList extends Condition {
 
 	private final List<Relational> operators;
-	private final List<Expression> expressions;
+	private final ASTList<Expression> expressions;
 
 	public ConditionList(Context context, List<Relational> operators, List<Expression> expressions) {
 		super(context);
@@ -23,19 +26,24 @@ public final class ConditionList extends Condition {
 		}
 
 		this.operators = operators;
-		this.expressions = expressions;
+		this.expressions = makeList(expressions);
 	}
 
 	public List<Relational> getOperators() {
 		return operators;
 	}
 
-	public List<Expression> getExpressions() {
+	public ASTList<Expression> getExpressions() {
 		return expressions;
 	}
 
 	@Override
 	public <T, R> R visit(ConditionVisitor<T, R> visitor, T param) {
 		return visitor.onNestedCondition(this, param);
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		doIterate(expressions, recurseMode, visitor);
 	}
 }

@@ -2,7 +2,6 @@ package com.neaterbits.compiler.c.emit;
 
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.block.Function;
-import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
@@ -38,17 +37,15 @@ public class CCompilationUnitEmmiter extends BaseProceduralProgramEmitter<Emitte
 			
 			param.append('(');
 			
-			for (int i = 0; i < function.getParameters().size(); ++ i) {
+			function.getParameters().foreachWithIndex((parameter, i) -> {
 				if (i > 0) {
 					param.append(", ");
 				}
 				
-				final Parameter parameter = function.getParameters().get(i);
-				
 				emitType(parameter.getType(), param);
 				
 				param.append(' ').append(parameter.getName().getName());
-			}
+			});
 
 			param.append(") {");
 			

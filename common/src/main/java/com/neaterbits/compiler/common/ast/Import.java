@@ -64,4 +64,9 @@ public final class Import extends BaseASTElement {
 	public MethodName getMethod() {
 		return method;
 	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		
+	}
 }

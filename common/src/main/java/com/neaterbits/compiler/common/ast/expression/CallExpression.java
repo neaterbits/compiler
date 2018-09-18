@@ -3,13 +3,16 @@ package com.neaterbits.compiler.common.ast.expression;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTRecurseMode;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.block.CallableName;
+import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public abstract class CallExpression<N extends CallableName>
 		extends Expression {
 
 	private final N callable;
-	private final ParameterList parameters;
+	private final ASTSingle<ParameterList> parameters;
 
 	public CallExpression(Context context, N callable, ParameterList parameters) {
 		super(context);
@@ -18,7 +21,7 @@ public abstract class CallExpression<N extends CallableName>
 		Objects.requireNonNull(parameters);
 
 		this.callable = callable;
-		this.parameters = parameters;
+		this.parameters = makeSingle(parameters);
 	}
 
 	public final N getCallable() {
@@ -26,6 +29,13 @@ public abstract class CallExpression<N extends CallableName>
 	}
 
 	public final ParameterList getParameters() {
-		return parameters;
+		return parameters.get();
+	}
+
+	@Override
+	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+
+		doIterate(parameters, recurseMode, visitor);
+		
 	}
 }
