@@ -38,6 +38,8 @@ public interface ExpressionVisitor<T, R> {
 	R onVariableReference(VariableReference expression, T param);
 	
 	R onConditionalExpression(ConditionalExpression expression, T param);
+	
+	R onNestedExpression(NestedExpression expression, T param);
 
 	// Literals
 	R onIntegerLiteral(IntegerLiteral expression, T param);

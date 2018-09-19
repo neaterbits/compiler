@@ -635,6 +635,53 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onExpressionBinaryOperator(context(ctx), Relational.NOT_EQUALS);
 	}
 	
+	@Override
+	public void enterNestedExpression_primaryNoNewArray(NestedExpression_primaryNoNewArrayContext ctx) {
+		delegate.onNestedExpressionStart(context(ctx));
+	}
+
+	@Override
+	public void enterNestedExpression_primaryNoNewArray_lfno_arrayAccess(
+			NestedExpression_primaryNoNewArray_lfno_arrayAccessContext ctx) {
+		delegate.onNestedExpressionStart(context(ctx));
+	}
+
+	@Override
+	public void enterNestedExpression_primaryNoNewArray_lfno_primary(
+			NestedExpression_primaryNoNewArray_lfno_primaryContext ctx) {
+		delegate.onNestedExpressionStart(context(ctx));
+	}
+
+	@Override
+	public void enterNestedExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
+			NestedExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
+		delegate.onNestedExpressionStart(context(ctx));
+	}
+
+	
+	@Override
+	public void exitNestedExpression_primaryNoNewArray(NestedExpression_primaryNoNewArrayContext ctx) {
+		delegate.onNestedExpressionEnd(context(ctx));
+	}
+
+	@Override
+	public void exitNestedExpression_primaryNoNewArray_lfno_arrayAccess(
+			NestedExpression_primaryNoNewArray_lfno_arrayAccessContext ctx) {
+		delegate.onNestedExpressionEnd(context(ctx));
+	}
+
+	@Override
+	public void exitNestedExpression_primaryNoNewArray_lfno_primary(
+			NestedExpression_primaryNoNewArray_lfno_primaryContext ctx) {
+		delegate.onNestedExpressionEnd(context(ctx));
+	}
+
+	@Override
+	public void exitNestedExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
+			NestedExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
+		delegate.onNestedExpressionEnd(context(ctx));
+	}
+
 	// Primaries
 	@Override
 	public void enterPrimary(PrimaryContext ctx) {

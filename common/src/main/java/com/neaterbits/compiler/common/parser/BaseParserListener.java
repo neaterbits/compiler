@@ -27,6 +27,7 @@ import com.neaterbits.compiler.common.ast.expression.ConditionalExpression;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.common.ast.expression.NestedExpression;
 import com.neaterbits.compiler.common.ast.expression.ParameterList;
 import com.neaterbits.compiler.common.ast.expression.Resource;
 import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
@@ -475,6 +476,23 @@ public abstract class BaseParserListener {
 				context,
 				stackAssignmentExpression.getLHS(),
 				stackAssignmentExpression.getRHS()));
+	}
+	
+	public final void onNestedExpressionStart(Context context) {
+		push(new StackExpressionList(logger));
+	}
+	
+	public final void onNestedExpressionEnd(Context context) {
+		
+		final StackExpressionList stackExpressionList = pop();
+		
+		final NestedExpression nestedExpression = new NestedExpression(
+				context,
+				stackExpressionList.makeExpression(context));
+		
+		final NestedExpressionSetter nestedExpressionSetter = get();
+		
+		nestedExpressionSetter.addNestedExpression(nestedExpression);
 	}
 
 	// Variables

@@ -239,6 +239,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 
 	
+	public void onNestedExpressionStart(Context context) {
+		delegate.onNestedExpressionStart(context);
+	}
+	
+	public void onNestedExpressionEnd(Context context) {
+		delegate.onNestedExpressionEnd(context);
+	}
+
 	public void onEnterAssignmentExpression(Context context) {
 		delegate.onEnterAssignmentExpression(context);
 	}
