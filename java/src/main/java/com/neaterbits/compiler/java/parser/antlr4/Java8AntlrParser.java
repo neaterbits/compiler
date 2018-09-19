@@ -3,6 +3,7 @@ package com.neaterbits.compiler.java.parser.antlr4;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
+import com.neaterbits.compiler.common.antlr4.AntlrParserFactory;
 import com.neaterbits.compiler.common.antlr4.BaseParser;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.log.ParseLogger;
@@ -13,7 +14,7 @@ import com.neaterbits.compiler.java.parser.JavaParserListener;
 public class Java8AntlrParser extends BaseParser<CompilationUnit, JavaParserListener, Java8Lexer, Java8Parser> {
 
 	public Java8AntlrParser(boolean debug) {
-		super(debug, new Java8Lexer(null), new Java8Parser(null));
+		super(debug, new AntlrParserFactory<>(Java8Lexer::new, Java8Parser::new));
 	}
 
 	@Override

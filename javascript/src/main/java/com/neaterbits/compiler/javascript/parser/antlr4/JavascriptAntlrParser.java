@@ -3,6 +3,7 @@ package com.neaterbits.compiler.javascript.parser.antlr4;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
+import com.neaterbits.compiler.common.antlr4.AntlrParserFactory;
 import com.neaterbits.compiler.common.antlr4.BaseParser;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.javascript.JavaScriptLexer;
@@ -17,7 +18,7 @@ public class JavascriptAntlrParser extends BaseParser<
 			JavaScriptParser> {
 
 	public JavascriptAntlrParser(boolean debug) {
-		super(debug, new JavaScriptLexer(null), new JavaScriptParser(null));
+		super(debug, new AntlrParserFactory<>(JavaScriptLexer::new, JavaScriptParser::new));
 	}
 
 	@Override

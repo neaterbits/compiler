@@ -52,8 +52,15 @@ public class JavaToCConverterTest {
 		final List<AntlrError> errors = new ArrayList<>();
 		
 		final CompilationUnit compilationUnit;
+
+		// final String fileName = "src/test/java/com/neaterbits/compiler/main/JavaToCConverterTest.java";
+		final String fileName = "../common/src/main/java/com/neaterbits/compiler/common/ModuleSpec.java";
 		
-		try (FileInputStream inputStream = new FileInputStream("src/test/java/com/neaterbits/compiler/main/JavaToCConverterTest.java")) {
+		final File f = new File(fileName);
+		
+		System.out.println("## path: " + f.getCanonicalPath());
+		
+		try (FileInputStream inputStream = new FileInputStream(fileName)) {
 			compilationUnit = parser.parse(inputStream, errors, new ParseLogger(System.out));
 		}
 
