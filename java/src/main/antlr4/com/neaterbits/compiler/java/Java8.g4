@@ -957,17 +957,17 @@ primary
 	;
 
 primaryNoNewArray
-	:	literal
-	|	typeName ('[' ']')* '.' 'class'
-	|	'void' '.' 'class'
-	|	'this'
-	|	typeName '.' 'this'
-	|	'(' expression ')'
-	|	classInstanceCreationExpression
-	|	fieldAccess
-	|	arrayAccess
-	|	methodInvocation
-	|	methodReference
+	:	literal							# literal_primaryNoNewArray
+	|	typeName ('[' ']')* '.' 'class'	# typeNameClassExpression_primaryNoNewArray
+	|	'void' '.' 'class'				# voidClassExpression_primaryNoNewArray
+	|	'this'							# thisExpression_primaryNoNewArray
+	|	typeName '.' 'this'				# typeNameThisExpression_primaryNoNewArray
+	|	'(' expression ')'				# nestedExpression_primaryNoNewArray
+	|	classInstanceCreationExpression	# javaClassInstanceCreationExpression_primaryNoNewArray
+	|	fieldAccess						# fieldAccesExpressionToken_primaryNoNewArray
+	|	arrayAccess						# arrayAccessExpressionToken_primaryNoNewArray
+	|	methodInvocation				# methodInvocationExpressionToken_primaryNoNewArray
+	|	methodReference					# methodReferenceExpressionToken_primaryNoNewArray
 	;
 
 primaryNoNewArray_lf_arrayAccess
@@ -975,16 +975,16 @@ primaryNoNewArray_lf_arrayAccess
 	;
 
 primaryNoNewArray_lfno_arrayAccess
-	:	literal
-	|	typeName ('[' ']')* '.' 'class'
-	|	'void' '.' 'class'
-	|	'this'
-	|	typeName '.' 'this'
-	|	'(' expression ')'
-	|	classInstanceCreationExpression
-	|	fieldAccess
-	|	methodInvocation
-	|	methodReference
+	:	literal							# literal_primaryNoNewArray_lfno_arrayAccess	
+	|	typeName ('[' ']')* '.' 'class'	# typeNameClassExpression_primaryNoNewArray_lfno_arrayAccess
+	|	'void' '.' 'class'				# voidClassExpression_primaryNoNewArray_lfno_arrayAccess
+	|	'this'							# thisExpression_primaryNoNewArray_lfno_arrayAccess
+	|	typeName '.' 'this'				# typeNameThisExpression_primaryNoNewArray_lfno_arrayAccess
+	|	'(' expression ')'				# nestedExpression_primaryNoNewArray_lfno_arrayAccess
+	|	classInstanceCreationExpression	# javaClassInstanceCreationExpression_primaryNoNewArray_lfno_arrayAccess
+	|	fieldAccess						# fieldAccessExpressionToken_primaryNoNewArray_lfno_arrayAccess
+	|	methodInvocation				# methodInvocationExpressionToken_primaryNoNewArray_lfno_arrayAccess
+	|	methodReference					# methodReferenceExpressionToken_primaryNoNewArray_lfno_arrayAccess
 	;
 
 primaryNoNewArray_lf_primary
@@ -1007,18 +1007,18 @@ primaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primary
 	;
 
 primaryNoNewArray_lfno_primary
-	:	literal										# literalToken
-	|	typeName ('[' ']')* '.' 'class'				# typeNameClassExpression
-	|	unannPrimitiveType ('[' ']')* '.' 'class'	# primitiveTypeNameClassExpression
-	|	'void' '.' 'class'							# voidClassExpression
-	|	'this'										# thisExpression_lfno_primary
-	|	typeName '.' 'this'							# typeNameThisExpression
-	|	'(' expression ')'							# nestedExpression
-	|	classInstanceCreationExpression_lfno_primary	# javaClassInstanceCreationExpression
-	|	fieldAccess_lfno_primary					# fieldAccessExpressionToken
-	|	arrayAccess_lfno_primary					# arrayAccessExpressionToken
-	|	methodInvocation_lfno_primary				# methodInvocationExpressionToken
-	|	methodReference_lfno_primary				# methodReferenceExpressionToken
+	:	literal										# literalToken_primaryNoNewArray_lfno_primary
+	|	typeName ('[' ']')* '.' 'class'				# typeNameClassExpression_primaryNoNewArray_lfno_primary
+	|	unannPrimitiveType ('[' ']')* '.' 'class'	# primitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary
+	|	'void' '.' 'class'							# voidClassExpression_primaryNoNewArray_lfno_primary
+	|	'this'										# thisExpression_lfno_primary_primaryNoNewArray_lfno_primary
+	|	typeName '.' 'this'							# typeNameThisExpression_primaryNoNewArray_lfno_primary
+	|	'(' expression ')'							# nestedExpression_primaryNoNewArray_lfno_primary
+	|	classInstanceCreationExpression_lfno_primary	# javaClassInstanceCreationExpression_primaryNoNewArray_lfno_primary
+	|	fieldAccess_lfno_primary					# fieldAccessExpressionToken_primaryNoNewArray_lfno_primary
+	|	arrayAccess_lfno_primary					# arrayAccessExpressionToken_primaryNoNewArray_lfno_primary
+	|	methodInvocation_lfno_primary				# methodInvocationExpressionToken_primaryNoNewArray_lfno_primary
+	|	methodReference_lfno_primary				# methodReferenceExpressionToken_primaryNoNewArray_lfno_primary
 	;
 
 primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary
@@ -1026,17 +1026,17 @@ primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary
 	;
 
 primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
-	:	literal
-	|	typeName ('[' ']')* '.' 'class'
-	|	unannPrimitiveType ('[' ']')* '.' 'class'
-	|	'void' '.' 'class'
-	|	'this'
-	|	typeName '.' 'this'
-	|	'(' expression ')'
-	|	classInstanceCreationExpression_lfno_primary
-	|	fieldAccess_lfno_primary
-	|	methodInvocation_lfno_primary
-	|	methodReference_lfno_primary
+	:	literal										# literalToken_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	typeName ('[' ']')* '.' 'class'				# typeName_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	unannPrimitiveType ('[' ']')* '.' 'class'	# primitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	'void' '.' 'class'							# voidClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	'this'										# thisExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	typeName '.' 'this'							# typeNameThisExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	'(' expression ')'							# nestedExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	classInstanceCreationExpression_lfno_primary	# javaClassInstanceCreateExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	fieldAccess_lfno_primary					# fieldAccessExpressionToken_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	methodInvocation_lfno_primary				# methodInvocationExpressionToken_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	methodReference_lfno_primary				# methodReferenceExpressionToken_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
 	;
 
 classInstanceCreationExpression

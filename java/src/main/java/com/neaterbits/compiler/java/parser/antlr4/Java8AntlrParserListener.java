@@ -37,6 +37,9 @@ import com.neaterbits.compiler.common.util.Strings;
 /**
  * 
  */
+/**
+ * 
+ */
 public class Java8AntlrParserListener extends Java8BaseListener {
 
 	private final JavaParserListener delegate;
@@ -55,11 +58,16 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
+		
+		System.out.println("## enter " + ruleName(ctx) + " " + ctx.getText());
+		
 		logger.onEnterAntlrRule(ruleName(ctx), ctx.getText());
 	}
 
 	@Override
 	public void exitEveryRule(ParserRuleContext ctx) {
+		System.out.println("## exit " + ruleName(ctx) + " " + ctx.getText());
+
 		logger.onExitAntlrRule(ruleName(ctx), ctx.getText());
 	}
 
@@ -397,7 +405,26 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 
 	@Override
-	public void enterJavaClassInstanceCreationExpression(JavaClassInstanceCreationExpressionContext ctx) {
+	public void enterJavaClassInstanceCreationExpression_primaryNoNewArray(
+			JavaClassInstanceCreationExpression_primaryNoNewArrayContext ctx) {
+		delegate.onJavaClassInstanceCreationExpressionStart(context(ctx));
+	}
+
+	@Override
+	public void enterJavaClassInstanceCreationExpression_primaryNoNewArray_lfno_arrayAccess(
+			JavaClassInstanceCreationExpression_primaryNoNewArray_lfno_arrayAccessContext ctx) {
+		delegate.onJavaClassInstanceCreationExpressionStart(context(ctx));
+	}
+
+	@Override
+	public void enterJavaClassInstanceCreationExpression_primaryNoNewArray_lfno_primary(
+			JavaClassInstanceCreationExpression_primaryNoNewArray_lfno_primaryContext ctx) {
+		delegate.onJavaClassInstanceCreationExpressionStart(context(ctx));
+	}
+
+	@Override
+	public void enterJavaClassInstanceCreateExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
+			JavaClassInstanceCreateExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
 		delegate.onJavaClassInstanceCreationExpressionStart(context(ctx));
 	}
 	
@@ -425,9 +452,29 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 
 	@Override
-	public void exitJavaClassInstanceCreationExpression(JavaClassInstanceCreationExpressionContext ctx) {
+	public void exitJavaClassInstanceCreationExpression_primaryNoNewArray(
+			JavaClassInstanceCreationExpression_primaryNoNewArrayContext ctx) {
 		delegate.onJavaClassInstanceCreationExpressionEnd(context(ctx));
 	}
+
+	@Override
+	public void exitJavaClassInstanceCreationExpression_primaryNoNewArray_lfno_arrayAccess(
+			JavaClassInstanceCreationExpression_primaryNoNewArray_lfno_arrayAccessContext ctx) {
+		delegate.onJavaClassInstanceCreationExpressionEnd(context(ctx));
+	}
+
+	@Override
+	public void exitJavaClassInstanceCreationExpression_primaryNoNewArray_lfno_primary(
+			JavaClassInstanceCreationExpression_primaryNoNewArray_lfno_primaryContext ctx) {
+		delegate.onJavaClassInstanceCreationExpressionEnd(context(ctx));
+	}
+
+	@Override
+	public void exitJavaClassInstanceCreateExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
+			JavaClassInstanceCreateExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
+		delegate.onJavaClassInstanceCreationExpressionEnd(context(ctx));
+	}
+
 
 	@Override
 	public void enterNoObjectMethodInvocation_lfno_primary(NoObjectMethodInvocation_lfno_primaryContext ctx) {
@@ -609,8 +656,31 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, ctx.Identifier().getText());
 	}
 
+	
 	@Override
-	public void exitThisExpression_lfno_primary(ThisExpression_lfno_primaryContext ctx) {
+	public void exitThisExpression_primaryNoNewArray(ThisExpression_primaryNoNewArrayContext ctx) {
+
+		delegate.onThisPrimary(context(ctx));
+	}
+
+	@Override
+	public void exitThisExpression_primaryNoNewArray_lfno_arrayAccess(
+			ThisExpression_primaryNoNewArray_lfno_arrayAccessContext ctx) {
+
+		delegate.onThisPrimary(context(ctx));
+	}
+
+	@Override
+	public void exitThisExpression_lfno_primary_primaryNoNewArray_lfno_primary(
+			ThisExpression_lfno_primary_primaryNoNewArray_lfno_primaryContext ctx) {
+
+		delegate.onThisPrimary(context(ctx));
+	}
+
+	@Override
+	public void exitThisExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
+			ThisExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
+
 		delegate.onThisPrimary(context(ctx));
 	}
 
