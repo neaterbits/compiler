@@ -1280,10 +1280,10 @@ additiveExpression
 	;
 
 multiplicativeExpression
-	:	unaryExpression
-	|	multiplicativeExpression '*' unaryExpression
-	|	multiplicativeExpression '/' unaryExpression
-	|	multiplicativeExpression '%' unaryExpression
+	:	unaryExpression									# unaryExpressionToken
+	|	multiplicativeExpression '*' unaryExpression	# multiplicativeMultiplyExpression
+	|	multiplicativeExpression '/' unaryExpression	# multiplicativeDivideExpression
+	|	multiplicativeExpression '%' unaryExpression	# multiplicativeModulusExpression
 	;
 
 unaryExpression

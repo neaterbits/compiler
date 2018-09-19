@@ -405,6 +405,21 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 
 	@Override
+	public void exitMultiplicativeMultiplyExpression(MultiplicativeMultiplyExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Arithmetic.MULTIPLY);
+	}
+
+	@Override
+	public void exitMultiplicativeDivideExpression(MultiplicativeDivideExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Arithmetic.DIVIDE);
+	}
+
+	@Override
+	public void exitMultiplicativeModulusExpression(MultiplicativeModulusExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Arithmetic.MODULUS);
+	}
+
+	@Override
 	public void enterJavaClassInstanceCreationExpression_primaryNoNewArray(
 			JavaClassInstanceCreationExpression_primaryNoNewArrayContext ctx) {
 		delegate.onJavaClassInstanceCreationExpressionStart(context(ctx));
