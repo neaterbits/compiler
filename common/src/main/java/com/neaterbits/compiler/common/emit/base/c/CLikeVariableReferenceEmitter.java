@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.emit.base.c;
 
 import com.neaterbits.compiler.common.ast.variables.ArrayAccessReference;
 import com.neaterbits.compiler.common.ast.variables.FieldAccessReference;
+import com.neaterbits.compiler.common.ast.variables.NameReference;
 import com.neaterbits.compiler.common.ast.variables.PrimaryListVariableReference;
 import com.neaterbits.compiler.common.ast.variables.SimpleVariableReference;
 import com.neaterbits.compiler.common.emit.EmitterState;
@@ -29,6 +30,11 @@ public abstract class CLikeVariableReferenceEmitter<T extends EmitterState> impl
 
 	@Override
 	public Void onPrimaryList(PrimaryListVariableReference primaryListVariableReference, T param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public final Void onNameReference(NameReference nameReference, T param) {
 		throw new UnsupportedOperationException();
 	}
 }

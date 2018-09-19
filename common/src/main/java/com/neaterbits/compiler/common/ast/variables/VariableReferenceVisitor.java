@@ -2,6 +2,8 @@ package com.neaterbits.compiler.common.ast.variables;
 
 public interface VariableReferenceVisitor<T, R> {
 
+	R onNameReference(NameReference nameReference, T param);
+
 	R onSimpleVariableReference(SimpleVariableReference variableReference, T param);
 	
 	R onArrayAccessReference(ArrayAccessReference variableReference, T param);

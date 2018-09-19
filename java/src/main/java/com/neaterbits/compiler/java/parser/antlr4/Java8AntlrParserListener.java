@@ -359,7 +359,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void exitExpressionName(ExpressionNameContext ctx) {
-		delegate.onVariableReference(context(ctx), ctx.getText());
+		delegate.onNameReference(context(ctx), ctx.getText());
 	}
 
 	@Override

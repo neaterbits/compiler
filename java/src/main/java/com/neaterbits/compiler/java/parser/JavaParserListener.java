@@ -243,6 +243,10 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onEnterAssignmentExpression(context);
 	}
 	
+	public void onNameReference(Context context, String name) {
+		delegate.onNameReference(context, name);
+	}
+
 	public void onVariableReference(Context context, String name) {
 		delegate.onVariableReference(context, name);
 	}

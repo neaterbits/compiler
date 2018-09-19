@@ -83,6 +83,7 @@ import com.neaterbits.compiler.common.ast.variables.VarName;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.common.ast.variables.ModifiersVariableDeclarationElement;
+import com.neaterbits.compiler.common.ast.variables.NameReference;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.stackstate.BaseStackTryCatchFinally;
 import com.neaterbits.compiler.common.parser.stackstate.BaseStackVariableDeclarationList;
@@ -468,7 +469,17 @@ public abstract class BaseParserListener {
 	}
 
 	// Variables
-	public void onVariableReference(Context context, String name) {
+	
+	// Variable or class member
+	public final void onNameReference(Context context, String name) {
+		final VariableReferenceSetter variableReferenceSetter = get();
+		
+		variableReferenceSetter.setVariableReference(new NameReference(context, name));
+	}
+	
+	
+	// Resolved as variable
+	public final void onVariableReference(Context context, String name) {
 
 		final VariableReferenceSetter variableReferenceSetter = get();
 
