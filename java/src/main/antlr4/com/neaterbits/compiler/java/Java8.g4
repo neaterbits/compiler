@@ -1011,7 +1011,7 @@ primaryNoNewArray_lfno_primary
 	|	typeName ('[' ']')* '.' 'class'				# typeNameClassExpression
 	|	unannPrimitiveType ('[' ']')* '.' 'class'	# primitiveTypeNameClassExpression
 	|	'void' '.' 'class'							# voidClassExpression
-	|	'this'										# thisExpression
+	|	'this'										# thisExpression_lfno_primary
 	|	typeName '.' 'this'							# typeNameThisExpression
 	|	'(' expression ')'							# nestedExpression
 	|	classInstanceCreationExpression_lfno_primary	# javaClassInstanceCreationExpression
@@ -1060,9 +1060,9 @@ typeArgumentsOrDiamond
 	;
 
 fieldAccess
-	:	primary '.' Identifier
-	|	'super' '.' Identifier
-	|	typeName '.' 'super' '.' Identifier
+	:	primary '.' Identifier					# primaryDotIdentifierFieldAccess
+	|	'super' '.' Identifier					# superDotIdentifierFieldAccess
+	|	typeName '.' 'super' '.' Identifier		# typeNameDotSuperDotIdentifierFieldAccess
 	;
 
 fieldAccess_lf_primary

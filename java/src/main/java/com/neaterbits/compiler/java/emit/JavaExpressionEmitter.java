@@ -3,8 +3,10 @@ package com.neaterbits.compiler.java.emit;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
+import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
@@ -34,7 +36,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		type.getType().visit(TYPE_EMITTER, param);
 	}
 	
-	private void emitVariableReference(VariableReference reference, EmitterState param) {
+	protected void emitVariableReference(VariableReference reference, EmitterState param) {
 		reference.visit(VARIABLE_REFERENCE_EMITTER, param);
 	}
 	
@@ -107,6 +109,38 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 		param.append(')');
 		
+		return null;
+	}
+
+	@Override
+	public Void onFieldAccess(FieldAccess expression, EmitterState param) {
+
+		switch (expression.getType()) {
+		case FIELD:
+			param.append('.').append(expression.getFieldName().getName());
+			break;
+
+		case SUPER_FIELD:
+			param.append("super.").append(expression.getFieldName().getName());
+			break;
+			
+		case TYPE_SUPER_FIELD:
+			emitType(expression.getClassType(), param);
+			param.append('.').append("super.").append(expression.getFieldName().getName());
+			break;
+			
+		default:
+			throw new UnsupportedOperationException("Unknown field access type " + expression.getType());
+		}
+		
+		return null;
+	}
+
+	@Override
+	public Void onThis(ThisPrimary expression, EmitterState param) {
+
+		param.append("this");
+
 		return null;
 	}
 

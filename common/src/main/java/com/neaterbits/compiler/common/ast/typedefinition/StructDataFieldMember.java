@@ -6,7 +6,7 @@ import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 
 public final class StructDataFieldMember extends DataFieldMember {
 	
-	public StructDataFieldMember(Context context, TypeReference type, String name) {
+	public StructDataFieldMember(Context context, TypeReference type, FieldName name) {
 		super(context, type, name);
 	}
 

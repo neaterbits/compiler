@@ -3,8 +3,10 @@ package com.neaterbits.compiler.c.emit;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
+import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
@@ -25,7 +27,7 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		condition.visit(CONDITION_EMITTER, param);
 	}
 
-	private void emitVariableReference(VariableReference variable, EmitterState param) {
+	protected void emitVariableReference(VariableReference variable, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -52,6 +54,26 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	@Override
 	public Void onMethodInvocation(MethodInvocationExpression expression, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onFieldAccess(FieldAccess expression, EmitterState param) {
+
+		switch (expression.getType()) {
+		case FIELD:
+			param.append('.').append(expression.getFieldName().getName());
+			break;
+			
+		default:
+			throw new UnsupportedOperationException("Unknown field access type " + expression.getType());
+		}
+		
+		return null;
+	}
+
+	@Override
+	public Void onThis(ThisPrimary expression, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 

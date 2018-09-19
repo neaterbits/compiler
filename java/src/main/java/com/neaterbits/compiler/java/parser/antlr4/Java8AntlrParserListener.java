@@ -29,6 +29,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.common.parser.FieldAccessType;
 import com.neaterbits.compiler.common.parser.MethodInvocationType;
 import com.neaterbits.compiler.common.util.Strings;
 
@@ -573,6 +574,37 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onExpressionBinaryOperator(context(ctx), Relational.NOT_EQUALS);
 	}
 	
+	// Primaries
+	@Override
+	public void enterPrimary(PrimaryContext ctx) {
+		delegate.onPrimaryStart(context(ctx));
+	}
+
+	@Override
+	public void exitPrimaryDotIdentifierFieldAccess(PrimaryDotIdentifierFieldAccessContext ctx) {
+		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitSuperDotIdentifierFieldAccess(SuperDotIdentifierFieldAccessContext ctx) {
+		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitTypeNameDotSuperDotIdentifierFieldAccess(TypeNameDotSuperDotIdentifierFieldAccessContext ctx) {
+		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitThisExpression_lfno_primary(ThisExpression_lfno_primaryContext ctx) {
+		delegate.onThisPrimary(context(ctx));
+	}
+
+	@Override
+	public void exitPrimary(PrimaryContext ctx) {
+		delegate.onPrimaryEnd(context(ctx));
+	}
+
 	// Literals
 	
 	@Override

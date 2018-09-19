@@ -13,7 +13,7 @@ public class ClassDataFieldMember extends DataFieldMember {
 	private final ASTSingle<FieldModifiers> modifiers; 
 	private final ASTSingle<Expression> initializer;
 	
-	public ClassDataFieldMember(Context context, FieldModifiers modifiers, TypeReference type, String name, Expression initializer) {
+	public ClassDataFieldMember(Context context, FieldModifiers modifiers, TypeReference type, FieldName name, Expression initializer) {
 		super(context, type, name);
 		
 		this.modifiers = makeSingle(modifiers);

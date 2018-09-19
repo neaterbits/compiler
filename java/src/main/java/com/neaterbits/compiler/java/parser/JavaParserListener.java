@@ -29,6 +29,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.common.parser.FieldAccessType;
 import com.neaterbits.compiler.common.parser.MethodInvocationType;
 import com.neaterbits.compiler.common.parser.iterative.BaseIterativeOOParserListener;
 import com.neaterbits.compiler.common.util.Strings;
@@ -262,6 +263,23 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onExpressionBinaryOperator(context, operator);
 	}
 	
+	// Primary
+	public void onPrimaryStart(Context context) {
+		delegate.onPrimaryStart(context);
+	}
+
+	public void onFieldAccess(Context context, FieldAccessType fieldAccessType, String typeName, String fieldName) {
+		delegate.onFieldAccess(context, fieldAccessType, typeName, fieldName);
+	}
+
+	public void onThisPrimary(Context context) {
+		delegate.onThisPrimary(context);
+	}
+
+	public void onPrimaryEnd(Context context) {
+		delegate.onPrimaryEnd(context);
+	}
+
 	// Literals
 	public void onJavaIntegerLiteral(Context context, String literal) {
 

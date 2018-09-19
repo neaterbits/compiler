@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.CompilationCode;
@@ -23,14 +24,17 @@ import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.common.ast.expression.ParameterList;
 import com.neaterbits.compiler.common.ast.expression.Resource;
+import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
+import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
@@ -57,6 +61,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorName;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldStatic;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
@@ -101,6 +106,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackMethodInvocation;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
 import com.neaterbits.compiler.common.parser.stackstate.StackParameterList;
 import com.neaterbits.compiler.common.parser.stackstate.StackParameterSignature;
+import com.neaterbits.compiler.common.parser.stackstate.StackPrimaryList;
 import com.neaterbits.compiler.common.parser.stackstate.StackResource;
 import com.neaterbits.compiler.common.parser.stackstate.StackReturnType;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryBlock;
@@ -447,7 +453,7 @@ public abstract class BaseParserListener {
 		
 		final StackAssignmentExpression assignmentExpression = get();
 		
-		assignmentExpression.setLHS(assignmentLHS.getVariableReference());
+		assignmentExpression.setLHS(assignmentLHS.getVariableReference(context));
 	}
 	
 	public final void onExitAssignmentExpression(Context context) {
@@ -461,6 +467,7 @@ public abstract class BaseParserListener {
 				stackAssignmentExpression.getRHS()));
 	}
 
+	// Variables
 	public void onVariableReference(Context context, String name) {
 
 		final VariableReferenceSetter variableReferenceSetter = get();
@@ -475,6 +482,44 @@ public abstract class BaseParserListener {
 
 		variableReferenceSetter.setVariableReference(variableReference);
 	}
+	
+	// Field access
+	public final void onPrimaryStart(Context context) {
+		// Start of any primary expression, like a literal or a linked list of field accesses
+		push(new StackPrimaryList(logger));
+	}
+	
+	
+	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, String typeName, String fieldName) {
+		
+		final StackPrimaryList stackPrimaryList = get();
+		
+		final FieldAccess fieldAccess = new FieldAccess(
+				context,
+				fieldAccessType,
+				typeName != null ? new ResolveLaterTypeReference(context, typeName) : null,
+				new FieldName(fieldName));
+		
+		stackPrimaryList.add(fieldAccess);
+	}
+	
+	public final void onThisPrimary(Context context) {
+		final StackPrimaryList stackPrimaryList = get();
+		
+		stackPrimaryList.add(new ThisPrimary(context));
+	}
+	
+	public final void onPrimaryEnd(Context context) {
+		final StackPrimaryList stackPrimary = pop();
+		
+		final Primary primary = stackPrimary.makePrimary(context);
+
+		final PrimarySetter primarySetter = get();
+
+		primarySetter.addPrimary(primary);
+	}
+	
+	// Literals
 	
 	public final void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits) {
 		final ExpressionSetter expressionSetter = get();

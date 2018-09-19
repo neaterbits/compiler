@@ -8,4 +8,5 @@ public interface VariableReferenceVisitor<T, R> {
 	
 	R onFieldAccessReference(FieldAccessReference fieldAccessReference, T param);
 	
+	R onPrimaryList(PrimaryListVariableReference primaryListVariableReference, T param);
 }

@@ -6,10 +6,11 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.block.CallableName;
+import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public abstract class CallExpression<N extends CallableName>
-		extends Expression {
+		extends Primary {
 
 	private final N callable;
 	private final ASTSingle<ParameterList> parameters;

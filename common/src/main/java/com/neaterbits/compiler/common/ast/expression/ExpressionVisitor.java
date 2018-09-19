@@ -11,6 +11,7 @@ import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLitera
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.common.ast.variables.VariableReference;
 
 public interface ExpressionVisitor<T, R> {
 
@@ -28,6 +29,14 @@ public interface ExpressionVisitor<T, R> {
 	
 	R onExpressionList(ExpressionList expression, T param);
 	
+	R onPrimaryList(PrimaryList expression, T param);
+	
+	R onFieldAccess(FieldAccess expression, T param);
+	
+	R onThis(ThisPrimary expression, T param);
+	
+	R onVariableReference(VariableReference expression, T param);
+
 	// Literals
 	R onIntegerLiteral(IntegerLiteral expression, T param);
 	R onFloatingPointLiteral(FloatingPointLiteral expression, T param);
