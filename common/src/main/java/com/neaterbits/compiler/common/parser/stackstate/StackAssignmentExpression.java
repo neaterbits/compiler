@@ -4,13 +4,18 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
+import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.ExpressionSetter;
+import com.neaterbits.compiler.common.parser.PrimarySetter;
 import com.neaterbits.compiler.common.parser.StackEntry;
 import com.neaterbits.compiler.common.parser.VariableReferenceSetter;
 
-public class StackAssignmentExpression extends StackEntry implements ExpressionSetter, VariableReferenceSetter {
+public class StackAssignmentExpression extends StackEntry
+	implements ExpressionSetter,
+			   VariableReferenceSetter,
+			   PrimarySetter {
 
 	private VariableReference lhs;
 	private Expression rhs;
@@ -43,19 +48,24 @@ public class StackAssignmentExpression extends StackEntry implements ExpressionS
 	
 	@Override
 	public void setVariableReference(VariableReference variableReference) {
-		
+
+		addExpression(new VariableExpression(variableReference.getContext(), variableReference));
+	}
+
+	@Override
+	public void addPrimary(Primary primary) {
 		if (this.lhs == null) {
 			throw new IllegalStateException("Invoked only for rhs");
 		}
 
-		addExpression(new VariableExpression(variableReference.getContext(), variableReference));
+		addExpression(primary);
 	}
 
 	@Override
 	public void addExpression(Expression expression) {
 
 		if (this.rhs != null) {
-			throw new IllegalStateException("lhs already set");
+			throw new IllegalStateException("rhs already set");
 		}
 
 		this.rhs = expression;

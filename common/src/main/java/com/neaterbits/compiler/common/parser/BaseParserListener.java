@@ -455,10 +455,17 @@ public abstract class BaseParserListener {
 		final StackAssignmentExpression assignmentExpression = get();
 		
 		assignmentExpression.setLHS(assignmentLHS.getVariableReference(context));
+		
+		push(new StackExpressionList(logger));
 	}
 	
 	public final void onExitAssignmentExpression(Context context) {
+		
+		final StackExpressionList stackExpressionList = pop();
+		
 		final StackAssignmentExpression stackAssignmentExpression = pop();
+		
+		stackAssignmentExpression.setRHS(stackExpressionList.makeExpression(context));
 
 		final ExpressionSetter expressionSetter = get();
 		
@@ -583,7 +590,7 @@ public abstract class BaseParserListener {
 	public final void onClassInstanceCreationExpressionEnd(Context context) {
 		final StackClassInstanceCreationExpression classInstanceCreationExpression = pop();
 		
-		final ClassInstanceCreationExpression expression = new ClassInstanceCreationExpression(
+		final ClassInstanceCreationExpression primary = new ClassInstanceCreationExpression(
 				context,
 				classInstanceCreationExpression.getType(),
 				classInstanceCreationExpression.getConstructorName(),
@@ -593,9 +600,9 @@ public abstract class BaseParserListener {
 							? classInstanceCreationExpression.getParameters()
 							: Collections.emptyList()));
 		
-		final ExpressionSetter expressionSetter = get();
+		final PrimarySetter primarySetter = get();
 		
-		expressionSetter.addExpression(expression);
+		primarySetter.addPrimary(primary);
 	}
 	
 	public final void onMethodInvocationStart(Context context, MethodInvocationType type, TypeReference classType, String methodName) {

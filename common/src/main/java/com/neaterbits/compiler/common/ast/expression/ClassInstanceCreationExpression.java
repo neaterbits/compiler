@@ -7,7 +7,7 @@ import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorName;
 
-public final class ClassInstanceCreationExpression extends CallExpression<ConstructorName> {
+public final class ClassInstanceCreationExpression extends Call<ConstructorName> {
 
 	private final ASTSingle<TypeReference> type;
 

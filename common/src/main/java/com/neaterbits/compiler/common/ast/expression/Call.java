@@ -9,13 +9,13 @@ import com.neaterbits.compiler.common.ast.block.CallableName;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
-public abstract class CallExpression<N extends CallableName>
+public abstract class Call<N extends CallableName>
 		extends Primary {
 
 	private final N callable;
 	private final ASTSingle<ParameterList> parameters;
 
-	public CallExpression(Context context, N callable, ParameterList parameters) {
+	public Call(Context context, N callable, ParameterList parameters) {
 		super(context);
 
 		Objects.requireNonNull(callable);

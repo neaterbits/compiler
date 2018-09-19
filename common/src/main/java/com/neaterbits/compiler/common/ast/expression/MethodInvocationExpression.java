@@ -10,7 +10,7 @@ import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.parser.MethodInvocationType;
 
-public final class MethodInvocationExpression extends CallExpression<MethodName> {
+public final class MethodInvocationExpression extends Call<MethodName> {
 
 	private final MethodInvocationType type;
 	private final ASTSingle<TypeReference> classType;
