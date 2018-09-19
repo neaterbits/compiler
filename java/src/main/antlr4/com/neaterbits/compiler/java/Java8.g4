@@ -1271,9 +1271,9 @@ shiftExpression
 	;
 
 additiveExpression
-	:	multiplicativeExpression
-	|	additiveExpression '+' multiplicativeExpression
-	|	additiveExpression '-' multiplicativeExpression
+	:	multiplicativeExpression							# multiplicativeExpressionToken
+	|	additiveExpression '+' multiplicativeExpression		# numericAddExpression
+	|	additiveExpression '-' multiplicativeExpression		# numericSubtractExpression
 	;
 
 multiplicativeExpression

@@ -3,13 +3,15 @@ package com.neaterbits.compiler.common.parser.stackstate;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.ExpressionSetter;
+import com.neaterbits.compiler.common.parser.PrimarySetter;
 import com.neaterbits.compiler.common.parser.StackEntry;
 import com.neaterbits.compiler.common.parser.VariableReferenceSetter;
 
-public class StackExpression extends StackEntry implements ExpressionSetter, VariableReferenceSetter {
+public class StackExpression extends StackEntry implements ExpressionSetter, VariableReferenceSetter, PrimarySetter {
 
 	private Expression expression;
 	
@@ -21,7 +23,7 @@ public class StackExpression extends StackEntry implements ExpressionSetter, Var
 		Objects.requireNonNull(expression);
 		
 		if (this.expression != null) {
-			throw new IllegalStateException("expression already set");
+			throw new IllegalStateException("expression already set " + expression.getClass());
 		}
 		
 		this.expression = expression;
@@ -39,5 +41,10 @@ public class StackExpression extends StackEntry implements ExpressionSetter, Var
 	@Override
 	public void setVariableReference(VariableReference variableReference) {
 		setExpression(variableReference);
+	}
+
+	@Override
+	public void addPrimary(Primary primary) {
+		addExpression(primary);
 	}
 }

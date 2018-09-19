@@ -97,7 +97,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackClassInstanceCreati
 import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
 import com.neaterbits.compiler.common.parser.stackstate.StackConstructor;
-import com.neaterbits.compiler.common.parser.stackstate.StackExpression;
+import com.neaterbits.compiler.common.parser.stackstate.StackExpressionList;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackFieldDeclarationList;
 import com.neaterbits.compiler.common.parser.stackstate.StackFinallyBlock;
@@ -533,39 +533,39 @@ public abstract class BaseParserListener {
 	// Literals
 	
 	public final void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits) {
-		final ExpressionSetter expressionSetter = get();
+		final PrimarySetter primarySetter = get();
 		
-		expressionSetter.addExpression(new IntegerLiteral(context, value, base, signed, bits));
+		primarySetter.addPrimary(new IntegerLiteral(context, value, base, signed, bits));
 	}
 	
 	public final void onFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits) {
-		final ExpressionSetter expressionSetter = get();
+		final PrimarySetter primarySetter = get();
 		
-		expressionSetter.addExpression(new FloatingPointLiteral(context, value, base, bits));
+		primarySetter.addPrimary(new FloatingPointLiteral(context, value, base, bits));
 	}
 	
 	public final void onBooleanLiteral(Context context, boolean value) {
-		final ExpressionSetter expressionSetter = get();
+		final PrimarySetter primarySetter = get();
 		
-		expressionSetter.addExpression(new BooleanLiteral(context, value));
+		primarySetter.addPrimary(new BooleanLiteral(context, value));
 	}
 	
 	public final void onCharacterLiteral(Context context, char value) {
-		final ExpressionSetter expressionSetter = get();
+		final PrimarySetter expressionSetter = get();
 		
-		expressionSetter.addExpression(new CharacterLiteral(context, value));
+		expressionSetter.addPrimary(new CharacterLiteral(context, value));
 	}
 	
 	public final void onStringLiteral(Context context, String value) {
-		final ExpressionSetter expressionSetter = get();
+		final PrimarySetter primarySetter = get();
 		
-		expressionSetter.addExpression(new StringLiteral(context, value));
+		primarySetter.addPrimary(new StringLiteral(context, value));
 	}
 	
 	public final void onNullLiteral(Context context) {
-		final ExpressionSetter expressionSetter = get();
+		final PrimarySetter primarySetter = get();
 		
-		expressionSetter.addExpression(new NullLiteral(context));
+		primarySetter.addPrimary(new NullLiteral(context));
 	}
 	
 	public final void onClassInstanceCreationExpressionStart(Context context) {
@@ -631,9 +631,9 @@ public abstract class BaseParserListener {
 							? stackMethodInvocation.getParameters()
 							: Collections.emptyList()));
 		
-		final ExpressionSetter expressionSetter = get();
+		final PrimarySetter primarySetter = get();
 		
-		expressionSetter.addExpression(methodInvocation);
+		primarySetter.addPrimary(methodInvocation);
 	}
 
 	// Statements
@@ -885,14 +885,16 @@ public abstract class BaseParserListener {
 	}
 	
 	public final void onReturnStatementStart(Context context) {
-		push(new StackExpression(logger));
+		push(new StackExpressionList(logger));
 	}
 
 	public final void onReturnStatementEnd(Context context) {
 
-		final StackExpression stackExpression = pop();
+		final StackExpressionList stackExpression = pop();
+		
+		final Expression expression = stackExpression.makeExpressionOrNull(context);
 
-		final ReturnStatement returnStatement = new ReturnStatement(context, stackExpression.getExpression());
+		final ReturnStatement returnStatement = new ReturnStatement(context, expression);
 
 		final StatementSetter statementSetter = get();
 

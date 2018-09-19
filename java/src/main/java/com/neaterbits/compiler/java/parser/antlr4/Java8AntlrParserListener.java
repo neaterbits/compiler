@@ -17,6 +17,7 @@ import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.NamespaceName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
+import com.neaterbits.compiler.common.ast.operator.Arithmetic;
 import com.neaterbits.compiler.common.ast.operator.Bitwise;
 import com.neaterbits.compiler.common.ast.operator.Logical;
 import com.neaterbits.compiler.common.ast.operator.Relational;
@@ -33,6 +34,9 @@ import com.neaterbits.compiler.common.parser.FieldAccessType;
 import com.neaterbits.compiler.common.parser.MethodInvocationType;
 import com.neaterbits.compiler.common.util.Strings;
 
+/**
+ * 
+ */
 public class Java8AntlrParserListener extends Java8BaseListener {
 
 	private final JavaParserListener delegate;
@@ -380,6 +384,16 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void exitBitwiseOrExpression(BitwiseOrExpressionContext ctx) {
 		delegate.onExpressionBinaryOperator(context(ctx), Bitwise.OR);
+	}
+	
+	@Override
+	public void exitNumericAddExpression(NumericAddExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Arithmetic.PLUS);
+	}
+
+	@Override
+	public void exitNumericSubtractExpression(NumericSubtractExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Arithmetic.MINUS);
 	}
 
 	@Override

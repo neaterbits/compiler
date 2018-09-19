@@ -8,15 +8,18 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.ExpressionList;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
+import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.operator.Arity;
 import com.neaterbits.compiler.common.ast.operator.Operator;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.ExpressionSetter;
 import com.neaterbits.compiler.common.parser.ListStackEntry;
+import com.neaterbits.compiler.common.parser.PrimarySetter;
 import com.neaterbits.compiler.common.parser.VariableReferenceSetter;
 
-public class StackExpressionList extends ListStackEntry<Expression> implements ExpressionSetter, VariableReferenceSetter {
+public class StackExpressionList extends ListStackEntry<Expression>
+		implements ExpressionSetter, VariableReferenceSetter, PrimarySetter {
 
 	private final List<Operator> operators;
 
@@ -28,6 +31,9 @@ public class StackExpressionList extends ListStackEntry<Expression> implements E
 
 	@Override
 	public final void addExpression(Expression expression) {
+		
+		Objects.requireNonNull(expression);
+		
 		getParseLogger().onStackAddElement(expression.getClass().getSimpleName());
 		
 		super.add(expression);
@@ -36,6 +42,11 @@ public class StackExpressionList extends ListStackEntry<Expression> implements E
 	@Override
 	public final void setVariableReference(VariableReference variableReference) {
 		addExpression(new VariableExpression(variableReference.getContext(), variableReference));
+	}
+
+	@Override
+	public final void addPrimary(Primary primary) {
+		addExpression(primary);
 	}
 
 	public final void addOperator(Operator operator) {
