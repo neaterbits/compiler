@@ -284,6 +284,38 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onPrimaryEnd(context);
 	}
 
+	public void onConditionalExpressionStart(Context context) {
+		delegate.onConditionalExpressionStart(context);
+	}
+	
+	public void onConditionalExpressionPart1Start(Context context) {
+		delegate.onConditionalExpressionPart1Start(context);
+	}
+	
+	public void onConditionalExpressionPart1End(Context context) {
+		delegate.onConditionalExpressionPart1End(context);
+	}
+
+	public void onConditionalExpressionPart2Start(Context context) {
+		delegate.onConditionalExpressionPart2Start(context);
+	}
+	
+	public void onConditionalExpressionPart2End(Context context) {
+		delegate.onConditionalExpressionPart2End(context);
+	}
+
+	public void onConditionalExpressionPart3Start(Context context) {
+		delegate.onConditionalExpressionPart3Start(context);
+	}
+	
+	public void onConditionalExpressionPart3End(Context context) {
+		delegate.onConditionalExpressionPart3End(context);
+	}
+	
+	public void onConditionalExpressionEnd(Context context) {
+		delegate.onConditionalExpressionEnd(context);
+	}
+	
 	// Literals
 	public void onJavaIntegerLiteral(Context context, String literal) {
 

@@ -23,6 +23,7 @@ import com.neaterbits.compiler.common.ast.block.ParameterName;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
+import com.neaterbits.compiler.common.ast.expression.ConditionalExpression;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
@@ -96,6 +97,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
+import com.neaterbits.compiler.common.parser.stackstate.StackConditionalExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackConstructor;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionList;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
@@ -535,6 +537,73 @@ public abstract class BaseParserListener {
 		final PrimarySetter primarySetter = get();
 
 		primarySetter.addPrimary(primary);
+	}
+	
+	public final void onConditionalExpressionStart(Context context) {
+
+		push(new StackConditionalExpression(logger));
+
+	}
+	
+	public final void onConditionalExpressionPart1Start(Context context) {
+
+		push(new StackExpressionList(logger));
+
+	}
+	
+	public final void onConditionalExpressionPart1End(Context context) {
+		final StackExpressionList stackExpressionList = pop();
+		
+		final StackConditionalExpression stackConditionalExpression = get();
+		
+		stackConditionalExpression.setPart1(stackExpressionList.makeExpression(context));
+	}
+
+	public final void onConditionalExpressionPart2Start(Context context) {
+		
+		push(new StackExpressionList(logger));
+
+	}
+	
+	public final void onConditionalExpressionPart2End(Context context) {
+		
+		final StackExpressionList stackExpressionList = pop();
+		
+		final StackConditionalExpression stackConditionalExpression = get();
+		
+		stackConditionalExpression.setPart2(stackExpressionList.makeExpression(context));
+
+	}
+
+	public final void onConditionalExpressionPart3Start(Context context) {
+		
+		push(new StackExpressionList(logger));
+
+	}
+	
+	public final void onConditionalExpressionPart3End(Context context) {
+		
+		final StackExpressionList stackExpressionList = pop();
+		
+		final StackConditionalExpression stackConditionalExpression = get();
+		
+		stackConditionalExpression.setPart3(stackExpressionList.makeExpression(context));
+
+	}
+	
+	public final void onConditionalExpressionEnd(Context context) {
+
+		final StackConditionalExpression stackConditionalExpression = pop();
+		
+		final ConditionalExpression conditionalExpression = new ConditionalExpression(
+				context,
+				stackConditionalExpression.getPart1(),
+				stackConditionalExpression.getPart2(),
+				stackConditionalExpression.getPart3());
+		
+		final ExpressionSetter expressionSetter = get();
+		
+		expressionSetter.addExpression(conditionalExpression);
 	}
 	
 	// Literals

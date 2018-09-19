@@ -36,6 +36,8 @@ public interface ExpressionVisitor<T, R> {
 	R onThis(ThisPrimary expression, T param);
 	
 	R onVariableReference(VariableReference expression, T param);
+	
+	R onConditionalExpression(ConditionalExpression expression, T param);
 
 	// Literals
 	R onIntegerLiteral(IntegerLiteral expression, T param);

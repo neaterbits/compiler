@@ -618,9 +618,40 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitPrimary(PrimaryContext ctx) {
 		delegate.onPrimaryEnd(context(ctx));
 	}
+	
+	@Override
+	public void enterConditionalExpressionLine(ConditionalExpressionLineContext ctx) {
+		delegate.onConditionalExpressionStart(context(ctx));
+		
+		delegate.onConditionalExpressionPart1Start(context(ctx));
+	}
+	
+	public void exitCeQuestionMark(CeQuestionMarkContext ctx) {
+		
+		delegate.onConditionalExpressionPart1End(context(ctx));
+
+		delegate.onConditionalExpressionPart2Start(context(ctx));
+	}
+
+	@Override
+	public void exitCeColon(CeColonContext ctx) {
+
+		delegate.onConditionalExpressionPart2End(context(ctx));
+		
+		delegate.onConditionalExpressionPart3Start(context(ctx));
+	}
+
+	@Override
+	public void exitConditionalExpressionLine(ConditionalExpressionLineContext ctx) {
+		
+		delegate.onConditionalExpressionPart3End(context(ctx));
+		
+		delegate.onConditionalExpressionEnd(context(ctx));
+	}
+	
 
 	// Literals
-	
+
 	@Override
 	public void exitIntegerLiteral(IntegerLiteralContext ctx) {
 		delegate.onJavaIntegerLiteral(context(ctx), ctx.getText());

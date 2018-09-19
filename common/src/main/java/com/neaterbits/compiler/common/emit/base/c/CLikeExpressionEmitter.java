@@ -3,6 +3,7 @@ package com.neaterbits.compiler.common.emit.base.c;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.ConditionExpression;
+import com.neaterbits.compiler.common.ast.expression.ConditionalExpression;
 import com.neaterbits.compiler.common.ast.expression.arithemetic.binary.ArithmeticBinaryExpression;
 import com.neaterbits.compiler.common.ast.expression.arithemetic.unary.PostDecrementExpression;
 import com.neaterbits.compiler.common.ast.expression.arithemetic.unary.PostIncrementExpression;
@@ -179,7 +180,23 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 	}
 
 	@Override
-	public Void onAssignment(AssignmentExpression expression, EmitterState param) {
+	public final Void onAssignment(AssignmentExpression expression, EmitterState param) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public final Void onConditionalExpression(ConditionalExpression expression, T param) {
+		
+		emitExpression(expression.getPart1(), param);
+		
+		param.append(" ? ");
+		
+		emitExpression(expression.getPart2(), param);
+		
+		param.append(" : ");
+		
+		emitExpression(expression.getPart3(), param);
+		
+		return null;
 	}
 }

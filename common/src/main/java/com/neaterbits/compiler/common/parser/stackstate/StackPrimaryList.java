@@ -11,8 +11,10 @@ import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.ListStackEntry;
 import com.neaterbits.compiler.common.parser.PrimarySetter;
+import com.neaterbits.compiler.common.parser.VariableReferenceSetter;
 
-public class StackPrimaryList extends ListStackEntry<Primary> implements PrimarySetter {
+public class StackPrimaryList extends ListStackEntry<Primary>
+	implements PrimarySetter, VariableReferenceSetter {
 
 	public StackPrimaryList(ParseLogger parseLogger) {
 		super(parseLogger);
@@ -23,7 +25,12 @@ public class StackPrimaryList extends ListStackEntry<Primary> implements Primary
 				? null
 				: makePrimary(context);
 	}
-	
+
+	@Override
+	public void setVariableReference(VariableReference variableReference) {
+		addPrimary(variableReference);
+	}
+
 	@Override
 	public final void addPrimary(Primary primary) {
 		Objects.requireNonNull(primary);

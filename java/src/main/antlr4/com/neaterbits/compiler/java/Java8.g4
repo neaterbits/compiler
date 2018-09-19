@@ -1219,9 +1219,12 @@ assignmentOperator
 	;
 
 conditionalExpression
-	:	conditionalOrExpression
-	|	conditionalOrExpression '?' expression ':' conditionalExpression
+	:	conditionalOrExpression												# conditionalOrExpressionToken
+	|	conditionalOrExpression ceQuestionMark expression ceColon conditionalExpression	# conditionalExpressionLine
 	;
+
+ceQuestionMark : '?';
+ceColon : ':';
 
 conditionalOrExpression
 	:	conditionalAndExpression								# conditionalAndExpressionToken
