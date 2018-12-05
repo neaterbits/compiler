@@ -12,7 +12,7 @@ import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.resolver.codemap.MethodInfo;
 import com.neaterbits.compiler.common.resolver.codemap.TypeInfo;
 
-public interface CodeMap {
+public interface ResolvedTypeCodeMap {
 
 	ResolvedType getClassExtendsFrom(CompleteName classType);
 

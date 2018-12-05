@@ -1,11 +1,11 @@
 package com.neaterbits.compiler.common.ast.type.primitive;
 
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.BaseTypeName;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 
 public class Char16Type extends CharacterType {
 
-	public Char16Type(TypeName name, boolean nullable) {
+	public Char16Type(BaseTypeName name, boolean nullable) {
 		super(name, nullable, 2);
 	}
 

@@ -14,17 +14,19 @@ import com.neaterbits.compiler.common.loader.TypeVariant;
 import static com.neaterbits.compiler.common.resolver.codemap.Encode.decodeTypeNo;
 import static com.neaterbits.compiler.common.resolver.codemap.Encode.encodeType;
 
-public final class CodeMapImpl extends BaseCodeMap {
+public final class ResolvedCodeMapImpl extends BaseCodeMap {
 	
 	private final FileReferences<ResolvedFile> fileReferences;
 	private final TypeHierarchy typeHierarchy;
 	private final MethodMap methodMap;
+	private final StaticMethodOverrideMap methodOverrideMap;
 	private final TypeReferences<ResolvedType> typeReferences;
 	
-	public CodeMapImpl() {
+	public ResolvedCodeMapImpl() {
 		this.fileReferences = new FileReferences<>();
 		this.typeHierarchy 	= new TypeHierarchy();
 		this.methodMap = new MethodMap();
+		this.methodOverrideMap = new StaticMethodOverrideMap();
 		this.typeReferences = new TypeReferences<>();
 	}
 
@@ -64,7 +66,7 @@ public final class CodeMapImpl extends BaseCodeMap {
 		return typeHierarchy.getTypeVariantForType(typeNo);
 	}
 	
-	public int addMethod(int typeNo, String name, int [] parameterTypes, MethodVariant methodVariant, MethodMapCache methodMapCache) {
+	public int addMethod(int typeNo, String name, int [] parameterTypes, MethodVariant methodVariant, int indexInType, MethodMapCache methodMapCache) {
 		
 		return methodMap.addMethod(
 				typeNo,
@@ -72,6 +74,7 @@ public final class CodeMapImpl extends BaseCodeMap {
 				name,
 				parameterTypes,
 				methodVariant,
+				indexInType,
 				methodMapCache);
 	}
 	
@@ -82,7 +85,7 @@ public final class CodeMapImpl extends BaseCodeMap {
 		final int [] extendedByEncoded = typeHierarchy.getExtendedByTypeEncoded(typeNo);
 		
 		if (extendedByEncoded != null) {
-			methodMap.addTypeExtendsTypes(encodedTypeNo, extendedByEncoded);
+			methodOverrideMap.addTypeExtendsTypes(encodedTypeNo, extendedByEncoded, methodMap);
 		}
 	}
 

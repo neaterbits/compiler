@@ -14,14 +14,14 @@ import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMapImpl;
+import com.neaterbits.compiler.common.resolver.codemap.ResolvedCodeMapImpl;
 import com.neaterbits.compiler.common.resolver.codemap.ResolvedTypeCodeMapImpl;
 
 final class CodeMapUtil extends ResolveUtil {
 
 	static ResolvedTypeCodeMapImpl makeCodeMap(List<ResolvedFile> resolvedFiles, Collection<? extends BuiltinType> builtinTypes, List<ResolvedType> typesInDependencyOrder) {
 		
-		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl(), builtinTypes);
+		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new ResolvedCodeMapImpl(), builtinTypes);
 		
 		final Map<CompleteName, ResolvedType> resolvedTypesByName = new HashMap<>();
 		

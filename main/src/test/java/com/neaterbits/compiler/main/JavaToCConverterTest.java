@@ -2,14 +2,16 @@ package com.neaterbits.compiler.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 import org.junit.Test;
 
 import com.neaterbits.compiler.c.emit.CCompilationUnitEmitter;
+import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ModuleId;
 import com.neaterbits.compiler.common.SourceModuleSpec;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
@@ -17,8 +19,6 @@ import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Module;
 import com.neaterbits.compiler.common.ast.Program;
-import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.common.ast.type.complex.StructType;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.BaseCompilationUnitEmitter;
 import com.neaterbits.compiler.common.loader.CompiledFile;
@@ -31,7 +31,7 @@ import com.neaterbits.compiler.common.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.common.resolver.ResolveLogger;
 import com.neaterbits.compiler.common.resolver.UnresolvedDependencies;
 import com.neaterbits.compiler.common.resolver.UnresolvedReferenceReplacer;
-import com.neaterbits.compiler.common.resolver.CodeMap;
+import com.neaterbits.compiler.common.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
@@ -96,30 +96,61 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		final ReplaceTypeReferencesResult replaceTypeReferencesResult = UnresolvedReferenceReplacer.replaceUnresolvedTypeReferences(resolveResult);
 		
 		// First map classes to C structs so can access between compilation units
-		final Map<ComplexType<?>, StructType> complexToStruct = convertClassesAndInterfacesToStruct(replaceTypeReferencesResult, new JavaToCClassToStructState());
+		final JavaToCDeclarations declarations = convertClassesAndInterfacesToStruct(replaceTypeReferencesResult, new JavaToCClassToStructState());
 		
 		final CCompilationUnitEmitter emitter = new CCompilationUnitEmitter();
 		
 		final EmitterState emitterState = new EmitterState('\n');
 		
+		final List<CompilationUnit> compilationUnits = new ArrayList<>();
+		
 		for (Module module : program.getModules()) {
 			
 			for (ParsedFile parsedFile : module.getParsedFiles()) {
 				
-				final CompilationUnit converted = convert(parsedFile.getParsed(), complexToStruct, replaceTypeReferencesResult.getCodeMap());
+				final CompilationUnit converted = convert(parsedFile.getParsed(), declarations, replaceTypeReferencesResult.getCodeMap());
 				
 				System.out.println("### converted code:");
 
 				listCode(converted);
 				
-				emitCompilationUnit(converted, emitter, emitterState);
+				//emitCompilationUnit(converted, emitter, emitterState);
+				
+				compilationUnits.add(converted);
 			}
+		}
+		
+		final CompilationUnit declarationsCompilationUnit = makeDeclarationsCompilationUnit(declarations);
+		
+		emitCompilationUnit(declarationsCompilationUnit, emitter, emitterState);
+		
+		for (CompilationUnit compilationUnit : compilationUnits) {
+			emitCompilationUnit(compilationUnit, emitter, emitterState);
 		}
 		
 		System.out.println("Converted code:");
 		
 		System.out.println(emitterState.asString());
 		
+	}
+	
+	private static CompilationUnit makeDeclarationsCompilationUnit(JavaToCDeclarations declarations) {
+		
+		final List<CompilationCode> compilationCode = new ArrayList<>();
+		
+		for (JavaToCClassDeclaration declaration : declarations.getDeclarations()) {
+			
+			compilationCode.add(declaration.getDataFieldStructType().getDefinition());
+			
+			compilationCode.add(declaration.getVTableStructType().getDefinition());
+		}
+		
+		final CompilationUnit compilationUnit = new CompilationUnit(
+				new Context("declarations", 0, 0, 0, 0, null),
+				Collections.emptyList(),
+				compilationCode);
+
+		return compilationUnit;
 	}
 	
 	private <T extends EmitterState> void emitCompilationUnit(CompilationUnit compilationUnit, BaseCompilationUnitEmitter<T> emitter, T emitterState) {
@@ -131,7 +162,6 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 			
 			emitterState.newline();
 		}
-		
 	}
 	
 	private ResolveFilesResult resolveFiles(Program program) {
@@ -155,7 +185,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	public void testConvertCompiler() throws IOException {
 		
 		final ModuleId common = new ModuleId("common");
-		final ModuleId java = new ModuleId("java");
+		// final ModuleId java = new ModuleId("java");
 
 		final File baseDirectory = new File("..").getCanonicalFile();
 
@@ -166,10 +196,12 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 				Collections.emptyList(),
 				new File(baseDirectory, "common/src/main/java"));
 		
+		/*
 		final SourceModuleSpec javaModuleSpec = new SourceModuleSpec(
 				java,
 				Arrays.asList(commonModuleSpec),
 				new File(baseDirectory, "java/src/main/java"));
+		*/
 		
 		final Program program = parseProgram(Arrays.asList(commonModuleSpec));
 
@@ -187,10 +219,10 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	}
 
 	
-	private CompilationUnit convert(CompilationUnit javaCompilationUnit, Map<ComplexType<?>, StructType> classToStruct, CodeMap codeMap) {
+	private CompilationUnit convert(CompilationUnit javaCompilationUnit, JavaToCDeclarations declarations, ResolvedTypeCodeMap codeMap) {
 		final JavaToCConverter converter = new JavaToCConverter();
 
-		final CompilationUnit cCode = converter.convertCompilationUnit(javaCompilationUnit, new JavaToCConverterState(classToStruct, codeMap));
+		final CompilationUnit cCode = converter.convertCompilationUnit(javaCompilationUnit, new JavaToCConverterState(declarations, codeMap));
 		
 		return cCode;
 	}

@@ -28,7 +28,7 @@ import com.neaterbits.compiler.common.resolver.BaseResolveTest;
 import com.neaterbits.compiler.common.resolver.ReferenceType;
 import com.neaterbits.compiler.common.resolver.TestResolvedFile;
 import com.neaterbits.compiler.common.resolver.TestResolvedType;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMapImpl;
+import com.neaterbits.compiler.common.resolver.codemap.ResolvedCodeMapImpl;
 import com.neaterbits.compiler.common.resolver.codemap.ResolvedTypeCodeMapImpl;
 
 public class CodeMapTest extends BaseResolveTest {
@@ -36,7 +36,7 @@ public class CodeMapTest extends BaseResolveTest {
 	@Test
 	public void testClassCodeMap() {
 
-		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl(), Collections.emptyList());
+		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new ResolvedCodeMapImpl(), Collections.emptyList());
 		
 		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
 
@@ -66,7 +66,7 @@ public class CodeMapTest extends BaseResolveTest {
 	@Test
 	public void testInterfaceCodeMap() {
 
-		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl(), Collections.emptyList());
+		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new ResolvedCodeMapImpl(), Collections.emptyList());
 		
 		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
 
@@ -94,7 +94,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 	@Test
 	public void testClassImplementingInterface() {
-		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new CodeMapImpl(), Collections.emptyList());
+		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new ResolvedCodeMapImpl(), Collections.emptyList());
 		
 		final TestResolvedFile classTestFile = new TestResolvedFile("TestClass.java");
 

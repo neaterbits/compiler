@@ -12,9 +12,7 @@ public final class MethodMapCache extends BaseCodeMap {
 	
 	private static final long HASH_UNDEF = 0xFFFFFFFFFFFFFFFFL;
 
-	
 	private long [] nameAndParamToSignatureNoHash;
-	
 	
 	private final Map<Parameters, Integer> paramsToIndex;
 	private final Map<String, Integer> nameToIndex;

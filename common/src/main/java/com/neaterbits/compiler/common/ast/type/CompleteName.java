@@ -12,9 +12,9 @@ public final class CompleteName {
 
 	private final NamespaceReference namespace; // "package" in Java
 	private final List<DefinitionName> outerTypes; // If this is an inner class
-	private final TypeName name; // Name of the type itself
+	private final BaseTypeName name; // Name of the type itself
 
-	public CompleteName(NamespaceReference namespace, List<DefinitionName> outerTypes, TypeName name) {
+	public CompleteName(NamespaceReference namespace, List<DefinitionName> outerTypes, BaseTypeName name) {
 		this.namespace = namespace;
 		this.outerTypes = outerTypes != null ? Collections.unmodifiableList(outerTypes) : null;
 		this.name = name;
@@ -28,7 +28,7 @@ public final class CompleteName {
 		return outerTypes;
 	}
 
-	public TypeName getName() {
+	public BaseTypeName getName() {
 		return name;
 	}
 	

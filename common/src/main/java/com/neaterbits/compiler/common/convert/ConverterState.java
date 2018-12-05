@@ -9,7 +9,7 @@ import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.BaseTypeName;
 import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.common.ast.variables.VariableDeclaration;
@@ -68,7 +68,7 @@ public abstract class ConverterState<T extends ConverterState<T>> {
 		this.currentNamespace = currentNamespace;
 	}
 	
-	public final CompleteName makeCompleteName(TypeName name) {
+	public final CompleteName makeCompleteName(BaseTypeName name) {
 		
 		Objects.requireNonNull(name);
 		

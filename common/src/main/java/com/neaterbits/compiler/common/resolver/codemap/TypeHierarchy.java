@@ -3,8 +3,8 @@ package com.neaterbits.compiler.common.resolver.codemap;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.loader.TypeVariant;
-
 import com.neaterbits.compiler.common.resolver.codemap.Encode.TypeTest;
+
 import static com.neaterbits.compiler.common.resolver.codemap.Encode.decodeTypeNo;
 import static com.neaterbits.compiler.common.resolver.codemap.Encode.encodeType;
 
@@ -59,6 +59,25 @@ final class TypeHierarchy extends BaseCodeMap {
 
 	}
 	
+	int getExtendsFromSingleSuperClass(int typeNo) {
+		
+		final int [] extendsFromEncoded = this.extendsFromEncoded[typeNo];
+		
+		int found = -1;
+		
+		for (int extendsFrom : extendsFromEncoded) {
+			if (Encode.isClass(extendsFrom)) {
+				if (found != -1) {
+					throw new IllegalStateException();
+				}
+				
+				found = extendsFrom;
+			}
+		}
+		
+		return found;
+	}
+	
 	int getNumExtendedBy(int typeNo) {
 		final int [] extendedBy = extendedByEncoded[typeNo];
 
@@ -83,10 +102,29 @@ final class TypeHierarchy extends BaseCodeMap {
 		
 		if (extendsFromEncoded != null) {
 		
-			resultTypes = new int[extendsFromEncoded.length];
+			int numEntries;
+			
+			if (typeTest == null) {
+				numEntries = extendsFromEncoded.length;
+			}
+			else {
+				numEntries = 0;
+				
+				for (int i = 0; i < extendsFromEncoded.length; ++ i) {
+					if (typeTest.onTypeNoEncoded(extendsFromEncoded[i])) {
+						++ numEntries;
+					}
+				}
+			}
+			
+			resultTypes = new int[numEntries];
+			
+			int dstIdx = 0;
 			
 			for (int i = 0; i < extendsFromEncoded.length; ++ i) {
-				resultTypes[i] = decodeTypeNo(extendsFromEncoded[i]);
+				if (typeTest == null || typeTest.onTypeNoEncoded(extendsFromEncoded[i])) {
+					resultTypes[dstIdx ++] = decodeTypeNo(extendsFromEncoded[i]);
+				}
 			}
 		}
 		else {

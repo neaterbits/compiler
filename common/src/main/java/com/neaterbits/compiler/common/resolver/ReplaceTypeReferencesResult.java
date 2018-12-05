@@ -27,7 +27,7 @@ public final class ReplaceTypeReferencesResult {
 		return resolvedFiles;
 	}
 
-	public CodeMap getCodeMap() {
+	public ResolvedTypeCodeMap getCodeMap() {
 		return codeMap;
 	}
 

@@ -119,6 +119,8 @@ public final class MethodsResolver {
 		
 		final Subclassing subclassing = classType.getDefinition().getModifiers().getModifier(Subclassing.class);
 		
+		int methodIdx = 0;
+		
 		for (ComplexMemberDefinition memberDefinition : classType.getMembers()) {
 			
 			if (memberDefinition instanceof ClassMethodMember) {
@@ -127,7 +129,9 @@ public final class MethodsResolver {
 				
 				final MethodVariant methodVariant = findMethodVariant(classMethodMember, subclassing);
 				
-				addClassMethod(typeNo, classMethodMember, methodVariant);
+				addClassMethod(typeNo, classMethodMember, methodVariant, methodIdx);
+				
+				++ methodIdx;
 			}
 		}
 	}
@@ -165,7 +169,7 @@ public final class MethodsResolver {
 		return methodVariant;
 	}
 	
-	private int addClassMethod(int typeNo, ClassMethodMember classMethodMember, MethodVariant methodVariant) {
+	private int addClassMethod(int typeNo, ClassMethodMember classMethodMember, MethodVariant methodVariant, int indexInType) {
 
 		final ClassMethod classMethod = classMethodMember.getMethod();
 		
@@ -185,7 +189,8 @@ public final class MethodsResolver {
 				typeNo,
 				classMethod.getName().getName(),
 				parameterTypes,
-				methodVariant);
+				methodVariant,
+				indexInType);
 
 		return methodNo;
 	}

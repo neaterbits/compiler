@@ -1,11 +1,11 @@
 package com.neaterbits.compiler.common.ast.type.primitive;
 
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.BaseTypeName;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 
 public class NamedVoidType extends ScalarType {
 
-	public NamedVoidType(TypeName typeName) {
+	public NamedVoidType(BaseTypeName typeName) {
 		super(typeName, false);
 	}
 

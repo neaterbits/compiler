@@ -7,9 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.neaterbits.compiler.common.ComplexTypeReference;
 import com.neaterbits.compiler.common.ModuleId;
@@ -38,7 +36,7 @@ import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.DirectoryParser;
 import com.neaterbits.compiler.common.parser.FileTypeParser;
 import com.neaterbits.compiler.common.parser.ProgramParser;
-import com.neaterbits.compiler.common.resolver.CodeMap;
+import com.neaterbits.compiler.common.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.common.resolver.ReplaceTypeReferencesResult;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
@@ -174,10 +172,9 @@ public abstract class BaseJavaCompilerTest {
 	
 	
 	static <T extends MappingJavaToCConverterState<T>>
-	Map<ComplexType<?>, StructType> convertClassesAndInterfacesToStruct(ReplaceTypeReferencesResult resolveResult, MappingJavaToCConverterState<T> converterState) {
+	JavaToCDeclarations convertClassesAndInterfacesToStruct(ReplaceTypeReferencesResult resolveResult, MappingJavaToCConverterState<T> converterState) {
 		
-		final Map<ComplexType<?>, StructType> classToStruct = new HashMap<>();
-		final Map<ComplexType<?>, StructType> classToVTable = new HashMap<>();
+		final JavaToCDeclarations declarations = new JavaToCDeclarations();
 		
 		final List<ComplexTypeReference> convertLaterTypeReferences = new ArrayList<>();
 
@@ -196,15 +193,14 @@ public abstract class BaseJavaCompilerTest {
 		convertTypes(
 				resolveResult.getTypesInDependencyOrder(),
 				resolveResult.getCodeMap(),
-				classToStruct,
-				classToVTable,
+				declarations,
 				convertLaterTypeReferences,
 				converterState);
 
 		// References to not-yet resolved fields in types
 		for (ComplexTypeReference reference : convertLaterTypeReferences) {
 		
-			final ComplexType<?> convertedStructType = classToStruct.get(reference.getType());
+			final ComplexType<?> convertedStructType = declarations.getClassStructType((ClassType)reference.getType());
 			
 			if (convertedStructType == null) {
 				final NamedType namedType = (NamedType)reference.getType();
@@ -218,14 +214,13 @@ public abstract class BaseJavaCompilerTest {
 			reference.replaceWith(structReference);
 		}
 		
-		return classToStruct;
+		return declarations;
 	}
 	
 	private static <T extends MappingJavaToCConverterState<T>> void convertTypes(
 			Collection<ResolvedType> types,
-			CodeMap codeMap,
-			Map<ComplexType<?>, StructType> classToStruct,
-			Map<ComplexType<?>, StructType> vtableToStruct,
+			ResolvedTypeCodeMap codeMap,
+			JavaToCDeclarations declarations,
 			List<ComplexTypeReference> convertLaterTypeReferences,
 			MappingJavaToCConverterState<T> converterState) {
 		
@@ -238,7 +233,7 @@ public abstract class BaseJavaCompilerTest {
 			
 				final StructType classStructType = ClassToFunctionsConverter.convertClassFieldsToStruct(
 						classType,
-						classToStruct,
+						declarations,
 						convertLaterTypeReferences,
 						fieldType -> converterState.convertTypeReference(fieldType),
 						converterState::classToStructName);
@@ -247,18 +242,16 @@ public abstract class BaseJavaCompilerTest {
 					throw new IllegalStateException();
 				}
 				
-				classToStruct.put(classType, classStructType);
-
 				final StructType vtableStructType = ClassToFunctionsConverter.convertClassMethodsToVTable(
 						classType,
-						classToStruct,
+						declarations,
 						codeMap,
 						methodType -> converterState.convertType(methodType),
 						converterState::classToStructName,
 						baseType -> converterState.getVTableBaseFieldName(baseType),
 						methodName -> converterState.getVTableFunctionFieldName(methodName)); 
 				
-				vtableToStruct.put(classType, vtableStructType);
+				declarations.add(new JavaToCClassDeclaration(classType, classStructType, vtableStructType));
 			}
 		}
 	}

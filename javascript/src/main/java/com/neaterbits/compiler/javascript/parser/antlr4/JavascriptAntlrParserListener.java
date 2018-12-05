@@ -10,7 +10,7 @@ import com.neaterbits.compiler.javascript.parser.JSParserListener;
 
 public class JavascriptAntlrParserListener extends JavaScriptParserBaseListener {
 
-	private final JSParserListener delegate;
+	// private final JSParserListener delegate;
 
 	private final boolean debug;
 	private final ParseLogger logger;
@@ -18,7 +18,7 @@ public class JavascriptAntlrParserListener extends JavaScriptParserBaseListener 
 	private int indent = 0;
 
 	public JavascriptAntlrParserListener(JSParserListener delegate, boolean debug, ParseLogger logger) {
-		this.delegate = delegate;
+		// this.delegate = delegate;
 		
 		this.debug = debug;
 		this.logger = logger;

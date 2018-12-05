@@ -3,19 +3,19 @@ package com.neaterbits.compiler.main;
 import com.neaterbits.compiler.common.ast.block.FunctionName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.BaseTypeName;
 import com.neaterbits.compiler.common.ast.type.primitive.IntType;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.Converters;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
-import com.neaterbits.compiler.common.resolver.CodeMap;
+import com.neaterbits.compiler.common.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.JavaTypes;
 
 public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState<T>> extends OOToProceduralConverterState<T> {
 
-	public MappingJavaToCConverterState(Converters<T> converters, CodeMap codeMap) {
+	public MappingJavaToCConverterState(Converters<T> converters, ResolvedTypeCodeMap codeMap) {
 		super(converters, codeMap);
 	}
 
@@ -32,7 +32,7 @@ public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState
 		sb.append(Strings.join(type.getNamespace().getParts(), '_'));
 		
 		if (type.getOuterTypes() != null) {
-			for (TypeName typeName : type.getOuterTypes()) {
+			for (BaseTypeName typeName : type.getOuterTypes()) {
 				sb.append('_').append(typeName.getName());
 			}
 		}

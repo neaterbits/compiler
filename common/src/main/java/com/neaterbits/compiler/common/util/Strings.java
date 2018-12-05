@@ -3,6 +3,7 @@ package com.neaterbits.compiler.common.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -55,23 +56,43 @@ public class Strings {
 		return join(strings, separator, strings.size());
 	}
 
+	public static <T> String join(Collection<T> strings, char separator, Function<T, String> map) {
+		return join(strings, separator, strings.size(), map);
+	}
+	
 	public static String join(Collection<String> strings, char separator, int count) {
 		return Strings.join(strings.toArray(new String[strings.size()]), separator, count);
 	}
 
 	public static String join(String[] strings, char separator, int count) {
+		return join(Arrays.asList(strings), separator, count, string -> string);
+	}
+
+	public static <T> String join(Collection<T> strings, char separator, int count, Function<T, String> map) {
+		return join(strings, separator, 0, count, map);
+	}
+
+	public static <T> String join(Collection<T> strings, char separator, int start, int count, Function<T, String> map) {
+		
 		final StringBuilder sb = new StringBuilder();
 
-		for (int i = 0; i < count; ++i) {
+		final Iterator<T> iter = strings.iterator();
+		
+		for (int i = 0; i < start; ++ i) {
+			iter.next();
+		}
+		
+		for (int i = 0; i < count; ++ i) {
 			if (i > 0) {
 				sb.append(separator);
 			}
 
-			sb.append(strings[i]);
+			sb.append(map.apply(iter.next()));
 		}
 
 		return sb.toString();
 	}
+
 	
 	public static boolean startsWith(String [] strings, String [] parts) {
 		return startsWith(Arrays.asList(strings), parts);
@@ -103,6 +124,15 @@ public class Strings {
 
 		return startsWith;
 	}
+	
+	public static String replaceTextRange(String text, int start, int replaceLength, String toAdd) {
+
+		return
+				  text.substring(0, start)
+				+ toAdd
+				+ text.substring(start + replaceLength);
+	}
+
 	
 	public static String [] lastOf(String [] parts, int num) {
 		final String [] updated = new String[num];
@@ -156,15 +186,22 @@ public class Strings {
 	}
 
 	public static String indent(int indent) {
-		final StringBuilder sb = new StringBuilder();
+		return concat("  ", indent);
+	}
 
-		for (int i = 0; i < indent; ++ i) {
-			sb.append("  ");
+	public static String spaces(int times) {
+		return concat(" ", times);
+	}
+
+	public static String concat(String string, int times) {
+		final StringBuilder sb = new StringBuilder(string.length() * times);
+
+		for (int i = 0; i < times; ++ i) {
+			sb.append(string);
 		}
 
 		return sb.toString();
 	}
-
 	
 	private static char hex(int hex) {
 		

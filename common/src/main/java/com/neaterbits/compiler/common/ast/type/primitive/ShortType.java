@@ -1,11 +1,11 @@
 package com.neaterbits.compiler.common.ast.type.primitive;
 
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.BaseTypeName;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 
 public class ShortType extends IntegerType {
 
-	public ShortType(TypeName name, boolean nullable) {
+	public ShortType(BaseTypeName name, boolean nullable) {
 		super(name, nullable, 16, true);
 	}
 

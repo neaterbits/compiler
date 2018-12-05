@@ -7,10 +7,10 @@ class Encode {
 	private static final int TYPEVARIANT_BITS = 2;
 	private static final int TYPEVARIANT_MASK = ((1 << TYPEVARIANT_BITS) - 1) << (32 - TYPEVARIANT_BITS);
 
-	static final int TYPE_BITS = 20;
+	static final int TYPE_BITS = IdentifierBits.TYPE_BITS;
 	static final int SIGNATURE_BITS = 20;
 	static final int METHOD_VARIANT_BITS = 2;
-	static final int METHOD_BITS = 22;
+	static final int METHOD_BITS = IdentifierBits.METHOD_BITS;
 	
 	static final int METHOD_AND_VARIANT_BITS = METHOD_BITS + METHOD_VARIANT_BITS;
 	

@@ -73,6 +73,11 @@ final class ArrayAllocation {
 		final int [][] result;
 		
 		if (array == null) {
+			
+			if (numEntries > 10000) {
+				throw new IllegalStateException();
+			}
+			
 			result = new int[10000][];
 		}
 		else if (array.length > numEntries) {

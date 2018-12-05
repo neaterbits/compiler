@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.common.ast.type.primitive;
 
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.BaseTypeName;
 
 public abstract class IntegerType extends NumericType {
 	
-	protected IntegerType(TypeName name, boolean nullable, int numBits, boolean signed) {
+	protected IntegerType(BaseTypeName name, boolean nullable, int numBits, boolean signed) {
 		super(name, nullable, numBits, signed);
 		
 	}

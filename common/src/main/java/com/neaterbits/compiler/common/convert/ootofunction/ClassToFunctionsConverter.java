@@ -2,7 +2,6 @@ package com.neaterbits.compiler.common.convert.ootofunction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.neaterbits.compiler.common.BuiltinTypeReference;
 import com.neaterbits.compiler.common.ComplexTypeReference;
@@ -30,7 +29,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterUtil;
-import com.neaterbits.compiler.common.resolver.CodeMap;
+import com.neaterbits.compiler.common.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.common.resolver.codemap.TypeInfo;
 
 /**
@@ -47,7 +46,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 
 	public static StructType convertClassFieldsToStruct(
 			ClassType classType,
-			Map<ComplexType<?>, StructType> alreadyConvertedMap,
+			OOToProceduralDeclarations<?> alreadyConvertedMap,
 			List<ComplexTypeReference> convertLaterList,
 			java.util.function.Function<TypeReference, TypeReference> convertFieldType,
 			java.util.function.Function<CompleteName, StructName> classToStructName) {
@@ -78,7 +77,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 					final BaseType type = complexTypeReference.getType();
 					
 					if (type instanceof ClassType) {
-						final StructType alreadyConverted = alreadyConvertedMap.get(type);
+						final StructType alreadyConverted = alreadyConvertedMap.getClassStructType((ClassType)type);
 						
 						if (alreadyConverted != null) {
 							convertedTypeReference = new ComplexTypeReference(
@@ -127,8 +126,8 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 	
 	public static StructType convertClassMethodsToVTable(
 			ClassType classType,
-			Map<ComplexType<?>, StructType> alreadyConvertedMap,
-			CodeMap codeMap,
+			OOToProceduralDeclarations<?> alreadyConvertedMap,
+			ResolvedTypeCodeMap codeMap,
 			java.util.function.Function<BaseType, BaseType> convertMethodType,
 			java.util.function.Function<CompleteName, StructName> classToStructName,
 			java.util.function.Function<CompleteName, FieldName> classToFieldName,
@@ -146,7 +145,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 			
 			final ComplexType<?> extendsFromType = codeMap.getType(extendsFromTypeInfo.getTypeNo());
 			
-			final StructType baseStructType = alreadyConvertedMap.get(extendsFromType);
+			final StructType baseStructType = alreadyConvertedMap.getClassStructType(extendsFromType);
 			
 			if (baseStructType == null) {
 				throw new IllegalStateException("No struct type for " + extendsFromType.getCompleteName());

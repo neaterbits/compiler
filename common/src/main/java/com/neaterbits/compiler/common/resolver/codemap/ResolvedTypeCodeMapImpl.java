@@ -18,13 +18,13 @@ import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
-import com.neaterbits.compiler.common.resolver.CodeMap;
+import com.neaterbits.compiler.common.resolver.ResolvedTypeCodeMap;
 
 import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.allocateArray;
 
-public final class ResolvedTypeCodeMapImpl implements CodeMap {
+public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 
-	private final CodeMapImpl codeMap;
+	private final ResolvedCodeMapImpl codeMap;
 	private final NameToTypeNoMap nameToTypeNoMap;
 	
 	private final Map<ScopedName, Integer> scopedNameMap;
@@ -33,7 +33,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 	
 	private ResolvedType [] resolvedTypes;
 	
-	public ResolvedTypeCodeMapImpl(CodeMapImpl codeMap, Collection<? extends BuiltinType> builtinTypes) {
+	public ResolvedTypeCodeMapImpl(ResolvedCodeMapImpl codeMap, Collection<? extends BuiltinType> builtinTypes) {
 		
 		Objects.requireNonNull(codeMap);
 
@@ -148,7 +148,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 		return nameToTypeNoMap.getType(type);
 	}
 	
-	public int addMethod(int type, String name, CompleteName [] parameterTypes, MethodVariant methodVariant) {
+	public int addMethod(int type, String name, CompleteName [] parameterTypes, MethodVariant methodVariant, int indexInType) {
 		
 		final int [] parameterTypeNos = new int[parameterTypes.length];
 		
@@ -156,7 +156,7 @@ public final class ResolvedTypeCodeMapImpl implements CodeMap {
 			parameterTypeNos[i] = getTypeNo(parameterTypes[i]);
 		}
 		
-		return codeMap.addMethod(type, name, parameterTypeNos, methodVariant, methodMapCache);
+		return codeMap.addMethod(type, name, parameterTypeNos, methodVariant, indexInType, methodMapCache);
 	}
 
 	public void computeMethodExtends(CompleteName completeName) {

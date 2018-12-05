@@ -4,14 +4,12 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.loader.TypeVariant;
+import com.neaterbits.compiler.common.resolver.codemap.CodeMap.MethodFilter;
 
 import static com.neaterbits.compiler.common.resolver.codemap.Encode.encodeType;
-import static com.neaterbits.compiler.common.resolver.codemap.Encode.decodeTypeNo;
-import static com.neaterbits.compiler.common.resolver.codemap.Encode.getTypeVariant;
 import static com.neaterbits.compiler.common.resolver.codemap.Encode.decodeMethodNo;
 import static com.neaterbits.compiler.common.resolver.codemap.Encode.getMethodVariant;
 import static com.neaterbits.compiler.common.resolver.codemap.Encode.encodeMethod;
-import static com.neaterbits.compiler.common.resolver.codemap.Encode.encodeMethodWithMethodVariant;
 import static com.neaterbits.compiler.common.resolver.codemap.Encode.encodeMethodWithoutTypeVariant;
 
 import static com.neaterbits.compiler.common.resolver.codemap.Hash.GetCompareValue;
@@ -21,10 +19,6 @@ import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.al
 import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.allocateArray;
 import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.addToSubIntArray;
 import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.allocateSubArray;
-import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.subIntArraySize;
-import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.subIntArrayCopy;
-import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.subIntArrayInitialIndex;
-import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.subIntArrayLastIndex;
 
 
 final class MethodMap extends BaseCodeMap {
@@ -50,12 +44,10 @@ final class MethodMap extends BaseCodeMap {
 	// Unique method signatures, 32 bits for name and 32 bits for parameters
 	private long [] methodSignatures;
 	
-	private int [][] extendedMethodsByExtending; // Map from methodNo to an array of methods that are extended by this one
-	private int [][] extendingMethodsByExtended;  // Map from methodNo to an array of methods that are extending this one
-	
 	private int [][] methodsByType;
 
 	private int [] typeByMethod;		// Find type from methodNo
+	private int [] indexByMethod;		// Index into type by methodNo
 	private int [] methodSignaturesByMethod; // Find unique signature from methodNo
 	
 	// hashmap as simple long [] array
@@ -159,7 +151,7 @@ final class MethodMap extends BaseCodeMap {
 		this.methodsByType[typeNo] = allocateSubArray(numMethods);
 	}
 	
-	int addMethod(int typeNo, TypeVariant typeVariant, String name, int [] parameters, MethodVariant methodVariant, MethodMapCache cache) {
+	int addMethod(int typeNo, TypeVariant typeVariant, String name, int [] parameters, MethodVariant methodVariant, int indexInType, MethodMapCache cache) {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(parameters);
 		
@@ -184,65 +176,13 @@ final class MethodMap extends BaseCodeMap {
 		
 		this.typeByMethod = allocateIntArray(this.typeByMethod, numMethods);
 		this.typeByMethod[methodIndex] = typeNoEncoded;
-		
-		this.extendedMethodsByExtending = allocateIntArray(extendedMethodsByExtending, numMethods);
-		this.extendingMethodsByExtended = allocateIntArray(extendingMethodsByExtended, numMethods);
+
+		this.indexByMethod = allocateIntArray(this.indexByMethod, numMethods);
+		this.indexByMethod[methodIndex] = indexInType;
 
 		return methodIndex;
 	}
 	
-	void addTypeExtendsTypes(int extendingTypeEncoded, int [] extendedTypesEncoded) {
-		
-		final int extendingType = decodeTypeNo(extendingTypeEncoded);
-		final int [] extendingMethodsEncoded = methodsByType[extendingType];
-		
-		for (int i = subIntArrayInitialIndex(extendingMethodsEncoded); i <= subIntArrayLastIndex(extendingMethodsEncoded); ++ i) {
-			
-			final int extendingMethodEncoded = extendingMethodsEncoded[i];
-			
-			final int extendingMethod = decodeMethodNo(extendingMethodEncoded);
-			
-			final int methodSignatureNo = methodSignaturesByMethod[extendingMethod];
-			
-			for (int extendedTypeEncoded : extendedTypesEncoded) {
-				
-				final int extendedType = decodeTypeNo(extendedTypeEncoded);
-				final long key = typeAndSignatureKey(extendedType, methodSignatureNo);
-
-				final long extendedMethodNoWithoutTypeVariant = Hash.hashGet(typeAndMethodSignatureToMethodHash, key, HASH_UNDEF, TYPE_AND_METHOD_SIGNATURE_HASH);
-				
-				if (extendedMethodNoWithoutTypeVariant != HASH_UNDEF) {
-					final TypeVariant extendedTypeVariant = getTypeVariant(extendedTypeEncoded);
-
-					addMethodExtends(
-							encodeMethodWithMethodVariant(
-									(int)extendedMethodNoWithoutTypeVariant,
-									extendedTypeVariant),
-							
-							extendingMethodEncoded);
-				}
-			}
-		}
-	}
-	
-	private static void checkHasNonStaticMethodVariant(int methodWithMethodVariant) {
-		if (getMethodVariant(methodWithMethodVariant) == MethodVariant.STATIC) {
-			throw new IllegalStateException();
-		}
-	}
-	
-	// Add a method directly overriding another one, in a class or interface
-	private void addMethodExtends(int extendedMethodEncoded, int extendingMethodEncoded) {
-
-		final int extendedMethod  = decodeMethodNo(extendedMethodEncoded);
-		final int extendingMethod = decodeMethodNo(extendingMethodEncoded);
-
-		checkHasNonStaticMethodVariant(extendedMethodEncoded);
-		checkHasNonStaticMethodVariant(extendingMethodEncoded);
-
-		addToSubIntArray(extendingMethodsByExtended, extendedMethod, 	extendingMethodEncoded, 3);
-		addToSubIntArray(extendedMethodsByExtending, extendingMethod, 	extendedMethodEncoded, 3);
-	}
 	
 	MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes, MethodMapCache methodMapCache) {
 
@@ -297,39 +237,6 @@ final class MethodMap extends BaseCodeMap {
 		return methodInfo != null ? methodInfo.getMethodNo() : -1;
 	}
 	
-	int getNumberOfMethodsDirectlyExtending(int methodNo) {
-		return this.extendingMethodsByExtended[methodNo] != null ? subIntArraySize(this.extendingMethodsByExtended, methodNo) : 0;
-	}
-	
-	int [] getMethodsDirectlyExtending(int methodNo) {
-		return this.extendingMethodsByExtended[methodNo] != null ? subIntArrayCopy(this.extendingMethodsByExtended[methodNo]) : null;
-	}
-	
-
-	int getNumberOfMethodsDirectlyExtendedBy(int methodNo) {
-		return this.extendedMethodsByExtending[methodNo] != null ? subIntArraySize(this.extendedMethodsByExtending, methodNo) : 0;
-	}
-
-	int [] getMethodsDirectlyExtendedBy(int methodNo) {
-		
-		return this.extendedMethodsByExtending[methodNo] != null ? subIntArrayCopy(this.extendedMethodsByExtending[methodNo]) : null;
-	}
-	
-	int getTotalNumberOfMethodsExtending(int methodNo) {
-
-		int count = 0;
-		
-		if (this.extendedMethodsByExtending[methodNo] != null) {
-			final int subSize = subIntArraySize(extendedMethodsByExtending, methodNo);
-
-			for (int i = 0; i < subSize; ++ i) {
-				count += getTotalNumberOfMethodsExtending(extendedMethodsByExtending[methodNo][i + 1]);
-			}
-		}
-		
-		return count;
-	}
-	
 	String getMethodName(int methodNo) {
 		return methodNames[(int)(methodSignatures[methodNo] >> 32)];
 	}
@@ -339,4 +246,82 @@ final class MethodMap extends BaseCodeMap {
 
 		return types != null ? Arrays.copyOf(types, types.length) : null;
 	}
+	
+	int getTypeForMethod(int methodNo) {
+		return Encode.decodeTypeNo(typeByMethod[methodNo]);
+	}
+	
+	int [] getMethodsForTypeEncoded(int typeNo) {
+		return methodsByType[typeNo];
+	}
+	
+	int getMethodSignature(int methodNo) {
+		return methodSignaturesByMethod[methodNo];
+	}
+	
+	int getMethodNoBySignatureNo(int type, int signatureNo) {
+		final long key = typeAndSignatureKey(type, signatureNo);
+
+		final long methodNo = Hash.hashGet(typeAndMethodSignatureToMethodHash, key, HASH_UNDEF, TYPE_AND_METHOD_SIGNATURE_HASH);
+		
+		return methodNo != HASH_UNDEF ? (int)methodNo : -1;
+	}
+	
+	int getIndexForMethod(int methodNo) {
+		return indexByMethod[methodNo];
+	}
+	
+	@FunctionalInterface
+	interface GetSuperType {
+		int getSuperType(int type);
+	}
+	
+	
+	int getDistinctMethodCount(int typeNo, MethodFilter methodFilter, GetSuperType getSuperType, VTableScratchArea scratchArea) {
+		
+		scratchArea.clear();
+
+		final int superType = getSuperType.getSuperType(typeNo);
+		
+		int distinctMethodCount;
+		
+		if (superType != -1) {
+			distinctMethodCount = getDistinctMethodCount(superType, methodFilter, getSuperType, scratchArea);
+			distinctMethodCount += addDistinctMethods(typeNo, methodFilter, scratchArea);
+		}
+		else {
+			distinctMethodCount = addDistinctMethods(typeNo, methodFilter, scratchArea);
+		}
+		
+		return distinctMethodCount;
+	}
+
+	private int addDistinctMethods(int type, MethodFilter methodFilter, VTableScratchArea scratchArea) {
+		
+		int distinctMethods = 0;
+		
+		for (int encodedMethodNo : methodsByType[type]) {
+			
+			final int methodNo = Encode.decodeMethodNo(encodedMethodNo);
+			final MethodVariant methodVariant = Encode.getMethodVariant(encodedMethodNo);
+			
+			if (!methodFilter.addMethod(methodNo, methodVariant)) {
+				continue;
+			}
+			
+			final int signatureNo = methodSignaturesByMethod[methodNo];
+			
+			if (!scratchArea.getAddedMethods().contains(signatureNo)) {
+				
+				scratchArea.add(type, indexByMethod[methodNo], distinctMethods);
+
+				++ distinctMethods;
+				
+				scratchArea.getAddedMethods().add(encodedMethodNo);
+			}
+		}
+		
+		return distinctMethods;
+	}
+	
 }

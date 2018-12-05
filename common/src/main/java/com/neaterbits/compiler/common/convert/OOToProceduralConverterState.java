@@ -10,7 +10,7 @@ import com.neaterbits.compiler.common.ast.type.NamedType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
-import com.neaterbits.compiler.common.resolver.CodeMap;
+import com.neaterbits.compiler.common.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.common.resolver.codemap.MethodInfo;
 import com.neaterbits.compiler.common.resolver.codemap.TypeInfo;
 
@@ -29,9 +29,9 @@ public abstract class OOToProceduralConverterState<T extends OOToProceduralConve
 	
 	public abstract String getClassStaticVTableArrayName();
 	
-	private final CodeMap codeMap;
+	private final ResolvedTypeCodeMap codeMap;
 	
-	protected OOToProceduralConverterState(Converters<T> converters, CodeMap codeMap) {
+	protected OOToProceduralConverterState(Converters<T> converters, ResolvedTypeCodeMap codeMap) {
 		
 		super(converters);
 		

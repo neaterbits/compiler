@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.common.ast.type.primitive;
 
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.BaseTypeName;
 
 public abstract class NumericType extends ScalarType {
 	
@@ -9,7 +9,7 @@ public abstract class NumericType extends ScalarType {
 
 	public abstract boolean isInteger();
 	
-	protected NumericType(TypeName name, boolean nullable, int numBits, boolean signed) {
+	protected NumericType(BaseTypeName name, boolean nullable, int numBits, boolean signed) {
 		super(name, nullable);
 
 		this.numBits = numBits;

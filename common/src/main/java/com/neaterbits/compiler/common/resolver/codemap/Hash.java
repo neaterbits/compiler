@@ -30,9 +30,7 @@ final class Hash {
 		final long [] hashMap = new long[size + 1];
 		
 		if (undefValue != 0L) {
-			Arrays.fill(hashMap, undefValue);
-			
-			hashMap[0] = 0L;
+			hashClear(hashMap, undefValue);
 		}
 		
 		return hashMap;
@@ -67,6 +65,12 @@ final class Hash {
 		storeKeyValue(hashMap, key, value, undefValue, values);
 		
 		return hashMap;
+	}
+	
+	static void hashClear(long [] hashMap, long undefValue) {
+		Arrays.fill(hashMap, undefValue);
+		
+		hashMap[0] = 0L;
 	}
 		
 	private static void storeKeyValue(long [] hashMap, long key, long value, long undefValue, GetCompareValue values) {

@@ -20,7 +20,7 @@ public abstract class NamedType extends BaseType {
 		return completeName.getNamespace();
 	}
 
-	public final TypeName getName() {
+	public final BaseTypeName getName() {
 		return completeName.getName();
 	}
 	

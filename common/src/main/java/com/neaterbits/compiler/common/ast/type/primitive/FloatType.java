@@ -1,11 +1,11 @@
 package com.neaterbits.compiler.common.ast.type.primitive;
 
-import com.neaterbits.compiler.common.ast.type.TypeName;
+import com.neaterbits.compiler.common.ast.type.BaseTypeName;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
 
 public final class FloatType extends FloatingPointType {
 
-	public FloatType(TypeName name, boolean nullable) {
+	public FloatType(BaseTypeName name, boolean nullable) {
 		super(name, nullable, 32, true);
 	}
 

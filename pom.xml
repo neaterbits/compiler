@@ -17,9 +17,16 @@
 
 	<modules>
 		<module>common</module>
+		<module>bytecode-common</module>
+		<module>bytecode-executor</module>
+		<module>bytecode-loader</module>
+		<module>codegen-common</module>
+		<module>codegen-x86</module>
+		<module>runtime-native</module>
 		<module>main</module>
 		<module>c</module>
 		<module>java</module>
+		<module>java-bytecode</module>
 		<module>javascript</module>
 	</modules>
 
