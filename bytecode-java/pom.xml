@@ -7,12 +7,17 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  <artifactId>java</artifactId>
+  <artifactId>bytecode-java</artifactId>
   
   <dependencies>
   	<dependency>
   		<groupId>${project.groupId}</groupId>
   		<artifactId>common</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>${project.groupId}</groupId>
+  		<artifactId>bytecode-common</artifactId>
   		<version>${project.version}</version>
   	</dependency>
   </dependencies>

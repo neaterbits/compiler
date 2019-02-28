@@ -7,8 +7,13 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  <artifactId>common</artifactId>
+  <artifactId>compiler-language-java</artifactId>
   
   <dependencies>
+  	<dependency>
+  		<groupId>${project.groupId}</groupId>
+  		<artifactId>compiler-common</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
   </dependencies>
 </project>

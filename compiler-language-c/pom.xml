@@ -7,12 +7,12 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  <artifactId>javascript</artifactId>
+  <artifactId>compiler-language-c</artifactId>
   
   <dependencies>
   	<dependency>
   		<groupId>${project.groupId}</groupId>
-  		<artifactId>common</artifactId>
+  		<artifactId>compiler-common</artifactId>
   		<version>${project.version}</version>
   	</dependency>
   </dependencies>
