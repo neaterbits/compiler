@@ -6,12 +6,14 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.list.ASTList;
+import com.neaterbits.compiler.common.ast.type.BaseTypeName;
 
-public abstract class ComplexTypeDefinition extends TypeDefinition<DefinitionName> {
+public abstract class ComplexTypeDefinition<T extends BaseTypeName, DECLARATION_NAME extends DeclarationName<T>>
+		extends TypeDefinition<T, DECLARATION_NAME> {
 
 	private final ASTList<ComplexMemberDefinition> members;
 	
-	protected ComplexTypeDefinition(Context context, DefinitionName name, List<ComplexMemberDefinition> members) {
+	protected ComplexTypeDefinition(Context context, DECLARATION_NAME name, List<ComplexMemberDefinition> members) {
 		super(context, name);
 		
 		this.members = makeList(members);

@@ -14,7 +14,7 @@ import com.neaterbits.compiler.common.loader.ast.BaseLoaderType;
 
 public class TestResolvedType extends BaseLoaderType implements ResolvedType {
 	
-	private final ComplexType<?> type;
+	private final ComplexType<?, ?, ?> type;
 	
 	private final List<ResolvedType> nestedTypes;
 	private final List<ResolvedTypeDependency> extendsFrom;
@@ -24,7 +24,7 @@ public class TestResolvedType extends BaseLoaderType implements ResolvedType {
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
-			ComplexType<?> type,
+			ComplexType<?, ?, ?> type,
 			List<ResolvedType> nestedTypes,
 			List<ResolvedTypeDependency> extendsFrom,
 			List<ResolvedTypeDependency> dependencies) {
@@ -42,13 +42,13 @@ public class TestResolvedType extends BaseLoaderType implements ResolvedType {
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
-			ComplexType<?> type) {
+			ComplexType<?, ?, ?> type) {
 	
 		this(file, scopedName, typeVariant, type, null, null, null);
 	}
 
 	@Override
-	public ComplexType<?> getType() {
+	public ComplexType<?, ?, ?> getType() {
 		return type;
 	}
 

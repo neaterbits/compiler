@@ -51,7 +51,7 @@ public class UnresolvedReferenceReplacer {
 					
 					if (dependencyType != null) {
 					
-						final ComplexType<?> type = dependencyType.getType();
+						final ComplexType<?, ?, ?> type = dependencyType.getType();
 						
 						element.replaceWith(new ComplexTypeReference(element.getContext(), type));
 					}

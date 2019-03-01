@@ -28,7 +28,7 @@ public interface ResolvedTypeCodeMap {
 	
 	TypeInfo getTypeInfo(BaseType type);
 	
-	ComplexType<?> getType(int typeNo);
+	ComplexType<?, ?, ?> getType(int typeNo);
 	
 	default int getMethodNo(ClassType classType, MethodName methodName, NamedType [] parameterTypes) {
 		

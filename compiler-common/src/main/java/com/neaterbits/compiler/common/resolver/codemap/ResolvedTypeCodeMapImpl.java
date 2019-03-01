@@ -105,7 +105,7 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 	}
 
 	@Override
-	public ComplexType<?> getType(int typeNo) {
+	public ComplexType<?, ?, ?> getType(int typeNo) {
 		return resolvedTypes[typeNo].getType();
 	}
 

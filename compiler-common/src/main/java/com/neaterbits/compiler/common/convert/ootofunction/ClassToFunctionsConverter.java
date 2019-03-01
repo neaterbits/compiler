@@ -25,6 +25,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDataFieldMember;
+import com.neaterbits.compiler.common.ast.typedefinition.StructDeclarationName;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
@@ -118,7 +119,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 		
 		final StructDefinition struct = new StructDefinition(
 				classDefinition.getContext(),
-				structName,
+				new StructDeclarationName(classDefinition.getName().getContext(), structName),
 				structMembers);
 		
 		return new StructType(struct);
@@ -143,7 +144,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 		
 		if (extendsFromTypeInfo != null) {
 			
-			final ComplexType<?> extendsFromType = codeMap.getType(extendsFromTypeInfo.getTypeNo());
+			final ComplexType<?, ?, ?> extendsFromType = codeMap.getType(extendsFromTypeInfo.getTypeNo());
 			
 			final StructType baseStructType = alreadyConvertedMap.getClassStructType(extendsFromType);
 			
@@ -183,7 +184,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 
 		final StructDefinition struct = new StructDefinition(
 				classDefinition.getContext(),
-				structName,
+				new StructDeclarationName(classDefinition.getName().getContext(), structName),
 				structMembers);
 		
 		return new StructType(struct);

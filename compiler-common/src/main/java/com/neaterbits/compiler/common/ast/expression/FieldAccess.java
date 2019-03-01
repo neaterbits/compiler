@@ -45,7 +45,7 @@ public final class FieldAccess extends Primary {
 	@Override
 	public BaseType getType() {
 		
-		final ComplexType<?> type = (ComplexType<?>)classType.get().getType();
+		final ComplexType<?, ?, ?> type = (ComplexType<?, ?, ?>)classType.get().getType();
 
 		return type.getFieldType(fieldName);
 	}

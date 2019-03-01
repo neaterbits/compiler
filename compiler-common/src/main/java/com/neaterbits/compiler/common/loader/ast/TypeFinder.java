@@ -169,7 +169,7 @@ class TypeFinder {
 									
 									parameters.take();
 									
-									final ComplexType<?> complexType = (ComplexType<?>)type;
+									final ComplexType<?, ?, ?> complexType = (ComplexType<?, ?, ?>)type;
 									
 									final MethodInvocationExpression updatedExpression;
 									
@@ -232,7 +232,7 @@ class TypeFinder {
 		return parsedTypes;
 	}
 	
-	static Primary makePrimary(Context context, ComplexType<?> type, String [] expressionPart) {
+	static Primary makePrimary(Context context, ComplexType<?, ?, ?> type, String [] expressionPart) {
 		
 		final Primary primary;
 		
@@ -251,7 +251,7 @@ class TypeFinder {
 					new ComplexTypeReference(context, type),
 					expressionPart[0]));
 			
-			ComplexType<?> fieldHolderType = type;
+			ComplexType<?, ?, ?> fieldHolderType = type;
 			
 			for (int i = 1; i < expressionPart.length; ++ i) {
 				
@@ -266,7 +266,7 @@ class TypeFinder {
 						fieldName));
 
 				if (i < expressionPart.length - 1) {
-					fieldHolderType = (ComplexType<?>)fieldHolderType.getFieldType(fieldName);
+					fieldHolderType = (ComplexType<?, ?, ?>)fieldHolderType.getFieldType(fieldName);
 				}
 			}
 			
@@ -360,7 +360,7 @@ class TypeFinder {
 	}
 	
 	interface ProcessTypeElement<R> {
-		R onTypeElement(String name, TypeVariant typeVariant, ComplexType<?> type);
+		R onTypeElement(String name, TypeVariant typeVariant, ComplexType<?, ?, ?> type);
 	}
 	
 	private static <R> R processIfTypeElement(TypeFinderStackEntry stackEntry, TypeFinderStackEntry lastStackEntry, boolean createType, ProcessTypeElement<R> process) {
@@ -374,7 +374,7 @@ class TypeFinder {
 		if (element instanceof ClassDefinition) {
 
 			final ClassDefinition classDefinition = (ClassDefinition)element;
-			final String name = classDefinition.getName().getName();
+			final String name = classDefinition.getNameString();
 			
 			result = process.onTypeElement(
 					name,
@@ -386,7 +386,7 @@ class TypeFinder {
 		else if (element instanceof InterfaceDefinition) {
 			
 			final InterfaceDefinition interfaceDefinition = (InterfaceDefinition)element;
-			final String name = interfaceDefinition.getName().getName();
+			final String name = interfaceDefinition.getNameString();
 
 			result = process.onTypeElement(
 					name,
@@ -399,7 +399,7 @@ class TypeFinder {
 		
 			final EnumDefinition enumDefinition = (EnumDefinition)element;
 			
-			final String name = enumDefinition.getName().getName();
+			final String name = enumDefinition.getNameString();
 			
 			result = process.onTypeElement(
 					name,
@@ -420,7 +420,7 @@ class TypeFinder {
 		return processIfTypeElement(stackEntry, lastStackEntry, true, (name, typeVariant, type) -> makeParsedType(file, stack, stackEntry, name, typeVariant, type));
 	}
 	
-	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry, String name, TypeVariant typeVariant, ComplexType<?> type) {
+	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry, String name, TypeVariant typeVariant, ComplexType<?, ?, ?> type) {
 
 		return new ParsedType(
 				file,
@@ -484,7 +484,7 @@ class TypeFinder {
 			if (element instanceof ClassDefinition) {
 	
 				final ClassDefinition classDefinition = (ClassDefinition)element;
-				final String name = classDefinition.getName().getName();
+				final String name = classDefinition.getNameString();
 				
 				typeName = new ClassName(name);
 				
@@ -495,7 +495,7 @@ class TypeFinder {
 			else if (element instanceof InterfaceDefinition) {
 				
 				final InterfaceDefinition interfaceDefinition = (InterfaceDefinition)element;
-				final String name = interfaceDefinition.getName().getName();
+				final String name = interfaceDefinition.getNameString();
 				
 				typeName = new InterfaceName(name);
 
@@ -506,7 +506,7 @@ class TypeFinder {
 			else if (element instanceof EnumDefinition) {
 			
 				final EnumDefinition enumDefinition = (EnumDefinition)element;
-				final String name = enumDefinition.getName().getName();
+				final String name = enumDefinition.getNameString();
 				
 				typeName = new ClassName(name);
 				

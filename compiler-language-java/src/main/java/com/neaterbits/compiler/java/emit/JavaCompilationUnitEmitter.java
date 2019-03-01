@@ -275,7 +275,7 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 
 		emitClassModifiers(classDefinition.getModifiers(), param);
 		
-		param.append("class ").append(classDefinition.getName().getName()).append(" {").newline();
+		param.append("class ").append(classDefinition.getNameString()).append(" {").newline();
 		
 		param.addIndent();
 		
@@ -293,7 +293,7 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 
 		emitClassModifiers(enumDefinition.getModifiers(), param);
 		
-		param.append("enum ").append(enumDefinition.getName().getName()).append(" {").newline();
+		param.append("enum ").append(enumDefinition.getNameString()).append(" {").newline();
 		
 		param.addIndent();
 		
@@ -408,7 +408,7 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 			param.append(' ');
 		}
 		
-		param.append("interface ").append(interfaceDefinition.getName().getName()).append(" {").newline();
+		param.append("interface ").append(interfaceDefinition.getNameString()).append(" {").newline();
 		
 		param.addIndent();
 		

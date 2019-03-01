@@ -13,7 +13,7 @@ public final class ClassDefinition extends BaseClassDefinition {
 	
 	private final ASTList<TypeReference> extendsClasses;
 	
-	public ClassDefinition(Context context, ClassModifiers modifiers, ClassName name,
+	public ClassDefinition(Context context, ClassModifiers modifiers, ClassDeclarationName name,
 			List<TypeReference> extendsClasses, List<TypeReference> implementsInterfaces,
 			List<ComplexMemberDefinition> members) {
 		super(context, modifiers, name, implementsInterfaces, members);

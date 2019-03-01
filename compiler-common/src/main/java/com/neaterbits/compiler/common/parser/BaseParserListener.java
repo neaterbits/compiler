@@ -71,6 +71,7 @@ import com.neaterbits.compiler.common.ast.type.primitive.IntegerType;
 import com.neaterbits.compiler.common.ast.type.primitive.StringType;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierHolder;
@@ -97,6 +98,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldStatic;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceAbstract;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDeclarationName;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodDefault;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodMember;
@@ -314,11 +316,11 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	public final void onClassStart(Context context, String name) {
+	public final void onClassStart(Context context, String name, Context nameContext) {
 		
 		logEnter(context);
 		
-		push(new StackNamedClass(logger, name));
+		push(new StackNamedClass(logger, name, nameContext));
 		
 		logExit(context);
 	}
@@ -404,7 +406,7 @@ public abstract class BaseParserListener {
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
 				classModifiers,
-				new ClassName(entry.getName()),
+				new ClassDeclarationName(entry.getNameContext(), new ClassName(entry.getName())),
 				entry.getExtendedClasses(),
 				entry.getImplementedInterfaces(),
 				classCode);
@@ -829,11 +831,11 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
-	public final void onInterfaceStart(Context context, String name) {
+	public final void onInterfaceStart(Context context, String name, Context nameContext) {
 		
 		logEnter(context);
 		
-		push(new StackInterface(logger, name));
+		push(new StackInterface(logger, name, nameContext));
 		
 		logExit(context);
 	}
@@ -909,7 +911,7 @@ public abstract class BaseParserListener {
 		final InterfaceDefinition classDefinition = new InterfaceDefinition(
 				context,
 				interfaceModifiers,
-				new InterfaceName(entry.getName()),
+				new InterfaceDeclarationName(entry.getNameContext(), new InterfaceName(entry.getName())),
 				entry.getExtendedInterfaces(),
 				interfaceCode);
 		
@@ -918,11 +920,11 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
-	public final void onEnumStart(Context context, String name) {
+	public final void onEnumStart(Context context, String name, Context nameContext) {
 
 		logEnter(context);
 
-		push(new StackEnum(logger, name));
+		push(new StackEnum(logger, name, nameContext));
 		
 		logExit(context);
 	}
@@ -978,7 +980,7 @@ public abstract class BaseParserListener {
 		final EnumDefinition enumDefinition = new EnumDefinition(
 				context,
 				new ClassModifiers(context, stackEnum.getModifiers()),
-				new ClassName(stackEnum.getName()),
+				new ClassDeclarationName(stackEnum.getNameContext(), new ClassName(stackEnum.getName())),
 				stackEnum.getImplementedInterfaces(),
 				stackEnum.getConstants(),
 				stackEnum.getList());

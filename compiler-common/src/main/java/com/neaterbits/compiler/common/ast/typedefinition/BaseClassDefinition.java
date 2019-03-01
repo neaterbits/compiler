@@ -9,13 +9,17 @@ import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
-public abstract class BaseClassDefinition extends ComplexTypeDefinition {
+public abstract class BaseClassDefinition extends ComplexTypeDefinition<ClassName, ClassDeclarationName> {
 
 	private final ASTSingle<ClassModifiers> modifiers;
 	
 	private final ASTList<TypeReference> implementsInterfaces;
 	
-	protected BaseClassDefinition(Context context, ClassModifiers modifiers, ClassName name, List<TypeReference> implementsInterfaces, List<ComplexMemberDefinition> members) {
+	protected BaseClassDefinition(
+			Context context,
+			ClassModifiers modifiers,
+			ClassDeclarationName name,
+			List<TypeReference> implementsInterfaces, List<ComplexMemberDefinition> members) {
 		super(context, name, members);
 
 		this.modifiers = makeSingle(modifiers);

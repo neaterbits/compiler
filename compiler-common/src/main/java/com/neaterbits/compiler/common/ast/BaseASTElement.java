@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.ast;
 
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.Stack;
@@ -34,12 +35,47 @@ public abstract class BaseASTElement extends ASTNode {
 		
 		final BaseASTIterator iterator = new BaseASTIterator() {
 			@Override
-			public void onElement(BaseASTElement element) {
+			public boolean onElement(BaseASTElement element) {
 				visitor.onElement(element);
+				
+				return true;
 			}
 		};
 		
 		iterateNodeFirst(iterator);
+	}
+	
+	private static class FoundElement {
+		private BaseASTElement found;
+	}
+	
+	public final BaseASTElement findElement(Predicate<BaseASTElement> test) {
+
+		final FoundElement foundElement = new FoundElement();
+		
+		final BaseASTIterator iterator = new BaseASTIterator() {
+			@Override
+			public boolean onElement(BaseASTElement element) {
+
+				final boolean continueIteration;
+				
+				if (test.test(element)) {
+					foundElement.found = element;
+				
+					continueIteration = false;
+				}
+				else {
+					continueIteration = true;
+				}
+
+				return continueIteration;
+			}
+		};
+		
+		iterateNodeFirst(iterator);
+
+		return foundElement.found;
+		
 	}
 
 	private void iterateNodeFirst(ASTIterator iterator) {
@@ -53,8 +89,10 @@ public abstract class BaseASTElement extends ASTNode {
 
 		final BaseASTIterator iterator = new BaseASTIterator() {
 			@Override
-			public void onElement(BaseASTElement element) {
+			public boolean onElement(BaseASTElement element) {
 				visitor.onElement(element);
+				
+				return true;
 			}
 		};
 
@@ -94,8 +132,10 @@ public abstract class BaseASTElement extends ASTNode {
 		}
 
 		@Override
-		public void onElement(BaseASTElement element) {
+		public boolean onElement(BaseASTElement element) {
 			stackVisitor.onElement(element, stackView);
+			
+			return true;
 		}
 
 		@Override
@@ -153,25 +193,32 @@ public abstract class BaseASTElement extends ASTNode {
 		}
 	}
 	
-	private void visit(BaseASTElement element, ASTRecurseMode recurseMode, ASTIterator iterator) {
+	private boolean visit(BaseASTElement element, ASTRecurseMode recurseMode, ASTIterator iterator) {
+		
+		final boolean continueIteration;
 		
 		switch (recurseMode) {
 		case VISIT_NODE_FIRST:
-			iterator.onElement(element);
+			continueIteration = iterator.onElement(element);
 			
-			if (element.isInList()) {
-				element.doRecurse(recurseMode, iterator);
+			if (continueIteration) {
+			
+				if (element.isInList()) {
+					element.doRecurse(recurseMode, iterator);
+				}
 			}
 			break;
 			
 		case VISIT_NODE_LAST:
 			element.doRecurse(recurseMode, iterator);
 
-			iterator.onElement(element);
+			continueIteration = iterator.onElement(element);
 			break;
 			
 		default:
 			throw new UnsupportedOperationException("Unknown recurse mode " + recurseMode);
 		}
+		
+		return continueIteration;
 	}
 }

@@ -5,14 +5,16 @@ import java.util.List;
 import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 
-public final class ClassType extends InvocableType<ClassDefinition> {
+public final class ClassType extends InvocableType<ClassName, ClassDeclarationName, ClassDefinition> {
 	
 	public ClassType(NamespaceReference namespace, List<DefinitionName> outerTypes, ClassDefinition definition) {
 		super(
-				new CompleteName(namespace, outerTypes, definition.getName()),
+				new CompleteName(namespace, outerTypes, definition.getTypeName()),
 				true,
 				definition);
 	}

@@ -14,7 +14,7 @@ public final class EnumDefinition extends BaseClassDefinition {
 
 	private final ASTList<EnumConstantDefinition> constants;
 	
-	public EnumDefinition(Context context, ClassModifiers modifiers, ClassName name,
+	public EnumDefinition(Context context, ClassModifiers modifiers, ClassDeclarationName name,
 			List<TypeReference> implementsInterfaces,
 			List<EnumConstantDefinition> constants,
 			List<ComplexMemberDefinition> members) {

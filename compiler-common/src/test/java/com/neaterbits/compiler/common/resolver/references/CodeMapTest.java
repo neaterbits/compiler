@@ -14,9 +14,11 @@ import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDeclarationName;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceName;
@@ -44,7 +46,11 @@ public class CodeMapTest extends BaseResolveTest {
 		final String className = "TestClass";
 		final ScopedName scopedName = new ScopedName(namespace, className);
 		
-		final ResolvedType resolvedClass = new TestResolvedType(testFile.getSpec(), scopedName, TypeVariant.CLASS, makeClassType(namespace, className));
+		final ResolvedType resolvedClass = new TestResolvedType(
+				testFile.getSpec(),
+				scopedName,
+				TypeVariant.CLASS,
+				makeClassType(namespace, className));
 
 		final int typeNo = codeMap.addType(resolvedClass);
 
@@ -74,7 +80,11 @@ public class CodeMapTest extends BaseResolveTest {
 		final String interfaceName = "TestInterface";
 		final ScopedName scopedName = new ScopedName(namespace, interfaceName);
 		
-		final ResolvedType resolvedInterface = new TestResolvedType(testFile.getSpec(), scopedName, TypeVariant.INTERFACE, makeInterfaceType(namespace, interfaceName));
+		final ResolvedType resolvedInterface = new TestResolvedType(
+				testFile.getSpec(),
+				scopedName,
+				TypeVariant.INTERFACE,
+				makeInterfaceType(namespace, interfaceName));
 
 		final int typeNo = codeMap.addType(resolvedInterface);
 
@@ -187,11 +197,12 @@ public class CodeMapTest extends BaseResolveTest {
 	private static ClassType makeClassType(Collection<String> namespace, String name) {
 		
 		final Context context = new Context("file", 0, 0, 0, 0, "");
+		final Context nameContext = new Context("file", 0, 0, 0, 0, "");
 		
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
 				new ClassModifiers(context, Collections.emptyList()),
-				new ClassName(name),
+				new ClassDeclarationName(nameContext, new ClassName(name)),
 				null,
 				null,
 				Collections.emptyList());
@@ -205,11 +216,12 @@ public class CodeMapTest extends BaseResolveTest {
 	private static InterfaceType makeInterfaceType(Collection<String> namespace, String name) {
 		
 		final Context context = new Context("file", 0, 0, 0, 0, "");
+		final Context nameContext = new Context("file", 0, 0, 0, 0, "");
 		
 		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(
 				context,
 				new InterfaceModifiers(context, Collections.emptyList()),
-				new InterfaceName(name),
+				new InterfaceDeclarationName(nameContext, new InterfaceName(name)),
 				null,
 				Collections.emptyList());
 		

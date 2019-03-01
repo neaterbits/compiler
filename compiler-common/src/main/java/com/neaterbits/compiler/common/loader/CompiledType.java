@@ -21,7 +21,7 @@ public interface CompiledType extends TypeInfo {
 	}
 
 	
-	ComplexType<?> getType();
+	ComplexType<?, ?, ?> getType();
 	
 	Collection<CompiledType> getNestedTypes();
 

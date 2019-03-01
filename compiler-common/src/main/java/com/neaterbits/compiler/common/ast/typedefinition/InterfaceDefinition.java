@@ -10,7 +10,7 @@ import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
-public final class InterfaceDefinition extends ComplexTypeDefinition {
+public final class InterfaceDefinition extends ComplexTypeDefinition<InterfaceName, InterfaceDeclarationName> {
 
 	private final ASTSingle<InterfaceModifiers> modifiers;
 
@@ -19,7 +19,7 @@ public final class InterfaceDefinition extends ComplexTypeDefinition {
 	public InterfaceDefinition(
 			Context context,
 			InterfaceModifiers modifiers,
-			InterfaceName name,
+			InterfaceDeclarationName name,
 			List<TypeReference> extendsInterfaces,
 			List<ComplexMemberDefinition> members) {
 		

@@ -5,9 +5,9 @@ import java.util.List;
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 
-public class StructDefinition extends ComplexTypeDefinition {
+public class StructDefinition extends ComplexTypeDefinition<StructName, StructDeclarationName> {
 
-	public StructDefinition(Context context, StructName name, List<ComplexMemberDefinition> members) {
+	public StructDefinition(Context context, StructDeclarationName name, List<ComplexMemberDefinition> members) {
 		super(context, name, members);
 	}
 

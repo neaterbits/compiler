@@ -13,7 +13,7 @@ import com.neaterbits.compiler.common.loader.TypeSpec;
 
 final class ParsedType extends BaseLoaderType implements CompiledType {
 
-	private final ComplexType<?> type;
+	private final ComplexType<?, ?, ?> type;
 	
 	private final List<CompiledType> nestedTypes;
 	private final List<CompiledTypeDependency> extendsFrom;
@@ -22,7 +22,7 @@ final class ParsedType extends BaseLoaderType implements CompiledType {
 	ParsedType(
 			FileSpec file,
 			TypeSpec typeSpec,
-			ComplexType<?> type,
+			ComplexType<?, ?, ?> type,
 			List<CompiledType> nestedTypes,
 			List<CompiledTypeDependency> extendsFrom,
 			List<CompiledTypeDependency> dependencies) {
@@ -46,7 +46,7 @@ final class ParsedType extends BaseLoaderType implements CompiledType {
 	}
 
 	@Override
-	public ComplexType<?> getType() {
+	public ComplexType<?, ?, ?> getType() {
 		return type;
 	}
 

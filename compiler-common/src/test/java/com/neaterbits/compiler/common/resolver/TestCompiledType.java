@@ -13,7 +13,7 @@ import com.neaterbits.compiler.common.loader.ast.BaseLoaderType;
 
 public class TestCompiledType extends BaseLoaderType implements CompiledType {
 
-	private final ComplexType<?> type;
+	private final ComplexType<?, ?, ?> type;
 	
 	private final Collection<CompiledType> nestedTypes;
 	private final Collection<CompiledTypeDependency> extendsFrom;
@@ -23,7 +23,7 @@ public class TestCompiledType extends BaseLoaderType implements CompiledType {
 	public TestCompiledType(
 			FileSpec file,
 			TypeSpec typeSpec,
-			ComplexType<?> type,
+			ComplexType<?, ?, ?> type,
 			Collection<CompiledType> nestedTypes,
 			Collection<CompiledTypeDependency> extendsFrom,
 			Collection<CompiledTypeDependency> dependencies) {
@@ -40,7 +40,7 @@ public class TestCompiledType extends BaseLoaderType implements CompiledType {
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
-			ComplexType<?> type,
+			ComplexType<?, ?, ?> type,
 			Collection<CompiledType> nestedTypes,
 			Collection<CompiledTypeDependency> extendsFrom,
 			Collection<CompiledTypeDependency> dependencies) {
@@ -48,7 +48,7 @@ public class TestCompiledType extends BaseLoaderType implements CompiledType {
 	}
 
 	@Override
-	public ComplexType<?> getType() {
+	public ComplexType<?, ?, ?> getType() {
 		return type;
 	}
 

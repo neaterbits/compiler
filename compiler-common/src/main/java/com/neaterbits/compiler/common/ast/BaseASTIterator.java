@@ -8,8 +8,8 @@ class BaseASTIterator implements ASTIterator {
 	}
 
 	@Override
-	public void onElement(BaseASTElement element) {
-		
+	public boolean onElement(BaseASTElement element) {
+		return true;
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.common.log.ParseLogger;
@@ -12,17 +13,20 @@ import com.neaterbits.compiler.common.parser.ClassModifierSetter;
 public final class StackNamedClass extends StackClass implements ClassModifierSetter {
 
 	private final String name;
+	private final Context nameContext;
 	private final List<ClassModifierHolder> modifiers;
 	
 	private final List<TypeReference> extendedClasses;
 	private final List<TypeReference> implementedInterfaces;
 	
-	public StackNamedClass(ParseLogger parseLogger, String name) {
+	public StackNamedClass(ParseLogger parseLogger, String name, Context nameContext) {
 		super(parseLogger);
 
 		Objects.requireNonNull(name);
-
+		Objects.requireNonNull(nameContext);
+		
 		this.name = name;
+		this.nameContext = nameContext;
 		this.modifiers = new ArrayList<>();
 		
 		this.extendedClasses = new ArrayList<>();
@@ -38,6 +42,10 @@ public final class StackNamedClass extends StackClass implements ClassModifierSe
 	
 	public String getName() {
 		return name;
+	}
+
+	public Context getNameContext() {
+		return nameContext;
 	}
 
 	public List<ClassModifierHolder> getModifiers() {

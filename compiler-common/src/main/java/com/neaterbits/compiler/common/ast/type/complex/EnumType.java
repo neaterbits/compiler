@@ -5,14 +5,16 @@ import java.util.List;
 import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.type.CompleteName;
 import com.neaterbits.compiler.common.ast.type.TypeVisitor;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassDeclarationName;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 
-public final class EnumType extends InvocableType<EnumDefinition> {
+public final class EnumType extends InvocableType<ClassName, ClassDeclarationName, EnumDefinition> {
 
 	public EnumType(NamespaceReference namespace, List<DefinitionName> outerTypes, EnumDefinition enumDefinition) {
 		super(
-				new CompleteName(namespace, outerTypes, enumDefinition.getName()),
+				new CompleteName(namespace, outerTypes, enumDefinition.getTypeName()),
 				true,
 				enumDefinition);
 	}

@@ -4,7 +4,7 @@ public interface ASTIterator {
 
 	void onPush(BaseASTElement element);
 	
-	void onElement(BaseASTElement element);
+	boolean onElement(BaseASTElement element);
 	
 	void onPop(BaseASTElement element);
 }

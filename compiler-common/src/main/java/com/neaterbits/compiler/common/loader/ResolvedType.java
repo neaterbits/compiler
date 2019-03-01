@@ -21,7 +21,7 @@ public interface ResolvedType extends TypeInfo {
 		return getType() != null ? getType().getCompleteName() : null;
 	}
 	
-	ComplexType<?> getType();
+	ComplexType<?, ?, ?> getType();
 	
 	default int getNumMethods() {
 		

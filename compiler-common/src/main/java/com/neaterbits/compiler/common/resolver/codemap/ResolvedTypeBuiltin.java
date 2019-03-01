@@ -46,7 +46,7 @@ final class ResolvedTypeBuiltin implements ResolvedType {
 	}
 
 	@Override
-	public ComplexType<?> getType() {
+	public ComplexType<?, ?, ?> getType() {
 		return null;
 	}
 	

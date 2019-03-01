@@ -10,9 +10,9 @@ import com.neaterbits.compiler.common.ast.type.complex.ComplexType;
 
 public final class ComplexTypeReference extends ResolvedTypeReference {
 
-	private final ComplexType<?> type;
+	private final ComplexType<?, ?, ?> type;
 
-	public ComplexTypeReference(Context context, ComplexType<?> type) {
+	public ComplexTypeReference(Context context, ComplexType<?, ?, ?> type) {
 		super(context);
 
 		Objects.requireNonNull(type);

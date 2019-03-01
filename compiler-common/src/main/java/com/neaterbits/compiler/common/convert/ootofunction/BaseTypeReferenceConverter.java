@@ -33,7 +33,7 @@ public abstract class BaseTypeReferenceConverter<T extends ConverterState<T>> im
 	public TypeReference onComplexTypeReference(ComplexTypeReference typeReference, T param) {
 		return new ComplexTypeReference(
 				typeReference.getContext(),
-				(ComplexType<?>)convertType(typeReference.getType(), param));
+				(ComplexType<?, ?, ?>)convertType(typeReference.getType(), param));
 	}
 
 	@Override

@@ -96,8 +96,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onImport(importStatement);
 	}
 	
-	public void onClassStart(Context context, String name) {
-		delegate.onClassStart(context, name);
+	public void onClassStart(Context context, String name, Context nameContext) {
+		delegate.onClassStart(context, name, nameContext);
 	}
 	
 	public void onVisibilityClassModifier(Context context, ClassVisibility visibility) {
@@ -243,8 +243,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		statementsStack.pop();
 	}
 
-	public void onInterfaceStart(Context context, String name) {
-		delegate.onInterfaceStart(context, name);
+	public void onInterfaceStart(Context context, String name, Context nameContext) {
+		delegate.onInterfaceStart(context, name, nameContext);
 	}
 	
 	public void onVisibilityInterfaceModifier(Context context, InterfaceVisibility visibility) {
@@ -304,10 +304,10 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		statementsStack.pop();
 	}
 	
-	public void onEnumStart(Context context, String name) {
+	public void onEnumStart(Context context, String name, Context nameContext) {
 		statementsStack.push();
 		
-		delegate.onEnumStart(context, name);
+		delegate.onEnumStart(context, name, nameContext);
 	}
 
 	public void onEnumImplements(Context context, ScopedName interfaceName) {

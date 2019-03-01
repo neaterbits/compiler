@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
@@ -84,7 +85,11 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	private Context context(ParserRuleContext ctx) {
 		return Antlr4.context(ctx, file);
 	}
-	
+
+	private Context context(TerminalNode ctx) {
+		return Antlr4.context(ctx.getSymbol(), file);
+	}
+
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
 		
@@ -190,7 +195,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterNormalClassDeclaration(NormalClassDeclarationContext ctx) {
-		delegate.onClassStart(context(ctx), ctx.Identifier().getText());
+		delegate.onClassStart(context(ctx), ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 	
 	@Override
@@ -470,7 +475,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterNormalInterfaceDeclaration(NormalInterfaceDeclarationContext ctx) {
-		delegate.onInterfaceStart(context(ctx), ctx.Identifier().getText());
+		delegate.onInterfaceStart(context(ctx), ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 	
 	@Override
@@ -540,7 +545,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterEnumDeclaration(EnumDeclarationContext ctx) {
-		delegate.onEnumStart(context(ctx), ctx.Identifier().getText());
+		delegate.onEnumStart(context(ctx), ctx.Identifier().getText(), context(ctx.Identifier()));
 		
 		if (ctx.superinterfaces() != null) {
 			for (InterfaceTypeContext interfaceCtx : ctx.superinterfaces().interfaceTypeList().interfaceType()) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierHolder;
@@ -19,16 +20,19 @@ import com.neaterbits.compiler.common.parser.ListStackEntry;
 public final class StackEnum extends ListStackEntry<ComplexMemberDefinition> implements ClassModifierSetter, ConstructorMemberSetter, ClassMethodMemberSetter {
 
 	private final String name;
+	private final Context nameContext;
 	private final List<ClassModifierHolder> modifiers;
 	private final List<TypeReference> implementedInterfaces;
 	private final List<EnumConstantDefinition> constants;
 	
-	public StackEnum(ParseLogger parseLogger, String name) {
+	public StackEnum(ParseLogger parseLogger, String name, Context nameContext) {
 		super(parseLogger);
 
 		Objects.requireNonNull(name);
+		Objects.requireNonNull(nameContext);
 
 		this.name = name;
+		this.nameContext = nameContext;
 		this.modifiers = new ArrayList<>();
 		this.implementedInterfaces = new ArrayList<>();
 		this.constants = new ArrayList<>();
@@ -36,6 +40,10 @@ public final class StackEnum extends ListStackEntry<ComplexMemberDefinition> imp
 
 	public String getName() {
 		return name;
+	}
+
+	public Context getNameContext() {
+		return nameContext;
 	}
 
 	public List<ClassModifierHolder> getModifiers() {

@@ -11,27 +11,27 @@ import com.neaterbits.compiler.common.ast.type.complex.StructType;
 
 public class OOToProceduralDeclarations<T extends OOToProceduralClassDeclaration> {
 
-	private final Map<ComplexType<?>, T> declarations;
+	private final Map<ComplexType<?, ?, ?>, T> declarations;
 	
 	public OOToProceduralDeclarations() {
 		this.declarations = new HashMap<>();
 	}
 
-	public OOToProceduralDeclarations(Map<ComplexType<?>, T> classToStruct) {
+	public OOToProceduralDeclarations(Map<ComplexType<?, ?, ?>, T> classToStruct) {
 		
 		Objects.requireNonNull(classToStruct);
 		
 		this.declarations = classToStruct;
 	}
 	
-	public final StructType getClassStructType(ComplexType<?> type) {
+	public final StructType getClassStructType(ComplexType<?, ?, ?> type) {
 		
 		final T declaration = declarations.get(type);
 		
 		return declaration != null ? declaration.getDataFieldStructType() : null;
 	}
 
-	public final StructType getVTableStructType(ComplexType<?> type) {
+	public final StructType getVTableStructType(ComplexType<?, ?, ?> type) {
 
 		final T declaration = declarations.get(type);
 		
