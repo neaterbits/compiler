@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.common;
 
-public class FieldType extends TypeName {
+public final class FieldType extends TypeName {
 
 	private final boolean builtin;
 	private final int sizeInBits;

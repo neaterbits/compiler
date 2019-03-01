@@ -2,6 +2,7 @@ package com.neaterbits.compiler.bytecode.common.loader;
 
 import java.io.IOException;
 
+import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
@@ -11,7 +12,7 @@ import com.neaterbits.compiler.common.resolver.codemap.CodeMap.TypeResult;
 class LoadClassHelper {
 
 	static ClassBytecode loadClass(TypeName typeName, TypeResult typeResult,
-			ClassLibs classLibs, LoaderMaps loaderMaps) {
+			BytecodeFormat bytecodeFormat, ClassLibs classLibs, LoaderMaps loaderMaps) {
 		
 		final ClassBytecode addedBytecode = loaderMaps.typeMap.addOrGetType(
 				typeName,
@@ -24,13 +25,13 @@ class LoadClassHelper {
 			ClassBytecode classBytecode = null;
 			
 			try {
-				classBytecode = classLibs.loadClassBytecode(type);
+				classBytecode = bytecodeFormat.loadClassBytecode(classLibs, type);
 			} catch (IOException | ClassFileException ex) {
 				ex.printStackTrace();
 			}
 			
 			if (classBytecode != null) {
-				loadBaseClasses(classBytecode, classLibs, loaderMaps);
+				loadBaseClasses(classBytecode, bytecodeFormat, classLibs, loaderMaps);
 			}
 		
 			return classBytecode;
@@ -47,7 +48,7 @@ class LoadClassHelper {
 		return addedBytecode;
 	}
 	
-	static void loadBaseClasses(ClassBytecode classBytecode, ClassLibs classLibs, LoaderMaps loaderMaps) {
+	static void loadBaseClasses(ClassBytecode classBytecode, BytecodeFormat bytecodeFormat, ClassLibs classLibs, LoaderMaps loaderMaps) {
 		
 		ClassBytecode currentClass = classBytecode;
 		
@@ -56,7 +57,7 @@ class LoadClassHelper {
 		for (;;) {
 			final TypeName superClassName = currentClass.getSuperClass();
 			
-			final ClassBytecode addedClass = loadClass(superClassName, typeResult, classLibs, loaderMaps);
+			final ClassBytecode addedClass = loadClass(superClassName, typeResult, bytecodeFormat, classLibs, loaderMaps);
 
 			if (addedClass == null) {
 				break;

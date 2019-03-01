@@ -3,6 +3,7 @@ package com.neaterbits.compiler.bytecode.common.executor;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.loader.BytecodeCompiler;
 import com.neaterbits.compiler.bytecode.common.loader.BytecodeLoader;
@@ -31,7 +32,7 @@ public class ExecutorMain<CLASS, METHOD> {
 		this.languageClassTypes = languageClassTypes;
 	}
 
-	public void execute(TypeName className, ClassLibs classLibs, CodeGenerator codeGenerator) {
+	public void execute(TypeName className, BytecodeFormat bytecodeFormat, ClassLibs classLibs, CodeGenerator codeGenerator) {
 
 		final CodeMap codeMap = new SynchronizedCodeMap(new IntCodeMap());
 		
@@ -46,6 +47,7 @@ public class ExecutorMain<CLASS, METHOD> {
 		
 		
 		final BytecodeLoader<CompiledClass, Void> bytecodeLoader = new BytecodeLoader<>(
+				bytecodeFormat,
 				classLibs,
 				compiler,
 				codeMap);

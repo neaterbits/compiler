@@ -3,6 +3,7 @@ package com.neaterbits.compiler.bytecode.common.loader;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.MethodClassReferenceScanner;
@@ -20,6 +21,7 @@ final class MethodLoaderThread<CLASS, METHOD> extends Thread {
 
 	private final BytecodeLoader<CLASS, METHOD> bytecodeLoader;
 	private final LoadMethodQueues<METHOD> loadQueues;
+	private final BytecodeFormat bytecodeFormat;
 	private final ClassLibs classLibs;
 	private final BytecodeCompiler<CLASS, METHOD> bytecodeCompiler;
 
@@ -33,6 +35,7 @@ final class MethodLoaderThread<CLASS, METHOD> extends Thread {
 	MethodLoaderThread(
 			BytecodeLoader<CLASS, METHOD> bytecodeLoader,
 			LoadMethodQueues<METHOD> loadQueues,
+			BytecodeFormat bytecodeFormat,
 			ClassLibs classLibs,
 			BytecodeCompiler<CLASS, METHOD> bytecodeCompiler,
 			LoaderMaps loaderMaps,
@@ -40,6 +43,7 @@ final class MethodLoaderThread<CLASS, METHOD> extends Thread {
 		
 		Objects.requireNonNull(bytecodeLoader);
 		Objects.requireNonNull(loadQueues);
+		Objects.requireNonNull(bytecodeFormat);
 		Objects.requireNonNull(classLibs);
 		Objects.requireNonNull(bytecodeCompiler);
 		Objects.requireNonNull(loaderMaps);
@@ -47,6 +51,7 @@ final class MethodLoaderThread<CLASS, METHOD> extends Thread {
 		
 		this.bytecodeLoader = bytecodeLoader;
 		this.loadQueues = loadQueues;
+		this.bytecodeFormat = bytecodeFormat;
 		this.classLibs = classLibs;
 		this.bytecodeCompiler = bytecodeCompiler;
 		this.loaderMaps = loaderMaps;
@@ -92,7 +97,7 @@ final class MethodLoaderThread<CLASS, METHOD> extends Thread {
 					
 					final TypeName typeName = request.getTypeName();
 	
-					final ClassBytecode addedClass = LoadClassHelper.loadClass(typeName, typeResult, classLibs, loaderMaps);
+					final ClassBytecode addedClass = LoadClassHelper.loadClass(typeName, typeResult, bytecodeFormat, classLibs, loaderMaps);
 					
 					final int type = typeResult.type;
 					

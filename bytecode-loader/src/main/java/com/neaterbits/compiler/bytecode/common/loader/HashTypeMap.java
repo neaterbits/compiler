@@ -11,16 +11,16 @@ import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.resolver.codemap.CodeMap;
 import com.neaterbits.compiler.common.resolver.codemap.CodeMap.TypeResult;
 
-final class HashTypeMap implements TypeMap {
+public final class HashTypeMap implements TypeMap {
 
 	@FunctionalInterface
-	interface LoadType {
+	public interface LoadType {
 		ClassBytecode load(TypeName typeName);
 	}
 	
 	private final Map<TypeName, Integer> typeByName;
 
-	HashTypeMap() {
+	public HashTypeMap() {
 		this.typeByName = new HashMap<>();
 	}
 
@@ -35,7 +35,7 @@ final class HashTypeMap implements TypeMap {
 		return type != null ? type : -1;
 	}
 	
-	ClassBytecode addOrGetType(TypeName typeName, CodeMap codeMap, TypeResult typeResult, LoadType loadType) {
+	public ClassBytecode addOrGetType(TypeName typeName, CodeMap codeMap, TypeResult typeResult, LoadType loadType) {
 		
 		Integer type;
 		

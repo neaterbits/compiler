@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.common.FieldType;
 import com.neaterbits.compiler.common.TypeName;
@@ -25,7 +26,7 @@ public class BytecodeLoader<CLASS, METHOD> {
 	private final ThreadsafeArray<LoadedMethod> scannedMethodsArray;
 	
 	
-	public BytecodeLoader(ClassLibs classLibs, BytecodeCompiler<CLASS, METHOD> bytecodeCompiler, CodeMap codeMap) {
+	public BytecodeLoader(BytecodeFormat bytecodeFormat, ClassLibs classLibs, BytecodeCompiler<CLASS, METHOD> bytecodeCompiler, CodeMap codeMap) {
 
 		Objects.requireNonNull(classLibs);
 		Objects.requireNonNull(bytecodeCompiler);
@@ -49,6 +50,7 @@ public class BytecodeLoader<CLASS, METHOD> {
 			final MethodLoaderThread<CLASS, METHOD> thread = new MethodLoaderThread<>(
 					this,
 					loadQueues,
+					bytecodeFormat,
 					classLibs,
 					bytecodeCompiler,
 					loaderMaps,

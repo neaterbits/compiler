@@ -68,7 +68,7 @@ public class CCompilationUnitEmitter extends BaseProceduralProgramEmitter<Emitte
 	@Override
 	public Void onStructDefinition(StructDefinition structDefinition, EmitterState param) {
 
-		param.append("struct ").append(structDefinition.getName().getName()).append(" {").newline();
+		param.append("struct ").append(structDefinition.getNameString()).append(" {").newline();
 		
 		param.addIndent();
 
@@ -93,7 +93,7 @@ public class CCompilationUnitEmitter extends BaseProceduralProgramEmitter<Emitte
 		param.append("enum");
 		
 		if (enumDefinition.getName() != null) {
-			param.append(' ').append(enumDefinition.getName().getName());
+			param.append(' ').append(enumDefinition.getNameString());
 		}
 		
 		param.append(" {").newline();
