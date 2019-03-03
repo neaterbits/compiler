@@ -200,7 +200,7 @@ public abstract class BaseJavaCompilerTest {
 		// References to not-yet resolved fields in types
 		for (ComplexTypeReference reference : convertLaterTypeReferences) {
 		
-			final ComplexType<?> convertedStructType = declarations.getClassStructType((ClassType)reference.getType());
+			final ComplexType<?, ?, ?> convertedStructType = declarations.getClassStructType((ClassType)reference.getType());
 			
 			if (convertedStructType == null) {
 				final NamedType namedType = (NamedType)reference.getType();

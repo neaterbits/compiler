@@ -18,6 +18,7 @@ import com.neaterbits.compiler.common.ast.type.complex.ClassType;
 import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
 import com.neaterbits.compiler.common.ast.type.complex.InvocableType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodModifierHolder;
@@ -29,6 +30,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition
 import com.neaterbits.compiler.common.ast.typedefinition.FieldModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDeclarationName;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceModifiers;
@@ -37,11 +39,11 @@ import com.neaterbits.compiler.common.ast.typedefinition.InterfaceName;
 final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 
 	@Override
-	public InvocableType<?> getType() {
+	public InvocableType<?, ?, ?> getType() {
 		
 		final Context context = null;
 
-		final InvocableType<?> type;
+		final InvocableType<?, ?, ?> type;
 		
 		if ((getAccessFlags() & AccessFlags.ACC_INTERFACE) != 0) {
 			final List<InterfaceModifierHolder> modifierList = new ArrayList<>();
@@ -55,7 +57,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 			final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(
 					context,
 					modifiers,
-					(InterfaceName)completeName.getName(),
+					new InterfaceDeclarationName(context, (InterfaceName)completeName.getName()),
 					extendsInterfaces,
 					getMembers(context));
 			
@@ -82,7 +84,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 			final ClassDefinition classDefinition = new ClassDefinition(
 					context,
 					modifiers,
-					(ClassName)completeName.getName(),
+					new ClassDeclarationName(context, (ClassName)completeName.getName()),
 					extendsClasses,
 					new ArrayList<TypeReference>(),
 					getMembers(context));

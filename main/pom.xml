@@ -13,17 +13,17 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>common</artifactId>
+			<artifactId>compiler-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>c</artifactId>
+			<artifactId>compiler-language-c</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>java</artifactId>
+			<artifactId>compiler-language-java</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

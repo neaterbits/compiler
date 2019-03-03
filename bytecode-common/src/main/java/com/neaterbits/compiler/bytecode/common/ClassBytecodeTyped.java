@@ -4,6 +4,6 @@ import com.neaterbits.compiler.common.ast.type.complex.InvocableType;
 
 public interface ClassBytecodeTyped {
 
-	InvocableType<?> getType();
+	InvocableType<?, ?, ?> getType();
 
 }
