@@ -746,7 +746,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	
 	public void onJavaIfThenStatementStart(Context context) {
 		
-		printStack("javaIfThenStatementStart");
+		if (logger != null) {
+			printStack("javaIfThenStatementStart");
+		}
 
 		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
 
@@ -764,11 +766,16 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 		statementsStack.push();
 
-		printStack("javaIfThenStatementStart - exit");
+		if (logger != null) {
+			printStack("javaIfThenStatementStart - exit");
+		}
 	}
 
 	public void onJavaIfThenStatementEnd(Context context) {
-		printStack("javaIfThenStatementEnd");
+		
+		if (logger != null) {
+			printStack("javaIfThenStatementEnd");
+		}
 
 		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
 		
@@ -783,13 +790,16 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.pop();
 
-		printStack("javaIfThenStatementEnd after pop");
+		if (logger != null) {
+			printStack("javaIfThenStatementEnd after pop");
+		}
 	}
 
 	public void onJavaIfThenElseStatementStart(Context context) {
 
-		printStack("javaIfThenElseStatementStart");
-
+		if (logger != null) {
+			printStack("javaIfThenElseStatementStart");
+		}
 
 		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
 		
@@ -811,8 +821,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 	public void onJavaIfThenElseStatementEnd(Context context) {
 
-		printStack("javaIfThenElseStatementEnd");
-
+		if (logger != null) {
+			printStack("javaIfThenElseStatementEnd");
+		}
 	}
 	
 	final JavaStatement getIfOrElseStatement(int i) {
@@ -892,7 +903,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	
 	public void onJavaBlockStart(Context context) {
 		
-		printStack("javaBlockStart");
+		if (logger != null) {
+			printStack("javaBlockStart");
+		}
 		
 		onAnyNonIfStatementStart(context);
 		
@@ -923,12 +936,16 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			statementsStack.push();
 		}
 
-		printStack("onJavaBlockStart - exit");
+		if (logger != null) {
+			printStack("onJavaBlockStart - exit");
+		}
 	}
 	
 	public void onJavaBlockEnd(Context context) {
 
-		printStack("onJavaBlockEnd");
+		if (logger != null) {
+			printStack("onJavaBlockEnd");
+		}
 
 		if (statementsStack.size() > 2) {
 			statementsStack.pop();
@@ -957,8 +974,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			// Do nothing, blocks are handled separately in parser
 		}
 		
-		printStack("onJavaBlockEnd - exit");
-
+		if (logger != null) {
+			printStack("onJavaBlockEnd - exit");
+		}
 	}
 
 	public void onJavaAssertStatementStart(Context context) {

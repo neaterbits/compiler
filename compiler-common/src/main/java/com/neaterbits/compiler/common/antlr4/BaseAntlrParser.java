@@ -21,11 +21,13 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import com.neaterbits.compiler.common.BaseParser;
 import com.neaterbits.compiler.common.log.ParseLogger;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
 
-public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEXER extends Lexer, PARSER extends Parser>
+public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>, LEXER extends Lexer, PARSER extends Parser>
+		extends BaseParser<T, AntlrError, LISTENER>
 		implements AntlrParser<T, LISTENER> {
 
 	protected abstract LISTENER createListener(ParseLogger parseLogger);
@@ -40,7 +42,7 @@ public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEX
 	
 	private final AntlrParserInstantiator<LEXER, PARSER> parserInstantiator;
 
-	protected BaseParser(boolean debug, AntlrParserFactory<LEXER, PARSER> parserFactory) {
+	protected BaseAntlrParser(boolean debug, AntlrParserFactory<LEXER, PARSER> parserFactory) {
 
 		Objects.requireNonNull(parserFactory);
 
@@ -53,8 +55,17 @@ public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEX
 
 	@Override
 	public final T parse(String string) {
+		return parse(string, true);
+	}
+	
+	@Override
+	public final T parse(String string, boolean log) {
 		try {
-			return parse(new ANTLRInputStream(string), new ArrayList<AntlrError>(), null, new ParseLogger(System.out));
+			return parse(
+					new ANTLRInputStream(string),
+					new ArrayList<AntlrError>(),
+					null,
+					log ? new ParseLogger(System.out) : null);
 		} catch (IOException ex) {
 			throw new IllegalStateException(ex);
 		}

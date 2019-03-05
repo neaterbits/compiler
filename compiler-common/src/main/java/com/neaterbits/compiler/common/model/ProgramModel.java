@@ -2,10 +2,12 @@ package com.neaterbits.compiler.common.model;
 
 import java.io.File;
 
-public interface ProgramModel<MODULE, SOURCEFILE> {
+public interface ProgramModel<MODULE, PARSED_FILE, COMPILATION_UNIT> {
 	
-	SOURCEFILE getSourceFile(File path);
+	PARSED_FILE getParsedFile(MODULE module, File path);
+	
+	COMPILATION_UNIT getCompilationUnit(PARSED_FILE sourceFile);
 
-	SourceToken getTokenAt(SOURCEFILE sourceFile, long offset);
+	ISourceToken getTokenAt(COMPILATION_UNIT sourceFile, long offset);
 	
 }

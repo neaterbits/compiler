@@ -2,20 +2,48 @@ package com.neaterbits.compiler.common.model;
 
 public enum SourceTokenType {
 	
-	KEYWORD,
+	KEYWORD(false, false, false),
 	
-	CLASS_DECLARATION_NAME,
-	INTERFACE_DECLARATION_NAME,
-	METHOD_DECLARATION_NAME,
+	CLASS_DECLARATION_NAME(false, true, false),
+	INTERFACE_DECLARATION_NAME(false, true, false),
+	METHOD_DECLARATION_NAME(false, false, false),
 	
-	CLASS_REFERENCE_NAME,
-	METHOD_REFERENCE_NAME,
+	CLASS_REFERENCE_NAME(false, false, true),
+	METHOD_REFERENCE_NAME(false, false, true),
 	
-	INSTANCE_VARIABLE,
-	LOCAL_VARIABLE,
+	INSTANCE_VARIABLE(true, false, false),
+	LOCAL_VARIABLE(true, false, false),
 	
-	CALL_PARAMETER_USE,
+	CALL_PARAMETER(true, false, false),
 	
-	UNKNOWN;
+	PACKAGE_DECLARATION_NAME(false, false, false),
 	
+	UNKNOWN(false, false, false);
+	
+	
+	private final boolean variable;
+	private final boolean typeDeclarationName;
+	private final boolean typeName;
+
+	private SourceTokenType(boolean variable, boolean typeDeclarationName, boolean typeName) {
+		this.variable = variable;
+		this.typeDeclarationName = typeDeclarationName;
+		this.typeName = typeName;
+	}
+
+	public boolean isKeyword() {
+		return this == KEYWORD;
+	}
+	
+	public boolean isVariable() {
+		return variable;
+	}
+
+	public boolean isTypeDeclarationName() {
+		return typeDeclarationName;
+	}
+
+	public boolean isTypeName() {
+		return typeName;
+	}
 }

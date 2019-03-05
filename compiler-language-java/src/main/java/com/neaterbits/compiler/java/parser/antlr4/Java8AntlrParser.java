@@ -4,14 +4,14 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 import com.neaterbits.compiler.common.antlr4.AntlrParserFactory;
-import com.neaterbits.compiler.common.antlr4.BaseParser;
+import com.neaterbits.compiler.common.antlr4.BaseAntlrParser;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.java.Java8Lexer;
 import com.neaterbits.compiler.java.Java8Parser;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 
-public class Java8AntlrParser extends BaseParser<CompilationUnit, JavaParserListener, Java8Lexer, Java8Parser> {
+public class Java8AntlrParser extends BaseAntlrParser<CompilationUnit, JavaParserListener, Java8Lexer, Java8Parser> {
 
 	public Java8AntlrParser(boolean debug) {
 		super(debug, new AntlrParserFactory<>(Java8Lexer::new, Java8Parser::new));

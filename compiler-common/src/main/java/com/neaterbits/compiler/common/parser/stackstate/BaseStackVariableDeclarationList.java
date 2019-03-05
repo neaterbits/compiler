@@ -22,7 +22,9 @@ public abstract class BaseStackVariableDeclarationList
 			throw new IllegalStateException("typeReference already set");
 		}
 		
-		getParseLogger().onStackSetElement(typeReference.toString());
+		if (getParseLogger() != null) {
+			getParseLogger().onStackSetElement(typeReference.toString());
+		}
 
 		this.typeReference = typeReference;
 	}

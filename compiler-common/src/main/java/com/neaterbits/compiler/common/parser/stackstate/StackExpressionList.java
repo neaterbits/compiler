@@ -34,7 +34,9 @@ public class StackExpressionList extends ListStackEntry<Expression>
 		
 		Objects.requireNonNull(expression);
 		
-		getParseLogger().onStackAddElement(expression.getClass().getSimpleName());
+		if (getParseLogger() != null) {
+			getParseLogger().onStackAddElement(expression.getClass().getSimpleName());
+		}
 		
 		super.add(expression);
 	}

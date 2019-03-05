@@ -22,7 +22,7 @@ abstract class BaseStackVariableDeclaration extends StackEntry
 	private String name;
 	private int numDims;
 
-	public BaseStackVariableDeclaration(ParseLogger parseLogger) {
+	BaseStackVariableDeclaration(ParseLogger parseLogger) {
 		super(parseLogger);
 	
 		this.modifiers = new ArrayList<>();

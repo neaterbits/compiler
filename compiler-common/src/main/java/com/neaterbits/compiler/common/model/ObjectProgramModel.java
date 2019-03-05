@@ -5,24 +5,16 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
+import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Program;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDeclarationName;
 import com.neaterbits.compiler.common.parser.ParsedFile;
 
-public final class ObjectProgramModel implements ProgramModel<Program, ParsedFile> {
-
-	private final Program program;
-	
-	public ObjectProgramModel(Program program) {
-
-		Objects.requireNonNull(program);
-		
-		this.program = program;
-	}
+public final class ObjectProgramModel implements ProgramModel<Program, ParsedFile, CompilationUnit > {
 
 	@Override
-	public ParsedFile getSourceFile(File path) {
+	public ParsedFile getParsedFile(Program program, File path) {
 		
 		return (ParsedFile)program.findElement(element -> {
 			
@@ -39,11 +31,16 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		
 		
 	}
+	
+	@Override
+	public CompilationUnit getCompilationUnit(ParsedFile sourceFile) {
+		return sourceFile.getParsed();
+	}
 
 	@Override
-	public SourceToken getTokenAt(ParsedFile sourceFile, long offset) {
+	public SourceToken getTokenAt(CompilationUnit compilationUnit, long offset) {
 
-		final BaseASTElement found = sourceFile.findElement(element -> {
+		final BaseASTElement found = compilationUnit.findElement(element -> {
 			
 			final Context context = element.getContext();
 			
@@ -76,7 +73,8 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		return new SourceToken(
 				sourceTokenType,
 				context.getStartPos(),
-				context.getText().length());
+				context.getText().length(),
+				element);
 
 	}
 }

@@ -98,8 +98,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		}
 		
 		++ indent;
-		
-		logger.onEnterAntlrRule(ruleName(ctx), ctx.getText());
+
+		if (logger != null) {
+			logger.onEnterAntlrRule(ruleName(ctx), ctx.getText());
+		}
 	}
 
 	@Override
@@ -111,7 +113,9 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		-- indent;
 
-		logger.onExitAntlrRule(ruleName(ctx), ctx.getText());
+		if (logger != null) {
+			logger.onExitAntlrRule(ruleName(ctx), ctx.getText());
+		}
 	}
 
 	@Override

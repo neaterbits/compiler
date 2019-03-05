@@ -245,11 +245,17 @@ public abstract class BaseParserListener {
 	}
 	
 	protected final void logEnter(Context context) {
-		logger.onEnterListenerFunction(getMethodName(), context);
+		
+		if (logger != null) {
+			logger.onEnterListenerFunction(getMethodName(), context);
+		}
 	}
 	
 	protected final void logExit(Context context) {
-		logger.onExitListenerFunction(getMethodName(), context);
+		
+		if (logger != null) {
+			logger.onExitListenerFunction(getMethodName(), context);
+		}
 	}
 	
 	public final void onCompilationUnitStart(Context context) {
@@ -2389,7 +2395,9 @@ public abstract class BaseParserListener {
 				.map(o -> o.getClass().getSimpleName())
 				.collect(Collectors.toList());
 		
-		logger.onStackPush(element.getClass().getSimpleName(), stack);
+		if (logger != null) {
+			logger.onStackPush(element.getClass().getSimpleName(), stack);
+		}
 		
 		mainStack.push(element);
 	}
@@ -2399,7 +2407,9 @@ public abstract class BaseParserListener {
 	protected final <T extends StackEntry> T pop() {
 		final T result = (T)mainStack.pop();
 
-		logger.onStackPop(result.getClass().getSimpleName());
+		if (logger != null) {
+			logger.onStackPop(result.getClass().getSimpleName());
+		}
 
 		return result;
 	}
