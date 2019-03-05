@@ -4,18 +4,22 @@ public final class Context {
 
 	private final String file;
 	private final int startLine;
-	private final int startPos;
+	private final int startPosInLine;
+	private final int startOffset;
 	private final int endLine;
-	private final int endPos;
+	private final int endPosInLine;
+	private final int endOffset;
 	private final String text;
 
-	public Context(String file, int startLine, int startPos, int endLine, int endPos, String text) {
+	public Context(String file, int startLine, int startPosInLine, int startOffset, int endLine, int endPos, int endOffset, String text) {
 		
 		this.file = file;
 		this.startLine = startLine;
-		this.startPos = startPos;
+		this.startPosInLine = startPosInLine;
+		this.startOffset = startOffset;
 		this.endLine = endLine;
-		this.endPos = endPos;
+		this.endPosInLine = endPos;
+		this.endOffset = endOffset;
 		this.text = text;
 	}
 
@@ -27,25 +31,33 @@ public final class Context {
 		return startLine;
 	}
 
-	public int getStartPos() {
-		return startPos;
+	public int getStartPosInLine() {
+		return startPosInLine;
+	}
+	
+	public int getStartOffset() {
+		return startOffset;
 	}
 
 	public int getEndLine() {
 		return endLine;
 	}
 
-	public int getEndPos() {
-		return endPos;
+	public int getEndPosInLine() {
+		return endPosInLine;
 	}
 
 	public String getText() {
 		return text;
 	}
 
+	public int getEndOffset() {
+		return endOffset;
+	}
+
 	@Override
 	public String toString() {
-		return "Context [file=" + file + ", startLine=" + startLine + ", startPos=" + startPos + ", endLine=" + endLine
-				+ ", endPos=" + endPos + "]";
+		return "Context [file=" + file + ", startLine=" + startLine + ", startPosInLine=" + startPosInLine + ", endLine=" + endLine
+				+ ", endPosInLine=" + endPosInLine + "]";
 	}
 }

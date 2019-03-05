@@ -196,8 +196,8 @@ public class CodeMapTest extends BaseResolveTest {
 	
 	private static ClassType makeClassType(Collection<String> namespace, String name) {
 		
-		final Context context = new Context("file", 0, 0, 0, 0, "");
-		final Context nameContext = new Context("file", 0, 0, 0, 0, "");
+		final Context context = new Context("file", 0, 0, 0, 0, 0, 0, "");
+		final Context nameContext = new Context("file", 0, 0, 0, 0, 0, 0, "");
 		
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
@@ -215,8 +215,8 @@ public class CodeMapTest extends BaseResolveTest {
 
 	private static InterfaceType makeInterfaceType(Collection<String> namespace, String name) {
 		
-		final Context context = new Context("file", 0, 0, 0, 0, "");
-		final Context nameContext = new Context("file", 0, 0, 0, 0, "");
+		final Context context = new Context("file", 0, 0, 0, 0, 0, 0, "");
+		final Context nameContext = new Context("file", 0, 0, 0, 0, 0, 0, "");
 		
 		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(
 				context,

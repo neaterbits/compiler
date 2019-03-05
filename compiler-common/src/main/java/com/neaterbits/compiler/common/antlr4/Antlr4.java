@@ -11,8 +11,10 @@ public class Antlr4 {
 		return new Context(file,
 				antlrContext.getStart().getLine(),
 				antlrContext.getStart().getCharPositionInLine(),
+				antlrContext.getStart().getStartIndex(),
 				antlrContext.getStop().getLine(),
 				antlrContext.getStop().getCharPositionInLine(),
+				antlrContext.getStop().getStopIndex(),
 				antlrContext.getText());
 	}
 
@@ -20,8 +22,10 @@ public class Antlr4 {
 		return new Context(file,
 				token.getLine(),
 				token.getCharPositionInLine(),
+				token.getStartIndex(),
 				token.getLine(),
 				token.getCharPositionInLine() + token.getText().length() - 1,
+				token.getStopIndex(),
 				token.getText());
 	}
 }

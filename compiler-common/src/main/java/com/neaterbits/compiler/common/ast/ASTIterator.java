@@ -6,5 +6,5 @@ public interface ASTIterator {
 	
 	boolean onElement(BaseASTElement element);
 	
-	void onPop(BaseASTElement element);
+	boolean onPop(BaseASTElement element);
 }

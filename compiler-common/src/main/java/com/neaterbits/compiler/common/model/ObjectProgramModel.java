@@ -16,7 +16,7 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 	@Override
 	public ParsedFile getParsedFile(Program program, File path) {
 		
-		return (ParsedFile)program.findElement(element -> {
+		return (ParsedFile)program.findElement(false, element -> {
 			
 			if (element instanceof ParsedFile) {
 				final ParsedFile parsedFile = (ParsedFile)element;
@@ -40,11 +40,11 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 	@Override
 	public SourceToken getTokenAt(CompilationUnit compilationUnit, long offset) {
 
-		final BaseASTElement found = compilationUnit.findElement(element -> {
-			
+		final BaseASTElement found = compilationUnit.findElement(true, element -> {
+
 			final Context context = element.getContext();
-			
-			return offset >= context.getStartPos() && offset <= context.getEndPos();
+
+			return offset >= context.getStartOffset() && offset <= context.getEndOffset();
 		});
 		
 		return found != null ? makeSourceToken(found) : null;
@@ -63,16 +63,14 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 			sourceTokenType = SourceTokenType.INTERFACE_DECLARATION_NAME;
 		}
 		else {
-			
 			sourceTokenType = SourceTokenType.UNKNOWN;
-			
 		}
 		
 		final Context context = element.getContext();
 
 		return new SourceToken(
 				sourceTokenType,
-				context.getStartPos(),
+				context.getStartOffset(),
 				context.getText().length(),
 				element);
 

@@ -42,6 +42,6 @@ public final class EncodedTypeReference extends TypeReference {
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		
+
 	}
 }

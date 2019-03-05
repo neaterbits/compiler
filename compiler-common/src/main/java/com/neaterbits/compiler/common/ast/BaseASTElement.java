@@ -14,6 +14,8 @@ import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public abstract class BaseASTElement extends ASTNode {
 	
+	protected static final boolean CONTINUE_ITERATION = true;
+	
 	private final Context context;
 
 	public BaseASTElement(Context context) {
@@ -47,13 +49,24 @@ public abstract class BaseASTElement extends ASTNode {
 	
 	private static class FoundElement {
 		private BaseASTElement found;
+		
+		private boolean onlyLeavesElementFound;
 	}
 	
-	public final BaseASTElement findElement(Predicate<BaseASTElement> test) {
+	
+	public final BaseASTElement findElement(boolean onlyLeaves, Predicate<BaseASTElement> test) {
 
 		final FoundElement foundElement = new FoundElement();
 		
 		final BaseASTIterator iterator = new BaseASTIterator() {
+			
+			@Override
+			public void onPush(BaseASTElement element) {
+				
+				super.onPush(element);
+
+			}
+
 			@Override
 			public boolean onElement(BaseASTElement element) {
 
@@ -61,13 +74,58 @@ public abstract class BaseASTElement extends ASTNode {
 				
 				if (test.test(element)) {
 					foundElement.found = element;
-				
-					continueIteration = false;
+					
+					if (onlyLeaves) {
+						// must continue iteration to check for whether are subnodes
+						continueIteration = true;
+					}
+					else {
+						// non-leaves OK, exit iteration
+						continueIteration = false;
+					}
 				}
 				else {
+					// test returned false, continue searching
 					continueIteration = true;
 				}
 
+				return continueIteration;
+			}
+
+			@Override
+			public boolean onPop(BaseASTElement element) {
+				super.onPop(element);
+				
+				final boolean continueIteration;
+				
+				if (onlyLeaves) {
+					if (foundElement.found != null) {
+						if (foundElement.found != element) {
+							
+							// only reset if not decidedly found, so that not reset by parent nodes
+							if (!foundElement.onlyLeavesElementFound) {
+								// found sub-element so reset found
+								foundElement.found = null;
+							}
+							
+							continueIteration = true;
+						}
+						else {
+							// pop found element without being reset in the meantime
+							foundElement.onlyLeavesElementFound = true;
+							continueIteration = false;
+						}
+					}
+					else {
+						// no element found, continue iteration
+						continueIteration = true;
+					}
+				}
+				else {
+					// not only leaves, continue iteration unless onElement() returned false
+					continueIteration = true;
+				}
+				
 				return continueIteration;
 			}
 		};
@@ -139,8 +197,10 @@ public abstract class BaseASTElement extends ASTNode {
 		}
 
 		@Override
-		public void onPop(BaseASTElement element) {
+		public boolean onPop(BaseASTElement element) {
 			stack.pop();
+			
+			return true;
 		}
 	}
 	
@@ -170,26 +230,46 @@ public abstract class BaseASTElement extends ASTNode {
 	
 	protected final void doIterate(ASTSingle<? extends ASTNode> single, ASTRecurseMode recurseMode, ASTIterator iterator) {
 
-		final BaseASTElement element = (BaseASTElement)single.get();
+		final BaseASTIterator baseASTIterator = (BaseASTIterator)iterator;
 
-		iterator.onPush(element);
-		
-		visit(element, recurseMode, iterator);
+		if (baseASTIterator.isContinueIteration()) {
+	
+			final BaseASTElement element = (BaseASTElement)single.get();
+	
+			iterator.onPush(element);
+			
+			final boolean continueIterationOnVisit = visit(element, recurseMode, iterator);
+	
+			final boolean continueIterationOnPop = iterator.onPop(element);
 
-		iterator.onPop(element);
+			if (!continueIterationOnVisit || !continueIterationOnPop) {
+				baseASTIterator.cancelIteration();
+			}
+		}
 	}
 
 	protected final void doIterate(ASTList<? extends ASTNode> list, ASTRecurseMode recurseMode, ASTIterator iterator) {
 
 		for (ASTNode node : list) {
 			
+			final BaseASTIterator baseASTIterator = (BaseASTIterator)iterator;
+			
+			if (!baseASTIterator.isContinueIteration()) {
+				break;
+			}
+			
 			final BaseASTElement element = (BaseASTElement)node;
 
 			iterator.onPush(element);
 			
-			visit(element, recurseMode, iterator);
+			final boolean continueIterationOnVisit = visit(element, recurseMode, iterator);
 
-			iterator.onPop(element);
+			final boolean continueIterationOnPop = iterator.onPop(element);
+			
+			if (!continueIterationOnVisit || !continueIterationOnPop) {
+				baseASTIterator.cancelIteration();
+				break;
+			}
 		}
 	}
 	
