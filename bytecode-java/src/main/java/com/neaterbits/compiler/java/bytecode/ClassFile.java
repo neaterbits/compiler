@@ -562,21 +562,22 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 	}
 
 	private void storeInConstantPool(int index, ConstantPoolTag tag, long value) {
-		constantPool.storeValue(index, 0, 4, tag.ordinal());
-		constantPool.storeValue(index, 4, 64, value);
+		constantPool.storeValue(index - 1, 0, 4, tag.ordinal());
+		constantPool.storeValue(index - 1, 4, 64, value);
 	}
 
 	private ConstantPoolTag getTagInConstantPool(int index) {
-		return ConstantPoolTag.values()[(int)constantPool.getValue(index, 0, 4)];
+		return ConstantPoolTag.values()[(int)constantPool.getValue(index - 1, 0, 4)];
 	}
 
 	private long getValueInConstantPool(int index) {
-		return constantPool.getValue(index, 4, 64);
+		return constantPool.getValue(index - 1, 4, 64);
 	}
 	
 	final long getValueInConstantPool(int index, ConstantPoolTag tag) {
+
 		if (tag != getTagInConstantPool(index)) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("tag mismatch " + tag + "/" + getTagInConstantPool(index) + " at " + index);
 		}
 		
 		return getValueInConstantPool(index);

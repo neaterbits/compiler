@@ -48,11 +48,13 @@ public class ClassFileReader {
 				throw new ClassFileException("Unknown constant pool tag " + tag);
 			}
 			
+			final int index = i + 1;
+			
 			switch (ctp) {
 			case CLASS: {
 				final int nameIndex = dataInput.readUnsignedShort();
 				
-				readerListener.onConstantPoolClass(i, nameIndex);
+				readerListener.onConstantPoolClass(index, nameIndex);
 				break;
 			}
 				
@@ -60,7 +62,7 @@ public class ClassFileReader {
 				final int classIndex = dataInput.readUnsignedShort();
 				final int nameAndTypeIndex = dataInput.readUnsignedShort();
 				
-				readerListener.onConstantPoolFieldref(i, classIndex, nameAndTypeIndex);
+				readerListener.onConstantPoolFieldref(index, classIndex, nameAndTypeIndex);
 				break;
 			}
 
@@ -68,7 +70,7 @@ public class ClassFileReader {
 				final int classIndex = dataInput.readUnsignedShort();
 				final int nameAndTypeIndex = dataInput.readUnsignedShort();
 				
-				readerListener.onConstantPoolMethodref(i, classIndex, nameAndTypeIndex);
+				readerListener.onConstantPoolMethodref(index, classIndex, nameAndTypeIndex);
 				break;
 			}
 
@@ -76,21 +78,21 @@ public class ClassFileReader {
 				final int classIndex = dataInput.readUnsignedShort();
 				final int nameAndTypeIndex = dataInput.readUnsignedShort();
 				
-				readerListener.onConstantPoolInterfaceMethodref(i, classIndex, nameAndTypeIndex);
+				readerListener.onConstantPoolInterfaceMethodref(index, classIndex, nameAndTypeIndex);
 				break;
 			}
 
 			case STRING:
 				final int stringIndex = dataInput.readUnsignedShort();
 				
-				readerListener.onConstantPoolString(i, stringIndex);
+				readerListener.onConstantPoolString(index, stringIndex);
 				break;
 				
 			case INTEGER: {
 				
 				final int value = dataInput.readInt();
 				
-				readerListener.onConstantPoolInteger(i, value);
+				readerListener.onConstantPoolInteger(index, value);
 				break;
 			}
 			
@@ -98,7 +100,7 @@ public class ClassFileReader {
 				
 				final float value = dataInput.readFloat();
 				
-				readerListener.onConstantPoolFloat(i, value);
+				readerListener.onConstantPoolFloat(index, value);
 				break;
 			}
 				
@@ -106,7 +108,7 @@ public class ClassFileReader {
 				
 				final long value = dataInput.readLong();
 				
-				readerListener.onConstantPoolLong(i, value);
+				readerListener.onConstantPoolLong(index, value);
 				break;
 			}
 			
@@ -114,7 +116,7 @@ public class ClassFileReader {
 				
 				final double value = dataInput.readDouble();
 				
-				readerListener.onConstantPoolDouble(i, value);
+				readerListener.onConstantPoolDouble(index, value);
 				break;
 			}
 			
@@ -122,28 +124,28 @@ public class ClassFileReader {
 				final int nameIndex = dataInput.readUnsignedShort();
 				final int descriptorIndex = dataInput.readUnsignedShort();
 				
-				readerListener.onConstantPoolNameAndType(i, nameIndex, descriptorIndex);
+				readerListener.onConstantPoolNameAndType(index, nameIndex, descriptorIndex);
 				break;
 			}
 			
 			case UTF8:
 				final String string = dataInput.readUTF();
 				
-				readerListener.onConstantPoolUTF8(i, string);
+				readerListener.onConstantPoolUTF8(index, string);
 				break;
 				
 			case METHOD_HANDLE: {
 				final int referenceKind = dataInput.readUnsignedByte();
 				final int referenceIndex = dataInput.readUnsignedShort();
 				
-				readerListener.onConstantPoolMethodHandle(i, referenceKind, referenceIndex);
+				readerListener.onConstantPoolMethodHandle(index, referenceKind, referenceIndex);
 				break;
 			}
 				
 			case METHOD_TYPE: {
 				final int descriptorIndex = dataInput.readUnsignedShort();
 				
-				readerListener.onConstantPoolMethodType(i, descriptorIndex);
+				readerListener.onConstantPoolMethodType(index, descriptorIndex);
 				break;
 			}
 			
@@ -151,7 +153,7 @@ public class ClassFileReader {
 				final int bootstrapMethodAttrIndex = dataInput.readUnsignedShort();
 				final int nameAndTypeIndex = dataInput.readUnsignedShort();
 				
-				readerListener.onConstantPoolInvokeDynamic(i, bootstrapMethodAttrIndex, nameAndTypeIndex);
+				readerListener.onConstantPoolInvokeDynamic(index, bootstrapMethodAttrIndex, nameAndTypeIndex);
 				break;
 			}
 			
@@ -212,7 +214,7 @@ public class ClassFileReader {
 			final int descriptorIndex = dataInput.readUnsignedShort();
 			final int attributesCount = dataInput.readUnsignedShort();
 			
-			readerListener.onField(i, accessFlags, nameIndex, descriptorIndex, attributesCount);
+			readerListener.onMethod(i, accessFlags, nameIndex, descriptorIndex, attributesCount);
 		
 			final int methodIndex = i;
 			
@@ -235,7 +237,6 @@ public class ClassFileReader {
 			final int attributesLength = dataInput.readInt();
 			
 			onAttribute.onAttribute(i, nameIndex, attributesLength);
-			
 		}
 	}
 
