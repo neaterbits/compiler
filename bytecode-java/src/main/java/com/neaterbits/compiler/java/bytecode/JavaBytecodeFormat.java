@@ -68,8 +68,17 @@ public class JavaBytecodeFormat implements BytecodeFormat {
 		return classBytecode;
 	}
 
+	
+	@Override
+	public ClassBytecode loadClassBytecode(InputStream inputStream) throws IOException, ClassFileException {
+		return JavaBytecodeFormat.loadClassByteCode(inputStream);
+	}
+
 	private static ClassBytecode loadClassByteCode(TypeName className, InputStream inputStream) throws IOException, ClassFileException {
+		return loadClassByteCode(inputStream);
+	}
 		
+	private static ClassBytecode loadClassByteCode(InputStream inputStream) throws IOException, ClassFileException {
 		final ClassFile classFile = new ClassFile();
 		
 		try {

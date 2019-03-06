@@ -16,8 +16,8 @@ public class ClassFileReaderTest {
 	@Test
 	public void testClassFileLoading() throws IOException, ClassFileException {
 	
-		final File file = new File("target/classes/com/neaterbits/compiler/java/bytecode/ClassFileReader.class");
-
+		final File file = new File("target/classes/com/neaterbits/compiler/java/bytecode/reader/ClassFileReader.class");
+		
 		try (FileInputStream inputStream = new FileInputStream(file)) {
 
 			ClassFileReader.readClassFile(inputStream, new ReaderListener());

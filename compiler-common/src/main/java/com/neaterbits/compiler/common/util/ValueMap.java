@@ -7,16 +7,24 @@ public final class ValueMap {
 	
 	private final long [] values;
 
+	static int getAllocationSize(int bitsPerValue, int valueCount) {
+		
+		final int numBitsTotal = bitsPerValue * valueCount;
+		
+		return ((numBitsTotal - 1) / 64) + 1;
+	}
+	
 	public ValueMap(int bitsPerValue, int valueCount) {
 		this.bitsPerValue = bitsPerValue;
 		this.valueCount = valueCount;
 		
-		final int numLongs = (((bitsPerValue * valueCount) + 64) / 64) - 1;
+		final int numLongs = getAllocationSize(bitsPerValue, valueCount);
 		
 		this.values = new long[numLongs];
 	}
 	
 	public long getValue(int index) {
+		
 		if (bitsPerValue > 64) {
 			throw new IllegalStateException();
 		}
@@ -34,6 +42,10 @@ public final class ValueMap {
 			throw new IllegalArgumentException();
 		}
 		
+		if (index < 0) {
+			throw new IllegalArgumentException();
+		}
+		
 		final int bitOffset = index * bitsPerValue + offset;
 
 		final int arrayIndex = bitOffset / 64;
@@ -44,14 +56,14 @@ public final class ValueMap {
 		long result;
 		
 		if (numBits <= spaceInLong) {
-			result = (values[arrayIndex] >> bitOffsetInLong) & Bits.mask(numBits);
+			result = ((values[arrayIndex] >> bitOffsetInLong) & Bits.maskForNumBits(numBits));
 		}
 		else {
 			result = values[arrayIndex] >> bitOffsetInLong;
 			
 			final int spaceInNextLong = numBits - spaceInLong;
 			
-			result |= values[arrayIndex + 1] & Bits.mask(spaceInNextLong);
+			result |= values[arrayIndex + 1] & Bits.maskForNumBits(spaceInNextLong);
 		}
 
 		return result;
@@ -72,12 +84,16 @@ public final class ValueMap {
 			throw new IllegalArgumentException();
 		}
 		
+		if (index < 0) {
+			throw new IllegalArgumentException();
+		}
+		
 		if (index >= valueCount) {
 			throw new IllegalArgumentException();
 		}
 		
-		if (value > Bits.mask(numBits)) {
-			throw new IllegalArgumentException();
+		if (numBits < 64 && value > Bits.maskForNumBits(numBits)) {
+			throw new IllegalArgumentException("value " + value + " > mask " + Bits.maskForNumBits(numBits) + " for " + numBits);
 		}
 		
 		final int bitOffset = index * bitsPerValue + offset;
@@ -86,13 +102,13 @@ public final class ValueMap {
 		final int bitOffsetInLong = bitOffset % 64;
 		
 		final int spaceInLong = 64 - bitOffsetInLong;
-	
 		
 		if (numBits <= spaceInLong) {
+			values[arrayIndex] &= ~(Bits.mask(numBits, bitOffsetInLong));
 			values[arrayIndex] |= value << bitOffsetInLong;
 		}
 		else {
-			values[arrayIndex] |= (value & Bits.mask(spaceInLong)) << bitOffsetInLong;
+			values[arrayIndex] |= (value & Bits.maskForNumBits(spaceInLong)) << bitOffsetInLong;
 			values[arrayIndex + 1] |= value >> spaceInLong;
 		}
 	}

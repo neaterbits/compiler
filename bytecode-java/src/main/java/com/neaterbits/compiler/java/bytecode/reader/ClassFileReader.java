@@ -262,9 +262,14 @@ public class ClassFileReader {
 		case "Exceptions":
 			attributesListener.onExceptions(memberIndex, attributeLength, dataInput);
 			break;
+			
+		case "LineNumberTable":
+		case "INDENT":
+			dataInput.skipBytes(attributeLength);
+			break;
 		
 		default:
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("Unknown attribute " + constant);
 		}
 	}
 }

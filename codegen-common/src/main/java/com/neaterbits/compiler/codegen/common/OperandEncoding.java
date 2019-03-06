@@ -14,7 +14,7 @@ public class OperandEncoding {
 	 */
 
 	private static final int OFFSET_BITS = 12;
-	private static final long OFFSET_MASK = Bits.mask(OFFSET_BITS);
+	private static final long OFFSET_MASK = Bits.maskForNumBits(OFFSET_BITS);
 	
 	private static final long IS_STACK = 1L << (OFFSET_BITS);
 	private static final long LOOP_COUNTER = 1L << (OFFSET_BITS + 1);

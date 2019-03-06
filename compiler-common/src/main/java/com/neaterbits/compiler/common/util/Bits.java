@@ -2,22 +2,27 @@ package com.neaterbits.compiler.common.util;
 
 public class Bits {
 	
-	public static long mask(int numBits) {
-		return (1 << (numBits + 1)) - 1;
+	public static long maskForNumBits(int numBits) {
+		return (1L << (numBits)) - 1;
 	}
 
 	public static long mask(int numBits, int shift) {
-		return mask(numBits) << shift;
+		return maskForNumBits(numBits) << shift;
 	}
 
 	public static int getNumBitsForStoringMaxValue(long value) {
+		
 		if (value < 0) {
 			throw new IllegalArgumentException();
 		}
 		
+		// Find first bit set from MSB
 		for (int i = 63; i >= 0; -- i) {
-			if ((value & (1L << i)) != 0L) {
-				return i;
+			
+			final long mask = 1L << i;
+			
+			if ((value & mask) != 0L) {
+				return i + 1;
 			}
 		}
 		
