@@ -3,7 +3,16 @@ package com.neaterbits.compiler.common.util;
 public class Bits {
 	
 	public static long maskForNumBits(int numBits) {
-		return (1L << (numBits)) - 1;
+		
+		if (numBits < 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (numBits > 64) {
+			throw new IllegalArgumentException();
+		}
+		
+		return numBits == 64 ? 0xFFFFFFFFFFFFFFFFL : (1L << (numBits)) - 1;
 	}
 
 	public static long mask(int numBits, int shift) {

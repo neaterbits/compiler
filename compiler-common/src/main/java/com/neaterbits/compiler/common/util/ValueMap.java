@@ -1,7 +1,20 @@
 package com.neaterbits.compiler.common.util;
 
+import java.util.Arrays;
+
+/*
+ * For storing entries of numbers of up to 64 bit size
+ * 
+ * For saving storage space.
+ * 
+ * Has bitsPerValue where bitsPerValue can be > 64 (for storing multiple numbers, each <= 64 bits)
+ * and count which are the number of such blocks.
+ * 
+ */
 public final class ValueMap {
 
+	private static final Boolean DEBUG = false;
+	
 	private final int bitsPerValue;
 	private final int valueCount;
 	
@@ -21,6 +34,12 @@ public final class ValueMap {
 		final int numLongs = getAllocationSize(bitsPerValue, valueCount);
 		
 		this.values = new long[numLongs];
+	}
+	
+	ValueMap(int bitsPerValue, int valueCount, long setValue) {
+		this(bitsPerValue, valueCount);
+		
+		Arrays.fill(values, setValue);
 	}
 	
 	public long getValue(int index) {
@@ -54,16 +73,44 @@ public final class ValueMap {
 		final int spaceInLong = 64 - bitOffsetInLong;
 	
 		long result;
-		
+
+		if (DEBUG) {
+			System.out.println("## get at offset " + offset + " with numbits " + numBits 
+				+ " spaceInLong " + spaceInLong + " bitOffset " + bitOffsetInLong + " arrayIndex " + arrayIndex);
+		}
+
 		if (numBits <= spaceInLong) {
-			result = ((values[arrayIndex] >> bitOffsetInLong) & Bits.maskForNumBits(numBits));
+
+			final long getBitsMask = Bits.maskForNumBits(numBits);
+			final long getBits = (values[arrayIndex] >> bitOffsetInLong);
+		
+			if (DEBUG) {
+				System.out.format("## space for numbits with mask 0x%016x, get bits 0x%016x\n", getBitsMask, getBits);
+			}
+			
+			result = (getBits & getBitsMask);
 		}
 		else {
-			result = values[arrayIndex] >> bitOffsetInLong;
+
+			final int numBits0 = spaceInLong;
+			final int numBits1 = numBits - spaceInLong;
+
+			final long getBitsMask0 = Bits.mask(numBits0, bitOffsetInLong);
+			final long getBitsMask1 = Bits.maskForNumBits(numBits1);
+
+
+			final long getBits0 = (values[arrayIndex] & getBitsMask0) >>> bitOffsetInLong;
+			final long getBits1 = (values[arrayIndex + 1] & getBitsMask1);
 			
-			final int spaceInNextLong = numBits - spaceInLong;
-			
-			result |= values[arrayIndex + 1] & Bits.maskForNumBits(spaceInNextLong);
+			result = getBits0;
+			result |= getBits1 << numBits0;
+
+			if (DEBUG) {
+				System.out.format("## not enough space for numbits get [0] mask 0x%016x, get bits 0x%016x, [1] mask 0x%016x, get bits 0x%016x %d/%d\n",
+					getBitsMask0, getBits0,
+					getBitsMask1, getBits1,
+					numBits0, numBits1);
+			}
 		}
 
 		return result;
@@ -79,6 +126,7 @@ public final class ValueMap {
 	}
 
 	public void storeValue(int index, int offset, int numBits, long value) {
+
 		
 		if (numBits > 64) {
 			throw new IllegalArgumentException();
@@ -102,14 +150,49 @@ public final class ValueMap {
 		final int bitOffsetInLong = bitOffset % 64;
 		
 		final int spaceInLong = 64 - bitOffsetInLong;
-		
+
+		if (DEBUG) {
+			System.out.println("## store at " + offset + " with numbits " + numBits + " for value " + value
+				+ " spaceInLong " + spaceInLong + " bitOffset " + bitOffsetInLong);
+		}
+			
 		if (numBits <= spaceInLong) {
-			values[arrayIndex] &= ~(Bits.mask(numBits, bitOffsetInLong));
-			values[arrayIndex] |= value << bitOffsetInLong;
+			
+			final long clearBitsMask = Bits.mask(numBits, bitOffsetInLong);
+			final long setBits = value << bitOffsetInLong;
+		
+			if (DEBUG) {
+				System.out.format("## space for numbits clear with mask 0x%016x, set bits 0x%016x\n", clearBitsMask, setBits);
+			}
+			
+			values[arrayIndex] &= ~clearBitsMask;
+			values[arrayIndex] |= setBits;
 		}
 		else {
-			values[arrayIndex] |= (value & Bits.maskForNumBits(spaceInLong)) << bitOffsetInLong;
-			values[arrayIndex + 1] |= value >> spaceInLong;
+
+			final int numBits0 = spaceInLong;
+			
+			final long clearBitsMask0 = Bits.mask(numBits0, bitOffsetInLong);
+			final long setBits0 = (value & Bits.maskForNumBits(numBits0)) << bitOffsetInLong;
+			
+			final int numBits1 = numBits - spaceInLong;
+			
+			final long clearBitsMask1 = Bits.maskForNumBits(numBits1);
+			final long setBits1 = value >>> numBits0;
+			
+			
+			if (DEBUG) {
+				System.out.format("## not enough space for numbits clear [0] mask 0x%016x, set bits 0x%016x, [1] mask 0x%016x, set bits 0x%016x %d/%d\n",
+						clearBitsMask0, setBits0,
+						clearBitsMask1, setBits1,
+						numBits0, numBits1);
+			}
+
+			values[arrayIndex] &= ~clearBitsMask0;
+			values[arrayIndex] |= setBits0;
+			
+			values[arrayIndex + 1] &= ~clearBitsMask1;
+			values[arrayIndex + 1] |= setBits1;
 		}
 	}
 }

@@ -43,6 +43,22 @@ public class BitsTest {
 		assertThat(Bits.maskForNumBits(7)).isEqualTo(127);
 		assertThat(Bits.maskForNumBits(8)).isEqualTo(255);
 		assertThat(Bits.maskForNumBits(63)).isEqualTo(Long.MAX_VALUE);
+		assertThat(Bits.maskForNumBits(64)).isEqualTo(0xFFFFFFFFFFFFFFFFL);
+
+		try {
+			Bits.maskForNumBits(-1);
+			fail("Expected exception");
+		}
+		catch (IllegalArgumentException ex) {
+		}
+
+		try {
+			Bits.maskForNumBits(65);
+			fail("Expected exception");
+		}
+		catch (IllegalArgumentException ex) {
+		}
+
 	}
 	
 	
