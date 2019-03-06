@@ -191,15 +191,10 @@ public class ClassFileReader {
 		
 			final int fieldIndex = i;
 			
-			readAttributes(dataInput, readerListener, attributesCount,
+			readAttributes(dataInput, attributesCount,
 					(attributeIndex, attributeNameIndex, attributeLength)
 						-> readerListener.onFieldAttribute(fieldIndex, attributeIndex, attributeNameIndex, attributeLength, dataInput));
 		}
-	}
-	
-	@FunctionalInterface
-	interface OnAttribute {
-		void onAttribute(int attributeIndex, int nameIndex, int attributesLength) throws IOException;
 	}
 	
 	private static void readMethods(DataInputStream dataInput, ClassFileReaderListener readerListener) throws IOException {
@@ -218,18 +213,13 @@ public class ClassFileReader {
 		
 			final int methodIndex = i;
 			
-			readAttributes(dataInput, readerListener, attributesCount,
+			readAttributes(dataInput, attributesCount,
 					(attributeIndex, attributeNameIndex, attributeLength)
 						-> readerListener.onMethodAttribute(methodIndex, attributeIndex, attributeNameIndex, attributeLength, dataInput));
 		}
 	}
 
-	private static void readAttributes(
-			DataInputStream dataInput,
-			ClassFileReaderListener readerListener,
-			int attributesCount,
-			OnAttribute onAttribute
-			) throws IOException {
+	public static void readAttributes(DataInput dataInput, int attributesCount, OnAttribute onAttribute) throws IOException {
 		
 		for (int i = 0; i < attributesCount; ++ i) {
 			
@@ -263,12 +253,19 @@ public class ClassFileReader {
 		case "Exceptions":
 			attributesListener.onExceptions(memberIndex, attributeLength, dataInput);
 			break;
-			
-		case "LineNumberTable":
-		case "INDENT":
-			dataInput.skipBytes(attributeLength);
+
+		case "LocalVariableTable":
+			attributesListener.onLocalVariableTable(memberIndex, attributeLength, dataInput);
 			break;
 		
+		case "RuntimeVisibleAnnotations":
+			attributesListener.onRuntimeVisibleAnnotations(memberIndex, attributeLength, dataInput);
+			break;
+			
+		case "Signature":
+			attributesListener.onSignature(memberIndex, dataInput.readUnsignedShort());
+			break;
+			
 		default:
 			throw new UnsupportedOperationException("Unknown attribute " + constant);
 		}

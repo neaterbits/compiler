@@ -712,13 +712,13 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 	private final ClassFileAttributesListener methodAttributeListener = new ClassFileAttributesListener() {
 		
 		@Override
-		public void onStackMapTable(int memberIndex, int attributeLength, DataInput dataInput) {
-			
+		public void onStackMapTable(int memberIndex, int attributeLength, DataInput dataInput) throws IOException {
+			dataInput.skipBytes(attributeLength);
 		}
 		
 		@Override
-		public void onExceptions(int memberIndex, int attributeLength, DataInput dataInput) {
-			
+		public void onExceptions(int memberIndex, int attributeLength, DataInput dataInput) throws IOException {
+			dataInput.skipBytes(attributeLength);
 		}
 		
 		@Override
@@ -739,10 +739,49 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 				dataInput.readFully(data);
 
 				methods[memberIndex].setBytecode(maxLocals, maxStack, data);
+				
+				final int exceptionTableLength = dataInput.readUnsignedShort();
+				
+				final long [] exceptionTable = new long[exceptionTableLength];
+				
+				for (int i = 0; i < exceptionTableLength; ++ i) {
+					exceptionTable[i] = 
+							  dataInput.readUnsignedShort() << 48
+							| dataInput.readUnsignedShort() << 32
+							| dataInput.readUnsignedShort() << 16
+							| dataInput.readUnsignedShort() << 0;
+				}
+				
+				methods[memberIndex].setExceptionTable(exceptionTable);
+
+				final int attributesCount = dataInput.readUnsignedShort();
+				
+				methods[memberIndex].setCodeAttributesCount(attributesCount);
+				
+				ClassFileReader.readAttributes(dataInput, attributesCount, 
+						(codeAttributeIndex, codeAttributeNameIndex, codeAttributeLength)
+							-> methods[memberIndex].onCodeAttribute(codeAttributeIndex, codeAttributeNameIndex, codeAttributeLength, dataInput));
 			}
 			catch (IOException ex) {
 				throw new IllegalStateException(ex);
 			}
+		}
+
+		@Override
+		public void onLocalVariableTable(int memberIndex, int attributeLength, DataInput dataInput) throws IOException {
+			dataInput.skipBytes(attributeLength);
+		}
+
+		@Override
+		public void onRuntimeVisibleAnnotations(int memberIndex, int attributeLength, DataInput dataInput)
+				throws IOException {
+			
+			dataInput.skipBytes(attributeLength);
+		}
+
+		@Override
+		public void onSignature(int memberIndex, int signatureIndex) {
+			
 		}
 	};
 	
