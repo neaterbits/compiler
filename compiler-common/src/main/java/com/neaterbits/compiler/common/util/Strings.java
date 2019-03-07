@@ -48,6 +48,30 @@ public class Strings {
 		return strings.toArray(new String[strings.size()]);
 	}
 
+	public static boolean startsWithToFindLowerCase(String toSearch, String toFind) {
+		
+		boolean startsWith;
+		
+		final int toSearchLength = toSearch.length();
+		final int toFindLength = toFind.length();
+		
+		if (toSearchLength < toFindLength) {
+			startsWith = false;
+		}
+		else {
+			startsWith = true;
+			
+			for (int i = 0; i < toFindLength; ++ i) {
+				if (Character.toLowerCase(toSearch.charAt(i)) != toFind.charAt(i)) {
+					startsWith = false;
+					break;
+				}
+			}
+		}
+
+		return startsWith;
+	}
+	
 	public static String join(String[] strings, char separator) {
 		return join(strings, separator, strings.length);
 	}
