@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
@@ -30,6 +31,27 @@ public final class CompleteName {
 
 	public BaseTypeName getName() {
 		return name;
+	}
+	
+	public TypeName toTypeName() {
+		
+		final String [] outerTypesArray;
+		
+		if (outerTypes == null) {
+			outerTypesArray = null;
+		}
+		else {
+			outerTypesArray = new String[outerTypes.size()];
+			
+			for (int i = 0; i < outerTypes.size(); ++ i) {
+				outerTypesArray[i] = outerTypes.get(i).getName();
+			}
+		}
+		
+		return new TypeName(
+				namespace.getParts(),
+				outerTypesArray,
+				name.getName());
 	}
 	
 	public ScopedName toScopedName() {
