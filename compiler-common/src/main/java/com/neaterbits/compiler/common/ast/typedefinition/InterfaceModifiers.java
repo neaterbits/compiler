@@ -1,32 +1,11 @@
 package com.neaterbits.compiler.common.ast.typedefinition;
 
 import java.util.List;
-import java.util.Objects;
 
-import com.neaterbits.compiler.common.Context;
-import com.neaterbits.compiler.common.ast.ASTIterator;
-import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.BaseASTElement;
-import com.neaterbits.compiler.common.ast.list.ASTList;
+public final class InterfaceModifiers extends BaseModifiers<InterfaceModifier, InterfaceModifierHolder> {
 
-public final class InterfaceModifiers extends BaseASTElement {
-
-	private final ASTList<InterfaceModifierHolder> modifiers;
-
-	public InterfaceModifiers(Context context, List<InterfaceModifierHolder> modifiers) {
-		super(context);
+	public InterfaceModifiers(List<InterfaceModifierHolder> modifiers) {
 		
-		Objects.requireNonNull(modifiers);
-
-		this.modifiers = makeList(modifiers);
-	}
-
-	public ASTList<InterfaceModifierHolder> getModifiers() {
-		return modifiers;
-	}
-
-	@Override
-	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		doIterate(modifiers, recurseMode, iterator);
+		super(modifiers);
 	}
 }

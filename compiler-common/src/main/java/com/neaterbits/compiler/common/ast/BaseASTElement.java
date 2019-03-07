@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.common.ast;
 
-
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -19,6 +19,11 @@ public abstract class BaseASTElement extends ASTNode {
 	private final Context context;
 
 	public BaseASTElement(Context context) {
+		
+		if (!isPlaceholderElement()) {
+			Objects.requireNonNull(context);
+		}
+		
 		this.context = context;
 	}
 
@@ -26,6 +31,10 @@ public abstract class BaseASTElement extends ASTNode {
 		return context;
 	}
 
+	public final boolean isPlaceholderElement() {
+		return this instanceof BasePlaceholderASTElement;
+	}
+	
 	@Override
 	public String toString() {
 		return getClass().getSimpleName();
@@ -52,7 +61,6 @@ public abstract class BaseASTElement extends ASTNode {
 		
 		private boolean onlyLeavesElementFound;
 	}
-	
 	
 	public final BaseASTElement findElement(boolean onlyLeaves, Predicate<BaseASTElement> test) {
 
@@ -164,12 +172,11 @@ public abstract class BaseASTElement extends ASTNode {
 		iterator.onElement(this);
 	}
 	
-	
 	private static BaseASTElement returnElement(BaseASTElement element) {
 		return element;
 	}
 
-	private static class ASTVisitorForStack<T, STACKVIEW extends StackView<T>, STACK extends Stack<T>> implements ASTIterator {
+	private static class ASTVisitorForStack<T, STACKVIEW extends StackView<T>, STACK extends Stack<T>> extends BaseASTIterator {
 		
 		private final ASTStackVisitor<T, STACKVIEW> stackVisitor;
 		private final STACKVIEW stackView;

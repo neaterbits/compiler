@@ -160,7 +160,7 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 					context,
 					functionPointerType,
 					primaryList,
-					new ParameterList(context, params));
+					new ParameterList(params));
 			
 			converted = invocationExpression;
 			

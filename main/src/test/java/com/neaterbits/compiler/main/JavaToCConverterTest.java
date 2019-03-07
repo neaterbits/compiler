@@ -146,7 +146,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		}
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				new Context("declarations", 0, 0, 0, 0, null),
+				new Context("declarations", 0, 0, 0, 0, 0, 0, null),
 				Collections.emptyList(),
 				compilationCode);
 

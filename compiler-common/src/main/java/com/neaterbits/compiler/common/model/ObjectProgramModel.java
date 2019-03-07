@@ -3,7 +3,11 @@ package com.neaterbits.compiler.common.model;
 import java.io.File;
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.ArrayStack;
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.Stack;
+import com.neaterbits.compiler.common.StackDelegator;
+import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Program;
@@ -32,19 +36,99 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		
 	}
 	
+	private static class Element {
+		private final BaseASTElement astElement;
+		private final ISourceToken token;
+		
+		Element(BaseASTElement astElement, ISourceToken token) {
+			this.astElement = astElement;
+			this.token = token;
+		}
+	}
+	
+	@Override
+	public void iterate(CompilationUnit sourceFile, SourceTokenVisitor visitor) {
+
+		final ArrayStack<Element> stack = new ArrayStack<>();
+		
+		final Stack<Element> stackWrapper = new StackDelegator<Element>(stack) {
+
+			@Override
+			public void push(Element element) {
+
+				super.push(element);
+
+				if (!element.astElement.isPlaceholderElement()) {
+					visitor.onPush(element.token);
+				}
+			}
+
+			@Override
+			public Element pop() {
+
+				final Element element = super.pop();
+				
+				if (!element.astElement.isPlaceholderElement()) {
+					visitor.onPop(element.token);
+				}
+				
+				return element;
+			}
+		};
+
+		sourceFile.iterateNodeFirstWithStack(
+				stackWrapper,
+				
+				baseASTElement -> new Element(
+						baseASTElement,
+						baseASTElement.isPlaceholderElement() ? null : makeSourceToken(baseASTElement)),
+				
+				new ASTVisitor() {
+			
+			@Override
+			public void onElement(BaseASTElement element) {
+				
+				if (stack.isEmpty()) {
+					
+					if (element.isPlaceholderElement()) {
+						throw new IllegalStateException();
+					}
+					
+					visitor.onToken(makeSourceToken(element));
+				}
+				else {
+					
+					final Element e = stack.get();
+					
+					if (e.token != null) {
+						visitor.onToken(e.token);
+					}
+					else {
+						if (!e.astElement.isPlaceholderElement()) {
+							throw new IllegalStateException();
+						}
+					}
+				}
+			}
+		});
+	}
+
+
 	@Override
 	public CompilationUnit getCompilationUnit(ParsedFile sourceFile) {
 		return sourceFile.getParsed();
 	}
 
 	@Override
-	public SourceToken getTokenAt(CompilationUnit compilationUnit, long offset) {
+	public ISourceToken getTokenAt(CompilationUnit compilationUnit, long offset) {
 
 		final BaseASTElement found = compilationUnit.findElement(true, element -> {
 
 			final Context context = element.getContext();
 
-			return offset >= context.getStartOffset() && offset <= context.getEndOffset();
+			return     !element.isPlaceholderElement()
+					&& offset >= context.getStartOffset()
+					&& offset <= context.getEndOffset();
 		});
 		
 		return found != null ? makeSourceToken(found) : null;
@@ -70,8 +154,8 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 
 		return new SourceToken(
 				sourceTokenType,
-				context.getStartOffset(),
-				context.getText().length(),
+				context != null ? context.getStartOffset() : -1L,
+				context != null ? context.getText().length() : 0L,
 				element);
 
 	}

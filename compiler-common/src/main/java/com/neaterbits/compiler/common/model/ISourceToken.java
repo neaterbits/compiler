@@ -7,4 +7,14 @@ public interface ISourceToken {
 	long getStartOffset();
 
 	long getLength();
+	
+	default boolean isPlaceholderToken() {
+		return getStartOffset() == -1L;
+	}
+
+	String getTokenTypeDebugName();
+	
+	default String getTokenDebugString() {
+		return getTokenTypeDebugName() + " [" + getStartOffset() + ", " + getLength() + "] ";
+	}
 }

@@ -3,19 +3,17 @@ package com.neaterbits.compiler.common.ast.typedefinition;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.BaseASTElement;
+import com.neaterbits.compiler.common.ast.BasePlaceholderASTElement;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 
 public abstract class BaseModifiers<MODIFIER, MODIFIER_HOLDER extends BaseModifierHolder<MODIFIER>>
-			extends BaseASTElement {
+			extends BasePlaceholderASTElement {
 
 	private final ASTList<MODIFIER_HOLDER> modifiers;
 
-	protected BaseModifiers(Context context, List<MODIFIER_HOLDER> modifiers) {
-		super(context);
+	protected BaseModifiers(List<MODIFIER_HOLDER> modifiers) {
 
 		Objects.requireNonNull(modifiers);
 		

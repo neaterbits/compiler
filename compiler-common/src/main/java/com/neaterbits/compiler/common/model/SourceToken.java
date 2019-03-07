@@ -44,6 +44,11 @@ public final class SourceToken implements ISourceToken {
 	public long getLength() {
 		return length;
 	}
+	
+	@Override
+	public String getTokenTypeDebugName() {
+		return astElement.getClass().getSimpleName();
+	}
 
 	BaseASTElement getAstElement() {
 		return astElement;

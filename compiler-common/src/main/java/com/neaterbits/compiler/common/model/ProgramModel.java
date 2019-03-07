@@ -8,6 +8,8 @@ public interface ProgramModel<MODULE, PARSED_FILE, COMPILATION_UNIT> {
 	
 	COMPILATION_UNIT getCompilationUnit(PARSED_FILE sourceFile);
 
+	void iterate(COMPILATION_UNIT sourceFile, SourceTokenVisitor iterator);
+	
 	ISourceToken getTokenAt(COMPILATION_UNIT sourceFile, long offset);
 	
 }

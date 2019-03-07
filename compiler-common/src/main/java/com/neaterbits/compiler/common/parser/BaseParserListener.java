@@ -407,7 +407,7 @@ public abstract class BaseParserListener {
 		
 		final List<ComplexMemberDefinition> classCode = entry.getList();
 
-		final ClassModifiers classModifiers = new ClassModifiers(context, entry.getModifiers());
+		final ClassModifiers classModifiers = new ClassModifiers(entry.getModifiers());
 		
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
@@ -532,7 +532,6 @@ public abstract class BaseParserListener {
 		final StackConstructorInvocation stackConstructorInvocation = pop();
 		
 		final ParameterList parameterList = new ParameterList(
-				context,
 				stackConstructorInvocation.getParameters() != null
 					? stackConstructorInvocation.getParameters()
 					: Collections.emptyList());
@@ -566,7 +565,7 @@ public abstract class BaseParserListener {
 		
 		final ConstructorMember constructorMember = new ConstructorMember(
 				context,
-				new ConstructorModifiers(context, stackConstructor.getModifiers()),
+				new ConstructorModifiers(stackConstructor.getModifiers()),
 				constructor);
 
 		final ConstructorMemberSetter constructorMemberSetter = get();
@@ -738,7 +737,7 @@ public abstract class BaseParserListener {
 		
 		final ClassMethodMember methodMember = new ClassMethodMember(
 				context,
-				new ClassMethodModifiers(context, method.getModifiers()), method.makeMethod(context));
+				new ClassMethodModifiers(method.getModifiers()), method.makeMethod(context));
 
 		methodMemberSetter.addMethod(methodMember);
 		
@@ -826,7 +825,7 @@ public abstract class BaseParserListener {
 			
 			final ClassDataFieldMember dataFieldMember = new ClassDataFieldMember(
 					context,
-					new FieldModifiers(context, stackFieldDeclarationList.getModifiers()),
+					new FieldModifiers(stackFieldDeclarationList.getModifiers()),
 					typeReference,
 					new FieldName(element.getName().getName()),
 					initializer);
@@ -912,7 +911,7 @@ public abstract class BaseParserListener {
 		
 		final List<ComplexMemberDefinition> interfaceCode = entry.getList();
 
-		final InterfaceModifiers interfaceModifiers = new InterfaceModifiers(context, entry.getModifiers());
+		final InterfaceModifiers interfaceModifiers = new InterfaceModifiers(entry.getModifiers());
 		
 		final InterfaceDefinition classDefinition = new InterfaceDefinition(
 				context,
@@ -965,7 +964,7 @@ public abstract class BaseParserListener {
 				context,
 				new EnumConstantName(stackEnumConstant.getName()),
 				stackEnumConstant.getParameters() != null
-					? new ParameterList(context, stackEnumConstant.getParameters())
+					? new ParameterList(stackEnumConstant.getParameters())
 					: null,
 				stackEnumConstant.getList());
 		
@@ -985,7 +984,7 @@ public abstract class BaseParserListener {
 		
 		final EnumDefinition enumDefinition = new EnumDefinition(
 				context,
-				new ClassModifiers(context, stackEnum.getModifiers()),
+				new ClassModifiers(stackEnum.getModifiers()),
 				new ClassDeclarationName(stackEnum.getNameContext(), new ClassName(stackEnum.getName())),
 				stackEnum.getImplementedInterfaces(),
 				stackEnum.getConstants(),
@@ -1076,7 +1075,7 @@ public abstract class BaseParserListener {
 		
 		final InterfaceMethodMember methodMember = new InterfaceMethodMember(
 				context,
-				new InterfaceMethodModifiers(context, method.getModifiers()), method.makeMethod(context));
+				new InterfaceMethodModifiers(method.getModifiers()), method.makeMethod(context));
 
 		methodMemberSetter.addMethod(methodMember);
 		
@@ -1499,7 +1498,6 @@ public abstract class BaseParserListener {
 				classInstanceCreationExpression.getType(),
 				classInstanceCreationExpression.getConstructorName(),
 				new ParameterList(
-						context,
 						classInstanceCreationExpression.getParameters() != null
 							? classInstanceCreationExpression.getParameters()
 							: Collections.emptyList()));
@@ -1590,7 +1588,6 @@ public abstract class BaseParserListener {
 				stackMethodInvocation.getObject(),
 				stackMethodInvocation.getName(),
 				new ParameterList(
-						context,
 						stackMethodInvocation.getParameters() != null
 							? stackMethodInvocation.getParameters()
 							: Collections.emptyList()));

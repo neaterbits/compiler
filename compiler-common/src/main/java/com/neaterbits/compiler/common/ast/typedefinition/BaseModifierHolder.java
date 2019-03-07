@@ -22,6 +22,10 @@ public abstract class BaseModifierHolder<MODIFIER> extends BaseASTElement {
 		return delegate;
 	}
 
+	public final MODIFIER getModifier() {
+		return delegate;
+	}
+	
 	@Override
 	protected final void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
