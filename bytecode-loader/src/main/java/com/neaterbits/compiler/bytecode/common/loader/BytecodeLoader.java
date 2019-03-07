@@ -17,7 +17,7 @@ public class BytecodeLoader<CLASS, METHOD> {
 	
 	private volatile boolean isRunning;
 	
-	private final HashTypeMap typeNameMap;
+	private final IntegerTypeMap typeNameMap;
 	private final LoadedClassesCache loadedClasses;
 	
 	private final LoadMethodQueues<METHOD> loadQueues;
@@ -39,7 +39,7 @@ public class BytecodeLoader<CLASS, METHOD> {
 		
 		this.scannedMethodsArray = new ThreadsafeArray<>(new LoadedMethod[10000]);
 		
-		this.typeNameMap = new HashTypeMap();
+		this.typeNameMap = new IntegerTypeMap();
 		
 		final LoaderMaps loaderMaps = new LoaderMaps(
 				codeMap,
@@ -70,7 +70,7 @@ public class BytecodeLoader<CLASS, METHOD> {
 	
 	public METHOD loadInitialMethod(ThreadData thread, TypeName className, String methodName, List<FieldType> parameterTypes) {
 
-		final int type = typeNameMap.getType(className);
+		final int type = typeNameMap.getTypeNo(className);
 		
 		final METHOD method;
 		

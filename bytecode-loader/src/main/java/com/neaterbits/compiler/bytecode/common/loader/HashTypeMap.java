@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.TypeMap;
@@ -11,33 +13,49 @@ import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.resolver.codemap.CodeMap;
 import com.neaterbits.compiler.common.resolver.codemap.CodeMap.TypeResult;
 
-public final class HashTypeMap implements TypeMap {
+public class HashTypeMap<T> implements TypeMap {
 
 	@FunctionalInterface
 	public interface LoadType {
 		ClassBytecode load(TypeName typeName);
 	}
 	
-	private final Map<TypeName, Integer> typeByName;
+	@FunctionalInterface
+	public interface CreateType<TYPE> {
+		TYPE create(int typeNo, ClassBytecode classBytecode);
+	}
 
-	public HashTypeMap() {
+	@FunctionalInterface
+	public interface GetTypeNo<TYPE> {
+		int getTypeNo(TYPE type);
+	}
+	
+	private final GetTypeNo<T> getTypeNo;
+	
+	private final Map<TypeName, T> typeByName;
+
+	public HashTypeMap(GetTypeNo<T> getTypeNo) {
+		
+		Objects.requireNonNull(getTypeNo);
+		
+		this.getTypeNo = getTypeNo;
 		this.typeByName = new HashMap<>();
 	}
 
 	@Override
-	public int getType(TypeName typeName) {
-		final Integer type;
+	public final int getTypeNo(TypeName typeName) {
+		final T type;
 		
 		synchronized (this) {
 			type = typeByName.get(typeName);
 		}
-		
-		return type != null ? type : -1;
+
+		return type != null ? getTypeNo.getTypeNo(type) : -1;
 	}
 	
-	public ClassBytecode addOrGetType(TypeName typeName, CodeMap codeMap, TypeResult typeResult, LoadType loadType) {
+	public final ClassBytecode addOrGetType(TypeName typeName, CodeMap codeMap, TypeResult typeResult, CreateType<T> createType, LoadType loadType) {
 		
-		Integer type;
+		T type;
 		
 		synchronized (this) {
 			type = typeByName.get(typeName);
@@ -56,7 +74,7 @@ public final class HashTypeMap implements TypeMap {
 				final int [] extendsFromTypes = new int[extendsFrom.size()];
 				
 				for (int i = 0; i < extendsFromTypes.length; ++ i) {
-					final int extendsFromType = typeByName.get(extendsFrom.get(i));
+					final int extendsFromType = getTypeNo.getTypeNo(typeByName.get(extendsFrom.get(i)));
 					
 					extendsFromTypes[i] = extendsFromType;
 				}
@@ -69,8 +87,14 @@ public final class HashTypeMap implements TypeMap {
 						addedBytecode = null;
 					}
 					else {
-						type = codeMap.addType(classBytecode.getTypeVariant(), extendsFromTypes);
+						final int typeNo = codeMap.addType(classBytecode.getTypeVariant(), extendsFromTypes);
 
+						type = createType.create(typeNo, classBytecode);
+						
+						if (type == null) {
+							throw new IllegalStateException();
+						}
+						
 						typeByName.put(typeName, type);
 
 						addedBytecode = classBytecode;
@@ -86,8 +110,18 @@ public final class HashTypeMap implements TypeMap {
 			addedBytecode = null;
 		}
 		
-		typeResult.type = type != null ? type : -1;
+		typeResult.type = type != null ? getTypeNo.getTypeNo(type) : -1;
 		
 		return addedBytecode;
 	}
+	
+	public void forEachKeyValueSynchronized(BiConsumer<TypeName, T> onType) {
+		
+		synchronized (this) {
+			for (Map.Entry<TypeName, T> entry : typeByName.entrySet()) {
+				onType.accept(entry.getKey(), entry.getValue());
+			}
+		}
+	}
+	
 }

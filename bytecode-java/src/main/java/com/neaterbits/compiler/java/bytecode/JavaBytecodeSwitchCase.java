@@ -29,7 +29,7 @@ public final class JavaBytecodeSwitchCase extends BytecodeSwitchCase {
 		
 		final TypeName typeName = classBytecode.getReferencedTypeName(classIndex);
 		
-		final int type = typeMap.getType(typeName);
+		final int type = typeMap.getTypeNo(typeName);
 		
 		if (type < 0) {
 			throw new IllegalStateException();

@@ -18,6 +18,7 @@ class LoadClassHelper {
 				typeName,
 				loaderMaps.codeMap,
 				typeResult,
+				(typeNo, classByteCode) -> typeNo,
 				type -> {
 		
 			// Not entirely threadsafe since some other thread might be loading same class

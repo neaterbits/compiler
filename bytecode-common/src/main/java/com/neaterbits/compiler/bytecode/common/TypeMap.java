@@ -4,6 +4,6 @@ import com.neaterbits.compiler.common.TypeName;
 
 public interface TypeMap {
 
-	int getType(TypeName typeName);
+	int getTypeNo(TypeName typeName);
 	
 }
