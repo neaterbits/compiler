@@ -6,6 +6,6 @@ public interface CompiledFile extends FileInfo {
 	
 	Collection<CompiledType> getTypes();
 	
-	FileImports getImports();
+	IFileImports getImports();
 }
 

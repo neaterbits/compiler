@@ -11,8 +11,10 @@ public interface BytecodeFormat {
 
 	Set<TypeName> getTypesFromLibraryFile(File libraryPath) throws IOException;
 
-	ClassBytecode loadClassBytecode(ClassLibs classLibs, TypeName className) throws IOException, ClassFileException;
+	ClassBytecode loadClassBytecode(ClassLibs classLibs, TypeName typeName) throws IOException, ClassFileException;
 	
 	ClassBytecode loadClassBytecode(InputStream inputStream) throws IOException, ClassFileException;
-	
+
+	ClassBytecode loadClassBytecode(File library, TypeName typeName) throws IOException, ClassFileException;
+
 }

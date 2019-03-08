@@ -741,10 +741,11 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 				methods[memberIndex].setBytecode(maxLocals, maxStack, data);
 				
 				final int exceptionTableLength = dataInput.readUnsignedShort();
-				
+
 				final long [] exceptionTable = new long[exceptionTableLength];
 				
 				for (int i = 0; i < exceptionTableLength; ++ i) {
+					
 					exceptionTable[i] = 
 							  dataInput.readUnsignedShort() << 48
 							| dataInput.readUnsignedShort() << 32
@@ -781,6 +782,36 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 
 		@Override
 		public void onSignature(int memberIndex, int signatureIndex) {
+			
+		}
+
+		@Override
+		public void onDeprecated(int memberIndex) {
+			
+		}
+
+		@Override
+		public void onAnnotationDefault(int memberIndex, int attributeLength, DataInput dataInput) throws IOException {
+			
+			dataInput.skipBytes(attributeLength);
+		}
+
+		@Override
+		public void onRuntimeInvisibleAnnotations(int memberIndex, int attributeLength, DataInput dataInput)
+				throws IOException {
+
+			dataInput.skipBytes(attributeLength);
+		}
+
+		@Override
+		public void onRuntimeInvisibleParameterAnnotations(int memberIndex, int attributeLength, DataInput dataInput)
+				throws IOException {
+
+			dataInput.skipBytes(attributeLength);
+		}
+
+		@Override
+		public void onSynthetic(int memberIndex) {
 			
 		}
 	};

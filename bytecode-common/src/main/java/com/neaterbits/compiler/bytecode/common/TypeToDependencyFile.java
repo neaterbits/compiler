@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.common.TypeName;
 
@@ -15,27 +16,45 @@ public final class TypeToDependencyFile implements ClassLibs {
 		this.typeToDependency = new HashMap<>();
 	}
 	
-	public void addModuleDependencyTypes(DependencyFile module, Set<TypeName> types) {
-		addDependencyTypes(module, types);
+	public void mergeModuleDependencyTypes(DependencyFile module, Set<TypeName> types) {
+		mergeDependencyTypes(module, types);
 	}
 		
-	public void addLibraryDependencyTypes(DependencyFile library, Set<TypeName> types) {
-		addDependencyTypes(library, types);
+	public void mergeLibraryDependencyTypesIfNotPresent(DependencyFile library, Set<TypeName> types) {
+		mergeDependencyTypes(library, types);
 	}
 
-	private void addDependencyTypes(DependencyFile dependency, Set<TypeName> types) {
+	private void mergeDependencyTypes(DependencyFile dependency, Set<TypeName> types) {
 			
 		Objects.requireNonNull(dependency);
 		Objects.requireNonNull(types);
 
 		for (TypeName type : types) {
+
 			
 			if (typeToDependency.put(type, dependency) != null) {
-				throw new IllegalStateException();
+				
+				System.out.println("## already added " + type);
+				
+				// throw new IllegalStateException();
 			}
 		}
 	}
 
+	public void forEachKeyValue(BiConsumer<TypeName, DependencyFile> forEach) {
+		
+		for (Map.Entry<TypeName, DependencyFile> entry : typeToDependency.entrySet()) {
+			forEach.accept(entry.getKey(), entry.getValue());
+		}
+	}
+	
+	public boolean hasType(TypeName typeName) {
+		
+		Objects.requireNonNull(typeName);
+	
+		return typeToDependency.containsKey(typeName);
+	}
+	
 	@Override
 	public DependencyFile getDependencyFileFor(TypeName typeName) {
 		return typeToDependency.get(typeName);

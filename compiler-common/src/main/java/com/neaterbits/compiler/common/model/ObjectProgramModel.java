@@ -1,19 +1,28 @@
 package com.neaterbits.compiler.common.model;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.ArrayStack;
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.StackDelegator;
+import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
+import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.Program;
+import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDeclarationName;
+import com.neaterbits.compiler.common.ast.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDeclarationName;
+import com.neaterbits.compiler.common.loader.ast.FileImports;
 import com.neaterbits.compiler.common.parser.ParsedFile;
+import com.neaterbits.compiler.common.resolver.ScopedNameResolver;
+import com.neaterbits.compiler.common.resolver.TypesMap;
 
 public final class ObjectProgramModel implements ProgramModel<Program, ParsedFile, CompilationUnit > {
 
@@ -47,7 +56,7 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 	}
 	
 	@Override
-	public void iterate(CompilationUnit sourceFile, SourceTokenVisitor visitor) {
+	public void iterate(CompilationUnit sourceFile, SourceTokenVisitor visitor, ResolvedTypes resolvedTypes) {
 
 		final ArrayStack<Element> stack = new ArrayStack<>();
 		
@@ -81,7 +90,7 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 				
 				baseASTElement -> new Element(
 						baseASTElement,
-						baseASTElement.isPlaceholderElement() ? null : makeSourceToken(baseASTElement)),
+						baseASTElement.isPlaceholderElement() ? null : makeSourceToken(baseASTElement, sourceFile, resolvedTypes)),
 				
 				new ASTVisitor() {
 			
@@ -94,7 +103,7 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 						throw new IllegalStateException();
 					}
 					
-					visitor.onToken(makeSourceToken(element));
+					visitor.onToken(makeSourceToken(element, sourceFile, resolvedTypes));
 				}
 				else {
 					
@@ -120,7 +129,7 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 	}
 
 	@Override
-	public ISourceToken getTokenAt(CompilationUnit compilationUnit, long offset) {
+	public ISourceToken getTokenAt(CompilationUnit compilationUnit, long offset, ResolvedTypes resolvedTypes) {
 
 		final BaseASTElement found = compilationUnit.findElement(true, element -> {
 
@@ -131,20 +140,64 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 					&& offset <= context.getEndOffset();
 		});
 		
-		return found != null ? makeSourceToken(found) : null;
+		return found != null ? makeSourceToken(found, compilationUnit, resolvedTypes) : null;
 	}
 	
-	private static SourceToken makeSourceToken(BaseASTElement element) {
+	private static SourceToken makeSourceToken(BaseASTElement element, CompilationUnit compilationUnit, ResolvedTypes resolvedTypes) {
 		
 		Objects.requireNonNull(element);
 
 		final SourceTokenType sourceTokenType;
+		TypeName typeName = null;
 		
 		if (element instanceof ClassDeclarationName) {
 			sourceTokenType = SourceTokenType.CLASS_DECLARATION_NAME;
 		}
 		else if (element instanceof InterfaceDeclarationName) {
 			sourceTokenType = SourceTokenType.INTERFACE_DECLARATION_NAME;
+		}
+		else if (element instanceof ResolveLaterTypeReference) {
+
+			// Resolve from already resolved types
+			final ResolveLaterTypeReference typeReference = (ResolveLaterTypeReference)element;
+			final FileImports fileImports = new FileImports(compilationUnit);
+			final TypesMap<TypeName> compiledTypesMap = new TypesMap<TypeName>() {
+
+				@Override
+				public TypeName lookupByScopedName(ScopedName scopedName) {
+					return resolvedTypes.lookup(scopedName);
+				}
+			};
+
+			final Namespace namespace = (Namespace)compilationUnit.findElement(false, e -> e instanceof Namespace);
+			final ComplexTypeDefinition<?, ?> definition = (ComplexTypeDefinition<?, ?>)compilationUnit.findElement(false, e -> e instanceof ComplexTypeDefinition<?, ?>);
+
+			if (definition != null) {
+			
+				final ScopedName referencedFrom = new ScopedName(
+						namespace != null
+							? Arrays.asList(namespace.getParts())
+							: null,
+						definition.getNameString());
+				
+				final TypeName resolved = ScopedNameResolver.resolveScopedName(
+						typeReference.getTypeName(),
+						null,
+						fileImports,
+						referencedFrom,
+						compiledTypesMap);
+				
+				if (resolved != null) {
+					sourceTokenType = SourceTokenType.CLASS_REFERENCE_NAME;
+					typeName = resolved;
+				}
+				else {
+					sourceTokenType = SourceTokenType.UNKNOWN;
+				}
+			}
+			else {
+				sourceTokenType = SourceTokenType.UNKNOWN;
+			}
 		}
 		else {
 			sourceTokenType = SourceTokenType.UNKNOWN;
@@ -154,9 +207,9 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 
 		return new SourceToken(
 				sourceTokenType,
-				context != null ? context.getStartOffset() : -1L,
-				context != null ? context.getText().length() : 0L,
+				context.getStartOffset(),
+				context.getText().length(),
+				typeName,
 				element);
-
 	}
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
 
-public interface FileImports {
+public interface IFileImports {
 
 	List<ScopedName> getAllNameCombinations(ScopedName scopedName);
 	

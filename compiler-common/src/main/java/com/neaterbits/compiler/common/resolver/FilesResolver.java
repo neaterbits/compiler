@@ -12,7 +12,7 @@ import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.CompiledType;
 import com.neaterbits.compiler.common.loader.CompiledTypeDependency;
-import com.neaterbits.compiler.common.loader.FileImports;
+import com.neaterbits.compiler.common.loader.IFileImports;
 import com.neaterbits.compiler.common.loader.FileSpec;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
@@ -114,7 +114,7 @@ public final class FilesResolver extends ResolveUtil {
 	
 	private List<ResolvedType> resolveTypes(
 			CompiledFile file,
-			FileImports fileImports,
+			IFileImports fileImports,
 			Collection<CompiledType> types,
 			CompiledTypesMap compiledTypesMap,
 			ResolvedTypesMap resolvedTypesMap,
@@ -190,7 +190,7 @@ public final class FilesResolver extends ResolveUtil {
 			Collection<CompiledTypeDependency> dependencies,
 			ScopedName referencedFrom,
 			CompiledFile file,
-			FileImports fileImports,
+			IFileImports fileImports,
 			CompiledTypesMap compiledTypesMap,
 			UnresolvedDependencies unresolvedDependencies) {
 		

@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
-import com.neaterbits.compiler.common.loader.FileImports;
+import com.neaterbits.compiler.common.loader.IFileImports;
 
-public final class TestFileImports implements FileImports {
+public final class TestFileImports implements IFileImports {
 
 	private final Map<ScopedName, List<ScopedName>> nameCombinations;
 	

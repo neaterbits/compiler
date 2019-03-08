@@ -32,7 +32,7 @@ abstract class JavaClassLib {
 			}
 		}
 		
-		sb.append(className.getName());
+		sb.append(className.getName()).append(".class");
 		
 		return sb.toString();
 	}

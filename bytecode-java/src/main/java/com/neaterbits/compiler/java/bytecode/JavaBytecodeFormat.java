@@ -17,6 +17,7 @@ import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.bytecode.reader.ClassFileReader;
+import com.neaterbits.compiler.java.bytecode.reader.ClassFileReaderListener;
 
 public class JavaBytecodeFormat implements BytecodeFormat {
 
@@ -34,12 +35,16 @@ public class JavaBytecodeFormat implements BytecodeFormat {
 				.map(parts -> new TypeName(
 						Arrays.copyOf(parts, parts.length - 1),
 						null,
-						parts[parts.length - 1]))
+						removeClassSuffix(parts[parts.length - 1])))
 				.collect(Collectors.toSet());
 		
 		}
 		
 		return files;
+	}
+	
+	private static String removeClassSuffix(String name) {
+		return name.substring(0, name.length() - ".class".length());
 	}
 	
 	@Override
@@ -55,14 +60,16 @@ public class JavaBytecodeFormat implements BytecodeFormat {
 			classBytecode = null;
 		}
 		else {
-			
 			final JavaClassLib classLib = file.isLibraryFile()
 					? new JarClassLib(file.getFile())
 					: new DirectoryClassLib(file.getFile().getParentFile());
+					
+
+			final ClassFile classFile = new ClassFile();
 			
-					
-					
-			classBytecode = loadClassByteCode(className, classLib.openClassFile(className));
+			loadClassByteCode(className, classLib.openClassFile(className), classFile);
+			
+			classBytecode = classFile;
 		}
 
 		return classBytecode;
@@ -71,23 +78,48 @@ public class JavaBytecodeFormat implements BytecodeFormat {
 	
 	@Override
 	public ClassBytecode loadClassBytecode(InputStream inputStream) throws IOException, ClassFileException {
-		return JavaBytecodeFormat.loadClassByteCode(inputStream);
-	}
 
-	private static ClassBytecode loadClassByteCode(TypeName className, InputStream inputStream) throws IOException, ClassFileException {
-		return loadClassByteCode(inputStream);
-	}
-		
-	private static ClassBytecode loadClassByteCode(InputStream inputStream) throws IOException, ClassFileException {
 		final ClassFile classFile = new ClassFile();
 		
+		JavaBytecodeFormat.loadClassByteCode(inputStream, classFile);
+		
+		return classFile;
+	}
+	
+	@Override
+	public ClassBytecode loadClassBytecode(File library, TypeName typeName) throws IOException, ClassFileException {
+		
+		final JarClassLib jarFile = new JarClassLib(library);
+
+		final ClassFile classFile = new ClassFile();
+		
+		loadClassByteCodeAndCloseStream(jarFile.openClassFile(typeName), classFile);
+		
+		return classFile;
+	}
+
+	void loadClassBytecode(File library, TypeName typeName, ClassFileReaderListener readerListener) throws IOException, ClassFileException {
+
+		final JarClassLib jarFile = new JarClassLib(library);
+
+		loadClassByteCodeAndCloseStream(jarFile.openClassFile(typeName), readerListener);
+	}
+
+	private static void loadClassByteCode(TypeName className, InputStream inputStream, ClassFileReaderListener readerListener) throws IOException, ClassFileException {
+		loadClassByteCode(inputStream, readerListener);
+	}
+
+	private static void loadClassByteCode(InputStream inputStream, ClassFileReaderListener readerListener) throws IOException, ClassFileException {
+		ClassFileReader.readClassFile(inputStream, readerListener);
+	}
+		
+	private static void loadClassByteCodeAndCloseStream(InputStream inputStream, ClassFileReaderListener readerListener) throws IOException, ClassFileException {
+		
 		try {
-			ClassFileReader.readClassFile(inputStream, classFile);
+			loadClassByteCode(inputStream, readerListener);
 		}
 		finally {
 			inputStream.close();
 		}
-		
-		return classFile;
 	}
 }

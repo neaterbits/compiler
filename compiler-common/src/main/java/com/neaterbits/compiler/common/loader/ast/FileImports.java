@@ -4,26 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassOrInterfaceName;
-import com.neaterbits.compiler.common.loader.FileImports;
+import com.neaterbits.compiler.common.loader.IFileImports;
 import com.neaterbits.compiler.common.parser.ParsedFile;
 
-final class FileImportsImpl implements FileImports {
+public final class FileImports implements IFileImports {
 
-	private final ParsedFile parsedFile;
+	private final CompilationUnit compilationUnit;
 	
-	FileImportsImpl(ParsedFile parsedFile) {
+	public FileImports(CompilationUnit compilationUnit) {
+
+		Objects.requireNonNull(compilationUnit);
+		
+		this.compilationUnit = compilationUnit;
+	}
+
+	FileImports(ParsedFile parsedFile) {
 		Objects.requireNonNull(parsedFile);
 
-		this.parsedFile = parsedFile;
+		this.compilationUnit = parsedFile.getParsed();
 	}
 	
 	private ASTList<Import> getImports() {
-		return parsedFile.getParsed().getImports();
+		return compilationUnit.getImports();
 	}
 	
 	private static ScopedName makeScopedName(NamespaceReference namespace, ClassOrInterfaceName className) {

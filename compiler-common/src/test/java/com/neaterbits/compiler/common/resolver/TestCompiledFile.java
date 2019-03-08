@@ -3,20 +3,20 @@ package com.neaterbits.compiler.common.resolver;
 
 import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.CompiledType;
-import com.neaterbits.compiler.common.loader.FileImports;
+import com.neaterbits.compiler.common.loader.IFileImports;
 import com.neaterbits.compiler.common.loader.FileSpec;
 
 public class TestCompiledFile extends BaseTestFile<CompiledType> implements CompiledFile {
 
-	private final FileImports imports;
+	private final IFileImports imports;
 	
-	public TestCompiledFile(String name, FileImports imports, CompiledType ... types) {
+	public TestCompiledFile(String name, IFileImports imports, CompiledType ... types) {
 		super(name, types);
 
 		this.imports = imports;
 	}
 	
-	public TestCompiledFile(FileSpec fileSpec, FileImports imports, CompiledType ... types) {
+	public TestCompiledFile(FileSpec fileSpec, IFileImports imports, CompiledType ... types) {
 		super(fileSpec, types);
 
 		this.imports = imports;
@@ -24,7 +24,7 @@ public class TestCompiledFile extends BaseTestFile<CompiledType> implements Comp
 	
 
 	@Override
-	public FileImports getImports() {
+	public IFileImports getImports() {
 		return imports;
 	}
 }

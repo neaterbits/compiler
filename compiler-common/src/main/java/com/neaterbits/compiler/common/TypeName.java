@@ -3,6 +3,8 @@ package com.neaterbits.compiler.common;
 import java.util.Arrays;
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.util.Strings;
+
 public class TypeName {
 
 	private final String [] namespace;
@@ -30,6 +32,22 @@ public class TypeName {
 		return name;
 	}
 
+	public String toDebugString() {
+		final StringBuilder sb = new StringBuilder();
+		
+		if (namespace != null) {
+			sb.append(Strings.join(namespace, '.'));
+		}
+
+		if (outerTypes != null) {
+			sb.append(Strings.join(outerTypes, '.'));
+		}
+		
+		sb.append('.').append(name);
+		
+		return sb.toString();
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -59,5 +77,11 @@ public class TypeName {
 		if (!Arrays.equals(outerTypes, other.outerTypes))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "TypeName [namespace=" + Arrays.toString(namespace) + ", outerTypes=" + Arrays.toString(outerTypes)
+				+ ", name=" + name + "]";
 	}
 }

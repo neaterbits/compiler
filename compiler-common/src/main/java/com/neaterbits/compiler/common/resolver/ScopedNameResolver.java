@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.neaterbits.compiler.common.ast.ScopedName;
-import com.neaterbits.compiler.common.loader.CompiledType;
-import com.neaterbits.compiler.common.loader.FileImports;
+import com.neaterbits.compiler.common.loader.IFileImports;
 
-final class ScopedNameResolver {
-	static CompiledType resolveScopedName(ScopedName scopedName, ReferenceType referenceType, FileImports fileImports, ScopedName referencedFrom, CompiledTypesMap compiledTypesMap) {
+public final class ScopedNameResolver {
+	
+	public static <T> T resolveScopedName(ScopedName scopedName, ReferenceType referenceType, IFileImports fileImports, ScopedName referencedFrom, TypesMap<T> compiledTypesMap) {
 		
-		CompiledType result = resolveScopedName(scopedName, fileImports, referencedFrom, compiledTypesMap);
+		T result = resolveScopedName(scopedName, fileImports, referencedFrom, compiledTypesMap);
 		
 		if (result == null && referenceType == ReferenceType.STATIC_OR_STATIC_INSTANCE_METHOD_CALL) {
 
@@ -33,10 +33,10 @@ final class ScopedNameResolver {
 		return result;
 	}
 
-	static CompiledType resolveScopedName(ScopedName scopedName, FileImports fileImports, ScopedName referencedFrom, CompiledTypesMap compiledTypesMap) {
+	private static <T> T resolveScopedName(ScopedName scopedName, IFileImports fileImports, ScopedName referencedFrom, TypesMap<T> compiledTypesMap) {
 		
-		final CompiledType result;
-		final CompiledType inSameNamespace;
+		final T result;
+		final T inSameNamespace;
 		
 		if (scopedName.hasScope()) {
 			result = compiledTypesMap.lookupByScopedName(scopedName);
@@ -54,11 +54,11 @@ final class ScopedNameResolver {
 			
 System.out.println("## name combinations: " + names + " for " + scopedName);
 			
-			final Map<ScopedName, CompiledType> matches = new HashMap<>();
+			final Map<ScopedName, T> matches = new HashMap<>();
 			
 			if (names != null) {
 				for (ScopedName name : names) {
-					final CompiledType type = compiledTypesMap.lookupByScopedName(name);
+					final T type = compiledTypesMap.lookupByScopedName(name);
 					
 					if (type != null) {
 						// Make sure class-part matches

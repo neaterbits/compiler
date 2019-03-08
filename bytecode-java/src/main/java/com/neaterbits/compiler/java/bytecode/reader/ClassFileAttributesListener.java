@@ -18,4 +18,14 @@ public interface ClassFileAttributesListener {
 	void onRuntimeVisibleAnnotations(int memberIndex, int attributeLength, DataInput dataInput) throws IOException;
 
 	void onSignature(int memberIndex, int signatureIndex);
+	
+	void onDeprecated(int memberIndex);
+	
+	void onAnnotationDefault(int memberIndex, int attributeLength, DataInput dataInput) throws IOException;
+
+	void onRuntimeInvisibleAnnotations(int memberIndex, int attributeLength, DataInput dataInput) throws IOException;
+
+	void onRuntimeInvisibleParameterAnnotations(int memberIndex, int attributeLength, DataInput dataInput) throws IOException;
+
+	void onSynthetic(int memberIndex);
 }

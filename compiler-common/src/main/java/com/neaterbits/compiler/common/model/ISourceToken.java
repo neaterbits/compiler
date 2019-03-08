@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.common.model;
 
+import com.neaterbits.compiler.common.TypeName;
+
 public interface ISourceToken {
 
 	SourceTokenType getTokenType();
@@ -7,11 +9,9 @@ public interface ISourceToken {
 	long getStartOffset();
 
 	long getLength();
-	
-	default boolean isPlaceholderToken() {
-		return getStartOffset() == -1L;
-	}
 
+	TypeName getTypeName();
+	
 	String getTokenTypeDebugName();
 	
 	default String getTokenDebugString() {

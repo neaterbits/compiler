@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.model;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 
 public final class SourceToken implements ISourceToken {
@@ -9,9 +10,10 @@ public final class SourceToken implements ISourceToken {
 	private final SourceTokenType tokenType;
 	private final long startOffset;
 	private final long length;
+	private final TypeName typeName;
 	private final BaseASTElement astElement;
 	
-	public SourceToken(SourceTokenType tokenType, long startOffset, long length, BaseASTElement astElement) {
+	public SourceToken(SourceTokenType tokenType, long startOffset, long length, TypeName typeName, BaseASTElement astElement) {
 
 		Objects.requireNonNull(tokenType);
 		Objects.requireNonNull(astElement);
@@ -27,6 +29,7 @@ public final class SourceToken implements ISourceToken {
 		this.tokenType = tokenType;
 		this.startOffset = startOffset;
 		this.length = length;
+		this.typeName = typeName;
 		this.astElement = astElement;
 	}
 
@@ -45,6 +48,11 @@ public final class SourceToken implements ISourceToken {
 		return length;
 	}
 	
+	@Override
+	public TypeName getTypeName() {
+		return typeName;
+	}
+
 	@Override
 	public String getTokenTypeDebugName() {
 		return astElement.getClass().getSimpleName();

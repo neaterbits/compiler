@@ -124,4 +124,12 @@ public class HashTypeMap<T> implements TypeMap {
 		}
 	}
 	
+	public boolean hasType(TypeName typeName) {
+		
+		Objects.requireNonNull(typeName);
+		
+		synchronized(this) {
+			return typeByName.containsKey(typeName);
+		}
+	}
 }

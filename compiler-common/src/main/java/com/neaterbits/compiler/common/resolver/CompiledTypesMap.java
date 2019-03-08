@@ -9,7 +9,7 @@ import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.loader.CompiledFile;
 import com.neaterbits.compiler.common.loader.CompiledType;
 
-final class CompiledTypesMap {
+final class CompiledTypesMap implements TypesMap<CompiledType> {
 
 	private final Map<ScopedName, CompiledType> map;
 	
@@ -34,7 +34,8 @@ final class CompiledTypesMap {
 		}
 	}
 	
-	CompiledType lookupByScopedName(ScopedName scopedName) {
+	@Override
+	public CompiledType lookupByScopedName(ScopedName scopedName) {
 		
 		Objects.requireNonNull(scopedName);
 		

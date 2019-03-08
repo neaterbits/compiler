@@ -25,7 +25,10 @@ final class JarClassLib extends JavaClassLib {
 
 	@Override
 	InputStream openClassFile(TypeName className) throws IOException {
-		return jarFile.getInputStream(jarFile.getJarEntry(toPath(className)));
+		
+		final String path = toPath(className);
+		
+		return jarFile.getInputStream(jarFile.getJarEntry(path));
 	}
 
 	@Override

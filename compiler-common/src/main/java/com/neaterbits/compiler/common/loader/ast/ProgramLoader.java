@@ -36,7 +36,7 @@ public class ProgramLoader implements Loader {
 
 		final List<CompiledType> types = TypeFinder.findTypes(parsedFile, compiledFileSpec);
 		
-		return new CompiledFileImpl(compiledFileSpec, new FileImportsImpl(parsedFile), types);
+		return new CompiledFileImpl(compiledFileSpec, new FileImports(parsedFile), types);
 	}
 	
 	

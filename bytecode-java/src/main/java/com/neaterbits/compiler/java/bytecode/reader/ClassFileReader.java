@@ -39,16 +39,16 @@ public class ClassFileReader {
 		readerListener.onConstantPoolCount(count);
 		
 		for (int i = 0; i < count; ++ i) {
-		
+
+			final int index = i + 1;
+
 			final byte tag = dataInput.readByte();
-			
+
 			final ConstantPoolTag ctp = ConstantPoolTag.getConstantPoolTag(tag);
 			
 			if (ctp == null) {
 				throw new ClassFileException("Unknown constant pool tag " + tag);
 			}
-			
-			final int index = i + 1;
 			
 			switch (ctp) {
 			case CLASS: {
@@ -109,6 +109,8 @@ public class ClassFileReader {
 				final long value = dataInput.readLong();
 				
 				readerListener.onConstantPoolLong(index, value);
+				
+				++ i;
 				break;
 			}
 			
@@ -117,6 +119,8 @@ public class ClassFileReader {
 				final double value = dataInput.readDouble();
 				
 				readerListener.onConstantPoolDouble(index, value);
+				
+				++ i;
 				break;
 			}
 			
@@ -243,6 +247,7 @@ public class ClassFileReader {
 			break;
 			
 		case "Code":
+			//dataInput.skipBytes(attributeLength);
 			attributesListener.onCode(memberIndex, attributeLength, dataInput);
 			break;
 			
@@ -266,8 +271,29 @@ public class ClassFileReader {
 			attributesListener.onSignature(memberIndex, dataInput.readUnsignedShort());
 			break;
 			
+		case "Deprecated":
+			attributesListener.onDeprecated(memberIndex);
+			break;
+
+		case "AnnotationDefault":
+			attributesListener.onAnnotationDefault(memberIndex, attributeLength, dataInput);
+			break;
+
+		case "RuntimeInvisibleAnnotations":
+			attributesListener.onRuntimeInvisibleAnnotations(memberIndex, attributeLength, dataInput);
+			break;
+
+		case "RuntimeInvisibleParameterAnnotations":
+			attributesListener.onRuntimeInvisibleParameterAnnotations(memberIndex, attributeLength, dataInput);
+			break;
+		
+		case "Synthetic":
+			attributesListener.onSynthetic(memberIndex);
+			break;
+			
 		default:
 			throw new UnsupportedOperationException("Unknown attribute " + constant);
+
 		}
 	}
 }
