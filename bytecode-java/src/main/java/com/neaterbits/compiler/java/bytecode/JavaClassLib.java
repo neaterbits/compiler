@@ -2,6 +2,7 @@ package com.neaterbits.compiler.java.bytecode;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.common.TypeName;
@@ -13,6 +14,8 @@ abstract class JavaClassLib {
 	abstract InputStream openClassFile(TypeName className) throws IOException;
 
 	abstract DependencyFile getDependencyFile(TypeName className);
+
+	abstract List<DependencyFile> getFiles();
 	
 	static String toPath(TypeName className) {
 

@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 final class ArrayAllocation {
+	
+	static final int DEFAULT_LENGTH = 10000;
+	
 	static final int [] allocateIntArray(int [] array, int numEntries) {
 		
 		final int [] result;
 		
 		if (array == null) {
-			result = new int[10000];
+			result = new int[DEFAULT_LENGTH];
 		}
 		else if (array.length > numEntries) {
 			result = array;
@@ -29,7 +32,7 @@ final class ArrayAllocation {
 		final long [] result;
 		
 		if (array == null) {
-			result = new long[10000];
+			result = new long[DEFAULT_LENGTH];
 		}
 		else if (array.length > numEntries) {
 			result = array;
@@ -49,13 +52,13 @@ final class ArrayAllocation {
 		final T [] result;
 		
 		if (array == null) {
-			result = createArray.apply(10000);
+			result = createArray.apply(DEFAULT_LENGTH);
 		}
 		else if (array.length > numEntries) {
 			result = array;
 		}
 		else if (array.length == numEntries) {
-			result = Arrays.copyOf(array, array.length);
+			result = Arrays.copyOf(array, array.length + DEFAULT_LENGTH);
 		}
 		else {
 			throw new IllegalStateException();
@@ -74,23 +77,23 @@ final class ArrayAllocation {
 		
 		if (array == null) {
 			
-			if (numEntries > 10000) {
+			if (numEntries > DEFAULT_LENGTH) {
 				throw new IllegalStateException();
 			}
 			
-			result = new int[10000][];
+			result = new int[DEFAULT_LENGTH][];
 		}
 		else if (array.length > numEntries) {
 			result = array;
 		}
 		else if (array.length == numEntries) {
-			result = Arrays.copyOf(array, array.length);
+			result = Arrays.copyOf(array, array.length + DEFAULT_LENGTH);
 		}
 		else if (!sequential) {
-			result = Arrays.copyOf(array, numEntries + 10000);
+			result = Arrays.copyOf(array, numEntries + DEFAULT_LENGTH);
 		}
 		else {
-			throw new IllegalStateException();
+			throw new IllegalStateException("array.length=" + array.length + ", numEntries=" + numEntries + ", sequential=" + sequential);
 		}
 
 		return result;

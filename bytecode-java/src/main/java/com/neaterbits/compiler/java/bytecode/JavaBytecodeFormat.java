@@ -88,9 +88,11 @@ public class JavaBytecodeFormat implements BytecodeFormat {
 	
 	@Override
 	public ClassBytecode loadClassBytecode(File library, TypeName typeName) throws IOException, ClassFileException {
-		
-		final JarClassLib jarFile = new JarClassLib(library);
 
+		Objects.requireNonNull(library);
+		Objects.requireNonNull(typeName);
+
+		final JarClassLib jarFile = new JarClassLib(library);
 		final ClassFile classFile = new ClassFile();
 		
 		loadClassByteCodeAndCloseStream(jarFile.openClassFile(typeName), classFile);

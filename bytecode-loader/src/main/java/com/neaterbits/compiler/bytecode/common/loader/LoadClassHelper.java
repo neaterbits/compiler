@@ -9,30 +9,45 @@ import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.resolver.codemap.CodeMap.TypeResult;
 
-class LoadClassHelper {
+public class LoadClassHelper {
 
 	static ClassBytecode loadClass(TypeName typeName, TypeResult typeResult,
-			BytecodeFormat bytecodeFormat, ClassLibs classLibs, LoaderMaps loaderMaps) {
-		
-		final ClassBytecode addedBytecode = loaderMaps.typeMap.addOrGetType(
-				typeName,
+			BytecodeFormat bytecodeFormat, ClassLibs classLibs, LoaderMaps loaderMaps) throws IOException, ClassFileException {
+	
+		final LoadClassParameters<ClassLibs, Integer, LoadedClassesCache> parameters
+			=  new LoadClassParameters<ClassLibs, Integer, LoadedClassesCache>(
+				loaderMaps.typeMap,
 				loaderMaps.codeMap,
+				(type, typeNo, classByteCode) -> typeNo,
+
+				// Not entirely threadsafe since some other thread might be loading same class
+				// However not important whether loading same class multiple times
+				(typeNo, addedByteCode) -> loaderMaps.loadedClasses.addClass(typeNo, addedByteCode),
+				
+				type -> bytecodeFormat.loadClassBytecode(classLibs, type));
+		
+		return loadClassAndBaseClassesAndAddToCodeMap(typeName, typeResult, parameters);
+	}
+	
+
+	public static <CLASSLIBS, TYPE, CACHE> ClassBytecode loadClassAndBaseClassesAndAddToCodeMap(
+			TypeName typeName,
+			TypeResult typeResult,
+			LoadClassParameters<CLASSLIBS, TYPE, CACHE> parameters) throws IOException, ClassFileException {
+		
+		final ClassBytecode addedBytecode = parameters.typeMap.addOrGetType(
+				typeName,
+				parameters.codeMap,
+				true,
 				typeResult,
-				(typeNo, classByteCode) -> typeNo,
+				parameters.createType, // (typeNo, classByteCode) -> typeNo,
+				
 				type -> {
 		
-			// Not entirely threadsafe since some other thread might be loading same class
-			// However not important whether loading same class multiple times
-			ClassBytecode classBytecode = null;
-			
-			try {
-				classBytecode = bytecodeFormat.loadClassBytecode(classLibs, type);
-			} catch (IOException | ClassFileException ex) {
-				ex.printStackTrace();
-			}
+			final ClassBytecode classBytecode = parameters.loadType.load(type);
 			
 			if (classBytecode != null) {
-				loadBaseClasses(classBytecode, bytecodeFormat, classLibs, loaderMaps);
+				loadBaseClasses(typeName, classBytecode, parameters);
 			}
 		
 			return classBytecode;
@@ -42,14 +57,20 @@ class LoadClassHelper {
 		if (addedBytecode != null) {
 			final int methodCount = addedBytecode.getMethodCount();
 			
-			loaderMaps.codeMap.setMethodCount(typeResult.type, methodCount);
-			loaderMaps.loadedClasses.addClass(typeResult.type, addedBytecode);
+			parameters.codeMap.setMethodCount(typeResult.type, methodCount);
+			
+			if (parameters.onAddedType != null) {
+				parameters.onAddedType.accept(typeResult.type, addedBytecode);
+			}
 		}
 	
 		return addedBytecode;
 	}
 	
-	static void loadBaseClasses(ClassBytecode classBytecode, BytecodeFormat bytecodeFormat, ClassLibs classLibs, LoaderMaps loaderMaps) {
+	private static <CLASSLIBS, TYPE, CACHE> void loadBaseClasses(
+			TypeName typeName,
+			ClassBytecode classBytecode,
+			LoadClassParameters<CLASSLIBS, TYPE, CACHE> parameters) throws IOException, ClassFileException {
 		
 		ClassBytecode currentClass = classBytecode;
 		
@@ -57,13 +78,25 @@ class LoadClassHelper {
 		
 		for (;;) {
 			final TypeName superClassName = currentClass.getSuperClass();
+
+			if (superClassName == null) {
+				// root class
+				break;
+			}
+
+			// System.out.println("## load superclass name " + superClassName);
 			
-			final ClassBytecode addedClass = loadClass(superClassName, typeResult, bytecodeFormat, classLibs, loaderMaps);
+			if (superClassName.equals(typeName)) {
+				throw new IllegalStateException();
+			}
+			
+			final ClassBytecode addedClass = loadClassAndBaseClassesAndAddToCodeMap(superClassName, typeResult, parameters);
+
+			// System.out.println("## loaded superclass name " + superClassName);
 
 			if (addedClass == null) {
 				break;
 			}
 		}
 	}
-
 }

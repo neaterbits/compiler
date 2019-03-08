@@ -1,6 +1,9 @@
 package com.neaterbits.compiler.bytecode.common;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -34,7 +37,7 @@ public final class TypeToDependencyFile implements ClassLibs {
 			
 			if (typeToDependency.put(type, dependency) != null) {
 				
-				System.out.println("## already added " + type);
+				// System.out.println("## already added " + type);
 				
 				// throw new IllegalStateException();
 			}
@@ -58,5 +61,10 @@ public final class TypeToDependencyFile implements ClassLibs {
 	@Override
 	public DependencyFile getDependencyFileFor(TypeName typeName) {
 		return typeToDependency.get(typeName);
+	}
+
+	@Override
+	public List<DependencyFile> getFiles() {
+		return Collections.unmodifiableList(new ArrayList<>(typeToDependency.values()));
 	}
 }

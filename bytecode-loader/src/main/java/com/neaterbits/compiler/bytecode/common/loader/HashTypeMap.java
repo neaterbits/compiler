@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.bytecode.common.loader;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
+import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.TypeMap;
 import com.neaterbits.compiler.common.TypeName;
 import com.neaterbits.compiler.common.resolver.codemap.CodeMap;
@@ -15,14 +17,16 @@ import com.neaterbits.compiler.common.resolver.codemap.CodeMap.TypeResult;
 
 public class HashTypeMap<T> implements TypeMap {
 
+	private static final Boolean DEBUG = false;
+	
 	@FunctionalInterface
 	public interface LoadType {
-		ClassBytecode load(TypeName typeName);
+		ClassBytecode load(TypeName typeName) throws IOException, ClassFileException;
 	}
 	
 	@FunctionalInterface
 	public interface CreateType<TYPE> {
-		TYPE create(int typeNo, ClassBytecode classBytecode);
+		TYPE create(TypeName typeName, int typeNo, ClassBytecode classBytecode);
 	}
 
 	@FunctionalInterface
@@ -53,7 +57,17 @@ public class HashTypeMap<T> implements TypeMap {
 		return type != null ? getTypeNo.getTypeNo(type) : -1;
 	}
 	
-	public final ClassBytecode addOrGetType(TypeName typeName, CodeMap codeMap, TypeResult typeResult, CreateType<T> createType, LoadType loadType) {
+	public final ClassBytecode addOrGetType(
+			TypeName typeName,
+			CodeMap codeMap,
+			boolean baseClassesAlreadyLoaded,
+			TypeResult typeResult,
+			CreateType<T> createType,
+			LoadType loadType) throws IOException, ClassFileException {
+		
+		if (DEBUG) {
+			System.out.println("## addOrGetType " + typeName.toDebugString());
+		}
 		
 		T type;
 		
@@ -65,31 +79,48 @@ public class HashTypeMap<T> implements TypeMap {
 		
 		if (type == null) {
 			
-			final ClassBytecode classBytecode = loadType.load(typeName);
+			final ClassBytecode classByteCode = loadType.load(typeName);
 			
-			if (classBytecode != null) {
+			if (classByteCode != null) {
+
+				final int [] extendsFromTypes;
 				
-				final List<TypeName> extendsFrom = Arrays.asList(classBytecode.getSuperClass());
-				
-				final int [] extendsFromTypes = new int[extendsFrom.size()];
-				
-				for (int i = 0; i < extendsFromTypes.length; ++ i) {
-					final int extendsFromType = getTypeNo.getTypeNo(typeByName.get(extendsFrom.get(i)));
+				if (baseClassesAlreadyLoaded && classByteCode.getSuperClass() != null) {
+
+					final List<TypeName> extendsFrom = Arrays.asList(classByteCode.getSuperClass());
 					
-					extendsFromTypes[i] = extendsFromType;
+					extendsFromTypes = new int[extendsFrom.size()];
+				
+					for (int i = 0; i < extendsFromTypes.length; ++ i) {
+						
+						final TypeName extendsFromName = extendsFrom.get(i);
+						
+						final T extendsFromType = typeByName.get(extendsFromName);
+
+						if (DEBUG) {
+							System.out.println("## get type for " + typeName.toDebugString() + " with type " + extendsFromType);
+						}
+						
+						final int extendsFromTypeNo = getTypeNo.getTypeNo(extendsFromType);
+						
+						extendsFromTypes[i] = extendsFromTypeNo;
+					}
+				}
+				else {
+					extendsFromTypes = null;
 				}
 
 				synchronized (this) {
 					type = typeByName.get(typeName);
 					
-					if (type == null) {
+					if (type != null) {
 						// Type added by other thread
 						addedBytecode = null;
 					}
 					else {
-						final int typeNo = codeMap.addType(classBytecode.getTypeVariant(), extendsFromTypes);
+						final int typeNo = codeMap.addType(classByteCode.getTypeVariant(), extendsFromTypes);
 
-						type = createType.create(typeNo, classBytecode);
+						type = createType.create(typeName, typeNo, classByteCode);
 						
 						if (type == null) {
 							throw new IllegalStateException();
@@ -97,7 +128,7 @@ public class HashTypeMap<T> implements TypeMap {
 						
 						typeByName.put(typeName, type);
 
-						addedBytecode = classBytecode;
+						addedBytecode = classByteCode;
 						
 					}
 				}
@@ -111,7 +142,11 @@ public class HashTypeMap<T> implements TypeMap {
 		}
 		
 		typeResult.type = type != null ? getTypeNo.getTypeNo(type) : -1;
-		
+
+		if (DEBUG) {
+			System.out.println("## done addOrGetType " + typeName.toDebugString() + " with " + typeResult.type);
+		}
+
 		return addedBytecode;
 	}
 	

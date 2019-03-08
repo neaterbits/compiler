@@ -1,10 +1,12 @@
 package com.neaterbits.compiler.bytecode.common.loader;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
+import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.MethodClassReferenceScanner;
 import com.neaterbits.compiler.bytecode.common.MethodType;
@@ -97,7 +99,12 @@ final class MethodLoaderThread<CLASS, METHOD> extends Thread {
 					
 					final TypeName typeName = request.getTypeName();
 	
-					final ClassBytecode addedClass = LoadClassHelper.loadClass(typeName, typeResult, bytecodeFormat, classLibs, loaderMaps);
+					ClassBytecode addedClass = null;
+					try {
+						addedClass = LoadClassHelper.loadClass(typeName, typeResult, bytecodeFormat, classLibs, loaderMaps);
+					} catch (IOException | ClassFileException ex) {
+						ex.printStackTrace();
+					}
 					
 					final int type = typeResult.type;
 					

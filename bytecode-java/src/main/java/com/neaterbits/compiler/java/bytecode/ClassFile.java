@@ -95,9 +95,8 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 
 	@Override
 	public final TypeName getSuperClass() {
-		return getTypeName(superClass);
+		return superClass != 0 ? getTypeName(superClass) : null;
 	}
-	
 	
 	@Override
 	public int getFieldCount() {
@@ -435,13 +434,14 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 	}
 		
 	final TypeName getTypeName(int classIndex) {
-		final String name = getUTF8((int)getValueInConstantPool(getThisClass(), ConstantPoolTag.CLASS));
+		final String name = getUTF8((int)getValueInConstantPool(classIndex, ConstantPoolTag.CLASS));
 	
 		return getTypeName(name);
 	}
 	
 	final TypeName getTypeName(String name) {
-		final String [] parts = Strings.split(name, '.');
+		
+		final String [] parts = Strings.split(name, '/');
 	
 		final String [] namespaceReference = Arrays.copyOf(parts, parts.length - 1);
 	

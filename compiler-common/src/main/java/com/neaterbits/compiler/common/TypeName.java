@@ -32,20 +32,24 @@ public class TypeName {
 		return name;
 	}
 
-	public String toDebugString() {
+	public String join(char separator) {
 		final StringBuilder sb = new StringBuilder();
 		
 		if (namespace != null) {
-			sb.append(Strings.join(namespace, '.'));
+			sb.append(Strings.join(namespace, separator));
 		}
 
 		if (outerTypes != null) {
-			sb.append(Strings.join(outerTypes, '.'));
+			sb.append(Strings.join(outerTypes, separator));
 		}
 		
-		sb.append('.').append(name);
+		sb.append(separator).append(name);
 		
 		return sb.toString();
+	}
+	
+	public String toDebugString() {
+		return join('.');
 	}
 	
 	@Override

@@ -33,14 +33,21 @@ public final class IntCodeMap implements CodeMap {
 	@Override
 	public int addType(TypeVariant typeVariant, int[] extendsFrom) {
 
-		final int [] extendsFromEncoded = new int[extendsFrom.length];
+		final int [] extendsFromEncoded;
 		
-		for (int i = 0; i < extendsFromEncoded.length; ++ i) {
-			final int extendsFromType = extendsFrom[i];
+		if (extendsFrom != null) {
+			extendsFromEncoded = new int[extendsFrom.length];
 			
-			extendsFromEncoded[i] = Encode.encodeType(
-					extendsFromType,
-					typeHierarchy.getTypeVariantForType(extendsFromType));
+			for (int i = 0; i < extendsFromEncoded.length; ++ i) {
+				final int extendsFromType = extendsFrom[i];
+				
+				extendsFromEncoded[i] = Encode.encodeType(
+						extendsFromType,
+						typeHierarchy.getTypeVariantForType(extendsFromType));
+			}
+		}
+		else {
+			extendsFromEncoded = null;
 		}
 		
 		return typeHierarchy.addType(typeVariant, extendsFromEncoded);

@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.common.TypeName;
@@ -44,5 +47,15 @@ final class DirectoryClassLib extends JavaClassLib {
 	@Override
 	DependencyFile getDependencyFile(TypeName className) {
 		return new DependencyFile(getClassFile(className), false);
+	}
+
+	@Override
+	List<DependencyFile> getFiles() {
+		
+		final File [] classFiles = directory.listFiles(file -> file.getName().endsWith(".class"));
+		
+		return Arrays.stream(classFiles)
+				.map(file -> new DependencyFile(file, false))
+				.collect(Collectors.toList());
 	}
 }

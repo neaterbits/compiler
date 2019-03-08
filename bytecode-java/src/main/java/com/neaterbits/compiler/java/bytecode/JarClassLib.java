@@ -3,6 +3,10 @@ package com.neaterbits.compiler.java.bytecode;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
@@ -26,13 +30,26 @@ final class JarClassLib extends JavaClassLib {
 	@Override
 	InputStream openClassFile(TypeName className) throws IOException {
 		
+		Objects.requireNonNull(className);
+		
 		final String path = toPath(className);
 		
-		return jarFile.getInputStream(jarFile.getJarEntry(path));
+		final JarEntry jarEntry = jarFile.getJarEntry(path);
+		
+		if (jarEntry == null) {
+			throw new IllegalStateException("No jar entry for " + path + "/" + className.toDebugString());
+		}
+		
+		return jarFile.getInputStream(jarEntry);
 	}
 
 	@Override
 	DependencyFile getDependencyFile(TypeName className) {
 		return new DependencyFile(path, true);
+	}
+
+	@Override
+	List<DependencyFile> getFiles() {
+		return Arrays.asList(new DependencyFile(path, true));
 	}
 }

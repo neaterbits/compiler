@@ -9,7 +9,7 @@ import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.common.TypeName;
 
-public class JavaClassLibs implements ClassLibs {
+public final class JavaClassLibs implements ClassLibs {
 
 	private final List<JavaClassLib> classpath;
 	
@@ -49,6 +49,18 @@ public class JavaClassLibs implements ClassLibs {
 		
 	   
 	   return classLib.getDependencyFile(typeName);
+	}
+
+	@Override
+	public List<DependencyFile> getFiles() {
+
+		final List<DependencyFile> files = new ArrayList<>();
+		
+		for (JavaClassLib classLib : classpath) {
+			files.addAll(classLib.getFiles());
+		}
+		
+		return files;
 	}
 }
 

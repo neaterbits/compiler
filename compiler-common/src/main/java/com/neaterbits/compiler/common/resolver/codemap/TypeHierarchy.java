@@ -32,7 +32,7 @@ final class TypeHierarchy extends BaseCodeMap {
 		final int typeNo = typeSequenceNo ++;
 		final int numTypes = typeSequenceNo;
 
-		this.typeVariant		= allocateArray(this.typeVariant, 10000, length -> new TypeVariant[length]);
+		this.typeVariant		= allocateArray(this.typeVariant, numTypes, length -> new TypeVariant[length]);
 		this.extendsFromEncoded = allocateIntArray(this.extendsFromEncoded, numTypes);
 		this.extendedByEncoded  = allocateIntArray(this.extendedByEncoded,  numTypes);
 
