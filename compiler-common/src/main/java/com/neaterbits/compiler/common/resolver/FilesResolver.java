@@ -226,6 +226,7 @@ public final class FilesResolver extends ResolveUtil {
 						compiledTypeDependency.getReferenceType(),
 						compiledTypeDependency.getElement(),
 						typeResolveMode,
+						null,
 						compiledTypeDependency.getUpdateOnResolve());
 				
 			}
@@ -246,6 +247,7 @@ public final class FilesResolver extends ResolveUtil {
 							compiledTypeDependency.getReferenceType(),
 							compiledTypeDependency.getElement(),
 							typeResolveMode,
+							null,
 							compiledTypeDependency.getUpdateOnResolve());
 				}
 				else {

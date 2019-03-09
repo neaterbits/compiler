@@ -11,6 +11,10 @@ public interface ClassBytecode extends ClassStatics, ClassFields {
 
 	TypeName getSuperClass();
 	
+	int getImplementedInterfacesCount();
+	
+	TypeName getImplementedInterface(int interfaceIdx);
+	
 	TypeVariant getTypeVariant();
 	
 	// Methods

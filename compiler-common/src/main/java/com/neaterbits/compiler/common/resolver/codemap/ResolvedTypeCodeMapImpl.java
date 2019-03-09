@@ -18,6 +18,7 @@ import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.common.loader.ResolvedFile;
 import com.neaterbits.compiler.common.loader.ResolvedType;
 import com.neaterbits.compiler.common.loader.ResolvedTypeDependency;
+import com.neaterbits.compiler.common.loader.TypeVariant;
 import com.neaterbits.compiler.common.resolver.ResolvedTypeCodeMap;
 
 import static com.neaterbits.compiler.common.resolver.codemap.ArrayAllocation.allocateArray;
@@ -55,24 +56,47 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 		return codeMap.addFile(types);
 	}
 
-	public int addType(ResolvedType type) {
-
+	private int [] getExtendsFrom(ResolvedType type, TypeVariant typeVariant) {
+		
+		Objects.requireNonNull(type);
+		Objects.requireNonNull(typeVariant);
+		
 		final int [] extendsFrom;
 		
 		if (type.getExtendsFrom() != null) {
-			extendsFrom = new int[type.getExtendsFrom().size()];
+			
+			int numExtendsFrom = 0;
+			
+			for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
+				if (typeDependency.getTypeVariant().equals(typeVariant)) {
+					++ numExtendsFrom;
+				}
+			}
+			
+			extendsFrom = new int[numExtendsFrom];
 			
 			int dstIdx = 0;
 			
 			for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
-				extendsFrom[dstIdx ++] = nameToTypeNoMap.getType(typeDependency.getCompleteName());
+				if (typeDependency.getTypeVariant().equals(typeVariant)) {
+					extendsFrom[dstIdx ++] = nameToTypeNoMap.getType(typeDependency.getCompleteName());
+				}
 			}
 		}
 		else {
 			extendsFrom = null;
 		}
 		
-		final int typeNo = codeMap.addType(type.getTypeVariant(), type.getNumMethods(), extendsFrom);
+		return extendsFrom;
+	}
+	
+	public int addType(ResolvedType type) {
+
+		final int typeNo = codeMap.addType(
+				type.getTypeVariant(),
+				type.getNumMethods(),
+				getExtendsFrom(type, TypeVariant.CLASS),
+				getExtendsFrom(type, TypeVariant.INTERFACE));
 
 		this.resolvedTypes = allocateArray(
 				this.resolvedTypes,
@@ -111,15 +135,15 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 
 	@Override
 	public TypeInfo getClassExtendsFromTypeInfo(CompleteName classType) {
-		final int type = codeMap.getClassExtendsFrom(getTypeNo(classType));
+		final int type = codeMap.getClassThisExtendsFrom(getTypeNo(classType));
 
 		return type < 0 ? null : getTypeInfo(type);
 	}
 
 	@Override
-	public ResolvedType getClassExtendsFrom(CompleteName classType) {
+	public ResolvedType getClassThisExtendsFrom(CompleteName classType) {
 
-		final int type = codeMap.getClassExtendsFrom(getTypeNo(classType));
+		final int type = codeMap.getClassThisExtendsFrom(getTypeNo(classType));
 		
 		return type < 0 ? null : resolvedTypes[type];
 	}

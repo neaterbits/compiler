@@ -1,9 +1,7 @@
 package com.neaterbits.compiler.bytecode.common.loader;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -48,19 +46,27 @@ public class HashTypeMap<T> implements TypeMap {
 
 	@Override
 	public final int getTypeNo(TypeName typeName) {
+
+		final T type = getType(typeName);
+		
+		return type != null ? getTypeNo.getTypeNo(type) : -1;
+	}
+
+	
+	public final T getType(TypeName typeName) {
 		final T type;
 		
 		synchronized (this) {
 			type = typeByName.get(typeName);
 		}
 
-		return type != null ? getTypeNo.getTypeNo(type) : -1;
+		return type;
 	}
 	
 	public final ClassBytecode addOrGetType(
 			TypeName typeName,
 			CodeMap codeMap,
-			boolean baseClassesAlreadyLoaded,
+			boolean baseTypesAlreadyLoaded,
 			TypeResult typeResult,
 			CreateType<T> createType,
 			LoadType loadType) throws IOException, ClassFileException {
@@ -83,31 +89,38 @@ public class HashTypeMap<T> implements TypeMap {
 			
 			if (classByteCode != null) {
 
-				final int [] extendsFromTypes;
+				final int [] extendsFromClasses;
+				final int [] extendsFromInterfaces;
 				
-				if (baseClassesAlreadyLoaded && classByteCode.getSuperClass() != null) {
+				if (baseTypesAlreadyLoaded) {
 
-					final List<TypeName> extendsFrom = Arrays.asList(classByteCode.getSuperClass());
+					if (classByteCode.getSuperClass() != null) {
+						final T extendsFromType = typeByName.get(classByteCode.getSuperClass());
+
+						extendsFromClasses = new int [] { getTypeNo.getTypeNo(extendsFromType) };
+					}
+					else {
+						extendsFromClasses = null;
+					}
 					
-					extendsFromTypes = new int[extendsFrom.size()];
-				
-					for (int i = 0; i < extendsFromTypes.length; ++ i) {
-						
-						final TypeName extendsFromName = extendsFrom.get(i);
-						
-						final T extendsFromType = typeByName.get(extendsFromName);
+					if (classByteCode.getImplementedInterfacesCount() > 0) {
 
-						if (DEBUG) {
-							System.out.println("## get type for " + typeName.toDebugString() + " with type " + extendsFromType);
+						extendsFromInterfaces = new int[classByteCode.getImplementedInterfacesCount()];
+						
+						for (int i = 0; i < classByteCode.getImplementedInterfacesCount(); ++ i) {
+
+							final T extendsFromType = typeByName.get(classByteCode.getImplementedInterface(i));
+
+							extendsFromInterfaces[i] = getTypeNo.getTypeNo(extendsFromType);
 						}
-						
-						final int extendsFromTypeNo = getTypeNo.getTypeNo(extendsFromType);
-						
-						extendsFromTypes[i] = extendsFromTypeNo;
+					}
+					else {
+						extendsFromInterfaces = null;
 					}
 				}
 				else {
-					extendsFromTypes = null;
+					extendsFromClasses = null;
+					extendsFromInterfaces = null;
 				}
 
 				synchronized (this) {
@@ -118,7 +131,13 @@ public class HashTypeMap<T> implements TypeMap {
 						addedBytecode = null;
 					}
 					else {
-						final int typeNo = codeMap.addType(classByteCode.getTypeVariant(), extendsFromTypes);
+						final int typeNo = codeMap.addType(classByteCode.getTypeVariant(), extendsFromClasses, extendsFromInterfaces);
+
+						if (DEBUG) {
+							System.out.println("## addType " + typeName.toDebugString() + " " + typeNo
+									+ " with superclass " 
+									+ (classByteCode.getSuperClass() != null ? classByteCode.getSuperClass().toDebugString() : null));
+						}
 
 						type = createType.create(typeName, typeNo, classByteCode);
 						

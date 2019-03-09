@@ -42,7 +42,7 @@ class ExtendingTypesHelper {
 			NameLoadMethodRequest request,
 			LoaderMaps loaderMaps) {
 		
-		final int [] extendingTypes = loaderMaps.codeMap.getDirectlyExtendingTypes(type);
+		final int [] extendingTypes = loaderMaps.codeMap.getTypesDirectlyExtendingThis(type);
 		
 		for (int extendingType : extendingTypes) {
 			final ClassBytecode classBytecode = loaderMaps.loadedClasses.getBytecode(extendingType);

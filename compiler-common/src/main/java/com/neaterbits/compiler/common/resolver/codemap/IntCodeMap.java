@@ -31,31 +31,62 @@ public final class IntCodeMap implements CodeMap {
 	}
 
 	@Override
-	public int addType(TypeVariant typeVariant, int[] extendsFrom) {
+	public int addType(TypeVariant typeVariant, int[] thisExtendsFromClasses, int [] thisExtendsFromInterfaces) {
 
-		final int [] extendsFromEncoded;
-		
-		if (extendsFrom != null) {
-			extendsFromEncoded = new int[extendsFrom.length];
-			
-			for (int i = 0; i < extendsFromEncoded.length; ++ i) {
-				final int extendsFromType = extendsFrom[i];
-				
-				extendsFromEncoded[i] = Encode.encodeType(
-						extendsFromType,
-						typeHierarchy.getTypeVariantForType(extendsFromType));
-			}
-		}
-		else {
-			extendsFromEncoded = null;
-		}
-		
-		return typeHierarchy.addType(typeVariant, extendsFromEncoded);
+		return typeHierarchy.addType(
+				typeVariant,
+				thisExtendsFromClasses != null ? typeHierarchy.encodeTypeVariant(thisExtendsFromClasses) : null,
+				thisExtendsFromInterfaces != null ? typeHierarchy.encodeTypeVariant(thisExtendsFromInterfaces) : null
+				);
 	}
 
+	
 	@Override
 	public int getExtendsFromSingleSuperClass(int type) {
 		return typeHierarchy.getExtendsFromSingleSuperClass(type);
+	}
+
+	private static final int [] EMPTY_ARRAY = new int[0];
+	
+	@Override
+	public int[] getTypesThisDirectlyExtends(int typeNo) {
+		final int [] encodedTypes = typeHierarchy.getTypesThisExtendsFromEncoded(typeNo);
+
+		final int [] result;
+		
+		if (encodedTypes != null) {
+			result = new int[encodedTypes.length];
+			
+			for (int i = 0; i < encodedTypes.length; ++ i) {
+				result[i] = Encode.decodeTypeNo(encodedTypes[i]);
+			}
+		}
+		else {
+			result = EMPTY_ARRAY;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public int[] getTypesDirectlyExtendingThis(int typeNo) {
+
+		final int [] encodedTypes = typeHierarchy.getTypesExtendingThisEncoded(typeNo);
+
+		final int [] result;
+		
+		if (encodedTypes != null) {
+			result = new int[encodedTypes.length];
+			
+			for (int i = 0; i < encodedTypes.length; ++ i) {
+				result[i] = Encode.decodeTypeNo(encodedTypes[i]);
+			}
+		}
+		else {
+			result = EMPTY_ARRAY;
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -109,11 +140,6 @@ public final class IntCodeMap implements CodeMap {
 		return MethodVariant.values()[(int)value];
 	}
 	
-	@Override
-	public int[] getDirectlyExtendingTypes(int type) {
-		return typeHierarchy.getExtendsFrom(type, Encode::isClass);
-	}
-
 	@Override
 	public int getTypeForMethod(int methodNo) {
 		return methodMap.getTypeForMethod(methodNo);

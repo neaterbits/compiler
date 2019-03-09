@@ -19,8 +19,8 @@ final class SynchronizedCodeMap implements CodeMap {
 	}
 
 	@Override
-	public synchronized int addType(TypeVariant typeVariant, int[] extendsFrom) {
-		return delegate.addType(typeVariant, extendsFrom);
+	public synchronized int addType(TypeVariant typeVariant, int[] extendsFromClasses, int [] extendsFromInterfaces) {
+		return delegate.addType(typeVariant, extendsFromClasses, extendsFromInterfaces);
 	}
 	
 	@Override
@@ -47,8 +47,13 @@ final class SynchronizedCodeMap implements CodeMap {
 	}
 
 	@Override
-	public synchronized int[] getDirectlyExtendingTypes(int type) {
-		return delegate.getDirectlyExtendingTypes(type);
+	public int[] getTypesThisDirectlyExtends(int typeNo) {
+		return delegate.getTypesThisDirectlyExtends(typeNo);
+	}
+
+	@Override
+	public synchronized int[] getTypesDirectlyExtendingThis(int type) {
+		return delegate.getTypesDirectlyExtendingThis(type);
 	}
 
 	@Override

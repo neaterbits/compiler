@@ -36,8 +36,8 @@ public class ExecutorMain<CLASS, METHOD> {
 
 		final CodeMap codeMap = new SynchronizedCodeMap(new IntCodeMap());
 		
-		final int baseType = codeMap.addType(TypeVariant.CLASS, new int[0]);
-		final int classType = codeMap.addType(TypeVariant.CLASS, new int [] { baseType });
+		final int baseType = codeMap.addType(TypeVariant.CLASS, new int[0], null);
+		final int classType = codeMap.addType(TypeVariant.CLASS, new int [] { baseType }, null);
 
 		final BytecodeCompiler<CompiledClass, Void> compiler = new ExecutorBytecodeCompiler(
 				baseType,

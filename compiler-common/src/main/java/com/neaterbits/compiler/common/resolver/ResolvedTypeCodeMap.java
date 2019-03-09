@@ -14,7 +14,7 @@ import com.neaterbits.compiler.common.resolver.codemap.TypeInfo;
 
 public interface ResolvedTypeCodeMap {
 
-	ResolvedType getClassExtendsFrom(CompleteName classType);
+	ResolvedType getClassThisExtendsFrom(CompleteName classType);
 
 	TypeInfo getClassExtendsFromTypeInfo(CompleteName classType);
 

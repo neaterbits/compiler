@@ -61,7 +61,7 @@ public class CodeMapTest extends BaseResolveTest {
 		assertThat(directSubtypes).isNotNull();
 		assertThat(directSubtypes.isEmpty());
 		
-		assertThat(codeMap.getClassExtendsFrom(resolvedClass.getCompleteName())).isNull();
+		assertThat(codeMap.getClassThisExtendsFrom(resolvedClass.getCompleteName())).isNull();
 
 		final Collection<ResolvedType> allSubtypes = codeMap.getAllSubtypes(resolvedClass.getCompleteName());
 		assertThat(allSubtypes).isNotNull();
@@ -95,7 +95,7 @@ public class CodeMapTest extends BaseResolveTest {
 		assertThat(directSubtypes).isNotNull();
 		assertThat(directSubtypes.isEmpty());
 		
-		assertThat(codeMap.getClassExtendsFrom(resolvedInterface.getCompleteName())).isNull();
+		assertThat(codeMap.getClassThisExtendsFrom(resolvedInterface.getCompleteName())).isNull();
 
 		final Collection<ResolvedType> allSubtypes = codeMap.getAllSubtypes(resolvedInterface.getCompleteName());
 		assertThat(allSubtypes).isNotNull();
@@ -126,7 +126,11 @@ public class CodeMapTest extends BaseResolveTest {
 				TypeVariant.INTERFACE,
 				makeInterfaceType(interfaceNamespace, interfaceName));
 		
-		final ResolvedTypeDependency interfaceDependency = new TestResolvedTypeDependency(classType.getCompleteName(), ReferenceType.EXTENDS_FROM);
+		final ResolvedTypeDependency interfaceDependency = new TestResolvedTypeDependency(
+				classType.getCompleteName(),
+				ReferenceType.EXTENDS_FROM,
+				TypeVariant.INTERFACE);
+		
 		final ResolvedType resolvedClass = new TestResolvedType(
 				classTestFile.getSpec(),
 				classScopedName,
@@ -157,7 +161,7 @@ public class CodeMapTest extends BaseResolveTest {
 		assertThat(allSubtypes.size()).isEqualTo(1);
 		assertThat(allSubtypes.iterator().next()).isSameAs(resolvedClass);
 
-		assertThat(codeMap.getClassExtendsFrom(resolvedInterface.getCompleteName())).isNull();
+		assertThat(codeMap.getClassThisExtendsFrom(resolvedInterface.getCompleteName())).isNull();
 
 		final ResolvedType anotherClass = addType(codeMap, "AnotherTestClass.java", "com.test.AnotherTestClass", TypeVariant.CLASS, resolvedClass);
 		final ResolvedType anotherInterface = addType(codeMap, "AnotherTestInterface.java", "com.test.AnotherTestInterface", TypeVariant.INTERFACE, resolvedInterface);

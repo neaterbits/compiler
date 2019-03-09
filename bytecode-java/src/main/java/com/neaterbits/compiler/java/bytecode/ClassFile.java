@@ -95,9 +95,29 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 
 	@Override
 	public final TypeName getSuperClass() {
-		return superClass != 0 ? getTypeName(superClass) : null;
+		
+		final TypeName typeName;
+		
+		if (getTypeVariant() == TypeVariant.INTERFACE) {
+			typeName = null;
+		}
+		else {
+			typeName = superClass != 0 ? getTypeName(superClass) : null;
+		}
+		
+		return typeName;
 	}
 	
+	@Override
+	public int getImplementedInterfacesCount() {
+		return interfaces != null ? interfaces.length : 0;
+	}
+
+	@Override
+	public TypeName getImplementedInterface(int interfaceIdx) {
+		return getTypeName(interfaces[interfaceIdx]);
+	}
+
 	@Override
 	public int getFieldCount() {
 		return fields.length;

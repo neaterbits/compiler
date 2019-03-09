@@ -14,7 +14,7 @@ public class TypeHierarchyTest {
 		final TypeHierarchy typeHierarchy = new TypeHierarchy();
 		
 		for (int i = 0; i < 100000; ++ i) {
-			final int typeNo = typeHierarchy.addType(TypeVariant.CLASS, null);
+			final int typeNo = typeHierarchy.addType(TypeVariant.CLASS, null, null);
 
 			assertThat(typeNo).isEqualTo(i);
 		}

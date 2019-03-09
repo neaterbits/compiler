@@ -37,10 +37,14 @@ public interface CodeMap {
 		MethodRefStatus onRef(int methodNo, int depth);
 	}
 
-	int addType(TypeVariant typeVariant, int [] extendsFrom);
+	int addType(TypeVariant typeVariant, int [] extendsFromClasses, int [] extendsFromInterfaces);
 	
 	int getExtendsFromSingleSuperClass(int type);
-	
+
+	int [] getTypesThisDirectlyExtends(int typeNo);
+
+	int [] getTypesDirectlyExtendingThis(int typeNo);
+
 	void setMethodCount(int type, int methodCount);
 	
 	int addOrGetMethod(
@@ -60,8 +64,6 @@ public interface CodeMap {
 			int [] parameters,
 			int indexInType);
 
-	int [] getDirectlyExtendingTypes(int type);
-	
 	int getTypeForMethod(int methodNo);
 	
 	int getIndexForMethod(int methodNo);

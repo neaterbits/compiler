@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassHelper;
@@ -108,11 +109,7 @@ public class ReadToClassFileTest extends BaseClassFileReaderTest {
 		}
 	}
 	
-	@Test
-	public void testLoadClassHelper() throws IOException, ClassFileException {
-		
-		final HashTypeMap<TypeInfo> typeMap = new HashTypeMap<>(type -> type.typeNo);
-		final CodeMap codeMap = new IntCodeMap();
+	private ClassBytecode loadClassAndBaseTypes(String className, HashTypeMap<TypeInfo> typeMap, CodeMap codeMap) throws IOException, ClassFileException {
 
 		final File file = getRTJarPath();
 		final JavaBytecodeFormat javaBytecodeFormat = new JavaBytecodeFormat();
@@ -121,17 +118,78 @@ public class ReadToClassFileTest extends BaseClassFileReaderTest {
 				typeMap,
 				codeMap,
 				(typeName, typeNo, classByteCode) -> {
-
-					System.out.println("## create type for " + typeName.toDebugString());
 					
 					return new TypeInfo(typeNo, typeName);
 				},
 				null,
 				(typeName) -> javaBytecodeFormat.loadClassBytecode(file, typeName));
 		
-		LoadClassHelper.loadClassAndBaseClassesAndAddToCodeMap(
-				parseClassName("java.util.HashMap"),
+		return LoadClassHelper.loadClassAndBaseTypesAndAddToCodeMap(
+				parseClassName(className),
 				new CodeMap.TypeResult(),
 				parameters);
 	}
+	
+	@Test
+	public void testLoadClassHelper() throws IOException, ClassFileException {
+		
+		final HashTypeMap<TypeInfo> typeMap = new HashTypeMap<>(type -> type.typeNo);
+		final CodeMap codeMap = new IntCodeMap();
+
+		final ClassBytecode classBytecode = loadClassAndBaseTypes("java.util.HashMap", typeMap, codeMap);
+		
+		assertThat(classBytecode).isNotNull();
+		
+		assertThat(classBytecode.getTypeVariant()).isEqualTo(TypeVariant.CLASS);
+
+		final TypeName javaUtilHashMap = parseClassName("java.util.HashMap");
+		final TypeName javaUtilAbstractMap = parseClassName("java.util.AbstractMap");
+		final TypeName javaLangObject = parseClassName("java.lang.Object");
+		
+		final int hashMapTypeNo = typeMap.getTypeNo(javaUtilHashMap);
+		final TypeInfo hashMapTypeInfo = typeMap.getType(javaUtilHashMap);
+
+		assertThat(hashMapTypeInfo).isNotNull();
+		assertThat(hashMapTypeInfo.typeNo).isEqualTo(hashMapTypeNo);
+		assertThat(hashMapTypeInfo.typeName).isEqualTo(javaUtilHashMap);
+
+		final TypeInfo abstractMapTypeInfo = typeMap.getType(javaUtilAbstractMap);
+		assertThat(abstractMapTypeInfo).isNotNull();
+
+		final TypeInfo objectTypeInfo = typeMap.getType(javaLangObject);
+		assertThat(objectTypeInfo).isNotNull();
+
+		assertThat(hashMapTypeInfo.typeNo).isGreaterThan(abstractMapTypeInfo.typeNo);
+		assertThat(hashMapTypeInfo.typeNo).isGreaterThan(objectTypeInfo.typeNo);
+		assertThat(abstractMapTypeInfo.typeNo).isGreaterThan(objectTypeInfo.typeNo);
+		
+		assertThat(codeMap.getExtendsFromSingleSuperClass(hashMapTypeNo)).isEqualTo(abstractMapTypeInfo.typeNo);
+		assertThat(codeMap.getExtendsFromSingleSuperClass(abstractMapTypeInfo.typeNo)).isEqualTo(objectTypeInfo.typeNo);
+
+		final int [] typesObjectExtendsFrom = codeMap.getTypesThisDirectlyExtends(objectTypeInfo.typeNo);
+		assertThat(typesObjectExtendsFrom.length).isEqualTo(0);
+		
+		final int [] typesExtendingObject = codeMap.getTypesDirectlyExtendingThis(objectTypeInfo.typeNo);
+		assertThat(typesExtendingObject).isNotNull();
+		assertThat(typesExtendingObject.length).isEqualTo(1);
+
+		assertThat(typesExtendingObject[0]).isEqualTo(abstractMapTypeInfo.typeNo);
+		
+		final int [] typesExtendingAbstractMap = codeMap.getTypesDirectlyExtendingThis(abstractMapTypeInfo.typeNo);
+		assertThat(typesExtendingAbstractMap.length).isEqualTo(1);
+		assertThat(typesExtendingAbstractMap[0]).isEqualTo(hashMapTypeInfo.typeNo);
+	}
+	
+	/*
+	private static final boolean contains(int [] array, int value) {
+		
+		for (int i = 0; i < array.length; ++ i) {
+			if (array[i] == value) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	*/
 }

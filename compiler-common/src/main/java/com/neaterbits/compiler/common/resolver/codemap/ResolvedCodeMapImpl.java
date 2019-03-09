@@ -34,24 +34,13 @@ public final class ResolvedCodeMapImpl extends BaseCodeMap {
 		return fileReferences.addFile(types);
 	}
 	
-	int addType(TypeVariant typeVariant, int numMethods, int [] extendsFrom) {
+	int addType(TypeVariant typeVariant, int numMethods, int [] thisExtendsFromClasses, int [] thisExtendsFromInterfaces) {
 		
-		final int [] extendsFromEncoded;
-		
-		if (extendsFrom != null) {
-			extendsFromEncoded = new int[extendsFrom.length];
-
-			int i = 0;
-			
-			for (int dependency : extendsFrom) {
-				extendsFromEncoded[i ++] = encodeType(dependency, typeHierarchy.getTypeVariantForType(dependency));
-			}
-		}
-		else {
-			extendsFromEncoded = null;
-		}
-		
-		final int typeNo = typeHierarchy.addType(typeVariant, extendsFromEncoded);
+		final int typeNo = typeHierarchy.addType(
+				typeVariant,
+				thisExtendsFromClasses != null ? typeHierarchy.encodeTypeVariant(thisExtendsFromClasses) : null,
+				thisExtendsFromInterfaces != null ? typeHierarchy.encodeTypeVariant(thisExtendsFromInterfaces) : null
+				);
 		
 		methodMap.allocateMethods(typeNo, numMethods);
 		
@@ -82,7 +71,7 @@ public final class ResolvedCodeMapImpl extends BaseCodeMap {
 		
 		final int encodedTypeNo = getEncodedTypeNo(typeNo);
 		
-		final int [] extendedByEncoded = typeHierarchy.getExtendedByTypeEncoded(typeNo);
+		final int [] extendedByEncoded = typeHierarchy.getTypesExtendingThisEncoded(typeNo);
 		
 		if (extendedByEncoded != null) {
 			methodOverrideMap.addTypeExtendsTypes(encodedTypeNo, extendedByEncoded, methodMap);
@@ -98,9 +87,9 @@ public final class ResolvedCodeMapImpl extends BaseCodeMap {
 	}
 	
 
-	int getClassExtendsFrom(int typeNo) {
+	int getClassThisExtendsFrom(int typeNo) {
 		
-		final int [] types = typeHierarchy.getExtendsFrom(typeNo, Encode::isClass);
+		final int [] types = typeHierarchy.getTypesThisExtendsFrom(typeNo, Encode::isClass);
 
 		final int result;
 		
@@ -123,7 +112,7 @@ public final class ResolvedCodeMapImpl extends BaseCodeMap {
 
 	int [] getDirectSubtypes(int typeNo) {
 
-		final int numSubtypes = typeHierarchy.getNumExtendedBy(typeNo);
+		final int numSubtypes = typeHierarchy.getNumExtendingThis(typeNo);
 		final int [] result;
 
 		if (numSubtypes == 0) {
@@ -133,7 +122,7 @@ public final class ResolvedCodeMapImpl extends BaseCodeMap {
 			result = new int[numSubtypes];
 
 			for (int i = 0; i < numSubtypes; ++ i) {
-				final int subtypeEncoded = typeHierarchy.getExtendedByTypeNoEncoded(typeNo, i);
+				final int subtypeEncoded = typeHierarchy.getTypesExtendingThisEncoded(typeNo, i);
 
 				result[i] = decodeTypeNo(subtypeEncoded);
 			}

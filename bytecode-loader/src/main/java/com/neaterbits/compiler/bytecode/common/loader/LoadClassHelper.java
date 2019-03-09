@@ -26,11 +26,11 @@ public class LoadClassHelper {
 				
 				type -> bytecodeFormat.loadClassBytecode(classLibs, type));
 		
-		return loadClassAndBaseClassesAndAddToCodeMap(typeName, typeResult, parameters);
+		return loadClassAndBaseTypesAndAddToCodeMap(typeName, typeResult, parameters);
 	}
 	
 
-	public static <CLASSLIBS, TYPE, CACHE> ClassBytecode loadClassAndBaseClassesAndAddToCodeMap(
+	public static <CLASSLIBS, TYPE, CACHE> ClassBytecode loadClassAndBaseTypesAndAddToCodeMap(
 			TypeName typeName,
 			TypeResult typeResult,
 			LoadClassParameters<CLASSLIBS, TYPE, CACHE> parameters) throws IOException, ClassFileException {
@@ -47,7 +47,7 @@ public class LoadClassHelper {
 			final ClassBytecode classBytecode = parameters.loadType.load(type);
 			
 			if (classBytecode != null) {
-				loadBaseClasses(typeName, classBytecode, parameters);
+				loadBaseTypes(typeName, classBytecode, parameters);
 			}
 		
 			return classBytecode;
@@ -67,7 +67,7 @@ public class LoadClassHelper {
 		return addedBytecode;
 	}
 	
-	private static <CLASSLIBS, TYPE, CACHE> void loadBaseClasses(
+	private static <CLASSLIBS, TYPE, CACHE> void loadBaseTypes(
 			TypeName typeName,
 			ClassBytecode classBytecode,
 			LoadClassParameters<CLASSLIBS, TYPE, CACHE> parameters) throws IOException, ClassFileException {
@@ -77,20 +77,27 @@ public class LoadClassHelper {
 		final TypeResult typeResult = new TypeResult();
 		
 		for (;;) {
+
+			for (int i = 0; i < currentClass.getImplementedInterfacesCount(); ++ i) {
+				final TypeName interfaceTypeName = currentClass.getImplementedInterface(i);
+				
+				loadClassAndBaseTypesAndAddToCodeMap(interfaceTypeName, typeResult, parameters);
+			}
+			
 			final TypeName superClassName = currentClass.getSuperClass();
 
 			if (superClassName == null) {
 				// root class
 				break;
 			}
-
+			
 			// System.out.println("## load superclass name " + superClassName);
 			
 			if (superClassName.equals(typeName)) {
 				throw new IllegalStateException();
 			}
 			
-			final ClassBytecode addedClass = loadClassAndBaseClassesAndAddToCodeMap(superClassName, typeResult, parameters);
+			final ClassBytecode addedClass = loadClassAndBaseTypesAndAddToCodeMap(superClassName, typeResult, parameters);
 
 			// System.out.println("## loaded superclass name " + superClassName);
 

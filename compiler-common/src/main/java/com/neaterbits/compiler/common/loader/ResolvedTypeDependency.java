@@ -11,4 +11,6 @@ public interface ResolvedTypeDependency {
 	ReferenceType getReferenceType();
 	
 	TypeReference getElement();
+	
+	TypeVariant getTypeVariant();
 }

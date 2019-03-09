@@ -58,6 +58,18 @@ public abstract class BuiltinClass extends BaseClassFile implements ClassBytecod
 	}
 
 	@Override
+	public int getImplementedInterfacesCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public TypeName getImplementedInterface(int interfaceIdx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public final TypeVariant getTypeVariant() {
 		return TypeVariant.CLASS;
 	}
