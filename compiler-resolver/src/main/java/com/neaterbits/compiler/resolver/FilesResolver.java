@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import com.neaterbits.compiler.resolver.ast.TypeResolveMode;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
@@ -17,6 +16,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 
 public final class FilesResolver extends ResolveUtil {

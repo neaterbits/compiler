@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver.ast;
+package com.neaterbits.compiler.util;
 
 public enum TypeResolveMode {
 

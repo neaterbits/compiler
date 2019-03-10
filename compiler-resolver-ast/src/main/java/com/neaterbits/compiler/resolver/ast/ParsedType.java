@@ -1,3 +1,4 @@
+
 package com.neaterbits.compiler.resolver.ast;
 
 import java.util.Collection;
@@ -6,6 +7,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.resolver.types.BaseResolverType;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.FileSpec;

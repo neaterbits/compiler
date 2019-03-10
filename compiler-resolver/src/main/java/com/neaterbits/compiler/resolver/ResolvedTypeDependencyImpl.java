@@ -7,8 +7,8 @@ import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.resolver.ast.TypeResolveMode;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
+import com.neaterbits.compiler.util.TypeResolveMode;
 
 final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency {
 	private final CompleteName completeName;

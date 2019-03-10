@@ -1,11 +1,9 @@
-package com.neaterbits.compiler.resolver.ast;
+package com.neaterbits.compiler.resolver.types;
 
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.resolver.types.FileSpec;
-import com.neaterbits.compiler.resolver.types.TypeSpec;
 
 public abstract class BaseResolverType {
 

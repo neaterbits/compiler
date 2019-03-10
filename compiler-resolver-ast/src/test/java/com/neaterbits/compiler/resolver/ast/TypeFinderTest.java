@@ -3,7 +3,7 @@ package com.neaterbits.compiler.resolver.ast;
 import org.junit.Test;
 
 import com.neaterbits.compiler.resolver.ast.TypeFinder;
-import com.neaterbits.compiler.resolver.ast.TypeResolveMode;
+import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.util.Strings;
 
 import static org.assertj.core.api.Assertions.assertThat;

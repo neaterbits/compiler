@@ -52,6 +52,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TypeResolveMode;
 
 
 class TypeFinder {

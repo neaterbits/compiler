@@ -3,7 +3,7 @@ package com.neaterbits.compiler.resolver;
 import java.util.Collection;
 import java.util.List;
 
-import com.neaterbits.compiler.resolver.ast.BaseResolverType;
+import com.neaterbits.compiler.resolver.types.BaseResolverType;
 import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
