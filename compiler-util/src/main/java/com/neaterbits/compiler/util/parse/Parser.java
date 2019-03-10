@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
-public interface Parser<T, ERROR extends ParseError, LISTENER> {
+public interface Parser<T, LISTENER> {
 
 	T parse(String string);
 
@@ -12,12 +12,12 @@ public interface Parser<T, ERROR extends ParseError, LISTENER> {
 
 	T parse(InputStream stream, String file) throws IOException;
 
-	T parse(String string, Collection<ERROR> errors, ParseLogger parseLogger);
+	T parse(String string, Collection<ParseError> errors, ParseLogger parseLogger);
 
-	T parse(InputStream stream, Collection<ERROR> errors, String file, ParseLogger parseLogger) throws IOException;
+	T parse(InputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException;
 
-	Collection<ERROR> parse(String string, LISTENER listener, ParseLogger parseLogger);
+	Collection<ParseError> parse(String string, LISTENER listener, ParseLogger parseLogger);
 
-	Collection<ERROR> parse(InputStream stream, LISTENER listener, String file, ParseLogger parseLogger) throws IOException;
+	Collection<ParseError> parse(InputStream stream, LISTENER listener, String file, ParseLogger parseLogger) throws IOException;
 
 }

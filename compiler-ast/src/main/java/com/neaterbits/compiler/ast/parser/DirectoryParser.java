@@ -11,11 +11,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.antlr4.AntlrError;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.util.Files;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.IOError;
+import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public class DirectoryParser {
@@ -67,7 +67,7 @@ public class DirectoryParser {
 
 					System.out.println("## compiling " + file.getName());
 					
-					final Collection<AntlrError> antlrErrors = new ArrayList<>();
+					final Collection<ParseError> parseErrors = new ArrayList<>();
 
 					final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					
@@ -75,13 +75,13 @@ public class DirectoryParser {
 					
 					final ParseLogger parseLogger = new ParseLogger(printStream);
 					
-					compilationUnit = parser.parse(fileInputStream, antlrErrors, file.getName(), debugParseLogger != null ? debugParseLogger : parseLogger);
+					compilationUnit = parser.parse(fileInputStream, parseErrors, file.getName(), debugParseLogger != null ? debugParseLogger : parseLogger);
 					
 					printStream.flush();
 					
 					log = new String(baos.toByteArray());
 
-					allFileerrors.addAll(antlrErrors);
+					allFileerrors.addAll(parseErrors);
 					
 				} catch (IOException ex) {
 					allFileerrors.add(new IOError(file, "Failed to load file", ex));

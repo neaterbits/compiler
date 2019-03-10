@@ -8,10 +8,10 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.neaterbits.compiler.antlr4.AntlrError;
 import com.neaterbits.compiler.antlr4.AntlrParser;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class FileTypeParser<LISTENER extends ModelParserListener<CompilationUnit>>
@@ -53,10 +53,10 @@ public final class FileTypeParser<LISTENER extends ModelParserListener<Compilati
 
 	
 	@Override
-	public CompilationUnit parse(InputStream inputStream, Collection<AntlrError> errors, String file, ParseLogger parseLogger) throws IOException {
+	public CompilationUnit parse(InputStream inputStream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
 		final LISTENER listener = makeListener.apply(parseLogger);
 		
-		final Collection<AntlrError> antlrErrors = parser.parse(inputStream, listener, file, parseLogger);
+		final Collection<ParseError> antlrErrors = parser.parse(inputStream, listener, file, parseLogger);
 
 		errors.addAll(antlrErrors);
 		

@@ -22,12 +22,13 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.neaterbits.compiler.util.parse.BaseParser;
+import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
 
 public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>, LEXER extends Lexer, PARSER extends Parser>
-		extends BaseParser<T, AntlrError, LISTENER>
+		extends BaseParser<T, LISTENER>
 		implements AntlrParser<T, LISTENER> {
 
 	protected abstract LISTENER createListener(ParseLogger parseLogger);
@@ -63,7 +64,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 		try {
 			return parse(
 					new ANTLRInputStream(string),
-					new ArrayList<AntlrError>(),
+					new ArrayList<>(),
 					null,
 					log ? new ParseLogger(System.out) : null);
 		} catch (IOException ex) {
@@ -73,11 +74,11 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 
 	@Override
 	public final T parse(InputStream stream, String file) throws IOException {
-		return parse(new ANTLRInputStream(stream), new ArrayList<AntlrError>(), file, new ParseLogger(System.out));
+		return parse(new ANTLRInputStream(stream), new ArrayList<>(), file, new ParseLogger(System.out));
 	}
 
 	@Override
-	public T parse(String string, Collection<AntlrError> errors, ParseLogger parseLogger) {
+	public T parse(String string, Collection<ParseError> errors, ParseLogger parseLogger) {
 		final LISTENER listener = createListener(parseLogger);
 
 		try {
@@ -90,7 +91,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 	}
 
 	@Override
-	public T parse(InputStream stream, Collection<AntlrError> errors, String file, ParseLogger parseLogger) throws IOException {
+	public T parse(InputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
 		final LISTENER listener = createListener(parseLogger);
 
 		parse(new ANTLRInputStream(stream), listener, errors, file, parseLogger);
@@ -98,7 +99,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 		return listener.getResult();
 	}
 
-	private T parse(ANTLRInputStream stream, Collection<AntlrError> errors, String file, ParseLogger parseLogger) throws IOException {
+	private T parse(ANTLRInputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
 
 		final LISTENER listener = createListener(parseLogger);
 
@@ -108,7 +109,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 	}
 
 	@Override
-	public final Collection<AntlrError> parse(String string, LISTENER listener, ParseLogger parseLogger) {
+	public final Collection<ParseError> parse(String string, LISTENER listener, ParseLogger parseLogger) {
 		
 		try {
 			return parse(new ANTLRInputStream(string), listener, null, parseLogger);
@@ -119,19 +120,19 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 	}
 
 	@Override
-	public final Collection<AntlrError> parse(InputStream stream, LISTENER listener, String file, ParseLogger parseLogger) throws IOException {
+	public final Collection<ParseError> parse(InputStream stream, LISTENER listener, String file, ParseLogger parseLogger) throws IOException {
 		return parse(new ANTLRInputStream(stream), listener, file, parseLogger);
 	}
 
-	private final Collection<AntlrError> parse(ANTLRInputStream stream, LISTENER listener, String file, ParseLogger parseLogger) throws IOException {
-		final List<AntlrError> errors = new ArrayList<AntlrError>();
+	private final Collection<ParseError> parse(ANTLRInputStream stream, LISTENER listener, String file, ParseLogger parseLogger) throws IOException {
+		final List<ParseError> errors = new ArrayList<>();
 
 		parse(stream, listener, errors, file, parseLogger);
 
 		return errors;
 	}
 
-	private final void parse(ANTLRInputStream stream, LISTENER listener, Collection<AntlrError> errors, String file, ParseLogger parseLogger) throws IOException {
+	private final void parse(ANTLRInputStream stream, LISTENER listener, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
 
 		if (listener == null) {
 			throw new IllegalArgumentException("listener == null");

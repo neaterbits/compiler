@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.antlr4.AntlrError;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
+import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +22,7 @@ public class JavaParserTest {
 		
 		final Java8AntlrParser parser = new Java8AntlrParser(true);
 
-		final List<AntlrError> errors = new ArrayList<>();
+		final List<ParseError> errors = new ArrayList<>();
 		
 		parser.parse(source, errors, new ParseLogger(System.out));
 		

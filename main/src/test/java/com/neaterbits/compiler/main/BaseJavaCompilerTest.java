@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.neaterbits.compiler.antlr4.AntlrError;
 import com.neaterbits.compiler.ast.CompilationCode;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
@@ -41,13 +40,14 @@ import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.ModuleSpec;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
+import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public abstract class BaseJavaCompilerTest {
 	
 	final CompilationUnit compile(String fileName) throws IOException {
 		final Java8AntlrParser parser = new Java8AntlrParser(true);
-		final List<AntlrError> errors = new ArrayList<>();
+		final List<ParseError> errors = new ArrayList<>();
 
 		final CompilationUnit compilationUnit;
 
