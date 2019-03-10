@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.bytecode.common.executor;
 
 import com.neaterbits.compiler.bytecode.common.ClassFields;
-import com.neaterbits.compiler.common.FieldType;
+import com.neaterbits.compiler.util.FieldType;
 
 class FieldSorter {
 

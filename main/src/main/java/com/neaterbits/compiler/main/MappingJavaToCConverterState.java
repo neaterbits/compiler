@@ -1,17 +1,17 @@
 package com.neaterbits.compiler.main;
 
-import com.neaterbits.compiler.common.ast.block.FunctionName;
-import com.neaterbits.compiler.common.ast.block.MethodName;
-import com.neaterbits.compiler.common.ast.type.CompleteName;
-import com.neaterbits.compiler.common.ast.type.BaseTypeName;
-import com.neaterbits.compiler.common.ast.type.primitive.IntType;
-import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
-import com.neaterbits.compiler.common.ast.typedefinition.StructName;
-import com.neaterbits.compiler.common.convert.Converters;
-import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
-import com.neaterbits.compiler.common.resolver.ResolvedTypeCodeMap;
-import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.compiler.ast.block.FunctionName;
+import com.neaterbits.compiler.ast.block.MethodName;
+import com.neaterbits.compiler.ast.type.BaseTypeName;
+import com.neaterbits.compiler.ast.type.CompleteName;
+import com.neaterbits.compiler.ast.type.primitive.IntType;
+import com.neaterbits.compiler.ast.typedefinition.FieldName;
+import com.neaterbits.compiler.ast.typedefinition.StructName;
+import com.neaterbits.compiler.convert.Converters;
+import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.java.JavaTypes;
+import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
+import com.neaterbits.compiler.util.Strings;
 
 public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState<T>> extends OOToProceduralConverterState<T> {
 

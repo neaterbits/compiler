@@ -1,21 +1,21 @@
 package com.neaterbits.compiler.java.emit;
 
-import com.neaterbits.compiler.common.TypeReference;
-import com.neaterbits.compiler.common.ast.block.ConstructorInvocationStatement;
-import com.neaterbits.compiler.common.ast.expression.Expression;
-import com.neaterbits.compiler.common.ast.list.ASTList;
-import com.neaterbits.compiler.common.ast.statement.BaseTryCatchFinallyStatement;
-import com.neaterbits.compiler.common.ast.statement.CatchBlock;
-import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
-import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
-import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
-import com.neaterbits.compiler.common.ast.statement.Mutability;
-import com.neaterbits.compiler.common.ast.statement.SwitchCaseLabel;
-import com.neaterbits.compiler.common.ast.statement.ThrowStatement;
-import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierVisitor;
-import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
-import com.neaterbits.compiler.common.emit.EmitterState;
-import com.neaterbits.compiler.common.emit.base.c.CLikeStatementEmitter;
+import com.neaterbits.compiler.ast.block.ConstructorInvocationStatement;
+import com.neaterbits.compiler.ast.expression.Expression;
+import com.neaterbits.compiler.ast.list.ASTList;
+import com.neaterbits.compiler.ast.statement.BaseTryCatchFinallyStatement;
+import com.neaterbits.compiler.ast.statement.CatchBlock;
+import com.neaterbits.compiler.ast.statement.IteratorForStatement;
+import com.neaterbits.compiler.ast.statement.Mutability;
+import com.neaterbits.compiler.ast.statement.SwitchCaseLabel;
+import com.neaterbits.compiler.ast.statement.ThrowStatement;
+import com.neaterbits.compiler.ast.statement.TryCatchFinallyStatement;
+import com.neaterbits.compiler.ast.statement.TryWithResourcesStatement;
+import com.neaterbits.compiler.ast.typedefinition.VariableModifierVisitor;
+import com.neaterbits.compiler.ast.typedefinition.VariableModifiers;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
+import com.neaterbits.compiler.emit.EmitterState;
+import com.neaterbits.compiler.emit.base.c.CLikeStatementEmitter;
 
 public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterState> {
 

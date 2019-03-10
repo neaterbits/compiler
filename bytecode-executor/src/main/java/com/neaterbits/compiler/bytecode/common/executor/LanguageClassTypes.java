@@ -3,7 +3,7 @@ package com.neaterbits.compiler.bytecode.common.executor;
 import java.util.List;
 
 import com.neaterbits.compiler.bytecode.common.ClassMethod;
-import com.neaterbits.compiler.common.FieldType;
+import com.neaterbits.compiler.util.FieldType;
 
 public interface LanguageClassTypes {
 

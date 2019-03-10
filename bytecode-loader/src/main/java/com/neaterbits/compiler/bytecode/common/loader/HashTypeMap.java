@@ -9,9 +9,9 @@ import java.util.function.BiConsumer;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.TypeMap;
-import com.neaterbits.compiler.common.TypeName;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMap;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMap.TypeResult;
+import com.neaterbits.compiler.codemap.CodeMap;
+import com.neaterbits.compiler.codemap.CodeMap.TypeResult;
+import com.neaterbits.compiler.util.TypeName;
 
 public class HashTypeMap<T> implements TypeMap {
 

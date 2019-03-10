@@ -1,29 +1,29 @@
 package com.neaterbits.compiler.java.emit;
 
-import com.neaterbits.compiler.common.ast.type.BaseType;
-import com.neaterbits.compiler.common.ast.type.FunctionPointerType;
-import com.neaterbits.compiler.common.ast.type.PointerType;
-import com.neaterbits.compiler.common.ast.type.TypeDefType;
-import com.neaterbits.compiler.common.ast.type.complex.ClassType;
-import com.neaterbits.compiler.common.ast.type.complex.EnumType;
-import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
-import com.neaterbits.compiler.common.ast.type.complex.StructType;
-import com.neaterbits.compiler.common.ast.type.primitive.ArrayType;
-import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
-import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
-import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
-import com.neaterbits.compiler.common.ast.type.primitive.Char8Type;
-import com.neaterbits.compiler.common.ast.type.primitive.DoubleType;
-import com.neaterbits.compiler.common.ast.type.primitive.FloatType;
-import com.neaterbits.compiler.common.ast.type.primitive.IntType;
-import com.neaterbits.compiler.common.ast.type.primitive.LongType;
-import com.neaterbits.compiler.common.ast.type.primitive.NullType;
-import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
-import com.neaterbits.compiler.common.ast.type.primitive.StringType;
-import com.neaterbits.compiler.common.ast.type.primitive.UnnamedVoidType;
-import com.neaterbits.compiler.common.ast.type.primitive.NamedVoidType;
-import com.neaterbits.compiler.common.emit.EmitterState;
-import com.neaterbits.compiler.common.emit.TypeEmitter;
+import com.neaterbits.compiler.ast.type.BaseType;
+import com.neaterbits.compiler.ast.type.FunctionPointerType;
+import com.neaterbits.compiler.ast.type.PointerType;
+import com.neaterbits.compiler.ast.type.TypeDefType;
+import com.neaterbits.compiler.ast.type.complex.ClassType;
+import com.neaterbits.compiler.ast.type.complex.EnumType;
+import com.neaterbits.compiler.ast.type.complex.InterfaceType;
+import com.neaterbits.compiler.ast.type.complex.StructType;
+import com.neaterbits.compiler.ast.type.primitive.ArrayType;
+import com.neaterbits.compiler.ast.type.primitive.BooleanType;
+import com.neaterbits.compiler.ast.type.primitive.ByteType;
+import com.neaterbits.compiler.ast.type.primitive.Char16Type;
+import com.neaterbits.compiler.ast.type.primitive.Char8Type;
+import com.neaterbits.compiler.ast.type.primitive.DoubleType;
+import com.neaterbits.compiler.ast.type.primitive.FloatType;
+import com.neaterbits.compiler.ast.type.primitive.IntType;
+import com.neaterbits.compiler.ast.type.primitive.LongType;
+import com.neaterbits.compiler.ast.type.primitive.NamedVoidType;
+import com.neaterbits.compiler.ast.type.primitive.NullType;
+import com.neaterbits.compiler.ast.type.primitive.ShortType;
+import com.neaterbits.compiler.ast.type.primitive.StringType;
+import com.neaterbits.compiler.ast.type.primitive.UnnamedVoidType;
+import com.neaterbits.compiler.emit.EmitterState;
+import com.neaterbits.compiler.emit.TypeEmitter;
 
 public final class JavaTypeEmitter implements TypeEmitter<EmitterState> {
 

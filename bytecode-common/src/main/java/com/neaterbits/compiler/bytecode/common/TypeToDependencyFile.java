@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import com.neaterbits.compiler.common.TypeName;
+import com.neaterbits.compiler.util.TypeName;
 
 public final class TypeToDependencyFile implements ClassLibs {
 

@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.common.antlr4.AntlrError;
-import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.antlr4.AntlrError;
 import com.neaterbits.compiler.javascript.parser.antlr4.JavascriptAntlrParser;
+import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public class JavascriptParserTest {
 

@@ -1,13 +1,13 @@
 package com.neaterbits.compiler.main;
 
-import com.neaterbits.compiler.common.ast.type.BaseType;
-import com.neaterbits.compiler.common.ast.type.FunctionPointerType;
-import com.neaterbits.compiler.common.ast.type.PointerType;
-import com.neaterbits.compiler.common.ast.type.TypeDefType;
-import com.neaterbits.compiler.common.ast.type.complex.ClassType;
-import com.neaterbits.compiler.common.ast.type.complex.EnumType;
-import com.neaterbits.compiler.common.ast.type.complex.InterfaceType;
-import com.neaterbits.compiler.common.ast.type.complex.StructType;
+import com.neaterbits.compiler.ast.type.BaseType;
+import com.neaterbits.compiler.ast.type.FunctionPointerType;
+import com.neaterbits.compiler.ast.type.PointerType;
+import com.neaterbits.compiler.ast.type.TypeDefType;
+import com.neaterbits.compiler.ast.type.complex.ClassType;
+import com.neaterbits.compiler.ast.type.complex.EnumType;
+import com.neaterbits.compiler.ast.type.complex.InterfaceType;
+import com.neaterbits.compiler.ast.type.complex.StructType;
 
 final class JavaToCTypeConverter extends BaseJavaToCTypeConverter<JavaToCConverterState> {
 

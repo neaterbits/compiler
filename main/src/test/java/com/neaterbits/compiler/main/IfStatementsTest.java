@@ -6,12 +6,12 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.common.ast.CompilationUnit;
-import com.neaterbits.compiler.common.ast.block.Block;
-import com.neaterbits.compiler.common.ast.statement.IfElseIfElseStatement;
-import com.neaterbits.compiler.common.ast.statement.Statement;
-import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
-import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
+import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.ast.block.Block;
+import com.neaterbits.compiler.ast.statement.IfElseIfElseStatement;
+import com.neaterbits.compiler.ast.statement.Statement;
+import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 
 public class IfStatementsTest extends BaseJavaCompilerTest {

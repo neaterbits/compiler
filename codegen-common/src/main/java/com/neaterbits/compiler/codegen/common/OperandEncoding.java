@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.codegen.common;
 
-import com.neaterbits.compiler.common.util.Bits;
+import com.neaterbits.compiler.util.Bits;
 
 public class OperandEncoding {
 	/*

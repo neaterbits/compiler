@@ -1,12 +1,12 @@
 package com.neaterbits.compiler.main;
 
-import com.neaterbits.compiler.common.BuiltinTypeReference;
-import com.neaterbits.compiler.common.TypeDefTypeReference;
-import com.neaterbits.compiler.common.TypeReference;
-import com.neaterbits.compiler.common.ast.type.BaseType;
-import com.neaterbits.compiler.common.ast.type.TypeDefType;
-import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
-import com.neaterbits.compiler.common.convert.ootofunction.BaseTypeReferenceConverter;
+import com.neaterbits.compiler.ast.type.BaseType;
+import com.neaterbits.compiler.ast.type.TypeDefType;
+import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
+import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
+import com.neaterbits.compiler.ast.typereference.TypeDefTypeReference;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
+import com.neaterbits.compiler.convert.ootofunction.BaseTypeReferenceConverter;
 
 final class JavaToCTypeReferenceConverter<T extends MappingJavaToCConverterState<T>> extends BaseTypeReferenceConverter<T> {
 

@@ -2,10 +2,10 @@ package com.neaterbits.compiler.bytecode.common;
 
 import java.util.List;
 
-import com.neaterbits.compiler.common.FieldType;
-import com.neaterbits.compiler.common.TypeName;
-import com.neaterbits.compiler.common.loader.TypeVariant;
-import com.neaterbits.compiler.common.resolver.codemap.MethodVariant;
+import com.neaterbits.compiler.codemap.MethodVariant;
+import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.util.FieldType;
+import com.neaterbits.compiler.util.TypeName;
 
 public interface ClassBytecode extends ClassStatics, ClassFields {
 

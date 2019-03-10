@@ -2,11 +2,11 @@ package com.neaterbits.compiler.javascript.parser.antlr4;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import com.neaterbits.compiler.common.log.ParseLogger;
-import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.javascript.JavaScriptParser;
 import com.neaterbits.compiler.javascript.JavaScriptParserBaseListener;
 import com.neaterbits.compiler.javascript.parser.JSParserListener;
+import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public class JavascriptAntlrParserListener extends JavaScriptParserBaseListener {
 

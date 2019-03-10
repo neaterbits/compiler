@@ -2,7 +2,7 @@ package com.neaterbits.compiler.java.parser;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ArrayStack;
+import com.neaterbits.compiler.util.ArrayStack;
 
 final class StatementsStack {
 

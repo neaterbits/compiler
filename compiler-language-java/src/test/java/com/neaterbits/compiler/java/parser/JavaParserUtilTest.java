@@ -2,7 +2,7 @@ package com.neaterbits.compiler.java.parser;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.common.ast.expression.Base;
+import com.neaterbits.compiler.ast.expression.Base;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

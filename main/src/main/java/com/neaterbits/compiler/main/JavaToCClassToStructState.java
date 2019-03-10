@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.main;
 
-import com.neaterbits.compiler.common.convert.Converters;
+import com.neaterbits.compiler.convert.Converters;
 
 public class JavaToCClassToStructState extends MappingJavaToCConverterState<JavaToCClassToStructState> {
 

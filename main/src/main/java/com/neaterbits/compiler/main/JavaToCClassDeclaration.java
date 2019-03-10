@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.main;
 
-import com.neaterbits.compiler.common.ast.type.complex.ClassType;
-import com.neaterbits.compiler.common.ast.type.complex.StructType;
-import com.neaterbits.compiler.common.convert.ootofunction.OOToProceduralClassDeclaration;
+import com.neaterbits.compiler.ast.type.complex.ClassType;
+import com.neaterbits.compiler.ast.type.complex.StructType;
+import com.neaterbits.compiler.convert.ootofunction.OOToProceduralClassDeclaration;
 
 public class JavaToCClassDeclaration extends OOToProceduralClassDeclaration {
 

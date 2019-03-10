@@ -1,27 +1,27 @@
 package com.neaterbits.compiler.c.emit;
 
-import com.neaterbits.compiler.common.ast.expression.ArrayCreationExpression;
-import com.neaterbits.compiler.common.ast.expression.Base;
-import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
-import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
-import com.neaterbits.compiler.common.ast.expression.FieldAccess;
-import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
-import com.neaterbits.compiler.common.ast.expression.FunctionPointerInvocationExpression;
-import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
-import com.neaterbits.compiler.common.ast.expression.SingleLambdaExpression;
-import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
-import com.neaterbits.compiler.common.ast.expression.VariableExpression;
-import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
-import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
-import com.neaterbits.compiler.common.ast.expression.literal.ClassExpression;
-import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLiteral;
-import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
-import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
-import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
-import com.neaterbits.compiler.common.ast.statement.Statement;
-import com.neaterbits.compiler.common.ast.variables.VariableReference;
-import com.neaterbits.compiler.common.emit.EmitterState;
-import com.neaterbits.compiler.common.emit.base.c.CLikeExpressionEmitter;
+import com.neaterbits.compiler.ast.expression.ArrayCreationExpression;
+import com.neaterbits.compiler.ast.expression.Base;
+import com.neaterbits.compiler.ast.expression.BlockLambdaExpression;
+import com.neaterbits.compiler.ast.expression.ClassInstanceCreationExpression;
+import com.neaterbits.compiler.ast.expression.FieldAccess;
+import com.neaterbits.compiler.ast.expression.FunctionCallExpression;
+import com.neaterbits.compiler.ast.expression.FunctionPointerInvocationExpression;
+import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.ast.expression.SingleLambdaExpression;
+import com.neaterbits.compiler.ast.expression.ThisPrimary;
+import com.neaterbits.compiler.ast.expression.VariableExpression;
+import com.neaterbits.compiler.ast.expression.literal.BooleanLiteral;
+import com.neaterbits.compiler.ast.expression.literal.CharacterLiteral;
+import com.neaterbits.compiler.ast.expression.literal.ClassExpression;
+import com.neaterbits.compiler.ast.expression.literal.FloatingPointLiteral;
+import com.neaterbits.compiler.ast.expression.literal.IntegerLiteral;
+import com.neaterbits.compiler.ast.expression.literal.NullLiteral;
+import com.neaterbits.compiler.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.ast.statement.Statement;
+import com.neaterbits.compiler.ast.variables.VariableReference;
+import com.neaterbits.compiler.emit.EmitterState;
+import com.neaterbits.compiler.emit.base.c.CLikeExpressionEmitter;
 
 final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 

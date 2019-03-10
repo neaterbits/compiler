@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.java.parser;
 
-import com.neaterbits.compiler.common.log.ParseLogger;
-import com.neaterbits.compiler.common.parser.stackstate.StackStatements;
+import com.neaterbits.compiler.ast.parser.stackstate.StackStatements;
+import com.neaterbits.compiler.util.parse.ParseLogger;
 
 final class StackJavaIfThenElse extends StackStatements {
 

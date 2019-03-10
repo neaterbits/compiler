@@ -9,11 +9,11 @@ import com.neaterbits.compiler.bytecode.common.loader.BytecodeCompiler;
 import com.neaterbits.compiler.bytecode.common.loader.BytecodeLoader;
 import com.neaterbits.compiler.bytecode.common.loader.ThreadData;
 import com.neaterbits.compiler.codegen.common.CodeGenerator;
-import com.neaterbits.compiler.common.FieldType;
-import com.neaterbits.compiler.common.TypeName;
-import com.neaterbits.compiler.common.loader.TypeVariant;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMap;
-import com.neaterbits.compiler.common.resolver.codemap.IntCodeMap;
+import com.neaterbits.compiler.codemap.CodeMap;
+import com.neaterbits.compiler.codemap.IntCodeMap;
+import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.util.FieldType;
+import com.neaterbits.compiler.util.TypeName;
 
 public class ExecutorMain<CLASS, METHOD> {
 	

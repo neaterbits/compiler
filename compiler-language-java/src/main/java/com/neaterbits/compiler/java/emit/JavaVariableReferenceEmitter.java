@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.java.emit;
 
-import com.neaterbits.compiler.common.ast.type.NamedType;
-import com.neaterbits.compiler.common.ast.variables.StaticMemberReference;
-import com.neaterbits.compiler.common.emit.EmitterState;
-import com.neaterbits.compiler.common.emit.base.c.CLikeVariableReferenceEmitter;
+import com.neaterbits.compiler.ast.type.NamedType;
+import com.neaterbits.compiler.ast.variables.StaticMemberReference;
+import com.neaterbits.compiler.emit.EmitterState;
+import com.neaterbits.compiler.emit.base.c.CLikeVariableReferenceEmitter;
 
 public final class JavaVariableReferenceEmitter extends CLikeVariableReferenceEmitter<EmitterState> {
 

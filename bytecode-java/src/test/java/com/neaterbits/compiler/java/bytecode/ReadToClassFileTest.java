@@ -13,12 +13,12 @@ import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassHelper;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassParameters;
-import com.neaterbits.compiler.common.TypeName;
-import com.neaterbits.compiler.common.loader.TypeVariant;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMap;
-import com.neaterbits.compiler.common.resolver.codemap.IntCodeMap;
-import com.neaterbits.compiler.common.util.Strings;
+import com.neaterbits.compiler.codemap.CodeMap;
+import com.neaterbits.compiler.codemap.IntCodeMap;
+import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.java.bytecode.reader.BaseClassFileReaderTest;
+import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TypeName;
 
 public class ReadToClassFileTest extends BaseClassFileReaderTest {
 

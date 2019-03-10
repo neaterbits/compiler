@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.Objects;
 
-final class Method extends Member {
+public final class Method extends Member {
 
 	private int maxLocals;
 	private int maxStack;

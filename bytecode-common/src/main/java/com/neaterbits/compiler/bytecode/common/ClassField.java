@@ -2,7 +2,7 @@ package com.neaterbits.compiler.bytecode.common;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.FieldType;
+import com.neaterbits.compiler.util.FieldType;
 
 public final class ClassField {
 

@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.common.antlr4.AntlrError;
-import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.antlr4.AntlrError;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
+import com.neaterbits.compiler.util.parse.ParseLogger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

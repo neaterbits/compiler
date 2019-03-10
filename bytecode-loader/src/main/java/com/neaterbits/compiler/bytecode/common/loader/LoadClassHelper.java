@@ -6,8 +6,8 @@ import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
-import com.neaterbits.compiler.common.TypeName;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMap.TypeResult;
+import com.neaterbits.compiler.codemap.CodeMap.TypeResult;
+import com.neaterbits.compiler.util.TypeName;
 
 public class LoadClassHelper {
 

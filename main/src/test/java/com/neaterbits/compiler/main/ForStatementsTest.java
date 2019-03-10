@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.common.ast.CompilationUnit;
+import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 
 public class ForStatementsTest extends BaseJavaCompilerTest {

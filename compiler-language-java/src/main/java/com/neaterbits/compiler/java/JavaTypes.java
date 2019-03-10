@@ -3,18 +3,18 @@ package com.neaterbits.compiler.java;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.neaterbits.compiler.common.ast.type.BaseTypeName;
-import com.neaterbits.compiler.common.ast.type.primitive.BooleanType;
-import com.neaterbits.compiler.common.ast.type.primitive.BuiltinType;
-import com.neaterbits.compiler.common.ast.type.primitive.ByteType;
-import com.neaterbits.compiler.common.ast.type.primitive.Char16Type;
-import com.neaterbits.compiler.common.ast.type.primitive.DoubleType;
-import com.neaterbits.compiler.common.ast.type.primitive.FloatType;
-import com.neaterbits.compiler.common.ast.type.primitive.IntType;
-import com.neaterbits.compiler.common.ast.type.primitive.LongType;
-import com.neaterbits.compiler.common.ast.type.primitive.NamedVoidType;
-import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
-import com.neaterbits.compiler.common.ast.type.primitive.StringType;
+import com.neaterbits.compiler.ast.type.BaseTypeName;
+import com.neaterbits.compiler.ast.type.primitive.BooleanType;
+import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
+import com.neaterbits.compiler.ast.type.primitive.ByteType;
+import com.neaterbits.compiler.ast.type.primitive.Char16Type;
+import com.neaterbits.compiler.ast.type.primitive.DoubleType;
+import com.neaterbits.compiler.ast.type.primitive.FloatType;
+import com.neaterbits.compiler.ast.type.primitive.IntType;
+import com.neaterbits.compiler.ast.type.primitive.LongType;
+import com.neaterbits.compiler.ast.type.primitive.NamedVoidType;
+import com.neaterbits.compiler.ast.type.primitive.ShortType;
+import com.neaterbits.compiler.ast.type.primitive.StringType;
 
 public class JavaTypes {
 

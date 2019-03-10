@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.bytecode.common;
 
-import com.neaterbits.compiler.common.TypeName;
+import com.neaterbits.compiler.util.TypeName;
 
 public interface TypeMap {
 

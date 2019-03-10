@@ -7,7 +7,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.bytecode.common.BytecodeInstructions;
 import com.neaterbits.compiler.bytecode.common.BytecodeSwitchCase;
 import com.neaterbits.compiler.bytecode.common.TypeMap;
-import com.neaterbits.compiler.common.TypeName;
+import com.neaterbits.compiler.util.TypeName;
 
 public final class JavaBytecodeSwitchCase extends BytecodeSwitchCase {
 

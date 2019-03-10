@@ -7,9 +7,9 @@ import java.util.function.Supplier;
 
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
-import com.neaterbits.compiler.common.FieldType;
-import com.neaterbits.compiler.common.TypeName;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMap;
+import com.neaterbits.compiler.codemap.CodeMap;
+import com.neaterbits.compiler.util.FieldType;
+import com.neaterbits.compiler.util.TypeName;
 
 public class BytecodeLoader<CLASS, METHOD> {
 

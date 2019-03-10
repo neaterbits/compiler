@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.c.emit;
 
-import com.neaterbits.compiler.common.ast.statement.ConstantSwitchCaseLabel;
-import com.neaterbits.compiler.common.ast.statement.DefaultSwitchCaseLabel;
-import com.neaterbits.compiler.common.ast.statement.EnumSwitchCaseLabel;
-import com.neaterbits.compiler.common.emit.EmitterState;
-import com.neaterbits.compiler.common.emit.SwitchCaseLabelEmitter;
+import com.neaterbits.compiler.ast.statement.ConstantSwitchCaseLabel;
+import com.neaterbits.compiler.ast.statement.DefaultSwitchCaseLabel;
+import com.neaterbits.compiler.ast.statement.EnumSwitchCaseLabel;
+import com.neaterbits.compiler.emit.EmitterState;
+import com.neaterbits.compiler.emit.SwitchCaseLabelEmitter;
 
 final class CSwitchCaseLabelEmitter implements SwitchCaseLabelEmitter<EmitterState> {
 

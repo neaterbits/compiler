@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.bytecode.common.loader;
 
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
-import com.neaterbits.compiler.common.FieldType;
-import com.neaterbits.compiler.common.resolver.codemap.MethodVariant;
+import com.neaterbits.compiler.codemap.MethodVariant;
+import com.neaterbits.compiler.util.FieldType;
 
 class ExtendingTypesHelper {
 

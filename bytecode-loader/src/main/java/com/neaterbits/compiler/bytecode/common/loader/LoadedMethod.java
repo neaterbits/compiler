@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.TypeName;
+import com.neaterbits.compiler.util.TypeName;
 
 final class LoadedMethod {
 	private List<TypeName> instantiatedTypes;

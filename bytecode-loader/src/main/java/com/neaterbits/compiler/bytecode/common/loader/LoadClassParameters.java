@@ -5,7 +5,7 @@ import java.util.function.BiConsumer;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.CreateType;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap.LoadType;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMap;
+import com.neaterbits.compiler.codemap.CodeMap;
 
 public class LoadClassParameters<CLASSLIBS, TYPE, CACHE> {
 

@@ -7,31 +7,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import com.neaterbits.compiler.bytecode.common.BaseClassFile;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.MethodClassReferenceScanner;
 import com.neaterbits.compiler.bytecode.common.MethodType;
-import com.neaterbits.compiler.common.FieldType;
-import com.neaterbits.compiler.common.TypeName;
-import com.neaterbits.compiler.common.ast.NamespaceReference;
-import com.neaterbits.compiler.common.ast.type.CompleteName;
-import com.neaterbits.compiler.common.ast.type.BaseTypeName;
-import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
-import com.neaterbits.compiler.common.ast.typedefinition.DefinitionName;
-import com.neaterbits.compiler.common.loader.TypeVariant;
-import com.neaterbits.compiler.common.resolver.codemap.MethodVariant;
-import com.neaterbits.compiler.common.util.Strings;
-import com.neaterbits.compiler.common.util.ValueMap;
+import com.neaterbits.compiler.codemap.MethodVariant;
+import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.java.bytecode.reader.ClassFileAttributesListener;
 import com.neaterbits.compiler.java.bytecode.reader.ClassFileReader;
 import com.neaterbits.compiler.java.bytecode.reader.ClassFileReaderListener;
 import com.neaterbits.compiler.java.bytecode.reader.ConstantPoolTag;
+import com.neaterbits.compiler.util.FieldType;
+import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.ValueMap;
 
 import static com.neaterbits.compiler.java.bytecode.JavaBytecodes.*;
 
-class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderListener {
+public class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderListener {
 
 	private ValueMap constantPool;
 	
@@ -47,27 +41,27 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 	private Field [] fields;
 	private Method [] methods;
 	
-	final String getUTF8(int index) {
+	protected final String getUTF8(int index) {
 		return constantPoolStrings[(int)getValueInConstantPool(index, ConstantPoolTag.UTF8)];
 	}
 	
-	final int getAccessFlags() {
+	protected final int getAccessFlags() {
 		return accessFlags;
 	}
 	
-	final int[] getInterfaces() {
+	protected final int[] getInterfaces() {
 		return interfaces;
 	}
 
-	final Field[] getFields() {
+	protected final Field[] getFields() {
 		return fields;
 	}
 
-	final Method[] getMethods() {
+	protected final Method[] getMethods() {
 		return methods;
 	}
 
-	final int getThisClass() {
+	protected final int getThisClass() {
 		return thisClass;
 	}
 
@@ -89,7 +83,7 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 		return typeVariant;
 	}
 
-	final int getSuperClassIndex() {
+	public final int getSuperClassIndex() {
 		return superClass;
 	}
 
@@ -429,31 +423,8 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 	TypeName getReferencedTypeName(int index) {
 		throw new UnsupportedOperationException("TODO");
 	}
-
-	final CompleteName getCompleteName(int classIndex, Function<String, BaseTypeName> createTypeName) {
 		
-		final TypeName typeName = getTypeName(classIndex);
-		
-		final List<DefinitionName> outerTypes;
-		
-		if (typeName.getOuterTypes() != null) {
-			outerTypes = new ArrayList<>(typeName.getOuterTypes().length);
-		
-			for (String outerType : typeName.getOuterTypes()) {
-				outerTypes.add(new ClassName(outerType));
-			}
-		}
-		else {
-			outerTypes = null;
-		}
-		
-		return new CompleteName(
-				new NamespaceReference(typeName.getNamespace()),
-				outerTypes,
-				createTypeName.apply(typeName.getName()));
-	}
-		
-	final TypeName getTypeName(int classIndex) {
+	protected final TypeName getTypeName(int classIndex) {
 		final String name = getUTF8((int)getValueInConstantPool(classIndex, ConstantPoolTag.CLASS));
 	
 		return getTypeName(name);
@@ -537,7 +508,7 @@ class ClassFile extends BaseClassFile implements ClassBytecode, ClassFileReaderL
 		return new FieldType(namespace, outerTypes, name, builtin, sizeInBits, numArrayDimensions);
 	}
 	
-	final String getMethodDescriptorTypes(int methodDescriptorIdx, Consumer<String> onParameter) {
+	protected final String getMethodDescriptorTypes(int methodDescriptorIdx, Consumer<String> onParameter) {
 		final String descriptor = getUTF8(methodDescriptorIdx);
 		
 		if (descriptor.charAt(0) != '(') {

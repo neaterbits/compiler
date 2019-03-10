@@ -12,11 +12,6 @@
   <dependencies>
   	<dependency>
   		<groupId>${project.groupId}</groupId>
-  		<artifactId>compiler-common</artifactId>
-  		<version>${project.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>${project.groupId}</groupId>
   		<artifactId>bytecode-common</artifactId>
   		<version>${project.version}</version>
   	</dependency>

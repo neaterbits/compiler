@@ -10,7 +10,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
-import com.neaterbits.compiler.common.TypeName;
+import com.neaterbits.compiler.util.TypeName;
 
 final class JarClassLib extends JavaClassLib {
 

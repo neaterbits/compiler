@@ -2,16 +2,16 @@ package com.neaterbits.compiler.main;
 
 import java.util.Arrays;
 
-import com.neaterbits.compiler.common.Context;
-import com.neaterbits.compiler.common.ast.expression.ArrayAccessExpression;
-import com.neaterbits.compiler.common.ast.expression.FieldAccess;
-import com.neaterbits.compiler.common.ast.expression.PrimaryList;
-import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
-import com.neaterbits.compiler.common.ast.variables.PrimaryListVariableReference;
-import com.neaterbits.compiler.common.ast.variables.StaticMemberReference;
-import com.neaterbits.compiler.common.ast.variables.VariableReference;
-import com.neaterbits.compiler.common.convert.ootofunction.BaseVariableReferenceConverter;
-import com.neaterbits.compiler.common.parser.FieldAccessType;
+import com.neaterbits.compiler.ast.expression.ArrayAccessExpression;
+import com.neaterbits.compiler.ast.expression.FieldAccess;
+import com.neaterbits.compiler.ast.expression.PrimaryList;
+import com.neaterbits.compiler.ast.parser.FieldAccessType;
+import com.neaterbits.compiler.ast.typedefinition.FieldName;
+import com.neaterbits.compiler.ast.variables.PrimaryListVariableReference;
+import com.neaterbits.compiler.ast.variables.StaticMemberReference;
+import com.neaterbits.compiler.ast.variables.VariableReference;
+import com.neaterbits.compiler.convert.ootofunction.BaseVariableReferenceConverter;
+import com.neaterbits.compiler.util.Context;
 
 final class JavaToCVariableReferenceConverter<T extends MappingJavaToCConverterState<T>> extends BaseVariableReferenceConverter<T> {
 

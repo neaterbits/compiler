@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.FieldType;
-import com.neaterbits.compiler.common.resolver.codemap.MethodVariant;
+import com.neaterbits.compiler.codemap.MethodVariant;
+import com.neaterbits.compiler.util.FieldType;
 
 public final class ClassMethod {
 

@@ -13,7 +13,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>compiler-common</artifactId>
+			<artifactId>compiler-resolver</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>compiler-convert</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

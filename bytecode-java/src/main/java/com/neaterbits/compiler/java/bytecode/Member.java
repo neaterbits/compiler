@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.java.bytecode;
 
-abstract class Member {
+public abstract class Member {
 
 	private final int accessFlags;
 	private final int nameIndex;
@@ -18,11 +18,11 @@ abstract class Member {
 		return accessFlags;
 	}
 
-	int getNameIndex() {
+	public final int getNameIndex() {
 		return nameIndex;
 	}
 
-	int getDescriptorIndex() {
+	public final int getDescriptorIndex() {
 		return descriptorIndex;
 	}
 

@@ -10,12 +10,12 @@ import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.MethodClassReferenceScanner;
 import com.neaterbits.compiler.bytecode.common.MethodType;
-import com.neaterbits.compiler.common.FieldType;
-import com.neaterbits.compiler.common.TypeName;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMap;
-import com.neaterbits.compiler.common.resolver.codemap.MethodVariant;
-import com.neaterbits.compiler.common.resolver.codemap.VTableScratchArea;
-import com.neaterbits.compiler.common.resolver.codemap.CodeMap.MethodRefStatus;
+import com.neaterbits.compiler.codemap.CodeMap;
+import com.neaterbits.compiler.codemap.MethodVariant;
+import com.neaterbits.compiler.codemap.VTableScratchArea;
+import com.neaterbits.compiler.codemap.CodeMap.MethodRefStatus;
+import com.neaterbits.compiler.util.FieldType;
+import com.neaterbits.compiler.util.TypeName;
 
 final class MethodLoaderThread<CLASS, METHOD> extends Thread {
 

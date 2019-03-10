@@ -16,8 +16,16 @@
 	</properties>
 
 	<modules>
-		<module>compiler-common</module>
+		<module>compiler-ast</module>
+		<module>compiler-convert</module>
+		<module>compiler-emit</module>
+		<module>compiler-resolver</module>
+		<module>compiler-antlr</module>
+		<module>compiler-util</module>
+		<module>codemap</module>
 		<module>bytecode-common</module>
+		<module>bytecode-ast</module>
+		<module>bytecode-java-ast</module>
 		<module>bytecode-executor</module>
 		<module>bytecode-loader</module>
 		<module>bytecode-java</module>

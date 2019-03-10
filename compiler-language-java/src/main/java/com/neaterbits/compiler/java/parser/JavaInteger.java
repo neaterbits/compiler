@@ -2,7 +2,7 @@ package com.neaterbits.compiler.java.parser;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.ast.expression.Base;
+import com.neaterbits.compiler.ast.expression.Base;
 
 final class JavaInteger {
 	
