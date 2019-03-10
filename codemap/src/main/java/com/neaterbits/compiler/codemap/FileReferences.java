@@ -4,18 +4,14 @@ import static com.neaterbits.compiler.codemap.ArrayAllocation.allocateIntArray;
 
 import java.util.Arrays;
 
-final class FileReferences<FILE> extends BaseCodeMap {
+public final class FileReferences<FILE> {
 
 	private int fileSequenceNo;
-	
 	
 	private int [] fileByType;
 	private int [][] typesByFile;
 	
-	FileReferences() {
-	}
-	
-	int addFile(int [] types) {
+	public int addFile(int [] types) {
 
 		final int fileNo = fileSequenceNo ++;
 		

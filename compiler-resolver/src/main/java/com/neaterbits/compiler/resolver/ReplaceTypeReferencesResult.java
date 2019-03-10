@@ -3,7 +3,6 @@ package com.neaterbits.compiler.resolver;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.compiler.codemap.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.loader.ResolvedFile;
 import com.neaterbits.compiler.resolver.loader.ResolvedType;
 

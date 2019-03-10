@@ -11,6 +11,7 @@ abstract class MethodOverrideMap {
 	private int [][] extendedMethodsByExtending; // Map from methodNo to an array of methods that are extended by this one
 	private int [][] extendingMethodsByExtended;  // Map from methodNo to an array of methods that are extending this one
 
+	abstract void addTypeExtendsTypes(int extendingTypeEncoded, int [] extendedTypesEncoded, MethodMap methodMap);
 	
 	private static void checkHasNonStaticMethodVariant(int methodWithMethodVariant) {
 		if (getMethodVariant(methodWithMethodVariant) == MethodVariant.STATIC) {

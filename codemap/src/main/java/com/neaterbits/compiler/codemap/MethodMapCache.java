@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 // Utilized while building integer maps, reusing same index for same names or signatures
-public final class MethodMapCache extends BaseCodeMap {
+public final class MethodMapCache {
 	
 	private static final long HASH_UNDEF = 0xFFFFFFFFFFFFFFFFL;
 

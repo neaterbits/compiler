@@ -11,7 +11,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.Encode.TypeTest;
 
-final class TypeHierarchy extends BaseCodeMap {
+final class TypeHierarchy {
 
 	private int typeSequenceNo;
 	

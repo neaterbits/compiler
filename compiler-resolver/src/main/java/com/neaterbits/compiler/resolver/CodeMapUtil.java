@@ -11,8 +11,6 @@ import java.util.Set;
 
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
-import com.neaterbits.compiler.codemap.ResolvedCodeMapImpl;
-import com.neaterbits.compiler.codemap.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.loader.ResolvedFile;
 import com.neaterbits.compiler.resolver.loader.ResolvedType;
 import com.neaterbits.compiler.resolver.loader.ResolvedTypeDependency;

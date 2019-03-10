@@ -11,6 +11,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.neaterbits.compiler.resolver.BaseResolveTest;
 import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.ResolvedCodeMapImpl;
+import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.TestResolvedFile;
 import com.neaterbits.compiler.resolver.TestResolvedType;
 import com.neaterbits.compiler.resolver.loader.ResolvedFile;
@@ -29,8 +31,6 @@ import com.neaterbits.compiler.ast.typedefinition.InterfaceDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceModifiers;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceName;
-import com.neaterbits.compiler.codemap.ResolvedCodeMapImpl;
-import com.neaterbits.compiler.codemap.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
 public class CodeMapTest extends BaseResolveTest {

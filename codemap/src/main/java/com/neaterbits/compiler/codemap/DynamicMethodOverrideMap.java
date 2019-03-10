@@ -1,5 +1,9 @@
 package com.neaterbits.compiler.codemap;
 
-final class DynamicMethodOverrideMap extends MethodOverrideMap {
+public final class DynamicMethodOverrideMap extends MethodOverrideMap {
 
+	@Override
+	void addTypeExtendsTypes(int extendingTypeEncoded, int[] extendedTypesEncoded, MethodMap methodMap) {
+		throw new UnsupportedOperationException();
+	}
 }

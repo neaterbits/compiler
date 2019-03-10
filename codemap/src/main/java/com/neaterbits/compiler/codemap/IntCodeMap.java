@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.codemap;
 
+import static com.neaterbits.compiler.codemap.Encode.encodeType;
+
 import com.neaterbits.compiler.util.Bits;
 import com.neaterbits.compiler.util.ValueMap;
 
@@ -12,18 +14,18 @@ public final class IntCodeMap implements CodeMap {
 	private final MethodMap methodMap;
 	private final MethodMapCache methodMapCache;
 	
-	private final DynamicMethodOverrideMap methodOverrideMap;
+	private final MethodOverrideMap methodOverrideMap;
 	
 	private final ValueMap methodVariants;
 	private final MethodCallGraph methodCallGraph;
 	
-	public IntCodeMap() {
+	public IntCodeMap(MethodOverrideMap methodOverrideMap) {
 		this.typeHierarchy 	= new TypeHierarchy();
 		
 		this.methodMap = new MethodMap();
 		this.methodMapCache = new MethodMapCache();
 		
-		this.methodOverrideMap = new DynamicMethodOverrideMap();
+		this.methodOverrideMap = methodOverrideMap;
 		
 		this.methodVariants = new ValueMap(NUM_METHOD_VARIANT_BITS, 10000);
 		this.methodCallGraph = new MethodCallGraph();
@@ -39,7 +41,26 @@ public final class IntCodeMap implements CodeMap {
 				);
 	}
 
+	private int getEncodedTypeNo(int typeNo) {
+		return encodeType(typeNo, getTypeVariantForType(typeNo));
+	}
+
+	public void computeMethodExtends(int typeNo) {
+
+		final int encodedTypeNo = getEncodedTypeNo(typeNo);
+		
+		final int [] extendedByEncoded = typeHierarchy.getTypesExtendingThisEncoded(typeNo);
+		
+		if (extendedByEncoded != null) {
+			methodOverrideMap.addTypeExtendsTypes(encodedTypeNo, extendedByEncoded, methodMap);
+		}
+	}
 	
+	@Override
+	public TypeVariant getTypeVariantForType(int typeNo) {
+		return typeHierarchy.getTypeVariantForType(typeNo);
+	}
+
 	@Override
 	public int getExtendsFromSingleSuperClass(int type) {
 		return typeHierarchy.getExtendsFromSingleSuperClass(type);
@@ -158,7 +179,7 @@ public final class IntCodeMap implements CodeMap {
 	public int recurseCallGraph(int fromMethodNo, MethodRef methodRef) {
 		return recurseCallGraph(fromMethodNo, methodRef, 0);
 	}
-		
+
 	private int recurseCallGraph(int fromMethodNo, MethodRef methodRef, int depth) {
 		
 		final int [] calledMethods = methodCallGraph.getMethodsCalledFrom(fromMethodNo);
@@ -212,6 +233,11 @@ public final class IntCodeMap implements CodeMap {
 	@Override
 	public int getDistinctMethodCount(int typeNo, MethodFilter methodFilter, VTableScratchArea scratchArea) {
 		return methodMap.getDistinctMethodCount(typeNo, methodFilter, typeHierarchy::getExtendsFromSingleSuperClass, scratchArea);
+	}
+
+	@Override
+	public MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes) {
+		return methodMap.getMethodInfo(typeNo, methodName, parameterTypes, methodMapCache);
 	}
 
 	private int recurseExtending(int calledMethod, MethodRef methodRef, int depth) {

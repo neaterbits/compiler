@@ -37,7 +37,9 @@ public interface CodeMap {
 
 	int addType(TypeVariant typeVariant, int [] extendsFromClasses, int [] extendsFromInterfaces);
 	
-	int getExtendsFromSingleSuperClass(int type);
+	TypeVariant getTypeVariantForType(int typeNo);
+	
+	int getExtendsFromSingleSuperClass(int typeNo);
 
 	int [] getTypesThisDirectlyExtends(int typeNo);
 
@@ -65,10 +67,13 @@ public interface CodeMap {
 	int getTypeForMethod(int methodNo);
 	
 	int getIndexForMethod(int methodNo);
+	
+	MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes);
 
 	void addMethodCall(int calledFrom, int calledTo);
 	
 	int recurseCallGraph(int fromMethodNo, MethodRef methodRef);
+
 	
 	@FunctionalInterface
 	interface MethodFilter {

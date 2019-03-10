@@ -3,6 +3,7 @@ package com.neaterbits.compiler.bytecode.common.executor;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.CodeMap;
+import com.neaterbits.compiler.codemap.MethodInfo;
 import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.VTableScratchArea;
@@ -23,6 +24,11 @@ final class SynchronizedCodeMap implements CodeMap {
 		return delegate.addType(typeVariant, extendsFromClasses, extendsFromInterfaces);
 	}
 	
+	@Override
+	public TypeVariant getTypeVariantForType(int typeNo) {
+		return delegate.getTypeVariantForType(typeNo);
+	}
+
 	@Override
 	public synchronized int getExtendsFromSingleSuperClass(int type) {
 		return delegate.getExtendsFromSingleSuperClass(type);
@@ -64,6 +70,11 @@ final class SynchronizedCodeMap implements CodeMap {
 	@Override
 	public synchronized int getIndexForMethod(int methodNo) {
 		return delegate.getIndexForMethod(methodNo);
+	}
+
+	@Override
+	public MethodInfo getMethodInfo(int typeNo, String methodName, int[] parameterTypes) {
+		return delegate.getMethodInfo(typeNo, methodName, parameterTypes);
 	}
 
 	@Override

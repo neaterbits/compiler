@@ -2,12 +2,12 @@ package com.neaterbits.compiler.codemap;
 
 import static com.neaterbits.compiler.codemap.ArrayAllocation.allocateIntArray;
 
-final class TypeReferences<TYPE> extends BaseCodeMap {
+public final class TypeReferences<TYPE> {
 
 	private int[][] fieldReferences;
 	private int[][] methodReferences;
 
-	void addFieldReferences(int fromType, int ... toTypes) {
+	public void addFieldReferences(int fromType, int ... toTypes) {
 		
 		this.fieldReferences = allocateIntArray(this.fieldReferences, fromType + 1);
 		
@@ -18,7 +18,7 @@ final class TypeReferences<TYPE> extends BaseCodeMap {
 		this.fieldReferences[fromType] = toTypes;
 	}
 	
-	void addMethodReferences(int fromType, int ... toTypes) {
+	public void addMethodReferences(int fromType, int ... toTypes) {
 		
 		this.methodReferences = allocateIntArray(this.methodReferences, fromType + 1);
 		

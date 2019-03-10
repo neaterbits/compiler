@@ -1,7 +1,4 @@
-package com.neaterbits.compiler.codemap;
-
-import static com.neaterbits.compiler.codemap.Encode.decodeTypeNo;
-import static com.neaterbits.compiler.codemap.Encode.encodeType;
+package com.neaterbits.compiler.resolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,33 +7,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.neaterbits.compiler.codemap.BaseCodeMap;
-import com.neaterbits.compiler.codemap.Encode;
 import com.neaterbits.compiler.codemap.FileReferences;
+import com.neaterbits.compiler.codemap.IntCodeMap;
 import com.neaterbits.compiler.codemap.MethodInfo;
-import com.neaterbits.compiler.codemap.MethodMap;
 import com.neaterbits.compiler.codemap.MethodMapCache;
 import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.StaticMethodOverrideMap;
-import com.neaterbits.compiler.codemap.TypeHierarchy;
 import com.neaterbits.compiler.codemap.TypeReferences;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.loader.ResolvedFile;
 import com.neaterbits.compiler.resolver.loader.ResolvedType;
 
-public final class ResolvedCodeMapImpl extends BaseCodeMap {
+public final class ResolvedCodeMapImpl {
 	
 	private final FileReferences<ResolvedFile> fileReferences;
-	private final TypeHierarchy typeHierarchy;
-	private final MethodMap methodMap;
-	private final StaticMethodOverrideMap methodOverrideMap;
+
+	private final IntCodeMap codeMap;
+	
 	private final TypeReferences<ResolvedType> typeReferences;
 	
 	public ResolvedCodeMapImpl() {
 		this.fileReferences = new FileReferences<>();
-		this.typeHierarchy 	= new TypeHierarchy();
-		this.methodMap = new MethodMap();
-		this.methodOverrideMap = new StaticMethodOverrideMap();
+
+		this.codeMap = new IntCodeMap(new StaticMethodOverrideMap());
 		this.typeReferences = new TypeReferences<>();
 	}
 
@@ -46,46 +39,23 @@ public final class ResolvedCodeMapImpl extends BaseCodeMap {
 	
 	int addType(TypeVariant typeVariant, int numMethods, int [] thisExtendsFromClasses, int [] thisExtendsFromInterfaces) {
 		
-		final int typeNo = typeHierarchy.addType(
-				typeVariant,
-				thisExtendsFromClasses != null ? typeHierarchy.encodeTypeVariant(thisExtendsFromClasses) : null,
-				thisExtendsFromInterfaces != null ? typeHierarchy.encodeTypeVariant(thisExtendsFromInterfaces) : null
-				);
+		final int typeNo = codeMap.addType(typeVariant, thisExtendsFromClasses, thisExtendsFromInterfaces);
 		
-		methodMap.allocateMethods(typeNo, numMethods);
+		codeMap.setMethodCount(typeNo, numMethods);
 		
 		return typeNo;
 	}
-	
-	private int getEncodedTypeNo(int typeNo) {
-		return encodeType(typeNo, typeHierarchy.getTypeVariantForType(typeNo));
-	}
 
 	TypeVariant getTypeVariant(int typeNo) {
-		return typeHierarchy.getTypeVariantForType(typeNo);
+		return codeMap.getTypeVariantForType(typeNo);
 	}
 	
-	public int addMethod(int typeNo, String name, int [] parameterTypes, MethodVariant methodVariant, int indexInType, MethodMapCache methodMapCache) {
-		
-		return methodMap.addMethod(
-				typeNo,
-				typeHierarchy.getTypeVariantForType(typeNo),
-				name,
-				parameterTypes,
-				methodVariant,
-				indexInType,
-				methodMapCache);
+	public int addMethod(int typeNo, String name, int [] parameterTypes, MethodVariant methodVariant, int indexInType) {
+		return codeMap.addOrGetMethod(typeNo, name, methodVariant, -1, parameterTypes, indexInType);
 	}
 	
 	public void computeMethodExtends(int typeNo) {
-		
-		final int encodedTypeNo = getEncodedTypeNo(typeNo);
-		
-		final int [] extendedByEncoded = typeHierarchy.getTypesExtendingThisEncoded(typeNo);
-		
-		if (extendedByEncoded != null) {
-			methodOverrideMap.addTypeExtendsTypes(encodedTypeNo, extendedByEncoded, methodMap);
-		}
+		codeMap.computeMethodExtends(typeNo);
 	}
 
 	public void addFieldReferences(int fromType, int ... toTypes) {
@@ -95,50 +65,13 @@ public final class ResolvedCodeMapImpl extends BaseCodeMap {
 	public void addMethodReferences(int fromType, int ... toTypes) {
 		typeReferences.addMethodReferences(fromType, toTypes);
 	}
-	
 
 	int getClassThisExtendsFrom(int typeNo) {
-		
-		final int [] types = typeHierarchy.getTypesThisExtendsFrom(typeNo, Encode::isClass);
-
-		final int result;
-		
-		if (types == null) {
-			result = -1;
-		}
-		else {
-		
-			if (types.length > 1) {
-				throw new IllegalStateException("Extending from more than one class");
-			}
-			
-			return types.length == 0 ? -1 : types[0];
-		}
-		
-		return result;
+		return codeMap.getExtendsFromSingleSuperClass(typeNo);
 	}
-	
-	private static final int [] EMPTY_ARRAY = new int[0];
 
 	int [] getDirectSubtypes(int typeNo) {
-
-		final int numSubtypes = typeHierarchy.getNumExtendingThis(typeNo);
-		final int [] result;
-
-		if (numSubtypes == 0) {
-			result = EMPTY_ARRAY;
-		}
-		else {
-			result = new int[numSubtypes];
-
-			for (int i = 0; i < numSubtypes; ++ i) {
-				final int subtypeEncoded = typeHierarchy.getTypesExtendingThisEncoded(typeNo, i);
-
-				result[i] = decodeTypeNo(subtypeEncoded);
-			}
-		}
-
-		return result;
+		return codeMap.getTypesDirectlyExtendingThis(typeNo);
 	}
 
 	int [] getAllSubtypes(int typeNo) {
@@ -179,7 +112,7 @@ public final class ResolvedCodeMapImpl extends BaseCodeMap {
 	}
 	
 	MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes, MethodMapCache methodMapCache) {
-		return methodMap.getMethodInfo(typeNo, methodName, parameterTypes, methodMapCache);
+		return codeMap.getMethodInfo(typeNo, methodName, parameterTypes);
 	}
 	
 	private void getAllSubtypes(int [] types, Collection<Integer> allTypes) {

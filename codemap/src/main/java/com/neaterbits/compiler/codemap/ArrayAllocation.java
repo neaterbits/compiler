@@ -3,7 +3,7 @@ package com.neaterbits.compiler.codemap;
 import java.util.Arrays;
 import java.util.function.Function;
 
-final class ArrayAllocation {
+public final class ArrayAllocation {
 	
 	static final int DEFAULT_LENGTH = 10000;
 	
@@ -47,7 +47,7 @@ final class ArrayAllocation {
 		return result;
 	}
 
-	static <T> T [] allocateArray(T [] array, int numEntries, Function<Integer, T[]> createArray) {
+	public static <T> T [] allocateArray(T [] array, int numEntries, Function<Integer, T[]> createArray) {
 		
 		final T [] result;
 		

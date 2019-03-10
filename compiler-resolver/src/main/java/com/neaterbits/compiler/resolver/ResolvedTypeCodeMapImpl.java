@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.codemap;
+package com.neaterbits.compiler.resolver;
 
 import static com.neaterbits.compiler.codemap.ArrayAllocation.allocateArray;
 
@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.codemap.ResolvedTypeBuiltin;
 import com.neaterbits.compiler.resolver.loader.ResolvedFile;
 import com.neaterbits.compiler.resolver.loader.ResolvedType;
@@ -186,7 +185,7 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 			parameterTypeNos[i] = getTypeNo(parameterTypes[i]);
 		}
 		
-		return codeMap.addMethod(type, name, parameterTypeNos, methodVariant, indexInType, methodMapCache);
+		return codeMap.addMethod(type, name, parameterTypeNos, methodVariant, indexInType);
 	}
 
 	public void computeMethodExtends(CompleteName completeName) {

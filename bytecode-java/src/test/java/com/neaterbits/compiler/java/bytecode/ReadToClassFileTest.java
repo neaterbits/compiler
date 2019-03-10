@@ -14,6 +14,7 @@ import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassHelper;
 import com.neaterbits.compiler.bytecode.common.loader.LoadClassParameters;
 import com.neaterbits.compiler.codemap.CodeMap;
+import com.neaterbits.compiler.codemap.DynamicMethodOverrideMap;
 import com.neaterbits.compiler.codemap.IntCodeMap;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.java.bytecode.reader.BaseClassFileReaderTest;
@@ -134,7 +135,7 @@ public class ReadToClassFileTest extends BaseClassFileReaderTest {
 	public void testLoadClassHelper() throws IOException, ClassFileException {
 		
 		final HashTypeMap<TypeInfo> typeMap = new HashTypeMap<>(type -> type.typeNo);
-		final CodeMap codeMap = new IntCodeMap();
+		final CodeMap codeMap = new IntCodeMap(new DynamicMethodOverrideMap());
 
 		final ClassBytecode classBytecode = loadClassAndBaseTypes("java.util.HashMap", typeMap, codeMap);
 		

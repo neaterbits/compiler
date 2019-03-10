@@ -18,7 +18,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.codemap.CodeMap.MethodFilter;
 
 
-final class MethodMap extends BaseCodeMap {
+final class MethodMap {
 
 	private static final int NO_PARAM_TYPES_INDEX = 0;
 	
