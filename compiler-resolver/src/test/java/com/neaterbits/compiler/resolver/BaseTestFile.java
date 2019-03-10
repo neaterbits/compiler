@@ -3,7 +3,7 @@ package com.neaterbits.compiler.resolver;
 import java.util.Arrays;
 import java.util.List;
 
-import com.neaterbits.compiler.resolver.loader.FileSpec;
+import com.neaterbits.compiler.resolver.types.FileSpec;
 
 public abstract class BaseTestFile<TYPE> {
 

@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver.loader.ast;
+package com.neaterbits.compiler.resolver.ast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.resolver.ReferenceType;
-import com.neaterbits.compiler.resolver.loader.CompiledType;
-import com.neaterbits.compiler.resolver.loader.CompiledTypeDependency;
+import com.neaterbits.compiler.resolver.types.CompiledType;
+import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.NamespaceReference;

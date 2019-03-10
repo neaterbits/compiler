@@ -4,10 +4,10 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.loader.CompiledFile;
-import com.neaterbits.compiler.resolver.loader.CompiledType;
-import com.neaterbits.compiler.resolver.loader.CompiledTypeDependency;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
+import com.neaterbits.compiler.resolver.types.CompiledFile;
+import com.neaterbits.compiler.resolver.types.CompiledType;
+import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.ScopedName;
 
 public final class ResolveLogger {

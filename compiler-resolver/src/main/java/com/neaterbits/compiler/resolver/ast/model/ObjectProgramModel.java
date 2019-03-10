@@ -16,7 +16,7 @@ import com.neaterbits.compiler.ast.typedefinition.InterfaceDeclarationName;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.resolver.ScopedNameResolver;
 import com.neaterbits.compiler.resolver.TypesMap;
-import com.neaterbits.compiler.resolver.loader.ast.FileImports;
+import com.neaterbits.compiler.resolver.ast.FileImports;
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;

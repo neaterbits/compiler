@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver.loader.ast;
+package com.neaterbits.compiler.resolver.ast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,9 +44,9 @@ import com.neaterbits.compiler.ast.variables.InitializerVariableDeclarationEleme
 import com.neaterbits.compiler.ast.variables.StaticMemberReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ReferenceType;
-import com.neaterbits.compiler.resolver.loader.CompiledType;
-import com.neaterbits.compiler.resolver.loader.FileSpec;
-import com.neaterbits.compiler.resolver.loader.TypeSpec;
+import com.neaterbits.compiler.resolver.types.CompiledType;
+import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;

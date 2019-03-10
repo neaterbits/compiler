@@ -15,8 +15,8 @@ import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.StaticMethodOverrideMap;
 import com.neaterbits.compiler.codemap.TypeReferences;
 import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.resolver.loader.ResolvedFile;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
+import com.neaterbits.compiler.resolver.types.ResolvedFile;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
 
 public final class ResolvedCodeMapImpl {
 	

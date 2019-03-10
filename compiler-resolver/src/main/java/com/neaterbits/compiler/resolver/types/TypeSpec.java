@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver.loader;
+package com.neaterbits.compiler.resolver.types;
 
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.util.ScopedName;

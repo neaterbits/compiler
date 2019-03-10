@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver.loader.ast;
+package com.neaterbits.compiler.resolver.ast;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,12 +6,12 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.resolver.loader.CompiledType;
-import com.neaterbits.compiler.resolver.loader.CompiledTypeDependency;
-import com.neaterbits.compiler.resolver.loader.FileSpec;
-import com.neaterbits.compiler.resolver.loader.TypeSpec;
+import com.neaterbits.compiler.resolver.types.CompiledType;
+import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
+import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.resolver.types.TypeSpec;
 
-final class ParsedType extends BaseLoaderType implements CompiledType {
+final class ParsedType extends BaseResolverType implements CompiledType {
 
 	private final ComplexType<?, ?, ?> type;
 	

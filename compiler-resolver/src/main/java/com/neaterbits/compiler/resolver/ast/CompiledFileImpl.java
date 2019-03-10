@@ -1,14 +1,14 @@
-package com.neaterbits.compiler.resolver.loader.ast;
+package com.neaterbits.compiler.resolver.ast;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.loader.CompiledFile;
-import com.neaterbits.compiler.resolver.loader.CompiledType;
-import com.neaterbits.compiler.resolver.loader.FileSpec;
-import com.neaterbits.compiler.resolver.loader.IFileImports;
+import com.neaterbits.compiler.resolver.types.CompiledFile;
+import com.neaterbits.compiler.resolver.types.CompiledType;
+import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.resolver.types.IFileImports;
 
 final class CompiledFileImpl implements CompiledFile {
 

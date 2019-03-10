@@ -7,8 +7,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
-import com.neaterbits.compiler.resolver.loader.ResolvedFile;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
+import com.neaterbits.compiler.resolver.types.ResolvedFile;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
 
 public final class ResolveFilesResult {
 	

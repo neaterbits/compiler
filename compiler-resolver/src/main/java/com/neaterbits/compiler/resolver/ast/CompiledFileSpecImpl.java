@@ -1,9 +1,9 @@
-package com.neaterbits.compiler.resolver.loader.ast;
+package com.neaterbits.compiler.resolver.ast;
 
 import java.io.File;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.loader.FileSpec;
+import com.neaterbits.compiler.resolver.types.FileSpec;
 
 final class CompiledFileSpecImpl implements FileSpec {
 

@@ -11,9 +11,9 @@ import java.util.Set;
 
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
-import com.neaterbits.compiler.resolver.loader.ResolvedFile;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
-import com.neaterbits.compiler.resolver.loader.ResolvedTypeDependency;
+import com.neaterbits.compiler.resolver.types.ResolvedFile;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 
 final class CodeMapUtil extends ResolveUtil {
 

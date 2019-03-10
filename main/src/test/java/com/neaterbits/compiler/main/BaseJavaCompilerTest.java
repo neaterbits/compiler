@@ -34,7 +34,7 @@ import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
 import com.neaterbits.compiler.resolver.ReplaceTypeReferencesResult;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.modules.ModuleId;

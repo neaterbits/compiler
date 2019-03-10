@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.neaterbits.compiler.resolver.loader.IFileImports;
+import com.neaterbits.compiler.resolver.types.IFileImports;
 import com.neaterbits.compiler.util.ScopedName;
 
 public final class ScopedNameResolver {

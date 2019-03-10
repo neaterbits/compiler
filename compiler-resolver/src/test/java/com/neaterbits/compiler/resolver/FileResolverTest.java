@@ -14,10 +14,10 @@ import com.neaterbits.compiler.resolver.FilesResolver;
 import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
-import com.neaterbits.compiler.resolver.loader.CompiledFile;
-import com.neaterbits.compiler.resolver.loader.CompiledType;
-import com.neaterbits.compiler.resolver.loader.CompiledTypeDependency;
-import com.neaterbits.compiler.resolver.loader.FileSpec;
+import com.neaterbits.compiler.resolver.types.CompiledFile;
+import com.neaterbits.compiler.resolver.types.CompiledType;
+import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
+import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.codemap.TypeVariant;
 

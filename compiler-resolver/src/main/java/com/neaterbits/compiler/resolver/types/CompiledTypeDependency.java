@@ -1,9 +1,9 @@
-package com.neaterbits.compiler.resolver.loader;
+package com.neaterbits.compiler.resolver.types;
 
 import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.resolver.ReferenceType;
-import com.neaterbits.compiler.resolver.loader.ast.TypeResolveMode;
+import com.neaterbits.compiler.resolver.ast.TypeResolveMode;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.typereference.TypeReference;

@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import com.neaterbits.compiler.resolver.loader.CompiledFile;
-import com.neaterbits.compiler.resolver.loader.CompiledTypeDependency;
+import com.neaterbits.compiler.resolver.types.CompiledFile;
+import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 
 final class FileUnresolvedReferences {

@@ -3,7 +3,7 @@ package com.neaterbits.compiler.resolver;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
 
 class ResolveUtil {
 

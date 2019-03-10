@@ -1,18 +1,18 @@
-package com.neaterbits.compiler.resolver.loader.ast;
+package com.neaterbits.compiler.resolver.ast;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.loader.FileSpec;
-import com.neaterbits.compiler.resolver.loader.TypeSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.resolver.types.TypeSpec;
 
-public abstract class BaseLoaderType {
+public abstract class BaseResolverType {
 
 	private final FileSpec file;
 	private final TypeSpec typeSpec;
 
-	protected BaseLoaderType(FileSpec file, TypeSpec typeSpec) {
+	protected BaseResolverType(FileSpec file, TypeSpec typeSpec) {
 		
 		Objects.requireNonNull(file);
 		Objects.requireNonNull(typeSpec);

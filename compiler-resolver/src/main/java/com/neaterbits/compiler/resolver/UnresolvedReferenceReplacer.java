@@ -10,9 +10,9 @@ import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
-import com.neaterbits.compiler.resolver.loader.ResolvedFile;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
-import com.neaterbits.compiler.resolver.loader.ResolvedTypeDependency;
+import com.neaterbits.compiler.resolver.types.ResolvedFile;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 
 public class UnresolvedReferenceReplacer {
 	

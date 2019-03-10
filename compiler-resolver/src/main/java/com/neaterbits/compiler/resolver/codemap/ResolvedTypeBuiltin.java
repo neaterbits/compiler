@@ -3,16 +3,16 @@ package com.neaterbits.compiler.resolver.codemap;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.loader.FileSpec;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
-import com.neaterbits.compiler.resolver.loader.ResolvedTypeDependency;
-import com.neaterbits.compiler.resolver.loader.TypeSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
+import com.neaterbits.compiler.resolver.types.TypeSpec;
 
 public final class ResolvedTypeBuiltin implements ResolvedType {
 

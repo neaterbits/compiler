@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.resolver;
 
 
-import com.neaterbits.compiler.resolver.loader.CompiledFile;
-import com.neaterbits.compiler.resolver.loader.CompiledType;
-import com.neaterbits.compiler.resolver.loader.FileSpec;
-import com.neaterbits.compiler.resolver.loader.IFileImports;
+import com.neaterbits.compiler.resolver.types.CompiledFile;
+import com.neaterbits.compiler.resolver.types.CompiledType;
+import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.resolver.types.IFileImports;
 
 public class TestCompiledFile extends BaseTestFile<CompiledType> implements CompiledFile {
 

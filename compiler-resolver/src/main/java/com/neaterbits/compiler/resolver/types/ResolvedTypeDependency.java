@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver.loader;
+package com.neaterbits.compiler.resolver.types;
 
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.typereference.TypeReference;

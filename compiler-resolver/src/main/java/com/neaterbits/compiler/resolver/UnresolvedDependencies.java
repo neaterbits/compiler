@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.neaterbits.compiler.resolver.loader.CompiledTypeDependency;
-import com.neaterbits.compiler.resolver.loader.FileSpec;
+import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
+import com.neaterbits.compiler.resolver.types.FileSpec;
 
 public final class UnresolvedDependencies {
 	

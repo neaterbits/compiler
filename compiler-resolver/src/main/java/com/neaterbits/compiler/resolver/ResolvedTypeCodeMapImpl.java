@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.resolver.codemap.ResolvedTypeBuiltin;
-import com.neaterbits.compiler.resolver.loader.ResolvedFile;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
-import com.neaterbits.compiler.resolver.loader.ResolvedTypeDependency;
+import com.neaterbits.compiler.resolver.types.ResolvedFile;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.ast.block.MethodName;
 import com.neaterbits.compiler.ast.type.BaseType;

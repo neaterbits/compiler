@@ -6,7 +6,7 @@ import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ReferenceType;
-import com.neaterbits.compiler.resolver.loader.ResolvedTypeDependency;
+import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 
 public final class TestResolvedTypeDependency implements ResolvedTypeDependency {
 

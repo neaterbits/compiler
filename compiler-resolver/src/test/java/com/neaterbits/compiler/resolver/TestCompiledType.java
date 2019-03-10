@@ -2,16 +2,16 @@ package com.neaterbits.compiler.resolver;
 
 import java.util.Collection;
 
-import com.neaterbits.compiler.resolver.loader.CompiledType;
-import com.neaterbits.compiler.resolver.loader.CompiledTypeDependency;
-import com.neaterbits.compiler.resolver.loader.FileSpec;
-import com.neaterbits.compiler.resolver.loader.TypeSpec;
-import com.neaterbits.compiler.resolver.loader.ast.BaseLoaderType;
+import com.neaterbits.compiler.resolver.ast.BaseResolverType;
+import com.neaterbits.compiler.resolver.types.CompiledType;
+import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
+import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-public class TestCompiledType extends BaseLoaderType implements CompiledType {
+public class TestCompiledType extends BaseResolverType implements CompiledType {
 
 	private final ComplexType<?, ?, ?> type;
 	

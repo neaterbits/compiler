@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver.loader.ast;
+package com.neaterbits.compiler.resolver.ast;
 
 import com.neaterbits.compiler.util.ArrayStack;
 

@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver.loader;
+package com.neaterbits.compiler.resolver.types;
 
 public interface FileSpec {
 

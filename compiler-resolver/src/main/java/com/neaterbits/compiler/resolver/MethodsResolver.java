@@ -19,9 +19,9 @@ import com.neaterbits.compiler.ast.typedefinition.ClassMethodStatic;
 import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.codemap.MethodVariant;
-import com.neaterbits.compiler.resolver.loader.ResolvedFile;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
-import com.neaterbits.compiler.resolver.loader.TypeSpec;
+import com.neaterbits.compiler.resolver.types.ResolvedFile;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.resolver.types.TypeSpec;
 
 public final class MethodsResolver {
 

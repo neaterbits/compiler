@@ -29,9 +29,9 @@ import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.UnresolvedDependencies;
 import com.neaterbits.compiler.resolver.UnresolvedReferenceReplacer;
-import com.neaterbits.compiler.resolver.loader.CompiledFile;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
-import com.neaterbits.compiler.resolver.loader.ast.ProgramLoader;
+import com.neaterbits.compiler.resolver.ast.ProgramLoader;
+import com.neaterbits.compiler.resolver.types.CompiledFile;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.modules.ModuleId;
@@ -166,13 +166,11 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	
 	private ResolveFilesResult resolveFiles(Program program) {
 
-		final ProgramLoader programLoader = new ProgramLoader(program);
-		
 		final ResolveLogger logger = new ResolveLogger(System.out);
 		
 		final FilesResolver resolver = new FilesResolver(logger, JavaTypes.getBuiltinTypes());
 		
-		final Collection<CompiledFile> allFiles = programLoader.getAllFiles();
+		final Collection<CompiledFile> allFiles = ProgramLoader.getCompiledFiles(program);
 		
 		for (CompiledFile compiledFile : allFiles) {
 			System.out.println("File " + compiledFile.getSpec() + " with types " + compiledFile.getTypes());

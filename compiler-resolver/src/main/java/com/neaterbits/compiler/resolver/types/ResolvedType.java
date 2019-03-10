@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver.loader;
+package com.neaterbits.compiler.resolver.types;
 
 import java.util.Collection;
 
@@ -7,7 +7,7 @@ import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
 
-public interface ResolvedType extends LoaderTypeInfo {
+public interface ResolvedType extends ResolveTypeInfo {
 
 	TypeSpec getSpec();
 	

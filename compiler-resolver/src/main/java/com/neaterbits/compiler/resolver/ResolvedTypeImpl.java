@@ -5,16 +5,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.loader.FileSpec;
-import com.neaterbits.compiler.resolver.loader.ResolvedType;
-import com.neaterbits.compiler.resolver.loader.ResolvedTypeDependency;
-import com.neaterbits.compiler.resolver.loader.TypeSpec;
-import com.neaterbits.compiler.resolver.loader.ast.BaseLoaderType;
+import com.neaterbits.compiler.resolver.ast.BaseResolverType;
+import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
+import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-final class ResolvedTypeImpl extends BaseLoaderType implements ResolvedType {
+final class ResolvedTypeImpl extends BaseResolverType implements ResolvedType {
 
 	private final ComplexType<?, ?, ?> type;
 	

@@ -1,10 +1,9 @@
-package com.neaterbits.compiler.resolver.loader.ast;
+package com.neaterbits.compiler.resolver.ast;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.loader.IFileImports;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
@@ -12,6 +11,7 @@ import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
+import com.neaterbits.compiler.resolver.types.IFileImports;
 
 public final class FileImports implements IFileImports {
 
