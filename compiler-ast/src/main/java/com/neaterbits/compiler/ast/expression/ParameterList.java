@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.BasePlaceholderASTElement;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.type.NamedType;
+import com.neaterbits.compiler.util.TypeName;
 
 public final class ParameterList extends BasePlaceholderASTElement {
 
@@ -38,6 +39,19 @@ public final class ParameterList extends BasePlaceholderASTElement {
 		}
 
 		return types;
+	}
+	
+	public final TypeName [] getTypeNames() {
+		
+		final NamedType [] types = getTypes();
+		
+		final TypeName [] typeNames = new TypeName[types.length];
+		
+		for (int i = 0; i < types.length; ++ i) {
+			typeNames[i] = types[i].getCompleteName().toTypeName();
+		}
+		
+		return typeNames;
 	}
 	
 	@Override

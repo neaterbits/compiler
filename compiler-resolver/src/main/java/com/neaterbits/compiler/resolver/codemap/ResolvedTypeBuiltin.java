@@ -3,60 +3,60 @@ package com.neaterbits.compiler.resolver.codemap;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.ast.NamespaceReference;
-import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
+import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.TypeName;
 
-public final class ResolvedTypeBuiltin implements ResolvedType {
+public final class ResolvedTypeBuiltin<BUILTINTYPE, COMPLEXTYPE> implements ResolvedType<BUILTINTYPE, COMPLEXTYPE> {
 
-	private final BuiltinType builtinType;
+	private final BUILTINTYPE builtinType;
+	private final TypeName typeName;
 	
-	public ResolvedTypeBuiltin(BuiltinType builtinType) {
+	public ResolvedTypeBuiltin(BUILTINTYPE builtinType, TypeName typeName) {
 		
 		Objects.requireNonNull(builtinType);
-
+		Objects.requireNonNull(typeName);
+		
+		this.typeName = typeName;
 		this.builtinType = builtinType;
+	}
+
+	@Override
+	public ScopedName getScopedName() {
+		return typeName.toScopedName();
+	}
+	
+	@Override
+	public TypeName getTypeName() {
+		return typeName;
 	}
 
 	@Override
 	public TypeVariant getTypeVariant() {
 		return TypeVariant.BUILTIN;
 	}
-	
-	@Override
-	public ScopedName getScopedName() {
-		return builtinType.getCompleteName().toScopedName();
-	}
-	
-	@Override
-	public NamespaceReference getNamespace() {
-		return builtinType.getNamespace();
-	}
 
 	@Override
-	public CompleteName getCompleteName() {
-		return builtinType.getCompleteName();
-	}
-
-	@Override
-	public ComplexType<?, ?, ?> getType() {
+	public COMPLEXTYPE getType() {
 		return null;
 	}
 	
+	@Override
+	public BUILTINTYPE getBuiltinType() {
+		return builtinType;
+	}
+
 	@Override
 	public TypeSpec getSpec() {
 		return null;
 	}
 	
 	@Override
-	public Collection<ResolvedType> getNestedTypes() {
+	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> getNestedTypes() {
 		return null;
 	}
 	
@@ -66,12 +66,12 @@ public final class ResolvedTypeBuiltin implements ResolvedType {
 	}
 	
 	@Override
-	public Collection<ResolvedTypeDependency> getExtendsFrom() {
+	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> getExtendsFrom() {
 		return null;
 	}
 	
 	@Override
-	public Collection<ResolvedTypeDependency> getDependencies() {
+	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> getDependencies() {
 		return null;
 	}
 }

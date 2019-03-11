@@ -4,6 +4,8 @@ import com.neaterbits.compiler.ast.block.FunctionName;
 import com.neaterbits.compiler.ast.block.MethodName;
 import com.neaterbits.compiler.ast.type.BaseTypeName;
 import com.neaterbits.compiler.ast.type.CompleteName;
+import com.neaterbits.compiler.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.type.primitive.IntType;
 import com.neaterbits.compiler.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.typedefinition.StructName;
@@ -15,7 +17,7 @@ import com.neaterbits.compiler.util.Strings;
 
 public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState<T>> extends OOToProceduralConverterState<T> {
 
-	public MappingJavaToCConverterState(Converters<T> converters, ResolvedTypeCodeMap codeMap) {
+	public MappingJavaToCConverterState(Converters<T> converters, ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>> codeMap) {
 		super(converters, codeMap);
 	}
 

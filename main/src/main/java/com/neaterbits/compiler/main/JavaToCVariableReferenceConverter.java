@@ -6,6 +6,7 @@ import com.neaterbits.compiler.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.ast.expression.FieldAccess;
 import com.neaterbits.compiler.ast.expression.PrimaryList;
 import com.neaterbits.compiler.ast.parser.FieldAccessType;
+import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.variables.PrimaryListVariableReference;
 import com.neaterbits.compiler.ast.variables.StaticMemberReference;
@@ -18,7 +19,9 @@ final class JavaToCVariableReferenceConverter<T extends MappingJavaToCConverterS
 	@Override
 	public VariableReference onStaticMemberReference(StaticMemberReference staticMemberReference, T param) {
 		
-		final int typeNo = param.getTypeNo(staticMemberReference.getClassType().getType());
+		final NamedType namedType = (NamedType)staticMemberReference.getClassType().getType();
+		
+		final int typeNo = param.getTypeNo(namedType.getCompleteName().toTypeName());
 		
 		final Context context = staticMemberReference.getContext();
 		

@@ -99,12 +99,12 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 		
 		final ClassType classType = (ClassType)object.getType();
 		
-		final int typeNo = param.getTypeNo(classType);
+		final int typeNo = param.getTypeNo(classType.getCompleteName().toTypeName());
 		
 		final MethodInfo methodInfo = param.getMethodInfo(
-				classType,
-				expression.getCallable(),
-				expression.getParameters().getTypes());
+				classType.getCompleteName().toTypeName(),
+				expression.getCallable().getName(),
+				expression.getParameters().getTypeNames());
 		
 		if (methodInfo == null) {
 			throw new IllegalStateException("No methodinfo for " + expression.getCallable() + " of " + classType.getCompleteName());

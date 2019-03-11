@@ -9,31 +9,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
+import com.neaterbits.compiler.util.TypeName;
 
 final class CodeMapUtil extends ResolveUtil {
 
-	static ResolvedTypeCodeMapImpl makeCodeMap(List<ResolvedFile> resolvedFiles, Collection<? extends BuiltinType> builtinTypes, List<ResolvedType> typesInDependencyOrder) {
+	static <BUILTINTYPE, COMPLEXTYPE> 
+		ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> makeCodeMap(
+				List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> resolvedFiles,
+				Collection<BUILTINTYPE> builtinTypes,
+				List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> typesInDependencyOrder,
+				ASTModel<BUILTINTYPE, COMPLEXTYPE> astModel) {
 		
-		final ResolvedTypeCodeMapImpl codeMap = new ResolvedTypeCodeMapImpl(new ResolvedCodeMapImpl(), builtinTypes);
+		final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap = new ResolvedTypeCodeMapImpl<>(
+				new ResolvedCodeMapImpl<>(),
+				builtinTypes,
+				astModel);
 		
-		final Map<CompleteName, ResolvedType> resolvedTypesByName = new HashMap<>();
+		final Map<TypeName, ResolvedType<BUILTINTYPE, COMPLEXTYPE>> resolvedTypesByName = new HashMap<>();
 		
-		for (ResolvedFile resolvedFile : resolvedFiles) {
-			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> resolvedTypesByName.put(type.getCompleteName(), type));
+		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE> resolvedFile : resolvedFiles) {
+			
+			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> {
+				resolvedTypesByName.put(type.getTypeName(), type);
+			});
 		}
 		
 		// Verify that all dependencies are resolved
-		for (ResolvedFile resolvedFile : resolvedFiles) {
+		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE> resolvedFile : resolvedFiles) {
 
 			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> {
 				
 				if (type.getExtendsFrom() != null) {
-					for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
+					for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE> typeDependency : type.getExtendsFrom()) {
 						if (!resolvedTypesByName.containsKey(typeDependency.getCompleteName())) {
 							throw new IllegalStateException("Cannot find type " + typeDependency.getCompleteName());
 						}
@@ -43,28 +53,28 @@ final class CodeMapUtil extends ResolveUtil {
 			});
 		}
 		
-		final Set<CompleteName> toAdd = new HashSet<>(resolvedTypesByName.keySet());
+		final Set<TypeName> toAdd = new HashSet<>(resolvedTypesByName.keySet());
 		
 		
 		// Since types extend from other types, we can only add those were we have added all base classes
 		while (!toAdd.isEmpty()) {
 			
-			final Iterator<CompleteName> iterator = toAdd.iterator();
+			final Iterator<TypeName> iterator = toAdd.iterator();
 			
 			while (iterator.hasNext()) {
 
-				final CompleteName completeName = iterator.next();
+				final TypeName completeName = iterator.next();
 				
 				if (codeMap.hasType(completeName)) {
 					throw new IllegalStateException();
 				}
 	
-				final ResolvedType type = resolvedTypesByName.get(completeName);
+				final ResolvedType<BUILTINTYPE, COMPLEXTYPE> type = resolvedTypesByName.get(completeName);
 				
 				boolean allExtendsFromAdded = true;
 				
 				if (type.getExtendsFrom() != null) {
-					for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
+					for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE> typeDependency : type.getExtendsFrom()) {
 						if (!codeMap.hasType(typeDependency.getCompleteName())) {
 							allExtendsFromAdded = false;
 							break;
@@ -86,9 +96,9 @@ final class CodeMapUtil extends ResolveUtil {
 		
 		final List<Integer> typeNosList = new ArrayList<>();
 			
-		for (ResolvedFile resolvedFile : resolvedFiles) {
+		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE> resolvedFile : resolvedFiles) {
 			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> {
-				typeNosList.add(codeMap.getTypeNo(type.getCompleteName()));
+				typeNosList.add(codeMap.getTypeNo(type.getTypeName()));
 			});
 			
 			final int [] typeNos = new int[typeNosList.size()];
@@ -102,7 +112,7 @@ final class CodeMapUtil extends ResolveUtil {
 			typeNosList.clear();
 		}
 		
-		final MethodsResolver methodsResolver = new MethodsResolver(codeMap);
+		final MethodsResolver<BUILTINTYPE, COMPLEXTYPE> methodsResolver = new MethodsResolver<>(codeMap, astModel);
 
 		methodsResolver.resolveMethodsForAllTypes(resolvedFiles);
 		

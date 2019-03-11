@@ -29,7 +29,7 @@ public class JavaTypes {
 	public static final StringType  STRING_TYPE = new StringType(new BaseTypeName("String"), true);
 	public static final NamedVoidType VOID_TYPE = new NamedVoidType(new BaseTypeName("void"));
 
-	private static final Collection<? extends BuiltinType> builtinTypes = Arrays.asList(
+	private static final Collection<BuiltinType> builtinTypes = Arrays.asList(
 			BYTE_TYPE,
 			SHORT_TYPE,
 			INT_TYPE,
@@ -42,7 +42,7 @@ public class JavaTypes {
 			VOID_TYPE
 		);
 	
-	public static Collection<? extends BuiltinType> getBuiltinTypes() {
+	public static Collection<BuiltinType> getBuiltinTypes() {
 		return builtinTypes;
 	}
 }

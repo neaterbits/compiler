@@ -14,49 +14,54 @@ import com.neaterbits.compiler.resolver.FilesResolver;
 import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
+import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
 public class FileResolverTest extends BaseResolveTest {
 
 	@Test
-	public void testResolveClasses() {
+	public void testResolve2Classes() {
 		
 		final PrintStream loggerStream = new PrintStream(new ByteArrayOutputStream());
 		
-		final ResolveLogger resolveLogger = new ResolveLogger(loggerStream);
+		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>> resolveLogger = new ResolveLogger<>(loggerStream);
 
-		final FilesResolver filesResolver = new FilesResolver(resolveLogger, Collections.emptyList());
+		final ASTModelImpl astModel = new ASTModelImpl();
+		
+		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>> filesResolver = new FilesResolver<>(resolveLogger, Collections.emptyList(), astModel);
 
 		final FileSpec testFileSpec = new TestFileSpec("TestClass.java");
 		final ScopedName testClass = makeScopedName("com.test.TestClass");
-		final CompiledType testType = new TestCompiledType(testFileSpec, testClass, TypeVariant.CLASS, null, null, null, null);
+		final CompiledType<ComplexType<?, ?, ?>> testType = new TestCompiledType(testFileSpec, testClass, TypeVariant.CLASS, null, null, null, null);
 		final TestCompiledFile testFile = new TestCompiledFile(testFileSpec, new TestFileImports(), testType);
 
 		final FileSpec anotherTestFileSpec = new TestFileSpec("AnotherTestClass.java");
 		final ScopedName anotherTestClass = makeScopedName("com.test.AnotherTestClass");
-		final CompiledType anotherTestType = new TestCompiledType(anotherTestFileSpec, anotherTestClass, TypeVariant.CLASS, null,
+		final CompiledType<ComplexType<?, ?, ?>> anotherTestType = new TestCompiledType(anotherTestFileSpec, anotherTestClass, TypeVariant.CLASS, null,
 					null,
 					Arrays.asList(makeExtendsFromDependency(testClass)),
 					null);
 
 		final TestCompiledFile anotherTestFile = new TestCompiledFile(anotherTestFileSpec, new TestFileImports(), anotherTestType);
 		
-		final List<CompiledFile> compiledFiles = Arrays.asList(
+		final List<CompiledFile<ComplexType<?, ?, ?>>> compiledFiles = Arrays.asList(
 				testFile,
 				anotherTestFile
 		);
 
-		final ResolveFilesResult result = filesResolver.resolveFiles(compiledFiles);
+		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>> result = filesResolver.resolveFiles(compiledFiles);
 		
 		assertThat(result).isNotNull();
 		
-		assertThat(result.getType(testType.getCompleteName())).isNotNull();
-		assertThat(result.getType(anotherTestType.getCompleteName())).isNotNull();
+		assertThat(result.getType(testType.getTypeName())).isNotNull();
+		assertThat(result.getType(anotherTestType.getTypeName())).isNotNull();
 		
 		/*
 		assertThat(result.getUnresolvedExtendsFrom(testFileSpec)).isEmpty();

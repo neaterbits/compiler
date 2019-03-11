@@ -1,6 +1,8 @@
 package com.neaterbits.compiler.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class TypeName {
@@ -30,6 +32,34 @@ public class TypeName {
 		return name;
 	}
 
+	public final ScopedName toScopedName() {
+		
+		final List<String> scope;
+		
+		if (namespace == null && outerTypes == null) {
+			scope = null;
+		}
+		else if (namespace != null && outerTypes != null) {
+			scope = new ArrayList<>(namespace.length + outerTypes.length);
+			
+			for (int i = 0; i < namespace.length; ++ i) {
+				scope.add(namespace[i]);
+			}
+			
+			for (int i = 0; i < outerTypes.length; ++ i) {
+				scope.add(outerTypes[i]);
+			}
+		}
+		else if (namespace != null) {
+			scope = Arrays.asList(namespace);
+		}
+		else {
+			scope = Arrays.asList(outerTypes);
+		}
+
+		return new ScopedName(scope, name);
+	}
+	
 	public String join(char separator) {
 		final StringBuilder sb = new StringBuilder();
 		

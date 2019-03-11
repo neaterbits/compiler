@@ -38,14 +38,12 @@ final class ParsedTypeReference implements CompiledTypeDependency {
 	public ReferenceType getReferenceType() {
 		return type;
 	}
-	
-	@Override
-	public TypeReference getElement() {
+
+	TypeReference getElement() {
 		return element;
 	}
 
-	@Override
-	public BiConsumer<BaseType, TypeResolveMode> getUpdateOnResolve() {
+	BiConsumer<BaseType, TypeResolveMode> getUpdateOnResolve() {
 		return updateOnResolve;
 	}
 

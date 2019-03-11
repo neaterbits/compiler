@@ -2,8 +2,11 @@ package com.neaterbits.compiler.resolver.types;
 
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.TypeName;
 
 public interface ResolveTypeInfo {
+	
+	TypeName getTypeName();
 	
 	ScopedName getScopedName();
 	

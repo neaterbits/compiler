@@ -10,7 +10,7 @@ import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.ScopedName;
 
-public final class ResolveLogger {
+public final class ResolveLogger<BUILTINTYPE, COMPLEXTYPE> {
 
 	private final PrintStream out;
 
@@ -21,27 +21,27 @@ public final class ResolveLogger {
 		this.out = out;
 	}
 
-	void onResolveFilesStart(Collection<CompiledFile> files) {
+	void onResolveFilesStart(Collection<CompiledFile<COMPLEXTYPE>> files) {
 		out.println("Start resolving " + files.size() + " files");
 	}
 
-	void onResolving(CompiledFile file) {
+	void onResolving(CompiledFile<COMPLEXTYPE> file) {
 		out.println("Resolving file " + file.getName());
 	}
 	
-	void onResolveTypeStart(CompiledType type) {
+	void onResolveTypeStart(CompiledType<COMPLEXTYPE> type) {
 		out.println("Resolving type " + type.getScopedName());
 	}
 	
-	void onResolveTypeDependency(CompiledTypeDependency dependency, ResolvedType resolvedDependency) {
+	void onResolveTypeDependency(CompiledTypeDependency dependency, ResolvedType<BUILTINTYPE, COMPLEXTYPE> resolvedDependency) {
 		out.println("  Resolve dependency " + dependency.getScopedName() + " to " + resolvedDependency);
 	}
 	
-	void onResolveTypeEnd(ResolvedType type) {
+	void onResolveTypeEnd(ResolvedType<BUILTINTYPE, COMPLEXTYPE> type) {
 		out.println("Resolved type " + (type != null ? type.getScopedName() : "null"));
 	}
 
-	void onTryResolveExtendsFrom(ScopedName scopedName, ResolvedType resolvedType) {
+	void onTryResolveExtendsFrom(ScopedName scopedName, ResolvedType<BUILTINTYPE, COMPLEXTYPE> resolvedType) {
 		out.println("  Try resolve extendsFrom " + scopedName + ": " + resolvedType);
 	}
 	

@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.neaterbits.compiler.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.references.TestResolvedTypeDependency;
@@ -27,10 +29,16 @@ public abstract class BaseResolveTest {
 	}
 
 	
-	protected static CompiledType makeCompiledType(CompiledFile compiledFile, String name, TypeVariant typeVariant, ScopedName ... extendsFrom) {
+	protected static CompiledType<ComplexType<?, ?, ?>> makeCompiledType(
+			CompiledFile<ComplexType<?, ?, ?>>
+			compiledFile,
+			String name,
+			TypeVariant typeVariant, 
+			ScopedName ... extendsFrom) {
+		
 		final ScopedName scopedName = makeScopedName(name);
 
-		final CompiledType compiledType = new TestCompiledType(
+		final CompiledType<ComplexType<?, ?, ?>> compiledType = new TestCompiledType(
 				compiledFile.getSpec(),
 				new TypeSpec(scopedName, typeVariant),
 				null,
@@ -43,14 +51,25 @@ public abstract class BaseResolveTest {
 		return compiledType;
 	}
 	
-	protected static ResolvedType makeResolvedType(ResolvedFile resolvedFile, String name, TypeVariant typeVariant, ResolvedType ... extendsFrom) {
+	@SafeVarargs
+	protected static ResolvedType<BuiltinType, ComplexType<?, ?, ?>> makeResolvedType(
+			ASTModel<BuiltinType, ComplexType<?, ?, ?>> astModel,
+			ResolvedFile<BuiltinType, ComplexType<?, ?, ?>> resolvedFile,
+			String name,
+			TypeVariant typeVariant,
+			ResolvedType<BuiltinType, ComplexType<?, ?, ?>> ... extendsFrom) {
+		
 		final ScopedName scopedName = makeScopedName(name);
 		
-		final List<ResolvedTypeDependency> extendsFromDependencies = Arrays.stream(extendsFrom)
-				.map(type -> new TestResolvedTypeDependency(type.getCompleteName(), ReferenceType.EXTENDS_FROM, type.getSpec().getTypeVariant()))
+		final List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>>> extendsFromDependencies = Arrays.stream(extendsFrom)
+				.map(type -> new TestResolvedTypeDependency(
+						type.getTypeName(),
+						ReferenceType.EXTENDS_FROM,
+						type.getSpec().getTypeVariant()))
 				.collect(Collectors.toList());
 		
-		final ResolvedType resolvedType = new TestResolvedType(resolvedFile.getSpec(), scopedName, typeVariant, null, null, extendsFromDependencies, null);
+		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>> resolvedType
+				= new TestResolvedType(resolvedFile.getSpec(), scopedName, typeVariant, null, null, extendsFromDependencies, null);
 
 		return resolvedType;
 	}

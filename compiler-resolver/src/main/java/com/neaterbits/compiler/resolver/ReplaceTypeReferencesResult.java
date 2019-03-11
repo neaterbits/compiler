@@ -6,13 +6,16 @@ import java.util.Objects;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 
-public final class ReplaceTypeReferencesResult {
+public final class ReplaceTypeReferencesResult<BUILTINTYPE, COMPLEXTYPE> {
 
-	private final Collection<ResolvedFile> resolvedFiles;
-	private final ResolvedTypeCodeMapImpl codeMap;
-	private final Collection<ResolvedType> typesInDependencyOrder;
+	private final Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> resolvedFiles;
+	private final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap;
+	private final Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> typesInDependencyOrder;
 
-	public ReplaceTypeReferencesResult(Collection<ResolvedFile> resolvedFiles, ResolvedTypeCodeMapImpl codeMap, Collection<ResolvedType> typesInDependencyOrder) {
+	public ReplaceTypeReferencesResult(
+			Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> resolvedFiles,
+			ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap,
+			Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> typesInDependencyOrder) {
 
 		Objects.requireNonNull(resolvedFiles);
 		Objects.requireNonNull(codeMap);
@@ -22,15 +25,15 @@ public final class ReplaceTypeReferencesResult {
 		this.typesInDependencyOrder = typesInDependencyOrder;
 	}
 	
-	public Collection<ResolvedFile> getResolvedFiles() {
+	public Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> getResolvedFiles() {
 		return resolvedFiles;
 	}
 
-	public ResolvedTypeCodeMap getCodeMap() {
+	public ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE> getCodeMap() {
 		return codeMap;
 	}
 
-	public Collection<ResolvedType> getTypesInDependencyOrder() {
+	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> getTypesInDependencyOrder() {
 		return typesInDependencyOrder;
 	}
 }

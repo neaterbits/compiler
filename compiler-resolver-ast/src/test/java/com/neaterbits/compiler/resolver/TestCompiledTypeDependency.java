@@ -1,14 +1,11 @@
 package com.neaterbits.compiler.resolver;
 
-import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.types.BaseTypeInfo;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
 public class TestCompiledTypeDependency extends BaseTypeInfo implements CompiledTypeDependency {
@@ -21,17 +18,12 @@ public class TestCompiledTypeDependency extends BaseTypeInfo implements Compiled
 	}
 
 	@Override
+	public TypeName getTypeName() {
+		return null;
+	}
+
+	@Override
 	public ReferenceType getReferenceType() {
 		return referenceType;
-	}
-
-	@Override
-	public TypeReference getElement() {
-		return null;
-	}
-
-	@Override
-	public BiConsumer<BaseType, TypeResolveMode> getUpdateOnResolve() {
-		return null;
 	}
 }

@@ -5,19 +5,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.resolver.types.BaseResolverType;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
+import com.neaterbits.compiler.util.TypeName;
 
-final class ParsedType extends BaseResolverType implements CompiledType {
+final class ParsedType extends BaseResolverType implements CompiledType<ComplexType<?, ?, ?>> {
 
 	private final ComplexType<?, ?, ?> type;
 	
-	private final List<CompiledType> nestedTypes;
+	private final List<CompiledType<ComplexType<?, ?, ?>>> nestedTypes;
 	private final List<CompiledTypeDependency> extendsFrom;
 	private final List<CompiledTypeDependency> dependencies;
 
@@ -25,7 +25,7 @@ final class ParsedType extends BaseResolverType implements CompiledType {
 			FileSpec file,
 			TypeSpec typeSpec,
 			ComplexType<?, ?, ?> type,
-			List<CompiledType> nestedTypes,
+			List<CompiledType<ComplexType<?, ?, ?>>> nestedTypes,
 			List<CompiledTypeDependency> extendsFrom,
 			List<CompiledTypeDependency> dependencies) {
 
@@ -41,19 +41,18 @@ final class ParsedType extends BaseResolverType implements CompiledType {
 		this.dependencies = dependencies;
 	}
 
-	
-	@Override
-	public NamespaceReference getNamespace() {
-		return type.getNamespace();
-	}
-
 	@Override
 	public ComplexType<?, ?, ?> getType() {
 		return type;
 	}
+	
+	@Override
+	public TypeName getTypeName() {
+		return type.getCompleteName().toTypeName();
+	}
 
 	@Override
-	public Collection<CompiledType> getNestedTypes() {
+	public Collection<CompiledType<ComplexType<?, ?, ?>>> getNestedTypes() {
 		return nestedTypes;
 	}
 

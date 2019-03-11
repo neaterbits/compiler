@@ -67,11 +67,11 @@ class TypeFinder {
 			.toString();
 	}
 	
-	static List<CompiledType> findTypes(ParsedFile parsedFile, FileSpec compiledFileSpec) {
+	static List<CompiledType<ComplexType<?, ?, ?>>> findTypes(ParsedFile parsedFile, FileSpec compiledFileSpec) {
 
 		final TypeFinderStack stack = new TypeFinderStack();
 		
-		final List<CompiledType> parsedTypes = new ArrayList<>();
+		final List<CompiledType<ComplexType<?, ?, ?>>> parsedTypes = new ArrayList<>();
 		
 		final Stack<TypeFinderStackEntry> stackWrapper = new StackDelegator<TypeFinderStackEntry>(stack) {
 
@@ -417,11 +417,22 @@ class TypeFinder {
 	}
 
 	
-	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry, TypeFinderStackEntry lastStackEntry) {
+	private static ParsedType makeParsedType(
+			FileSpec file,
+			TypeFinderStack stack,
+			TypeFinderStackEntry stackEntry,
+			TypeFinderStackEntry lastStackEntry) {
+		
 		return processIfTypeElement(stackEntry, lastStackEntry, true, (name, typeVariant, type) -> makeParsedType(file, stack, stackEntry, name, typeVariant, type));
 	}
 	
-	private static ParsedType makeParsedType(FileSpec file, TypeFinderStack stack, TypeFinderStackEntry stackEntry, String name, TypeVariant typeVariant, ComplexType<?, ?, ?> type) {
+	private static ParsedType makeParsedType(
+			FileSpec file,
+			TypeFinderStack stack,
+			TypeFinderStackEntry stackEntry,
+			String name,
+			TypeVariant typeVariant,
+			ComplexType<?, ?, ?> type) {
 
 		return new ParsedType(
 				file,

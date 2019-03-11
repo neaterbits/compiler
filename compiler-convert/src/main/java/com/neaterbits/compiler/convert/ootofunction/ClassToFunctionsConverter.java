@@ -15,6 +15,7 @@ import com.neaterbits.compiler.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.complex.StructType;
+import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
@@ -128,7 +129,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 	public static StructType convertClassMethodsToVTable(
 			ClassType classType,
 			OOToProceduralDeclarations<?> alreadyConvertedMap,
-			ResolvedTypeCodeMap codeMap,
+			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>> codeMap,
 			java.util.function.Function<BaseType, BaseType> convertMethodType,
 			java.util.function.Function<CompleteName, StructName> classToStructName,
 			java.util.function.Function<CompleteName, FieldName> classToFieldName,
@@ -140,7 +141,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 		final int numMembers = classDefinition.getMembers().size();
 		final List<ComplexMemberDefinition> structMembers = new ArrayList<>(numMembers);
 
-		final TypeInfo extendsFromTypeInfo = codeMap.getClassExtendsFromTypeInfo(classType.getCompleteName());
+		final TypeInfo extendsFromTypeInfo = codeMap.getClassExtendsFromTypeInfo(classType.getCompleteName().toTypeName());
 		
 		if (extendsFromTypeInfo != null) {
 			

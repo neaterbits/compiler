@@ -7,9 +7,11 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 
 class ResolveUtil {
 
-	static void forEachResolvedTypeNested(Collection<ResolvedType> types, Consumer<ResolvedType> forEachType) {
+	static <BUILTINTYPE, COMPLEXTYPE> void forEachResolvedTypeNested(
+			Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> types,
+			Consumer<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> forEachType) {
 		
-		for (ResolvedType type : types) {
+		for (ResolvedType<BUILTINTYPE, COMPLEXTYPE> type : types) {
 
 			forEachType.accept(type);
 			

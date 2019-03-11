@@ -17,45 +17,50 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 
-public final class FilesResolver extends ResolveUtil {
+public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE> extends ResolveUtil {
 
-	private final ResolveLogger logger;
+	private final ResolveLogger<BUILTINTYPE, COMPLEXTYPE> logger;
+	private final ASTModel<BUILTINTYPE, COMPLEXTYPE> astModel;
 	
-	private final Collection<? extends BuiltinType> builtinTypes;
-	private final BuiltinTypesMap builtinTypesMap;
+	private final Collection<BUILTINTYPE> builtinTypes;
+	private final BuiltinTypesMap<BUILTINTYPE> builtinTypesMap;
 	
-	public FilesResolver(ResolveLogger logger, Collection<? extends BuiltinType> builtinTypes) {
+	public FilesResolver(ResolveLogger<BUILTINTYPE, COMPLEXTYPE> logger, Collection<BUILTINTYPE> builtinTypes, ASTModel<BUILTINTYPE, COMPLEXTYPE> astModel) {
 
 		Objects.requireNonNull(logger);
+		Objects.requireNonNull(astModel);
 		
 		this.logger = logger;
+		this.astModel = astModel;
 		
 		this.builtinTypes = builtinTypes;
-		this.builtinTypesMap = new BuiltinTypesMap(builtinTypes);
+		this.builtinTypesMap = new BuiltinTypesMap<>(builtinTypes, astModel);
 	}
 
-	public ResolveFilesResult resolveFiles(Collection<CompiledFile> allFiles) {
+	public ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE> resolveFiles(Collection<CompiledFile<COMPLEXTYPE>> allFiles) {
 
-		final ResolvedTypesMap resolvedTypesMap = new ResolvedTypesMap();
+		final ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE> resolvedTypesMap = new ResolvedTypesMap<>();
 
 		final UnresolvedDependencies unresolvedDependencies = new UnresolvedDependencies();
 
-		final List<ResolvedFile> resolvedFiles = resolveFiles(allFiles, resolvedTypesMap, unresolvedDependencies);
+		final List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> resolvedFiles = resolveFiles(allFiles, resolvedTypesMap, unresolvedDependencies);
 		
-		return new ResolveFilesResult(resolvedFiles, resolvedTypesMap, builtinTypesMap, builtinTypes, unresolvedDependencies);
+		return new ResolveFilesResult<>(resolvedFiles, resolvedTypesMap, builtinTypesMap, builtinTypes, unresolvedDependencies);
 	}
 	
-	private List<ResolvedFile> resolveFiles(Collection<CompiledFile> startFiles, ResolvedTypesMap resolvedTypesMap, UnresolvedDependencies unresolvedDependencies ) {
+	private List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> resolveFiles(
+			Collection<CompiledFile<COMPLEXTYPE>> startFiles,
+			ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE> resolvedTypesMap,
+			UnresolvedDependencies unresolvedDependencies ) {
 
 		logger.onResolveFilesStart(startFiles);
 		
 		// final ResolveState resolveState = new ResolveState(startFiles);
 		
-		final CompiledTypesMap compiledTypesMap = new CompiledTypesMap(startFiles);
+		final CompiledTypesMap<COMPLEXTYPE> compiledTypesMap = new CompiledTypesMap<>(startFiles);
 		
-		final List<ResolvedFile> resolvedFiles = new ArrayList<>(startFiles.size());
+		final List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> resolvedFiles = new ArrayList<>(startFiles.size());
 		
 		// Try resolve files while unresolved dependency count has changed between each iteration
 		// and there were files resolved
@@ -64,14 +69,20 @@ public final class FilesResolver extends ResolveUtil {
 
 		for (int count = -1, lastCount = 0; count != lastCount; ) {
 			
-			for (CompiledFile file : startFiles) {
+			for (CompiledFile<COMPLEXTYPE> file : startFiles) {
 				
 				if (!resolvedFileSpecs.contains(file.getSpec())) {
 				
-					final List<ResolvedType> resolvedTypes = resolveTypes(file, file.getImports(), file.getTypes(), compiledTypesMap, resolvedTypesMap, unresolvedDependencies);
+					final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> resolvedTypes = resolveTypes(
+							file,
+							file.getImports(),
+							file.getTypes(),
+							compiledTypesMap,
+							resolvedTypesMap,
+							unresolvedDependencies);
 		
 					if (resolvedTypes != null) {
-						resolvedFiles.add(new ResolvedFileImpl(file.getSpec(), resolvedTypes));
+						resolvedFiles.add(new ResolvedFileImpl<>(file.getSpec(), resolvedTypes));
 						
 						resolvedFileSpecs.add(file.getSpec());
 					}
@@ -82,7 +93,7 @@ public final class FilesResolver extends ResolveUtil {
 			count = resolvedFiles.size();
 		}
 		
-		for (ResolvedFile resolvedFile : resolvedFiles) {
+		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE> resolvedFile : resolvedFiles) {
 			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> {
 				if (type.getDependencies() != null) {
 					checkForUpdateOnResolve(type.getDependencies(), compiledTypesMap);
@@ -95,38 +106,39 @@ public final class FilesResolver extends ResolveUtil {
 		return resolvedFiles;
 	}
 	
-	private void checkForUpdateOnResolve(Collection<ResolvedTypeDependency> dependencies, CompiledTypesMap compiledTypesMap) {
+	private void checkForUpdateOnResolve(Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> dependencies, CompiledTypesMap<COMPLEXTYPE> compiledTypesMap) {
 		
-		for (ResolvedTypeDependency resolvedTypeDependency : dependencies) {
+		for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE> resolvedTypeDependency : dependencies) {
 
-			final ResolvedTypeDependencyImpl impl = (ResolvedTypeDependencyImpl)resolvedTypeDependency;
 			
-			if (impl.getUpdateOnResolve() != null) {
+			if (resolvedTypeDependency.shouldUpdateOnResolve()) {
+			
+				final ScopedName scopedName = resolvedTypeDependency.getScopedName();
 				
-				final CompiledType compiledType = compiledTypesMap.lookupByScopedName(impl.getCompleteName().toScopedName());
-				
-				impl.getUpdateOnResolve().accept(compiledType.getType(), impl.getTypeResolveMode());
+				final CompiledType<COMPLEXTYPE> compiledType = compiledTypesMap.lookupByScopedName(scopedName);
+
+				resolvedTypeDependency.updateOnResolve(compiledType.getType());
 			}
 		}
 			
 	}
 	
 	
-	private List<ResolvedType> resolveTypes(
-			CompiledFile file,
+	private List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> resolveTypes(
+			CompiledFile<COMPLEXTYPE> file,
 			IFileImports fileImports,
-			Collection<CompiledType> types,
-			CompiledTypesMap compiledTypesMap,
-			ResolvedTypesMap resolvedTypesMap,
+			Collection<CompiledType<COMPLEXTYPE>> types,
+			CompiledTypesMap<COMPLEXTYPE> compiledTypesMap,
+			ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE> resolvedTypesMap,
 			UnresolvedDependencies unresolvedDependencies) {
 		
 		boolean resolved = true;
 		
-		final List<ResolvedType> resolvedTypes = new ArrayList<>(types.size());
+		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> resolvedTypes = new ArrayList<>(types.size());
 		
-		for (CompiledType type : types) {
+		for (CompiledType<COMPLEXTYPE> type : types) {
 			
-			final List<ResolvedTypeDependency> resolvedExtendsFrom;
+			final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> resolvedExtendsFrom;
 			
 			if (type.getExtendsFrom() != null) {
 				 resolvedExtendsFrom = resolveTypeDependencies(type.getExtendsFrom(), type.getScopedName(), file, fileImports, compiledTypesMap, unresolvedDependencies);
@@ -139,7 +151,7 @@ public final class FilesResolver extends ResolveUtil {
 				resolvedExtendsFrom = null;
 			}
 			
-			final List<ResolvedTypeDependency> resolvedDependencies;
+			final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> resolvedDependencies;
 			
 			if (type.getDependencies() != null) {
 				resolvedDependencies = resolveTypeDependencies(type.getDependencies(), type.getScopedName(), file, fileImports, compiledTypesMap, unresolvedDependencies);
@@ -152,10 +164,16 @@ public final class FilesResolver extends ResolveUtil {
 				resolvedDependencies = null;
 			}
 			
-			final List<ResolvedType> resolvedNestedTypes;
+			final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> resolvedNestedTypes;
 			
 			if (type.getNestedTypes() != null) {
-				 resolvedNestedTypes = resolveTypes(file, fileImports, type.getNestedTypes(), compiledTypesMap, resolvedTypesMap, unresolvedDependencies);
+				 resolvedNestedTypes = resolveTypes(
+						 file,
+						 fileImports,
+						 type.getNestedTypes(),
+						 compiledTypesMap,
+						 resolvedTypesMap,
+						 unresolvedDependencies);
 				
 				if (resolvedNestedTypes == null) {
 					resolved = false;
@@ -169,9 +187,9 @@ public final class FilesResolver extends ResolveUtil {
 				break;
 			}
 			
-			final ResolvedType resolvedType = new ResolvedTypeImpl(
+			final ResolvedType<BUILTINTYPE, COMPLEXTYPE> resolvedType = new ResolvedTypeImpl<>(
 					file.getSpec(),
-					type.getScopedName(),
+					type.getTypeName(),
 					type.getSpec().getTypeVariant(),
 					type.getType(),
 					resolvedNestedTypes,
@@ -180,75 +198,76 @@ public final class FilesResolver extends ResolveUtil {
 
 			resolvedTypes.add(resolvedType);
 
-			resolvedTypesMap.addMapping(type.getCompleteName(), resolvedType);
+			resolvedTypesMap.addMapping(type.getTypeName(), resolvedType);
 		}
 		
 		return resolved ? resolvedTypes : null;
 	}
 	
-	private List<ResolvedTypeDependency> resolveTypeDependencies(
+	private List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> resolveTypeDependencies(
 			Collection<CompiledTypeDependency> dependencies,
 			ScopedName referencedFrom,
-			CompiledFile file,
+			CompiledFile<COMPLEXTYPE> file,
 			IFileImports fileImports,
-			CompiledTypesMap compiledTypesMap,
+			CompiledTypesMap<COMPLEXTYPE> compiledTypesMap,
 			UnresolvedDependencies unresolvedDependencies) {
 		
 		boolean resolved = true;
 		
-		final List<ResolvedTypeDependency> resolvedTypes = new ArrayList<>(dependencies.size());
+		final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> resolvedTypes = new ArrayList<>(dependencies.size());
 		
 		for (CompiledTypeDependency compiledTypeDependency : dependencies) {
 			
 			final ScopedName scopedName = compiledTypeDependency.getScopedName();
 			
-			final CompiledType foundType = ScopedNameResolver.resolveScopedName(
+			final CompiledType<COMPLEXTYPE> foundType = ScopedNameResolver.resolveScopedName(
 					scopedName,
 					compiledTypeDependency.getReferenceType(),
 					fileImports,
 					referencedFrom,
 					compiledTypesMap);
 
-			final ResolvedTypeDependency resolvedTypeDependency;
+			final ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE> resolvedTypeDependency;
 			
 			
 			if (foundType != null) {
+				
+				final ScopedName typeScopedName = foundType.getScopedName();
+				
 				final TypeResolveMode typeResolveMode = 
 						   scopedName.hasScope()
-						&& scopedName.scopeStartsWith(foundType.getType().getCompleteName().toScopedName().getParts())
+						&& scopedName.scopeStartsWith(typeScopedName.getParts())
 						
 						? TypeResolveMode.COMPLETE_TO_COMPLETE
 						: TypeResolveMode.CLASSNAME_TO_COMPLETE;
 
 				
-				resolvedTypeDependency = new ResolvedTypeDependencyImpl(
-						foundType.getCompleteName(),
+				resolvedTypeDependency = astModel.makeResolvedTypeDependency(
+						foundType.getTypeName(),
 						compiledTypeDependency.getReferenceType(),
-						compiledTypeDependency.getElement(),
 						typeResolveMode,
 						null,
-						compiledTypeDependency.getUpdateOnResolve());
+						compiledTypeDependency);
 				
 			}
 			else {
 				
-				final BuiltinType builtinType = builtinTypesMap.lookupType(compiledTypeDependency.getScopedName());
+				final BUILTINTYPE builtinType = builtinTypesMap.lookupType(compiledTypeDependency.getScopedName());
 				
 				if (builtinType != null) {
 					final TypeResolveMode typeResolveMode = 
 							   scopedName.hasScope()
-							&& scopedName.scopeStartsWith(builtinType.getCompleteName().toScopedName().getParts())
+							&& scopedName.scopeStartsWith(astModel.getBuiltinTypeScopedName(builtinType).getParts())
 							
 							? TypeResolveMode.COMPLETE_TO_COMPLETE
 							: TypeResolveMode.CLASSNAME_TO_COMPLETE;
 
-					resolvedTypeDependency = new ResolvedTypeDependencyImpl(
-							builtinType.getCompleteName(),
+					resolvedTypeDependency = astModel.makeResolvedTypeDependency(
+							astModel.getBuiltinTypeName(builtinType),
 							compiledTypeDependency.getReferenceType(),
-							compiledTypeDependency.getElement(),
 							typeResolveMode,
 							null,
-							compiledTypeDependency.getUpdateOnResolve());
+							compiledTypeDependency);
 				}
 				else {
 					resolvedTypeDependency = null;

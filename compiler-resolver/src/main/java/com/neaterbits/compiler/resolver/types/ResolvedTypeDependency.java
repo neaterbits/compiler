@@ -1,17 +1,27 @@
 package com.neaterbits.compiler.resolver.types;
 
-import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.TypeName;
 
-public interface ResolvedTypeDependency {
+public interface ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE> {
 
-	CompleteName getCompleteName();
+	TypeName getCompleteName();
+	
+	default ScopedName getScopedName() {
+		return getCompleteName().toScopedName();
+	}
 	
 	ReferenceType getReferenceType();
 	
-	TypeReference getElement();
-	
 	TypeVariant getTypeVariant();
+	
+	boolean shouldUpdateOnResolve();
+	
+	void updateOnResolve(COMPLEXTYPE type);
+
+	void replaceWithComplexType(COMPLEXTYPE complexType);
+	
+	void replaceWithBuiltinType(BUILTINTYPE builtinType);
 }

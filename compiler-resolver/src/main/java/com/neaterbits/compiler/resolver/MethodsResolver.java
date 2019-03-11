@@ -7,41 +7,34 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.neaterbits.compiler.ast.block.ClassMethod;
-import com.neaterbits.compiler.ast.block.Parameter;
-import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.type.NamedType;
-import com.neaterbits.compiler.ast.type.complex.ClassType;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodModifiers;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodOverride;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodStatic;
-import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
-import com.neaterbits.compiler.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
+import com.neaterbits.compiler.util.TypeName;
 
-public final class MethodsResolver {
+public final class MethodsResolver<BUILTINTYPE, COMPLEXTYPE> {
 
-	private final ResolvedTypeCodeMapImpl codeMap;
+	private final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap;
+	private final ASTModel<BUILTINTYPE, COMPLEXTYPE> astModel;
 	
-	
-	public MethodsResolver(ResolvedTypeCodeMapImpl codeMap) {
+	public MethodsResolver(ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap, ASTModel<BUILTINTYPE, COMPLEXTYPE> astModel) {
+
 		Objects.requireNonNull(codeMap);
+		Objects.requireNonNull(astModel);
 
 		this.codeMap = codeMap;
+		this.astModel = astModel;
 	}
 
 
-	void resolveMethodsForAllTypes(Collection<ResolvedFile> allFiles) {
+	void resolveMethodsForAllTypes(Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> allFiles) {
 	
 		// Create a set of all types and just start resolving one by one
 		
-		final Map<TypeSpec, ResolvedType> map = new HashMap<>(allFiles.size());
+		final Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE>> map = new HashMap<>(allFiles.size());
 	
-		for (ResolvedFile file : allFiles) {
+		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE> file : allFiles) {
 			getAllTypes(file.getTypes(), map);
 		}
 		
@@ -49,9 +42,9 @@ public final class MethodsResolver {
 	}
 	
 	
-	private void getAllTypes(Collection<ResolvedType> types, Map<TypeSpec, ResolvedType> map) {
+	private void getAllTypes(Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> types, Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE>> map) {
 		
-		for (ResolvedType type : types) {
+		for (ResolvedType<BUILTINTYPE, COMPLEXTYPE> type : types) {
 
 			if (map.put(type.getSpec(), type) != null) {
 				throw new IllegalStateException();
@@ -63,7 +56,7 @@ public final class MethodsResolver {
 		}
 	}
 	
-	private void resolveAllMethods(Map<TypeSpec, ResolvedType> map) {
+	private void resolveAllMethods(Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE>> map) {
 		
 		final Set<TypeSpec> toResolve = new HashSet<>(map.keySet());
 
@@ -77,36 +70,35 @@ public final class MethodsResolver {
 		}
 	}
 	
-	private void resolveAllMethods(Map<TypeSpec, ResolvedType> map, TypeSpec typeSpec) {
+	private void resolveAllMethods(Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE>> map, TypeSpec typeSpec) {
 	
 		Objects.requireNonNull(typeSpec);
 		
-		final ResolvedType resolvedType = map.get(typeSpec);
+		final ResolvedType<BUILTINTYPE, COMPLEXTYPE> resolvedType = map.get(typeSpec);
 		
 		addTypeAndMethods(resolvedType);
 	}
 	
 	
-	private void addTypeAndMethods(ResolvedType resolvedType) {
+	private void addTypeAndMethods(ResolvedType<BUILTINTYPE, COMPLEXTYPE> resolvedType) {
 		
 		Objects.requireNonNull(resolvedType);
 		
 		// Pass typeNo to references since faster lookup
-		final Integer typeNo = codeMap.getTypeNo(resolvedType.getCompleteName());
+		
+		final Integer typeNo = codeMap.getTypeNo(resolvedType.getTypeName());
 		
 		if (typeNo == null) {
-			throw new IllegalArgumentException("No typeNo for " + resolvedType.getCompleteName().getName());
+			throw new IllegalArgumentException("No typeNo for " + resolvedType.getTypeName().toDebugString());
 		}
 		
 		switch (resolvedType.getTypeVariant()) {
 		case CLASS:
 
-			final ClassType classType = (ClassType)resolvedType.getType();
-
-			addClassMembers(classType, typeNo);
+			addClassMembers(resolvedType.getType(), typeNo);
 
 			// Have added all methods, compute extends from/by
-			codeMap.computeMethodExtends(classType.getCompleteName());
+			codeMap.computeMethodExtends(resolvedType.getTypeName());
 			break;
 			
 		default:
@@ -114,79 +106,24 @@ public final class MethodsResolver {
 		}
 	}
 	
-	private void addClassMembers(ClassType classType, int typeNo) {
+	private void addClassMembers(COMPLEXTYPE classType, int typeNo) {
 		
-		final Subclassing subclassing = classType.getDefinition().getModifiers().getModifier(Subclassing.class);
-		
-		int methodIdx = 0;
-		
-		for (ComplexMemberDefinition memberDefinition : classType.getMembers()) {
+		astModel.iterateClassMethods(classType, (name, methodVariant, returnType, parameterTypes, indexInType) -> {
 			
-			if (memberDefinition instanceof ClassMethodMember) {
-
-				final ClassMethodMember classMethodMember = (ClassMethodMember)memberDefinition;
-				
-				final MethodVariant methodVariant = findMethodVariant(classMethodMember, subclassing);
-				
-				addClassMethod(typeNo, classMethodMember, methodVariant, methodIdx);
-				
-				++ methodIdx;
-			}
-		}
+			addClassMethod(typeNo, name, methodVariant, parameterTypes, indexInType);
+		});
 	}
 	
-	private MethodVariant findMethodVariant(ClassMethodMember classMethodMember, Subclassing subclassing) {
-
-		final ClassMethodModifiers modifiers = classMethodMember.getModifiers();
-
-		final MethodVariant methodVariant;
-		
-		if (modifiers.hasModifier(ClassMethodStatic.class)) {
-			methodVariant = MethodVariant.STATIC;
-		}
-		else {
-			final ClassMethodOverride methodOverride = modifiers.getModifier(ClassMethodOverride.class);
-			
-			if (methodOverride != null) {
-				if (methodOverride == ClassMethodOverride.ABSTRACT) {
-					methodVariant = MethodVariant.ABSTRACT;
-				}
-				else if (methodOverride == ClassMethodOverride.FINAL) {
-					methodVariant = MethodVariant.FINAL_IMPLEMENTATION;
-				}
-				else {
-					throw new UnsupportedOperationException();
-				}
-			}
-			else {
-				methodVariant = subclassing != null && subclassing == Subclassing.FINAL
-						? MethodVariant.FINAL_IMPLEMENTATION
-						: MethodVariant.OVERRIDABLE_IMPLEMENTATION;
-			}
-		}
-		
-		return methodVariant;
-	}
-	
-	private int addClassMethod(int typeNo, ClassMethodMember classMethodMember, MethodVariant methodVariant, int indexInType) {
-
-		final ClassMethod classMethod = classMethodMember.getMethod();
-		
-		final CompleteName [] parameterTypes = new CompleteName[classMethod.getParameters().size()];
-		
-		// final int [] parameterTypes = new int[classMethod.getParameters().size()]; 
-		
-		int i = 0;
-		
-		for (Parameter parameter : classMethod.getParameters()) {
-			final NamedType namedType = (NamedType)parameter.getType().getType();
-			
-			parameterTypes[i ++] = namedType.getCompleteName();
-		}
+	private int addClassMethod(
+			int typeNo,
+			String name,
+			MethodVariant methodVariant,
+			TypeName [] parameterTypes,
+			int indexInType) {
 		
 		final int methodNo = codeMap.addMethod(
 				typeNo,
-				classMethod.getName().getName(),
+				name,
 				parameterTypes,
 				methodVariant,
 				indexInType);

@@ -16,12 +16,15 @@ import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Module;
 import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
+import com.neaterbits.compiler.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.c.emit.CCompilationUnitEmitter;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseCompilationUnitEmitter;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.main.convert.ConvertClass;
+import com.neaterbits.compiler.resolver.ASTModel;
 import com.neaterbits.compiler.resolver.FilesResolver;
 import com.neaterbits.compiler.resolver.ReplaceTypeReferencesResult;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
@@ -29,6 +32,7 @@ import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.UnresolvedDependencies;
 import com.neaterbits.compiler.resolver.UnresolvedReferenceReplacer;
+import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
@@ -68,23 +72,25 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		assertThat(program).isNotNull();
 		
 		listProgram(program);
-		
+
+		final ASTModelImpl astModel = new ASTModelImpl();
+
 		// Uses imports to resolve all type references to their class implementations that should now have been loaded
 
 		// Also builds map of all extended by/extends relationships for classes and interfaces and methods thereof
 		// This information will be used when figuring out how to do method dispatch for each call site 
-		final ResolveFilesResult resolveResult = resolveFiles(program);
+		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>> resolveResult = resolveFiles(program, astModel);
 		
 		final UnresolvedDependencies unresolved = resolveResult.getUnresolvedDependencies();
 		if (!unresolved.isEmpty()) {
 			throw new IllegalStateException("Unresolved dependencies " + unresolved);
 		}
-		
+
 		System.out.println("## resolved files: " + resolveResult.getResolvedFiles());
 		
-		final ResolvedType printstream = resolveResult.getResolvedFiles().stream()
+		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>> printstream = resolveResult.getResolvedFiles().stream()
 				.flatMap(file -> file.getTypes().stream())
-				.filter(type -> type.getCompleteName().getName().getName().equals("PrintStream"))
+				.filter(type -> type.getTypeName().equals("PrintStream"))
 				.findFirst().get();
 				
 		assertThat(printstream).isNotNull();
@@ -92,8 +98,10 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		assertThat(printstream.getExtendsFrom()).isNotNull();
 		assertThat(printstream.getExtendsFrom().size()).isEqualTo(1);
 		
+		
 		// Replaces all resolved type references within the AST
-		final ReplaceTypeReferencesResult replaceTypeReferencesResult = UnresolvedReferenceReplacer.replaceUnresolvedTypeReferences(resolveResult);
+		final ReplaceTypeReferencesResult<BuiltinType, ComplexType<?, ?, ?>> replaceTypeReferencesResult
+				= UnresolvedReferenceReplacer.replaceUnresolvedTypeReferences(resolveResult, astModel);
 		
 		// First map classes to C structs so can access between compilation units
 		final JavaToCDeclarations declarations = convertClassesAndInterfacesToStruct(replaceTypeReferencesResult, new JavaToCClassToStructState());
@@ -164,15 +172,18 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		}
 	}
 	
-	private ResolveFilesResult resolveFiles(Program program) {
+	private ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>> resolveFiles(Program program, ASTModel<BuiltinType, ComplexType<?, ?, ?>> astModel) {
 
-		final ResolveLogger logger = new ResolveLogger(System.out);
+		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>> logger = new ResolveLogger<>(System.out);
 		
-		final FilesResolver resolver = new FilesResolver(logger, JavaTypes.getBuiltinTypes());
+		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>> resolver = new FilesResolver<>(
+				logger,
+				JavaTypes.getBuiltinTypes(),
+				astModel);
 		
-		final Collection<CompiledFile> allFiles = ProgramLoader.getCompiledFiles(program);
+		final Collection<CompiledFile<ComplexType<?, ?, ?>>> allFiles = ProgramLoader.getCompiledFiles(program);
 		
-		for (CompiledFile compiledFile : allFiles) {
+		for (CompiledFile<ComplexType<?, ?, ?>> compiledFile : allFiles) {
 			System.out.println("File " + compiledFile.getSpec() + " with types " + compiledFile.getTypes());
 		}
 		
@@ -203,7 +214,9 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		final Program program = parseProgram(Arrays.asList(commonModuleSpec));
 
-		resolveFiles(program);
+		final ASTModelImpl astModel = new ASTModelImpl();
+		
+		resolveFiles(program, astModel);
 		
 	/*
 		final PrintStream logOutput = new PrintStream(new ByteArrayOutputStream());
@@ -217,7 +230,11 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	}
 
 	
-	private CompilationUnit convert(CompilationUnit javaCompilationUnit, JavaToCDeclarations declarations, ResolvedTypeCodeMap codeMap) {
+	private CompilationUnit convert(
+			CompilationUnit javaCompilationUnit,
+			JavaToCDeclarations declarations,
+			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>> codeMap) {
+		
 		final JavaToCConverter converter = new JavaToCConverter();
 
 		final CompilationUnit cCode = converter.convertCompilationUnit(javaCompilationUnit, new JavaToCConverterState(declarations, codeMap));

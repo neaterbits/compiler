@@ -5,32 +5,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.util.ScopedName;
 
-final class BuiltinTypesMap {
+final class BuiltinTypesMap<BUILTINTYPE> {
 
-	private final Map<ScopedName, BuiltinType> byScopedName;
-	private final Map<String, BuiltinType> byName;
+	private final Map<ScopedName, BUILTINTYPE> byScopedName;
+	private final Map<String, BUILTINTYPE> byName;
 	
-	BuiltinTypesMap(Collection<? extends BuiltinType> builtinTypes) {
+	BuiltinTypesMap(Collection<BUILTINTYPE> builtinTypes, ASTBuiltinTypeModel<BUILTINTYPE> astModel) {
 
 		this.byScopedName = new HashMap<>(builtinTypes.size());
 		this.byName = new HashMap<>(builtinTypes.size());
 
-		for (BuiltinType builtinType : builtinTypes) {
-			byScopedName.put(builtinType.getCompleteName().toScopedName(), builtinType);
+		for (BUILTINTYPE builtinType : builtinTypes) {
+			byScopedName.put(astModel.getBuiltinTypeScopedName(builtinType), builtinType);
 			
-			byName.put(builtinType.getName().getName(), builtinType);
+			byName.put(astModel.getBuiltinTypeNameString(builtinType), builtinType);
 		}
 	}
 
 
-	BuiltinType lookupType(ScopedName typeName) {
+	BUILTINTYPE lookupType(ScopedName typeName) {
 		
 		Objects.requireNonNull(typeName);
 		
-		final BuiltinType type;
+		final BUILTINTYPE type;
 		
 		if (typeName.hasScope()) {
 			type = byScopedName.get(typeName);
@@ -41,5 +40,4 @@ final class BuiltinTypesMap {
 		
 		return type;
 	}
-	
 }

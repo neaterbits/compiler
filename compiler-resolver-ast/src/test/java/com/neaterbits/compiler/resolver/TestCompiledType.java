@@ -8,14 +8,15 @@ import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-public class TestCompiledType extends BaseResolverType implements CompiledType {
+public class TestCompiledType extends BaseResolverType implements CompiledType<ComplexType<?, ?, ?>> {
 
 	private final ComplexType<?, ?, ?> type;
 	
-	private final Collection<CompiledType> nestedTypes;
+	private final Collection<CompiledType<ComplexType<?, ?, ?>>> nestedTypes;
 	private final Collection<CompiledTypeDependency> extendsFrom;
 	private final Collection<CompiledTypeDependency> dependencies;
 	
@@ -24,7 +25,7 @@ public class TestCompiledType extends BaseResolverType implements CompiledType {
 			FileSpec file,
 			TypeSpec typeSpec,
 			ComplexType<?, ?, ?> type,
-			Collection<CompiledType> nestedTypes,
+			Collection<CompiledType<ComplexType<?, ?, ?>>> nestedTypes,
 			Collection<CompiledTypeDependency> extendsFrom,
 			Collection<CompiledTypeDependency> dependencies) {
 		super(file, typeSpec);
@@ -41,7 +42,7 @@ public class TestCompiledType extends BaseResolverType implements CompiledType {
 			ScopedName scopedName,
 			TypeVariant typeVariant,
 			ComplexType<?, ?, ?> type,
-			Collection<CompiledType> nestedTypes,
+			Collection<CompiledType<ComplexType<?, ?, ?>>> nestedTypes,
 			Collection<CompiledTypeDependency> extendsFrom,
 			Collection<CompiledTypeDependency> dependencies) {
 		this(file, new TypeSpec(scopedName, typeVariant), type, nestedTypes, extendsFrom, dependencies);
@@ -53,7 +54,12 @@ public class TestCompiledType extends BaseResolverType implements CompiledType {
 	}
 
 	@Override
-	public Collection<CompiledType> getNestedTypes() {
+	public TypeName getTypeName() {
+		return type.getCompleteName().toTypeName();
+	}
+
+	@Override
+	public Collection<CompiledType<ComplexType<?, ?, ?>>> getNestedTypes() {
 		return nestedTypes;
 	}
 

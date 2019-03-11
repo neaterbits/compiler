@@ -2,31 +2,18 @@ package com.neaterbits.compiler.resolver.types;
 
 import java.util.Collection;
 
-import com.neaterbits.compiler.ast.NamespaceReference;
-import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
-
-public interface CompiledType extends ResolveTypeInfo {
+public interface CompiledType<COMPLEXTYPE> extends ResolveTypeInfo {
 
 	TypeSpec getSpec();
 	
 	FileSpec getFile();
 	
-	default NamespaceReference getNamespace() {
-		return getCompleteName().getNamespace();
-	}
-
-	default CompleteName getCompleteName() {
-		return getType().getCompleteName();
-	}
-
+	COMPLEXTYPE getType();
 	
-	ComplexType<?, ?, ?> getType();
-	
-	Collection<CompiledType> getNestedTypes();
+	Collection<CompiledType<COMPLEXTYPE>> getNestedTypes();
 
 	Collection<CompiledTypeDependency> getExtendsFrom();
 	
 	Collection<CompiledTypeDependency> getDependencies();
-
+	
 }

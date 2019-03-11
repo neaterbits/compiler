@@ -1,17 +1,23 @@
-package com.neaterbits.compiler.resolver;
+package com.neaterbits.compiler.resolver.ast;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.type.CompleteName;
+import com.neaterbits.compiler.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
+import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
+import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
+import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 
-final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency {
-	private final CompleteName completeName;
+final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>> {
+	private final TypeName completeName;
 	private final ReferenceType referenceType;
 	private final TypeReference element;
 	private final TypeResolveMode typeResolveMode;
@@ -19,7 +25,7 @@ final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency {
 	private final BiConsumer<BaseType, TypeResolveMode> updateOnResolve;
 	
 	ResolvedTypeDependencyImpl(
-			CompleteName completeName,
+			TypeName completeName,
 			ReferenceType referenceType,
 			TypeReference element,
 			TypeResolveMode typeResolveMode,
@@ -41,7 +47,7 @@ final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency {
 	}
 
 	@Override
-	public CompleteName getCompleteName() {
+	public TypeName getCompleteName() {
 		return completeName;
 	}
 
@@ -50,11 +56,6 @@ final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency {
 		return referenceType;
 	}
 
-	@Override
-	public TypeReference getElement() {
-		return element;
-	}
-	
 	@Override
 	public TypeVariant getTypeVariant() {
 		return typeVariant;
@@ -66,5 +67,35 @@ final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency {
 
 	BiConsumer<BaseType, TypeResolveMode> getUpdateOnResolve() {
 		return updateOnResolve;
+	}
+
+	@Override
+	public boolean shouldUpdateOnResolve() {
+		return updateOnResolve != null;
+	}
+
+	@Override
+	public void updateOnResolve(ComplexType<?, ?, ?> type) {
+		updateOnResolve.accept(type, typeResolveMode);
+	}
+
+	@Override
+	public void replaceWithComplexType(ComplexType<?, ?, ?> complexType) {
+		
+		if (!(element instanceof ResolveLaterTypeReference)) {
+			throw new IllegalStateException();
+		}
+		
+		element.replaceWith(new ComplexTypeReference(element.getContext(), complexType));
+	}
+
+	@Override
+	public void replaceWithBuiltinType(BuiltinType builtinType) {
+
+		if (!(element instanceof ResolveLaterTypeReference)) {
+			throw new IllegalStateException();
+		}
+
+		element.replaceWith(new BuiltinTypeReference(element.getContext(), builtinType));
 	}
 }

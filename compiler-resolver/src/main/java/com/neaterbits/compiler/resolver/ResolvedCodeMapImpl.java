@@ -18,13 +18,13 @@ import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 
-public final class ResolvedCodeMapImpl {
+public final class ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> {
 	
-	private final FileReferences<ResolvedFile> fileReferences;
+	private final FileReferences<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> fileReferences;
 
 	private final IntCodeMap codeMap;
 	
-	private final TypeReferences<ResolvedType> typeReferences;
+	private final TypeReferences<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> typeReferences;
 	
 	public ResolvedCodeMapImpl() {
 		this.fileReferences = new FileReferences<>();

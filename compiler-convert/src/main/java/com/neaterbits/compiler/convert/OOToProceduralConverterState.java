@@ -4,13 +4,13 @@ import com.neaterbits.compiler.ast.block.FunctionName;
 import com.neaterbits.compiler.ast.block.MethodName;
 import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.type.NamedType;
-import com.neaterbits.compiler.ast.type.complex.ClassType;
+import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.typedefinition.StructName;
 import com.neaterbits.compiler.codemap.MethodInfo;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
+import com.neaterbits.compiler.util.TypeName;
 
 public abstract class OOToProceduralConverterState<T extends OOToProceduralConverterState<T>>
 			extends ConverterState<T> {
@@ -27,16 +27,16 @@ public abstract class OOToProceduralConverterState<T extends OOToProceduralConve
 	
 	public abstract String getClassStaticVTableArrayName();
 	
-	private final ResolvedTypeCodeMap codeMap;
+	private final ResolvedTypeCodeMap<BuiltinType, ? extends BaseType> codeMap;
 	
-	protected OOToProceduralConverterState(Converters<T> converters, ResolvedTypeCodeMap codeMap) {
+	protected OOToProceduralConverterState(Converters<T> converters, ResolvedTypeCodeMap<BuiltinType, ? extends BaseType> codeMap) {
 		
 		super(converters);
 		
 		this.codeMap = codeMap;
 	}
 	
-	public int getTypeNo(BaseType type) {
+	public int getTypeNo(TypeName type) {
 		
 		final TypeInfo typeInfo = codeMap.getTypeInfo(type);
 		
@@ -44,7 +44,7 @@ public abstract class OOToProceduralConverterState<T extends OOToProceduralConve
 	}
 	
 	
-	public MethodInfo getMethodInfo(ClassType classType, MethodName methodName, NamedType [] parameterTypes) {
+	public MethodInfo getMethodInfo(TypeName classType, String methodName, TypeName [] parameterTypes) {
 		final MethodInfo methodInfo = codeMap.getMethodInfo(classType, methodName, parameterTypes);
 
 		return methodInfo;

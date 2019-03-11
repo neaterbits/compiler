@@ -9,22 +9,22 @@ import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.util.ScopedName;
 
-final class CompiledTypesMap implements TypesMap<CompiledType> {
+final class CompiledTypesMap<COMPLEXTYPE> implements TypesMap<CompiledType<COMPLEXTYPE>> {
 
-	private final Map<ScopedName, CompiledType> map;
+	private final Map<ScopedName, CompiledType<COMPLEXTYPE>> map;
 	
-	CompiledTypesMap(Collection<CompiledFile> files) {
+	CompiledTypesMap(Collection<CompiledFile<COMPLEXTYPE>> files) {
 		
 		this.map = new HashMap<>();
 
-		for (CompiledFile file : files) {
+		for (CompiledFile<COMPLEXTYPE> file : files) {
 			addTypes(file.getTypes());
 		}
 	}
 	
-	private void addTypes(Collection<CompiledType> types) {
+	private void addTypes(Collection<CompiledType<COMPLEXTYPE>> types) {
 		
-		for (CompiledType type : types) {
+		for (CompiledType<COMPLEXTYPE> type : types) {
 			
 			map.put(type.getScopedName(), type);
 			
@@ -35,7 +35,7 @@ final class CompiledTypesMap implements TypesMap<CompiledType> {
 	}
 	
 	@Override
-	public CompiledType lookupByScopedName(ScopedName scopedName) {
+	public CompiledType<COMPLEXTYPE> lookupByScopedName(ScopedName scopedName) {
 		
 		Objects.requireNonNull(scopedName);
 		

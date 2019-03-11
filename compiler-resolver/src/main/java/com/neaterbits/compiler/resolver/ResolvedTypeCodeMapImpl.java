@@ -14,13 +14,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.ast.block.MethodName;
-import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.type.NamedType;
-import com.neaterbits.compiler.ast.type.complex.ClassType;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.codemap.MethodInfo;
 import com.neaterbits.compiler.codemap.MethodMapCache;
 import com.neaterbits.compiler.codemap.MethodVariant;
@@ -28,40 +22,48 @@ import com.neaterbits.compiler.codemap.NameToTypeNoMap;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
+public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> implements ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE> {
 
-	private final ResolvedCodeMapImpl codeMap;
+	private final ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap;
+	private final ASTModel<BUILTINTYPE, COMPLEXTYPE> astModel;
 	private final NameToTypeNoMap nameToTypeNoMap;
 	
 	private final Map<ScopedName, Integer> scopedNameMap;
 	
 	private final MethodMapCache methodMapCache;
 	
-	private ResolvedType [] resolvedTypes;
+	private ResolvedType<BUILTINTYPE, COMPLEXTYPE> [] resolvedTypes;
 	
-	public ResolvedTypeCodeMapImpl(ResolvedCodeMapImpl codeMap, Collection<? extends BuiltinType> builtinTypes) {
+	public ResolvedTypeCodeMapImpl(
+			ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap,
+			Collection<BUILTINTYPE> builtinTypes,
+			ASTModel<BUILTINTYPE, COMPLEXTYPE> astModel) {
 		
 		Objects.requireNonNull(codeMap);
+		Objects.requireNonNull(astModel);
 
 		this.codeMap = codeMap;
+		this.astModel = astModel;
 		this.nameToTypeNoMap = new NameToTypeNoMap();
 		this.scopedNameMap = new HashMap<>();
 		this.methodMapCache = new MethodMapCache();
 		
 		// Add all builtin types
-		for (BuiltinType builtinType : builtinTypes) {
+		for (BUILTINTYPE builtinType : builtinTypes) {
 			
-			final ResolvedType resolvedBuiltinType = new ResolvedTypeBuiltin(builtinType);
+			final ResolvedType<BUILTINTYPE, COMPLEXTYPE> resolvedBuiltinType = new ResolvedTypeBuiltin<>(
+					builtinType,
+					astModel.getBuiltinTypeName(builtinType));
 			
-			addType(resolvedBuiltinType);
+			addBuiltinType(resolvedBuiltinType);
 		}
 	}
 
-	public int addFile(ResolvedFile file, int [] types) {
+	public int addFile(ResolvedFile<BUILTINTYPE, COMPLEXTYPE> file, int [] types) {
 		return codeMap.addFile(types);
 	}
 
-	private int [] getExtendsFrom(ResolvedType type, TypeVariant typeVariant) {
+	private int [] getExtendsFrom(ResolvedType<BUILTINTYPE, COMPLEXTYPE> type, TypeVariant typeVariant) {
 		
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(typeVariant);
@@ -72,7 +74,7 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 			
 			int numExtendsFrom = 0;
 			
-			for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
+			for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE> typeDependency : type.getExtendsFrom()) {
 				if (typeDependency.getTypeVariant().equals(typeVariant)) {
 					++ numExtendsFrom;
 				}
@@ -82,9 +84,9 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 			
 			int dstIdx = 0;
 			
-			for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
+			for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE> typeDependency : type.getExtendsFrom()) {
 				if (typeDependency.getTypeVariant().equals(typeVariant)) {
-					extendsFrom[dstIdx ++] = nameToTypeNoMap.getType(typeDependency.getCompleteName().toTypeName());
+					extendsFrom[dstIdx ++] = nameToTypeNoMap.getType(typeDependency.getCompleteName());
 				}
 			}
 		}
@@ -94,35 +96,49 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 		
 		return extendsFrom;
 	}
-	
-	public int addType(ResolvedType type) {
 
-		final int typeNo = codeMap.addType(
-				type.getTypeVariant(),
-				type.getNumMethods(),
+	private int addBuiltinType(ResolvedType<BUILTINTYPE, COMPLEXTYPE> type) {
+		return addType(type, astModel.getBuiltinTypeName(type.getBuiltinType()), 0, null, null);
+	}
+
+	public int addType(ResolvedType<BUILTINTYPE, COMPLEXTYPE> type) {
+		
+		return addType(
+				type,
+				type.getTypeName(),
+				astModel.getNumMethods(type.getType()),
 				getExtendsFrom(type, TypeVariant.CLASS),
 				getExtendsFrom(type, TypeVariant.INTERFACE));
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public int addType(ResolvedType<?, ?> type, TypeName typeName, int numMethods, int [] classesExtendsFrom, int [] interfacesExtendsFrom) {
+		final int typeNo = codeMap.addType(
+				type.getTypeVariant(),
+				numMethods,
+				classesExtendsFrom,
+				interfacesExtendsFrom);
 
 		this.resolvedTypes = allocateArray(
 				this.resolvedTypes,
 				typeNo + 1,
 				length -> new ResolvedType[length]);
 		
-		resolvedTypes[typeNo] = type;
+		resolvedTypes[typeNo] = (ResolvedType)type;
 		
-		nameToTypeNoMap.addMapping(type.getCompleteName().toTypeName(), typeNo);
+		nameToTypeNoMap.addMapping(typeName, typeNo);
 		scopedNameMap.put(type.getScopedName(), typeNo);
 		
 		return typeNo;
 	}
 	
-	public ResolvedType getType(CompleteName completeName) {
+	public ResolvedType<BUILTINTYPE, COMPLEXTYPE> getType(TypeName completeName) {
 		final int typeNo = getTypeNo(completeName);
 		
 		return resolvedTypes[typeNo];
 	}
 	
-	public ResolvedType getType(ScopedName scopedName) {
+	public ResolvedType<BUILTINTYPE, COMPLEXTYPE> getType(ScopedName scopedName) {
 		
 		final Integer typeNo = scopedNameMap.get(scopedName);
 		
@@ -134,19 +150,19 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 	}
 
 	@Override
-	public ComplexType<?, ?, ?> getType(int typeNo) {
+	public COMPLEXTYPE getType(int typeNo) {
 		return resolvedTypes[typeNo].getType();
 	}
 
 	@Override
-	public TypeInfo getClassExtendsFromTypeInfo(CompleteName classType) {
+	public TypeInfo getClassExtendsFromTypeInfo(TypeName classType) {
 		final int type = codeMap.getClassThisExtendsFrom(getTypeNo(classType));
 
 		return type < 0 ? null : getTypeInfo(type);
 	}
 
 	@Override
-	public ResolvedType getClassThisExtendsFrom(CompleteName classType) {
+	public ResolvedType<BUILTINTYPE, COMPLEXTYPE> getClassThisExtendsFrom(TypeName classType) {
 
 		final int type = codeMap.getClassThisExtendsFrom(getTypeNo(classType));
 		
@@ -155,29 +171,29 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 	
 
 	@Override
-	public Collection<ResolvedType> getInterfacesImplement(CompleteName classType) {
+	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> getInterfacesImplement(TypeName classType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Collection<ResolvedType> getInterfacesExtendFrom(CompleteName interfaceType) {
+	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> getInterfacesExtendFrom(TypeName interfaceType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	public boolean hasType(CompleteName completeName) {
-		return nameToTypeNoMap.getType(completeName.toTypeName()) != null;
+	public boolean hasType(TypeName typeName) {
+		return nameToTypeNoMap.getType(typeName) != null;
 	}
 
-	public Integer getTypeNo(CompleteName type) {
+	public Integer getTypeNo(TypeName type) {
 		
 		Objects.requireNonNull(type);
 		
-		return nameToTypeNoMap.getType(type.toTypeName());
+		return nameToTypeNoMap.getType(type);
 	}
 	
-	public int addMethod(int type, String name, CompleteName [] parameterTypes, MethodVariant methodVariant, int indexInType) {
+	public int addMethod(int type, String name, TypeName [] parameterTypes, MethodVariant methodVariant, int indexInType) {
 		
 		final int [] parameterTypeNos = new int[parameterTypes.length];
 		
@@ -188,12 +204,12 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 		return codeMap.addMethod(type, name, parameterTypeNos, methodVariant, indexInType);
 	}
 
-	public void computeMethodExtends(CompleteName completeName) {
+	public void computeMethodExtends(TypeName completeName) {
 		codeMap.computeMethodExtends(getTypeNo(completeName));
 	}
 
 	@Override
-	public List<ResolvedType> getDirectSubtypes(CompleteName type) {
+	public List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> getDirectSubtypes(TypeName type) {
 		
 		Objects.requireNonNull(type);
 		
@@ -201,7 +217,7 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 		
 		final int [] types = codeMap.getDirectSubtypes(typeNo);
 		
-		final List<ResolvedType> result = new ArrayList<>(types.length);
+		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> result = new ArrayList<>(types.length);
 		
 		for (int resultTypeNo : types) {
 			result.add(resolvedTypes[resultTypeNo]);
@@ -211,7 +227,7 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 	}
 
 	@Override
-	public List<ResolvedType> getAllSubtypes(CompleteName type) {
+	public List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> getAllSubtypes(TypeName type) {
 		
 		Objects.requireNonNull(type);
 		
@@ -219,7 +235,7 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 		
 		final int [] types = codeMap.getAllSubtypes(typeNo);
 		
-		final List<ResolvedType> result = new ArrayList<>(types.length);
+		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> result = new ArrayList<>(types.length);
 		
 		for (int resultTypeNo : types) {
 			result.add(resolvedTypes[resultTypeNo]);
@@ -229,11 +245,9 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 	}
 	
 	@Override
-	public TypeInfo getTypeInfo(BaseType type) {
+	public TypeInfo getTypeInfo(TypeName type) {
 
-		final NamedType namedType = (NamedType)type;
-		
-		final Integer typeNo = getTypeNo(namedType.getCompleteName());
+		final Integer typeNo = getTypeNo(type);
 		
 		final TypeInfo typeInfo;
 		
@@ -248,12 +262,12 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 	}
 	
 	@Override
-	public MethodInfo getMethodInfo(ClassType type, MethodName methodName, NamedType [] parameterTypes) {
+	public MethodInfo getMethodInfo(TypeName type, String methodName, TypeName [] parameterTypes) {
 		
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(methodName);
 		
-		final int typeNo = getTypeNo(type.getCompleteName());
+		final int typeNo = getTypeNo(type);
 		
 		final int [] parameterTypeNos;
 		
@@ -265,7 +279,7 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 		
 			for (int i = 0; i < parameterTypes.length; ++ i) {
 
-				final CompleteName typeName = parameterTypes[i].getCompleteName();
+				final TypeName typeName = parameterTypes[i];
 				final Integer parameterTypeNo = getTypeNo(typeName);
 				
 				if (parameterTypeNo == null) {
@@ -276,6 +290,6 @@ public final class ResolvedTypeCodeMapImpl implements ResolvedTypeCodeMap {
 			}
 		}
 		
-		return codeMap.getMethodInfo(typeNo, methodName.getName(), parameterTypeNos, methodMapCache);
+		return codeMap.getMethodInfo(typeNo, methodName, parameterTypeNos, methodMapCache);
 	}
 }
