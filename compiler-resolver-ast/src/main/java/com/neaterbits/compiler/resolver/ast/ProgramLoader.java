@@ -24,7 +24,7 @@ public class ProgramLoader  {
 		return allFiles;
 	}
 
-	private static CompiledFile<ComplexType<?, ?, ?>> makeCompiledFile(ParsedFile parsedFile) {
+	public static CompiledFile<ComplexType<?, ?, ?>> makeCompiledFile(ParsedFile parsedFile) {
 
 		final CompiledFileSpecImpl compiledFileSpec = new CompiledFileSpecImpl(parsedFile.getFile().getPath());
 
