@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.ast;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.list.ASTList;
@@ -13,7 +13,7 @@ public final class Module extends BaseASTElement {
 	private final ModuleSpec moduleSpec;
 	private final ASTList<ParsedFile> parsedFiles;
 	
-	public Module(ModuleSpec moduleSpec, List<ParsedFile> parsedFiles) {
+	public Module(ModuleSpec moduleSpec, Collection<ParsedFile> parsedFiles) {
 		super(null);
 
 		Objects.requireNonNull(parsedFiles);

@@ -12,6 +12,10 @@ public class ModuleId {
 		
 		this.id = id;
 	}
+	
+	public final String getId() {
+		return id;
+	}
 
 	@Override
 	public int hashCode() {

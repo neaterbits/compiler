@@ -54,7 +54,6 @@ import com.neaterbits.compiler.util.StackDelegator;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeResolveMode;
 
-
 class TypeFinder {
 
 	private static final Boolean DEBUG = false;
