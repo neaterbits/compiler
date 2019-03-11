@@ -9,20 +9,20 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.TypeName;
 
-public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE> {
+public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 	
-	private final List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> resolvedFiles;
+	private final List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles;
 	
 	// private final ResolveState resolveState;
-	private final ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE> resolvedTypesMap;
+	private final ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypesMap;
 	private final BuiltinTypesMap<BUILTINTYPE> builtinTypesMap;
 	private final UnresolvedDependencies unresolvedDependencies;
 	
 	private final Collection<BUILTINTYPE> builtinTypes;
 	
 	ResolveFilesResult(
-			List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> resolvedFiles,
-			ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE> resolvedTypesMap,
+			List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles,
+			ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypesMap,
 			BuiltinTypesMap<BUILTINTYPE> builtinTypesMap,
 			Collection<BUILTINTYPE> builtinTypes,
 			UnresolvedDependencies unresolvedDependencies) {
@@ -46,12 +46,12 @@ public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE> {
 		this.builtinTypes = builtinTypes;
 	}
 
-	public List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> getResolvedFiles() {
+	public List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getResolvedFiles() {
 		return resolvedFiles;
 	}
 
 	
-	ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE> getResolvedTypesMap() {
+	ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getResolvedTypesMap() {
 		return resolvedTypesMap;
 	}
 	
@@ -59,7 +59,7 @@ public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE> {
 		return builtinTypesMap;
 	}
 
-	public ResolvedType<BUILTINTYPE, COMPLEXTYPE> getType(TypeName completeName) {
+	public ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getType(TypeName completeName) {
 		
 		Objects.requireNonNull(completeName);
 		

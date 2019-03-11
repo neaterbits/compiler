@@ -14,10 +14,14 @@ import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TypeName;
 
 public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState<T>> extends OOToProceduralConverterState<T> {
 
-	public MappingJavaToCConverterState(Converters<T> converters, ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>> codeMap) {
+	public MappingJavaToCConverterState(
+			Converters<T> converters,
+			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap) {
+		
 		super(converters, codeMap);
 	}
 

@@ -17,6 +17,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TypeName;
 
 public abstract class BaseResolveTest {
 
@@ -52,23 +53,23 @@ public abstract class BaseResolveTest {
 	}
 	
 	@SafeVarargs
-	protected static ResolvedType<BuiltinType, ComplexType<?, ?, ?>> makeResolvedType(
-			ASTModel<BuiltinType, ComplexType<?, ?, ?>> astModel,
-			ResolvedFile<BuiltinType, ComplexType<?, ?, ?>> resolvedFile,
+	protected static ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> makeResolvedType(
+			ASTModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel,
+			ResolvedFile<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedFile,
 			String name,
 			TypeVariant typeVariant,
-			ResolvedType<BuiltinType, ComplexType<?, ?, ?>> ... extendsFrom) {
+			ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> ... extendsFrom) {
 		
 		final ScopedName scopedName = makeScopedName(name);
 		
-		final List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>>> extendsFromDependencies = Arrays.stream(extendsFrom)
+		final List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> extendsFromDependencies = Arrays.stream(extendsFrom)
 				.map(type -> new TestResolvedTypeDependency(
 						type.getTypeName(),
 						ReferenceType.EXTENDS_FROM,
 						type.getSpec().getTypeVariant()))
 				.collect(Collectors.toList());
 		
-		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>> resolvedType
+		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedType
 				= new TestResolvedType(resolvedFile.getSpec(), scopedName, typeVariant, null, null, extendsFromDependencies, null);
 
 		return resolvedType;

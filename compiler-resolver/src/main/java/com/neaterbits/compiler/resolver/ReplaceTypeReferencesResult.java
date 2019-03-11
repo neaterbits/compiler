@@ -6,16 +6,16 @@ import java.util.Objects;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 
-public final class ReplaceTypeReferencesResult<BUILTINTYPE, COMPLEXTYPE> {
+public final class ReplaceTypeReferencesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
-	private final Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> resolvedFiles;
-	private final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap;
-	private final Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> typesInDependencyOrder;
+	private final Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles;
+	private final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap;
+	private final Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typesInDependencyOrder;
 
 	public ReplaceTypeReferencesResult(
-			Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> resolvedFiles,
-			ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap,
-			Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> typesInDependencyOrder) {
+			Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles,
+			ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap,
+			Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typesInDependencyOrder) {
 
 		Objects.requireNonNull(resolvedFiles);
 		Objects.requireNonNull(codeMap);
@@ -25,15 +25,15 @@ public final class ReplaceTypeReferencesResult<BUILTINTYPE, COMPLEXTYPE> {
 		this.typesInDependencyOrder = typesInDependencyOrder;
 	}
 	
-	public Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> getResolvedFiles() {
+	public Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getResolvedFiles() {
 		return resolvedFiles;
 	}
 
-	public ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE> getCodeMap() {
+	public ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getCodeMap() {
 		return codeMap;
 	}
 
-	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> getTypesInDependencyOrder() {
+	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getTypesInDependencyOrder() {
 		return typesInDependencyOrder;
 	}
 }

@@ -11,7 +11,8 @@ import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 
-public final class ResolvedTypeBuiltin<BUILTINTYPE, COMPLEXTYPE> implements ResolvedType<BUILTINTYPE, COMPLEXTYPE> {
+public final class ResolvedTypeBuiltin<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+		implements ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
 	private final BUILTINTYPE builtinType;
 	private final TypeName typeName;
@@ -56,7 +57,7 @@ public final class ResolvedTypeBuiltin<BUILTINTYPE, COMPLEXTYPE> implements Reso
 	}
 	
 	@Override
-	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> getNestedTypes() {
+	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getNestedTypes() {
 		return null;
 	}
 	
@@ -66,12 +67,12 @@ public final class ResolvedTypeBuiltin<BUILTINTYPE, COMPLEXTYPE> implements Reso
 	}
 	
 	@Override
-	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> getExtendsFrom() {
+	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getExtendsFrom() {
 		return null;
 	}
 	
 	@Override
-	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> getDependencies() {
+	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getDependencies() {
 		return null;
 	}
 }

@@ -38,6 +38,7 @@ import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.ModuleSpec;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
@@ -174,7 +175,7 @@ public abstract class BaseJavaCompilerTest {
 	
 	static <T extends MappingJavaToCConverterState<T>>
 	JavaToCDeclarations convertClassesAndInterfacesToStruct(
-			ReplaceTypeReferencesResult<BuiltinType, ComplexType<?, ?, ?>> resolveResult,
+			ReplaceTypeReferencesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult,
 			MappingJavaToCConverterState<T> converterState) {
 		
 		final JavaToCDeclarations declarations = new JavaToCDeclarations();
@@ -221,14 +222,14 @@ public abstract class BaseJavaCompilerTest {
 	}
 	
 	private static <T extends MappingJavaToCConverterState<T>> void convertTypes(
-			Collection<ResolvedType<BuiltinType, ComplexType<?, ?, ?>>> types,
-			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>> codeMap,
+			Collection<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> types,
+			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap,
 			JavaToCDeclarations declarations,
 			List<ComplexTypeReference> convertLaterTypeReferences,
 			MappingJavaToCConverterState<T> converterState) {
 		
 		
-		for (ResolvedType<BuiltinType, ComplexType<?, ?, ?>> resolvedType : types) {
+		for (ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedType : types) {
 			
 			if (resolvedType.getTypeVariant() == TypeVariant.CLASS) {
 				

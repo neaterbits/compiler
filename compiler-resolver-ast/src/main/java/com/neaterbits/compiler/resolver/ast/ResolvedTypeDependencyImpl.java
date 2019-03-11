@@ -16,7 +16,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 
-final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>> {
+final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
 	private final TypeName completeName;
 	private final ReferenceType referenceType;
 	private final TypeReference element;

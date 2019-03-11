@@ -76,7 +76,7 @@ public final class ScopedName {
 
 	@Override
 	public String toString() {
-		return (scope != null ? Strings.join(scope, '.') : "") + '/' + name; 
+		return (scope != null ? Strings.join(scope, '.') + '/' : "") + name; 
 	}
 
 	@Override

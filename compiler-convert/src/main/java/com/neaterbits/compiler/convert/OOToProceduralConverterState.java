@@ -27,9 +27,9 @@ public abstract class OOToProceduralConverterState<T extends OOToProceduralConve
 	
 	public abstract String getClassStaticVTableArrayName();
 	
-	private final ResolvedTypeCodeMap<BuiltinType, ? extends BaseType> codeMap;
+	private final ResolvedTypeCodeMap<BuiltinType, ? extends BaseType, TypeName> codeMap;
 	
-	protected OOToProceduralConverterState(Converters<T> converters, ResolvedTypeCodeMap<BuiltinType, ? extends BaseType> codeMap) {
+	protected OOToProceduralConverterState(Converters<T> converters, ResolvedTypeCodeMap<BuiltinType, ? extends BaseType, TypeName> codeMap) {
 		
 		super(converters);
 		

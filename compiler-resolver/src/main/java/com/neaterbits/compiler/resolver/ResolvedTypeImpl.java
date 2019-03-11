@@ -13,23 +13,23 @@ import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-final class ResolvedTypeImpl<BUILTINTYPE, COMPLEXTYPE> extends BaseResolverType implements ResolvedType<BUILTINTYPE, COMPLEXTYPE> {
+final class ResolvedTypeImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends BaseResolverType implements ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
 	private final COMPLEXTYPE type;
 	private final TypeName typeName;
 	
-	private final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> nestedTypes;
-	private final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> extendsFrom;
-	private final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> dependencies;
+	private final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> nestedTypes;
+	private final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> extendsFrom;
+	private final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> dependencies;
 
 	public ResolvedTypeImpl(
 			FileSpec file,
 			TypeName typeName,
 			TypeVariant typeVariant,
 			COMPLEXTYPE type,
-			List<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> nestedTypes,
-			List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> extendsFrom,
-			List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> dependencies) {
+			List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> nestedTypes,
+			List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> extendsFrom,
+			List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> dependencies) {
 		
 		super(file, new TypeSpec(typeName.toScopedName(), typeVariant));
 		
@@ -61,17 +61,17 @@ final class ResolvedTypeImpl<BUILTINTYPE, COMPLEXTYPE> extends BaseResolverType 
 	}
 
 	@Override
-	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> getNestedTypes() {
+	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getNestedTypes() {
 		return nestedTypes;
 	}
 
 	@Override
-	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> getExtendsFrom() {
+	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getExtendsFrom() {
 		return extendsFrom;
 	}
 
 	@Override
-	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE>> getDependencies() {
+	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getDependencies() {
 		return dependencies;
 	}
 }

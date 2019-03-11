@@ -33,6 +33,7 @@ import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.convert.OOToProceduralConverterUtil;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
+import com.neaterbits.compiler.util.TypeName;
 
 /**
  * Converts a class to C code
@@ -129,7 +130,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 	public static StructType convertClassMethodsToVTable(
 			ClassType classType,
 			OOToProceduralDeclarations<?> alreadyConvertedMap,
-			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>> codeMap,
+			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap,
 			java.util.function.Function<BaseType, BaseType> convertMethodType,
 			java.util.function.Function<CompleteName, StructName> classToStructName,
 			java.util.function.Function<CompleteName, FieldName> classToFieldName,

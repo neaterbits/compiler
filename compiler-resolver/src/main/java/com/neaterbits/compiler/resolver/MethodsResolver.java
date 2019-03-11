@@ -13,12 +13,14 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.TypeName;
 
-public final class MethodsResolver<BUILTINTYPE, COMPLEXTYPE> {
+public final class MethodsResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
-	private final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap;
-	private final ASTModel<BUILTINTYPE, COMPLEXTYPE> astModel;
+	private final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap;
+	private final ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 	
-	public MethodsResolver(ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE> codeMap, ASTModel<BUILTINTYPE, COMPLEXTYPE> astModel) {
+	public MethodsResolver(
+			ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap,
+			ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
 		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(astModel);
@@ -28,13 +30,13 @@ public final class MethodsResolver<BUILTINTYPE, COMPLEXTYPE> {
 	}
 
 
-	void resolveMethodsForAllTypes(Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE>> allFiles) {
+	void resolveMethodsForAllTypes(Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> allFiles) {
 	
 		// Create a set of all types and just start resolving one by one
 		
-		final Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE>> map = new HashMap<>(allFiles.size());
+		final Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> map = new HashMap<>(allFiles.size());
 	
-		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE> file : allFiles) {
+		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> file : allFiles) {
 			getAllTypes(file.getTypes(), map);
 		}
 		
@@ -42,9 +44,11 @@ public final class MethodsResolver<BUILTINTYPE, COMPLEXTYPE> {
 	}
 	
 	
-	private void getAllTypes(Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE>> types, Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE>> map) {
+	private void getAllTypes(
+			Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> types,
+			Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> map) {
 		
-		for (ResolvedType<BUILTINTYPE, COMPLEXTYPE> type : types) {
+		for (ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> type : types) {
 
 			if (map.put(type.getSpec(), type) != null) {
 				throw new IllegalStateException();
@@ -56,7 +60,7 @@ public final class MethodsResolver<BUILTINTYPE, COMPLEXTYPE> {
 		}
 	}
 	
-	private void resolveAllMethods(Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE>> map) {
+	private void resolveAllMethods(Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> map) {
 		
 		final Set<TypeSpec> toResolve = new HashSet<>(map.keySet());
 
@@ -70,17 +74,17 @@ public final class MethodsResolver<BUILTINTYPE, COMPLEXTYPE> {
 		}
 	}
 	
-	private void resolveAllMethods(Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE>> map, TypeSpec typeSpec) {
+	private void resolveAllMethods(Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> map, TypeSpec typeSpec) {
 	
 		Objects.requireNonNull(typeSpec);
 		
-		final ResolvedType<BUILTINTYPE, COMPLEXTYPE> resolvedType = map.get(typeSpec);
+		final ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedType = map.get(typeSpec);
 		
 		addTypeAndMethods(resolvedType);
 	}
 	
 	
-	private void addTypeAndMethods(ResolvedType<BUILTINTYPE, COMPLEXTYPE> resolvedType) {
+	private void addTypeAndMethods(ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedType) {
 		
 		Objects.requireNonNull(resolvedType);
 		

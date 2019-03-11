@@ -23,7 +23,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 
-public class ASTModelImpl implements ASTModel<BuiltinType, ComplexType<?, ?, ?>> {
+public class ASTModelImpl implements ASTModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
 
 	@Override
 	public ScopedName getBuiltinTypeScopedName(BuiltinType builtinType) {
@@ -41,7 +41,7 @@ public class ASTModelImpl implements ASTModel<BuiltinType, ComplexType<?, ?, ?>>
 	}
 
 	@Override
-	public ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>> makeResolvedTypeDependency(
+	public ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName> makeResolvedTypeDependency(
 			TypeName completeName,
 			ReferenceType referenceType,
 			TypeResolveMode typeResolveMode,

@@ -6,13 +6,13 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 
-public interface ASTModel<BUILTINTYPE, COMPLEXTYPE> extends ASTBuiltinTypeModel<BUILTINTYPE> {
+public interface ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends ASTBuiltinTypeModel<BUILTINTYPE> {
 
 	int getNumMethods(COMPLEXTYPE complextype);
 	
 	void iterateClassMethods(COMPLEXTYPE complexType, ASTMethodVisitor visitor);
 	
-	ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE> makeResolvedTypeDependency(
+	ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> makeResolvedTypeDependency(
 			TypeName completeName,
 			ReferenceType referenceType,
 			TypeResolveMode typeResolveMode,

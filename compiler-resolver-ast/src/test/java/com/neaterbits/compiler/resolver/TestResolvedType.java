@@ -14,22 +14,22 @@ import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-public class TestResolvedType extends BaseResolverType implements ResolvedType<BuiltinType, ComplexType<?, ?, ?>> {
+public class TestResolvedType extends BaseResolverType implements ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
 	
 	private final ComplexType<?, ?, ?> type;
 	
-	private final List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>>> nestedTypes;
-	private final List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>>> extendsFrom;
-	private final List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>>> dependencies;
+	private final List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> nestedTypes;
+	private final List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> extendsFrom;
+	private final List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> dependencies;
 	
 	public TestResolvedType(
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
 			ComplexType<?, ?, ?> type,
-			List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>>> nestedTypes,
-			List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>>> extendsFrom,
-			List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>>> dependencies) {
+			List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> nestedTypes,
+			List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> extendsFrom,
+			List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> dependencies) {
 
 		super(file, new TypeSpec(scopedName, typeVariant));
 
@@ -65,17 +65,17 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 	}
 
 	@Override
-	public Collection<ResolvedType<BuiltinType, ComplexType<?, ?, ?>>> getNestedTypes() {
+	public Collection<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> getNestedTypes() {
 		return nestedTypes;
 	}
 
 	@Override
-	public Collection<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>>> getExtendsFrom() {
+	public Collection<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> getExtendsFrom() {
 		return extendsFrom;
 	}
 
 	@Override
-	public Collection<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>>> getDependencies() {
+	public Collection<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> getDependencies() {
 		return dependencies;
 	}
 }

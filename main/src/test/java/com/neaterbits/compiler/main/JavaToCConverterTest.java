@@ -38,6 +38,7 @@ import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
 
@@ -79,7 +80,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
 		// Also builds map of all extended by/extends relationships for classes and interfaces and methods thereof
 		// This information will be used when figuring out how to do method dispatch for each call site 
-		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>> resolveResult = resolveFiles(program, astModel);
+		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult = resolveFiles(program, astModel);
 		
 		final UnresolvedDependencies unresolved = resolveResult.getUnresolvedDependencies();
 		if (!unresolved.isEmpty()) {
@@ -88,7 +89,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
 		System.out.println("## resolved files: " + resolveResult.getResolvedFiles());
 		
-		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>> printstream = resolveResult.getResolvedFiles().stream()
+		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> printstream = resolveResult.getResolvedFiles().stream()
 				.flatMap(file -> file.getTypes().stream())
 				.filter(type -> type.getTypeName().equals("PrintStream"))
 				.findFirst().get();
@@ -100,7 +101,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		
 		// Replaces all resolved type references within the AST
-		final ReplaceTypeReferencesResult<BuiltinType, ComplexType<?, ?, ?>> replaceTypeReferencesResult
+		final ReplaceTypeReferencesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> replaceTypeReferencesResult
 				= UnresolvedReferenceReplacer.replaceUnresolvedTypeReferences(resolveResult, astModel);
 		
 		// First map classes to C structs so can access between compilation units
@@ -172,11 +173,13 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		}
 	}
 	
-	private ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>> resolveFiles(Program program, ASTModel<BuiltinType, ComplexType<?, ?, ?>> astModel) {
+	private ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveFiles(
+			Program program,
+			ASTModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel) {
 
-		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>> logger = new ResolveLogger<>(System.out);
+		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName> logger = new ResolveLogger<>(System.out);
 		
-		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>> resolver = new FilesResolver<>(
+		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolver = new FilesResolver<>(
 				logger,
 				JavaTypes.getBuiltinTypes(),
 				astModel);
@@ -233,7 +236,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	private CompilationUnit convert(
 			CompilationUnit javaCompilationUnit,
 			JavaToCDeclarations declarations,
-			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>> codeMap) {
+			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap) {
 		
 		final JavaToCConverter converter = new JavaToCConverter();
 

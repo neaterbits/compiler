@@ -5,7 +5,7 @@ import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 
-public interface ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE> {
+public interface ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
 	TypeName getCompleteName();
 	

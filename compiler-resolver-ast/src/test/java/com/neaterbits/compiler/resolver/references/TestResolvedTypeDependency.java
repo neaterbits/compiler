@@ -9,7 +9,7 @@ import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.TypeName;
 
-public final class TestResolvedTypeDependency implements ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>> {
+public final class TestResolvedTypeDependency implements ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
 
 	private final TypeName completeName;
 	private final ReferenceType referenceType;
