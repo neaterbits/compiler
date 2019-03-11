@@ -41,6 +41,16 @@ public class ASTModelImpl implements ASTModel<BuiltinType, ComplexType<?, ?, ?>,
 	}
 
 	@Override
+	public ScopedName getLibraryTypeScopedName(TypeName libraryType) {
+		return libraryType.toScopedName();
+	}
+
+	@Override
+	public TypeName getLibraryTypeName(TypeName libraryType) {
+		return libraryType;
+	}
+
+	@Override
 	public ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName> makeResolvedTypeDependency(
 			TypeName completeName,
 			ReferenceType referenceType,

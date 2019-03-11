@@ -37,7 +37,7 @@ public class FileResolverTest extends BaseResolveTest {
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
 		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName> filesResolver
-			= new FilesResolver<>(resolveLogger, Collections.emptyList(), astModel);
+			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, astModel);
 
 		final FileSpec testFileSpec = new TestFileSpec("TestClass.java");
 		final ScopedName testClass = makeScopedName("com.test.TestClass");

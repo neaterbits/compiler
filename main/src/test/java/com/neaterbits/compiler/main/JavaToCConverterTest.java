@@ -30,6 +30,7 @@ import com.neaterbits.compiler.resolver.ReplaceTypeReferencesResult;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
+import com.neaterbits.compiler.resolver.ResolverLibraryTypes;
 import com.neaterbits.compiler.resolver.UnresolvedDependencies;
 import com.neaterbits.compiler.resolver.UnresolvedReferenceReplacer;
 import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
@@ -80,7 +81,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
 		// Also builds map of all extended by/extends relationships for classes and interfaces and methods thereof
 		// This information will be used when figuring out how to do method dispatch for each call site 
-		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult = resolveFiles(program, astModel);
+		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult = resolveFiles(program, null, astModel);
 		
 		final UnresolvedDependencies unresolved = resolveResult.getUnresolvedDependencies();
 		if (!unresolved.isEmpty()) {
@@ -175,6 +176,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	
 	private ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveFiles(
 			Program program,
+			ResolverLibraryTypes<TypeName> libraryTypes,
 			ASTModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel) {
 
 		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName> logger = new ResolveLogger<>(System.out);
@@ -182,6 +184,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolver = new FilesResolver<>(
 				logger,
 				JavaTypes.getBuiltinTypes(),
+				libraryTypes,
 				astModel);
 		
 		final Collection<CompiledFile<ComplexType<?, ?, ?>>> allFiles = ProgramLoader.getCompiledFiles(program);
@@ -219,7 +222,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
-		resolveFiles(program, astModel);
+		resolveFiles(program, null, astModel);
 		
 	/*
 		final PrintStream logOutput = new PrintStream(new ByteArrayOutputStream());

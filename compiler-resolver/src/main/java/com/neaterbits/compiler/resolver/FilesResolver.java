@@ -16,29 +16,37 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 
 public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends ResolveUtil {
 
 	private final ResolveLogger<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> logger;
-	private final ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
-	
+
 	private final Collection<BUILTINTYPE> builtinTypes;
+	private final ResolverLibraryTypes<LIBRARYTYPE> libraryTypes;
+	
+	private final ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
+
 	private final BuiltinTypesMap<BUILTINTYPE> builtinTypesMap;
 	
 	public FilesResolver(
 			ResolveLogger<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> logger,
 			Collection<BUILTINTYPE> builtinTypes,
+			ResolverLibraryTypes<LIBRARYTYPE> libraryTypes,
 			ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
 		Objects.requireNonNull(logger);
 		Objects.requireNonNull(astModel);
-		
+
 		this.logger = logger;
-		this.astModel = astModel;
-		
+
 		this.builtinTypes = builtinTypes;
 		this.builtinTypesMap = new BuiltinTypesMap<>(builtinTypes, astModel);
+
+		this.libraryTypes = libraryTypes;
+		
+		this.astModel = astModel;
 	}
 
 	public ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFiles(Collection<CompiledFile<COMPLEXTYPE>> allFiles) {
@@ -245,53 +253,61 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends 
 					referencedFrom,
 					compiledTypesMap);
 
-			final ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypeDependency;
 			
-			if (foundType != null) {
-				
-				final ScopedName typeScopedName = foundType.getScopedName();
-				
-				final TypeResolveMode typeResolveMode = 
-						   scopedName.hasScope()
-						&& scopedName.scopeStartsWith(typeScopedName.getParts())
-						
-						? TypeResolveMode.COMPLETE_TO_COMPLETE
-						: TypeResolveMode.CLASSNAME_TO_COMPLETE;
+			final ScopedName typeScopedName;
+			final TypeName typeName;
 
-				
-				resolvedTypeDependency = astModel.makeResolvedTypeDependency(
-						foundType.getTypeName(),
-						compiledTypeDependency.getReferenceType(),
-						typeResolveMode,
-						null,
-						compiledTypeDependency);
-				
+			if (foundType != null) {
+				typeScopedName = foundType.getScopedName();
+				typeName = foundType.getTypeName();
 			}
 			else {
 				
 				final BUILTINTYPE builtinType = builtinTypesMap.lookupType(compiledTypeDependency.getScopedName());
 				
 				if (builtinType != null) {
-					final TypeResolveMode typeResolveMode = 
-							   scopedName.hasScope()
-							&& scopedName.scopeStartsWith(astModel.getBuiltinTypeScopedName(builtinType).getParts())
-							
-							? TypeResolveMode.COMPLETE_TO_COMPLETE
-							: TypeResolveMode.CLASSNAME_TO_COMPLETE;
-
-					resolvedTypeDependency = astModel.makeResolvedTypeDependency(
-							astModel.getBuiltinTypeName(builtinType),
-							compiledTypeDependency.getReferenceType(),
-							typeResolveMode,
-							null,
-							compiledTypeDependency);
+					typeScopedName = astModel.getBuiltinTypeScopedName(builtinType);
+					typeName = astModel.getBuiltinTypeName(builtinType);
 				}
 				else {
-					resolvedTypeDependency = null;
+					if (libraryTypes != null) {
+						
+						final LIBRARYTYPE libraryType = libraryTypes.lookupType(compiledTypeDependency.getScopedName());
+						
+						if (libraryType != null) {
+							typeScopedName = astModel.getLibraryTypeScopedName(libraryType);
+							typeName = astModel.getLibraryTypeName(libraryType);
+						}
+						else {
+							typeScopedName = null;
+							typeName = null;
+						}
+					}
+					else {
+						typeScopedName = null;
+						typeName = null;
+					}
 				}
 			}
 
-			if (resolvedTypeDependency != null) {
+			if (typeScopedName != null) {
+
+				final TypeResolveMode typeResolveMode = 
+						   scopedName.hasScope()
+						&& scopedName.scopeStartsWith(typeScopedName.getParts())
+						
+							? TypeResolveMode.COMPLETE_TO_COMPLETE
+							: TypeResolveMode.CLASSNAME_TO_COMPLETE;
+
+				final ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypeDependency;
+
+				resolvedTypeDependency = astModel.makeResolvedTypeDependency(
+						typeName,
+						compiledTypeDependency.getReferenceType(),
+						typeResolveMode,
+						null,
+						compiledTypeDependency);
+
 				resolvedTypes.add(resolvedTypeDependency);
 				unresolvedDependencies.remove(file.getSpec(), compiledTypeDependency);
 			}

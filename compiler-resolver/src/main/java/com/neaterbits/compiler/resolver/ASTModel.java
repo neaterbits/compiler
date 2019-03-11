@@ -6,7 +6,9 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 
-public interface ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends ASTBuiltinTypeModel<BUILTINTYPE> {
+public interface ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+	extends ASTBuiltinTypeModel<BUILTINTYPE>,
+			ASTLibraryTypeModel<LIBRARYTYPE> {
 
 	int getNumMethods(COMPLEXTYPE complextype);
 	
