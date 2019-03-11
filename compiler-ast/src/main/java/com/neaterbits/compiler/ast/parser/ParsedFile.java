@@ -5,12 +5,12 @@ import java.util.List;
 
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
-import com.neaterbits.compiler.ast.BaseASTElement;
+import com.neaterbits.compiler.ast.BasePlaceholderASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.parse.CompileError;
 
-public final class ParsedFile extends BaseASTElement {
+public final class ParsedFile extends BasePlaceholderASTElement {
 
 	private final SourceFile file;
 	private final List<CompileError> errors;
@@ -18,8 +18,6 @@ public final class ParsedFile extends BaseASTElement {
 	private final ASTSingle<CompilationUnit> parsed;
 
 	public ParsedFile(SourceFile file, List<CompileError> errors, String log, CompilationUnit parsed) {
-		super(null);
-		
 		this.file = file;
 		this.errors = Collections.unmodifiableList(errors);
 		this.log = log;
