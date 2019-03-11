@@ -52,7 +52,7 @@ public final class ScopedNameResolver {
 			
 			final List<ScopedName> names = fileImports.getAllNameCombinations(scopedName);
 			
-System.out.println("## name combinations: " + names + " for " + scopedName);
+// System.out.println("## name combinations: " + names + " for " + scopedName);
 			
 			final Map<ScopedName, T> matches = new HashMap<>();
 			
