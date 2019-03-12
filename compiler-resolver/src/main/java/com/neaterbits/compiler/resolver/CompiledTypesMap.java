@@ -13,11 +13,11 @@ final class CompiledTypesMap<COMPLEXTYPE> implements TypesMap<CompiledType<COMPL
 
 	private final Map<ScopedName, CompiledType<COMPLEXTYPE>> map;
 	
-	CompiledTypesMap(Collection<CompiledFile<COMPLEXTYPE>> files) {
+	<COMPILATION_UNIT> CompiledTypesMap(Collection<CompiledFile<COMPLEXTYPE, COMPILATION_UNIT>> files) {
 		
 		this.map = new HashMap<>();
 
-		for (CompiledFile<COMPLEXTYPE> file : files) {
+		for (CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> file : files) {
 			addTypes(file.getTypes());
 		}
 	}

@@ -1,33 +1,32 @@
 package com.neaterbits.compiler.resolver;
 
-
+import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.FileSpec;
-import com.neaterbits.compiler.resolver.types.IFileImports;
 
-public class TestCompiledFile extends BaseTestFile<CompiledType<ComplexType<?, ?, ?>>> implements CompiledFile<ComplexType<?, ?, ?>> {
+public class TestCompiledFile extends BaseTestFile<CompiledType<ComplexType<?, ?, ?>>>
+		implements CompiledFile<ComplexType<?, ?, ?>, CompilationUnit> {
 
-	private final IFileImports imports;
+	private final CompilationUnit compilationUnit;
 	
 	@SafeVarargs
-	public TestCompiledFile(String name, IFileImports imports, CompiledType<ComplexType<?, ?, ?>> ... types) {
+	public TestCompiledFile(String name, CompilationUnit compilationUnit, CompiledType<ComplexType<?, ?, ?>> ... types) {
 		super(name, types);
 
-		this.imports = imports;
+		this.compilationUnit = compilationUnit;
 	}
 	
 	@SafeVarargs
-	public TestCompiledFile(FileSpec fileSpec, IFileImports imports, CompiledType<ComplexType<?, ?, ?>> ... types) {
+	public TestCompiledFile(FileSpec fileSpec, CompilationUnit compilationUnit, CompiledType<ComplexType<?, ?, ?>> ... types) {
 		super(fileSpec, types);
 
-		this.imports = imports;
+		this.compilationUnit = compilationUnit;
 	}
-	
 
 	@Override
-	public IFileImports getImports() {
-		return imports;
+	public CompilationUnit getCompilationUnit() {
+		return compilationUnit;
 	}
 }

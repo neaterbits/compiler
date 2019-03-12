@@ -11,11 +11,30 @@ public final class ScopedName {
 	private final List<String> scope;
 	private final String name;
 
+	public static ScopedName makeScopedName(String [] parts) {
+		
+		Objects.requireNonNull(parts);
+		
+		if (parts.length == 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		return new ScopedName(
+				parts.length > 1 ? Arrays.asList(Arrays.copyOf(parts, parts.length - 1)) : null,
+				parts[parts.length - 1]);
+	}
+
 	public static ScopedName makeScopedName(String [] namespaceParts, String name) {
+
+		Objects.requireNonNull(namespaceParts);
+		Objects.requireNonNull(name);
+		
 		return makeScopedName(namespaceParts, namespaceParts.length, name);
 	}
 
 	public static ScopedName makeScopedName(String [] parts, int num, String name) {
+		
+		Objects.requireNonNull(parts);
 		
 		final List<String> scope = new ArrayList<>(num + 1);
 		

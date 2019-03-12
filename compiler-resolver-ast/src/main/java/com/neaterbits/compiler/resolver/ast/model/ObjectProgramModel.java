@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.ASTVisitor;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.ast.Import;
 import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
@@ -16,7 +17,6 @@ import com.neaterbits.compiler.ast.typedefinition.InterfaceDeclarationName;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.resolver.ScopedNameResolver;
 import com.neaterbits.compiler.resolver.TypesMap;
-import com.neaterbits.compiler.resolver.ast.FileImports;
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
@@ -29,6 +29,7 @@ import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.model.SourceToken;
 import com.neaterbits.compiler.util.model.SourceTokenType;
 import com.neaterbits.compiler.util.model.SourceTokenVisitor;
+import com.neaterbits.compiler.util.model.TypeImportVisitor;
 
 public final class ObjectProgramModel implements ProgramModel<Program, ParsedFile, CompilationUnit > {
 
@@ -47,8 +48,6 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 			
 			return false;
 		});
-		
-		
 	}
 	
 	private static class Element {
@@ -149,7 +148,16 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		return found != null ? makeSourceToken(found, compilationUnit, resolvedTypes) : null;
 	}
 	
-	private static SourceToken makeSourceToken(BaseASTElement element, CompilationUnit compilationUnit, ResolvedTypes resolvedTypes) {
+	
+	@Override
+	public void iterateTypeImports(CompilationUnit sourceFile, TypeImportVisitor visitor) {
+		for (Import typeImport : sourceFile.getImports()) {
+			typeImport.visit(visitor);
+		}
+	}
+
+
+	private SourceToken makeSourceToken(BaseASTElement element, CompilationUnit compilationUnit, ResolvedTypes resolvedTypes) {
 		
 		Objects.requireNonNull(element);
 
@@ -166,7 +174,6 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 
 			// Resolve from already resolved types
 			final ResolveLaterTypeReference typeReference = (ResolveLaterTypeReference)element;
-			final FileImports fileImports = new FileImports(compilationUnit);
 			final TypesMap<TypeName> compiledTypesMap = new TypesMap<TypeName>() {
 
 				@Override
@@ -189,7 +196,8 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 				final TypeName resolved = ScopedNameResolver.resolveScopedName(
 						typeReference.getTypeName(),
 						null,
-						fileImports,
+						compilationUnit,
+						this,
 						referencedFrom,
 						compiledTypesMap);
 				

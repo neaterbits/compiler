@@ -10,7 +10,7 @@ import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.ScopedName;
 
-public final class ResolveLogger<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
+public final class ResolveLogger<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILATION_UNIT> {
 
 	private final PrintStream out;
 
@@ -21,11 +21,11 @@ public final class ResolveLogger<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 		this.out = out;
 	}
 
-	void onResolveFilesStart(Collection<CompiledFile<COMPLEXTYPE>> files) {
+	void onResolveFilesStart(Collection<CompiledFile<COMPLEXTYPE, COMPILATION_UNIT>> files) {
 		out.println("Start resolving " + files.size() + " files");
 	}
 
-	void onResolving(CompiledFile<COMPLEXTYPE> file) {
+	void onResolving(CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> file) {
 		out.println("Resolving file " + file.getName());
 	}
 	

@@ -6,7 +6,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 
-public interface ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+public interface ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 	extends ASTBuiltinTypeModel<BUILTINTYPE>,
 			ASTLibraryTypeModel<LIBRARYTYPE> {
 

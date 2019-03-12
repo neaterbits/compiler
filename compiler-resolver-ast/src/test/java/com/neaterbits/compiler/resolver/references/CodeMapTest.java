@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.neaterbits.compiler.resolver.ASTModel;
+import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.BaseResolveTest;
 import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.ResolvedCodeMapImpl;
@@ -214,7 +214,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 	@SafeVarargs
 	private final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> addType(
-			ASTModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel,
+			ASTTypesModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel,
 			ResolvedTypeCodeMapImpl<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap,
 			String file,
 			String name,

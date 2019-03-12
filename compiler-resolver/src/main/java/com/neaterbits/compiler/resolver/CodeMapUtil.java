@@ -21,7 +21,7 @@ final class CodeMapUtil extends ResolveUtil {
 				List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles,
 				Collection<BUILTINTYPE> builtinTypes,
 				List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typesInDependencyOrder,
-				ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+				ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 		
 		final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap = new ResolvedTypeCodeMapImpl<>(
 				new ResolvedCodeMapImpl<>(),

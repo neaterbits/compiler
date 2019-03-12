@@ -16,11 +16,11 @@ import com.neaterbits.compiler.util.TypeName;
 public final class MethodsResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
 	private final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap;
-	private final ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
+	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 	
 	public MethodsResolver(
 			ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap,
-			ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
 		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(astModel);

@@ -13,7 +13,7 @@ public class UnresolvedReferenceReplacer {
 	public static <BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 			ReplaceTypeReferencesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> replaceUnresolvedTypeReferences(
 						
-			ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFilesResult, ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+			ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFilesResult, ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 		
 		final List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles = resolveFilesResult.getResolvedFiles();
 		

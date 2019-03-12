@@ -26,7 +26,7 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		implements ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
 	private final ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap;
-	private final ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
+	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 	private final NameToTypeNoMap nameToTypeNoMap;
 	
 	private final Map<ScopedName, Integer> scopedNameMap;
@@ -38,7 +38,7 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 	public ResolvedTypeCodeMapImpl(
 			ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap,
 			Collection<BUILTINTYPE> builtinTypes,
-			ASTModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 		
 		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(astModel);

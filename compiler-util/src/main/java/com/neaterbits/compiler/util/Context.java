@@ -11,6 +11,10 @@ public final class Context {
 	private final int endOffset;
 	private final String text;
 
+	public static Context makeTestContext() {
+		return new Context("", 0, 0, 0, 0, 0, 0, "");
+	}
+	
 	public Context(String file, int startLine, int startPosInLine, int startOffset, int endLine, int endPos, int endOffset, String text) {
 		
 		this.file = file;

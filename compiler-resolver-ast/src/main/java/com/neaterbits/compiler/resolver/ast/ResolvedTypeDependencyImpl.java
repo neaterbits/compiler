@@ -36,7 +36,7 @@ final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency<Builtin
 		Objects.requireNonNull(referenceType);
 		Objects.requireNonNull(element);
 		Objects.requireNonNull(typeResolveMode);
-		Objects.requireNonNull(typeVariant);
+//		Objects.requireNonNull(typeVariant);
 
 		this.completeName = completeName;
 		this.referenceType = referenceType;

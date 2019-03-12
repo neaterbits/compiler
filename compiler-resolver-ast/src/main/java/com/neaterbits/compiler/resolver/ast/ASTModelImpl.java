@@ -15,7 +15,7 @@ import com.neaterbits.compiler.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ASTMethodVisitor;
-import com.neaterbits.compiler.resolver.ASTModel;
+import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
@@ -23,7 +23,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 
-public class ASTModelImpl implements ASTModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
+public class ASTModelImpl implements ASTTypesModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
 
 	@Override
 	public ScopedName getBuiltinTypeScopedName(BuiltinType builtinType) {

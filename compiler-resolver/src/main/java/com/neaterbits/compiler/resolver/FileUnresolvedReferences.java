@@ -10,12 +10,15 @@ import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 
-final class FileUnresolvedReferences<COMPLEXTYPE> {
-	private final CompiledFile<COMPLEXTYPE> fileToResolve;
+final class FileUnresolvedReferences<COMPLEXTYPE, COMPILATION_UNIT> {
+	private final CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> fileToResolve;
 	private final Set<CompiledTypeDependency> extendsFrom;
 	private final Set<CompiledTypeDependency> dependencies;
 	
-	FileUnresolvedReferences(CompiledFile<COMPLEXTYPE> fileToResolve, Collection<CompiledTypeDependency> extendsFrom, Collection<CompiledTypeDependency> dependencies) {
+	FileUnresolvedReferences(
+			CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> fileToResolve,
+			Collection<CompiledTypeDependency> extendsFrom,
+			Collection<CompiledTypeDependency> dependencies) {
 		
 		Objects.requireNonNull(fileToResolve);
 		
@@ -25,7 +28,7 @@ final class FileUnresolvedReferences<COMPLEXTYPE> {
 		this.dependencies 	= dependencies != null ? new HashSet<>(dependencies) : Collections.emptySet();
 	}
 
-	CompiledFile<COMPLEXTYPE> getFileToResolve() {
+	CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> getFileToResolve() {
 		return fileToResolve;
 	}
 

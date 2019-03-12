@@ -4,36 +4,49 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.neaterbits.compiler.resolver.types.IFileImports;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.model.CompilationUnitModel;
 
 public final class ScopedNameResolver {
 	
-	public static <T> T resolveScopedName(ScopedName scopedName, ReferenceType referenceType, IFileImports fileImports, ScopedName referencedFrom, TypesMap<T> compiledTypesMap) {
+	public static <T, COMPILATION_UNIT> T resolveScopedName(
+			ScopedName toResolve,
+			ReferenceType referenceType,
+			COMPILATION_UNIT compilationUnit,
+			CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel,
+			ScopedName referencedFrom,
+			TypesMap<T> compiledTypesMap) {
 		
-		T result = resolveScopedName(scopedName, fileImports, referencedFrom, compiledTypesMap);
+		T result = resolveScopedName(toResolve, compilationUnit, compilationUnitModel, referencedFrom, compiledTypesMap);
 		
 		if (result == null && referenceType == ReferenceType.STATIC_OR_STATIC_INSTANCE_METHOD_CALL) {
 
-			if (scopedName.hasScope() && scopedName.getScope().size() > 1) {
+			if (toResolve.hasScope() && toResolve.getScope().size() > 1) {
 			
-				final ScopedName updatedScopeName = new ScopedName(scopedName.getScope().subList(0, scopedName.getScope().size() - 1), scopedName.getName());
+				final ScopedName updatedScopeName = new ScopedName(
+						toResolve.getScope().subList(0, toResolve.getScope().size() - 1),
+						toResolve.getName());
 				
-				result = resolveScopedName(updatedScopeName, fileImports, referencedFrom, compiledTypesMap);
+				result = resolveScopedName(updatedScopeName, compilationUnit, compilationUnitModel, referencedFrom, compiledTypesMap);
 			}
 			// Class name as part of scopedName
-			else if (scopedName.hasScope() && scopedName.getScope().size() == 1) {
+			else if (toResolve.hasScope() && toResolve.getScope().size() == 1) {
 
-				final ScopedName updatedScopeName = new ScopedName(null, scopedName.getScope().get(0));
+				final ScopedName updatedScopeName = new ScopedName(null, toResolve.getScope().get(0));
 				
-				result = resolveScopedName(updatedScopeName, fileImports, referencedFrom, compiledTypesMap);
+				result = resolveScopedName(updatedScopeName, compilationUnit, compilationUnitModel, referencedFrom, compiledTypesMap);
 			}
 		}
 		
 		return result;
 	}
 
-	private static <T> T resolveScopedName(ScopedName scopedName, IFileImports fileImports, ScopedName referencedFrom, TypesMap<T> compiledTypesMap) {
+	private static <T, COMPILATION_UNIT> T resolveScopedName(
+			ScopedName scopedName,
+			COMPILATION_UNIT compilationUnit,
+			CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel,
+			ScopedName referencedFrom,
+			TypesMap<T> compiledTypesMap) {
 		
 		final T result;
 		final T inSameNamespace;
@@ -50,9 +63,9 @@ public final class ScopedNameResolver {
 			
 			// Only type name, must look at imports
 			
-			final List<ScopedName> names = fileImports.getAllNameCombinations(scopedName);
+			final List<ScopedName> names = FileImports.getAllNameCombinations(compilationUnit, scopedName, compilationUnitModel);
 			
-// System.out.println("## name combinations: " + names + " for " + scopedName);
+ // System.out.println("## name combinations: " + names + " for " + scopedName);
 			
 			final Map<ScopedName, T> matches = new HashMap<>();
 			
@@ -85,5 +98,4 @@ public final class ScopedNameResolver {
 
 		return result;
 	}
-
 }

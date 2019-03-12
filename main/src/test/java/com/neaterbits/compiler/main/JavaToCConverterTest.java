@@ -24,7 +24,7 @@ import com.neaterbits.compiler.emit.base.BaseCompilationUnitEmitter;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.main.convert.ConvertClass;
-import com.neaterbits.compiler.resolver.ASTModel;
+import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.FilesResolver;
 import com.neaterbits.compiler.resolver.ReplaceTypeReferencesResult;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
@@ -35,6 +35,7 @@ import com.neaterbits.compiler.resolver.UnresolvedDependencies;
 import com.neaterbits.compiler.resolver.UnresolvedReferenceReplacer;
 import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
+import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.Context;
@@ -177,19 +178,21 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	private ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveFiles(
 			Program program,
 			ResolverLibraryTypes<TypeName> libraryTypes,
-			ASTModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel) {
+			ASTTypesModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel) {
 
-		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName> logger = new ResolveLogger<>(System.out);
+		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit>
+			logger = new ResolveLogger<>(System.out);
 		
-		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolver = new FilesResolver<>(
+		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> resolver = new FilesResolver<>(
 				logger,
 				JavaTypes.getBuiltinTypes(),
 				libraryTypes,
+				new ObjectProgramModel(),
 				astModel);
 		
-		final Collection<CompiledFile<ComplexType<?, ?, ?>>> allFiles = ProgramLoader.getCompiledFiles(program);
+		final Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles = ProgramLoader.getCompiledFiles(program);
 		
-		for (CompiledFile<ComplexType<?, ?, ?>> compiledFile : allFiles) {
+		for (CompiledFile<ComplexType<?, ?, ?>, CompilationUnit> compiledFile : allFiles) {
 			System.out.println("File " + compiledFile.getSpec() + " with types " + compiledFile.getTypes());
 		}
 		

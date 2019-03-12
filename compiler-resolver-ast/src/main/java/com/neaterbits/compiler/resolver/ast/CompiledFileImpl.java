@@ -8,22 +8,21 @@ import java.util.Objects;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.FileSpec;
-import com.neaterbits.compiler.resolver.types.IFileImports;
 
-final class CompiledFileImpl<COMPLEXTYPE> implements CompiledFile<COMPLEXTYPE> {
+final class CompiledFileImpl<COMPLEXTYPE, COMPILATION_UNIT> implements CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> {
 
 	private final CompiledFileSpecImpl spec;
-	private final IFileImports fileImports;
+	private final COMPILATION_UNIT compilationUnit;
 	private final List<CompiledType<COMPLEXTYPE>> types;
 	
-	CompiledFileImpl(CompiledFileSpecImpl spec, IFileImports fileImports, List<CompiledType<COMPLEXTYPE>> types) {
+	CompiledFileImpl(CompiledFileSpecImpl spec, COMPILATION_UNIT compilationUnit, List<CompiledType<COMPLEXTYPE>> types) {
 		
 		Objects.requireNonNull(spec);
-		Objects.requireNonNull(fileImports);
+		Objects.requireNonNull(compilationUnit);
 		Objects.requireNonNull(types);
 		
 		this.spec = spec;
-		this.fileImports = fileImports;
+		this.compilationUnit = compilationUnit;
 		this.types = Collections.unmodifiableList(types);
 	}
 
@@ -43,8 +42,8 @@ final class CompiledFileImpl<COMPLEXTYPE> implements CompiledFile<COMPLEXTYPE> {
 	}
 
 	@Override
-	public IFileImports getImports() {
-		return fileImports;
+	public COMPILATION_UNIT getCompilationUnit() {
+		return compilationUnit;
 	}
 
 	@Override

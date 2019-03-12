@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.codemap.TypeVariant;
@@ -31,7 +32,7 @@ public abstract class BaseResolveTest {
 
 	
 	protected static CompiledType<ComplexType<?, ?, ?>> makeCompiledType(
-			CompiledFile<ComplexType<?, ?, ?>>
+			CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>
 			compiledFile,
 			String name,
 			TypeVariant typeVariant, 
@@ -54,7 +55,7 @@ public abstract class BaseResolveTest {
 	
 	@SafeVarargs
 	protected static ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> makeResolvedType(
-			ASTModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel,
+			ASTTypesModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel,
 			ResolvedFile<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedFile,
 			String name,
 			TypeVariant typeVariant,

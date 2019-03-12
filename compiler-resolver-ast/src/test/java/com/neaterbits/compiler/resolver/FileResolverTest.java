@@ -2,6 +2,7 @@ package com.neaterbits.compiler.resolver;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,12 +16,15 @@ import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
+import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.codemap.TypeVariant;
@@ -32,17 +36,22 @@ public class FileResolverTest extends BaseResolveTest {
 		
 		final PrintStream loggerStream = new PrintStream(new ByteArrayOutputStream());
 		
-		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveLogger = new ResolveLogger<>(loggerStream);
+		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> resolveLogger = new ResolveLogger<>(loggerStream);
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
-		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName> filesResolver
-			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, astModel);
+		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> filesResolver
+			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, new ObjectProgramModel(), astModel);
 
 		final FileSpec testFileSpec = new TestFileSpec("TestClass.java");
 		final ScopedName testClass = makeScopedName("com.test.TestClass");
 		final CompiledType<ComplexType<?, ?, ?>> testType = new TestCompiledType(testFileSpec, testClass, TypeVariant.CLASS, null, null, null, null);
-		final TestCompiledFile testFile = new TestCompiledFile(testFileSpec, new TestFileImports(), testType);
+		
+		final Context context = new Context("", 0, 0, 0, 0, 0, 0, "");
+		
+		final CompilationUnit compilationUnit = new CompilationUnit(context, new ArrayList<>(), new ArrayList<>());
+		
+		final TestCompiledFile testFile = new TestCompiledFile(testFileSpec, compilationUnit, testType);
 
 		final FileSpec anotherTestFileSpec = new TestFileSpec("AnotherTestClass.java");
 		final ScopedName anotherTestClass = makeScopedName("com.test.AnotherTestClass");
@@ -51,9 +60,9 @@ public class FileResolverTest extends BaseResolveTest {
 					Arrays.asList(makeExtendsFromDependency(testClass)),
 					null);
 
-		final TestCompiledFile anotherTestFile = new TestCompiledFile(anotherTestFileSpec, new TestFileImports(), anotherTestType);
+		final TestCompiledFile anotherTestFile = new TestCompiledFile(anotherTestFileSpec, compilationUnit, anotherTestType);
 		
-		final List<CompiledFile<ComplexType<?, ?, ?>>> compiledFiles = Arrays.asList(
+		final List<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> compiledFiles = Arrays.asList(
 				testFile,
 				anotherTestFile
 		);

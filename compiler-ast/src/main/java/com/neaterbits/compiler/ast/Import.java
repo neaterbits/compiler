@@ -7,38 +7,38 @@ import com.neaterbits.compiler.ast.block.MethodName;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.model.TypeImportVisitor;
 
 public final class Import extends BaseASTElement {
-
-	enum Type {
-		KNOWN_NAMESPACE,
-		NAMESPACE_OR_TYPE,
-		KNOWN_METHOD,
-		WILDCARD_METHOD
-	}
 	
 	private final NamespaceReference namespace;
 	private final ClassOrInterfaceName typeName;
 	private final String [] namespaceOrTypeName;
-	private final Type type;
+	private final ImportType type;
 	private final MethodName method;
 
 	public Import(Context context, NamespaceReference namespace, ClassOrInterfaceName typeName) {
 		super(context);
 		
+		Objects.requireNonNull(namespace);
+		Objects.requireNonNull(typeName);
+		
 		this.namespace = namespace;
 		this.typeName = typeName;
 		this.namespaceOrTypeName = null;
-		this.type = Type.KNOWN_NAMESPACE;
+		this.type = ImportType.KNOWN_NAMESPACE;
 		this.method = null;
 	}
 	
 	public Import(Context context, String[] namespaceOrTypeName) {
 		super(context);
+		
+		Objects.requireNonNull(namespaceOrTypeName);
+		
 		this.namespace = null;
 		this.typeName = null;
 		this.namespaceOrTypeName = namespaceOrTypeName;
-		this.type = Type.NAMESPACE_OR_TYPE;
+		this.type = ImportType.NAMESPACE_OR_TYPE;
 		this.method = null;
 	}
 
@@ -51,7 +51,7 @@ public final class Import extends BaseASTElement {
 		this.namespace = namespace;
 		this.typeName = typeName;
 		this.namespaceOrTypeName = null;
-		this.type = method != null ? Type.KNOWN_METHOD : Type.WILDCARD_METHOD;
+		this.type = method != null ? ImportType.KNOWN_METHOD : ImportType.WILDCARD_METHOD;
 		this.method = method;
 	}
 
@@ -68,13 +68,35 @@ public final class Import extends BaseASTElement {
 	}
 
 	public boolean isMethodImport() {
-		return type == Type.KNOWN_METHOD || type == Type.WILDCARD_METHOD;
+		return type == ImportType.KNOWN_METHOD || type == ImportType.WILDCARD_METHOD;
 	}
 
 	public MethodName getMethod() {
 		return method;
 	}
-
+	
+	public void visit(TypeImportVisitor visitor) {
+		
+		
+		switch (type) {
+		case KNOWN_NAMESPACE:
+			visitor.onKnownNamespace(namespace.getParts(), typeName.getName());
+			break;
+			
+		case NAMESPACE_OR_TYPE:
+			visitor.onNamespaceOrTypeName(namespaceOrTypeName);
+			break;
+			
+		case KNOWN_METHOD:
+			visitor.onKnownStaticMethod(namespace.getParts(), typeName.getName(), method.getName());
+			break;
+			
+		case WILDCARD_METHOD:
+			visitor.onStaticMethodWildcard(namespace.getParts(), typeName.getName());
+			break;
+		}
+	}
+	
 	public boolean startsWith(String [] parts) {
 	
 		final boolean startsWith;
