@@ -49,7 +49,7 @@ public final class CompleteName {
 		}
 		
 		return new TypeName(
-				namespace.getParts(),
+				namespace != null ? namespace.getParts() : null,
 				outerTypesArray,
 				name.getName());
 	}
