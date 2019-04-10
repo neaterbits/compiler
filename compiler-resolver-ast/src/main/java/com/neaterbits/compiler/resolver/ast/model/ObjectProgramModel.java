@@ -8,12 +8,14 @@ import com.neaterbits.compiler.ast.ASTVisitor;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
+import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceDeclarationName;
+import com.neaterbits.compiler.ast.typedefinition.InterfaceModifierHolder;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.resolver.ScopedNameResolver;
 import com.neaterbits.compiler.resolver.TypesMap;
@@ -164,7 +166,13 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		final SourceTokenType sourceTokenType;
 		TypeName typeName = null;
 		
-		if (element instanceof ClassDeclarationName) {
+		if (element instanceof Keyword) {
+			sourceTokenType = SourceTokenType.KEYWORD;
+		}
+		else if (element instanceof InterfaceModifierHolder) {
+			sourceTokenType = SourceTokenType.KEYWORD;
+		}
+		else if (element instanceof ClassDeclarationName) {
 			sourceTokenType = SourceTokenType.CLASS_DECLARATION_NAME;
 		}
 		else if (element instanceof InterfaceDeclarationName) {
