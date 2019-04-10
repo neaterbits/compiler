@@ -3,6 +3,7 @@ package com.neaterbits.compiler.ast.type;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.NamespaceReference;
+import com.neaterbits.compiler.util.TypeName;
 
 public abstract class NamedType extends BaseType {
 
@@ -26,6 +27,10 @@ public abstract class NamedType extends BaseType {
 	
 	public final CompleteName getCompleteName() {
 		return completeName;
+	}
+	
+	public final TypeName getTypeName() {
+		return completeName.toTypeName();
 	}
 
 	@Override

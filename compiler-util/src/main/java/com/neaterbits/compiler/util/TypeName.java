@@ -71,7 +71,11 @@ public class TypeName {
 			sb.append(Strings.join(outerTypes, separator));
 		}
 		
-		sb.append(separator).append(name);
+		if (sb.length() != 0) {
+			sb.append(separator);
+		}
+		
+		sb.append(name);
 		
 		return sb.toString();
 	}
