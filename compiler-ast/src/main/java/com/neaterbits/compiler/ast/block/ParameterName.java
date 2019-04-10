@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.ast.block;
 
-import com.neaterbits.compiler.ast.Name;
+import com.neaterbits.compiler.util.Context;
 
-public final class ParameterName extends Name {
+public final class ParameterName extends ASTName {
 
-	public ParameterName(String name) {
-		super(name);
+	public ParameterName(Context context, String name) {
+		super(context, name);
 	}
 }

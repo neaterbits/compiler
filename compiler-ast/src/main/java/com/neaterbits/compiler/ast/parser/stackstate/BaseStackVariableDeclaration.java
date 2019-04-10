@@ -20,6 +20,7 @@ abstract class BaseStackVariableDeclaration extends StackEntry
 	private final List<VariableModifierHolder> modifiers;
 	private TypeReference typeReference;
 	private String name;
+	private Context nameContext;
 	private int numDims;
 
 	BaseStackVariableDeclaration(ParseLogger parseLogger) {
@@ -51,14 +52,16 @@ abstract class BaseStackVariableDeclaration extends StackEntry
 	}
 
 	@Override
-	public final void init(String name, int numDims) {
+	public final void init(String name, Context nameContext, int numDims) {
 		Objects.requireNonNull(name);
+		Objects.requireNonNull(nameContext);
 
 		if (this.name != null) {
 			throw new IllegalStateException("Name already set");
 		}
 		
 		this.name = name;
+		this.nameContext = nameContext;
 		this.numDims = numDims;
 	}
 	
@@ -74,6 +77,10 @@ abstract class BaseStackVariableDeclaration extends StackEntry
 
 	public final String getName() {
 		return name;
+	}
+	
+	public final Context getNameContext() {
+		return nameContext;
 	}
 
 	public final int getNumDims() {

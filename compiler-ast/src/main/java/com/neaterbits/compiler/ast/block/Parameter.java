@@ -13,7 +13,7 @@ import com.neaterbits.compiler.util.Context;
 public final class Parameter extends BaseASTElement {
 
 	private final ASTSingle<TypeReference> type;
-	private final ParameterName name;
+	private final ASTSingle<ParameterName> name;
 	private final boolean varArgs;
 
 	public Parameter(Context context, TypeReference type, ParameterName name, boolean varArgs) {
@@ -25,7 +25,7 @@ public final class Parameter extends BaseASTElement {
 		Name.check(name.getName());
 
 		this.type = makeSingle(type);
-		this.name = name;
+		this.name = makeSingle(name);
 		this.varArgs = varArgs;
 	}
 	
@@ -34,7 +34,7 @@ public final class Parameter extends BaseASTElement {
 	}
 	
 	public ParameterName getName() {
-		return name;
+		return name.get();
 	}
 
 	public boolean isVarArgs() {
@@ -44,5 +44,6 @@ public final class Parameter extends BaseASTElement {
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		doIterate(type, recurseMode, iterator);
+		doIterate(name, recurseMode, iterator);
 	}
 }

@@ -651,7 +651,7 @@ public abstract class BaseParserListener {
 		final Parameter parameter = new Parameter(
 				context,
 				stackParameterSignature.getTypeReference(),
-				new ParameterName(stackParameterSignature.getName()),
+				new ParameterName(stackParameterSignature.getNameContext(), stackParameterSignature.getName()),
 				stackParameterSignature.isVarArgs());
 
 		stackCallable.addParameter(parameter);
@@ -2165,7 +2165,7 @@ public abstract class BaseParserListener {
 		
 		final VariableNameSetter variableNameSetter = get();
 
-		variableNameSetter.init(name, numDims);
+		variableNameSetter.init(name, context, numDims);
 		
 		logExit(context);
 	}

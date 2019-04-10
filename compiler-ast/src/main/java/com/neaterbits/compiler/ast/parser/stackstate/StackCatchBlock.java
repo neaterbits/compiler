@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.parser.TypeReferenceSetter;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.VarName;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public class StackCatchBlock extends StackStatements implements VariableNameSetter, TypeReferenceSetter {
@@ -47,7 +48,7 @@ public class StackCatchBlock extends StackStatements implements VariableNameSett
 	}
 
 	@Override
-	public void init(String name, int numDims) {
+	public void init(String name, Context nameContext, int numDims) {
 		setExceptionVarName(new VarName(name));
 	}
 }

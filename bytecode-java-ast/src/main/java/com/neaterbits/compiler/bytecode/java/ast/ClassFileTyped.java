@@ -163,7 +163,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 		final List<Parameter> params = new ArrayList<>(paramTypes.size());
 		
 		for (int i = 0; i < paramTypes.size(); ++ i) {
-			params.add(new Parameter(context, paramTypes.get(i), new ParameterName("param" + i), false));
+			params.add(new Parameter(context, paramTypes.get(i), new ParameterName(null, "param" + i), false));
 		}
 		
 		final ClassMethod classMethod = new ClassMethod(
