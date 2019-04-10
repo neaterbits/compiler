@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.ASTVisitor;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
+import com.neaterbits.compiler.ast.ImportName;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.NamespaceDeclaration;
@@ -176,6 +177,9 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		}
 		else if (element instanceof NamespaceDeclaration) {
 			sourceTokenType = SourceTokenType.NAMESPACE_DECLARATION_NAME;
+		}
+		else if (element instanceof ImportName) {
+			sourceTokenType = SourceTokenType.IMPORT_NAME;
 		}
 		else if (element instanceof ClassDeclarationName) {
 			sourceTokenType = SourceTokenType.CLASS_DECLARATION_NAME;

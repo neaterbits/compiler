@@ -7,9 +7,9 @@ import com.neaterbits.compiler.util.model.TypeImportVisitor;
 public final class Import extends BaseASTElement {
 
 	private final ASTSingle<Keyword> keyword;
-	private final ASTSingle<ImportPackage> _package;
+	private final ASTSingle<ImportName> _package;
 
-	public Import(Context context, Keyword keyword, ImportPackage _package) {
+	public Import(Context context, Keyword keyword, ImportName _package) {
 		super(context);
 
 		this.keyword = makeSingle(keyword);
@@ -20,7 +20,7 @@ public final class Import extends BaseASTElement {
 		return keyword.get();
 	}
 	
-	public ImportPackage getPackage() {
+	public ImportName getPackage() {
 		return _package.get();
 	}
 

@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
-import com.neaterbits.compiler.ast.ImportPackage;
+import com.neaterbits.compiler.ast.ImportName;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
@@ -65,7 +65,7 @@ public class ScopedNameResolverTest {
 		final Import importStatement = new Import(
 				Context.makeTestContext(),
 				new Keyword(Context.makeTestContext(), ""),
-				new ImportPackage(
+				new ImportName(
 					Context.makeTestContext(),
 					namespaceReference,
 					new ClassOrInterfaceName("InImportedNamespace")));
@@ -91,7 +91,7 @@ public class ScopedNameResolverTest {
 		final Import importStatement = new Import(
 				Context.makeTestContext(),
 				new Keyword(Context.makeTestContext(), "import"),
-				new ImportPackage(
+				new ImportName(
 						Context.makeTestContext(),
 						namespaceReference,
 						new ClassOrInterfaceName("InImportedNamespace")));

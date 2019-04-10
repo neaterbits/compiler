@@ -21,7 +21,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.ast.Import;
-import com.neaterbits.compiler.ast.ImportPackage;
+import com.neaterbits.compiler.ast.ImportName;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.block.ConstructorInvocation;
@@ -170,7 +170,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		final String typeName = ctx.typeName().getText();
 		
-		final ImportPackage importPackage = new ImportPackage(
+		final ImportName importPackage = new ImportName(
 				context(ctx.typeName()),
 				namespaceReference(typeName),
 				classOrInterfaceName(typeName));
@@ -191,7 +191,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		final String [] s = Strings.split(packageOrTypeName, '.');
 		
-		final ImportPackage importPackage= new ImportPackage(context(ctx.packageOrTypeName()), s);
+		final ImportName importPackage= new ImportName(context(ctx.packageOrTypeName()), s);
 		
 		final Import importStatement = new Import(context(ctx), keyword, importPackage);
 
@@ -207,7 +207,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 		final String typeName = ctx.typeName().getText();
 		
-		final ImportPackage importPackage = new ImportPackage(
+		final ImportName importPackage = new ImportName(
 				context(ctx.modifier, ctx.Identifier().getSymbol(), "static " + typeName + '.' + ctx.Identifier().getText()),
 				namespaceReference(typeName),
 				classOrInterfaceName(typeName),
@@ -227,7 +227,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 		final String typeName = ctx.typeName().getText();
 		
-		final ImportPackage importPackage = new ImportPackage(
+		final ImportName importPackage = new ImportName(
 				context(ctx.modifier, ctx.asterisk, "static " + typeName + ".*"),
 				namespaceReference(typeName),
 				classOrInterfaceName(typeName),

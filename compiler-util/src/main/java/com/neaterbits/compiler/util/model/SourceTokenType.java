@@ -17,7 +17,9 @@ public enum SourceTokenType {
 	CALL_PARAMETER(true, false, false),
 	
 	NAMESPACE_DECLARATION_NAME(false, false, false),
-	
+
+	IMPORT_NAME(false, false, false),
+
 	UNKNOWN(false, false, false);
 	
 	

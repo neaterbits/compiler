@@ -9,7 +9,7 @@ import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.model.TypeImportVisitor;
 
-public final class ImportPackage extends BaseASTElement {
+public final class ImportName extends BaseASTElement {
 
 	private final NamespaceReference namespace;
 	private final ClassOrInterfaceName typeName;
@@ -17,7 +17,7 @@ public final class ImportPackage extends BaseASTElement {
 	private final ImportType type;
 	private final MethodName method;
 
-	public ImportPackage(Context context, NamespaceReference namespace, ClassOrInterfaceName typeName) {
+	public ImportName(Context context, NamespaceReference namespace, ClassOrInterfaceName typeName) {
 		super(context);
 		
 		Objects.requireNonNull(namespace);
@@ -30,7 +30,7 @@ public final class ImportPackage extends BaseASTElement {
 		this.method = null;
 	}
 	
-	public ImportPackage(Context context, String[] namespaceOrTypeName) {
+	public ImportName(Context context, String[] namespaceOrTypeName) {
 		super(context);
 		
 		Objects.requireNonNull(namespaceOrTypeName);
@@ -42,7 +42,7 @@ public final class ImportPackage extends BaseASTElement {
 		this.method = null;
 	}
 
-	public ImportPackage(Context context, NamespaceReference namespace, ClassOrInterfaceName typeName, MethodName method) {
+	public ImportName(Context context, NamespaceReference namespace, ClassOrInterfaceName typeName, MethodName method) {
 		super(context);
 		
 		Objects.requireNonNull(namespace);
@@ -119,18 +119,18 @@ public final class ImportPackage extends BaseASTElement {
 		return startsWith;
 	}
 	
-	public ImportPackage removeFromNamespace(String [] parts) {
+	public ImportName removeFromNamespace(String [] parts) {
 		
-		final ImportPackage result;
+		final ImportName result;
 		
 		switch (type) {
 		case KNOWN_NAMESPACE:
-			result = new ImportPackage(getContext(), namespace.removeFromNamespace(parts), typeName);
+			result = new ImportName(getContext(), namespace.removeFromNamespace(parts), typeName);
 			break;
 			
 		case KNOWN_METHOD:
 		case WILDCARD_METHOD:
-			result = new ImportPackage(getContext(), namespace.removeFromNamespace(parts), typeName, method);
+			result = new ImportName(getContext(), namespace.removeFromNamespace(parts), typeName, method);
 			break;
 			
 		case NAMESPACE_OR_TYPE:
@@ -139,7 +139,7 @@ public final class ImportPackage extends BaseASTElement {
 				throw new IllegalArgumentException("Does not start with parts " + Arrays.toString(parts));
 			}
 			
-			result = new ImportPackage(getContext(), Strings.lastOf(this.namespaceOrTypeName, this.namespaceOrTypeName.length - parts.length));
+			result = new ImportName(getContext(), Strings.lastOf(this.namespaceOrTypeName, this.namespaceOrTypeName.length - parts.length));
 			break;
 			
 		default:
