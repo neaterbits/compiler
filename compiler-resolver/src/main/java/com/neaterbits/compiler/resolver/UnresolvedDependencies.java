@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.FileSpec;
@@ -53,12 +54,22 @@ public final class UnresolvedDependencies {
 		}
 	}
 	
-	int getCount() {
+	public int getCount() {
 		return count;
 	}
 	
 	public boolean isEmpty() {
 		return map.isEmpty();
+	}
+	
+	public void forEach(BiConsumer<FileSpec, CompiledTypeDependency> each) {
+		
+		for (Map.Entry<FileSpec, Set<CompiledTypeDependency>> entry : map.entrySet()) {
+			
+			for (CompiledTypeDependency compiledTypeDependency : entry.getValue()) {
+				each.accept(entry.getKey(), compiledTypeDependency);
+			}
+		}
 	}
 
 	@Override

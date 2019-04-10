@@ -20,7 +20,8 @@ public abstract class ParseError extends CompileError {
 		return charPositionInLine;
 	}
 
-	public final String getMsg() {
+	@Override
+	public final String getMessage() {
 		return msg;
 	}
 }
