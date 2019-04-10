@@ -296,11 +296,11 @@ public abstract class BaseParserListener {
 		stackCompilationUnit.addImport(importStatement);
 	}
 	
-	public final void onNamespaceStart(Context context, String name, String [] parts) {
+	public final void onNamespaceStart(Context context, String name, Context nameContext, String [] parts) {
 		
 		logEnter(context);
 		
-		push(new StackNamespace(logger, name, parts));
+		push(new StackNamespace(logger, name, nameContext, parts));
 		
 		logExit(context);
 	}
@@ -515,7 +515,7 @@ public abstract class BaseParserListener {
 		
 		final StackConstructor constructor = get();
 		
-		constructor.setName(constructorName);
+		constructor.setName(constructorName, context);
 		
 		logExit(context);
 	}
@@ -563,7 +563,7 @@ public abstract class BaseParserListener {
 		
 		final Constructor constructor = new Constructor(
 				context,
-				new ConstructorName(stackConstructor.getName()),
+				new ConstructorName(stackConstructor.getNameContext(), stackConstructor.getName()),
 				stackConstructor.getParameters(),
 				new Block(context, stackConstructor.getList()));
 		
@@ -620,7 +620,7 @@ public abstract class BaseParserListener {
 		
 		final CallableStackEntry method = get();
 		
-		method.setName(methodName);
+		method.setName(methodName, context);
 		
 		logExit(context);
 	}
@@ -1492,7 +1492,7 @@ public abstract class BaseParserListener {
 		final StackClassInstanceCreationExpression stackClassInstanceCreationExpression = get();
 		
 		stackClassInstanceCreationExpression.setType(type);
-		stackClassInstanceCreationExpression.setConstructorName(new ConstructorName(name.getName()));
+		stackClassInstanceCreationExpression.setConstructorName(new ConstructorName(context, name.getName()));
 		
 		logExit(context);
 	}
@@ -1519,7 +1519,7 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	public final void onMethodInvocationStart(Context context, MethodInvocationType type, TypeReference classType, String methodName) {
+	public final void onMethodInvocationStart(Context context, MethodInvocationType type, TypeReference classType, String methodName, Context methodNameContext) {
 		
 		logEnter(context);
 		
@@ -1536,7 +1536,7 @@ public abstract class BaseParserListener {
 			}
 		}
 		
-		push(new StackMethodInvocation(logger, type, classType, methodName));
+		push(new StackMethodInvocation(logger, type, classType, methodName, methodNameContext));
 		
 		logExit(context);
 	}

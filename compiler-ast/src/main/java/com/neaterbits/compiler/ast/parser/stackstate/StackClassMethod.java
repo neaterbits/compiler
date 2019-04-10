@@ -20,8 +20,8 @@ public final class StackClassMethod extends CallableStackEntry {
 		this.modifiers = new ArrayList<>();
 	}
 
-	public StackClassMethod(ParseLogger parseLogger, String name) {
-		super(parseLogger, name);
+	public StackClassMethod(ParseLogger parseLogger, String name, Context nameContext) {
+		super(parseLogger, name, nameContext);
 
 		this.modifiers = new ArrayList<>();
 	}
@@ -37,6 +37,6 @@ public final class StackClassMethod extends CallableStackEntry {
 	}
 
 	public ClassMethod makeMethod(Context context) {
-		return new ClassMethod(context, getReturnType(), getName(), getParameters(), new Block(context, getList()));
+		return new ClassMethod(context, getReturnType(), getName(), getNameContext(), getParameters(), new Block(context, getList()));
 	}
 }

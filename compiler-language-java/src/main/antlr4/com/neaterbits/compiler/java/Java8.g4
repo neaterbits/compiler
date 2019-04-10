@@ -309,7 +309,7 @@ interfaceTypeList
 	;
 
 classBody
-	:	'{' classBodyDeclaration* '}'
+	:	classBodyStartBracket = '{' classBodyDeclaration* classBodyEndBracket = '}'
 	;
 
 classBodyDeclaration

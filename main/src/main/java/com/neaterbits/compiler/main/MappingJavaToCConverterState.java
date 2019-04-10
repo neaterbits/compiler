@@ -59,7 +59,7 @@ public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState
 		
 		sb.append('_').append(methodName.getName());
 		
-		return new FunctionName(sb.toString());
+		return new FunctionName(methodName.getContext(), sb.toString());
 	}
 
 	@Override

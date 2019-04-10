@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.parser.PrimarySetter;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class StackMethodInvocation extends CallStackEntry<MethodName> implements PrimarySetter {
@@ -16,13 +17,14 @@ public final class StackMethodInvocation extends CallStackEntry<MethodName> impl
 	private final TypeReference classType;
 	private Primary object;
 	
-	public StackMethodInvocation(ParseLogger parseLogger, MethodInvocationType type, TypeReference classType, String methodName) {
+	public StackMethodInvocation(ParseLogger parseLogger, MethodInvocationType type, TypeReference classType, String methodName, Context methodNameContext) {
 		super(parseLogger);
 
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(methodName);
-
-		setName(new MethodName(methodName));
+		Objects.requireNonNull(methodNameContext);
+		
+		setName(new MethodName(methodNameContext, methodName));
 
 		this.classType = classType;
 		this.type = type;

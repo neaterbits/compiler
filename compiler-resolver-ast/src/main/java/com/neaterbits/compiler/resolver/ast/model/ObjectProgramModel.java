@@ -15,6 +15,7 @@ import com.neaterbits.compiler.ast.parser.ParsedFile;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceDeclarationName;
+import com.neaterbits.compiler.ast.typedefinition.InterfaceMethodName;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceModifierHolder;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.resolver.ScopedNameResolver;
@@ -177,6 +178,9 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		}
 		else if (element instanceof InterfaceDeclarationName) {
 			sourceTokenType = SourceTokenType.INTERFACE_DECLARATION_NAME;
+		}
+		else if (element instanceof InterfaceMethodName) {
+			sourceTokenType = SourceTokenType.METHOD_DECLARATION_NAME;
 		}
 		else if (element instanceof ResolveLaterTypeReference) {
 

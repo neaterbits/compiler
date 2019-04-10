@@ -82,10 +82,10 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		return compilationUnit;
 	}
 
-	public void onPackageDeclaration(Context context, String name) {
+	public void onPackageDeclaration(Context context, String name, Context nameContext) {
 		this.packageName = name;
 		
-		delegate.onNamespaceStart(context, name, Strings.split(packageName, '.'));
+		delegate.onNamespaceStart(context, name, nameContext, Strings.split(packageName, '.'));
 	}
 
 	public void onCompilationUnitStart(Context context) {
@@ -575,8 +575,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onClassInstanceCreationExpressionEnd(context);
 	}
 	
-	public void onMethodInvocationStart(Context context, MethodInvocationType type, TypeReference classType, String methodName) {
-		delegate.onMethodInvocationStart(context, type, classType, methodName);
+	public void onMethodInvocationStart(Context context, MethodInvocationType type, TypeReference classType, String methodName, Context methodNameContext) {
+		delegate.onMethodInvocationStart(context, type, classType, methodName, methodNameContext);
 	}
 	
 	public void onMethodInvocationEnd(Context context) {

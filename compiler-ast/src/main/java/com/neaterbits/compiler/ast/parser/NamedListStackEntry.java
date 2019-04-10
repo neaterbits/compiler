@@ -3,16 +3,19 @@ package com.neaterbits.compiler.ast.parser;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.BaseASTElement;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public class NamedListStackEntry<T extends BaseASTElement> extends ListStackEntry<T> {
 
 	private String name;
+	private Context nameContext;
 
-	public NamedListStackEntry(ParseLogger parseLogger, String name) {
+	public NamedListStackEntry(ParseLogger parseLogger, String name, Context nameContext) {
 		super(parseLogger);
 
 		this.name = name;
+		this.nameContext = nameContext;
 	}
 
 	public NamedListStackEntry(ParseLogger parseLogger) {
@@ -24,14 +27,25 @@ public class NamedListStackEntry<T extends BaseASTElement> extends ListStackEntr
 	public final String getName() {
 		return name;
 	}
+	
+	public final Context getNameContext() {
+		return nameContext;
+	}
 
-	public final void setName(String name) {
+	public void setNameContext(Context nameContext) {
+		this.nameContext = nameContext;
+	}
+
+	public final void setName(String name, Context nameContext) {
+		
 		Objects.requireNonNull(name);
+		Objects.requireNonNull(nameContext);
 		
 		if (this.name != null) {
 			throw new IllegalStateException("Name already set");
 		}
 		
 		this.name = name;
+		this.nameContext = nameContext;
 	}
 }

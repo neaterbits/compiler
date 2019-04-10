@@ -170,6 +170,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 				context,
 				returnType,
 				getUTF8(method.getNameIndex()),
+				null,
 				params,
 				null);
 		

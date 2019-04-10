@@ -10,8 +10,8 @@ import com.neaterbits.compiler.util.Context;
 
 public final class ClassMethod extends CallableCode<MethodName> {
 
-	public ClassMethod(Context context, TypeReference returnType, String name, List<Parameter> parameters, Block block) {
-		super(context, returnType, new MethodName(name), parameters, block);
+	public ClassMethod(Context context, TypeReference returnType, String name, Context nameContext, List<Parameter> parameters, Block block) {
+		super(context, returnType, new MethodName(nameContext, name), parameters, block);
 
 		Objects.requireNonNull(returnType);
 	}

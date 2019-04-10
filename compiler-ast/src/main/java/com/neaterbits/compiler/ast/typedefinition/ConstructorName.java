@@ -5,21 +5,22 @@ import java.util.Collections;
 import java.util.List;
 
 import com.neaterbits.compiler.ast.block.CallableName;
+import com.neaterbits.compiler.util.Context;
 
 public final class ConstructorName extends CallableName {
 
 	private final List<String> names;
 	
-	public ConstructorName(String name) {
-		this(Arrays.asList(name));
+	public ConstructorName(Context context, String name) {
+		this(context, Arrays.asList(name));
 	}
 	
-	public ConstructorName(ClassName className) {
-		this(className.getName());
+	public ConstructorName(Context context, ClassName className) {
+		this(context, className.getName());
 	}
 	
-	public ConstructorName(List<String> names) {
-		super(names.get(names.size() - 1));
+	public ConstructorName(Context context, List<String> names) {
+		super(context, names.get(names.size() - 1));
 		
 		this.names = Collections.unmodifiableList(names);
 	}

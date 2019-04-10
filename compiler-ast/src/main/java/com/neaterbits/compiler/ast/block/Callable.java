@@ -14,7 +14,7 @@ import com.neaterbits.compiler.util.Context;
 public abstract class Callable<NAME extends CallableName> extends CompilationCode {
 
 	private final ASTSingle<TypeReference> returnType;
-	private final NAME name;
+	private final ASTSingle<NAME> name;
 	private final ASTList<Parameter> parameters;
 
 	protected Callable(Context context, TypeReference returnType, NAME name, List<Parameter> parameters) {
@@ -24,7 +24,7 @@ public abstract class Callable<NAME extends CallableName> extends CompilationCod
 		Objects.requireNonNull(parameters);
 
 		this.returnType = returnType != null ? makeSingle(returnType) : null;
-		this.name = name;
+		this.name = makeSingle(name);
 		this.parameters = makeList(parameters);
 	}
 
@@ -33,7 +33,7 @@ public abstract class Callable<NAME extends CallableName> extends CompilationCod
 	}
 
 	public final NAME getName() {
-		return name;
+		return name.get();
 	}
 
 	public final ASTList<Parameter> getParameters() {
@@ -45,6 +45,8 @@ public abstract class Callable<NAME extends CallableName> extends CompilationCod
 		if (returnType != null) {
 			doIterate(returnType, recurseMode, iterator);
 		}
+		
+		doIterate(name, recurseMode, iterator);
 
 		doIterate(parameters, recurseMode, iterator);
 	}

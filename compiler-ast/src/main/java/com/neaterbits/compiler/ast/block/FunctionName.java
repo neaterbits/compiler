@@ -1,7 +1,9 @@
 package com.neaterbits.compiler.ast.block;
 
+import com.neaterbits.compiler.util.Context;
+
 public final class FunctionName extends CallableName {
-	public FunctionName(String name) {
-		super(name);
+	public FunctionName(Context context, String name) {
+		super(context, name);
 	}
 }

@@ -10,9 +10,9 @@ import com.neaterbits.compiler.util.Context;
 
 public final class InterfaceMethod extends Callable<InterfaceMethodName> {
 
-	public InterfaceMethod(Context context, TypeReference returnType, String name,
+	public InterfaceMethod(Context context, TypeReference returnType, String name, Context nameContext,
 			List<Parameter> parameters) {
-		super(context, returnType, new InterfaceMethodName(name), parameters);
+		super(context, returnType, new InterfaceMethodName(nameContext, name), parameters);
 	}
 
 	@Override

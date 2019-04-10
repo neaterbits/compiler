@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.parser.NamedListStackEntry;
 import com.neaterbits.compiler.ast.parser.StatementSetter;
 import com.neaterbits.compiler.ast.statement.Statement;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public abstract class CallableStackEntry extends NamedListStackEntry<Statement> implements StatementSetter {
@@ -22,8 +23,8 @@ public abstract class CallableStackEntry extends NamedListStackEntry<Statement> 
 		this.parameters = new ArrayList<>();
 	}
 
-	public CallableStackEntry(ParseLogger parseLogger, String name) {
-		super(parseLogger, name);
+	public CallableStackEntry(ParseLogger parseLogger, String name, Context nameContext) {
+		super(parseLogger, name, nameContext);
 
 		this.parameters = new ArrayList<>();
 	}

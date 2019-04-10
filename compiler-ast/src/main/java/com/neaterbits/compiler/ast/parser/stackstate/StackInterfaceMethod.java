@@ -13,8 +13,8 @@ public final class StackInterfaceMethod extends CallableStackEntry {
 
 	private final List<InterfaceMethodModifierHolder> modifiers;
 
-	public StackInterfaceMethod(ParseLogger parseLogger, String name) {
-		super(parseLogger, name);
+	public StackInterfaceMethod(ParseLogger parseLogger, String name, Context nameContext) {
+		super(parseLogger, name, nameContext);
 
 		this.modifiers = new ArrayList<>();
 	}
@@ -36,6 +36,6 @@ public final class StackInterfaceMethod extends CallableStackEntry {
 	}
 	
 	public InterfaceMethod makeMethod(Context context) {
-		return new InterfaceMethod(context, getReturnType(), getName(), getParameters());
+		return new InterfaceMethod(context, getReturnType(), getName(), getNameContext(), getParameters());
 	}
 }

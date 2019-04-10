@@ -141,7 +141,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void exitPackageDeclaration(PackageDeclarationContext ctx) {
-		delegate.onPackageDeclaration(context(ctx), ctx.packageName().getText());
+		delegate.onPackageDeclaration(context(ctx), ctx.packageName().getText(), context(ctx.packageName()));
 	}
 
 	private static NamespaceReference namespaceReference(String typeName) {
@@ -208,7 +208,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				context(ctx.modifier, ctx.Identifier().getSymbol(), "static " + typeName + '.' + ctx.Identifier().getText()),
 				namespaceReference(typeName),
 				classOrInterfaceName(typeName),
-				new MethodName(ctx.Identifier().getText()));
+				new MethodName(context(ctx.Identifier()), ctx.Identifier().getText()));
 		
 		final Import importStatement = new Import(context(ctx), keyword, importPackage);
 
@@ -397,7 +397,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterMethodDeclarator(MethodDeclaratorContext ctx) {
-		delegate.onMethodName(context(ctx), ctx.Identifier().getText());
+		delegate.onMethodName(context(ctx.Identifier()), ctx.Identifier().getText());
 	}
 	
 	@Override
@@ -832,7 +832,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterNoObjectMethodInvocation_lfno_primary(NoObjectMethodInvocation_lfno_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, ctx.methodName().getText());
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, ctx.methodName().getText(), context(ctx.methodName()));
 	}
 
 	@Override
@@ -846,7 +846,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				context(ctx),
 				MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR,
 				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
-				ctx.Identifier().getText());
+				ctx.Identifier().getText(),
+				context(ctx.Identifier()));
 	}
 
 	@Override
@@ -856,7 +857,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterObjectMethodInvocation_lfno_primary(ObjectMethodInvocation_lfno_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, ctx.Identifier().getText());
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -866,7 +867,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterSuperMethodInvocation_lfno_primary(SuperMethodInvocation_lfno_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, ctx.Identifier().getText());
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -880,7 +881,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				context(ctx),
 				MethodInvocationType.TYPED_SUPER,
 				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
-				ctx.Identifier().getText());
+				ctx.Identifier().getText(),
+				context(ctx.Identifier()));
 	}
 
 	@Override
@@ -890,7 +892,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterNoObjectMethodInvocation(NoObjectMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, ctx.methodName().getText());
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, ctx.methodName().getText(), context(ctx.methodName()));
 	}
 
 	@Override
@@ -904,7 +906,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				context(ctx),
 				MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR,
 				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
-				ctx.Identifier().getText());
+				ctx.Identifier().getText(),
+				context(ctx.Identifier()));
 	}
 
 	@Override
@@ -914,7 +917,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterObjectMethodInvocation(ObjectMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, ctx.Identifier().getText());
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -924,7 +927,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterExpressionMethodInvocation(ExpressionMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.PRIMARY, null, ctx.Identifier().getText());
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.PRIMARY, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -934,7 +937,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterSubMethodInvocation_lf_primary(SubMethodInvocation_lf_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUB, null, ctx.Identifier().getText());
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUB, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -944,7 +947,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterSuperMethodInvocation(SuperMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, ctx.Identifier().getText());
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -958,7 +961,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				context(ctx),
 				MethodInvocationType.TYPED_SUPER,
 				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
-				ctx.Identifier().getText());
+				ctx.Identifier().getText(),
+				context(ctx.Identifier()));
 	}
 
 	@Override
