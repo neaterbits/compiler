@@ -228,7 +228,7 @@ compilationUnit
 	;
 
 packageDeclaration
-	:	packageModifier* 'package' packageName ';'
+	:	packageModifier* keyword = 'package' packageName ';'
 	;
 
 packageModifier
@@ -309,7 +309,7 @@ interfaceTypeList
 	;
 
 classBody
-	:	classBodyStartBracket = '{' classBodyDeclaration* classBodyEndBracket = '}'
+	:	'{' classBodyDeclaration* '}'
 	;
 
 classBodyDeclaration

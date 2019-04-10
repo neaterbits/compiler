@@ -141,7 +141,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void exitPackageDeclaration(PackageDeclarationContext ctx) {
-		delegate.onPackageDeclaration(context(ctx), ctx.packageName().getText(), context(ctx.packageName()));
+		delegate.onPackageDeclaration(
+				context(ctx),
+				ctx.keyword.getText(), context(ctx.keyword),
+				ctx.packageName().getText(), context(ctx.packageName()));
 	}
 
 	private static NamespaceReference namespaceReference(String typeName) {

@@ -15,6 +15,7 @@ import com.neaterbits.compiler.ast.Import;
 import com.neaterbits.compiler.ast.ImportPackage;
 import com.neaterbits.compiler.ast.Module;
 import com.neaterbits.compiler.ast.Namespace;
+import com.neaterbits.compiler.ast.NamespaceDeclaration;
 import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.parser.DirectoryParser;
 import com.neaterbits.compiler.ast.parser.FileTypeParser;
@@ -168,7 +169,10 @@ public abstract class BaseJavaCompilerTest {
 					namespace.replaceWith(
 							new Namespace(
 									namespace.getContext(),
-									namespace.getReference().removeFromNamespace(scopeToRename),
+									namespace.getKeyword(),
+									new NamespaceDeclaration(
+											namespace.getNamespaceDeclaration().getContext(),
+											namespace.getReference().removeFromNamespace(scopeToRename)),
 									namespace.getLines().take()));
 				}
 			}

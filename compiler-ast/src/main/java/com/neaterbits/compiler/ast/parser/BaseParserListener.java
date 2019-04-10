@@ -296,11 +296,11 @@ public abstract class BaseParserListener {
 		stackCompilationUnit.addImport(importStatement);
 	}
 	
-	public final void onNamespaceStart(Context context, String name, Context nameContext, String [] parts) {
+	public final void onNamespaceStart(Context context, String namespaceKeyword, Context namespaceKeywordContext, String name, Context nameContext, String [] parts) {
 		
 		logEnter(context);
 		
-		push(new StackNamespace(logger, name, nameContext, parts));
+		push(new StackNamespace(logger, namespaceKeyword, namespaceKeywordContext, name, nameContext, parts));
 		
 		logExit(context);
 	}
@@ -315,7 +315,9 @@ public abstract class BaseParserListener {
 
 		final Namespace nameSpace = new Namespace(
 				context,
+				new Keyword(stackNamespace.getNamespaceKeywordContext(), stackNamespace.getNamespaceKeyword()),
 				stackNamespace.getParts(),
+				stackNamespace.getNameContext(),
 				new CompilationCodeLines(context, namespaceCode));
 		
 		mainStack.addElement(nameSpace);

@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.Namespace;
+import com.neaterbits.compiler.ast.NamespaceDeclaration;
 import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
@@ -172,6 +173,9 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		}
 		else if (element instanceof InterfaceModifierHolder) {
 			sourceTokenType = SourceTokenType.KEYWORD;
+		}
+		else if (element instanceof NamespaceDeclaration) {
+			sourceTokenType = SourceTokenType.NAMESPACE_DECLARATION_NAME;
 		}
 		else if (element instanceof ClassDeclarationName) {
 			sourceTokenType = SourceTokenType.CLASS_DECLARATION_NAME;

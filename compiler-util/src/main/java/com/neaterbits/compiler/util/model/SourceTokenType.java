@@ -16,7 +16,7 @@ public enum SourceTokenType {
 	
 	CALL_PARAMETER(true, false, false),
 	
-	PACKAGE_DECLARATION_NAME(false, false, false),
+	NAMESPACE_DECLARATION_NAME(false, false, false),
 	
 	UNKNOWN(false, false, false);
 	

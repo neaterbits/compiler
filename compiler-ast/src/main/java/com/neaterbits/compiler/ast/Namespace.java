@@ -7,25 +7,35 @@ import com.neaterbits.compiler.util.Context;
 
 public final class Namespace extends CompilationCode {
 
-	private final NamespaceReference namespaceReference;
+	private final ASTSingle<Keyword> keyword;
+	
+	private final ASTSingle<NamespaceDeclaration> namespaceDeclaration;
 	
 	private final ASTSingle<CompilationCodeLines> lines;
 	
-	public Namespace(Context context, String [] parts, CompilationCodeLines lines) {
+	public Namespace(Context context, Keyword keyword, String [] parts, Context partsContext, CompilationCodeLines lines) {
 		super(context);
 
-		this.namespaceReference = new NamespaceReference(parts);
+		Objects.requireNonNull(keyword);
+		
+		this.keyword = makeSingle(keyword);
+		
+		this.namespaceDeclaration = makeSingle(new NamespaceDeclaration(partsContext, new NamespaceReference(parts)));
 
 		this.lines = makeSingle(lines);
 	}
 
-	public Namespace(Context context, NamespaceReference namespaceReference, CompilationCodeLines lines) {
+	public Namespace(Context context, Keyword keyword, NamespaceDeclaration namespaceDeclaration, CompilationCodeLines lines) {
 		super(context);
 
-		Objects.requireNonNull(namespaceReference);
+		Objects.requireNonNull(keyword);
+		
+		Objects.requireNonNull(namespaceDeclaration);
 		Objects.requireNonNull(lines);
 		
-		this.namespaceReference = namespaceReference;
+		this.keyword = makeSingle(keyword);
+		
+		this.namespaceDeclaration = makeSingle(namespaceDeclaration);
 		this.lines = makeSingle(lines);
 	}
 
@@ -36,12 +46,20 @@ public final class Namespace extends CompilationCode {
 
 	}
 
+	public Keyword getKeyword() {
+		return keyword.get();
+	}
+
+	public NamespaceDeclaration getNamespaceDeclaration() {
+		return namespaceDeclaration.get();
+	}
+
 	public final NamespaceReference getReference() {
-		return namespaceReference;
+		return namespaceDeclaration.get().getNamespaceReference();
 	}
 	
 	public final String [] getParts() {
-		return namespaceReference.getParts();
+		return namespaceDeclaration.get().getNamespaceReference().getParts();
 	}
 
 	public final CompilationCodeLines getLines() {
@@ -50,6 +68,8 @@ public final class Namespace extends CompilationCode {
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
+		doIterate(keyword, recurseMode, iterator);
+		doIterate(namespaceDeclaration, recurseMode, iterator);
 		doIterate(lines, recurseMode, iterator);
 	}
 }
