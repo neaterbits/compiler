@@ -32,10 +32,6 @@ public class NamedListStackEntry<T extends BaseASTElement> extends ListStackEntr
 		return nameContext;
 	}
 
-	public void setNameContext(Context nameContext) {
-		this.nameContext = nameContext;
-	}
-
 	public final void setName(String name, Context nameContext) {
 		
 		Objects.requireNonNull(name);

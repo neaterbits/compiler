@@ -346,7 +346,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterConstructorDeclarator(ConstructorDeclaratorContext ctx) {
-		delegate.onConstructorName(context(ctx), ctx.simpleTypeName().getText());
+		delegate.onConstructorName(context(ctx.simpleTypeName()), ctx.simpleTypeName().getText());
 	}
 
 	@Override
