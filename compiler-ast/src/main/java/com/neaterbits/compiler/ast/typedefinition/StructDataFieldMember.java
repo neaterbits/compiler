@@ -1,12 +1,13 @@
 package com.neaterbits.compiler.ast.typedefinition;
 
 import com.neaterbits.compiler.ast.CompilationCodeVisitor;
+import com.neaterbits.compiler.ast.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public final class StructDataFieldMember extends DataFieldMember {
 	
-	public StructDataFieldMember(Context context, TypeReference type, FieldName name) {
+	public StructDataFieldMember(Context context, TypeReference type, FieldNameDeclaration name) {
 		super(context, type, name);
 	}
 

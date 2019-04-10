@@ -13,17 +13,17 @@ import com.neaterbits.compiler.util.Context;
 public abstract class VariableDeclarationElement extends BaseASTElement {
 	
 	private final ASTSingle<TypeReference> type;
-	private final VarName name;
+	private final ASTSingle<VarNameDeclaration> name;
 	private final int numDims;
 	
-	public VariableDeclarationElement(Context context, TypeReference type, VarName name, int numDims) {
+	public VariableDeclarationElement(Context context, TypeReference type, VarNameDeclaration name, int numDims) {
 		super(context);
 
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(name);
 
 		this.type = makeSingle(type);
-		this.name = name;
+		this.name = makeSingle(name);
 		this.numDims = numDims;
 	}
 
@@ -31,8 +31,12 @@ public abstract class VariableDeclarationElement extends BaseASTElement {
 		return type.get();
 	}
 
-	public final VarName getName() {
-		return name;
+	public VarNameDeclaration getNameDeclaration() {
+		return name.get();
+	}
+
+	public final VarName getVarName() {
+		return name.get().getVarName();
 	}
 
 	public final int getNumDims() {
@@ -44,7 +48,7 @@ public abstract class VariableDeclarationElement extends BaseASTElement {
 		final VariableDeclaration variableDeclaration = new VariableDeclaration(
 				modifiers,
 				type.get(),
-				name,
+				name.get().getVarName(),
 				numDims);
 
 		return variableDeclaration;

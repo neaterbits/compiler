@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.neaterbits.compiler.ast.CompilationCode;
 import com.neaterbits.compiler.ast.CompilationCodeLines;
 import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.ast.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.Import;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.Namespace;
@@ -182,6 +183,7 @@ import com.neaterbits.compiler.ast.variables.ModifiersVariableDeclarationElement
 import com.neaterbits.compiler.ast.variables.NameReference;
 import com.neaterbits.compiler.ast.variables.SimpleVariableReference;
 import com.neaterbits.compiler.ast.variables.VarName;
+import com.neaterbits.compiler.ast.variables.VarNameDeclaration;
 import com.neaterbits.compiler.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
@@ -833,7 +835,7 @@ public abstract class BaseParserListener {
 					context,
 					new FieldModifiers(stackFieldDeclarationList.getModifiers()),
 					typeReference,
-					new FieldName(element.getName().getName()),
+					new FieldNameDeclaration(element.getNameDeclaration()),
 					initializer);
 			
 			stackClass.add(dataFieldMember);
@@ -1271,7 +1273,7 @@ public abstract class BaseParserListener {
 	}
 	
 	
-	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, String fieldName) {
+	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, String fieldName, Context fieldNameContext) {
 		
 		logEnter(context);
 		
@@ -1833,7 +1835,7 @@ public abstract class BaseParserListener {
 				variableDeclaration.getList());
 
 		variableDeclaration.getList().forEach(e -> {
-			variableScopes.get().add(e.getName().getName(), e.makeVariableDeclaration(modifiers));
+			variableScopes.get().add(e.getVarName().getName(), e.makeVariableDeclaration(modifiers));
 		});
 		
 		statementSetter.addStatement(statement);
@@ -1863,7 +1865,7 @@ public abstract class BaseParserListener {
 		final InitializerVariableDeclarationElement variableDeclarationElement = new InitializerVariableDeclarationElement(
 				context,
 				declarationList.getTypeReference(),
-				new VarName(stackDeclaration.getName()),
+				new VarNameDeclaration(stackDeclaration.getNameContext(), stackDeclaration.getName()),
 				stackDeclaration.getNumDims(),
 				initializer);
 		
@@ -2059,7 +2061,7 @@ public abstract class BaseParserListener {
 				context,
 				new VariableModifiers(context, stackIteratorForStatement.getModifiers()),
 				stackIteratorForStatement.getTypeReference(),
-				new VarName(stackIteratorForStatement.getName()),
+				new VarNameDeclaration(stackIteratorForStatement.getNameContext(), stackIteratorForStatement.getName()),
 				stackIteratorForStatement.getNumDims()); 
 
 		final IteratorForStatement statement = new IteratorForStatement(
@@ -2180,11 +2182,11 @@ public abstract class BaseParserListener {
 				context,
 				new VariableModifiers(context, stackResource.getModifiers()),
 				stackResource.getTypeReference(),
-				new VarName(stackResource.getName()),
+				new VarNameDeclaration(stackResource.getNameContext(), stackResource.getName()),
 				stackResource.getNumDims(),
 				stackResource.getInitializer());
 		
-		variableScopes.get().add(resource.getName().getName(), resource.makeVariableDeclaration());
+		variableScopes.get().add(resource.getVarName().getName(), resource.makeVariableDeclaration());
 	
 		final StackResourceList stackResourceList = get();
 		

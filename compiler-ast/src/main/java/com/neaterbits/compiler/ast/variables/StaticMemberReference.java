@@ -12,15 +12,18 @@ public final class StaticMemberReference extends VariableReference {
 
 	private final TypeReference classType;
 	private final String name;
+	private final Context nameContext;
 
-	public StaticMemberReference(Context context, TypeReference type, String name) {
+	public StaticMemberReference(Context context, TypeReference type, String name, Context nameContext) {
 		super(context);
 
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(name);
+		Objects.requireNonNull(nameContext);
 		
 		this.classType = type;
 		this.name = name;
+		this.nameContext = nameContext;
 	}
 	
 	public TypeReference getClassType() {
@@ -29,6 +32,10 @@ public final class StaticMemberReference extends VariableReference {
 
 	public String getName() {
 		return name;
+	}
+
+	public Context getNameContext() {
+		return nameContext;
 	}
 
 	@Override

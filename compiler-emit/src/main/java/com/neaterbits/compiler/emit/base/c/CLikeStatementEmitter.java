@@ -44,7 +44,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 	
 	protected final void emitVariableDeclarationElement(InitializerVariableDeclarationElement element, T param) {
 		
-		emitVariableDeclaration(element.getTypeReference(), element.getName(), param);
+		emitVariableDeclaration(element.getTypeReference(), element.getVarName(), param);
 
 		if (element.getInitializer() != null) {
 			param.append(" = ");

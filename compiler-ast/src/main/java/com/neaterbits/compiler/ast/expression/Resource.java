@@ -8,7 +8,7 @@ import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.InitializerVariableDeclarationElement;
-import com.neaterbits.compiler.ast.variables.VarName;
+import com.neaterbits.compiler.ast.variables.VarNameDeclaration;
 import com.neaterbits.compiler.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.util.Context;
 
@@ -16,7 +16,7 @@ public final class Resource extends InitializerVariableDeclarationElement {
 
 	private final ASTSingle<VariableModifiers> modifiers;
 	
-	public Resource(Context context, VariableModifiers modifiers, TypeReference type, VarName name, int numDims, Expression initializer) {
+	public Resource(Context context, VariableModifiers modifiers, TypeReference type, VarNameDeclaration name, int numDims, Expression initializer) {
 		super(context, type, name, numDims, initializer);
 		
 		Objects.requireNonNull(modifiers);
@@ -25,7 +25,7 @@ public final class Resource extends InitializerVariableDeclarationElement {
 	}
 	
 	public Resource(VariableModifiers modifiers, InitializerVariableDeclarationElement element) {
-		this(element.getContext(), modifiers, element.getTypeReference(), element.getName(), element.getNumDims(), element.getInitializer());
+		this(element.getContext(), modifiers, element.getTypeReference(), element.getNameDeclaration(), element.getNumDims(), element.getInitializer());
 	}
 
 	public VariableModifiers getModifiers() {

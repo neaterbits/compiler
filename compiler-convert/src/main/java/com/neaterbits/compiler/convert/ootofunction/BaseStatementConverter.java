@@ -112,7 +112,7 @@ public abstract class BaseStatementConverter<T extends ConverterState<T>>
 			final InitializerVariableDeclarationElement convertedDeclaration = new InitializerVariableDeclarationElement(
 					declaration.getContext(),
 					convertType(declaration.getTypeReference(), param),
-					declaration.getName(),
+					declaration.getNameDeclaration(),
 					declaration.getNumDims(),
 					convertExpression(declaration.getInitializer(), param));
 			

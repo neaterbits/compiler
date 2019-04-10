@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import com.neaterbits.compiler.ast.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.block.ClassMethod;
 import com.neaterbits.compiler.ast.block.Parameter;
@@ -27,7 +28,6 @@ import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.ast.typedefinition.FieldModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.FieldModifiers;
-import com.neaterbits.compiler.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceModifierHolder;
@@ -119,7 +119,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 				context,
 				modifiers,
 				new EncodedTypeReference(context, descriptor),
-				new FieldName(getUTF8(field.getNameIndex())),
+				new FieldNameDeclaration(null, getUTF8(field.getNameIndex())),
 				null);
 	}
 

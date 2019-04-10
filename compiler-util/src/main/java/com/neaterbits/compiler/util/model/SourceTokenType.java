@@ -11,6 +11,8 @@ public enum SourceTokenType {
 	CLASS_REFERENCE_NAME(false, false, true),
 	METHOD_REFERENCE_NAME(false, false, true),
 	
+	INSTANCE_VARIABLE_DECLARATION_NAME(true, false, false),
+	
 	INSTANCE_VARIABLE(true, false, false),
 	LOCAL_VARIABLE(true, false, false),
 	

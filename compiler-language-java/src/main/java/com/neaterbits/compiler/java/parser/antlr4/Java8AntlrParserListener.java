@@ -1271,34 +1271,34 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitPrimaryDotIdentifierFieldAccess(PrimaryDotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, ctx.Identifier().getText());
+		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitSuperDotIdentifierFieldAccess(SuperDotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, ctx.Identifier().getText());
+		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitTypeNameDotSuperDotIdentifierFieldAccess(TypeNameDotSuperDotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, ctx.Identifier().getText());
+		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitDotIdentifierFieldAccess(DotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, ctx.Identifier().getText());
+		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitSuperDotIdentifierFieldAccess_fieldAccess_lfno_primary(
 			SuperDotIdentifierFieldAccess_fieldAccess_lfno_primaryContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, ctx.Identifier().getText());
+		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 	
 	@Override
 	public void exitTypeNameDotSuperDotIdentifierFieldAccess_fieldAccess_lfno_primary(
 			TypeNameDotSuperDotIdentifierFieldAccess_fieldAccess_lfno_primaryContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, ctx.Identifier().getText());
+		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override

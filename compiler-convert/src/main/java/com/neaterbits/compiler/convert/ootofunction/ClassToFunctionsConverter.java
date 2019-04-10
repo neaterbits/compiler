@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.neaterbits.compiler.ast.CompilationCode;
+import com.neaterbits.compiler.ast.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.block.ClassMethod;
 import com.neaterbits.compiler.ast.block.Function;
@@ -21,7 +22,6 @@ import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
-import com.neaterbits.compiler.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.typedefinition.StructDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.StructDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.StructDefinition;
@@ -135,8 +135,8 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap,
 			java.util.function.Function<BaseType, BaseType> convertMethodType,
 			java.util.function.Function<CompleteName, StructName> classToStructName,
-			java.util.function.Function<CompleteName, FieldName> classToFieldName,
-			java.util.function.Function<MethodName, FieldName> methodToFieldName) {
+			java.util.function.Function<CompleteName, FieldNameDeclaration> classToFieldName,
+			java.util.function.Function<MethodName, FieldNameDeclaration> methodToFieldName) {
 		
 
 		final ClassDefinition classDefinition = classType.getDefinition();

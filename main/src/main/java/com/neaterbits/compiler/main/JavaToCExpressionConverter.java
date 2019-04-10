@@ -153,7 +153,7 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 									context,
 									FieldAccessType.FIELD,
 									new FunctionPointerTypeReference(context, functionPointerType),
-									param.getVTableFunctionFieldName(expression.getCallable())))
+									param.getVTableFunctionFieldName(expression.getCallable()).toFieldName()))
 							);
 
 			final FunctionPointerInvocationExpression invocationExpression = new FunctionPointerInvocationExpression(

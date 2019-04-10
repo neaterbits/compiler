@@ -3,6 +3,7 @@ package com.neaterbits.compiler.ast.typedefinition;
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.CompilationCodeVisitor;
+import com.neaterbits.compiler.ast.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
@@ -13,7 +14,7 @@ public final class ClassDataFieldMember extends DataFieldMember {
 	private final ASTSingle<FieldModifiers> modifiers; 
 	private final ASTSingle<Expression> initializer;
 	
-	public ClassDataFieldMember(Context context, FieldModifiers modifiers, TypeReference type, FieldName name, Expression initializer) {
+	public ClassDataFieldMember(Context context, FieldModifiers modifiers, TypeReference type, FieldNameDeclaration name, Expression initializer) {
 		super(context, type, name);
 		
 		this.modifiers = makeSingle(modifiers);

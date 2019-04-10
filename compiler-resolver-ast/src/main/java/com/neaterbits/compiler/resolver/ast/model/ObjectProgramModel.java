@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.ASTVisitor;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.ast.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.Import;
 import com.neaterbits.compiler.ast.ImportName;
 import com.neaterbits.compiler.ast.Keyword;
@@ -183,6 +184,7 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 				 || element instanceof VariableModifierHolder) {
 			
 			sourceTokenType = SourceTokenType.KEYWORD;
+			
 		}
 		else if (element instanceof NamespaceDeclaration) {
 			sourceTokenType = SourceTokenType.NAMESPACE_DECLARATION_NAME;
@@ -192,6 +194,9 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		}
 		else if (element instanceof ClassDeclarationName) {
 			sourceTokenType = SourceTokenType.CLASS_DECLARATION_NAME;
+		}
+		else if (element instanceof FieldNameDeclaration) {
+			sourceTokenType = SourceTokenType.INSTANCE_VARIABLE_DECLARATION_NAME;
 		}
 		else if (element instanceof InterfaceDeclarationName) {
 			sourceTokenType = SourceTokenType.INTERFACE_DECLARATION_NAME;

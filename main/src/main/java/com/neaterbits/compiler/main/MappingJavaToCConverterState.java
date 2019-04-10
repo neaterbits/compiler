@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.main;
 
+import com.neaterbits.compiler.ast.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.block.FunctionName;
 import com.neaterbits.compiler.ast.block.MethodName;
 import com.neaterbits.compiler.ast.type.BaseTypeName;
@@ -7,7 +8,6 @@ import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.type.primitive.IntType;
-import com.neaterbits.compiler.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.typedefinition.StructName;
 import com.neaterbits.compiler.convert.Converters;
 import com.neaterbits.compiler.convert.OOToProceduralConverterState;
@@ -68,13 +68,13 @@ public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState
 	}
 	
 	@Override
-	public final FieldName getVTableBaseFieldName(CompleteName type) {
-		return new FieldName("base_" + className(type));
+	public final FieldNameDeclaration getVTableBaseFieldName(CompleteName type) {
+		return new FieldNameDeclaration(null, "base_" + className(type));
 	}
 
 	@Override
-	public final FieldName getVTableFunctionFieldName(MethodName methodName) {
-		return new FieldName(methodName.getName());
+	public final FieldNameDeclaration getVTableFunctionFieldName(MethodName methodName) {
+		return new FieldNameDeclaration(methodName.getContext(), methodName.getName());
 	}
 
 	@Override

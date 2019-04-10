@@ -13,7 +13,7 @@ public final class ModifiersVariableDeclarationElement extends VariableDeclarati
 
 	private final ASTSingle<VariableModifiers> modifiers;
 
-	public ModifiersVariableDeclarationElement(Context context, VariableModifiers modifiers, TypeReference type, VarName name, int numDims) {
+	public ModifiersVariableDeclarationElement(Context context, VariableModifiers modifiers, TypeReference type, VarNameDeclaration name, int numDims) {
 		super(context, type, name, numDims);
 
 		Objects.requireNonNull(modifiers);

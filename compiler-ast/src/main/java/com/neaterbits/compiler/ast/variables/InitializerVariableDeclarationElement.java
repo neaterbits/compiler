@@ -12,7 +12,7 @@ public class InitializerVariableDeclarationElement extends VariableDeclarationEl
 
 	private final ASTSingle<Expression> initializer;
 	
-	public InitializerVariableDeclarationElement(Context context, TypeReference type, VarName name, int numDims, Expression initializer) {
+	public InitializerVariableDeclarationElement(Context context, TypeReference type, VarNameDeclaration name, int numDims, Expression initializer) {
 		super(context, type, name, numDims);
 
 		this.initializer = initializer != null ? makeSingle(initializer) : null;

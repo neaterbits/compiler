@@ -240,7 +240,8 @@ class TypeFinder {
 			primary = new StaticMemberReference(
 					context,
 					new ComplexTypeReference(context, type),
-					expressionPart[0]);
+					expressionPart[0],
+					context);
 		}
 		else {
 			
@@ -249,7 +250,8 @@ class TypeFinder {
 			primaries.add(new StaticMemberReference(
 					context,
 					new ComplexTypeReference(context, type),
-					expressionPart[0]));
+					expressionPart[0],
+					context));
 			
 			ComplexType<?, ?, ?> fieldHolderType = type;
 			
