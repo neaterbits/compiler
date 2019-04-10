@@ -19,23 +19,37 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class StackEnum extends ListStackEntry<ComplexMemberDefinition> implements ClassModifierSetter, ConstructorMemberSetter, ClassMethodMemberSetter {
 
+	private final String enumKeyword;
+	private final Context enumKeywordContext;
 	private final String name;
 	private final Context nameContext;
 	private final List<ClassModifierHolder> modifiers;
 	private final List<TypeReference> implementedInterfaces;
 	private final List<EnumConstantDefinition> constants;
 	
-	public StackEnum(ParseLogger parseLogger, String name, Context nameContext) {
+	public StackEnum(ParseLogger parseLogger, String enumKeyword, Context enumKeywordContext, String name, Context nameContext) {
 		super(parseLogger);
 
+		Objects.requireNonNull(enumKeyword);
+		Objects.requireNonNull(enumKeywordContext);
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(nameContext);
 
+		this.enumKeyword = enumKeyword;
+		this.enumKeywordContext = enumKeywordContext;
 		this.name = name;
 		this.nameContext = nameContext;
 		this.modifiers = new ArrayList<>();
 		this.implementedInterfaces = new ArrayList<>();
 		this.constants = new ArrayList<>();
+	}
+
+	public String getEnumKeyword() {
+		return enumKeyword;
+	}
+
+	public Context getEnumKeywordContext() {
+		return enumKeywordContext;
 	}
 
 	public String getName() {

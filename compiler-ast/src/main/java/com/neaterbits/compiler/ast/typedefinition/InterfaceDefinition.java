@@ -5,6 +5,7 @@ import java.util.List;
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.CompilationCodeVisitor;
+import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
@@ -19,11 +20,12 @@ public final class InterfaceDefinition extends ComplexTypeDefinition<InterfaceNa
 	public InterfaceDefinition(
 			Context context,
 			InterfaceModifiers modifiers,
+			Keyword interfaceKeyword,
 			InterfaceDeclarationName name,
 			List<TypeReference> extendsInterfaces,
 			List<ComplexMemberDefinition> members) {
 		
-		super(context, name, members);
+		super(context, interfaceKeyword, name, members);
 
 		this.modifiers = makeSingle(modifiers);
 		this.extendsInterfaces = makeList(extendsInterfaces);
@@ -46,6 +48,7 @@ public final class InterfaceDefinition extends ComplexTypeDefinition<InterfaceNa
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
 		doIterate(modifiers, recurseMode, iterator);
+		doIterateTypeKeywordAndName(recurseMode, iterator);
 		doIterate(extendsInterfaces, recurseMode, iterator);
 		
 		super.doRecurse(recurseMode, iterator);

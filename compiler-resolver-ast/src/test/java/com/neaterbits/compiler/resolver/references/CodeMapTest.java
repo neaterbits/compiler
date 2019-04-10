@@ -240,6 +240,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
 				new ClassModifiers(Collections.emptyList()),
+				null,
 				new ClassDeclarationName(nameContext, new ClassName(name)),
 				null,
 				null,
@@ -259,6 +260,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(
 				context,
 				new InterfaceModifiers(Collections.emptyList()),
+				null,
 				new InterfaceDeclarationName(nameContext, new InterfaceName(name)),
 				null,
 				Collections.emptyList());

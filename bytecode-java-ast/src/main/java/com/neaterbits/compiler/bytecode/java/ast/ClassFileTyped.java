@@ -65,6 +65,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 			final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(
 					context,
 					modifiers,
+					null,
 					new InterfaceDeclarationName(context, (InterfaceName)completeName.getName()),
 					extendsInterfaces,
 					getMembers(context));
@@ -92,6 +93,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 			final ClassDefinition classDefinition = new ClassDefinition(
 					context,
 					modifiers,
+					null,
 					new ClassDeclarationName(context, (ClassName)completeName.getName()),
 					extendsClasses,
 					new ArrayList<TypeReference>(),

@@ -274,7 +274,7 @@ classDeclaration
 	;
 
 normalClassDeclaration
-	:	classModifier* 'class' Identifier typeParameters? superclass? superinterfaces? classBody
+	:	classModifier* keyword = 'class' Identifier typeParameters? superclass? superinterfaces? classBody
 	;
 
 classModifier
@@ -540,7 +540,7 @@ explicitConstructorInvocation
 	;
 
 enumDeclaration
-	:	classModifier* 'enum' Identifier superinterfaces? enumBody
+	:	classModifier* keyword = 'enum' Identifier superinterfaces? enumBody
 	;
 
 enumBody
@@ -573,7 +573,7 @@ interfaceDeclaration
 	;
 
 normalInterfaceDeclaration
-	:	interfaceModifier* 'interface' Identifier typeParameters? extendsInterfaces? interfaceBody
+	:	interfaceModifier* keyword = 'interface' Identifier typeParameters? extendsInterfaces? interfaceBody
 	;
 
 interfaceModifier

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
+import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
@@ -18,9 +19,10 @@ public abstract class BaseClassDefinition extends ComplexTypeDefinition<ClassNam
 	protected BaseClassDefinition(
 			Context context,
 			ClassModifiers modifiers,
+			Keyword typeKeyword,
 			ClassDeclarationName name,
 			List<TypeReference> implementsInterfaces, List<ComplexMemberDefinition> members) {
-		super(context, name, members);
+		super(context, typeKeyword, name, members);
 
 		this.modifiers = makeSingle(modifiers);
 		this.implementsInterfaces = makeList(implementsInterfaces);
@@ -41,11 +43,14 @@ public abstract class BaseClassDefinition extends ComplexTypeDefinition<ClassNam
 							&& ((ClassMethodMember)member).getMethod().getName().getName().equals(methodName));
 	}
 
-	@Override
-	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
+	protected final void doIterateModifiersAndName(ASTRecurseMode recurseMode, ASTIterator iterator) {
+
 		doIterate(modifiers, recurseMode, iterator);
-		doIterate(implementsInterfaces, recurseMode, iterator);
+		doIterateTypeKeywordAndName(recurseMode, iterator);
 		
-		super.doRecurse(recurseMode, iterator);
+	}
+
+	protected final void doIterateImplementsInterfaces(ASTRecurseMode recurseMode, ASTIterator iterator) {
+		doIterate(implementsInterfaces, recurseMode, iterator);
 	}
 }

@@ -15,23 +15,37 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class StackInterface extends ListStackEntry<ComplexMemberDefinition> implements InterfaceMethodMemberSetter {
 
+	private final String interfaceKeyword;
+	private final Context interfaceKeywordContext;
 	private final String name;
 	private final Context nameContext;
 	private final List<InterfaceModifierHolder> modifiers;
 	private final List<TypeReference> extendedInterfaces;
 	
-	public StackInterface(ParseLogger parseLogger, String name, Context nameContext) {
+	public StackInterface(ParseLogger parseLogger, String interfaceKeyword, Context interfaceKeywordContext, String name, Context nameContext) {
 		super(parseLogger);
 
+		Objects.requireNonNull(interfaceKeyword);
+		Objects.requireNonNull(interfaceKeywordContext);
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(nameContext);
 
+		this.interfaceKeyword = interfaceKeyword;
+		this.interfaceKeywordContext = interfaceKeywordContext;
 		this.name = name;
 		this.nameContext = nameContext;
 		this.modifiers = new ArrayList<>();
 		this.extendedInterfaces = new ArrayList<>();
 	}
 	
+	public String getInterfaceKeyword() {
+		return interfaceKeyword;
+	}
+
+	public Context getInterfaceKeywordContext() {
+		return interfaceKeywordContext;
+	}
+
 	public String getName() {
 		return name;
 	}

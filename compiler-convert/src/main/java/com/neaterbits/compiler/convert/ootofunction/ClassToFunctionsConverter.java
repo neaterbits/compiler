@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.neaterbits.compiler.ast.CompilationCode;
+import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.block.ClassMethod;
 import com.neaterbits.compiler.ast.block.Function;
 import com.neaterbits.compiler.ast.block.FunctionName;
@@ -121,6 +122,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 		
 		final StructDefinition struct = new StructDefinition(
 				classDefinition.getContext(),
+				new Keyword(classDefinition.getTypeKeyword().getContext(), "struct"),
 				new StructDeclarationName(classDefinition.getName().getContext(), structName),
 				structMembers);
 		
@@ -186,6 +188,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 
 		final StructDefinition struct = new StructDefinition(
 				classDefinition.getContext(),
+				new Keyword(classDefinition.getTypeKeyword().getContext(), "struct"),
 				new StructDeclarationName(classDefinition.getName().getContext(), structName),
 				structMembers);
 		

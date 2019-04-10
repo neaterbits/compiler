@@ -12,6 +12,8 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class StackNamedClass extends StackClass implements ClassModifierSetter {
 
+	private final String classKeyword;
+	private final Context classKeywordContext;
 	private final String name;
 	private final Context nameContext;
 	private final List<ClassModifierHolder> modifiers;
@@ -19,12 +21,16 @@ public final class StackNamedClass extends StackClass implements ClassModifierSe
 	private final List<TypeReference> extendedClasses;
 	private final List<TypeReference> implementedInterfaces;
 	
-	public StackNamedClass(ParseLogger parseLogger, String name, Context nameContext) {
+	public StackNamedClass(ParseLogger parseLogger, String classKeyword, Context classKeywordContext, String name, Context nameContext) {
 		super(parseLogger);
 
+		Objects.requireNonNull(classKeyword);
+		Objects.requireNonNull(classKeywordContext);
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(nameContext);
 		
+		this.classKeyword = classKeyword;
+		this.classKeywordContext = classKeywordContext;
 		this.name = name;
 		this.nameContext = nameContext;
 		this.modifiers = new ArrayList<>();
@@ -40,6 +46,14 @@ public final class StackNamedClass extends StackClass implements ClassModifierSe
 		modifiers.add(modifier);
 	}
 	
+	public String getClassKeyword() {
+		return classKeyword;
+	}
+
+	public Context getClassKeywordContext() {
+		return classKeywordContext;
+	}
+
 	public String getName() {
 		return name;
 	}

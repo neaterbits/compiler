@@ -11,6 +11,7 @@ import com.neaterbits.compiler.ast.CompilationCode;
 import com.neaterbits.compiler.ast.CompilationCodeLines;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
+import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.block.Block;
 import com.neaterbits.compiler.ast.block.Constructor;
@@ -322,11 +323,11 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	public final void onClassStart(Context context, String name, Context nameContext) {
+	public final void onClassStart(Context context, String classKeyword, Context classKeywordContext, String name, Context nameContext) {
 		
 		logEnter(context);
 		
-		push(new StackNamedClass(logger, name, nameContext));
+		push(new StackNamedClass(logger, classKeyword, classKeywordContext, name, nameContext));
 		
 		logExit(context);
 	}
@@ -412,6 +413,9 @@ public abstract class BaseParserListener {
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
 				classModifiers,
+				entry.getClassKeyword() != null
+					? new Keyword(entry.getClassKeywordContext(), entry.getClassKeyword())
+					: null,
 				new ClassDeclarationName(entry.getNameContext(), new ClassName(entry.getName())),
 				entry.getExtendedClasses(),
 				entry.getImplementedInterfaces(),
@@ -439,7 +443,7 @@ public abstract class BaseParserListener {
 		
 		final List<ComplexMemberDefinition> classCode = entry.getList();
 		
-		final ClassDefinition classDefinition = new ClassDefinition(context, null, null, null, null, classCode);
+		final ClassDefinition classDefinition = new ClassDefinition(context, null, null, null, null, null, classCode);
 		
 		mainStack.addElement(classDefinition);
 		
@@ -836,11 +840,11 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
-	public final void onInterfaceStart(Context context, String name, Context nameContext) {
+	public final void onInterfaceStart(Context context, String interfaceKeyword, Context interfaceKeywordContext, String name, Context nameContext) {
 		
 		logEnter(context);
 		
-		push(new StackInterface(logger, name, nameContext));
+		push(new StackInterface(logger, interfaceKeyword, interfaceKeywordContext, name, nameContext));
 		
 		logExit(context);
 	}
@@ -916,6 +920,9 @@ public abstract class BaseParserListener {
 		final InterfaceDefinition classDefinition = new InterfaceDefinition(
 				context,
 				interfaceModifiers,
+				entry.getInterfaceKeyword() != null
+						? new Keyword(entry.getInterfaceKeywordContext(), entry.getInterfaceKeyword())
+						: null,
 				new InterfaceDeclarationName(entry.getNameContext(), new InterfaceName(entry.getName())),
 				entry.getExtendedInterfaces(),
 				interfaceCode);
@@ -925,11 +932,11 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
-	public final void onEnumStart(Context context, String name, Context nameContext) {
+	public final void onEnumStart(Context context, String enumKeyword, Context enumKeywordContext, String name, Context nameContext) {
 
 		logEnter(context);
 
-		push(new StackEnum(logger, name, nameContext));
+		push(new StackEnum(logger, enumKeyword, enumKeywordContext, name, nameContext));
 		
 		logExit(context);
 	}
@@ -985,6 +992,9 @@ public abstract class BaseParserListener {
 		final EnumDefinition enumDefinition = new EnumDefinition(
 				context,
 				new ClassModifiers(stackEnum.getModifiers()),
+				stackEnum.getEnumKeyword() != null
+					? new Keyword(stackEnum.getEnumKeywordContext(), stackEnum.getEnumKeyword())
+					: null,
 				new ClassDeclarationName(stackEnum.getNameContext(), new ClassName(stackEnum.getName())),
 				stackEnum.getImplementedInterfaces(),
 				stackEnum.getConstants(),

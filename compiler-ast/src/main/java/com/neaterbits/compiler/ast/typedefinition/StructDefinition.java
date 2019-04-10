@@ -3,12 +3,13 @@ package com.neaterbits.compiler.ast.typedefinition;
 import java.util.List;
 
 import com.neaterbits.compiler.ast.CompilationCodeVisitor;
+import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.util.Context;
 
 public class StructDefinition extends ComplexTypeDefinition<StructName, StructDeclarationName> {
 
-	public StructDefinition(Context context, StructDeclarationName name, List<ComplexMemberDefinition> members) {
-		super(context, name, members);
+	public StructDefinition(Context context, Keyword structKeyword, StructDeclarationName name, List<ComplexMemberDefinition> members) {
+		super(context, structKeyword, name, members);
 	}
 
 	@Override

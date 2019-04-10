@@ -237,7 +237,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterNormalClassDeclaration(NormalClassDeclarationContext ctx) {
-		delegate.onClassStart(context(ctx), ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onClassStart(
+				context(ctx),
+				ctx.keyword.getText(), context(ctx.keyword),
+				ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 	
 	@Override
@@ -517,7 +520,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterNormalInterfaceDeclaration(NormalInterfaceDeclarationContext ctx) {
-		delegate.onInterfaceStart(context(ctx), ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onInterfaceStart(
+				context(ctx),
+				ctx.keyword.getText(), context(ctx.keyword),
+				ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 	
 	@Override
@@ -587,7 +593,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterEnumDeclaration(EnumDeclarationContext ctx) {
-		delegate.onEnumStart(context(ctx), ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onEnumStart(
+				context(ctx),
+				ctx.keyword.getText(), context(ctx.keyword),
+				ctx.Identifier().getText(), context(ctx.Identifier()));
 		
 		if (ctx.superinterfaces() != null) {
 			for (InterfaceTypeContext interfaceCtx : ctx.superinterfaces().interfaceTypeList().interfaceType()) {
