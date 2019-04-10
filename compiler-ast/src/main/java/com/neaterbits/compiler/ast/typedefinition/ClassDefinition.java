@@ -7,22 +7,29 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.list.ASTList;
+import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public final class ClassDefinition extends BaseClassDefinition {
 	
+	private final ASTSingle<Keyword> extendsKeyword;
 	private final ASTList<TypeReference> extendsClasses;
 	
 	public ClassDefinition(Context context, ClassModifiers modifiers, Keyword classKeyword, ClassDeclarationName name,
-			List<TypeReference> extendsClasses, List<TypeReference> implementsInterfaces,
+			Keyword extendsKeyword, List<TypeReference> extendsClasses,
+			List<TypeReference> implementsInterfaces,
 			List<ComplexMemberDefinition> members) {
 		super(context, modifiers, classKeyword, name, implementsInterfaces, members);
-	
+		
+		this.extendsKeyword = extendsKeyword != null ? makeSingle(extendsKeyword) : null;
 		this.extendsClasses = makeList(extendsClasses);
 	}
 
-	
+	public Keyword getExtendsKeyword() {
+		return extendsKeyword.get();
+	}
+
 	public ASTList<TypeReference> getExtendsClasses() {
 		return extendsClasses;
 	}
@@ -32,11 +39,14 @@ public final class ClassDefinition extends BaseClassDefinition {
 		return visitor.onClassDefinition(this, param);
 	}
 
-
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
 		doIterateModifiersAndName(recurseMode, iterator);
+		
+		if (extendsKeyword != null) {
+			doIterate(extendsKeyword, recurseMode, iterator);
+		}
 		
 		doIterate(extendsClasses, recurseMode, iterator);
 		

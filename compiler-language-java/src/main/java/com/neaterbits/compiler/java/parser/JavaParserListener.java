@@ -116,8 +116,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onStrictfpClassModifier(context);
 	}
 	
-	public void onClassExtends(Context context, ScopedName className) {
-		delegate.onClassExtends(context, className);
+	public void onClassExtends(Context context, String extendsKeyword, Context extendsKeywordContext, ScopedName className) {
+		delegate.onClassExtends(context, extendsKeyword, extendsKeywordContext, className);
 	}
 	
 	public void onClassImplements(Context context, ScopedName interfaceName) {

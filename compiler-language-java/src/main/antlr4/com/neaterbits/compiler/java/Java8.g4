@@ -297,7 +297,7 @@ typeParameterList
 	;
 
 superclass
-	:	'extends' classType
+	:	keyword = 'extends' classType
 	;
 
 superinterfaces

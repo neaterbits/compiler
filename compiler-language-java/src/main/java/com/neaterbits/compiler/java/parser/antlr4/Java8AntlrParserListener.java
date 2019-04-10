@@ -283,7 +283,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterSuperclass(SuperclassContext ctx) {
-		delegate.onClassExtends(context(ctx), parseName(ctx.classType().getText()));
+		delegate.onClassExtends(
+				context(ctx),
+				ctx.keyword.getText(), context(ctx.keyword),
+				parseName(ctx.classType().getText()));
 	}
 
 	@Override

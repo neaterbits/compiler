@@ -18,10 +18,15 @@ public final class StackNamedClass extends StackClass implements ClassModifierSe
 	private final Context nameContext;
 	private final List<ClassModifierHolder> modifiers;
 	
+	private String extendsKeyword;
+	private Context extendsKeywordContext;
+	
 	private final List<TypeReference> extendedClasses;
 	private final List<TypeReference> implementedInterfaces;
 	
-	public StackNamedClass(ParseLogger parseLogger, String classKeyword, Context classKeywordContext, String name, Context nameContext) {
+	public StackNamedClass(ParseLogger parseLogger,
+			String classKeyword, Context classKeywordContext,
+			String name, Context nameContext) {
 		super(parseLogger);
 
 		Objects.requireNonNull(classKeyword);
@@ -72,6 +77,27 @@ public final class StackNamedClass extends StackClass implements ClassModifierSe
 
 	public List<TypeReference> getImplementedInterfaces() {
 		return implementedInterfaces;
+	}
+
+	public void setExtendsKeyword(String extendsKeyword, Context extendsKeywordContext) {
+		
+		Objects.requireNonNull(extendsKeyword);
+		Objects.requireNonNull(extendsKeywordContext);
+		
+		if (this.extendsKeyword != null) {
+			throw new IllegalStateException();
+		}
+		
+		this.extendsKeyword = extendsKeyword;
+		this.extendsKeywordContext = extendsKeywordContext;
+	}
+	
+	public String getExtendsKeyword() {
+		return extendsKeyword;
+	}
+
+	public Context getExtendsKeywordContext() {
+		return extendsKeywordContext;
 	}
 
 	public void addExtendedClass(TypeReference extendedClass) {

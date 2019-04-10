@@ -382,11 +382,13 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	public final void onClassExtends(Context context, ScopedName className) {
+	public final void onClassExtends(Context context, String extendsKeyword, Context extendsKeywordContext, ScopedName className) {
 		
 		logEnter(context);
 
 		final StackNamedClass stackNamedClass = get();
+		
+		stackNamedClass.setExtendsKeyword(extendsKeyword, extendsKeywordContext);
 		
 		stackNamedClass.addExtendedClass(new ResolveLaterTypeReference(context, className));
 		
@@ -421,6 +423,9 @@ public abstract class BaseParserListener {
 					? new Keyword(entry.getClassKeywordContext(), entry.getClassKeyword())
 					: null,
 				new ClassDeclarationName(entry.getNameContext(), new ClassName(entry.getName())),
+				entry.getExtendsKeyword() != null
+					? new Keyword(entry.getExtendsKeywordContext(), entry.getExtendsKeyword())
+					: null,
 				entry.getExtendedClasses(),
 				entry.getImplementedInterfaces(),
 				classCode);
@@ -447,7 +452,7 @@ public abstract class BaseParserListener {
 		
 		final List<ComplexMemberDefinition> classCode = entry.getList();
 		
-		final ClassDefinition classDefinition = new ClassDefinition(context, null, null, null, null, null, classCode);
+		final ClassDefinition classDefinition = new ClassDefinition(context, null, null, null, null, null, null, classCode);
 		
 		mainStack.addElement(classDefinition);
 		

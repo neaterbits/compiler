@@ -244,6 +244,7 @@ public class CodeMapTest extends BaseResolveTest {
 				new ClassDeclarationName(nameContext, new ClassName(name)),
 				null,
 				null,
+				null,
 				Collections.emptyList());
 		
 		return new ClassType(
