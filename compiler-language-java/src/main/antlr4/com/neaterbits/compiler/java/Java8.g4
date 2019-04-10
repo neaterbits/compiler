@@ -243,19 +243,19 @@ importDeclaration
 	;
 
 singleTypeImportDeclaration
-	:	'import' typeName ';'
+	:	keyword = 'import' typeName ';'
 	;
 
 typeImportOnDemandDeclaration
-	:	'import' packageOrTypeName '.' '*' ';'
+	:	keyword = 'import' packageOrTypeName '.' '*' ';'
 	;
 
 singleStaticImportDeclaration
-	:	'import' 'static' typeName '.' Identifier ';'
+	:	keyword = 'import' modifier = 'static' typeName '.' Identifier ';'
 	;
 
 staticImportOnDemandDeclaration
-	:	'import' 'static' typeName '.' '*' ';'
+	:	keyword = 'import' modifier = 'static' typeName '.' asterisk = '*' ';'
 	;
 
 typeDeclaration

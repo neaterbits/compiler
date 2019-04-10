@@ -222,7 +222,7 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		return new SourceToken(
 				sourceTokenType,
 				context.getStartOffset(),
-				context.getText().length(),
+				context.getEndOffset() - context.getStartOffset() + 1,
 				typeName,
 				element.getClass().getSimpleName());
 	}

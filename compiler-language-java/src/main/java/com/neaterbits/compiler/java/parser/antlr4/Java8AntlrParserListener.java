@@ -16,10 +16,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.ast.Import;
+import com.neaterbits.compiler.ast.ImportPackage;
+import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.block.ConstructorInvocation;
 import com.neaterbits.compiler.ast.block.MethodName;
@@ -90,6 +93,14 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		return Antlr4.context(ctx.getSymbol(), file);
 	}
 
+	private Context context(Token ctx) {
+		return Antlr4.context(ctx, file);
+	}
+
+	private Context context(Token startCtx, Token endCtx, String text) {
+		return Antlr4.context(startCtx, endCtx, text, file);
+	}
+
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
 		
@@ -149,50 +160,77 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void exitSingleTypeImportDeclaration(SingleTypeImportDeclarationContext ctx) {
+	
+		final Keyword keyword = new Keyword(
+				context(ctx.keyword),
+				ctx.keyword.getText());
 		
 		final String typeName = ctx.typeName().getText();
 		
-		final Import importStatement = new Import(
-				context(ctx),
+		final ImportPackage importPackage = new ImportPackage(
+				context(ctx.typeName()),
 				namespaceReference(typeName),
 				classOrInterfaceName(typeName));
+		
+		final Import importStatement = new Import(context(ctx), keyword, importPackage);
 		
 		delegate.onImport(importStatement);
 	}
 
 	@Override
 	public void exitTypeImportOnDemandDeclaration(TypeImportOnDemandDeclarationContext ctx) {
+		
+		final Keyword keyword = new Keyword(
+				context(ctx.keyword),
+				ctx.keyword.getText());
+
 		final String packageOrTypeName = ctx.packageOrTypeName().getText();
 		
 		final String [] s = Strings.split(packageOrTypeName, '.');
 		
-		final Import importStatement = new Import(context(ctx), s);
+		final ImportPackage importPackage= new ImportPackage(context(ctx.packageOrTypeName()), s);
 		
+		final Import importStatement = new Import(context(ctx), keyword, importPackage);
+
 		delegate.onImport(importStatement);
 	}
 
 	@Override
 	public void exitSingleStaticImportDeclaration(SingleStaticImportDeclarationContext ctx) {
+
+		final Keyword keyword = new Keyword(
+				context(ctx.keyword),
+				ctx.keyword.getText());
+
 		final String typeName = ctx.typeName().getText();
 		
-		final Import importStatement = new Import(
-				context(ctx),
+		final ImportPackage importPackage = new ImportPackage(
+				context(ctx.modifier, ctx.Identifier().getSymbol(), "static " + typeName + '.' + ctx.Identifier().getText()),
 				namespaceReference(typeName),
 				classOrInterfaceName(typeName),
 				new MethodName(ctx.Identifier().getText()));
 		
+		final Import importStatement = new Import(context(ctx), keyword, importPackage);
+
 		delegate.onImport(importStatement);
 	}
 
 	@Override
 	public void exitStaticImportOnDemandDeclaration(StaticImportOnDemandDeclarationContext ctx) {
+
+		final Keyword keyword = new Keyword(
+				context(ctx.keyword),
+				ctx.keyword.getText());
+
 		final String typeName = ctx.typeName().getText();
 		
-		final Import importStatement = new Import(
-				context(ctx),
+		final ImportPackage importPackage = new ImportPackage(
+				context(ctx.modifier, ctx.asterisk, "static " + typeName + ".*"),
 				namespaceReference(typeName),
 				classOrInterfaceName(typeName),
 				null);
+
+		final Import importStatement = new Import(context(ctx), keyword, importPackage);
 		
 		delegate.onImport(importStatement);
 	}

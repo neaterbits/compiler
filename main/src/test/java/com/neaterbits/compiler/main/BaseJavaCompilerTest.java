@@ -12,6 +12,7 @@ import java.util.List;
 import com.neaterbits.compiler.ast.CompilationCode;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
+import com.neaterbits.compiler.ast.ImportPackage;
 import com.neaterbits.compiler.ast.Module;
 import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.Program;
@@ -153,9 +154,11 @@ public abstract class BaseJavaCompilerTest {
 			else if (e instanceof Import) {
 				
 				final Import importStatement = (Import)e;
+				
+				final ImportPackage importPackage = importStatement.getPackage();
 
-				if (importStatement.startsWith(scopeToRename)) {
-					importStatement.replaceWith(importStatement.removeFromNamespace(scopeToRename));
+				if (importPackage.startsWith(scopeToRename)) {
+					importPackage.replaceWith(importPackage.removeFromNamespace(scopeToRename));
 				}
 			}
 			else if (e instanceof Namespace) {

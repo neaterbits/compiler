@@ -28,4 +28,15 @@ public class Antlr4 {
 				token.getStopIndex(),
 				token.getText());
 	}
+
+	public static Context context(Token startToken, Token endToken, String text, String file) {
+		return new Context(file,
+				startToken.getLine(),
+				startToken.getCharPositionInLine(),
+				startToken.getStartIndex(),
+				endToken.getLine(),
+				endToken.getCharPositionInLine() + endToken.getText().length() - 1,
+				endToken.getStopIndex(),
+				text);
+	}
 }
