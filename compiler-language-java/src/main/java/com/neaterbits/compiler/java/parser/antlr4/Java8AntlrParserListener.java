@@ -497,6 +497,11 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 
 	@Override
+	public void exitPrivateFieldModifier(PrivateFieldModifierContext ctx) {
+		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.PRIVATE);
+	}
+
+	@Override
 	public void exitStaticFieldModifier(StaticFieldModifierContext ctx) {
 		delegate.onStaticFieldModifier(context(ctx));
 	}
