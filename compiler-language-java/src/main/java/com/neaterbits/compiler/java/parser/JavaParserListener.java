@@ -913,9 +913,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			switch (ifOrElseStatement.getStatement()) {
 			case IF_THEN_ELSE_START:
 				
-				final JavaStatement prevStatement = getIfOrElseStatement(1).getStatement();
+				final JavaStatementHolder prevStatement = getIfOrElseStatement(1);
 				
-				if (prevStatement == JavaStatement.ELSE) {
+				if (prevStatement != null && prevStatement.getStatement() == JavaStatement.ELSE) {
 					delegate.onElseIfStatementEnd(context);
 				}
 				else {
