@@ -793,15 +793,15 @@ statementExpression
 	;
 
 ifThenStatement
-	:	'if' '(' expression ')' statement
+	:	ifKeyword = 'if' '(' expression ')' statement
 	;
 
 ifThenElseStatement
-	:	'if' '(' expression ')' statementNoShortIf 'else' statement
+	:	ifKeyword = 'if' '(' expression ')' statementNoShortIf elseKeyword = 'else' statement
 	;
 
 ifThenElseStatementNoShortIf
-	:	'if' '(' expression ')' statementNoShortIf 'else' statementNoShortIf
+	:	ifKeyword = 'if' '(' expression ')' statementNoShortIf elseKeyword = 'else' statementNoShortIf
 	;
 
 assertStatement

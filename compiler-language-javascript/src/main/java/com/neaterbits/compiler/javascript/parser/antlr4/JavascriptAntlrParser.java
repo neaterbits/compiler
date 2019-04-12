@@ -22,7 +22,7 @@ public class JavascriptAntlrParser extends BaseAntlrParser<
 	}
 
 	@Override
-	protected JSParserListener createListener(ParseLogger logger) {
+	protected JSParserListener createListener(ParseLogger logger, String file) {
 		return new JSParserListener(logger);
 	}
 

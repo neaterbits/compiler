@@ -31,7 +31,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 		extends BaseParser<T, LISTENER>
 		implements AntlrParser<T, LISTENER> {
 
-	protected abstract LISTENER createListener(ParseLogger parseLogger);
+	protected abstract LISTENER createListener(ParseLogger parseLogger, String file);
 
 	protected abstract ParserRuleContext getMainContext(PARSER parser);
 	
@@ -79,7 +79,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 
 	@Override
 	public T parse(String string, Collection<ParseError> errors, ParseLogger parseLogger) {
-		final LISTENER listener = createListener(parseLogger);
+		final LISTENER listener = createListener(parseLogger, null);
 
 		try {
 			parse(new ANTLRInputStream(string), listener, errors, null, parseLogger);
@@ -92,7 +92,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 
 	@Override
 	public T parse(InputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
-		final LISTENER listener = createListener(parseLogger);
+		final LISTENER listener = createListener(parseLogger, file);
 
 		parse(new ANTLRInputStream(stream), listener, errors, file, parseLogger);
 
@@ -101,7 +101,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 
 	private T parse(ANTLRInputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
 
-		final LISTENER listener = createListener(parseLogger);
+		final LISTENER listener = createListener(parseLogger, file);
 
 		parse(stream, listener, errors, file, parseLogger);
 

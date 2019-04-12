@@ -114,7 +114,7 @@ public abstract class BaseJavaCompilerTest {
 		
 		final FileTypeParser<JavaParserListener> javaParser = new FileTypeParser<>(
 				new Java8AntlrParser(true),
-				logger -> new JavaParserListener(logger), 
+				logger -> new JavaParserListener(logger, "testfile"), 
 				".java");
 
 		final DirectoryParser directoryParser = new DirectoryParser(javaParser);

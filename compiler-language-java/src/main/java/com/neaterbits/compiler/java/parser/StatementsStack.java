@@ -2,6 +2,8 @@ package com.neaterbits.compiler.java.parser;
 
 import java.util.Objects;
 
+import org.antlr.v4.runtime.Token;
+
 import com.neaterbits.compiler.util.ArrayStack;
 
 final class StatementsStack {
@@ -16,17 +18,18 @@ final class StatementsStack {
 		stack.push(new JavaStatements());
 	}
 
-	void add(JavaStatement statement) {
+
+	void add(JavaStatement statement, Token ... tokens) {
 		Objects.requireNonNull(statement);
 		
-		stack.get().add(statement);
+		stack.get().add(new JavaStatementHolder(statement, tokens));
 	}
 
-	JavaStatement getLastFromTopFrame() {
+	JavaStatementHolder getLastFromTopFrame() {
 		return stack.get().getLast();
 	}
 
-	JavaStatement getLastFromFrame(int frame) {
+	JavaStatementHolder getLastFromFrame(int frame) {
 		return stack.getFromTop(frame).getLast();
 	}
 	
@@ -34,7 +37,7 @@ final class StatementsStack {
 		return stack.getFromTop(frame).size();
 	}
 
-	JavaStatement getLastFromFrame(int frame, int fromLast) {
+	JavaStatementHolder getLastFromFrame(int frame, int fromLast) {
 		return stack.getFromTop(frame).getLast(fromLast);
 	}
 

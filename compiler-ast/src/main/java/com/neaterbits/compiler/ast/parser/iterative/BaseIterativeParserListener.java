@@ -1,10 +1,12 @@
 package com.neaterbits.compiler.ast.parser.iterative;
 
+import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.block.Block;
 import com.neaterbits.compiler.ast.parser.BaseInfixParserListener;
 import com.neaterbits.compiler.ast.parser.StatementSetter;
 import com.neaterbits.compiler.ast.parser.stackstate.StackBlock;
 import com.neaterbits.compiler.ast.parser.stackstate.StackConditionBlock;
+import com.neaterbits.compiler.ast.parser.stackstate.StackElseBlock;
 import com.neaterbits.compiler.ast.parser.stackstate.StackExpression;
 import com.neaterbits.compiler.ast.parser.stackstate.StackIfElseIfElse;
 import com.neaterbits.compiler.ast.parser.stackstate.StackSwitchCase;
@@ -27,11 +29,11 @@ public abstract class BaseIterativeParserListener
 		super(logger);
 	}
 
-	public final void onIfStatementStart(Context context) {
+	public final void onIfStatementStart(Context context, String ifKeyword, Context ifKeywordContext) {
 		
 		
 		push(new StackIfElseIfElse(getLogger()));
-		push(new StackConditionBlock(getLogger()));
+		push(new StackConditionBlock(getLogger(), context, null, null, ifKeyword, ifKeywordContext));
 		
 		pushVariableScope();
 	}
@@ -43,7 +45,13 @@ public abstract class BaseIterativeParserListener
 		final StackIfElseIfElse ifElseIfElse = get();
 		
 		final ConditionBlock conditionBlock = new ConditionBlock(
-				context,
+				stackConditionBlock.getUpdatedContext(),
+				stackConditionBlock.getElseKeyword() != null
+					? new Keyword(stackConditionBlock.getElseKeywordContext(), stackConditionBlock.getElseKeyword())
+					: null,
+				stackConditionBlock.getIfKeyword() != null
+					? new Keyword(stackConditionBlock.getIfKeywordContext(), stackConditionBlock.getIfKeyword())
+					: null,
 				stackConditionBlock.makeExpression(context),
 				new Block(context, stackConditionBlock.getStatements()));
 
@@ -62,11 +70,11 @@ public abstract class BaseIterativeParserListener
 		logExit(context);
 	}
 
-	public final void onElseIfStatementStart(Context context) {
+	public final void onElseIfStatementStart(Context context, String elseKeyword, Context elseKeywordContext, String ifKeyword, Context ifKeywordContext) {
 
 		logEnter(context);
 		
-		push(new StackConditionBlock(getLogger()));
+		push(new StackConditionBlock(getLogger(), context, elseKeyword, elseKeywordContext, ifKeyword, ifKeywordContext));
 		
 		pushVariableScope();
 		
@@ -91,11 +99,11 @@ public abstract class BaseIterativeParserListener
 	}
 	*/
 
-	public final void onElseStatementStart(Context context) {
+	public final void onElseStatementStart(Context context, String keyword, Context keywordContext) {
 		
 		logEnter(context);
 		
-		push(new StackBlock(getLogger()));
+		push(new StackElseBlock(getLogger(), keyword, keywordContext));
 		
 		pushVariableScope();
 		

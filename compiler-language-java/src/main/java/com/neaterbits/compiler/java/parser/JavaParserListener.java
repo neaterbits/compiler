@@ -3,6 +3,9 @@ package com.neaterbits.compiler.java.parser;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.antlr.v4.runtime.Token;
+
+import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
@@ -49,6 +52,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 
 	private final ParseLogger logger;
+	private final String file;
 	
 	// Cache packagename
 	private String packageName;
@@ -71,8 +75,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		logger.println("stack at " + statement + " " + statementsStack);
 	}
 	
-	public JavaParserListener(ParseLogger logger) {
+	public JavaParserListener(ParseLogger logger, String file) {
 		this.logger = logger;
+		this.file = file;
 		this.delegate = new JavaIterativeListener(logger);
 		this.statementsStack = new StatementsStack();
 	}
@@ -744,26 +749,59 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onTypeReference(context, typeName);
 	}
 	
-	public void onJavaIfThenStatementStart(Context context) {
+	private static Context updateElseIfContext(Context context, Token elseToken, String file) {
+
+		final Context elseContext = Antlr4.context(elseToken, file);
+		
+		final Context updatedContext;
+		
+		if (elseContext.getStartOffset() < context.getStartOffset()) {
+			updatedContext = new Context(
+					context.getFile(),
+					elseContext.getStartLine(),
+					elseContext.getStartPosInLine(),
+					elseContext.getStartOffset(),
+					context.getEndLine(),
+					context.getEndPosInLine(),
+					context.getEndOffset(),
+					context.getText());
+		}
+		else {
+			updatedContext = context;
+		}
+		
+		if (elseContext.getStartOffset() != updatedContext.getStartOffset()) {
+			throw new IllegalStateException("elseContext " + elseContext.getStartOffset() + "/" + updatedContext.getStartOffset());
+		}
+		
+		return updatedContext;
+	}
+	
+	public void onJavaIfThenStatementStart(Context context, Token keywordToken) {
 		
 		if (logger != null) {
 			printStack("javaIfThenStatementStart");
 		}
 
-		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
+		final JavaStatementHolder ifOrElseStatement = getIfOrElseStatement(0);
 
-		if (ifOrElseStatement == JavaStatement.ELSE) {
+		if (ifOrElseStatement != null && ifOrElseStatement.getStatement() == JavaStatement.ELSE) {
 			
 			statementsStack.pop();
-			
-			delegate.onElseIfStatementStart(context);
+
+			final String elseText = ifOrElseStatement.getKeywordToken(0).getText();
+			final Token elseToken = ifOrElseStatement.getKeywordToken(0);
+
+			delegate.onElseIfStatementStart(
+					updateElseIfContext(context, elseToken, file),
+					elseText, Antlr4.context(elseToken, file),
+					keywordToken.getText(), Antlr4.context(keywordToken, file));
 		}
 		else {
-			delegate.onIfStatementStart(context);
+			delegate.onIfStatementStart(context, keywordToken.getText(), Antlr4.context(keywordToken, file));
 		}
 
-		statementsStack.add(JavaStatement.IF_THEN);
-
+		statementsStack.add(JavaStatement.IF_THEN, keywordToken);
 		statementsStack.push();
 
 		if (logger != null) {
@@ -777,9 +815,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			printStack("javaIfThenStatementEnd");
 		}
 
-		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
+		final JavaStatementHolder ifOrElseStatement = getIfOrElseStatement(0);
 		
-		if (ifOrElseStatement == JavaStatement.ELSE) {
+		if (ifOrElseStatement.getStatement() == JavaStatement.ELSE) {
 			delegate.onElseIfStatementEnd(context);
 		}
 		else {
@@ -787,7 +825,6 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		}
 
 		delegate.onEndIfStatement(context);
-		
 		statementsStack.pop();
 
 		if (logger != null) {
@@ -795,27 +832,34 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		}
 	}
 
-	public void onJavaIfThenElseStatementStart(Context context) {
+	public void onJavaIfThenElseStatementStart(
+			Context context,
+			Token ifKeyword,
+			Token elseKeyword) {
 
 		if (logger != null) {
 			printStack("javaIfThenElseStatementStart");
 		}
 
-		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
+		final JavaStatementHolder ifOrElseStatement = getIfOrElseStatement(0);
 		
-		if (ifOrElseStatement == JavaStatement.ELSE) {
+		if (ifOrElseStatement != null && ifOrElseStatement.getStatement() == JavaStatement.ELSE) {
 			// Previous was if-statement so this is else-statement
-			
 			statementsStack.pop();
 
-			delegate.onElseIfStatementStart(context);
+			final String elseText = ifOrElseStatement.getKeywordToken(0).getText();
+			final Token elseToken = ifOrElseStatement.getKeywordToken(0);
+			
+			delegate.onElseIfStatementStart(
+					updateElseIfContext(context, elseToken, file),
+					elseText, Antlr4.context(elseToken, file),
+					ifKeyword.getText(), Antlr4.context(ifKeyword, file));
 		}
 		else {
-			delegate.onIfStatementStart(context);
+			delegate.onIfStatementStart(context, ifKeyword.getText(), Antlr4.context(ifKeyword, file));
 		}
 
-		statementsStack.add(JavaStatement.IF_THEN_ELSE_START);
-
+		statementsStack.add(JavaStatement.IF_THEN_ELSE_START, ifKeyword, elseKeyword);
 		statementsStack.push();
 	}
 
@@ -826,7 +870,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		}
 	}
 	
-	final JavaStatement getIfOrElseStatement(int i) {
+	final JavaStatementHolder getIfOrElseStatement(int i) {
 
 		return 	   statementsStack.size() > 1
 				&& statementsStack.getSizeOfFrame(1) > 0 + i
@@ -837,18 +881,21 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 	private void onAnyNonIfStatementStart(Context context) {
 
-		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
+		final JavaStatementHolder ifOrElseStatement = getIfOrElseStatement(0);
 
 		if (ifOrElseStatement != null && statementsStack.getSizeOfFrame(0) == 0) {
 			
-			switch (ifOrElseStatement) {
+			switch (ifOrElseStatement.getStatement()) {
 			case IF_THEN_ELSE_START:
 				// We are at block1 of if <block1> else <block2>
 				break;
 
 			case ELSE:
 				// We are at block2 of if <block1> else <block2>
-				delegate.onElseStatementStart(context);
+				delegate.onElseStatementStart(
+						context,
+						ifOrElseStatement.getKeywordToken(0).getText(),
+						Antlr4.context(ifOrElseStatement.getKeywordToken(0), file));
 				break;
 				
 			default:
@@ -859,14 +906,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	
 	private void onAnyNonIfStatementEnd(Context context) {
 
-		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
+		final JavaStatementHolder ifOrElseStatement = getIfOrElseStatement(0);
 
 		if (ifOrElseStatement != null && statementsStack.getSizeOfFrame(0) == 1) {
 
-			switch (ifOrElseStatement) {
+			switch (ifOrElseStatement.getStatement()) {
 			case IF_THEN_ELSE_START:
 				
-				final JavaStatement prevStatement = getIfOrElseStatement(1);
+				final JavaStatement prevStatement = getIfOrElseStatement(1).getStatement();
 				
 				if (prevStatement == JavaStatement.ELSE) {
 					delegate.onElseIfStatementEnd(context);
@@ -877,9 +924,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 				}
 				
 				// We are at block1 of if <block1> else <block2>
-				statementsStack.pop();
 				
-				statementsStack.add(JavaStatement.ELSE);
+				final Token elseToken = ifOrElseStatement.getKeywordToken(1);
+				
+				statementsStack.pop();
+				statementsStack.add(JavaStatement.ELSE, elseToken);
 				
 				// else-block
 				statementsStack.push();
@@ -915,7 +964,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		if (statementsStack.size() > 1 && statementsStack.getSizeOfFrame(1) > 0) {
 			
-			switch (statementsStack.getLastFromFrame(1)) {
+			switch (statementsStack.getLastFromFrame(1).getStatement()) {
 				
 			case ENHANCED_FOR:
 				delegate.onIteratorForTestEnd(context);
@@ -956,7 +1005,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		if (statementsStack.size() > 1 && statementsStack.getSizeOfFrame(1) > 0) {
 
-			switch (statementsStack.getLastFromFrame(1)) {
+			switch (statementsStack.getLastFromFrame(1).getStatement()) {
 				
 			case TRY_CATCH:
 			case TRY_CATCH_FINALLY:

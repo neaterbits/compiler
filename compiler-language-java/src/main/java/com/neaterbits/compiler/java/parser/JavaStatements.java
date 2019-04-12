@@ -5,23 +5,23 @@ import java.util.List;
 import java.util.Objects;
 
 final class JavaStatements {
-	private final List<JavaStatement> statements;
+	private final List<JavaStatementHolder> statements;
 
 	JavaStatements() {
 		this.statements = new ArrayList<>();
 	}
 	
-	void add(JavaStatement statement) {
+	void add(JavaStatementHolder statement) {
 		Objects.requireNonNull(statement);
 		
 		statements.add(statement);
 	}
 
-	JavaStatement getLast() {
+	JavaStatementHolder getLast() {
 		return statements.get(statements.size() - 1);
 	}
 
-	JavaStatement getLast(int fromLast) {
+	JavaStatementHolder getLast(int fromLast) {
 		return statements.get(statements.size() - fromLast - 1);
 	}
 	

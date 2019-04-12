@@ -1576,7 +1576,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	// Hack to construct proper if-else if-else sequences
 	@Override
 	public void enterIfThenStatement(IfThenStatementContext ctx) {
-		delegate.onJavaIfThenStatementStart(context(ctx));
+		delegate.onJavaIfThenStatementStart(context(ctx), ctx.ifKeyword);
 	}
 
 	@Override
@@ -1586,7 +1586,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterIfThenElseStatement(IfThenElseStatementContext ctx) {
-		delegate.onJavaIfThenElseStatementStart(context(ctx));
+		delegate.onJavaIfThenElseStatementStart(context(ctx), ctx.ifKeyword, ctx.elseKeyword);
 	}
 
 	@Override
@@ -1596,7 +1596,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterIfThenElseStatementNoShortIf(IfThenElseStatementNoShortIfContext ctx) {
-		delegate.onJavaIfThenElseStatementStart(context(ctx));
+		delegate.onJavaIfThenElseStatementStart(context(ctx), ctx.ifKeyword, ctx.elseKeyword);
 	}
 
 	@Override

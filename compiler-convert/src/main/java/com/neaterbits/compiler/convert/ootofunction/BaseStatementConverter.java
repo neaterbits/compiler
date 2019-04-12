@@ -41,6 +41,8 @@ public abstract class BaseStatementConverter<T extends ConverterState<T>>
 
 			final ConditionBlock convertedConditionBlock = new ConditionBlock(
 					conditionBlock.getContext(),
+					null,
+					null,
 					convertExpression(conditionBlock.getCondition(), param),
 					convertBlock(conditionBlock.getBlock(), param));
 
