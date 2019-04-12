@@ -14,12 +14,14 @@ import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.NamespaceDeclaration;
 import com.neaterbits.compiler.ast.Program;
+import com.neaterbits.compiler.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.ComplexTypeDefinition;
+import com.neaterbits.compiler.ast.typedefinition.ConstructorModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.FieldModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceMethodName;
@@ -181,12 +183,15 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 		}
 		else if (   element instanceof InterfaceModifierHolder
 				 || element instanceof ClassModifierHolder
+				 || element instanceof ConstructorModifierHolder
 				 || element instanceof ClassMethodModifierHolder
 				 || element instanceof FieldModifierHolder
 				 || element instanceof VariableModifierHolder) {
 			
 			sourceTokenType = SourceTokenType.KEYWORD;
-			
+		}
+		else if (element instanceof ThisPrimary) {
+			sourceTokenType = SourceTokenType.THIS_REFERENCE;
 		}
 		else if (element instanceof NamespaceDeclaration) {
 			sourceTokenType = SourceTokenType.NAMESPACE_DECLARATION_NAME;
