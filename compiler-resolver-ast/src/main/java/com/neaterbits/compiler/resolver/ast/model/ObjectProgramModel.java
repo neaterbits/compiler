@@ -15,6 +15,7 @@ import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.NamespaceDeclaration;
 import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.expression.ThisPrimary;
+import com.neaterbits.compiler.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
@@ -189,6 +190,9 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 				 || element instanceof VariableModifierHolder) {
 			
 			sourceTokenType = SourceTokenType.KEYWORD;
+		}
+		else if (element instanceof BooleanLiteral) {
+			sourceTokenType = SourceTokenType.BOOLEAN_LITERAL;
 		}
 		else if (element instanceof ThisPrimary) {
 			sourceTokenType = SourceTokenType.THIS_REFERENCE;
