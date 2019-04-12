@@ -1832,7 +1832,7 @@ public abstract class BaseParserListener {
 		
 		final StatementSetter statementSetter = get();
 		
-		final VariableModifiers modifiers = new VariableModifiers(context, variableDeclaration.getModifiers());
+		final VariableModifiers modifiers = new VariableModifiers(variableDeclaration.getModifiers());
 		
 		final VariableDeclarationStatement statement = new VariableDeclarationStatement(
 				context,
@@ -2064,7 +2064,7 @@ public abstract class BaseParserListener {
 		
 		final ModifiersVariableDeclarationElement variableDeclarationElement = new ModifiersVariableDeclarationElement(
 				context,
-				new VariableModifiers(context, stackIteratorForStatement.getModifiers()),
+				new VariableModifiers(stackIteratorForStatement.getModifiers()),
 				stackIteratorForStatement.getTypeReference(),
 				new VarNameDeclaration(stackIteratorForStatement.getNameContext(), stackIteratorForStatement.getName()),
 				stackIteratorForStatement.getNumDims()); 
@@ -2185,7 +2185,7 @@ public abstract class BaseParserListener {
 		
 		final Resource resource = new Resource(
 				context,
-				new VariableModifiers(context, stackResource.getModifiers()),
+				new VariableModifiers(stackResource.getModifiers()),
 				stackResource.getTypeReference(),
 				new VarNameDeclaration(stackResource.getNameContext(), stackResource.getName()),
 				stackResource.getNumDims(),

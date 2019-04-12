@@ -79,11 +79,11 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 
 		final List<VariableModifierHolder> list = new ArrayList<>(modifiers.getModifiers().size());
 		
-		for (VariableModifierHolder modifierHolder : modifiers.getModifierHolders()) {
-			list.add(new VariableModifierHolder(modifierHolder.getContext(), modifierHolder.getDelegate()));
+		for (VariableModifierHolder modifierHolder : modifiers.getModifiers()) {
+			list.add(new VariableModifierHolder(modifierHolder.getContext(), modifierHolder.getModifier()));
 		}
 
-		return new VariableModifiers(modifiers.getContext(), list);
+		return new VariableModifiers(list);
 	}
 
 	protected final VariableReference convertVariableReference(VariableReference variableReference, T state) {

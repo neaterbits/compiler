@@ -67,7 +67,7 @@ abstract class BaseStackVariableDeclaration extends StackEntry
 	
 	public final VariableDeclaration makeVariableDeclaration(Context context) {
 		final VariableDeclaration variableDeclaration = new VariableDeclaration(
-				new VariableModifiers(context, modifiers),
+				new VariableModifiers(modifiers),
 				typeReference,
 				new VarName(name),
 				numDims);
