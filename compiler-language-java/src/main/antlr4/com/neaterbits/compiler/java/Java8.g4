@@ -810,7 +810,7 @@ assertStatement
 	;
 
 switchStatement
-	:	'switch' '(' expression ')' switchBlock
+	:	keyword = 'switch' '(' expression ')' switchBlock
 	;
 
 switchBlock
@@ -826,9 +826,9 @@ switchLabels
 	;
 
 switchLabel
-	:	'case' enumConstantName ':'		# enumConstantNameSwitchLabel
-	|	'case' constantExpression ':'	# constantExpressionSwitchLabel
-	|	'default' ':'					# defaultSwitchLabel
+	:	keyword = 'case' enumConstantName ':'	# enumConstantNameSwitchLabel
+	|	keyword = 'case' constantExpression ':'	# constantExpressionSwitchLabel
+	|	keyword = 'default' ':'					# defaultSwitchLabel
 	;
 
 enumConstantName
@@ -887,7 +887,7 @@ enhancedForStatementNoShortIf
 	;
 
 breakStatement
-	:	'break' Identifier? ';'
+	:	keyword = 'break' Identifier? ';'
 	;
 
 continueStatement

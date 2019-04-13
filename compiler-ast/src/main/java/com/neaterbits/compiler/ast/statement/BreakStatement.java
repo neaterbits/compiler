@@ -1,17 +1,31 @@
 package com.neaterbits.compiler.ast.statement;
 
+import java.util.Objects;
+
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
+import com.neaterbits.compiler.ast.Keyword;
+import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
 
 public final class BreakStatement extends Statement {
 
+	private final ASTSingle<Keyword> keyword;
+
 	private final String label;
 
-	public BreakStatement(Context context, String label) {
+	public BreakStatement(Context context, Keyword keyword, String label) {
 		super(context);
+
+		Objects.requireNonNull(keyword);
+		
+		this.keyword = makeSingle(keyword);
 		
 		this.label = label;
+	}
+
+	public Keyword getKeyword() {
+		return keyword.get();
 	}
 
 	public String getLabel() {
@@ -25,6 +39,7 @@ public final class BreakStatement extends Statement {
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		
+
+		doIterate(keyword, recurseMode, iterator);
 	}
 }

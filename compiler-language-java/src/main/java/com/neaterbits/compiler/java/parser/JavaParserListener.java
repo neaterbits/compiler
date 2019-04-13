@@ -1057,11 +1057,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onExpressionStatementEnd(context);
 	}
 
-	public void onSwitchStatementStart(Context context) {
+	public void onSwitchStatementStart(Context context, String keyword, Context keywordContext) {
 
 		statementsStack.add(JavaStatement.SWITCH);
 
-		delegate.onSwitchStatementStart(context);
+		delegate.onSwitchStatementStart(context, keyword, keywordContext);
 	}
 
 	public void onJavaSwitchBlockStart(Context context) {
@@ -1092,12 +1092,12 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onConstantSwitchLabelEnd(context);
 	}
 	
-	public void onEnumSwitchLabel(Context context, String constantName) {
-		delegate.onEnumSwitchLabel(context, constantName);
+	public void onEnumSwitchLabel(Context context, String keyword, Context keywordContext, String constantName) {
+		delegate.onEnumSwitchLabel(context, keyword, keywordContext, constantName);
 	}
 	
-	public void onDefaultSwitchLabel(Context context) {
-		delegate.onDefaultSwitchLabel(context);
+	public void onDefaultSwitchLabel(Context context, String keyword, Context keywordContext) {
+		delegate.onDefaultSwitchLabel(context, keyword, keywordContext);
 	}
 	
 	public void onJavaSwitchBlockEnd(Context context) {
@@ -1108,8 +1108,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onSwitchStatementEnd(context);
 	}
 	
-	public void onBreakStatement(Context context, String label) {
-		delegate.onBreakStatement(context, label);
+	public void onBreakStatement(Context context, String keyword, Context keywordContext, String label) {
+		delegate.onBreakStatement(context, keyword, keywordContext, label);
 	}
 	
 	public void onWhileStatementStart(Context context) {

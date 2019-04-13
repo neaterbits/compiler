@@ -4,7 +4,6 @@ import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.block.Block;
 import com.neaterbits.compiler.ast.parser.BaseInfixParserListener;
 import com.neaterbits.compiler.ast.parser.StatementSetter;
-import com.neaterbits.compiler.ast.parser.stackstate.StackBlock;
 import com.neaterbits.compiler.ast.parser.stackstate.StackConditionBlock;
 import com.neaterbits.compiler.ast.parser.stackstate.StackElseBlock;
 import com.neaterbits.compiler.ast.parser.stackstate.StackExpression;
@@ -144,11 +143,11 @@ public abstract class BaseIterativeParserListener
 		logExit(context);
 	}
 
-	public final void onSwitchStatementStart(Context context) {
+	public final void onSwitchStatementStart(Context context, String keyword, Context keywordContext) {
 
 		logEnter(context);
 		
-		push(new StackSwitchCase(getLogger()));
+		push(new StackSwitchCase(getLogger(), keyword, keywordContext));
 
 		logExit(context);
 	}
@@ -227,11 +226,13 @@ public abstract class BaseIterativeParserListener
 		logExit(context);
 	}
 	
-	public final void onEnumSwitchLabel(Context context, String constantName) {
+	public final void onEnumSwitchLabel(Context context, String keyword, Context keywordContext, String constantName) {
 		
 		logEnter(context);
 		
-		final EnumSwitchCaseLabel switchCaseLabel = new EnumSwitchCaseLabel(context, constantName);
+		final Keyword k = new Keyword(keywordContext, keyword);
+		
+		final EnumSwitchCaseLabel switchCaseLabel = new EnumSwitchCaseLabel(context, k, constantName);
 		
 		final StackSwitchCaseGroup stackSwitchCaseGroup = get();
 		
@@ -241,13 +242,15 @@ public abstract class BaseIterativeParserListener
 	}
 	
 	
-	public final void onDefaultSwitchLabel(Context context) {
+	public final void onDefaultSwitchLabel(Context context, String keyword, Context keywordContext) {
 		
 		logEnter(context);
 
 		final StackSwitchCaseGroup stackSwitchCaseGroup = get();
 		
-		stackSwitchCaseGroup.addLabel(new DefaultSwitchCaseLabel(context));
+		final Keyword k = new Keyword(keywordContext, keyword);
+		
+		stackSwitchCaseGroup.addLabel(new DefaultSwitchCaseLabel(context, k));
 		
 		logExit(context);
 	}
@@ -265,8 +268,11 @@ public abstract class BaseIterativeParserListener
 		
 		final StackSwitchCase stackSwitchCase = pop();
 		
+		final Keyword k = new Keyword(stackSwitchCase.getKeywordContext(), stackSwitchCase.getKeyword());
+		
 		final SwitchCaseStatement statement = new SwitchCaseStatement(
 				context,
+				k,
 				stackSwitchCase.makeExpression(context),
 				stackSwitchCase.getGroups());
 		
@@ -277,13 +283,13 @@ public abstract class BaseIterativeParserListener
 		logExit(context);
 	}
 	
-	public final void onBreakStatement(Context context, String label) {
+	public final void onBreakStatement(Context context, String keyword, Context keywordContext, String label) {
 		
 		logEnter(context);
 
 		final StatementSetter statementSetter = get();
 		
-		statementSetter.addStatement(new BreakStatement(context, label));
+		statementSetter.addStatement(new BreakStatement(context, new Keyword(keywordContext, keyword), label));
 		
 		logExit(context);
 	}

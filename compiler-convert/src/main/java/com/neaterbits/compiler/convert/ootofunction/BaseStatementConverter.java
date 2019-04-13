@@ -73,8 +73,7 @@ public abstract class BaseStatementConverter<T extends ConverterState<T>>
 			*/
 		}
 		
-
-		return new SwitchCaseStatement(statement.getContext(), convertedExpression, convertedGroups);
+		return new SwitchCaseStatement(statement.getContext(), null, convertedExpression, convertedGroups);
 	}
 
 	@Override

@@ -1646,7 +1646,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterSwitchStatement(SwitchStatementContext ctx) {
-		delegate.onSwitchStatementStart(context(ctx));
+		delegate.onSwitchStatementStart(context(ctx), ctx.keyword.getText(), context(ctx.keyword));
 	}
 	
 	@Override
@@ -1686,12 +1686,12 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterEnumConstantNameSwitchLabel(EnumConstantNameSwitchLabelContext ctx) {
-		delegate.onEnumSwitchLabel(context(ctx), ctx.enumConstantName().getText());
+		delegate.onEnumSwitchLabel(context(ctx), ctx.keyword.getText(), context(ctx.keyword), ctx.enumConstantName().getText());
 	}
 
 	@Override
 	public void exitDefaultSwitchLabel(DefaultSwitchLabelContext ctx) {
-		delegate.onDefaultSwitchLabel(context(ctx));
+		delegate.onDefaultSwitchLabel(context(ctx), ctx.keyword.getText(), context(ctx.keyword));
 	}
 
 	@Override
@@ -1711,7 +1711,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				? ctx.Identifier().getText()
 				: null;
 
-		delegate.onBreakStatement(context(ctx), breakLabel);
+		delegate.onBreakStatement(context(ctx), ctx.keyword.getText(), context(ctx.keyword), breakLabel);
 	}
 
 	@Override
