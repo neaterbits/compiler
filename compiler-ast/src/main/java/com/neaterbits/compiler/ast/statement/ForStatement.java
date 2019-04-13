@@ -52,5 +52,7 @@ public final class ForStatement extends LoopStatement {
 		if (forUpdate != null) {
 			doIterate(forUpdate, recurseMode, iterator);
 		}
+		
+		super.doRecurse(recurseMode, iterator);
 	}
 }

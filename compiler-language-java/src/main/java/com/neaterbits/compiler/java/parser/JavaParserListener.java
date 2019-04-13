@@ -1084,8 +1084,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onJavaSwitchBlockStatementGroupEnd(context);
 	}
 
-	public void onConstantSwitchLabelStart(Context context) {
-		delegate.onConstantSwitchLabelStart(context);
+	public void onConstantSwitchLabelStart(Context context, String keyword, Context keywordContext) {
+		delegate.onConstantSwitchLabelStart(context, keyword, keywordContext);
 	}
 	
 	public void onConstantSwitchLabelEnd(Context context) {

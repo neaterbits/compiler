@@ -5,8 +5,8 @@ import com.neaterbits.compiler.ast.block.Block;
 import com.neaterbits.compiler.ast.parser.BaseInfixParserListener;
 import com.neaterbits.compiler.ast.parser.StatementSetter;
 import com.neaterbits.compiler.ast.parser.stackstate.StackConditionBlock;
+import com.neaterbits.compiler.ast.parser.stackstate.StackConstantSwitchLabel;
 import com.neaterbits.compiler.ast.parser.stackstate.StackElseBlock;
-import com.neaterbits.compiler.ast.parser.stackstate.StackExpression;
 import com.neaterbits.compiler.ast.parser.stackstate.StackIfElseIfElse;
 import com.neaterbits.compiler.ast.parser.stackstate.StackSwitchCase;
 import com.neaterbits.compiler.ast.parser.stackstate.StackSwitchCaseGroup;
@@ -200,11 +200,11 @@ public abstract class BaseIterativeParserListener
 		logExit(context);
 	}
 
-	public final void onConstantSwitchLabelStart(Context context) {
+	public final void onConstantSwitchLabelStart(Context context, String keyword, Context keywordContext) {
 		
 		logEnter(context);
 		
-		push(new StackExpression(getLogger()));
+		push(new StackConstantSwitchLabel(getLogger(), keyword, keywordContext));
 		
 		logExit(context);
 	}
@@ -213,11 +213,12 @@ public abstract class BaseIterativeParserListener
 		
 		logEnter(context);
 		
-		final StackExpression stackExpression = pop();
+		final StackConstantSwitchLabel stackLabel = pop();
 		
 		final ConstantSwitchCaseLabel switchCaseLabel = new ConstantSwitchCaseLabel(
 				context,
-				stackExpression.getExpression());
+				new Keyword(stackLabel.getKeywordContext(), stackLabel.getKeyword()),
+				stackLabel.getExpression());
 		
 		final StackSwitchCaseGroup stackSwitchCaseGroup = get();
 		

@@ -1676,7 +1676,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterConstantExpressionSwitchLabel(ConstantExpressionSwitchLabelContext ctx) {
-		delegate.onConstantSwitchLabelStart(context(ctx));
+		delegate.onConstantSwitchLabelStart(context(ctx), ctx.keyword.getText(), context(ctx.keyword));
 	}
 
 	@Override
