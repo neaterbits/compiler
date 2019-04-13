@@ -858,11 +858,11 @@ forStatementNoShortIf
 	;
 
 basicForStatement
-	:	'for' '(' forInit? ';' expression? ';' forUpdate? ')' statement
+	:	keyword = 'for' '(' forInit? ';' expression? ';' forUpdate? ')' statement
 	;
 
 basicForStatementNoShortIf
-	:	'for' '(' forInit? ';' expression? ';' forUpdate? ')' statementNoShortIf
+	:	keyword = 'for' '(' forInit? ';' expression? ';' forUpdate? ')' statementNoShortIf
 	;
 
 forInit

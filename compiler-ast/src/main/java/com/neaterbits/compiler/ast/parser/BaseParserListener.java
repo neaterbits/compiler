@@ -1965,11 +1965,11 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	public final void onForStatementStart(Context context) {
+	public final void onForStatementStart(Context context, String keyword, Context keywordContext) {
 		
 		logEnter(context);
 
-		push(new StackForStatement(logger));
+		push(new StackForStatement(logger, keyword, keywordContext));
 		
 		logExit(context);
 	}
@@ -2050,6 +2050,7 @@ public abstract class BaseParserListener {
 		
 		final ForStatement statement = new ForStatement(
 				context,
+				new Keyword(stackForStatement.getKeywordContext(), stackForStatement.getKeyword()),
 				stackForStatement.getForInit(),
 				stackForStatement.makeExpressionOrNull(context),
 				stackForStatement.getForUpdate(),

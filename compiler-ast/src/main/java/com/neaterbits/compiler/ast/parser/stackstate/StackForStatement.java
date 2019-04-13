@@ -14,15 +14,32 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public class StackForStatement extends StackExpressionList implements StatementSetter {
 
+	private final String keyword;
+	private final Context keywordContext;
+	
 	private ForInit forInit;
 	private ForExpressionList forUpdate;
 	
 	private final List<Statement> statements;
 	
-	public StackForStatement(ParseLogger parseLogger) {
+	public StackForStatement(ParseLogger parseLogger, String keyword, Context keywordContext) {
 		super(parseLogger);
 		
+		Objects.requireNonNull(keyword);
+		Objects.requireNonNull(keywordContext);
+		
+		this.keyword = keyword;
+		this.keywordContext = keywordContext;
+		
 		this.statements = new ArrayList<>();
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+
+	public Context getKeywordContext() {
+		return keywordContext;
 	}
 
 	public ForInit getForInit() {

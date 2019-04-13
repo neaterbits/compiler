@@ -1120,11 +1120,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onWhileStatementEnd(context);
 	}
 	
-	public void onForStatementStart(Context context) {
+	public void onForStatementStart(Context context, String keyword, Context keywordContext) {
 		
 		statementsStack.add(JavaStatement.FOR);
 		
-		delegate.onForStatementStart(context);
+		delegate.onForStatementStart(context, keyword, keywordContext);
 	}
 	
 	public void onForInitStart(Context context) {
