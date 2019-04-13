@@ -114,7 +114,7 @@ public abstract class BaseIterativeParserListener
 
 		logEnter(context);
 		
-		final StackBlock stackBlock = pop();
+		final StackElseBlock stackBlock = pop();
 
 		popVariableScope();
 
