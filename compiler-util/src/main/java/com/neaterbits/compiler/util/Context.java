@@ -1,5 +1,9 @@
 package com.neaterbits.compiler.util;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Function;
+
 public final class Context {
 
 	private final String file;
@@ -13,6 +17,49 @@ public final class Context {
 
 	public static Context makeTestContext() {
 		return new Context("", 0, 0, 0, 0, 0, 0, "");
+	}
+	
+	public static <T> Context merge(Collection<T> elements, Function<T, Context> getContext) {
+		
+		if (elements.size() <= 1) {
+			throw new IllegalArgumentException();
+		}
+		
+		Context lower = null;
+		Context upper = null;
+		
+		final StringBuilder sb = new StringBuilder();
+		
+		final Iterator<T> iter = elements.iterator();
+		
+		while (iter.hasNext()) {
+			final Context context = getContext.apply(iter.next());
+		
+			if (lower == null) {
+				lower = context;
+			}
+			else {
+				sb.append(' ');
+				
+				if (!lower.getFile().equals(context.getFile())) {
+					throw new IllegalArgumentException();
+				}
+			}
+			
+			upper = context;
+			
+			sb.append(context.getText());
+		}
+		
+		if (lower.endOffset > upper.startOffset) {
+			throw new IllegalArgumentException();
+		}
+		
+		return new Context(
+				lower.file,
+				lower.startLine, lower.startPosInLine, lower.getStartOffset(), 
+				upper.endLine, upper.endPosInLine, upper.endOffset,
+				sb.toString());
 	}
 	
 	public Context(String file, int startLine, int startPosInLine, int startOffset, int endLine, int endPos, int endOffset, String text) {

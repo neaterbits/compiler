@@ -61,7 +61,7 @@ public class StackExpressionList extends ListStackEntry<Expression>
 		operators.add(operator);
 	}
 
-	public final List<Operator> getOperators() {
+	public final List<Operator> getOperators(Context context) {
 		return operators;
 	}
 
@@ -84,7 +84,9 @@ public class StackExpressionList extends ListStackEntry<Expression>
 			result = expressions.get(0);
 		}
 		else {
-			result = new ExpressionList(context, operators, expressions);
+			final Context listContext = Context.merge(expressions, Expression::getContext);
+			
+			result = new ExpressionList(listContext, operators, expressions);
 		}
 		
 		return result;
