@@ -40,6 +40,8 @@ public interface ExpressionVisitor<T, R> {
 	
 	R onFieldAccess(FieldAccess expression, T param);
 	
+	R onCastExpression(CastExpression expression, T param);
+	
 	R onThis(ThisPrimary expression, T param);
 	
 	R onVariableReference(VariableReference expression, T param);

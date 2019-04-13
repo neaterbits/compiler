@@ -39,7 +39,7 @@ public class StackExpression extends StackEntry implements ExpressionSetter, Var
 	}
 
 	@Override
-	public void setVariableReference(VariableReference variableReference) {
+	public final void setVariableReference(VariableReference variableReference) {
 		setExpression(variableReference);
 	}
 

@@ -1000,6 +1000,16 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitArgumentList(ArgumentListContext ctx) {
 		delegate.onParametersEnd(context(ctx));
 	}
+
+	@Override
+	public void enterCastExpression_unaryExpression(CastExpression_unaryExpressionContext ctx) {
+		delegate.onCastExpressionStart(context(ctx));
+	}
+
+	@Override
+	public void exitCastExpression_unaryExpression(CastExpression_unaryExpressionContext ctx) {
+		delegate.onCastExpressionEnd(context(ctx));
+	}
 	
 	// Array creation
 

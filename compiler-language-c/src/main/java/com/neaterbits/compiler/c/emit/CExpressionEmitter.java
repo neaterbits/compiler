@@ -19,6 +19,7 @@ import com.neaterbits.compiler.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.statement.Statement;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.VariableReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.c.CLikeExpressionEmitter;
@@ -29,8 +30,14 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	
 	private static final CVariableReferenceEmitter VARIABLE_REFERENCE_EMITTER = new CVariableReferenceEmitter();
 	
+	private static final CTypeEmitter TYPE_EMITTER = new CTypeEmitter();
+	
 	protected void emitVariableReference(VariableReference variable, EmitterState param) {
 		variable.visit(VARIABLE_REFERENCE_EMITTER, param);
+	}
+
+	protected void emitTypeReference(TypeReference type, EmitterState param) {
+		type.getType().visit(TYPE_EMITTER, param);
 	}
 
 	@Override

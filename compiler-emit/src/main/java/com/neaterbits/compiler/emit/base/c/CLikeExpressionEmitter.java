@@ -2,6 +2,7 @@ package com.neaterbits.compiler.emit.base.c;
 
 import com.neaterbits.compiler.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.ast.expression.AssignmentExpression;
+import com.neaterbits.compiler.ast.expression.CastExpression;
 import com.neaterbits.compiler.ast.expression.ConditionalExpression;
 import com.neaterbits.compiler.ast.expression.NestedExpression;
 import com.neaterbits.compiler.ast.expression.arithemetic.binary.ArithmeticBinaryExpression;
@@ -224,4 +225,19 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 		
 		return null;
 	}
+
+	@Override
+	public final Void onCastExpression(CastExpression expression, T param) {
+
+		param.append('(');
+		
+		emitTypeReference(expression.getCastType(), param);
+		
+		param.append(')');
+		
+		emitExpression(expression.getExpression(), param);
+		
+		return null;
+	}
 }
+

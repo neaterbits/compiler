@@ -1348,9 +1348,9 @@ postDecrementExpression_lf_postfixExpression
 	;
 
 castExpression
-	:	'(' primitiveType ')' unaryExpression
-	|	'(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus
-	|	'(' referenceType additionalBound* ')' lambdaExpression
+	:	'(' primitiveType ')' unaryExpression									# castExpression_unaryExpression
+	|	'(' referenceType additionalBound* ')' unaryExpressionNotPlusMinus		# castExpression_unaryExpressionNotPlusMinus
+	|	'(' referenceType additionalBound* ')' lambdaExpression					# castExpression_lambdaExpression
 	;
 
 // LEXER

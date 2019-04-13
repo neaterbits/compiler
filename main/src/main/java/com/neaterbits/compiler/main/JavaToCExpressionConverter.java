@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.block.ClassMethod;
 import com.neaterbits.compiler.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.ast.expression.ArrayCreationExpression;
 import com.neaterbits.compiler.ast.expression.BlockLambdaExpression;
+import com.neaterbits.compiler.ast.expression.CastExpression;
 import com.neaterbits.compiler.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.expression.FieldAccess;
@@ -182,6 +183,11 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 
 	@Override
 	public Expression onArrayCreationExpression(ArrayCreationExpression expression, T param) {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public Expression onCastExpression(CastExpression expression, T param) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -26,6 +26,7 @@ import com.neaterbits.compiler.ast.expression.ArrayCreationExpression;
 import com.neaterbits.compiler.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.ast.expression.Base;
 import com.neaterbits.compiler.ast.expression.BlockLambdaExpression;
+import com.neaterbits.compiler.ast.expression.CastExpression;
 import com.neaterbits.compiler.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.ast.expression.ConditionalExpression;
 import com.neaterbits.compiler.ast.expression.Expression;
@@ -55,6 +56,7 @@ import com.neaterbits.compiler.ast.parser.stackstate.StackArrayAccess;
 import com.neaterbits.compiler.ast.parser.stackstate.StackArrayCreationExpression;
 import com.neaterbits.compiler.ast.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.ast.parser.stackstate.StackAssignmentLHS;
+import com.neaterbits.compiler.ast.parser.stackstate.StackCastExpression;
 import com.neaterbits.compiler.ast.parser.stackstate.StackCatchBlock;
 import com.neaterbits.compiler.ast.parser.stackstate.StackClass;
 import com.neaterbits.compiler.ast.parser.stackstate.StackClassInstanceCreationExpression;
@@ -1295,6 +1297,34 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
+	public final void onCastExpressionStart(Context context) {
+		
+		logEnter(context);
+	
+		push(new StackCastExpression(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onCastExpressionEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackCastExpression stackCastExpression = pop();
+
+		final ExpressionSetter expressionSetter = get();
+		
+		final CastExpression castExpression = new CastExpression(
+				context,
+				stackCastExpression.getTypeReference(),
+				stackCastExpression.getExpression());
+		
+		expressionSetter.addExpression(castExpression);
+		
+		logExit(context);
+	}
+	
+	
 	public final void onThisPrimary(Context context) {
 		
 		logEnter(context);
@@ -1885,9 +1915,15 @@ public abstract class BaseParserListener {
 		
 		Objects.requireNonNull(typeReference);
 
+		try {
 		final TypeReferenceSetter typeReferenceSetter = get();
 
 		typeReferenceSetter.setTypeReference(typeReference);
+		}
+		catch (Exception ex) {
+			System.err.println("## exception at " + context);
+			ex.printStackTrace(System.err);
+		}
 		
 		logExit(context);
 	}

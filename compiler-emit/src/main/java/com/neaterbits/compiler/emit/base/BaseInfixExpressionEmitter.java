@@ -6,6 +6,7 @@ import com.neaterbits.compiler.ast.expression.ExpressionList;
 import com.neaterbits.compiler.ast.expression.PrimaryList;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.operator.Operator;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.VariableReference;
 import com.neaterbits.compiler.emit.EmitterState;
 
@@ -14,6 +15,8 @@ public abstract class BaseInfixExpressionEmitter<T extends EmitterState> extends
 	protected abstract String getOperatorString(Operator operator);
 
 	protected abstract void emitVariableReference(VariableReference variableReference, T param);
+
+	protected abstract void emitTypeReference(TypeReference typeReference, T param);
 
 	@Override
 	public final Void onExpressionList(ExpressionList expressionList, T param) {

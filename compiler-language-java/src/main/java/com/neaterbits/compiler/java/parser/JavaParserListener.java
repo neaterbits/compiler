@@ -432,6 +432,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onFieldAccess(context, fieldAccessType, typeName, fieldName, fieldNameContext);
 	}
 
+	public void onCastExpressionStart(Context context) {
+		delegate.onCastExpressionStart(context);
+	}
+	
+	public void onCastExpressionEnd(Context context) {
+		delegate.onCastExpressionEnd(context);
+	}
+
 	public void onThisPrimary(Context context) {
 		delegate.onThisPrimary(context);
 	}

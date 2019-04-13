@@ -42,7 +42,8 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		statement.visit(STATEMENT_EMITTER, state);
 	}
 
-	private void emitType(TypeReference type, EmitterState param) {
+	@Override
+	protected void emitTypeReference(TypeReference type, EmitterState param) {
 		type.getType().visit(TYPE_EMITTER, param);
 	}
 	
@@ -87,7 +88,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	public Void onClassInstanceCreation(ClassInstanceCreationExpression expression, EmitterState state) {
 		state.append("new ");
 		
-		emitType(expression.getTypeReference(), state);
+		emitTypeReference(expression.getTypeReference(), state);
 		
 		state.append('(');
 
@@ -107,7 +108,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 			break;
 			
 		case NAMED_CLASS_STATIC:
-			emitType(expression.getClassType(), param);
+			emitTypeReference(expression.getClassType(), param);
 			param.append('.');
 			break;
 
@@ -122,7 +123,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 			break;
 			
 		case TYPED_SUPER:
-			emitType(expression.getClassType(), param);
+			emitTypeReference(expression.getClassType(), param);
 			param.append('.');
 			param.append("super").append('.');
 			break;
@@ -146,7 +147,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 		param.append("new ");
 		
-		emitType(expression.getTypeReference(), param);
+		emitTypeReference(expression.getTypeReference(), param);
 		
 		param.append(' ');
 		
@@ -192,7 +193,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 			break;
 			
 		case TYPE_SUPER_FIELD:
-			emitType(expression.getClassType(), param);
+			emitTypeReference(expression.getClassType(), param);
 			param.append('.').append("super.").append(expression.getFieldName().getName());
 			break;
 			
