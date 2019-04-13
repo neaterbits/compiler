@@ -53,7 +53,7 @@ public abstract class BaseStatementConverter<T extends ConverterState<T>>
 				? convertBlock(statement.getElseBlock(), param)
 				: null;
 		
-		return new IfElseIfElseStatement(statement.getContext(), convertedConditionBlocks, convertedElseBlock);
+		return new IfElseIfElseStatement(statement.getContext(), convertedConditionBlocks, null, convertedElseBlock);
 	}
 
 	@Override

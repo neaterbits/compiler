@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
+import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.block.Block;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
@@ -13,9 +14,11 @@ import com.neaterbits.compiler.util.Context;
 public final class IfElseIfElseStatement extends ConditionStatement {
 
 	private final ASTList<ConditionBlock> conditions;
+	
+	private final ASTSingle<Keyword> elseKeyword;
 	private final ASTSingle<Block> elseBlock;
 	
-	public IfElseIfElseStatement(Context context, List<ConditionBlock> conditions, Block elseBlock) {
+	public IfElseIfElseStatement(Context context, List<ConditionBlock> conditions, Keyword elseKeyword, Block elseBlock) {
 		super(context);
 		
 		Objects.requireNonNull(conditions);
@@ -25,11 +28,17 @@ public final class IfElseIfElseStatement extends ConditionStatement {
 		}
 		
 		this.conditions = makeList(conditions);
+		
+		this.elseKeyword = elseKeyword != null ? makeSingle(elseKeyword) : null;
 		this.elseBlock = elseBlock != null ? makeSingle(elseBlock) : null;
 	}
 
 	public ASTList<ConditionBlock> getConditions() {
 		return conditions;
+	}
+
+	public Keyword getElseKeyword() {
+		return elseKeyword != null ? elseKeyword.get() : null;
 	}
 
 	public Block getElseBlock() {
@@ -46,8 +55,8 @@ public final class IfElseIfElseStatement extends ConditionStatement {
 		doIterate(conditions, recurseMode, iterator);
 		
 		if (elseBlock != null) {
+			doIterate(elseKeyword, recurseMode, iterator);
 			doIterate(elseBlock, recurseMode, iterator);
 		}
 	}
-		
-	}
+}

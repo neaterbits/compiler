@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.ast.parser.stackstate;
 
+import java.util.Objects;
+
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
@@ -10,6 +12,9 @@ public final class StackElseBlock extends StackStatements {
 	
 	public StackElseBlock(ParseLogger parseLogger, String keyword, Context keywordContext) {
 		super(parseLogger);
+		
+		Objects.requireNonNull(keyword);
+		Objects.requireNonNull(keywordContext);
 		
 		this.keyword = keyword;
 		this.keywordContext = keywordContext;

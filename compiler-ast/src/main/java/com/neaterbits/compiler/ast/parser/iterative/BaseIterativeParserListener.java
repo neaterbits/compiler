@@ -119,7 +119,11 @@ public abstract class BaseIterativeParserListener
 
 		final StackIfElseIfElse ifElseIfElse = get();
 		
-		ifElseIfElse.setElseBlock(new Block(context, stackBlock.getList()));
+		ifElseIfElse.setElseBlock(
+				stackBlock.getKeyword() != null
+					? new Keyword(stackBlock.getKeywordContext(), stackBlock.getKeyword())
+					: null,
+				new Block(context, stackBlock.getList()));
 		
 		logExit(context);
 	}
@@ -136,6 +140,7 @@ public abstract class BaseIterativeParserListener
 		final IfElseIfElseStatement statement = new IfElseIfElseStatement(
 				context,
 				ifElseIfElse.getList(),
+				ifElseIfElse.getElseKeyword(),
 				ifElseIfElse.getElseBlock());
 		
 		statementSetter.addStatement(statement);
