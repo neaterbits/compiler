@@ -90,13 +90,16 @@ public class MethodMapTest {
 		
 		assertThat(methodOverrideMap.getNumberOfMethodsDirectlyExtending(methodNo)).isEqualTo(1);
 		assertThat(methodOverrideMap.getMethodsDirectlyExtending(methodNo).length).isEqualTo(1);
+		
+		assertThat(Encode.decodeMethodNo(methodOverrideMap.getMethodsDirectlyExtending(methodNo)[0])).isEqualTo(overrideMethodNo);
+		
 		assertThat(methodOverrideMap.getMethodsDirectlyExtending(methodNo)[0]).isEqualTo(
-				Encode.encodeMethodWithoutTypeVariant(overrideMethodNo, MethodVariant.FINAL_IMPLEMENTATION));
+				Encode.encodeMethod(overrideMethodNo, TypeVariant.CLASS, MethodVariant.FINAL_IMPLEMENTATION));
 
 		assertThat(methodOverrideMap.getNumberOfMethodsDirectlyExtendedBy(overrideMethodNo)).isEqualTo(1);
 		assertThat(methodOverrideMap.getMethodsDirectlyExtendedBy(overrideMethodNo).length).isEqualTo(1);
 		assertThat(methodOverrideMap.getMethodsDirectlyExtendedBy(overrideMethodNo)[0]).isEqualTo(
-				Encode.encodeMethodWithoutTypeVariant(methodNo, MethodVariant.OVERRIDABLE_IMPLEMENTATION));
+				Encode.encodeMethod(methodNo, TypeVariant.CLASS, MethodVariant.OVERRIDABLE_IMPLEMENTATION));
 	}
 	
 }

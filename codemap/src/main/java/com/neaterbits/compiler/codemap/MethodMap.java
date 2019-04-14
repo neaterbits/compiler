@@ -39,7 +39,7 @@ final class MethodMap {
 	// Each unique name and type combination is given a sequence number
 	private int methodSignatureNo;
 	// Unique method signatures, 32 bits for name and 32 bits for parameters
-	private long [] methodSignatures;
+	private long [] methodSignaturesBySignatureIndex;
 	
 	private int [][] methodsByType;
 
@@ -133,12 +133,13 @@ final class MethodMap {
 		if (methodSignatureIndex < 0) {
 			methodSignatureIndex = methodSignatureNo ++;
 			
-			this.methodSignatures = allocateLongArray(methodSignatures, methodSignatureIndex + 1);
-			methodSignatures[methodSignatureIndex] = nameIndex.longValue() << 32 | paramsIndex.longValue();
+			this.methodSignaturesBySignatureIndex = allocateLongArray(methodSignaturesBySignatureIndex, methodSignatureIndex + 1);
+			
+			methodSignaturesBySignatureIndex[methodSignatureIndex] = nameIndex.longValue() << 32 | paramsIndex.longValue();
 			
 			cache.storeSignatureNo(nameIndex, paramsIndex, methodSignatureIndex);
 		}
-		
+
 		return methodSignatureIndex;
 	}
 	
@@ -235,11 +236,14 @@ final class MethodMap {
 	}
 	
 	String getMethodName(int methodNo) {
-		return methodNames[(int)(methodSignatures[methodNo] >> 32)];
+		return methodNames[(int)(methodSignaturesBySignatureIndex[methodNo] >> 32)];
 	}
 	
 	int [] getMethodParameterTypes(int methodNo) {
-		final int [] types = parameterSignatures[(int)(methodSignatures[methodNo] & 0xFFFFFFFF)];
+		
+		final int signatureIndex = methodSignaturesByMethod[methodNo];
+
+		final int [] types = parameterSignatures[(int)(methodSignaturesBySignatureIndex[signatureIndex] & 0xFFFFFFFF)];
 
 		return types != null ? Arrays.copyOf(types, types.length) : null;
 	}

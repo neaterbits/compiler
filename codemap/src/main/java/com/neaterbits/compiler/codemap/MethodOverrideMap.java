@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.codemap;
 
 import static com.neaterbits.compiler.codemap.ArrayAllocation.addToSubIntArray;
+import static com.neaterbits.compiler.codemap.ArrayAllocation.allocateIntArray;
 import static com.neaterbits.compiler.codemap.ArrayAllocation.subIntArrayCopy;
 import static com.neaterbits.compiler.codemap.ArrayAllocation.subIntArraySize;
 import static com.neaterbits.compiler.codemap.Encode.decodeMethodNo;
@@ -37,8 +38,11 @@ abstract class MethodOverrideMap {
 		checkHasNonStaticMethodVariant(extendedMethodEncoded);
 		checkHasNonStaticMethodVariant(extendingMethodEncoded);
 
-		addToSubIntArray(extendingMethodsByExtended, extendedMethod, 	extendingMethodEncoded, 3);
-		addToSubIntArray(extendedMethodsByExtending, extendingMethod, 	extendedMethodEncoded, 3);
+		this.extendingMethodsByExtended = allocateIntArray(this.extendingMethodsByExtended, extendedMethod + 1, false);
+		addToSubIntArray(extendingMethodsByExtended, extendedMethod, extendingMethodEncoded, 3);
+
+		this.extendedMethodsByExtending = allocateIntArray(this.extendedMethodsByExtending, extendingMethod + 1, false);
+		addToSubIntArray(extendedMethodsByExtending, extendingMethod, extendedMethodEncoded, 3);
 	}
 
 	final int getNumberOfMethodsDirectlyExtending(int methodNo) {
