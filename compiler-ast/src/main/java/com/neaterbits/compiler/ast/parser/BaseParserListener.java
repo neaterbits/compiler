@@ -1549,7 +1549,8 @@ public abstract class BaseParserListener {
 				new ParameterList(
 						classInstanceCreationExpression.getParameters() != null
 							? classInstanceCreationExpression.getParameters()
-							: Collections.emptyList()));
+							: Collections.emptyList()),
+				classInstanceCreationExpression.getMethods());
 		
 		final PrimarySetter primarySetter = get();
 		

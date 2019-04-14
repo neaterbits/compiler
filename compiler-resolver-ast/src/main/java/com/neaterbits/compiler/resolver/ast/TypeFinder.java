@@ -11,6 +11,7 @@ import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.block.ClassMethod;
 import com.neaterbits.compiler.ast.block.Parameter;
+import com.neaterbits.compiler.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.ast.expression.FieldAccess;
 import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.expression.ParameterList;
@@ -207,6 +208,10 @@ class TypeFinder {
 							}
 							else if (lastElement instanceof CatchBlock) {
 								referenceType = ReferenceType.CATCH_EXCEPTION;
+								updateOnResolve = null;
+							}
+							else if (lastElement instanceof ClassInstanceCreationExpression) {
+								referenceType = ReferenceType.CLASS_INSTANCE_CREATION;
 								updateOnResolve = null;
 							}
 							else {
