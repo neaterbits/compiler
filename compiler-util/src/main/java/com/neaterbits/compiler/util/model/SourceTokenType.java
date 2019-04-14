@@ -26,7 +26,11 @@ public enum SourceTokenType {
 
 	IMPORT_NAME(false, false, false),
 
+	CHARACTER_LITERAL(false, false, false),
+	STRING_LITERAL(false, false, false),
+	INTEGER_LITERAL(false, false, false),
 	BOOLEAN_LITERAL(false, false, false),
+	NULL_LITERAL(false, false, false),
 	
 	UNKNOWN(false, false, false);
 	

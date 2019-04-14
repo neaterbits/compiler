@@ -16,6 +16,10 @@ import com.neaterbits.compiler.ast.NamespaceDeclaration;
 import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.ast.expression.literal.BooleanLiteral;
+import com.neaterbits.compiler.ast.expression.literal.CharacterLiteral;
+import com.neaterbits.compiler.ast.expression.literal.IntegerLiteral;
+import com.neaterbits.compiler.ast.expression.literal.NullLiteral;
+import com.neaterbits.compiler.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
@@ -191,8 +195,20 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 			
 			sourceTokenType = SourceTokenType.KEYWORD;
 		}
+		else if (element instanceof CharacterLiteral) {
+			sourceTokenType = SourceTokenType.CHARACTER_LITERAL;
+		}
+		else if (element instanceof StringLiteral) {
+			sourceTokenType = SourceTokenType.STRING_LITERAL;
+		}
+		else if (element instanceof IntegerLiteral) {
+			sourceTokenType = SourceTokenType.INTEGER_LITERAL;
+		}
 		else if (element instanceof BooleanLiteral) {
 			sourceTokenType = SourceTokenType.BOOLEAN_LITERAL;
+		}
+		else if (element instanceof NullLiteral) {
+			sourceTokenType = SourceTokenType.NULL_LITERAL;
 		}
 		else if (element instanceof ThisPrimary) {
 			sourceTokenType = SourceTokenType.THIS_REFERENCE;
