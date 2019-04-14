@@ -32,6 +32,8 @@ public enum SourceTokenType {
 	BOOLEAN_LITERAL(false, false, false),
 	NULL_LITERAL(false, false, false),
 	
+	ENUM_CONSTANT(false, false, false),
+	
 	UNKNOWN(false, false, false);
 	
 	

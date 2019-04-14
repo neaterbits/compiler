@@ -1686,7 +1686,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterEnumConstantNameSwitchLabel(EnumConstantNameSwitchLabelContext ctx) {
-		delegate.onEnumSwitchLabel(context(ctx), ctx.keyword.getText(), context(ctx.keyword), ctx.enumConstantName().getText());
+		delegate.onEnumSwitchLabel(
+				context(ctx),
+				ctx.keyword.getText(), context(ctx.keyword),
+				ctx.enumConstantName().getText(), context(ctx.enumConstantName()));
 	}
 
 	@Override

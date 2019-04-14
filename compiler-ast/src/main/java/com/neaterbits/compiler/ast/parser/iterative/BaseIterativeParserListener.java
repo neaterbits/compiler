@@ -14,6 +14,7 @@ import com.neaterbits.compiler.ast.statement.BreakStatement;
 import com.neaterbits.compiler.ast.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.statement.ConstantSwitchCaseLabel;
 import com.neaterbits.compiler.ast.statement.DefaultSwitchCaseLabel;
+import com.neaterbits.compiler.ast.statement.EnumConstant;
 import com.neaterbits.compiler.ast.statement.EnumSwitchCaseLabel;
 import com.neaterbits.compiler.ast.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.statement.SwitchCaseGroup;
@@ -232,13 +233,19 @@ public abstract class BaseIterativeParserListener
 		logExit(context);
 	}
 	
-	public final void onEnumSwitchLabel(Context context, String keyword, Context keywordContext, String constantName) {
+	public final void onEnumSwitchLabel(
+			Context context,
+			String keyword, Context keywordContext,
+			String constantName, Context constantNameContext) {
 		
 		logEnter(context);
 		
 		final Keyword k = new Keyword(keywordContext, keyword);
 		
-		final EnumSwitchCaseLabel switchCaseLabel = new EnumSwitchCaseLabel(context, k, constantName);
+		final EnumSwitchCaseLabel switchCaseLabel = new EnumSwitchCaseLabel(
+				context,
+				k,
+				new EnumConstant(constantNameContext, constantName));
 		
 		final StackSwitchCaseGroup stackSwitchCaseGroup = get();
 		

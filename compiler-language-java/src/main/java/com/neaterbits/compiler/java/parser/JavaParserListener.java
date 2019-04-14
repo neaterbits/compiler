@@ -1092,8 +1092,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onConstantSwitchLabelEnd(context);
 	}
 	
-	public void onEnumSwitchLabel(Context context, String keyword, Context keywordContext, String constantName) {
-		delegate.onEnumSwitchLabel(context, keyword, keywordContext, constantName);
+	public void onEnumSwitchLabel(Context context, String keyword, Context keywordContext, String constantName, Context constantNameContext) {
+		delegate.onEnumSwitchLabel(context, keyword, keywordContext, constantName, constantNameContext);
 	}
 	
 	public void onDefaultSwitchLabel(Context context, String keyword, Context keywordContext) {

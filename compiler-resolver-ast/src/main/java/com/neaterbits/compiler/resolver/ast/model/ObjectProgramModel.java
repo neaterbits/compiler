@@ -21,6 +21,7 @@ import com.neaterbits.compiler.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
+import com.neaterbits.compiler.ast.statement.EnumConstant;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodModifierHolder;
@@ -239,6 +240,9 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 			final BuiltinType builtinType = (BuiltinType)builtinTypeReference.getType();
 			
 			typeName = builtinType.getTypeName();
+		}
+		else if (element instanceof EnumConstant) {
+			sourceTokenType = SourceTokenType.ENUM_CONSTANT;
 		}
 		else if (element instanceof ResolveLaterTypeReference) {
 
