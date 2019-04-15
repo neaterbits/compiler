@@ -25,7 +25,7 @@ public abstract class BaseClassDefinition extends ComplexTypeDefinition<ClassNam
 		super(context, typeKeyword, name, members);
 
 		this.modifiers = makeSingle(modifiers);
-		this.implementsInterfaces = makeList(implementsInterfaces);
+		this.implementsInterfaces = implementsInterfaces != null ? makeList(implementsInterfaces) : null;
 	}
 
 	public ClassModifiers getModifiers() {
@@ -51,6 +51,9 @@ public abstract class BaseClassDefinition extends ComplexTypeDefinition<ClassNam
 	}
 
 	protected final void doIterateImplementsInterfaces(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		doIterate(implementsInterfaces, recurseMode, iterator);
+		
+		if (implementsInterfaces != null) {
+			doIterate(implementsInterfaces, recurseMode, iterator);
+		}
 	}
 }

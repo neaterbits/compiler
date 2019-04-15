@@ -87,7 +87,20 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 			
 			for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typeDependency : type.getExtendsFrom()) {
 				if (typeDependency.getTypeVariant().equals(typeVariant)) {
-					extendsFrom[dstIdx ++] = nameToTypeNoMap.getType(typeDependency.getCompleteName());
+
+					final TypeName name = typeDependency.getCompleteName();
+					
+					if (name == null) {
+						throw new IllegalStateException();
+					}
+					
+					final Integer typeNo = nameToTypeNoMap.getType(name);
+					
+					if (typeNo == null) {
+						throw new IllegalStateException("No type no for name " + name + " from " + type.getTypeName());
+					}
+					
+					extendsFrom[dstIdx ++] = typeNo;
 				}
 			}
 		}
@@ -210,13 +223,13 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 	}
 
 	@Override
-	public List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getDirectSubtypes(TypeName type) {
+	public List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getDirectExtendingThis(TypeName type) {
 		
 		Objects.requireNonNull(type);
 		
 		final int typeNo = getTypeNo(type);
 		
-		final int [] types = codeMap.getDirectSubtypes(typeNo);
+		final int [] types = codeMap.getDirectExtendingThis(typeNo);
 		
 		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> result = new ArrayList<>(types.length);
 		
@@ -234,7 +247,7 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		
 		final int typeNo = getTypeNo(type);
 		
-		final int [] types = codeMap.getAllSubtypes(typeNo);
+		final int [] types = codeMap.getAllExtendingThis(typeNo);
 		
 		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> result = new ArrayList<>(types.length);
 		

@@ -61,6 +61,12 @@ final class TypeHierarchy {
 		else if (thisExtendsFromInterfacesEncoded != null && thisExtendsFromInterfacesEncoded.length != 0) {
 			
 			this.thisExtendsFromEncoded[typeNo] = thisExtendsFromInterfacesEncoded;
+			
+			for (int i = 0; i < thisExtendsFromInterfacesEncoded.length; ++ i) {
+				final int extendedTypeNo = Encode.decodeTypeNo(thisExtendsFromInterfacesEncoded[i]);
+
+				setExtendedBy(extendedTypeNo, typeNo, typeVariant);
+			}
 		}
 		else {
 			this.thisExtendsFromEncoded[typeNo] = null;
@@ -124,13 +130,15 @@ final class TypeHierarchy {
 		
 		int found = -1;
 		
-		for (int extendsFromEncoded : extendsFromEncodedArray) {
-			if (Encode.isClass(extendsFromEncoded)) {
-				if (found != -1) {
-					throw new IllegalStateException();
+		if (extendsFromEncodedArray != null) {
+			for (int extendsFromEncoded : extendsFromEncodedArray) {
+				if (Encode.isClass(extendsFromEncoded)) {
+					if (found != -1) {
+						throw new IllegalStateException();
+					}
+					
+					found = extendsFromEncoded;
 				}
-				
-				found = extendsFromEncoded;
 			}
 		}
 		

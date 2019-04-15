@@ -28,7 +28,7 @@ public final class InterfaceDefinition extends ComplexTypeDefinition<InterfaceNa
 		super(context, interfaceKeyword, name, members);
 
 		this.modifiers = makeSingle(modifiers);
-		this.extendsInterfaces = makeList(extendsInterfaces);
+		this.extendsInterfaces = extendsInterfaces != null ? makeList(extendsInterfaces) : null;
 	}
 
 	public InterfaceModifiers getModifiers() {
@@ -49,7 +49,10 @@ public final class InterfaceDefinition extends ComplexTypeDefinition<InterfaceNa
 
 		doIterate(modifiers, recurseMode, iterator);
 		doIterateTypeKeywordAndName(recurseMode, iterator);
-		doIterate(extendsInterfaces, recurseMode, iterator);
+		
+		if (extendsInterfaces != null) {
+			doIterate(extendsInterfaces, recurseMode, iterator);
+		}
 		
 		super.doRecurse(recurseMode, iterator);
 	}

@@ -23,7 +23,7 @@ public final class ClassDefinition extends BaseClassDefinition {
 		super(context, modifiers, classKeyword, name, implementsInterfaces, members);
 		
 		this.extendsKeyword = extendsKeyword != null ? makeSingle(extendsKeyword) : null;
-		this.extendsClasses = makeList(extendsClasses);
+		this.extendsClasses = extendsClasses != null ? makeList(extendsClasses) : null;
 	}
 
 	public Keyword getExtendsKeyword() {
@@ -48,7 +48,9 @@ public final class ClassDefinition extends BaseClassDefinition {
 			doIterate(extendsKeyword, recurseMode, iterator);
 		}
 		
-		doIterate(extendsClasses, recurseMode, iterator);
+		if (extendsClasses != null) {
+			doIterate(extendsClasses, recurseMode, iterator);
+		}
 		
 		doIterateImplementsInterfaces(recurseMode, iterator);
 		

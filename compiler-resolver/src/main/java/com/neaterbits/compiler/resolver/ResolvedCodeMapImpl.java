@@ -70,15 +70,15 @@ public final class ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 		return codeMap.getExtendsFromSingleSuperClass(typeNo);
 	}
 
-	int [] getDirectSubtypes(int typeNo) {
+	int [] getDirectExtendingThis(int typeNo) {
 		return codeMap.getTypesDirectlyExtendingThis(typeNo);
 	}
 
-	int [] getAllSubtypes(int typeNo) {
+	int [] getAllExtendingThis(int typeNo) {
 
 		final List<Integer> allTypes = new ArrayList<>();
 		
-		final int [] directSubtypes = getDirectSubtypes(typeNo);
+		final int [] directSubtypes = getDirectExtendingThis(typeNo);
 		
 		addAll(allTypes, directSubtypes);
 		
@@ -118,7 +118,7 @@ public final class ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 	private void getAllSubtypes(int [] types, Collection<Integer> allTypes) {
 		
 		for (int type : types) {
-			final int [] subTypes = getDirectSubtypes(type);
+			final int [] subTypes = getDirectExtendingThis(type);
 			
 			addAll(allTypes, subTypes);
 			

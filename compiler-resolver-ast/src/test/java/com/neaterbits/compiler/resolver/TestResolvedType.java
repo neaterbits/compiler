@@ -56,7 +56,7 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 	
 	@Override
 	public TypeName getTypeName() {
-		return type.getCompleteName().toTypeName();
+		return type != null ? type.getCompleteName().toTypeName() : null;
 	}
 
 	@Override

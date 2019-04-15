@@ -64,7 +64,7 @@ public class ScopedNameResolverTest {
 		
 		final Import importStatement = new Import(
 				Context.makeTestContext(),
-				new Keyword(Context.makeTestContext(), ""),
+				new Keyword(Context.makeTestContext(), "testtoken"),
 				new ImportName(
 					Context.makeTestContext(),
 					namespaceReference,
