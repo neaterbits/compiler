@@ -37,12 +37,14 @@ final class ResolvedTypeImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends Base
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(typeName);
 		
-		if (extendsFrom.contains(this)) {
-			throw new IllegalArgumentException();
-		}
-
-		if (extendsFrom.stream().anyMatch(e -> e.getCompleteName().equals(typeName))) {
-			throw new IllegalArgumentException();
+		if (extendsFrom != null) {
+			if (extendsFrom.contains(this)) {
+				throw new IllegalArgumentException();
+			}
+	
+			if (extendsFrom.stream().anyMatch(e -> e.getCompleteName().equals(typeName))) {
+				throw new IllegalArgumentException();
+			}
 		}
 
 		this.type = type;
