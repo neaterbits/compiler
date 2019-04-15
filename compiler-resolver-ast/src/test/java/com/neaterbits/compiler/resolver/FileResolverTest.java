@@ -17,16 +17,26 @@ import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
+import com.neaterbits.compiler.resolver.references.TestResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.ast.Keyword;
+import com.neaterbits.compiler.ast.NamespaceReference;
+import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
+import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
+import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.ast.typedefinition.ClassModifiers;
+import com.neaterbits.compiler.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
 public class FileResolverTest extends BaseResolveTest {
@@ -38,14 +48,31 @@ public class FileResolverTest extends BaseResolveTest {
 		
 		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> resolveLogger = new ResolveLogger<>(loggerStream);
 
-		final ASTModelImpl astModel = new ASTModelImpl();
+		final ASTModelImpl astModel = new ASTModelImpl() {
+
+			@Override
+			public ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName> makeResolvedTypeDependency(
+					TypeName completeName, ReferenceType referenceType, TypeResolveMode typeResolveMode,
+					TypeVariant typeVariant, CompiledTypeDependency compiledTypeDependency) {
+
+				return new TestResolvedTypeDependency(completeName, referenceType, typeVariant);
+			}
+		};
 		
 		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> filesResolver
 			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, new ObjectProgramModel(), astModel);
 
 		final FileSpec testFileSpec = new TestFileSpec("TestClass.java");
-		final ScopedName testClass = makeScopedName("com.test.TestClass");
-		final CompiledType<ComplexType<?, ?, ?>> testType = new TestCompiledType(testFileSpec, testClass, TypeVariant.CLASS, null, null, null, null);
+		final TypeName testClass = makeTypeName("com.test.TestClass");
+		final ClassType testClassType = makeClassType(testClass);
+		final CompiledType<ComplexType<?, ?, ?>> testType = new TestCompiledType(
+				testFileSpec,
+				testClass.toScopedName(),
+				TypeVariant.CLASS,
+				testClassType,
+				null, 
+				null, 
+				null);
 		
 		final Context context = new Context("", 0, 0, 0, 0, 0, 0, "");
 		
@@ -54,11 +81,18 @@ public class FileResolverTest extends BaseResolveTest {
 		final TestCompiledFile testFile = new TestCompiledFile(testFileSpec, compilationUnit, testType);
 
 		final FileSpec anotherTestFileSpec = new TestFileSpec("AnotherTestClass.java");
-		final ScopedName anotherTestClass = makeScopedName("com.test.AnotherTestClass");
-		final CompiledType<ComplexType<?, ?, ?>> anotherTestType = new TestCompiledType(anotherTestFileSpec, anotherTestClass, TypeVariant.CLASS, null,
-					null,
-					Arrays.asList(makeExtendsFromDependency(testClass)),
-					null);
+		final TypeName anotherTestClass = makeTypeName("com.test.AnotherTestClass");
+		
+		final ClassType anotherTestClassType = makeClassType(anotherTestClass);
+		
+		final CompiledType<ComplexType<?, ?, ?>> anotherTestType = new TestCompiledType(
+				anotherTestFileSpec,
+				anotherTestClass.toScopedName(),
+				TypeVariant.CLASS,
+				anotherTestClassType,
+				null,
+				Arrays.asList(makeExtendsFromDependency(testClass.toScopedName())),
+				null);
 
 		final TestCompiledFile anotherTestFile = new TestCompiledFile(anotherTestFileSpec, compilationUnit, anotherTestType);
 		
@@ -81,6 +115,26 @@ public class FileResolverTest extends BaseResolveTest {
 		assertThat(result.getUnresolvedExtendsFrom(anotherTestFileSpec)).isEmpty();
 		assertThat(result.getUnresolvedTypeDependencies(anotherTestFileSpec)).isEmpty();
 		*/
+	}
+	
+	private static ClassType makeClassType(TypeName anotherTestClass) {
+		
+		final NamespaceReference namespaceReference = new NamespaceReference(Arrays.asList(anotherTestClass.getNamespace()));
+		
+		final ClassType anotherTestClassType = new ClassType(
+				namespaceReference,
+				null,
+				new ClassDefinition(
+						Context.makeTestContext(),
+						new ClassModifiers(Collections.emptyList()),
+						new Keyword(Context.makeTestContext(), "class"),
+						new ClassDeclarationName(Context.makeTestContext(), new ClassName(anotherTestClass.getName())),
+						null,
+						null,
+						null,
+						Collections.emptyList()));
+		
+		return anotherTestClassType;
 	}
 	
 	private static CompiledTypeDependency makeExtendsFromDependency(ScopedName scopedName) {

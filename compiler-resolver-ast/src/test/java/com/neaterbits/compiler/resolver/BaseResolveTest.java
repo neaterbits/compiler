@@ -30,6 +30,16 @@ public abstract class BaseResolveTest {
 		return scopedName;
 	}
 
+	protected static TypeName makeTypeName(String name) {
+		final String [] parts = Strings.split(name, '.');
+		
+		final TypeName typeName = new TypeName(
+				Arrays.copyOf(parts, parts.length - 1),
+				null,
+				parts[parts.length - 1]);
+
+		return typeName;
+	}
 	
 	protected static CompiledType<ComplexType<?, ?, ?>> makeCompiledType(
 			CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>

@@ -19,7 +19,7 @@ public final class TestResolvedTypeDependency implements ResolvedTypeDependency<
 
 		Objects.requireNonNull(completeName);
 		Objects.requireNonNull(referenceType);
-		Objects.requireNonNull(typeVariant);
+		// Objects.requireNonNull(typeVariant);
 		
 		this.completeName = completeName;
 		this.referenceType = referenceType;
