@@ -14,7 +14,6 @@ import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Module;
 import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.parser.ParsedFile;
-import com.neaterbits.compiler.ast.parser.SourceFile;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.resolver.FilesResolver;
@@ -22,6 +21,7 @@ import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
+import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.modules.ModuleId;
@@ -42,7 +42,7 @@ public class BuildAndResolve {
 			Parser<CompilationUnit, ?> parser,
 			Collection<INPUT> inputs,
 			GetInputStream<INPUT> getInputStream,
-			Function<INPUT, File> getFile,
+			Function<INPUT, FileSpec> getFileSpec,
 			Consumer<ParsedFile> onParsedFile,
 			ObjectProgramModel programModel,
 			Collection<BuiltinType> builtinTypes,
@@ -55,9 +55,9 @@ public class BuildAndResolve {
 			
 			try (InputStream inputStream = getInputStream.getInputStream(input)) {
 			
-				final File file = getFile.apply(input);
+				final FileSpec fileSpec = getFileSpec.apply(input);
 				
-				final ParsedFile parsedFile = BuildAndResolve.parseFile(parser, inputStream, file, resolvedTypes);
+				final ParsedFile parsedFile = BuildAndResolve.parseFile(parser, inputStream, fileSpec, resolvedTypes);
 				
 				parsedFiles.add(parsedFile);
 				
@@ -76,12 +76,12 @@ public class BuildAndResolve {
 	public static ParsedFile parseFile(
 			Parser<CompilationUnit, ?> parser,
 			InputStream inputStream,
-			File file,
+			FileSpec fileSpec,
 			ResolvedTypes resolvedTypes) throws IOException {
 		
 		final List<ParseError> errors = new ArrayList<>();
 		
-		final CompilationUnit compilationUnit = parser.parse(inputStream, errors, file.getName(), null);
+		final CompilationUnit compilationUnit = parser.parse(inputStream, errors, fileSpec.getParseContextName(), null);
 		
 		if (compilationUnit == null) {
 			throw new IllegalStateException();
@@ -90,7 +90,7 @@ public class BuildAndResolve {
 		final List<CompileError> compileErrors = errors.stream().map(error -> (CompileError)error).collect(Collectors.toList());
 		
 		final ParsedFile parsedFile = new ParsedFile(
-				new SourceFile(file),
+				fileSpec,
 				compileErrors,
 				null,
 				compilationUnit);

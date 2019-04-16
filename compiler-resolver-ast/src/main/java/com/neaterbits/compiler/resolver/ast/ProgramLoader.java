@@ -11,6 +11,7 @@ import com.neaterbits.compiler.ast.parser.ParsedFile;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
+import com.neaterbits.compiler.util.FileSpec;
 
 public class ProgramLoader  {
 
@@ -27,7 +28,7 @@ public class ProgramLoader  {
 
 	public static CompiledFile<ComplexType<?, ?, ?>, CompilationUnit> makeCompiledFile(ParsedFile parsedFile) {
 
-		final CompiledFileSpecImpl compiledFileSpec = new CompiledFileSpecImpl(parsedFile.getFile().getPath());
+		final FileSpec compiledFileSpec = parsedFile.getFileSpec();
 
 		final List<CompiledType<ComplexType<?, ?, ?>>> types = TypeFinder.findTypes(parsedFile, compiledFileSpec);
 		

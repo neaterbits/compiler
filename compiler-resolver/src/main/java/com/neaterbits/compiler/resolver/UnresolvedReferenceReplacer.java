@@ -32,7 +32,7 @@ public class UnresolvedReferenceReplacer {
 		return new ReplaceTypeReferencesResult<>(resolveFilesResult.getResolvedFiles(), codeMap, typesInDependencyOrder);
 	}
 	
-	static <BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> void replaceUnresolvedTypeReferences(
+	private static <BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> void replaceUnresolvedTypeReferences(
 			Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedTypes,
 			ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypesMap,
 			BuiltinTypesMap<BUILTINTYPE> builtinTypesMap) {

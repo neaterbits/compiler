@@ -2,6 +2,8 @@ package com.neaterbits.compiler.resolver.types;
 
 import java.util.Collection;
 
+import com.neaterbits.compiler.util.FileSpec;
+
 public interface ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends ResolveTypeInfo {
 
 	TypeSpec getSpec();

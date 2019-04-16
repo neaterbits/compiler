@@ -3,7 +3,8 @@ package com.neaterbits.compiler.resolver;
 import java.util.Arrays;
 import java.util.List;
 
-import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.NameFileSpec;
 
 public abstract class BaseTestFile<TYPE> {
 
@@ -20,7 +21,7 @@ public abstract class BaseTestFile<TYPE> {
 	}
 
 	protected BaseTestFile(String name, TYPE [] types) {
-		this(new TestFileSpec(name), Arrays.asList(types));
+		this(new NameFileSpec(name), Arrays.asList(types));
 	}
 
 	public final FileSpec getSpec() {

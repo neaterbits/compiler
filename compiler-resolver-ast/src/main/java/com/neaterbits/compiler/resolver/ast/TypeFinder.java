@@ -46,9 +46,9 @@ import com.neaterbits.compiler.ast.variables.StaticMemberReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.types.CompiledType;
-import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
@@ -217,7 +217,7 @@ class TypeFinder {
 							else {
 								throw new UnsupportedOperationException("Unknown scope for type reference " + typeReference.getTypeName()
 									+ " for element " + lastElement
-									+ " at \"" + lastElement.getContext() + "\" / " + parsedFile.getFile().getPath().getName());
+									+ " at \"" + lastElement.getContext() + "\" / " + parsedFile.getFileSpec().getDebugName());
 							}
 							
 							if (referenceType != null) {

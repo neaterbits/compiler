@@ -1,15 +1,13 @@
-package com.neaterbits.compiler.resolver.ast;
+package com.neaterbits.compiler.util;
 
 import java.io.File;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.types.FileSpec;
-
-final class CompiledFileSpecImpl implements FileSpec {
+public final class FileSystemFileSpec implements FileSpec {
 
 	private final File file;
 
-	CompiledFileSpecImpl(File file) {
+	public FileSystemFileSpec(File file) {
 
 		Objects.requireNonNull(file);
 		
@@ -17,7 +15,7 @@ final class CompiledFileSpecImpl implements FileSpec {
 	}
 	
 	@Override
-	public String getName() {
+	public String getParseContextName() {
 		return file.getName();
 	}
 
@@ -37,7 +35,7 @@ final class CompiledFileSpecImpl implements FileSpec {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CompiledFileSpecImpl other = (CompiledFileSpecImpl) obj;
+		FileSystemFileSpec other = (FileSystemFileSpec) obj;
 		if (file == null) {
 			if (other.file != null)
 				return false;

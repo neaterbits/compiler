@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
-import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.util.FileSpec;
 
 public final class UnresolvedDependencies {
 	

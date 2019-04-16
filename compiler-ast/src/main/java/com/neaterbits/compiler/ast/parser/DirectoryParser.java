@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.Files;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.IOError;
@@ -88,7 +89,7 @@ public class DirectoryParser {
 				}
 				
 				final ParsedFile parsedFile = new ParsedFile(
-						new SourceFile(file),
+						new FileSystemFileSpec(file),
 						allFileerrors,
 						log,
 						compilationUnit);

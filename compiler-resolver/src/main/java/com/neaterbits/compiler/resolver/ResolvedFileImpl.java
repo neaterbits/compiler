@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.util.FileSpec;
 
 final class ResolvedFileImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> implements ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
@@ -24,7 +24,7 @@ final class ResolvedFileImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> implements R
 
 	@Override
 	public String getName() {
-		return fileSpec.getName();
+		return fileSpec.getParseContextName();
 	}
 
 	@Override

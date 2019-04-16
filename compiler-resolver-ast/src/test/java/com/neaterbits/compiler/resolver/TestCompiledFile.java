@@ -4,7 +4,7 @@ import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
-import com.neaterbits.compiler.resolver.types.FileSpec;
+import com.neaterbits.compiler.util.FileSpec;
 
 public class TestCompiledFile extends BaseTestFile<CompiledType<ComplexType<?, ?, ?>>>
 		implements CompiledFile<ComplexType<?, ?, ?>, CompilationUnit> {

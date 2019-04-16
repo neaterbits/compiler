@@ -1,6 +1,5 @@
 package com.neaterbits.compiler.resolver.ast.model;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -39,6 +38,7 @@ import com.neaterbits.compiler.resolver.ScopedNameResolver;
 import com.neaterbits.compiler.resolver.TypesMap;
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
@@ -54,14 +54,14 @@ import com.neaterbits.compiler.util.model.TypeImportVisitor;
 public final class ObjectProgramModel implements ProgramModel<Program, ParsedFile, CompilationUnit > {
 
 	@Override
-	public ParsedFile getParsedFile(Program program, File path) {
+	public ParsedFile getParsedFile(Program program, FileSpec path) {
 		
 		return (ParsedFile)program.findElement(false, element -> {
 			
 			if (element instanceof ParsedFile) {
 				final ParsedFile parsedFile = (ParsedFile)element;
 				
-				if (parsedFile.getFile().getPath().getAbsoluteFile().equals(path.getAbsoluteFile())) {
+				if (parsedFile.getFileSpec().equals(path)) {
 					return true;
 				}
 			}

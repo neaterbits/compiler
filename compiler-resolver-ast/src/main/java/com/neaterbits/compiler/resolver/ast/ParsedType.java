@@ -9,8 +9,8 @@ import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.resolver.types.BaseResolverType;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
-import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
+import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
 
 final class ParsedType extends BaseResolverType implements CompiledType<ComplexType<?, ?, ?>> {

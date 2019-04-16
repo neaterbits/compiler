@@ -8,23 +8,24 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.BasePlaceholderASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.list.ASTSingle;
+import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.parse.CompileError;
 
 public final class ParsedFile extends BasePlaceholderASTElement {
 
-	private final SourceFile file;
+	private final FileSpec file;
 	private final List<CompileError> errors;
 	private final String log;
 	private final ASTSingle<CompilationUnit> parsed;
 
-	public ParsedFile(SourceFile file, List<CompileError> errors, String log, CompilationUnit parsed) {
+	public ParsedFile(FileSpec file, List<CompileError> errors, String log, CompilationUnit parsed) {
 		this.file = file;
 		this.errors = Collections.unmodifiableList(errors);
 		this.log = log;
 		this.parsed = makeSingle(parsed);
 	}
 
-	public SourceFile getFile() {
+	public FileSpec getFileSpec() {
 		return file;
 	}
 

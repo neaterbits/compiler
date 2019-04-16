@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.resolver.types.BaseResolverType;
-import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
+import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.codemap.TypeVariant;
 

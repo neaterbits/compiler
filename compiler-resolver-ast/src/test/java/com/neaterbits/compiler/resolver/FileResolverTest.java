@@ -21,9 +21,10 @@ import com.neaterbits.compiler.resolver.references.TestResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
-import com.neaterbits.compiler.resolver.types.FileSpec;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
@@ -62,7 +63,7 @@ public class FileResolverTest extends BaseResolveTest {
 		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> filesResolver
 			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, new ObjectProgramModel(), astModel);
 
-		final FileSpec testFileSpec = new TestFileSpec("TestClass.java");
+		final FileSpec testFileSpec = new NameFileSpec("TestClass.java");
 		final TypeName testClass = makeTypeName("com.test.TestClass");
 		final ClassType testClassType = makeClassType(testClass);
 		final CompiledType<ComplexType<?, ?, ?>> testType = new TestCompiledType(
@@ -80,7 +81,7 @@ public class FileResolverTest extends BaseResolveTest {
 		
 		final TestCompiledFile testFile = new TestCompiledFile(testFileSpec, compilationUnit, testType);
 
-		final FileSpec anotherTestFileSpec = new TestFileSpec("AnotherTestClass.java");
+		final FileSpec anotherTestFileSpec = new NameFileSpec("AnotherTestClass.java");
 		final TypeName anotherTestClass = makeTypeName("com.test.AnotherTestClass");
 		
 		final ClassType anotherTestClassType = makeClassType(anotherTestClass);
