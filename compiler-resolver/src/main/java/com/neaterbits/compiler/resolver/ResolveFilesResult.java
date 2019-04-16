@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.resolver;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -72,6 +73,30 @@ public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
 	Collection<BUILTINTYPE> getBuiltinTypes() {
 		return builtinTypes;
+	}
+	
+	public Collection<ResolveError> getResolveErrors() {
+
+		final UnresolvedDependencies unresolved = getUnresolvedDependencies();
+
+		final List<ResolveError> resolveErrors;
+   
+		if (!unresolved.isEmpty()) {
+			resolveErrors = new ArrayList<>(unresolved.getCount());
+           
+			unresolved.forEach((fileSpec, compiledTypeDependency) -> {
+                   
+				final ResolveError resolveError = new ResolveError("Cannot resolve name " + 
+						compiledTypeDependency.getScopedName().toString());
+                   
+				resolveErrors.add(resolveError);
+           });
+		}
+		else {
+	           resolveErrors = Collections.emptyList();
+	   	}
+
+		return resolveErrors;
 	}
 	
 	/*
