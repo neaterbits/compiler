@@ -119,7 +119,7 @@ class TypeFinder {
 						else if (e instanceof ResolveLaterTypeReference) {
 							final ResolveLaterTypeReference typeReference = (ResolveLaterTypeReference)e;
 
-							final ScopedName name = typeReference.getTypeName();
+							final ScopedName name = typeReference.getScopedName();
 							
 							// Check where we are at in stack
 							final TypeFinderStackEntry lastStackEntry = stack.getFromTop(1);
@@ -150,7 +150,7 @@ class TypeFinder {
 									throw new UnsupportedOperationException("Expected static class invocation");
 								}
 								
-								final ScopedName toResolve = typeReference.getTypeName();
+								final ScopedName toResolve = typeReference.getScopedName();
 								
 								updateOnResolve = (type, resolveMode) -> {
 									final NamedType namedType = (NamedType)type;
@@ -215,7 +215,7 @@ class TypeFinder {
 								updateOnResolve = null;
 							}
 							else {
-								throw new UnsupportedOperationException("Unknown scope for type reference " + typeReference.getTypeName()
+								throw new UnsupportedOperationException("Unknown scope for type reference " + typeReference.getScopedName()
 									+ " for element " + lastElement
 									+ " at \"" + lastElement.getContext() + "\" / " + parsedFile.getFileSpec().getDebugName());
 							}

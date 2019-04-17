@@ -24,4 +24,6 @@ public interface ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 	void replaceWithComplexType(COMPLEXTYPE complexType);
 	
 	void replaceWithBuiltinType(BUILTINTYPE builtinType);
+
+	void replaceWithLibraryType(LIBRARYTYPE libraryType);
 }

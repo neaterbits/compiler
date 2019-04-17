@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
+import com.neaterbits.compiler.ast.typereference.LibraryTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
@@ -97,5 +98,15 @@ final class ResolvedTypeDependencyImpl implements ResolvedTypeDependency<Builtin
 		}
 
 		element.replaceWith(new BuiltinTypeReference(element.getContext(), builtinType));
+	}
+
+	@Override
+	public void replaceWithLibraryType(TypeName libraryType) {
+
+		if (!(element instanceof ResolveLaterTypeReference)) {
+			throw new IllegalStateException();
+		}
+		
+		element.replaceWith(new LibraryTypeReference(element.getContext(), libraryType));
 	}
 }

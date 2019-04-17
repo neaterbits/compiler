@@ -19,7 +19,7 @@ import com.neaterbits.compiler.util.ScopedName;
 
 public class ScopedNameResolverTest {
 
-	private final ObjectProgramModel compilationUnitModel = new ObjectProgramModel();
+	private final ObjectProgramModel compilationUnitModel = new ObjectProgramModel(null);
 	
 	
 	@Test

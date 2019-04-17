@@ -2,6 +2,8 @@ package com.neaterbits.compiler.java;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import com.neaterbits.compiler.ast.type.BaseTypeName;
 import com.neaterbits.compiler.ast.type.primitive.BooleanType;
@@ -15,6 +17,7 @@ import com.neaterbits.compiler.ast.type.primitive.LongType;
 import com.neaterbits.compiler.ast.type.primitive.NamedVoidType;
 import com.neaterbits.compiler.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.ast.type.primitive.StringType;
+import com.neaterbits.compiler.util.imports.TypeImport;
 
 public class JavaTypes {
 
@@ -29,7 +32,7 @@ public class JavaTypes {
 	public static final StringType  STRING_TYPE = new StringType(new BaseTypeName("String"), true);
 	public static final NamedVoidType VOID_TYPE = new NamedVoidType(new BaseTypeName("void"));
 
-	private static final Collection<BuiltinType> builtinTypes = Arrays.asList(
+	private static final Collection<BuiltinType> builtinTypes = Collections.unmodifiableList(Arrays.asList(
 			BYTE_TYPE,
 			SHORT_TYPE,
 			INT_TYPE,
@@ -40,9 +43,17 @@ public class JavaTypes {
 			BOOLEAN_TYPE,
 			STRING_TYPE,
 			VOID_TYPE
-		);
+		));
 	
 	public static Collection<BuiltinType> getBuiltinTypes() {
 		return builtinTypes;
+	}
+
+	private static final List<TypeImport> IMPLICIT_IMPORTS = Collections.unmodifiableList(Arrays.asList(
+			new TypeImport(new String [] { "java", "lang" })
+	));
+	
+	public static List<TypeImport> getImplicitImports() {
+		return IMPLICIT_IMPORTS;
 	}
 }

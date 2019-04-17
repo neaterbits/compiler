@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.imports.TypeImport;
 import com.neaterbits.compiler.util.model.CompilationUnitModel;
 import com.neaterbits.compiler.util.model.TypeImportVisitor;
 
@@ -55,6 +56,14 @@ class FileImports {
 			};
 
 			compilationUnitModel.iterateTypeImports(compilationUnit, visitor);
+			
+			final List<TypeImport> implicitImports = compilationUnitModel.getImplicitImports();
+			
+			if (implicitImports != null) {
+				for (TypeImport implicitImport : implicitImports) {
+					implicitImport.visit(visitor);
+				}
+			}
 		}
 
 		return result;

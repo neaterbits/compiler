@@ -1,29 +1,23 @@
-package com.neaterbits.compiler.bytecode.ast;
+package com.neaterbits.compiler.ast.typereference;
 
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
-import com.neaterbits.compiler.ast.typereference.TypeReferenceVisitor;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
 
-public final class EncodedTypeReference extends TypeReference {
+public class LibraryTypeReference extends ResolvedTypeReference {
 
-	private final String typeName;
-
-	public EncodedTypeReference(Context context, String typeName) {
-		super(context);
+	private final TypeName typeName;
 	
+	public LibraryTypeReference(Context context, TypeName typeName) {
+		super(context);
+
 		Objects.requireNonNull(typeName);
 		
 		this.typeName = typeName;
-	}
-
-	public String getEncodedTypeName() {
-		return typeName;
 	}
 
 	@Override
@@ -33,12 +27,12 @@ public final class EncodedTypeReference extends TypeReference {
 
 	@Override
 	public TypeName getTypeName() {
-		throw new UnsupportedOperationException();
+		return typeName;
 	}
 
 	@Override
 	public String getDebugName() {
-		return typeName;
+		return typeName.getName();
 	}
 
 	@Override
@@ -48,6 +42,6 @@ public final class EncodedTypeReference extends TypeReference {
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-
+		
 	}
 }

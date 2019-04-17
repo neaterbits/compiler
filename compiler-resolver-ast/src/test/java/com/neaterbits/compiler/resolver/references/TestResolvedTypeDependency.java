@@ -60,4 +60,9 @@ public final class TestResolvedTypeDependency implements ResolvedTypeDependency<
 	public void replaceWithBuiltinType(BuiltinType builtinType) {
 		
 	}
+
+	@Override
+	public void replaceWithLibraryType(TypeName libraryType) {
+		
+	}
 }

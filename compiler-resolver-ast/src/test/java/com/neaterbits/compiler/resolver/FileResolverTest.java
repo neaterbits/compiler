@@ -61,7 +61,7 @@ public class FileResolverTest extends BaseResolveTest {
 		};
 		
 		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> filesResolver
-			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, new ObjectProgramModel(), astModel);
+			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, new ObjectProgramModel(null), astModel);
 
 		final FileSpec testFileSpec = new NameFileSpec("TestClass.java");
 		final TypeName testClass = makeTypeName("com.test.TestClass");

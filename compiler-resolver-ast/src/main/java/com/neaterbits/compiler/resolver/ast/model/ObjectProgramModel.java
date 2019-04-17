@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.resolver.ast.model;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.ASTVisitor;
@@ -43,6 +44,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.imports.TypeImport;
 import com.neaterbits.compiler.util.model.ISourceToken;
 import com.neaterbits.compiler.util.model.ProgramModel;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
@@ -51,7 +53,14 @@ import com.neaterbits.compiler.util.model.SourceTokenType;
 import com.neaterbits.compiler.util.model.SourceTokenVisitor;
 import com.neaterbits.compiler.util.model.TypeImportVisitor;
 
-public final class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, CompilationUnit > {
+public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, CompilationUnit > {
+
+	private final List<TypeImport> implicitImports;
+	
+	public ObjectProgramModel(List<TypeImport> implicitImports) {
+		this.implicitImports = implicitImports;
+	}
+
 
 	@Override
 	public ASTParsedFile getParsedFile(Program program, FileSpec path) {
@@ -176,6 +185,12 @@ public final class ObjectProgramModel implements ProgramModel<Program, ASTParsed
 		}
 	}
 
+	
+	@Override
+	public List<TypeImport> getImplicitImports() {
+		return implicitImports;
+	}
+
 
 	private SourceToken makeSourceToken(BaseASTElement element, CompilationUnit compilationUnit, ResolvedTypes resolvedTypes) {
 		
@@ -268,7 +283,7 @@ public final class ObjectProgramModel implements ProgramModel<Program, ASTParsed
 						definition.getNameString());
 				
 				final TypeName resolved = ScopedNameResolver.resolveScopedName(
-						typeReference.getTypeName(),
+						typeReference.getScopedName(),
 						null,
 						compilationUnit,
 						this,

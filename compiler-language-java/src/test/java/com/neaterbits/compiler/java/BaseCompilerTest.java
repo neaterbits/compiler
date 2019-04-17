@@ -63,4 +63,19 @@ public abstract class BaseCompilerTest {
 	protected static <T extends BaseASTElement> T get(Iterator<BaseASTElement> iterator) {
 		return (T)iterator.next();
 	}
+
+	@SuppressWarnings("unchecked")
+	protected static <T extends BaseASTElement> T getNext(Iterator<BaseASTElement> iterator, Class<T> elementType) {
+
+		while (iterator.hasNext()) {
+			
+			final BaseASTElement next = iterator.next();
+			
+			if (next.getClass().equals(elementType)) {
+				return (T)next;
+			}
+		}
+		
+		return null;
+	}
 }

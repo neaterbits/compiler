@@ -142,9 +142,9 @@ public abstract class BaseJavaCompilerTest {
 			if (e instanceof ResolveLaterTypeReference) {
 				final ResolveLaterTypeReference typeReference = (ResolveLaterTypeReference)e;
 				
-				if (typeReference.getTypeName().scopeStartsWith(scopeToRename)) {
+				if (typeReference.getScopedName().scopeStartsWith(scopeToRename)) {
 			
-					final ScopedName renamedScope = typeReference.getTypeName().removeFromScope(scopeToRename);
+					final ScopedName renamedScope = typeReference.getScopedName().removeFromScope(scopeToRename);
 					
 					typeReference.replaceWith(
 							new ResolveLaterTypeReference(

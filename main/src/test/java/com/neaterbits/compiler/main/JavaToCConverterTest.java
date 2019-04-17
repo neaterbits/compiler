@@ -21,6 +21,7 @@ import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.c.emit.CCompilationUnitEmitter;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseCompilationUnitEmitter;
+import com.neaterbits.compiler.java.JavaProgramModel;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.main.convert.ConvertClass;
@@ -34,7 +35,6 @@ import com.neaterbits.compiler.resolver.ResolverLibraryTypes;
 import com.neaterbits.compiler.resolver.UnresolvedDependencies;
 import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
-import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.passes.AddToCodeMapPass;
 import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass;
 import com.neaterbits.compiler.resolver.passes.ResolvedTypeDependencies;
@@ -104,7 +104,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		assertThat(printstream.getExtendsFrom()).isNotNull();
 		assertThat(printstream.getExtendsFrom().size()).isEqualTo(1);
 		
-		ReplaceResolvedTypeReferencesPass.replaceResolvedTypeReferences(resolveResult, astModel);
+		ReplaceResolvedTypeReferencesPass.replaceResolvedTypeReferences(resolveResult, scopedName -> null, astModel);
 		
 		final List<ASTParsedFile> astParsedFiles = new ArrayList<>();
 		
@@ -200,7 +200,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 				logger,
 				JavaTypes.getBuiltinTypes(),
 				libraryTypes,
-				new ObjectProgramModel(),
+				new JavaProgramModel(),
 				astModel);
 		
 		final Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles = ProgramLoader.getCompiledFiles(program);

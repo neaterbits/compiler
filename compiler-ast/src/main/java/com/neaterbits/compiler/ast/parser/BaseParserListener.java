@@ -1566,7 +1566,7 @@ public abstract class BaseParserListener {
 		if (classType != null && classType instanceof ResolveLaterTypeReference) {
 			final ResolveLaterTypeReference resolveLaterTypeReference = (ResolveLaterTypeReference)classType;
 
-			if (variableScopesContain(resolveLaterTypeReference.getTypeName().getName())) {
+			if (variableScopesContain(resolveLaterTypeReference.getScopedName().getName())) {
 				// Likely a scoped variable, eg. variable.invokeMethod() instead of Class.invokeStaticMethod()
 				
 				if (type == MethodInvocationType.NAMED_CLASS_STATIC) {

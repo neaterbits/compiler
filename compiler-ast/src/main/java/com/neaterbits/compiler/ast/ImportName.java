@@ -1,32 +1,26 @@
 package com.neaterbits.compiler.ast;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.block.MethodName;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.imports.TypeImport;
 import com.neaterbits.compiler.util.model.TypeImportVisitor;
 
 public final class ImportName extends BaseASTElement {
 
-	private final NamespaceReference namespace;
-	private final ClassOrInterfaceName typeName;
-	private final String [] namespaceOrTypeName;
-	private final ImportType type;
-	private final MethodName method;
+	private final TypeImport typeImport;
 
+	private final MethodName method;
+	
 	public ImportName(Context context, NamespaceReference namespace, ClassOrInterfaceName typeName) {
 		super(context);
 		
 		Objects.requireNonNull(namespace);
 		Objects.requireNonNull(typeName);
 		
-		this.namespace = namespace;
-		this.typeName = typeName;
-		this.namespaceOrTypeName = null;
-		this.type = ImportType.KNOWN_NAMESPACE;
+		this.typeImport = new TypeImport(namespace.getParts(), typeName.getName());
 		this.method = null;
 	}
 	
@@ -34,11 +28,8 @@ public final class ImportName extends BaseASTElement {
 		super(context);
 		
 		Objects.requireNonNull(namespaceOrTypeName);
-		
-		this.namespace = null;
-		this.typeName = null;
-		this.namespaceOrTypeName = namespaceOrTypeName;
-		this.type = ImportType.NAMESPACE_OR_TYPE;
+
+		this.typeImport = new TypeImport(namespaceOrTypeName);
 		this.method = null;
 	}
 
@@ -47,28 +38,32 @@ public final class ImportName extends BaseASTElement {
 		
 		Objects.requireNonNull(namespace);
 		Objects.requireNonNull(typeName);
-		
-		this.namespace = namespace;
-		this.typeName = typeName;
-		this.namespaceOrTypeName = null;
-		this.type = method != null ? ImportType.KNOWN_METHOD : ImportType.WILDCARD_METHOD;
+
+		this.typeImport = new TypeImport(namespace.getParts(), typeName.getName(), method != null ? method.getName() : null);
+		this.method = method;
+	}
+
+	private ImportName(Context context, TypeImport typeImport, MethodName method) {
+		super(context);
+
+		this.typeImport = typeImport;
 		this.method = method;
 	}
 
 	public NamespaceReference getNamespace() {
-		return namespace;
+		return new NamespaceReference(typeImport.getNamespace());
 	}
 
 	public ClassOrInterfaceName getTypeName() {
-		return typeName;
+		return new ClassOrInterfaceName(typeImport.getTypeName());
 	}
 
 	public String[] getNamespaceOrTypeName() {
-		return namespaceOrTypeName;
+		return typeImport.getNamespaceOrTypeName();
 	}
 
 	public boolean isMethodImport() {
-		return type == ImportType.KNOWN_METHOD || type == ImportType.WILDCARD_METHOD;
+		return typeImport.isMethodImport();
 	}
 
 	public MethodName getMethod() {
@@ -76,77 +71,17 @@ public final class ImportName extends BaseASTElement {
 	}
 	
 	public void visit(TypeImportVisitor visitor) {
-		
-		
-		switch (type) {
-		case KNOWN_NAMESPACE:
-			visitor.onKnownNamespace(namespace.getParts(), typeName.getName());
-			break;
-			
-		case NAMESPACE_OR_TYPE:
-			visitor.onNamespaceOrTypeName(namespaceOrTypeName);
-			break;
-			
-		case KNOWN_METHOD:
-			visitor.onKnownStaticMethod(namespace.getParts(), typeName.getName(), method.getName());
-			break;
-			
-		case WILDCARD_METHOD:
-			visitor.onStaticMethodWildcard(namespace.getParts(), typeName.getName());
-			break;
-		}
+		typeImport.visit(visitor);
 	}
 	
 	public boolean startsWith(String [] parts) {
 	
-		final boolean startsWith;
-		
-		switch (type) {
-		case KNOWN_NAMESPACE:
-		case KNOWN_METHOD:
-		case WILDCARD_METHOD:
-			startsWith = namespace.startsWith(parts);
-			break;
-			
-		case NAMESPACE_OR_TYPE:
-			startsWith = Strings.startsWith(namespaceOrTypeName, parts);
-			break;
-		
-		default:
-			throw new UnsupportedOperationException("Unknown type " + type);
-		}
-		
-		return startsWith;
+		return typeImport.startsWith(parts);
 	}
 	
 	public ImportName removeFromNamespace(String [] parts) {
 		
-		final ImportName result;
-		
-		switch (type) {
-		case KNOWN_NAMESPACE:
-			result = new ImportName(getContext(), namespace.removeFromNamespace(parts), typeName);
-			break;
-			
-		case KNOWN_METHOD:
-		case WILDCARD_METHOD:
-			result = new ImportName(getContext(), namespace.removeFromNamespace(parts), typeName, method);
-			break;
-			
-		case NAMESPACE_OR_TYPE:
-			
-			if (!startsWith(parts)) {
-				throw new IllegalArgumentException("Does not start with parts " + Arrays.toString(parts));
-			}
-			
-			result = new ImportName(getContext(), Strings.lastOf(this.namespaceOrTypeName, this.namespaceOrTypeName.length - parts.length));
-			break;
-			
-		default:
-			throw new UnsupportedOperationException("Unknown type " + type);
-		}
-		
-		return result;
+		return new ImportName(getContext(), typeImport.removeFromNamespace(parts), method);
 	}
 	
 	@Override
@@ -156,8 +91,6 @@ public final class ImportName extends BaseASTElement {
 
 	@Override
 	public String toString() {
-		return "Import [namespace=" + namespace + ", className=" + typeName + ", packageOrTypeName="
-				+ Arrays.toString(namespaceOrTypeName) + ", type=" + type + ", method=" + method + "]";
+		return typeImport.toString();
 	}
-
 }

@@ -5,6 +5,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.TypeName;
 
 public final class ResolveLaterTypeReference extends TypeReference {
 
@@ -17,10 +18,15 @@ public final class ResolveLaterTypeReference extends TypeReference {
 		this.typeName = typeName;
 	}
 
-	public ScopedName getTypeName() {
+	public ScopedName getScopedName() {
 		return typeName;
 	}
 	
+	@Override
+	public TypeName getTypeName() {
+		throw new UnsupportedOperationException();
+	}
+
 	public void setResolved(BaseType resolved) {
 		this.resolved = resolved;
 	}
