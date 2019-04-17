@@ -32,6 +32,10 @@ public abstract class DataFieldMember extends ComplexMemberDefinition {
 		return name.get();
 	}
 
+	public final String getNameString() {
+		return name.get().getName();
+	}
+	
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		doIterate(type, recurseMode, iterator);

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.neaterbits.compiler.ast.list.ASTList;
-import com.neaterbits.compiler.ast.parser.ParsedFile;
+import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 
 public final class Program extends BaseASTElement {
 
@@ -20,7 +20,7 @@ public final class Program extends BaseASTElement {
 		this(Arrays.asList(module));
 	}
 	
-	public Program(ParsedFile parsedFile) {
+	public Program(ASTParsedFile parsedFile) {
 		this(new Module(null, parsedFile));
 	}
 

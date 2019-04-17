@@ -42,7 +42,7 @@ final class ModuleParser {
 		if (systemModule != null) {
 			systemModulePath = systemModule.getBaseDirectory().getCanonicalPath();
 
-			final List<ParsedFile> parsedFiles = directoryParser.parseDirectory(
+			final List<ASTParsedFile> parsedFiles = directoryParser.parseDirectory(
 					systemModule.getBaseDirectory(),
 					debugParseLogger);
 			
@@ -75,7 +75,7 @@ final class ModuleParser {
 					iter.remove();
 				}
 				else {
-					final List<ParsedFile> parsedFiles = directoryParser.parseDirectory(moduleSpec.getBaseDirectory(), debugParseLogger);
+					final List<ASTParsedFile> parsedFiles = directoryParser.parseDirectory(moduleSpec.getBaseDirectory(), debugParseLogger);
 					
 					final Module module = new Module(moduleSpec, parsedFiles);
 					

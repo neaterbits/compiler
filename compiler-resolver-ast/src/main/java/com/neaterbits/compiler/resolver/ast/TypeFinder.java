@@ -19,7 +19,7 @@ import com.neaterbits.compiler.ast.expression.PrimaryList;
 import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.parser.FieldAccessType;
 import com.neaterbits.compiler.ast.parser.MethodInvocationType;
-import com.neaterbits.compiler.ast.parser.ParsedFile;
+import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.statement.CatchBlock;
 import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.NamedType;
@@ -67,7 +67,7 @@ class TypeFinder {
 			.toString();
 	}
 	
-	static List<CompiledType<ComplexType<?, ?, ?>>> findTypes(ParsedFile parsedFile, FileSpec compiledFileSpec) {
+	static List<CompiledType<ComplexType<?, ?, ?>>> findTypes(ASTParsedFile parsedFile, FileSpec compiledFileSpec) {
 
 		final TypeFinderStack stack = new TypeFinderStack();
 		

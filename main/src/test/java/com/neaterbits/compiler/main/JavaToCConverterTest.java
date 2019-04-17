@@ -15,7 +15,7 @@ import com.neaterbits.compiler.ast.CompilationCode;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Module;
 import com.neaterbits.compiler.ast.Program;
-import com.neaterbits.compiler.ast.parser.ParsedFile;
+import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.c.emit.CCompilationUnitEmitter;
@@ -32,7 +32,7 @@ import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.ResolverLibraryTypes;
 import com.neaterbits.compiler.resolver.UnresolvedDependencies;
-import com.neaterbits.compiler.resolver.UnresolvedReferenceReplacer;
+import com.neaterbits.compiler.resolver.ResolvedReferenceReplacer;
 import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
@@ -104,7 +104,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		// Replaces all resolved type references within the AST
 		final ReplaceTypeReferencesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> replaceTypeReferencesResult
-				= UnresolvedReferenceReplacer.replaceUnresolvedTypeReferences(resolveResult, astModel);
+				= ResolvedReferenceReplacer.replaceResolvedTypeReferences(resolveResult, astModel);
 		
 		// First map classes to C structs so can access between compilation units
 		final JavaToCDeclarations declarations = convertClassesAndInterfacesToStruct(replaceTypeReferencesResult, new JavaToCClassToStructState());
@@ -117,7 +117,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		for (Module module : program.getModules()) {
 			
-			for (ParsedFile parsedFile : module.getParsedFiles()) {
+			for (ASTParsedFile parsedFile : module.getParsedFiles()) {
 				
 				final CompilationUnit converted = convert(parsedFile.getParsed(), declarations, replaceTypeReferencesResult.getCodeMap());
 				

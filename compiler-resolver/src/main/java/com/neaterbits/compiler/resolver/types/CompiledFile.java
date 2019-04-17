@@ -7,5 +7,6 @@ public interface CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> extends FileInfo {
 	Collection<CompiledType<COMPLEXTYPE>> getTypes();
 	
 	COMPILATION_UNIT getCompilationUnit();
+	
 }
 

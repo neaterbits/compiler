@@ -45,13 +45,13 @@ public class DirectoryParser {
 		return null;
 	}
 	
-	public List<ParsedFile> parseDirectory(File directory) {
+	public List<ASTParsedFile> parseDirectory(File directory) {
 		return parseDirectory(directory, null);
 	}
 
-	public List<ParsedFile> parseDirectory(File directory, ParseLogger debugParseLogger) {
+	public List<ASTParsedFile> parseDirectory(File directory, ParseLogger debugParseLogger) {
 
-		final List<ParsedFile> parsedFiles = new ArrayList<>();
+		final List<ASTParsedFile> parsedFiles = new ArrayList<>();
 		
 		Files.recurseDirectories(directory, file -> {
 
@@ -88,7 +88,7 @@ public class DirectoryParser {
 					allFileerrors.add(new IOError(file, "Failed to load file", ex));
 				}
 				
-				final ParsedFile parsedFile = new ParsedFile(
+				final ASTParsedFile parsedFile = new ASTParsedFile(
 						new FileSystemFileSpec(file),
 						allFileerrors,
 						log,

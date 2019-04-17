@@ -21,8 +21,12 @@ public abstract class DeclarationName<T extends BaseTypeName> extends BaseASTEle
 		this.name = name;
 	}
 
-	public T getName() {
+	public final T getName() {
 		return name;
+	}
+	
+	public final String getNameString() {
+		return name.getName();
 	}
 
 	@Override

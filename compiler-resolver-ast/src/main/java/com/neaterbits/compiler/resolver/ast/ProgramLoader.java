@@ -7,7 +7,7 @@ import java.util.List;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Module;
 import com.neaterbits.compiler.ast.Program;
-import com.neaterbits.compiler.ast.parser.ParsedFile;
+import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
@@ -19,14 +19,14 @@ public class ProgramLoader  {
 		final List<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles = new ArrayList<>();
 		
 		for (Module module : program.getModules()) {
-			for (ParsedFile parsedFile : module.getParsedFiles()) {
+			for (ASTParsedFile parsedFile : module.getParsedFiles()) {
 				allFiles.add(makeCompiledFile(parsedFile));
 			}
 		}
 		return allFiles;
 	}
 
-	public static CompiledFile<ComplexType<?, ?, ?>, CompilationUnit> makeCompiledFile(ParsedFile parsedFile) {
+	public static CompiledFile<ComplexType<?, ?, ?>, CompilationUnit> makeCompiledFile(ASTParsedFile parsedFile) {
 
 		final FileSpec compiledFileSpec = parsedFile.getFileSpec();
 

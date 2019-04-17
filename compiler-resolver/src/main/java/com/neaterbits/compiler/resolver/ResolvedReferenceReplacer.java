@@ -8,17 +8,17 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 
-public class UnresolvedReferenceReplacer {
+public class ResolvedReferenceReplacer {
 	
 	public static <BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
-			ReplaceTypeReferencesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> replaceUnresolvedTypeReferences(
+			ReplaceTypeReferencesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> replaceResolvedTypeReferences(
 						
 			ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFilesResult, ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 		
 		final List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles = resolveFilesResult.getResolvedFiles();
 		
 		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedFile : resolvedFiles) {
-			replaceUnresolvedTypeReferences(resolvedFile.getTypes(), resolveFilesResult.getResolvedTypesMap(), resolveFilesResult.getBuiltinTypesMap());
+			replaceResolvedTypeReferences(resolvedFile.getTypes(), resolveFilesResult.getResolvedTypesMap(), resolveFilesResult.getBuiltinTypesMap());
 		}
 		
 		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typesInDependencyOrder = new ArrayList<>(resolvedFiles.size());
@@ -32,14 +32,14 @@ public class UnresolvedReferenceReplacer {
 		return new ReplaceTypeReferencesResult<>(resolveFilesResult.getResolvedFiles(), codeMap, typesInDependencyOrder);
 	}
 	
-	private static <BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> void replaceUnresolvedTypeReferences(
+	private static <BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> void replaceResolvedTypeReferences(
 			Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedTypes,
 			ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypesMap,
 			BuiltinTypesMap<BUILTINTYPE> builtinTypesMap) {
 		
 		for (ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedType : resolvedTypes) {
 			if (resolvedType.getNestedTypes() != null) {
-				replaceUnresolvedTypeReferences(resolvedType.getNestedTypes(), resolvedTypesMap, builtinTypesMap);
+				replaceResolvedTypeReferences(resolvedType.getNestedTypes(), resolvedTypesMap, builtinTypesMap);
 			}
 
 			if (resolvedType.getDependencies() != null) {

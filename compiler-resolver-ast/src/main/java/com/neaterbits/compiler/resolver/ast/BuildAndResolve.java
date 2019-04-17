@@ -13,16 +13,16 @@ import java.util.stream.Collectors;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Module;
 import com.neaterbits.compiler.ast.Program;
-import com.neaterbits.compiler.ast.parser.ParsedFile;
+import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
-import com.neaterbits.compiler.resolver.FilesResolver;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
-import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
+import com.neaterbits.compiler.resolver.passes.ResolveTypeDependenciesPass;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.CompilationUnitModel;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.ModuleSpec;
@@ -39,16 +39,16 @@ public class BuildAndResolve {
 	}
 	
 	public static <INPUT> BuildAndResolveResult parseAndResolve(
-			Parser<CompilationUnit, ?> parser,
+			Parser<CompilationUnit> parser,
 			Collection<INPUT> inputs,
 			GetInputStream<INPUT> getInputStream,
 			Function<INPUT, FileSpec> getFileSpec,
-			Consumer<ParsedFile> onParsedFile,
+			Consumer<ASTParsedFile> onParsedFile,
 			ObjectProgramModel programModel,
 			Collection<BuiltinType> builtinTypes,
 			ResolvedTypes resolvedTypes) throws IOException {
 
-		final List<ParsedFile> parsedFiles = new ArrayList<>(inputs.size());
+		final List<ASTParsedFile> parsedFiles = new ArrayList<>(inputs.size());
 		final List<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles = new ArrayList<>(inputs.size());
 
 		for (INPUT input : inputs) {
@@ -57,7 +57,7 @@ public class BuildAndResolve {
 			
 				final FileSpec fileSpec = getFileSpec.apply(input);
 				
-				final ParsedFile parsedFile = BuildAndResolve.parseFile(parser, inputStream, fileSpec, resolvedTypes);
+				final ASTParsedFile parsedFile = BuildAndResolve.parseFile(parser, inputStream, fileSpec, resolvedTypes);
 				
 				parsedFiles.add(parsedFile);
 				
@@ -73,8 +73,8 @@ public class BuildAndResolve {
 		return new BuildAndResolveResult(parsedFiles, resolveFilesResult);
 	}
 	
-	public static ParsedFile parseFile(
-			Parser<CompilationUnit, ?> parser,
+	public static ASTParsedFile parseFile(
+			Parser<CompilationUnit> parser,
 			InputStream inputStream,
 			FileSpec fileSpec,
 			ResolvedTypes resolvedTypes) throws IOException {
@@ -89,7 +89,7 @@ public class BuildAndResolve {
 		
 		final List<CompileError> compileErrors = errors.stream().map(error -> (CompileError)error).collect(Collectors.toList());
 		
-		final ParsedFile parsedFile = new ParsedFile(
+		final ASTParsedFile parsedFile = new ASTParsedFile(
 				fileSpec,
 				compileErrors,
 				null,
@@ -103,7 +103,7 @@ public class BuildAndResolve {
 			List<T> dependencies,
 			Function<T, ModuleId> getModuleId,
 			Function<T, File> getFile,
-			Collection<ParsedFile> compilationUnits,
+			Collection<ASTParsedFile> compilationUnits,
 			ObjectProgramModel programModel,
 			Collection<BuiltinType> builtinTypes,
 			ResolvedTypes resolvedTypes) {
@@ -127,34 +127,11 @@ public class BuildAndResolve {
 	public static ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveParsedFiles(
 			
 			Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles,
-			ObjectProgramModel programModel,
+			CompilationUnitModel<CompilationUnit> programModel,
 			Collection<BuiltinType> builtinTypes,
 			ResolvedTypes resolvedTypes) {
-
-		final ASTModelImpl astModel = new ASTModelImpl();
-
-		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> logger = new ResolveLogger<>(System.out);
-
-		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> filesResolver
-			= new FilesResolver<>(
-					logger,
-					builtinTypes,
-					scopedName -> {
-						
-						System.out.println("## lookup scoped name " + scopedName);
-						
-						return resolvedTypes.lookup(scopedName);
-						
-					},
-					programModel,
-					astModel);
 		
-		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult = filesResolver.resolveFiles(allFiles);
-		
-				
-		System.out.println("## resolved files: " + resolveResult.getResolvedFiles());
-	
-		return resolveResult;
+		return ResolveTypeDependenciesPass.resolveParsedFiles(allFiles, programModel, builtinTypes, resolvedTypes::lookup, new ASTModelImpl());
 	}
 
 }

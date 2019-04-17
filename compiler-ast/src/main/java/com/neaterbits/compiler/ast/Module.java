@@ -5,15 +5,15 @@ import java.util.Collection;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.list.ASTList;
-import com.neaterbits.compiler.ast.parser.ParsedFile;
+import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.util.modules.ModuleSpec;
 
 public final class Module extends BaseASTElement {
 
 	private final ModuleSpec moduleSpec;
-	private final ASTList<ParsedFile> parsedFiles;
+	private final ASTList<ASTParsedFile> parsedFiles;
 	
-	public Module(ModuleSpec moduleSpec, Collection<ParsedFile> parsedFiles) {
+	public Module(ModuleSpec moduleSpec, Collection<ASTParsedFile> parsedFiles) {
 		super(null);
 
 		Objects.requireNonNull(parsedFiles);
@@ -22,7 +22,7 @@ public final class Module extends BaseASTElement {
 		this.parsedFiles = makeList(parsedFiles);
 	}
 	
-	public Module(ModuleSpec moduleSpec, ParsedFile parsedFiles) {
+	public Module(ModuleSpec moduleSpec, ASTParsedFile parsedFiles) {
 		this(moduleSpec, Arrays.asList(parsedFiles));
 	}
 
@@ -30,7 +30,7 @@ public final class Module extends BaseASTElement {
 		return moduleSpec;
 	}
 
-	public ASTList<ParsedFile> getParsedFiles() {
+	public ASTList<ASTParsedFile> getParsedFiles() {
 		return parsedFiles;
 	}
 

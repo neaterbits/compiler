@@ -19,7 +19,7 @@ import com.neaterbits.compiler.ast.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.expression.literal.StringLiteral;
-import com.neaterbits.compiler.ast.parser.ParsedFile;
+import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.statement.EnumConstant;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
@@ -51,15 +51,15 @@ import com.neaterbits.compiler.util.model.SourceTokenType;
 import com.neaterbits.compiler.util.model.SourceTokenVisitor;
 import com.neaterbits.compiler.util.model.TypeImportVisitor;
 
-public final class ObjectProgramModel implements ProgramModel<Program, ParsedFile, CompilationUnit > {
+public final class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, CompilationUnit > {
 
 	@Override
-	public ParsedFile getParsedFile(Program program, FileSpec path) {
+	public ASTParsedFile getParsedFile(Program program, FileSpec path) {
 		
-		return (ParsedFile)program.findElement(false, element -> {
+		return (ASTParsedFile)program.findElement(false, element -> {
 			
-			if (element instanceof ParsedFile) {
-				final ParsedFile parsedFile = (ParsedFile)element;
+			if (element instanceof ASTParsedFile) {
+				final ASTParsedFile parsedFile = (ASTParsedFile)element;
 				
 				if (parsedFile.getFileSpec().equals(path)) {
 					return true;
@@ -149,7 +149,7 @@ public final class ObjectProgramModel implements ProgramModel<Program, ParsedFil
 
 
 	@Override
-	public CompilationUnit getCompilationUnit(ParsedFile sourceFile) {
+	public CompilationUnit getCompilationUnit(ASTParsedFile sourceFile) {
 		return sourceFile.getParsed();
 	}
 
