@@ -57,5 +57,6 @@ public abstract class VariableDeclarationElement extends BaseASTElement {
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		doIterate(type, recurseMode, iterator);
+		doIterate(name, recurseMode, iterator);
 	}
 }
