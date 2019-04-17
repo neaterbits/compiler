@@ -11,6 +11,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.resolver.util.BuiltinTypesMap;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
 
@@ -55,11 +56,11 @@ public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 	}
 
 	
-	ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getResolvedTypesMap() {
+	public ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getResolvedTypesMap() {
 		return resolvedTypesMap;
 	}
 	
-	BuiltinTypesMap<BUILTINTYPE> getBuiltinTypesMap() {
+	public BuiltinTypesMap<BUILTINTYPE> getBuiltinTypesMap() {
 		return builtinTypesMap;
 	}
 
@@ -74,7 +75,7 @@ public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 		return unresolvedDependencies;
 	}
 
-	Collection<BUILTINTYPE> getBuiltinTypes() {
+	public Collection<BUILTINTYPE> getBuiltinTypes() {
 		return builtinTypes;
 	}
 	

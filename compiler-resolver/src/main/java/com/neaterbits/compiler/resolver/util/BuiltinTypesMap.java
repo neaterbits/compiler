@@ -1,18 +1,19 @@
-package com.neaterbits.compiler.resolver;
+package com.neaterbits.compiler.resolver.util;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.neaterbits.compiler.resolver.ASTBuiltinTypeModel;
 import com.neaterbits.compiler.util.ScopedName;
 
-final class BuiltinTypesMap<BUILTINTYPE> {
+public final class BuiltinTypesMap<BUILTINTYPE> {
 
 	private final Map<ScopedName, BUILTINTYPE> byScopedName;
 	private final Map<String, BUILTINTYPE> byName;
 	
-	BuiltinTypesMap(Collection<BUILTINTYPE> builtinTypes, ASTBuiltinTypeModel<BUILTINTYPE> astModel) {
+	public BuiltinTypesMap(Collection<BUILTINTYPE> builtinTypes, ASTBuiltinTypeModel<BUILTINTYPE> astModel) {
 
 		this.byScopedName = new HashMap<>(builtinTypes.size());
 		this.byName = new HashMap<>(builtinTypes.size());
@@ -25,7 +26,7 @@ final class BuiltinTypesMap<BUILTINTYPE> {
 	}
 
 
-	BUILTINTYPE lookupType(ScopedName typeName) {
+	public BUILTINTYPE lookupType(ScopedName typeName) {
 		
 		Objects.requireNonNull(typeName);
 		

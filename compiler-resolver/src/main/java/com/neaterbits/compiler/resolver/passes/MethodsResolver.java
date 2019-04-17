@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver;
+package com.neaterbits.compiler.resolver.passes;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.neaterbits.compiler.codemap.MethodVariant;
+import com.neaterbits.compiler.resolver.ASTTypesModel;
+import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;

@@ -26,16 +26,18 @@ import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.main.convert.ConvertClass;
 import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.FilesResolver;
-import com.neaterbits.compiler.resolver.ReplaceTypeReferencesResult;
+import com.neaterbits.compiler.resolver.AddToCodeMapResult;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.ResolverLibraryTypes;
 import com.neaterbits.compiler.resolver.UnresolvedDependencies;
-import com.neaterbits.compiler.resolver.ResolvedReferenceReplacer;
 import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
+import com.neaterbits.compiler.resolver.passes.AddToCodeMapPass;
+import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass;
+import com.neaterbits.compiler.resolver.passes.ResolvedTypeDependencies;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.Context;
@@ -43,6 +45,7 @@ import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
+import com.neaterbits.compiler.util.passes.ParsedFiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -101,10 +104,20 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		assertThat(printstream.getExtendsFrom()).isNotNull();
 		assertThat(printstream.getExtendsFrom().size()).isEqualTo(1);
 		
+		ReplaceResolvedTypeReferencesPass.replaceResolvedTypeReferences(resolveResult, astModel);
+		
+		final List<ASTParsedFile> astParsedFiles = new ArrayList<>();
+		
+		program.getModules().forEach(module -> module.getParsedFiles().forEach(astParsedFiles::add));
+		
+		final ParsedFiles<ASTParsedFile> parsedFiles = new ParsedFiles<>(astParsedFiles);
+		
+		final ResolvedTypeDependencies<ASTParsedFile, BuiltinType, ComplexType<?, ?, ?>, TypeName> resolved =
+				new ResolvedTypeDependencies<>(parsedFiles, resolveResult);
 		
 		// Replaces all resolved type references within the AST
-		final ReplaceTypeReferencesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> replaceTypeReferencesResult
-				= ResolvedReferenceReplacer.replaceResolvedTypeReferences(resolveResult, astModel);
+		final AddToCodeMapResult<ASTParsedFile, BuiltinType, ComplexType<?, ?, ?>, TypeName> replaceTypeReferencesResult
+				= AddToCodeMapPass.makeCodeMap(resolved, astModel);
 		
 		// First map classes to C structs so can access between compilation units
 		final JavaToCDeclarations declarations = convertClassesAndInterfacesToStruct(replaceTypeReferencesResult, new JavaToCClassToStructState());
