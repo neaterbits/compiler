@@ -11,6 +11,7 @@ import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledFiles;
+import com.neaterbits.compiler.util.passes.ParsedFiles;
 import com.neaterbits.compiler.util.passes.SingleToMultiPass;
 
 public class FindTypeDependenciesPass 
@@ -28,6 +29,8 @@ public class FindTypeDependenciesPass
 			compiledFiles.add(compiledFile);
 		}
 		
-		return new CompiledFiles<>(new ArrayList<>(input), compiledFiles);
+		return new CompiledFiles<>(
+				new ParsedFiles<>(new ArrayList<>(input)),
+				compiledFiles);
 	}
 }

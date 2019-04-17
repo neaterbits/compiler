@@ -18,7 +18,6 @@ public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 	
 	private final List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles;
 	
-	// private final ResolveState resolveState;
 	private final ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypesMap;
 	private final BuiltinTypesMap<BUILTINTYPE> builtinTypesMap;
 	private final UnresolvedDependencies unresolvedDependencies;
