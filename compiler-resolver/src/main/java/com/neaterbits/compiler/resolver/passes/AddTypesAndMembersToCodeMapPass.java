@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
-import com.neaterbits.compiler.resolver.ResolvedCodeMapImpl;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
@@ -79,7 +79,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 	
 		final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap = new ResolvedTypeCodeMapImpl<>(
-				new ResolvedCodeMapImpl<>(),
+				new IntCompilerCodeMap(),
 				builtinTypes,
 				astModel);
 		

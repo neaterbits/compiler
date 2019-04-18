@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.BaseResolveTest;
 import com.neaterbits.compiler.resolver.ReferenceType;
-import com.neaterbits.compiler.resolver.ResolvedCodeMapImpl;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.TestResolvedFile;
 import com.neaterbits.compiler.resolver.TestResolvedType;
@@ -37,6 +36,7 @@ import com.neaterbits.compiler.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceModifiers;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceName;
 import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 
 public class CodeMapTest extends BaseResolveTest {
 
@@ -46,7 +46,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
 		final ResolvedTypeCodeMapImpl<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
-				= new ResolvedTypeCodeMapImpl<>(new ResolvedCodeMapImpl<>(), Collections.emptyList(), astModel);
+				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
 
@@ -88,7 +88,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final ASTModelImpl astModel = new ASTModelImpl();
 
 		final ResolvedTypeCodeMapImpl<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
-				= new ResolvedTypeCodeMapImpl<>(new ResolvedCodeMapImpl<>(), Collections.emptyList(), astModel);
+				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
 
@@ -128,7 +128,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
 		final ResolvedTypeCodeMapImpl<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
-				= new ResolvedTypeCodeMapImpl<>(new ResolvedCodeMapImpl<>(), Collections.emptyList(), astModel);
+				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 		final TestResolvedFile classTestFile = new TestResolvedFile("TestClass.java");
 

@@ -6,7 +6,6 @@ import com.neaterbits.compiler.codemap.Encode;
 import com.neaterbits.compiler.codemap.MethodMap;
 import com.neaterbits.compiler.codemap.MethodMapCache;
 import com.neaterbits.compiler.codemap.MethodVariant;
-import com.neaterbits.compiler.codemap.StaticMethodOverrideMap;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
 import static org.assertj.core.api.Assertions.assertThat;

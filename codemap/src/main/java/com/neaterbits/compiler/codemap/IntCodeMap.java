@@ -2,6 +2,13 @@ package com.neaterbits.compiler.codemap;
 
 import static com.neaterbits.compiler.codemap.Encode.encodeType;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import com.neaterbits.compiler.util.Bits;
 import com.neaterbits.compiler.util.ValueMap;
 
@@ -43,6 +50,7 @@ public class IntCodeMap implements CodeMap {
 		return encodeType(typeNo, getTypeVariantForType(typeNo));
 	}
 
+	@Override
 	public void computeMethodExtends(int typeNo) {
 
 		final int encodedTypeNo = getEncodedTypeNo(typeNo);
@@ -105,6 +113,62 @@ public class IntCodeMap implements CodeMap {
 		}
 		
 		return result;
+	}
+
+	
+	@Override
+	public int[] getAllTypesExtendingThis(int typeNo) {
+
+		final List<Integer> allTypes = new ArrayList<>();
+		
+		final int [] directSubtypes = getTypesDirectlyExtendingThis(typeNo);
+		
+		addAll(allTypes, directSubtypes);
+		
+		getAllSubtypes(directSubtypes, allTypes);
+		
+		// Use separate set to find duplicates so that returns in order
+		final Set<Integer> found = new HashSet<>();
+		
+		final Iterator<Integer> iterator = allTypes.iterator();
+		
+		while (iterator.hasNext()) {
+			final Integer subType = iterator.next();
+			
+			if (found.contains(subType)) {
+				iterator.remove();
+			}
+			else {
+				found.add(subType);
+			}
+		}
+		
+		final int [] result = new int[allTypes.size()];
+
+		int dstIdx = 0;
+		
+		for (Integer foundTypeNo : allTypes) {
+			result[dstIdx ++] = foundTypeNo;
+		}
+		
+		return result;
+	}
+
+	private void getAllSubtypes(int [] types, Collection<Integer> allTypes) {
+		
+		for (int type : types) {
+			final int [] subTypes = getTypesDirectlyExtendingThis(type);
+			
+			addAll(allTypes, subTypes);
+			
+			getAllSubtypes(subTypes, allTypes);
+		}
+	}
+	
+	private static void addAll(Collection<Integer> collection, int [] array) {
+		for (int i : array) {
+			collection.add(i);
+		}
 	}
 
 	@Override

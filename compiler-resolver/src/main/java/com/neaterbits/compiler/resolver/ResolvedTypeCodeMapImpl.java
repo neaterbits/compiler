@@ -16,27 +16,25 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.codemap.MethodInfo;
-import com.neaterbits.compiler.codemap.MethodMapCache;
 import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.NameToTypeNoMap;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 
 public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 		implements ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
-	private final ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap;
+	private final CompilerCodeMap codeMap;
 	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 	private final NameToTypeNoMap nameToTypeNoMap;
 	
 	private final Map<ScopedName, Integer> scopedNameMap;
 	
-	private final MethodMapCache methodMapCache;
-	
 	private ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> [] resolvedTypes;
 	
 	public ResolvedTypeCodeMapImpl(
-			ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap,
+			CompilerCodeMap codeMap,
 			Collection<BUILTINTYPE> builtinTypes,
 			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 		
@@ -47,7 +45,6 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		this.astModel = astModel;
 		this.nameToTypeNoMap = new NameToTypeNoMap();
 		this.scopedNameMap = new HashMap<>();
-		this.methodMapCache = new MethodMapCache();
 		
 		// Add all builtin types
 		for (BUILTINTYPE builtinType : builtinTypes) {
@@ -160,7 +157,7 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 	}
 
 	private TypeInfo getTypeInfo(int typeNo) {
-		return new TypeInfo(typeNo, codeMap.getTypeVariant(typeNo));
+		return new TypeInfo(typeNo, codeMap.getTypeVariantForType(typeNo));
 	}
 
 	@Override
@@ -215,7 +212,11 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 			parameterTypeNos[i] = getTypeNo(parameterTypes[i]);
 		}
 		
-		return codeMap.addMethod(type, name, parameterTypeNos, methodVariant, indexInType);
+		return addMethod(type, name, parameterTypeNos, methodVariant, indexInType);
+	}
+
+	private int addMethod(int typeNo, String name, int [] parameterTypes, MethodVariant methodVariant, int indexInType) {
+		return codeMap.addOrGetMethod(typeNo, name, methodVariant, -1, parameterTypes, indexInType);
 	}
 
 	public void computeMethodExtends(TypeName completeName) {
@@ -229,7 +230,7 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		
 		final int typeNo = getTypeNo(type);
 		
-		final int [] types = codeMap.getDirectExtendingThis(typeNo);
+		final int [] types = codeMap.getTypesDirectlyExtendingThis(typeNo);
 		
 		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> result = new ArrayList<>(types.length);
 		
@@ -247,7 +248,7 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		
 		final int typeNo = getTypeNo(type);
 		
-		final int [] types = codeMap.getAllExtendingThis(typeNo);
+		final int [] types = codeMap.getAllTypesExtendingThis(typeNo);
 		
 		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> result = new ArrayList<>(types.length);
 		
@@ -304,6 +305,6 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 			}
 		}
 		
-		return codeMap.getMethodInfo(typeNo, methodName, parameterTypeNos, methodMapCache);
+		return codeMap.getMethodInfo(typeNo, methodName, parameterTypeNos);
 	}
 }

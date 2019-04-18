@@ -45,6 +45,8 @@ public interface CodeMap {
 
 	int [] getTypesDirectlyExtendingThis(int typeNo);
 
+	int [] getAllTypesExtendingThis(int typeNo);
+	
 	void setMethodCount(int type, int methodCount);
 	
 	int addOrGetMethod(
@@ -64,6 +66,9 @@ public interface CodeMap {
 			int [] parameters,
 			int indexInType);
 
+	
+	void computeMethodExtends(int typeNo);
+	
 	int getTypeForMethod(int methodNo);
 	
 	int getIndexForMethod(int methodNo);

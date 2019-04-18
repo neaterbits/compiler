@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.ArrayAllocation;
 import com.neaterbits.compiler.codemap.IntCodeMap;
-import com.neaterbits.compiler.codemap.MethodOverrideMap;
+import com.neaterbits.compiler.codemap.StaticMethodOverrideMap;
 
 public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 
@@ -19,8 +19,8 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 	private final FileReferences fileReferences;
 	private final TokenCrossReference crossReference;
 	
-	public IntCompilerCodeMap(MethodOverrideMap methodOverrideMap) {
-		super(methodOverrideMap);
+	public IntCompilerCodeMap() {
+		super(new StaticMethodOverrideMap());
 		
 		this.sourceFileToIndex = new HashMap<>();
 		this.sourceFileNo = SOURCEFILE_UNDEF + 1;

@@ -53,6 +53,11 @@ class SynchronizedCodeMap implements CodeMap {
 	}
 
 	@Override
+	public final synchronized void computeMethodExtends(int typeNo) {
+		delegate.computeMethodExtends(typeNo);
+	}
+
+	@Override
 	public final synchronized int[] getTypesThisDirectlyExtends(int typeNo) {
 		return delegate.getTypesThisDirectlyExtends(typeNo);
 	}
@@ -60,6 +65,10 @@ class SynchronizedCodeMap implements CodeMap {
 	@Override
 	public final synchronized int[] getTypesDirectlyExtendingThis(int type) {
 		return delegate.getTypesDirectlyExtendingThis(type);
+	}
+	@Override
+	public final synchronized int[] getAllTypesExtendingThis(int typeNo) {
+		return delegate.getAllTypesExtendingThis(typeNo);
 	}
 
 	@Override

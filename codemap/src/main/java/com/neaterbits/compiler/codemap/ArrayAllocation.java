@@ -127,7 +127,7 @@ public final class ArrayAllocation {
 	}
 
 	
-	static int subIntArrayInitialIndex(int [] array) {
+	public static int subIntArrayInitialIndex(int [] array) {
 		return 1;
 	}
 	
