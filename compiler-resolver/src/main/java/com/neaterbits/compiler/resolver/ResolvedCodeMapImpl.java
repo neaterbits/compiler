@@ -11,21 +11,16 @@ import com.neaterbits.compiler.codemap.MethodInfo;
 import com.neaterbits.compiler.codemap.MethodMapCache;
 import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.StaticMethodOverrideMap;
-import com.neaterbits.compiler.codemap.TypeReferences;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
-import com.neaterbits.compiler.resolver.types.ResolvedType;
 
 public final class ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 	
 	private final IntCompilerCodeMap codeMap;
 	
-	private final TypeReferences<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typeReferences;
-	
 	public ResolvedCodeMapImpl() {
 
 		this.codeMap = new IntCompilerCodeMap(new StaticMethodOverrideMap());
-		this.typeReferences = new TypeReferences<>();
 	}
 
 	public int addFile(String file, int [] types) {
@@ -53,13 +48,6 @@ public final class ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 		codeMap.computeMethodExtends(typeNo);
 	}
 
-	public void addFieldReferences(int fromType, int ... toTypes) {
-		typeReferences.addFieldReferences(fromType, toTypes);
-	}
-
-	public void addMethodReferences(int fromType, int ... toTypes) {
-		typeReferences.addMethodReferences(fromType, toTypes);
-	}
 
 	int getClassThisExtendsFrom(int typeNo) {
 		return codeMap.getExtendsFromSingleSuperClass(typeNo);
