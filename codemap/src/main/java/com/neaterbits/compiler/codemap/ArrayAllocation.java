@@ -5,9 +5,9 @@ import java.util.function.Function;
 
 public final class ArrayAllocation {
 	
-	static final int DEFAULT_LENGTH = 10000;
+	public static final int DEFAULT_LENGTH = 10000;
 	
-	static final int [] allocateIntArray(int [] array, int numEntries) {
+	public static final int [] allocateIntArray(int [] array, int numEntries) {
 		
 		final int [] result;
 		
@@ -27,7 +27,7 @@ public final class ArrayAllocation {
 		return result;
 	}
 
-	static long [] allocateLongArray(long [] array, int numEntries) {
+	public static long [] allocateLongArray(long [] array, int numEntries) {
 		
 		final long [] result;
 		
@@ -136,7 +136,7 @@ public final class ArrayAllocation {
 	}
 
 	
-	static int [] subIntArrayCopy(int [] array) {
+	public static int [] subIntArrayCopy(int [] array) {
 		
 		final int numEntries = array[0];
 		

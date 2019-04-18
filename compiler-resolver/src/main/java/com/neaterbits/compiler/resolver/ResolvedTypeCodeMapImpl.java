@@ -61,7 +61,7 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 	}
 
 	public int addFile(ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> file, int [] types) {
-		return codeMap.addFile(types);
+		return codeMap.addFile(file.getSpec().getDistinctName(), types);
 	}
 
 	private int [] getExtendsFrom(ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> type, TypeVariant typeVariant) {

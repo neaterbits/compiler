@@ -1,20 +1,16 @@
-package com.neaterbits.compiler.codemap;
+package com.neaterbits.compiler.codemap.compiler;
 
 import static com.neaterbits.compiler.codemap.ArrayAllocation.allocateIntArray;
 
 import java.util.Arrays;
 
-public final class FileReferences<FILE> {
+public final class FileReferences {
 
-	private int fileSequenceNo;
-	
 	private int [] fileByType;
 	private int [][] typesByFile;
 	
-	public int addFile(int [] types) {
+	public int addFile(int fileNo, int [] types) {
 
-		final int fileNo = fileSequenceNo ++;
-		
 		this.typesByFile = allocateIntArray(this.typesByFile, fileNo + 1);
 		
 		if (typesByFile[fileNo] != null) {
@@ -30,5 +26,14 @@ public final class FileReferences<FILE> {
 		}
 		
 		return fileNo;
+	}
+
+	void removeFile(int fileNo) {
+
+		for (int type : typesByFile[fileNo]) {
+			fileByType[type] = IntCompilerCodeMap.SOURCEFILE_UNDEF;
+		}
+		
+		typesByFile[fileNo] = null;
 	}
 }

@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 public final class FileSystemFileSpec implements FileSpec {
@@ -14,6 +15,15 @@ public final class FileSystemFileSpec implements FileSpec {
 		this.file = file;
 	}
 	
+	@Override
+	public String getDistinctName() {
+		try {
+			return file.getCanonicalPath();
+		} catch (IOException ex) {
+			throw new IllegalStateException(ex);
+		}
+	}
+
 	@Override
 	public String getParseContextName() {
 		return file.getName();

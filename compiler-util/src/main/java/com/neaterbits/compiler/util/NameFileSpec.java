@@ -12,6 +12,11 @@ public final class NameFileSpec implements FileSpec {
 		
 		this.name = name;
 	}
+	
+	@Override
+	public String getDistinctName() {
+		return name;
+	}
 
 	@Override
 	public String getParseContextName() {

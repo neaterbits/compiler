@@ -1,4 +1,6 @@
-package com.neaterbits.compiler.codemap;
+package com.neaterbits.compiler.codemap.compiler;
+
+import com.neaterbits.compiler.codemap.ArrayAllocation;
 
 // Cross referencing token names, eg. for rename
 final class TokenReferenceMap {

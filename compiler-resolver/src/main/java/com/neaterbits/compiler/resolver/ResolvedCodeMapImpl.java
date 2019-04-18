@@ -7,34 +7,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.neaterbits.compiler.codemap.FileReferences;
-import com.neaterbits.compiler.codemap.IntCodeMap;
 import com.neaterbits.compiler.codemap.MethodInfo;
 import com.neaterbits.compiler.codemap.MethodMapCache;
 import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.StaticMethodOverrideMap;
 import com.neaterbits.compiler.codemap.TypeReferences;
 import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.resolver.types.ResolvedFile;
+import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 
 public final class ResolvedCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 	
-	private final FileReferences<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> fileReferences;
-
-	private final IntCodeMap codeMap;
+	private final IntCompilerCodeMap codeMap;
 	
 	private final TypeReferences<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typeReferences;
 	
 	public ResolvedCodeMapImpl() {
-		this.fileReferences = new FileReferences<>();
 
-		this.codeMap = new IntCodeMap(new StaticMethodOverrideMap());
+		this.codeMap = new IntCompilerCodeMap(new StaticMethodOverrideMap());
 		this.typeReferences = new TypeReferences<>();
 	}
 
-	public int addFile(int [] types) {
-		return fileReferences.addFile(types);
+	public int addFile(String file, int [] types) {
+		return codeMap.addFile(file, types);
 	}
 	
 	int addType(TypeVariant typeVariant, int numMethods, int [] thisExtendsFromClasses, int [] thisExtendsFromInterfaces) {

@@ -4,6 +4,8 @@ public interface FileSpec {
 
 	String getParseContextName();
 	
+	String getDistinctName();
+	
 	default String getDebugName() {
 		return getParseContextName();
 	}

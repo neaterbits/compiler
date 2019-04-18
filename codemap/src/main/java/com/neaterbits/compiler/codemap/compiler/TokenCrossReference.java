@@ -1,16 +1,9 @@
-package com.neaterbits.compiler.codemap;
+package com.neaterbits.compiler.codemap.compiler;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import com.neaterbits.compiler.codemap.ArrayAllocation;
 
 final class TokenCrossReference {
 
-	private static final int SOURCEFILE_UNDEF = 0;
-	
-	private int sourceFileNo; // source file allocator
-	private String [] sourceFiles;
-	private final Map<String, Integer> sourceFileToIndex;
 	
 	private int tokenNo; // token allocator
 
@@ -27,60 +20,11 @@ final class TokenCrossReference {
 		this.variableReferences = new TokenReferenceMap();
 		this.methodReferences = new TokenReferenceMap();
 
-		this.sourceFileToIndex = new HashMap<>();
-		
-		this.sourceFileNo = SOURCEFILE_UNDEF + 1;
 		this.tokenNo = TokenReferenceMap.TOKEN_UNDEF + 1;
 	}
 	
-	int addSourceFile(String file) {
-		
-		Objects.requireNonNull(file);
-		
-		if (!file.trim().equals(file)) {
-			throw new IllegalArgumentException();
-		}
-		
-		if (file.isEmpty()) {
-			throw new IllegalArgumentException();
-		}
-		
-		if (sourceFileToIndex.containsKey(file)) {
-			throw new IllegalArgumentException();
-		}
-		
-		final int sourceFileIdx = sourceFileNo ++;
-	
-		this.sourceFiles = ArrayAllocation.allocateArray(sourceFiles, ArrayAllocation.DEFAULT_LENGTH, String[]::new);
-		
-		sourceFiles[sourceFileIdx] = file;
-		sourceFileToIndex.put(file, sourceFileIdx);
-		
-		return sourceFileIdx;
-	}
-	
-	void removeSourceFile(String file) {
-		
-		Objects.requireNonNull(file);
-
-		final Integer sourceFileIdx = sourceFileToIndex.remove(file);
-		
-		if (sourceFileIdx == null) {
-			throw new IllegalStateException();
-		}
-		
-		sourceFiles[sourceFileIdx] = null;
-		
-		for (int token : sourceFileToTokens[sourceFileIdx]) {
-			removeTokenRefs(token);
-		}
-	}
 	
 	int addToken(int sourceFile, int tokenOffset, int tokenLength) {
-		
-		if (sourceFiles[sourceFile] == null) {
-			throw new IllegalArgumentException();
-		}
 		
 		if (tokenOffset < 0) {
 			throw new IllegalArgumentException();
@@ -129,6 +73,11 @@ final class TokenCrossReference {
 		return variableReferences.getDeclarationTokenReferencedFrom(fromToken);
 	}
 
+	void removeFile(int sourceFileIdx) {
+		for (int token : sourceFileToTokens[sourceFileIdx]) {
+			removeTokenRefs(token);
+		}
+	}        
 	
 	void removeToken(int token) {
 
@@ -149,7 +98,7 @@ final class TokenCrossReference {
 	
 	private void removeTokenRefs(int token) {
 		
-		tokenToSourceFile[token] = SOURCEFILE_UNDEF;
+		tokenToSourceFile[token] = IntCompilerCodeMap.SOURCEFILE_UNDEF;
 		tokenToOffsetAndLength[token] = -1L;
 
 		if (variableReferences.hasToken(token)) {
