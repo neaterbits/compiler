@@ -36,7 +36,7 @@ import com.neaterbits.compiler.emit.ProgramEmitter;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
-import com.neaterbits.compiler.resolver.AddToCodeMapResult;
+import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.ScopedName;
@@ -183,7 +183,7 @@ public abstract class BaseJavaCompilerTest {
 	
 	static <T extends MappingJavaToCConverterState<T>>
 	JavaToCDeclarations convertClassesAndInterfacesToStruct(
-			AddToCodeMapResult<ASTParsedFile, BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult,
+			AddTypesAndMembersToCodeMapResult<ASTParsedFile, BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult,
 			MappingJavaToCConverterState<T> converterState) {
 		
 		final JavaToCDeclarations declarations = new JavaToCDeclarations();

@@ -5,7 +5,7 @@ import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
 import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.passes.FindTypeDependenciesPass;
-import com.neaterbits.compiler.resolver.passes.AddToCodeMapPass;
+import com.neaterbits.compiler.resolver.passes.AddTypesAndMembersToCodeMapPass;
 import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass;
 import com.neaterbits.compiler.resolver.passes.ResolveTypeDependenciesPass;
 import com.neaterbits.compiler.util.language.CompilerLanguage;
@@ -56,7 +56,7 @@ public class JavaAntlrCompilerLanguage extends CompilerLanguage<CompilationUnit,
 							typesModel))
 				
 				.addMultiPass(new ReplaceResolvedTypeReferencesPass<>(resolvedTypes::lookup, typesModel))
-				.addMultiPass(new AddToCodeMapPass<>(typesModel))
+				.addMultiPass(new AddTypesAndMembersToCodeMapPass<>(typesModel))
 				
 				.build();
 

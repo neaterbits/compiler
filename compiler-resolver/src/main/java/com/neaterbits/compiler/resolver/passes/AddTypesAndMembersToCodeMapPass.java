@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.neaterbits.compiler.resolver.ASTTypesModel;
-import com.neaterbits.compiler.resolver.AddToCodeMapResult;
+import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolvedCodeMapImpl;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
@@ -26,14 +26,14 @@ import com.neaterbits.compiler.util.passes.MultiPass;
 
 import static com.neaterbits.compiler.resolver.util.ResolveUtil.forEachResolvedTypeNested;
 
-public final class AddToCodeMapPass<PARSED_FILE extends ParsedFile, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFile, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 	extends MultiPass<
 			ResolvedTypeDependencies<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>,
 			CompiledAndResolvedFiles> {
 
 	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 	
-	public AddToCodeMapPass(ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+	public AddTypesAndMembersToCodeMapPass(ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
 		Objects.requireNonNull(astModel);
 		
@@ -41,14 +41,14 @@ public final class AddToCodeMapPass<PARSED_FILE extends ParsedFile, BUILTINTYPE,
 	}
 
 	@Override
-	public AddToCodeMapResult<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> execute(
+	public AddTypesAndMembersToCodeMapResult<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> execute(
 			ResolvedTypeDependencies<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> input) throws IOException {
 		
 		return makeCodeMap(input, astModel);
 	}
 	
 	public static <PARSED_FILE extends ParsedFile, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
-		AddToCodeMapResult<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> makeCodeMap(
+		AddTypesAndMembersToCodeMapResult<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> makeCodeMap(
 			ResolvedFiles<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedFiles,
 			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
@@ -64,7 +64,7 @@ public final class AddToCodeMapPass<PARSED_FILE extends ParsedFile, BUILTINTYPE,
 				astModel);
 
 		
-		return new AddToCodeMapResult<>(
+		return new AddTypesAndMembersToCodeMapResult<>(
 				resolvedFiles,
 				resolveFilesResult.getResolvedFiles(),
 				codeMap,

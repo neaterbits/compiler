@@ -27,7 +27,7 @@ import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.main.convert.ConvertClass;
 import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.FilesResolver;
-import com.neaterbits.compiler.resolver.AddToCodeMapResult;
+import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
@@ -35,7 +35,7 @@ import com.neaterbits.compiler.resolver.ResolverLibraryTypes;
 import com.neaterbits.compiler.resolver.UnresolvedDependencies;
 import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
-import com.neaterbits.compiler.resolver.passes.AddToCodeMapPass;
+import com.neaterbits.compiler.resolver.passes.AddTypesAndMembersToCodeMapPass;
 import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass;
 import com.neaterbits.compiler.resolver.passes.ResolvedTypeDependencies;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
@@ -116,8 +116,8 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 				new ResolvedTypeDependencies<>(parsedFiles, resolveResult);
 		
 		// Replaces all resolved type references within the AST
-		final AddToCodeMapResult<ASTParsedFile, BuiltinType, ComplexType<?, ?, ?>, TypeName> replaceTypeReferencesResult
-				= AddToCodeMapPass.makeCodeMap(resolved, astModel);
+		final AddTypesAndMembersToCodeMapResult<ASTParsedFile, BuiltinType, ComplexType<?, ?, ?>, TypeName> replaceTypeReferencesResult
+				= AddTypesAndMembersToCodeMapPass.makeCodeMap(resolved, astModel);
 		
 		// First map classes to C structs so can access between compilation units
 		final JavaToCDeclarations declarations = convertClassesAndInterfacesToStruct(replaceTypeReferencesResult, new JavaToCClassToStructState());
