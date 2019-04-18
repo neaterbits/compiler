@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.loader.BytecodeCompiler;
-import com.neaterbits.compiler.codemap.CodeMap;
+import com.neaterbits.compiler.bytecode.common.loader.codemap.LoaderCodeMap;
 import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.VTableScratchArea;
 import com.neaterbits.runtime._native.NativeMemory;
@@ -13,7 +13,7 @@ import com.neaterbits.runtime._native.NativeMethodsTyped;
 
 final class ExecutorBytecodeCompiler implements BytecodeCompiler<CompiledClass, Void> {
 
-	private final CodeMap codeMap;
+	private final LoaderCodeMap codeMap;
 	
 	private final ClassObjectClass classObjectFields;
 	
@@ -25,7 +25,7 @@ final class ExecutorBytecodeCompiler implements BytecodeCompiler<CompiledClass, 
 	
 	private int[][] classVTable;
 	
-	ExecutorBytecodeCompiler(int baseType, int classType, LanguageClassTypes languageClassTypes, CodeMap codeMap) {
+	ExecutorBytecodeCompiler(int baseType, int classType, LanguageClassTypes languageClassTypes, LoaderCodeMap codeMap) {
 		Objects.requireNonNull(languageClassTypes);
 		Objects.requireNonNull(codeMap);
 		

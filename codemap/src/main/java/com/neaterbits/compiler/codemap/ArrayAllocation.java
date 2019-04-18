@@ -67,7 +67,7 @@ public final class ArrayAllocation {
 		return result;
 	}
 
-	static int [][] allocateIntArray(int [][] array, int numEntries) {
+	public static int [][] allocateIntArray(int [][] array, int numEntries) {
 		return allocateIntArray(array, numEntries, true);
 	}
 	
@@ -99,7 +99,7 @@ public final class ArrayAllocation {
 		return result;
 	}
 
-	static void addToSubIntArray(int [][] array, int primaryIndex, int value, int initialSize) {
+	public static void addToSubIntArray(int [][] array, int primaryIndex, int value, int initialSize) {
 		int [] subArray = array[primaryIndex];
 		
 		if (subArray == null) {

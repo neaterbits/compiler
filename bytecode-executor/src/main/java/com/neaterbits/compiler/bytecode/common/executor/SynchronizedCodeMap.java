@@ -8,7 +8,7 @@ import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.VTableScratchArea;
 
-final class SynchronizedCodeMap implements CodeMap {
+class SynchronizedCodeMap implements CodeMap {
 
 	private final CodeMap delegate;
 
@@ -20,75 +20,65 @@ final class SynchronizedCodeMap implements CodeMap {
 	}
 
 	@Override
-	public synchronized int addType(TypeVariant typeVariant, int[] extendsFromClasses, int [] extendsFromInterfaces) {
+	public final synchronized int addType(TypeVariant typeVariant, int[] extendsFromClasses, int [] extendsFromInterfaces) {
 		return delegate.addType(typeVariant, extendsFromClasses, extendsFromInterfaces);
 	}
 	
 	@Override
-	public TypeVariant getTypeVariantForType(int typeNo) {
+	public final synchronized TypeVariant getTypeVariantForType(int typeNo) {
 		return delegate.getTypeVariantForType(typeNo);
 	}
 
 	@Override
-	public synchronized int getExtendsFromSingleSuperClass(int type) {
+	public final synchronized int getExtendsFromSingleSuperClass(int type) {
 		return delegate.getExtendsFromSingleSuperClass(type);
 	}
 
 	@Override
-	public synchronized void setMethodCount(int type, int methodCount) {
+	public final synchronized void setMethodCount(int type, int methodCount) {
 		delegate.setMethodCount(type, methodCount);
 	}
 
 	@Override
-	public synchronized int addOrGetMethod(int type, String methodName, MethodVariant methodVariant, int returnType, int[] parameters,
+	public final synchronized int addOrGetMethod(int type, String methodName, MethodVariant methodVariant, int returnType, int[] parameters,
 			int indexInType) {
 		return delegate.addOrGetMethod(type, methodName, methodVariant, returnType, parameters, indexInType);
 	}
 
 	@Override
-	public synchronized int addOrGetExtendingMethod(int extendedMethod, MethodVariant extendedMethodVariant, int type,
+	public final synchronized int addOrGetExtendingMethod(int extendedMethod, MethodVariant extendedMethodVariant, int type,
 			String methodName, MethodVariant methodVariant, int returnType, int[] parameters, int indexInType) {
 
 		return delegate.addOrGetExtendingMethod(extendedMethod, extendedMethodVariant, type, methodName, methodVariant, returnType, parameters, indexInType);
 	}
 
 	@Override
-	public int[] getTypesThisDirectlyExtends(int typeNo) {
+	public final synchronized int[] getTypesThisDirectlyExtends(int typeNo) {
 		return delegate.getTypesThisDirectlyExtends(typeNo);
 	}
 
 	@Override
-	public synchronized int[] getTypesDirectlyExtendingThis(int type) {
+	public final synchronized int[] getTypesDirectlyExtendingThis(int type) {
 		return delegate.getTypesDirectlyExtendingThis(type);
 	}
 
 	@Override
-	public synchronized int getTypeForMethod(int methodNo) {
+	public final synchronized int getTypeForMethod(int methodNo) {
 		return delegate.getTypeForMethod(methodNo);
 	}
 
 	@Override
-	public synchronized int getIndexForMethod(int methodNo) {
+	public final synchronized int getIndexForMethod(int methodNo) {
 		return delegate.getIndexForMethod(methodNo);
 	}
 
 	@Override
-	public MethodInfo getMethodInfo(int typeNo, String methodName, int[] parameterTypes) {
+	public final synchronized MethodInfo getMethodInfo(int typeNo, String methodName, int[] parameterTypes) {
 		return delegate.getMethodInfo(typeNo, methodName, parameterTypes);
 	}
 
 	@Override
-	public synchronized void addMethodCall(int calledFrom, int calledTo) {
-		delegate.addMethodCall(calledFrom, calledTo);
-	}
-
-	@Override
-	public synchronized int recurseCallGraph(int fromMethodNo, MethodRef methodRef) {
-		return delegate.recurseCallGraph(fromMethodNo, methodRef);
-	}
-
-	@Override
-	public synchronized int getDistinctMethodCount(int typeNo, MethodFilter methodFilter, VTableScratchArea scratchArea) {
+	public final synchronized int getDistinctMethodCount(int typeNo, MethodFilter methodFilter, VTableScratchArea scratchArea) {
 		return delegate.getDistinctMethodCount(typeNo, methodFilter, scratchArea);
 	}
 }

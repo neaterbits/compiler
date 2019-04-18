@@ -3,16 +3,16 @@ package com.neaterbits.compiler.bytecode.common.loader;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.codemap.CodeMap;
+import com.neaterbits.compiler.bytecode.common.loader.codemap.LoaderCodeMap;
 import com.neaterbits.compiler.util.FieldType;
 
 final class LoaderMaps {
 
-	final CodeMap codeMap;
+	final LoaderCodeMap codeMap;
 	final IntegerTypeMap typeMap;
 	final LoadedClassesCache loadedClasses;
 
-	LoaderMaps(CodeMap codeMap, IntegerTypeMap typeMap, LoadedClassesCache loadedClasses) {
+	LoaderMaps(LoaderCodeMap codeMap, IntegerTypeMap typeMap, LoadedClassesCache loadedClasses) {
 
 		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(typeMap);

@@ -1,4 +1,6 @@
-package com.neaterbits.compiler.codemap;
+package com.neaterbits.compiler.bytecode.common.loader.codemap;
+
+import com.neaterbits.compiler.codemap.ArrayAllocation;
 
 final class MethodCallGraph {
 

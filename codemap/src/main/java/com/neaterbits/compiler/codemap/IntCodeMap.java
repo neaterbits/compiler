@@ -5,7 +5,7 @@ import static com.neaterbits.compiler.codemap.Encode.encodeType;
 import com.neaterbits.compiler.util.Bits;
 import com.neaterbits.compiler.util.ValueMap;
 
-public final class IntCodeMap implements CodeMap {
+public class IntCodeMap implements CodeMap {
 
 	private static final int NUM_METHOD_VARIANT_BITS = Bits.getNumBitsForStoringMaxValue(MethodVariant.values().length);
 	
@@ -17,7 +17,6 @@ public final class IntCodeMap implements CodeMap {
 	private final MethodOverrideMap methodOverrideMap;
 	
 	private final ValueMap methodVariants;
-	private final MethodCallGraph methodCallGraph;
 	
 	public IntCodeMap(MethodOverrideMap methodOverrideMap) {
 		this.typeHierarchy 	= new TypeHierarchy();
@@ -28,7 +27,6 @@ public final class IntCodeMap implements CodeMap {
 		this.methodOverrideMap = methodOverrideMap;
 		
 		this.methodVariants = new ValueMap(NUM_METHOD_VARIANT_BITS, 10000);
-		this.methodCallGraph = new MethodCallGraph();
 	}
 
 	@Override
@@ -154,7 +152,7 @@ public final class IntCodeMap implements CodeMap {
 		return methodNo;
 	}
 
-	private MethodVariant getMethodVariant(int methodNo) {
+	protected final MethodVariant getMethodVariant(int methodNo) {
 		final long value = methodVariants.getValue(methodNo);
 		
 		return MethodVariant.values()[(int)value];
@@ -171,66 +169,6 @@ public final class IntCodeMap implements CodeMap {
 	}
 
 	@Override
-	public void addMethodCall(int calledFrom, int calledTo) {
-		methodCallGraph.addMethodCall(calledFrom, calledTo);
-	}
-
-	@Override
-	public int recurseCallGraph(int fromMethodNo, MethodRef methodRef) {
-		return recurseCallGraph(fromMethodNo, methodRef, 0);
-	}
-
-	private int recurseCallGraph(int fromMethodNo, MethodRef methodRef, int depth) {
-		
-		final int [] calledMethods = methodCallGraph.getMethodsCalledFrom(fromMethodNo);
-		
-		int numProcessed = 0;
-		
-		final boolean shouldContinue;
-		
-		if (depth > 0) {
-			final MethodRefStatus status = methodRef.onRef(fromMethodNo, depth);
-			
-			if (status.isProcessed()) {
-				++ numProcessed;
-			}
-			
-			shouldContinue = status.shouldContinue();
-		}
-		else {
-			shouldContinue = true;
-		}
-		
-		if (shouldContinue && calledMethods != null) {
-			for (int calledMethod : calledMethods) {
-				
-				final MethodVariant methodVariant = getMethodVariant(calledMethod);
-				
-				switch (methodVariant) {
-				case STATIC:
-				case FINAL_IMPLEMENTATION:
-					numProcessed += recurseCallGraph(calledMethod, methodRef, depth + 1);
-					break;
-					
-				case ABSTRACT:
-					numProcessed += recurseExtending(calledMethod, methodRef, depth);
-					break;
-					
-				case OVERRIDABLE_IMPLEMENTATION:
-					numProcessed += recurseCallGraph(calledMethod, methodRef, depth + 1);
-					numProcessed += recurseExtending(calledMethod, methodRef, depth);
-					break;
-					
-				default:
-					throw new UnsupportedOperationException();
-				}
-			}
-		}
-
-		return numProcessed;
-	}
-	
-	@Override
 	public int getDistinctMethodCount(int typeNo, MethodFilter methodFilter, VTableScratchArea scratchArea) {
 		return methodMap.getDistinctMethodCount(typeNo, methodFilter, typeHierarchy::getExtendsFromSingleSuperClass, scratchArea);
 	}
@@ -239,17 +177,8 @@ public final class IntCodeMap implements CodeMap {
 	public MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes) {
 		return methodMap.getMethodInfo(typeNo, methodName, parameterTypes, methodMapCache);
 	}
-
-	private int recurseExtending(int calledMethod, MethodRef methodRef, int depth) {
-
-		final int [] extendingMethods = methodOverrideMap.getMethodsDirectlyExtending(calledMethod);
-		
-		int numProcessed = 0;
-		
-		for (int method : extendingMethods) {
-			numProcessed += recurseCallGraph(method, methodRef, depth + 1);
-		}
 	
-		return numProcessed;
+	protected final int [] getMethodsDirectlyExtending(int methodNo) {
+		return methodOverrideMap.getMethodsDirectlyExtending(methodNo);
 	}
 }

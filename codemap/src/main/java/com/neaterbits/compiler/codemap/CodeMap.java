@@ -70,16 +70,10 @@ public interface CodeMap {
 	
 	MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes);
 
-	void addMethodCall(int calledFrom, int calledTo);
-	
-	int recurseCallGraph(int fromMethodNo, MethodRef methodRef);
-
-	
 	@FunctionalInterface
 	interface MethodFilter {
 		boolean addMethod(int methodNo, MethodVariant methodVariant);
 	}
-	
 	
 	int getDistinctMethodCount(int typeNo, MethodFilter methodFilter, VTableScratchArea scratchArea);
 }
