@@ -14,7 +14,6 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.codemap.MethodInfo;
 import com.neaterbits.compiler.codemap.MethodVariant;
-import com.neaterbits.compiler.codemap.NameToTypeNoMap;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
@@ -24,7 +23,6 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 
 	private final CompilerCodeMap codeMap;
 	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
-	private final NameToTypeNoMap nameToTypeNoMap;
 	
 	private ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> [] resolvedTypes;
 	
@@ -38,7 +36,6 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 
 		this.codeMap = codeMap;
 		this.astModel = astModel;
-		this.nameToTypeNoMap = new NameToTypeNoMap();
 		
 		// Add all builtin types
 		for (BUILTINTYPE builtinType : builtinTypes) {
@@ -85,7 +82,7 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 						throw new IllegalStateException();
 					}
 					
-					final Integer typeNo = nameToTypeNoMap.getType(name);
+					final Integer typeNo = codeMap.getTypeNoByTypeName(name);
 					
 					if (typeNo == null) {
 						throw new IllegalStateException("No type no for name " + name + " from " + type.getTypeName());
@@ -131,7 +128,7 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		
 		resolvedTypes[typeNo] = (ResolvedType)type;
 		
-		nameToTypeNoMap.addMapping(typeName, typeNo);
+		codeMap.addMapping(typeName, typeNo);
 		
 		return typeNo;
 	}
@@ -180,14 +177,14 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 	}
 	
 	public boolean hasType(TypeName typeName) {
-		return nameToTypeNoMap.getType(typeName) != null;
+		return codeMap.getTypeNoByTypeName(typeName) != null;
 	}
 
 	public Integer getTypeNo(TypeName type) {
 		
 		Objects.requireNonNull(type);
 		
-		return nameToTypeNoMap.getType(type);
+		return codeMap.getTypeNoByTypeName(type);
 	}
 	
 	public int addMethod(int type, String name, TypeName [] parameterTypes, MethodVariant methodVariant, int indexInType) {

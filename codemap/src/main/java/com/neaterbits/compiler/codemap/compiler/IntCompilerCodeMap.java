@@ -6,7 +6,9 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.ArrayAllocation;
 import com.neaterbits.compiler.codemap.IntCodeMap;
+import com.neaterbits.compiler.codemap.NameToTypeNoMap;
 import com.neaterbits.compiler.codemap.StaticMethodOverrideMap;
+import com.neaterbits.compiler.util.TypeName;
 
 public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 
@@ -19,6 +21,8 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 	private final FileReferences fileReferences;
 	private final TokenCrossReference crossReference;
 	
+	private final NameToTypeNoMap nameToTypeNoMap;
+
 	public IntCompilerCodeMap() {
 		super(new StaticMethodOverrideMap());
 		
@@ -27,6 +31,8 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 
 		this.fileReferences = new FileReferences();
 		this.crossReference = new TokenCrossReference();
+
+		this.nameToTypeNoMap = new NameToTypeNoMap();
 	}
 
 	@Override
@@ -71,6 +77,16 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 		
 		sourceFiles[sourceFileIdx] = null;
 		crossReference.removeFile(sourceFileIdx);
+	}
+	
+	@Override
+	public void addMapping(TypeName name, int typeNo) {
+		nameToTypeNoMap.addMapping(name, typeNo);
+	}
+
+	@Override
+	public Integer getTypeNoByTypeName(TypeName typeName) {
+		return nameToTypeNoMap.getType(typeName);
 	}
 
 	@Override
