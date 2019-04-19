@@ -126,7 +126,11 @@ public final class ArrayAllocation {
 		return array[index][0];
 	}
 
-	
+
+	public static int subIntArrayValue(int [] array, int index) {
+		return array[1 + index];
+	}
+
 	public static int subIntArrayInitialIndex(int [] array) {
 		return 1;
 	}

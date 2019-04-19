@@ -12,8 +12,11 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.codemap.MethodInfo;
-import com.neaterbits.compiler.codemap.MethodVariant;
+import com.neaterbits.compiler.util.model.FieldInfo;
+import com.neaterbits.compiler.util.model.MethodInfo;
+import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.util.model.Mutability;
+import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
@@ -187,6 +190,31 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		return codeMap.getTypeNoByTypeName(type);
 	}
 	
+	public int addField(
+			int type,
+			String name,
+			TypeName fieldType,
+			int numArrayDimensions,
+			boolean isStatic,
+			Visibility visibility,
+			Mutability mutability,
+			boolean isVolatile,
+			boolean isTransient,
+			int indexInType) {
+
+		if (numArrayDimensions > 0) {
+			throw new UnsupportedOperationException();
+		}
+		
+		final int fieldTypeNo = codeMap.getTypeNoByTypeName(fieldType);
+		if (fieldTypeNo < 0) {
+			throw new IllegalArgumentException("Unknown type " + fieldType);
+		}
+
+		return codeMap.addField(type, name, fieldTypeNo, isStatic, visibility, mutability, isVolatile, isTransient, indexInType);
+	}
+
+	
 	public int addMethod(int type, String name, TypeName [] parameterTypes, MethodVariant methodVariant, int indexInType) {
 		
 		final int [] parameterTypeNos = new int[parameterTypes.length];
@@ -259,6 +287,13 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		return typeInfo;
 	}
 	
+	@Override
+	public FieldInfo getFieldInfo(TypeName type, String fieldName) {
+		final Integer typeNo = getTypeNo(type);
+
+		return typeNo != null ? codeMap.getFieldInfo(typeNo, fieldName) : null;
+	}
+
 	@Override
 	public MethodInfo getMethodInfo(TypeName type, String methodName, TypeName [] parameterTypes) {
 		

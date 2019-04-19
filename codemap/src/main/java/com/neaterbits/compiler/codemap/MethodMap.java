@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.CodeMap.MethodFilter;
+import com.neaterbits.compiler.util.model.MethodInfo;
+import com.neaterbits.compiler.util.model.MethodVariant;
 
 
 final class MethodMap {

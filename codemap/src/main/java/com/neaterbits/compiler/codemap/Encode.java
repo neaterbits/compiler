@@ -1,5 +1,10 @@
 package com.neaterbits.compiler.codemap;
 
+import com.neaterbits.compiler.util.Bits;
+import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.util.model.Mutability;
+import com.neaterbits.compiler.util.model.Visibility;
+
 class Encode {
 	private static final int TYPEVARIANT_BITS = 2;
 	private static final int TYPEVARIANT_MASK = ((1 << TYPEVARIANT_BITS) - 1) << (32 - TYPEVARIANT_BITS);
@@ -8,6 +13,26 @@ class Encode {
 	static final int SIGNATURE_BITS = 20;
 	static final int METHOD_VARIANT_BITS = 2;
 	static final int METHOD_BITS = IdentifierBits.METHOD_BITS;
+	
+	static final int FIELD_BITS = IdentifierBits.FIELD_BITS;
+	static final int FIELD_MASK = Bits.intMask(FIELD_BITS, 0);
+	
+	private static final int FIELD_VISIBILITY_BITS = Bits.getNumBitsForStoringEnum(Visibility.class);
+	private static final int FIELD_VISIBILITY_SHIFT = FIELD_BITS;
+	private static final int FIELD_VISIBILITY_MASK = Bits.intMask(FIELD_VISIBILITY_BITS, FIELD_VISIBILITY_SHIFT);
+	
+	private static final int FIELD_MUTABILITY_BITS = Bits.getNumBitsForStoringEnum(Mutability.class);
+	private static final int FIELD_MUTABILITY_SHIFT = FIELD_VISIBILITY_SHIFT + FIELD_VISIBILITY_BITS;
+	private static final int FIELD_MUTABILITY_MASK = Bits.intMask(FIELD_MUTABILITY_BITS, FIELD_MUTABILITY_SHIFT);
+	
+	private static final int FIELD_STATIC_BITS = 1;
+	private static final int FIELD_STATIC_SHIFT = FIELD_MUTABILITY_SHIFT + FIELD_MUTABILITY_BITS;
+	
+	private static final int FIELD_VOLATILE_BITS = 1;
+	private static final int FIELD_VOLATILE_SHIFT = FIELD_STATIC_SHIFT + FIELD_STATIC_BITS;
+	
+	private static final int FIELD_TRANSIENT_BITS = 1;
+	private static final int FIELD_TRANSIENT_SHIFT = FIELD_VOLATILE_SHIFT + FIELD_VOLATILE_BITS;
 	
 	static final int METHOD_AND_VARIANT_BITS = METHOD_BITS + METHOD_VARIANT_BITS;
 	
@@ -31,6 +56,16 @@ class Encode {
 	static {
 		if (TypeVariant.values().length > (1 << TYPEVARIANT_BITS)) {
 			throw new IllegalStateException("More bits required for type variant");
+		}
+		
+		if (
+				FIELD_BITS
+			  + FIELD_VISIBILITY_BITS
+			  + FIELD_MUTABILITY_BITS
+			  + FIELD_STATIC_BITS
+			  + FIELD_VOLATILE_BITS
+			  + FIELD_TRANSIENT_BITS > 32) {
+			throw new IllegalStateException("More bits required for fields");
 		}
 	}
 	
@@ -66,10 +101,48 @@ class Encode {
 		return decodeIndex(encodedTypeNo);
 	}
 
-	static int encodeMethod(int methodNo, TypeVariant typeVariant, MethodVariant methodVariant) {
-
-		return encodeTypeVariant(methodVariant.ordinal() << METHOD_BITS | methodNo , typeVariant);
+	static int encodeField(
+			int fieldIndex,
+			boolean isStatic,
+			Visibility visibility,
+			Mutability mutability,
+			boolean isVolatile,
+			boolean isTransient) {
 		
+		return    fieldIndex
+				| (isStatic ? 1 : 0) << FIELD_STATIC_SHIFT
+				| visibility.ordinal() << FIELD_VISIBILITY_SHIFT
+				| mutability.ordinal() << FIELD_MUTABILITY_SHIFT
+				| (isVolatile ? 1 : 0) << FIELD_VOLATILE_SHIFT
+				| (isTransient ? 1 : 0) << FIELD_TRANSIENT_SHIFT;
+	}
+	
+	static int decodeFieldNo(int encoded) {
+		return encoded & FIELD_MASK;
+	}
+
+	static boolean isFieldStatic(int encoded) {
+		return (encoded & (1 << FIELD_STATIC_SHIFT)) != 0;
+	}
+
+	static boolean isFieldVolatile(int encoded) {
+		return (encoded & (1 << FIELD_VOLATILE_SHIFT)) != 0;
+	}
+
+	static boolean isFieldTransient(int encoded) {
+		return (encoded & (1 << FIELD_TRANSIENT_SHIFT)) != 0;
+	}
+
+	static Visibility getFieldVisibility(int encoded) {
+		return Visibility.values()[(encoded & FIELD_VISIBILITY_MASK) >> FIELD_VISIBILITY_SHIFT];
+	}
+	
+	static Mutability getFieldMutability(int encoded) {
+		return Mutability.values()[(encoded & FIELD_MUTABILITY_MASK) >> FIELD_MUTABILITY_SHIFT];
+	}
+	
+	static int encodeMethod(int methodNo, TypeVariant typeVariant, MethodVariant methodVariant) {
+		return encodeTypeVariant(methodVariant.ordinal() << METHOD_BITS | methodNo , typeVariant);
 	}
 
 	static int encodeMethodWithMethodVariant(int methodNoWihMethodVariant, TypeVariant typeVariant) {

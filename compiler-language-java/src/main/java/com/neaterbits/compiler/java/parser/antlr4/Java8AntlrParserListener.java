@@ -8,6 +8,8 @@ import com.neaterbits.compiler.java.parser.JavaPrimitiveType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.model.Mutability;
+import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ import com.neaterbits.compiler.ast.operator.Notation;
 import com.neaterbits.compiler.ast.operator.Relational;
 import com.neaterbits.compiler.ast.parser.FieldAccessType;
 import com.neaterbits.compiler.ast.parser.MethodInvocationType;
-import com.neaterbits.compiler.ast.statement.Mutability;
+import com.neaterbits.compiler.ast.statement.ASTMutability;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
@@ -493,12 +495,12 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitPublicFieldModifier(PublicFieldModifierContext ctx) {
-		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.PUBLIC);
+		delegate.onVisibilityFieldModifier(context(ctx), new FieldVisibility(Visibility.PUBLIC));
 	}
 
 	@Override
 	public void exitPrivateFieldModifier(PrivateFieldModifierContext ctx) {
-		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.PRIVATE);
+		delegate.onVisibilityFieldModifier(context(ctx), new FieldVisibility(Visibility.PRIVATE));
 	}
 
 	@Override
@@ -508,7 +510,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void exitFinalFieldModifier(FinalFieldModifierContext ctx) {
-		delegate.onMutabilityFieldModifier(context(ctx), Mutability.VALUE_OR_REF_IMMUTABLE);
+		delegate.onMutabilityFieldModifier(context(ctx), new ASTMutability(Mutability.VALUE_OR_REF_IMMUTABLE));
 	}
 	
 	@Override
@@ -1546,7 +1548,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitFinalVariableModifier(FinalVariableModifierContext ctx) {
-		delegate.onMutabilityVariableModifier(context(ctx), Mutability.VALUE_OR_REF_IMMUTABLE);
+		delegate.onMutabilityVariableModifier(context(ctx), new ASTMutability(Mutability.VALUE_OR_REF_IMMUTABLE));
 	}
 
 	@Override

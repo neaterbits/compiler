@@ -16,7 +16,7 @@ import com.neaterbits.compiler.ast.operator.Operator;
 import com.neaterbits.compiler.ast.parser.FieldAccessType;
 import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.parser.iterative.BaseIterativeOOParserListener;
-import com.neaterbits.compiler.ast.statement.Mutability;
+import com.neaterbits.compiler.ast.statement.ASTMutability;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.type.primitive.IntegerType;
 import com.neaterbits.compiler.ast.type.primitive.ScalarType;
@@ -346,7 +346,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onStaticFieldModifier(context);
 	}
 	
-	public void onMutabilityFieldModifier(Context context, Mutability mutability) {
+	public void onMutabilityFieldModifier(Context context, ASTMutability mutability) {
 		delegate.onMutabilityFieldModifier(context, mutability);
 	}
 	
@@ -678,7 +678,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		return compilationUnit;
 	}
 
-	public void onMutabilityVariableModifier(Context context, Mutability mutability) {
+	public void onMutabilityVariableModifier(Context context, ASTMutability mutability) {
 		delegate.onMutabilityVariableModifier(context, mutability);
 	}
 	

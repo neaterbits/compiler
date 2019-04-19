@@ -6,7 +6,7 @@ import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.statement.BaseTryCatchFinallyStatement;
 import com.neaterbits.compiler.ast.statement.CatchBlock;
 import com.neaterbits.compiler.ast.statement.IteratorForStatement;
-import com.neaterbits.compiler.ast.statement.Mutability;
+import com.neaterbits.compiler.ast.statement.ASTMutability;
 import com.neaterbits.compiler.ast.statement.SwitchCaseLabel;
 import com.neaterbits.compiler.ast.statement.ThrowStatement;
 import com.neaterbits.compiler.ast.statement.TryCatchFinallyStatement;
@@ -43,7 +43,7 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 	private static final VariableModifierVisitor<Void, String> VARIABLEMODIFIER_TO_STRING = new VariableModifierVisitor<Void, String>() {
 		
 		@Override
-		public String onVariableMutability(Mutability mutability, Void param) {
+		public String onVariableMutability(ASTMutability mutability, Void param) {
 			return "final";
 		}
 	};

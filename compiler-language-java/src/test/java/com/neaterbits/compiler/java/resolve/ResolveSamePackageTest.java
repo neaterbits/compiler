@@ -29,6 +29,7 @@ import com.neaterbits.compiler.java.CompileFileCollector;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
+import com.neaterbits.compiler.util.model.Visibility;
 
 public class ResolveSamePackageTest extends BaseCompilerTest {
 
@@ -82,7 +83,7 @@ public class ResolveSamePackageTest extends BaseCompilerTest {
 	
 		final FieldModifiers fieldModifiers = get(iter);
 		assertThat(fieldModifiers.hasModifier(FieldVisibility.class)).isTrue();
-		assertThat(fieldModifiers.getModifier(FieldVisibility.class) == FieldVisibility.PRIVATE).isTrue();
+		assertThat(fieldModifiers.getModifier(FieldVisibility.class).getVisibility()).isEqualTo(Visibility.PRIVATE);
 
 		final FieldModifierHolder fieldModifierHolder = get(iter);
 		assertThat(fieldModifierHolder.getModifier() instanceof FieldVisibility).isTrue();

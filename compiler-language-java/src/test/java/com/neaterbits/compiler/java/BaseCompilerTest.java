@@ -10,8 +10,8 @@ import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.NameFileSpec;
+import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
 import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
-import com.neaterbits.compiler.util.model.CompiledAndResolvedFiles;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.passes.FileParsePassInput;
 import com.neaterbits.compiler.util.passes.FilePassInput;
@@ -39,12 +39,22 @@ public abstract class BaseCompilerTest {
 		
 	}
 
+	protected final CompiledAndMappedFiles compileAndMap(FileSpec fileSpec, String text, ResolvedTypes resolvedTypes) throws IOException {
+		Objects.requireNonNull(fileSpec);
+		Objects.requireNonNull(text);
 		
-	protected static CompiledAndResolvedFiles compile(List<FilePassInput> toCompile, ResolvedTypes resolvedTypes) throws IOException {
+		return new CompileFileCollector()
+				.add(fileSpec, text)
+				.compile(resolvedTypes);
+		
+	}
+
+		
+	protected static CompiledAndMappedFiles compile(List<FilePassInput> toCompile, ResolvedTypes resolvedTypes) throws IOException {
 		
 		final JavaAntlrCompilerLanguage compilerLanguage = new JavaAntlrCompilerLanguage();
 		
-		final LanguageCompiler<FileParsePassInput<CompilationUnit>, CompiledAndResolvedFiles> compiler
+		final LanguageCompiler<FileParsePassInput<CompilationUnit>, CompiledAndMappedFiles> compiler
 				= compilerLanguage.makeCompilerPasses(resolvedTypes);
 	
 		final List<FileParsePassInput<CompilationUnit>> parseInputs = toCompile.stream()

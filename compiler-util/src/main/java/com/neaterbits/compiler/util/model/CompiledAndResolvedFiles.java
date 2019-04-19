@@ -5,5 +5,5 @@ import com.neaterbits.compiler.util.FileSpec;
 public interface CompiledAndResolvedFiles {
 
 	CompiledAndResolvedFile getFile(FileSpec fileSpec);
-	
+
 }

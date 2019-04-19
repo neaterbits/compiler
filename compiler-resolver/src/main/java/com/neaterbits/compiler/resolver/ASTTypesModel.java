@@ -12,7 +12,7 @@ public interface ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 
 	int getNumMethods(COMPLEXTYPE complextype);
 	
-	void iterateClassMethods(COMPLEXTYPE complexType, ASTMethodVisitor visitor);
+	void iterateClassMembers(COMPLEXTYPE complexType, ASTFieldVisitor fieldVisitor, ASTMethodVisitor methodVisitor);
 	
 	ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> makeResolvedTypeDependency(
 			TypeName completeName,

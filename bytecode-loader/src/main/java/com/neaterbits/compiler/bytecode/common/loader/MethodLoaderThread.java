@@ -11,11 +11,11 @@ import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.MethodClassReferenceScanner;
 import com.neaterbits.compiler.bytecode.common.MethodType;
 import com.neaterbits.compiler.codemap.CodeMap;
-import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.VTableScratchArea;
 import com.neaterbits.compiler.codemap.CodeMap.MethodRefStatus;
 import com.neaterbits.compiler.util.FieldType;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.MethodVariant;
 
 final class MethodLoaderThread<CLASS, METHOD> extends Thread {
 

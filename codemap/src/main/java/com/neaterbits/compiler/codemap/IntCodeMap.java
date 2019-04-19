@@ -11,6 +11,11 @@ import java.util.Set;
 
 import com.neaterbits.compiler.util.Bits;
 import com.neaterbits.compiler.util.ValueMap;
+import com.neaterbits.compiler.util.model.FieldInfo;
+import com.neaterbits.compiler.util.model.MethodInfo;
+import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.util.model.Mutability;
+import com.neaterbits.compiler.util.model.Visibility;
 
 public class IntCodeMap implements CodeMap {
 
@@ -18,6 +23,8 @@ public class IntCodeMap implements CodeMap {
 	
 	private final TypeHierarchy typeHierarchy;
 
+	private final FieldMap fieldMap;
+	
 	private final MethodMap methodMap;
 	private final MethodMapCache methodMapCache;
 	
@@ -27,6 +34,8 @@ public class IntCodeMap implements CodeMap {
 	
 	public IntCodeMap(MethodOverrideMap methodOverrideMap) {
 		this.typeHierarchy 	= new TypeHierarchy();
+		
+		this.fieldMap = new FieldMap();
 		
 		this.methodMap = new MethodMap();
 		this.methodMapCache = new MethodMapCache();
@@ -169,6 +178,18 @@ public class IntCodeMap implements CodeMap {
 		for (int i : array) {
 			collection.add(i);
 		}
+	}
+
+	@Override
+	public int addField(int type, String name, int fieldType, boolean isStatic, Visibility visibility,
+			Mutability mutability, boolean isVolatile, boolean isTransient, int indexInType) {
+		return fieldMap.addField(type, name, indexInType, fieldType, isStatic, visibility, mutability, isVolatile, isTransient);
+	}
+
+	@Override
+	public FieldInfo getFieldInfo(int typeNo, String fieldName) {
+
+		return fieldMap.getFieldInfo(typeNo, fieldName);
 	}
 
 	@Override

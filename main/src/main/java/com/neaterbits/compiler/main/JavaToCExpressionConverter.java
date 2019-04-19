@@ -25,12 +25,12 @@ import com.neaterbits.compiler.ast.parser.FieldAccessType;
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.typereference.FunctionPointerTypeReference;
-import com.neaterbits.compiler.codemap.MethodInfo;
 import com.neaterbits.compiler.convert.MethodDispatch;
 import com.neaterbits.compiler.convert.OOToProceduralConverterUtil;
 import com.neaterbits.compiler.convert.ootofunction.BaseExpressionConverter;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.MethodInfo;
 
 final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>> extends BaseExpressionConverter<T> {
 

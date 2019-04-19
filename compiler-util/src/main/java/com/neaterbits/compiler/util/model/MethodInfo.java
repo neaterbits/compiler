@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.codemap;
+package com.neaterbits.compiler.util.model;
 
 import java.util.Objects;
 
@@ -7,7 +7,7 @@ public final class MethodInfo {
 	private final int methodNo;
 	private final MethodVariant methodVariant;
 
-	MethodInfo(int methodNo, MethodVariant methodVariant) {
+	public MethodInfo(int methodNo, MethodVariant methodVariant) {
 
 		Objects.requireNonNull(methodVariant);
 

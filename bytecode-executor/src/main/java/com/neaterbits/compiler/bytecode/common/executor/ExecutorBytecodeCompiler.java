@@ -6,8 +6,8 @@ import java.util.Objects;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.loader.BytecodeCompiler;
 import com.neaterbits.compiler.bytecode.common.loader.codemap.LoaderCodeMap;
-import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.VTableScratchArea;
+import com.neaterbits.compiler.util.model.MethodVariant;
 import com.neaterbits.runtime._native.NativeMemory;
 import com.neaterbits.runtime._native.NativeMethodsTyped;
 

@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.resolver;
 
-import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.MethodVariant;
 
 @FunctionalInterface
 public interface ASTMethodVisitor {

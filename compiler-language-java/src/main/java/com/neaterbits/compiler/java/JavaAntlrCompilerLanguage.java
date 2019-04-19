@@ -10,7 +10,7 @@ import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass
 import com.neaterbits.compiler.resolver.passes.ResolveTypeDependenciesPass;
 import com.neaterbits.compiler.util.language.CompilerLanguage;
 import com.neaterbits.compiler.util.model.CompilationUnitModel;
-import com.neaterbits.compiler.util.model.CompiledAndResolvedFiles;
+import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.parse.Parser;
 import com.neaterbits.compiler.util.passes.CompilerBuilderIntermediate;
@@ -36,7 +36,7 @@ public class JavaAntlrCompilerLanguage extends CompilerLanguage<CompilationUnit,
 	@Override
 	public LanguageCompiler<
 				FileParsePassInput<CompilationUnit>,
-				CompiledAndResolvedFiles
+				CompiledAndMappedFiles
 			>
 	
 			makeCompilerPasses(ResolvedTypes resolvedTypes) {

@@ -107,7 +107,7 @@ import com.neaterbits.compiler.ast.statement.ForExpressionList;
 import com.neaterbits.compiler.ast.statement.ForInit;
 import com.neaterbits.compiler.ast.statement.ForStatement;
 import com.neaterbits.compiler.ast.statement.IteratorForStatement;
-import com.neaterbits.compiler.ast.statement.Mutability;
+import com.neaterbits.compiler.ast.statement.ASTMutability;
 import com.neaterbits.compiler.ast.statement.ReturnStatement;
 import com.neaterbits.compiler.ast.statement.ThrowStatement;
 import com.neaterbits.compiler.ast.statement.TryCatchFinallyStatement;
@@ -792,7 +792,7 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	public final void onMutabilityFieldModifier(Context context, Mutability mutability) {
+	public final void onMutabilityFieldModifier(Context context, ASTMutability mutability) {
 		
 		logEnter(context);
 		
@@ -1824,7 +1824,7 @@ public abstract class BaseParserListener {
 
 	// Statements
 	
-	public final void onMutabilityVariableModifier(Context context, Mutability mutability) {
+	public final void onMutabilityVariableModifier(Context context, ASTMutability mutability) {
 		
 		logEnter(context);
 		

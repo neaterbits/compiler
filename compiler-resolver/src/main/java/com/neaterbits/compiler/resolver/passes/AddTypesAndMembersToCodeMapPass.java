@@ -20,7 +20,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.CompiledAndResolvedFiles;
+import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.MultiPass;
 
@@ -29,7 +29,7 @@ import static com.neaterbits.compiler.resolver.util.ResolveUtil.forEachResolvedT
 public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFile, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 	extends MultiPass<
 			ResolvedTypeDependencies<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>,
-			CompiledAndResolvedFiles> {
+			CompiledAndMappedFiles> {
 
 	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 	

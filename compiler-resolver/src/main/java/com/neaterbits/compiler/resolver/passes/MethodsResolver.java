@@ -7,13 +7,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.MethodVariant;
 
 public final class MethodsResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
@@ -114,7 +114,16 @@ public final class MethodsResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 	
 	private void addClassMembers(COMPLEXTYPE classType, int typeNo) {
 		
-		astModel.iterateClassMethods(classType, (name, methodVariant, returnType, parameterTypes, indexInType) -> {
+		astModel.iterateClassMembers(classType,
+				
+				
+		(name, type, numArrayDimensions, isStatic, visibility, mutability, isVolatile, isTransient, indexInType) -> {
+			
+			codeMap.addField(typeNo, name, type, numArrayDimensions, isStatic, visibility, mutability, isVolatile, isTransient, indexInType);
+			
+		},
+		
+		(name, methodVariant, returnType, parameterTypes, indexInType) -> {
 			
 			addClassMethod(typeNo, name, methodVariant, parameterTypes, indexInType);
 		});

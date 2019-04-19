@@ -1,16 +1,28 @@
 package com.neaterbits.compiler.ast.statement;
 
+import java.util.Objects;
+
 import com.neaterbits.compiler.ast.typedefinition.FieldModifier;
 import com.neaterbits.compiler.ast.typedefinition.FieldModifierVisitor;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifier;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifierVisitor;
+import com.neaterbits.compiler.util.model.Mutability;
 
-public enum Mutability implements VariableModifier, FieldModifier {
+public class ASTMutability implements VariableModifier, FieldModifier {
 
-	VALUE_OR_REF_IMMUTABLE,				// final in java
-	VALUE_OR_OBJECT_IMMUTABLE,			// const in C++ ?
-	VALUE_OR_OBJECT_OR_REF_IMMUTABLE;	// const & const in C++ ?
+	private final Mutability mutability;
 	
+	public ASTMutability(Mutability mutability) {
+
+		Objects.requireNonNull(mutability);
+		
+		this.mutability = mutability;
+	}
+	
+	public Mutability getMutability() {
+		return mutability;
+	}
+
 	@Override
 	public <T, R> R visit(VariableModifierVisitor<T, R> visitor, T param) {
 		return visitor.onVariableMutability(this, param);

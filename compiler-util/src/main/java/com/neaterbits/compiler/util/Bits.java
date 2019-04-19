@@ -19,6 +19,24 @@ public class Bits {
 		return maskForNumBits(numBits) << shift;
 	}
 
+	public static int intMaskForNumBits(int numBits) {
+		
+		if (numBits < 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (numBits > 32) {
+			throw new IllegalArgumentException();
+		}
+		
+		return numBits == 32 ? 0xFFFFFFFF : (1 << (numBits)) - 1;
+	}
+
+	public static int intMask(int numBits, int shift) {
+		return intMaskForNumBits(numBits) << shift;
+	}
+
+	
 	public static int getNumBitsForStoringMaxValue(long value) {
 		
 		if (value < 0) {
@@ -37,4 +55,9 @@ public class Bits {
 		
 		return 0;
 	}
+
+	public static int getNumBitsForStoringEnum(Class<? extends Enum<?>> enumClass) {
+		return getNumBitsForStoringMaxValue(enumClass.getEnumConstants().length);
+	}
+
 }

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.NameFileSpec;
-import com.neaterbits.compiler.util.model.CompiledAndResolvedFiles;
+import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.passes.FilePassInput;
 
@@ -43,7 +43,7 @@ public class CompileFileCollector {
 		return add(new NameFileSpec(name), text);
 	}
 
-	public CompiledAndResolvedFiles compile(ResolvedTypes resolvedTypes) throws IOException {
+	public CompiledAndMappedFiles compile(ResolvedTypes resolvedTypes) throws IOException {
 		
 		final List<FilePassInput> parseInputs = files.stream()
 				

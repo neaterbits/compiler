@@ -7,10 +7,10 @@ import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.StructName;
-import com.neaterbits.compiler.codemap.MethodInfo;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.MethodInfo;
 
 public abstract class OOToProceduralConverterState<T extends OOToProceduralConverterState<T>>
 			extends ConverterState<T> {

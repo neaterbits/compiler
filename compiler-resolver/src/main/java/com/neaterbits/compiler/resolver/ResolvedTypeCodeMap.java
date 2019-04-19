@@ -2,10 +2,11 @@ package com.neaterbits.compiler.resolver;
 
 import java.util.Collection;
 
-import com.neaterbits.compiler.codemap.MethodInfo;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.FieldInfo;
+import com.neaterbits.compiler.util.model.MethodInfo;
 
 public interface ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
@@ -24,6 +25,8 @@ public interface ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 	COMPLEXTYPE getType(int typeNo);
 	
 	TypeInfo getTypeInfo(TypeName type);
+
+	FieldInfo getFieldInfo(TypeName type, String fieldName);
 
 	MethodInfo getMethodInfo(TypeName type, String methodName, TypeName [] parameterTypes);
 }

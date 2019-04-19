@@ -1,19 +1,29 @@
 package com.neaterbits.compiler.resolver.ast;
 
+import java.util.Objects;
+
 import com.neaterbits.compiler.ast.block.ClassMethod;
 import com.neaterbits.compiler.ast.block.Parameter;
+import com.neaterbits.compiler.ast.statement.ASTMutability;
+import com.neaterbits.compiler.ast.statement.FieldTransient;
+import com.neaterbits.compiler.ast.statement.FieldVolatile;
 import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
+import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodModifiers;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodStatic;
 import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
+import com.neaterbits.compiler.ast.typedefinition.FieldModifier;
+import com.neaterbits.compiler.ast.typedefinition.FieldModifierHolder;
+import com.neaterbits.compiler.ast.typedefinition.FieldStatic;
+import com.neaterbits.compiler.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.ast.typedefinition.Subclassing;
-import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.resolver.ASTFieldVisitor;
 import com.neaterbits.compiler.resolver.ASTMethodVisitor;
 import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.ReferenceType;
@@ -22,8 +32,25 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.model.FieldModifiers;
+import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.util.model.Mutability;
+import com.neaterbits.compiler.util.model.Visibility;
 
 public class ASTModelImpl implements ASTTypesModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
+
+	private final FieldModifiers dataFieldDefaultModifiers;
+	
+	public ASTModelImpl() {
+		this(new FieldModifiers(false, Visibility.NAMESPACE, Mutability.MUTABLE, false, false));
+	}
+	
+	public ASTModelImpl(FieldModifiers dataFieldDefaultModifiers) {
+
+		Objects.requireNonNull(dataFieldDefaultModifiers);
+		
+		this.dataFieldDefaultModifiers = dataFieldDefaultModifiers;
+	}
 
 	@Override
 	public ScopedName getBuiltinTypeScopedName(BuiltinType builtinType) {
@@ -86,29 +113,82 @@ public class ASTModelImpl implements ASTTypesModel<BuiltinType, ComplexType<?, ?
 	}
 
 	@Override
-	public void iterateClassMethods(ComplexType<?, ?, ?> complexType, ASTMethodVisitor visitor) {
-		iterateClassMembers((ClassType)complexType, visitor);
+	public void iterateClassMembers(ComplexType<?, ?, ?> complexType, ASTFieldVisitor fieldVisitor, ASTMethodVisitor methodVisitor) {
+		iterateClassMembers((ClassType)complexType, fieldVisitor, methodVisitor);
 	}
 
-	private void iterateClassMembers(ClassType complexType, ASTMethodVisitor visitor) {
+	private void iterateClassMembers(ClassType complexType, ASTFieldVisitor fieldVisitor, ASTMethodVisitor methodVisitor) {
 		
 		final Subclassing subclassing = complexType.getDefinition().getModifiers().getModifier(Subclassing.class);
 		
+		int fieldIdx = 0;
 		int methodIdx = 0;
 		
 		for (ComplexMemberDefinition memberDefinition : complexType.getMembers()) {
 			
-			if (memberDefinition instanceof ClassMethodMember) {
+			if (memberDefinition instanceof ClassDataFieldMember) {
+				
+				final ClassDataFieldMember classDataFieldMember = (ClassDataFieldMember)memberDefinition;
+
+				visitDataField(classDataFieldMember, fieldIdx, fieldVisitor);
+				
+				fieldIdx ++;
+			}
+			else if (memberDefinition instanceof ClassMethodMember) {
 
 				final ClassMethodMember classMethodMember = (ClassMethodMember)memberDefinition;
 				
 				final MethodVariant methodVariant = findMethodVariant(classMethodMember, subclassing);
 				
-				visitClassMethod(classMethodMember, methodVariant, methodIdx, visitor);
+				visitClassMethod(classMethodMember, methodVariant, methodIdx, methodVisitor);
 				
 				++ methodIdx;
 			}
 		}
+	}
+	
+	private void visitDataField(ClassDataFieldMember dataField, int indexInType, ASTFieldVisitor visitor) {
+		
+		boolean isStatic = dataFieldDefaultModifiers.isStatic();
+		boolean isTransient = dataFieldDefaultModifiers.isTransient();
+		boolean isVolatile = dataFieldDefaultModifiers.isVolatile();
+		Visibility visibility = dataFieldDefaultModifiers.getVisibility();
+		Mutability mutability = dataFieldDefaultModifiers.getMutability();
+		
+		for (FieldModifierHolder fieldModifierHolder : dataField.getModifiers().getModifiers()) {
+			
+			final FieldModifier fieldModifier = fieldModifierHolder.getModifier();
+			
+			if (fieldModifier instanceof FieldStatic) {
+				isStatic = true;
+			}
+			else if (fieldModifier instanceof FieldTransient) {
+				isTransient = true;
+			}
+			else if (fieldModifier instanceof FieldVolatile) {
+				isVolatile = true;
+			}
+			else if (fieldModifier instanceof FieldVisibility) {
+				visibility = ((FieldVisibility)fieldModifier).getVisibility();
+			}
+			else if (fieldModifier instanceof ASTMutability) {
+				mutability = ((ASTMutability)fieldModifier).getMutability();
+			}
+			else {
+				throw new UnsupportedOperationException();
+			}
+		}
+
+		visitor.onField(
+				dataField.getNameString(),
+				dataField.getType().getTypeName(),
+				0,
+				isStatic,
+				visibility,
+				mutability,
+				isVolatile,
+				isTransient,
+				indexInType);
 	}
 	
 	private MethodVariant findMethodVariant(ClassMethodMember classMethodMember, Subclassing subclassing) {

@@ -24,8 +24,11 @@ public final class ClassDataFieldMember extends DataFieldMember {
 	public Expression getInitializer() {
 		return initializer != null ? initializer.get() : null;
 	}
-	
-	
+
+	public FieldModifiers getModifiers() {
+		return modifiers.get();
+	}
+
 	@Override
 	public <T, R> R visit(CompilationCodeVisitor<T, R> visitor, T param) {
 		return visitor.onClassDataFieldMember(this, param);

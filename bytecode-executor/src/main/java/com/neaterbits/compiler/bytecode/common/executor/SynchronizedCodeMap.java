@@ -3,10 +3,13 @@ package com.neaterbits.compiler.bytecode.common.executor;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.CodeMap;
-import com.neaterbits.compiler.codemap.MethodInfo;
-import com.neaterbits.compiler.codemap.MethodVariant;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.VTableScratchArea;
+import com.neaterbits.compiler.util.model.FieldInfo;
+import com.neaterbits.compiler.util.model.MethodInfo;
+import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.util.model.Mutability;
+import com.neaterbits.compiler.util.model.Visibility;
 
 class SynchronizedCodeMap implements CodeMap {
 
@@ -32,6 +35,17 @@ class SynchronizedCodeMap implements CodeMap {
 	@Override
 	public final synchronized int getExtendsFromSingleSuperClass(int type) {
 		return delegate.getExtendsFromSingleSuperClass(type);
+	}
+
+	@Override
+	public final synchronized int addField(int type, String name, int fieldType, boolean isStatic, Visibility visibility,
+			Mutability mutability, boolean isVolatile, boolean isTransient, int indexInType) {
+		return delegate.addField(type, name, fieldType, isStatic, visibility, mutability, isVolatile, isTransient, indexInType);
+	}
+
+	@Override
+	public final synchronized FieldInfo getFieldInfo(int typeNo, String fieldName) {
+		return delegate.getFieldInfo(typeNo, fieldName);
 	}
 
 	@Override

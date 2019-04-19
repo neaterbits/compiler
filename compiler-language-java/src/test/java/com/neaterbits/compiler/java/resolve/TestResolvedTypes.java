@@ -1,11 +1,10 @@
 package com.neaterbits.compiler.java.resolve;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.java.JavaUtil;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 
@@ -19,12 +18,7 @@ public class TestResolvedTypes implements ResolvedTypes {
 	
 	TestResolvedTypes addType(String type) {
 		
-		final String [] parts = Strings.split(type, '.');
-		
-		final TypeName typeName = new TypeName(
-				Arrays.copyOf(parts, parts.length - 1),
-				null,
-				parts[parts.length - 1]);
+		final TypeName typeName = JavaUtil.parseToTypeName(type);
 		
 		typeNames.add(typeName);
 		

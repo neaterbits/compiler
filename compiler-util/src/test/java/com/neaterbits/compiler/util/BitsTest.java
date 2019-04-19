@@ -60,8 +60,34 @@ public class BitsTest {
 		}
 		catch (IllegalArgumentException ex) {
 		}
-
 	}
 	
-	
+	@Test
+	public void testIntMask() {
+		assertThat(Bits.intMaskForNumBits(0)).isEqualTo(0);
+		assertThat(Bits.intMaskForNumBits(1)).isEqualTo(1);
+		assertThat(Bits.intMaskForNumBits(2)).isEqualTo(3);
+		assertThat(Bits.intMaskForNumBits(3)).isEqualTo(7);
+		assertThat(Bits.intMaskForNumBits(4)).isEqualTo(15);
+		assertThat(Bits.intMaskForNumBits(5)).isEqualTo(31);
+		assertThat(Bits.intMaskForNumBits(6)).isEqualTo(63);
+		assertThat(Bits.intMaskForNumBits(7)).isEqualTo(127);
+		assertThat(Bits.intMaskForNumBits(8)).isEqualTo(255);
+		assertThat(Bits.intMaskForNumBits(31)).isEqualTo(Integer.MAX_VALUE);
+		assertThat(Bits.intMaskForNumBits(32)).isEqualTo((int)0xFFFFFFFFL);
+
+		try {
+			Bits.intMaskForNumBits(-1);
+			fail("Expected exception");
+		}
+		catch (IllegalArgumentException ex) {
+		}
+
+		try {
+			Bits.intMaskForNumBits(33);
+			fail("Expected exception");
+		}
+		catch (IllegalArgumentException ex) {
+		}
+	}
 }

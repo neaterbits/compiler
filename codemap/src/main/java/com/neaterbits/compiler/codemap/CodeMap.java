@@ -1,5 +1,11 @@
 package com.neaterbits.compiler.codemap;
 
+import com.neaterbits.compiler.util.model.FieldInfo;
+import com.neaterbits.compiler.util.model.MethodInfo;
+import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.util.model.Mutability;
+import com.neaterbits.compiler.util.model.Visibility;
+
 public interface CodeMap {
 	
 	public static class TypeResult {
@@ -46,6 +52,19 @@ public interface CodeMap {
 	int [] getTypesDirectlyExtendingThis(int typeNo);
 
 	int [] getAllTypesExtendingThis(int typeNo);
+	
+	int addField(
+			int type,
+			String name,
+			int fieldType,
+			boolean isStatic,
+			Visibility visibility,
+			Mutability mutability,
+			boolean isVolatile,
+			boolean isTransient,
+			int indexInType);
+	
+	FieldInfo getFieldInfo(int typeNo, String fieldName);
 	
 	void setMethodCount(int type, int methodCount);
 	
