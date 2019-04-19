@@ -4,16 +4,13 @@ import static com.neaterbits.compiler.codemap.ArrayAllocation.allocateArray;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.resolver.codemap.ResolvedTypeBuiltin;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
-import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.codemap.MethodInfo;
 import com.neaterbits.compiler.codemap.MethodVariant;
@@ -29,8 +26,6 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 	private final NameToTypeNoMap nameToTypeNoMap;
 	
-	private final Map<ScopedName, Integer> scopedNameMap;
-	
 	private ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> [] resolvedTypes;
 	
 	public ResolvedTypeCodeMapImpl(
@@ -44,7 +39,6 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		this.codeMap = codeMap;
 		this.astModel = astModel;
 		this.nameToTypeNoMap = new NameToTypeNoMap();
-		this.scopedNameMap = new HashMap<>();
 		
 		// Add all builtin types
 		for (BUILTINTYPE builtinType : builtinTypes) {
@@ -138,7 +132,6 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		resolvedTypes[typeNo] = (ResolvedType)type;
 		
 		nameToTypeNoMap.addMapping(typeName, typeNo);
-		scopedNameMap.put(type.getScopedName(), typeNo);
 		
 		return typeNo;
 	}
@@ -149,13 +142,6 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		return resolvedTypes[typeNo];
 	}
 	
-	public ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getType(ScopedName scopedName) {
-		
-		final Integer typeNo = scopedNameMap.get(scopedName);
-		
-		return typeNo != null ? resolvedTypes[typeNo] : null;
-	}
-
 	private TypeInfo getTypeInfo(int typeNo) {
 		return new TypeInfo(typeNo, codeMap.getTypeVariantForType(typeNo));
 	}
