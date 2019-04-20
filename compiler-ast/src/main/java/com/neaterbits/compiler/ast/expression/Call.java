@@ -13,7 +13,7 @@ import com.neaterbits.compiler.util.Context;
 public abstract class Call<N extends CallableName>
 		extends Primary {
 
-	private final N callable;
+	private final ASTSingle<N> callable;
 	private final ASTSingle<ParameterList> parameters;
 
 	public Call(Context context, N callable, ParameterList parameters) {
@@ -22,12 +22,12 @@ public abstract class Call<N extends CallableName>
 		Objects.requireNonNull(callable);
 		Objects.requireNonNull(parameters);
 
-		this.callable = callable;
+		this.callable = makeSingle(callable);
 		this.parameters = makeSingle(parameters);
 	}
 
 	public final N getCallable() {
-		return callable;
+		return callable.get();
 	}
 
 	public final ParameterList getParameters() {
@@ -42,6 +42,8 @@ public abstract class Call<N extends CallableName>
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
+		doIterate(callable, recurseMode, iterator);
+		
 		doIterate(parameters, recurseMode, iterator);
 		
 	}
