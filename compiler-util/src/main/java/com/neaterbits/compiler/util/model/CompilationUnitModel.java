@@ -6,7 +6,7 @@ import com.neaterbits.compiler.util.imports.TypeImport;
 
 public interface CompilationUnitModel<COMPILATION_UNIT> {
 
-	void iterate(COMPILATION_UNIT sourceFile, SourceTokenVisitor iterator, ResolvedTypes resolvedTypes);
+	void iterate(COMPILATION_UNIT sourceFile, SourceTokenVisitor iterator, ResolvedTypes resolvedTypes, boolean visitPlaceholderElements);
 	
 	ISourceToken getTokenAt(COMPILATION_UNIT sourceFile, long offset, ResolvedTypes resolvedTypes);
 	

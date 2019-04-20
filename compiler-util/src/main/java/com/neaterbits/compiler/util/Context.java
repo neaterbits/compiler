@@ -105,6 +105,10 @@ public final class Context {
 	public int getEndOffset() {
 		return endOffset;
 	}
+	
+	public int getLength() {
+		return getEndOffset() - getStartOffset() + 1;
+	}
 
 	@Override
 	public String toString() {

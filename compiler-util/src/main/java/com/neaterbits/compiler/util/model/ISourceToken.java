@@ -14,6 +14,8 @@ public interface ISourceToken {
 	
 	String getTokenTypeDebugName();
 	
+	boolean isPlaceholder();
+	
 	default String getTokenDebugString() {
 		return getTokenTypeDebugName() + " [" + getStartOffset() + ", " + getLength() + "] ";
 	}

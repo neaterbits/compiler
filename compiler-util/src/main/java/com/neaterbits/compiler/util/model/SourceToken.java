@@ -2,6 +2,7 @@ package com.neaterbits.compiler.util.model;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
 
 public final class SourceToken implements ISourceToken {
@@ -11,17 +12,26 @@ public final class SourceToken implements ISourceToken {
 	private final long length;
 	private final TypeName typeName;
 	private final String astElement;
-	
-	public SourceToken(SourceTokenType tokenType, long startOffset, long length, TypeName typeName, String astElement) {
+	private final boolean isPlaceholder;
+
+	public SourceToken(String astElement) {
+		this(SourceTokenType.UNKNOWN, -1, 0, null, astElement, true);
+	}
+
+	public SourceToken(SourceTokenType tokenType, Context context, TypeName typeName, String astElement) {
+		this(tokenType, context.getStartOffset(), context.getEndOffset() - context.getStartOffset() + 1, typeName, astElement, false);
+	}
+
+	public SourceToken(SourceTokenType tokenType, long startOffset, long length, TypeName typeName, String astElement, boolean isPlaceholder) {
 
 		Objects.requireNonNull(tokenType);
 		Objects.requireNonNull(astElement);
 
-		if (startOffset < 0) {
+		if (startOffset < 0 && !isPlaceholder) {
 			throw new IllegalArgumentException();
 		}
 		
-		if (length <= 0) {
+		if (length <= 0 && !isPlaceholder) {
 			throw new IllegalArgumentException();
 		}
 		
@@ -30,6 +40,7 @@ public final class SourceToken implements ISourceToken {
 		this.length = length;
 		this.typeName = typeName;
 		this.astElement = astElement;
+		this.isPlaceholder = isPlaceholder;
 	}
 
 	@Override
@@ -55,6 +66,11 @@ public final class SourceToken implements ISourceToken {
 	@Override
 	public String getTokenTypeDebugName() {
 		return astElement;
+	}
+
+	@Override
+	public boolean isPlaceholder() {
+		return isPlaceholder;
 	}
 
 	@Override

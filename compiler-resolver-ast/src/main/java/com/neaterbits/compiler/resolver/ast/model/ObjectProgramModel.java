@@ -90,7 +90,7 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 	}
 	
 	@Override
-	public void iterate(CompilationUnit sourceFile, SourceTokenVisitor visitor, ResolvedTypes resolvedTypes) {
+	public void iterate(CompilationUnit sourceFile, SourceTokenVisitor visitor, ResolvedTypes resolvedTypes, boolean visitPlaceholderElements) {
 
 		final ArrayStack<Element> stack = new ArrayStack<>();
 		
@@ -101,7 +101,7 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 
 				super.push(element);
 
-				if (!element.astElement.isPlaceholderElement()) {
+				if (visitPlaceholderElements || !element.astElement.isPlaceholderElement()) {
 					visitor.onPush(element.token);
 				}
 			}
@@ -111,7 +111,7 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 
 				final Element element = super.pop();
 				
-				if (!element.astElement.isPlaceholderElement()) {
+				if (visitPlaceholderElements || !element.astElement.isPlaceholderElement()) {
 					visitor.onPop(element.token);
 				}
 				
@@ -124,7 +124,9 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 				
 				baseASTElement -> new Element(
 						baseASTElement,
-						baseASTElement.isPlaceholderElement() ? null : makeSourceToken(baseASTElement, sourceFile, resolvedTypes)),
+					 	baseASTElement.isPlaceholderElement() && !visitPlaceholderElements
+								? null
+								: makeSourceToken(baseASTElement, sourceFile, resolvedTypes)),
 				
 				new ASTVisitor() {
 			
@@ -147,7 +149,7 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 						visitor.onToken(e.token);
 					}
 					else {
-						if (!e.astElement.isPlaceholderElement()) {
+						if (!visitPlaceholderElements && !e.astElement.isPlaceholderElement()) {
 							throw new IllegalStateException();
 						}
 					}
@@ -191,8 +193,21 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 		return implicitImports;
 	}
 
-
 	private SourceToken makeSourceToken(BaseASTElement element, CompilationUnit compilationUnit, ResolvedTypes resolvedTypes) {
+		
+		final SourceToken sourceToken;
+		
+		if (element.isPlaceholderElement()) {
+			sourceToken = new SourceToken(element.getClass().getSimpleName());
+		}
+		else {
+			sourceToken = makeSourceTokenForNonPlaceholder(element, compilationUnit, resolvedTypes);
+		}
+		
+		return sourceToken;
+	}
+
+	private SourceToken makeSourceTokenForNonPlaceholder(BaseASTElement element, CompilationUnit compilationUnit, ResolvedTypes resolvedTypes) {
 		
 		Objects.requireNonNull(element);
 
@@ -231,6 +246,7 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 		}
 		else if (element instanceof NamespaceDeclaration) {
 			sourceTokenType = SourceTokenType.NAMESPACE_DECLARATION_NAME;
+			
 		}
 		else if (element instanceof ImportName) {
 			sourceTokenType = SourceTokenType.IMPORT_NAME;
@@ -310,8 +326,7 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 
 		return new SourceToken(
 				sourceTokenType,
-				context.getStartOffset(),
-				context.getEndOffset() - context.getStartOffset() + 1,
+				context,
 				typeName,
 				element.getClass().getSimpleName());
 	}
