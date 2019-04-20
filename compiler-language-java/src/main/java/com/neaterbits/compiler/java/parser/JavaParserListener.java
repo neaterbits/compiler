@@ -637,8 +637,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onLambdaExpressionStart(context);
 	}
 	
-	public void onSingleLambdaParameter(Context context, String varName) {
-		delegate.onSingleLambdaParameter(context, varName);
+	public void onSingleLambdaParameter(Context context, String varName, Context varNameContext) {
+		delegate.onSingleLambdaParameter(context, varName, varNameContext);
 	}
 	
 	public void onFormalLambdaParameterListStart(Context context) {
@@ -649,8 +649,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onFormalLambdaParameterListEnd(context);
 	}
 	
-	public void onInferredLambdaParameterList(Context context, List<String> varNames) {
-		delegate.onInferredLambdaParameterList(context, varNames);
+	public void onInferredLambdaParameterList(Context context, List<String> varNames, Context varNamesContext) {
+		delegate.onInferredLambdaParameterList(context, varNames, varNamesContext);
 	}
 	
 	public void onLambdaBodyStart(Context context) {

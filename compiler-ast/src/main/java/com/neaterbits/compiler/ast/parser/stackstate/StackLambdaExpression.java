@@ -6,12 +6,16 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.parser.StatementSetter;
 import com.neaterbits.compiler.ast.statement.Statement;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class StackLambdaExpression extends StackExpressionList implements StatementSetter {
 
 	private String singleParameter;
+	private Context singleParameterContext;
+	
 	private List<String> inferredParameters;
+	private Context inferredParametersContext;
 	
 	private final List<Statement> statements;
 	
@@ -25,22 +29,34 @@ public final class StackLambdaExpression extends StackExpressionList implements 
 		return singleParameter;
 	}
 
-	public void setSingleParameter(String singleParameter) {
-		
-		Objects.requireNonNull(singleParameter);
-		
-		this.singleParameter = singleParameter;
+	public Context getSingleParameterContext() {
+		return singleParameterContext;
 	}
 
+	public void setSingleParameter(String singleParameter, Context singleParameterContext) {
+		
+		Objects.requireNonNull(singleParameter);
+		Objects.requireNonNull(singleParameterContext);
+		
+		this.singleParameter = singleParameter;
+		this.singleParameterContext = singleParameterContext;
+	}
+	
 	public List<String> getInferredParameterList() {
 		return inferredParameters;
 	}
+	
+	public Context getInferredParametersContext() {
+		return inferredParametersContext;
+	}
 
-	public void setInferredParameterList(List<String> inferredParameters) {
+	public void setInferredParameterList(List<String> inferredParameters, Context inferredParametersContexxt) {
 		
 		Objects.requireNonNull(inferredParameters);
+		Objects.requireNonNull(inferredParametersContexxt);
 		
 		this.inferredParameters = inferredParameters;
+		this.inferredParametersContext = inferredParametersContexxt;
 	}
 
 	public List<Statement> getStatements() {

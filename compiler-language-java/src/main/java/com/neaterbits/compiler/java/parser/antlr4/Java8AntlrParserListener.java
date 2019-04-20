@@ -95,6 +95,15 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		return Antlr4.context(ctx.getSymbol(), file);
 	}
 
+	private Context context(List<TerminalNode> ctx) {
+		
+		return Antlr4.context(
+				ctx.get(0).getSymbol(),
+				ctx.get(ctx.size() - 1).getSymbol(),
+				Strings.join(ctx, ' ', node -> node.getText()),
+				file);
+	}
+
 	private Context context(Token ctx) {
 		return Antlr4.context(ctx, file);
 	}
@@ -1147,15 +1156,18 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void exitLambdaSingleParameter(LambdaSingleParameterContext ctx) {
 
-		delegate.onSingleLambdaParameter(context(ctx), ctx.Identifier().getText());
+		delegate.onSingleLambdaParameter(context(ctx), ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitInferredFormalParameterList(InferredFormalParameterListContext ctx) {
 		
-		delegate.onInferredLambdaParameterList(context(ctx), ctx.Identifier().stream()
-				.map(identifier -> identifier.getText())
-				.collect(Collectors.toList()));
+		delegate.onInferredLambdaParameterList(
+				context(ctx),
+				ctx.Identifier().stream()
+					.map(identifier -> identifier.getText())
+					.collect(Collectors.toList()),
+				context(ctx.Identifier()));
 	}
 
 	@Override

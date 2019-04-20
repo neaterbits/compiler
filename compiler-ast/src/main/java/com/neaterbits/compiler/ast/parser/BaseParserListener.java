@@ -1727,13 +1727,13 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	public final void onSingleLambdaParameter(Context context, String varName) {
+	public final void onSingleLambdaParameter(Context context, String varName, Context varNameContext) {
 	
 		logEnter(context);
 		
 		final StackLambdaExpression stackLambdaExpression = get();
 		
-		stackLambdaExpression.setSingleParameter(varName);
+		stackLambdaExpression.setSingleParameter(varName, varNameContext);
 		
 		logExit(context);
 	}
@@ -1756,13 +1756,13 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	public final void onInferredLambdaParameterList(Context context, List<String> varNames) {
+	public final void onInferredLambdaParameterList(Context context, List<String> varNames, Context varNamesContext) {
 		
 		logEnter(context);
 		
 		final StackLambdaExpression stackLambdaExpression = get();
 		
-		stackLambdaExpression.setInferredParameterList(varNames);
+		stackLambdaExpression.setInferredParameterList(varNames, varNamesContext);
 		
 		logExit(context);
 	}
@@ -1790,10 +1790,10 @@ public abstract class BaseParserListener {
 		final LambdaExpressionParameters parameters;
 
 		if (stackLambdaExpression.getSingleParameter() != null) {
-			parameters = new LambdaExpressionParameters(context, stackLambdaExpression.getSingleParameter());
+			parameters = new LambdaExpressionParameters(stackLambdaExpression.getSingleParameterContext(), stackLambdaExpression.getSingleParameter());
 		}
 		else if (stackLambdaExpression.getInferredParameterList() != null) {
-			parameters = new LambdaExpressionParameters(context, stackLambdaExpression.getInferredParameterList());
+			parameters = new LambdaExpressionParameters(stackLambdaExpression.getInferredParametersContext(), stackLambdaExpression.getInferredParameterList());
 		}
 		else {
 			throw new UnsupportedOperationException();
