@@ -13,8 +13,8 @@ import com.neaterbits.compiler.util.Context;
 public final class MethodInvocationExpression extends Call<MethodName> {
 
 	private final MethodInvocationType type;
-	private final ASTSingle<TypeReference> classType;
-	private final ASTSingle<Expression> object;
+	private final ASTSingle<TypeReference> classType; // non null for static method calls
+	private final ASTSingle<Expression> object; // object invoked on if non static
 
 	public MethodInvocationExpression(Context context, MethodInvocationType type, TypeReference classType, Expression object, MethodName callable, ParameterList parameters) {
 		super(context, callable, parameters);
@@ -25,6 +25,14 @@ public final class MethodInvocationExpression extends Call<MethodName> {
 			Objects.requireNonNull(classType);
 		}
 
+		if (classType == null && object == null && type != MethodInvocationType.NO_OBJECT && type != MethodInvocationType.SUB) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (classType != null && object != null) {
+			throw new IllegalArgumentException();
+		}
+		
 		this.type = type;
 		this.classType = classType != null ? makeSingle(classType) : null;
 		this.object = object != null ? makeSingle(object) : null;
