@@ -22,7 +22,7 @@ public final class NameFileSpec implements FileSpec {
 	public String getParseContextName() {
 		return name;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -46,5 +46,10 @@ public final class NameFileSpec implements FileSpec {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "NameFileSpec [name=" + name + "]";
 	}
 }

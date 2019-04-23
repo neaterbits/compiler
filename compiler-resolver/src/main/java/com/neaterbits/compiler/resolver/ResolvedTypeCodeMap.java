@@ -3,12 +3,13 @@ package com.neaterbits.compiler.resolver;
 import java.util.Collection;
 
 import com.neaterbits.compiler.codemap.TypeInfo;
+import com.neaterbits.compiler.codemap.compiler.CrossReferenceUpdater;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.FieldInfo;
 import com.neaterbits.compiler.util.model.MethodInfo;
 
-public interface ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
+public interface ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends CrossReferenceUpdater {
 
 	ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getClassThisExtendsFrom(TypeName classType);
 

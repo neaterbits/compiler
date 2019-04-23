@@ -13,13 +13,13 @@ import com.neaterbits.compiler.ast.ImportName;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
-import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
+import com.neaterbits.compiler.resolver.ast.model.ObjectImportsModel;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 
 public class ScopedNameResolverTest {
 
-	private final ObjectProgramModel compilationUnitModel = new ObjectProgramModel(null);
+	private final ObjectImportsModel importsModel = new ObjectImportsModel(null);
 	
 	
 	@Test
@@ -31,7 +31,7 @@ public class ScopedNameResolverTest {
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "InSameNamespace"),
 				ReferenceType.FIELD,
 				makeCompilationUnit(),
-				compilationUnitModel,
+				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
 				typesMap);
 
@@ -48,7 +48,7 @@ public class ScopedNameResolverTest {
 				ScopedName.makeScopedName(new String [] { "com", "test", "othernamespace" }, "InOtherNamespace"),
 				ReferenceType.FIELD,
 				makeCompilationUnit(),
-				compilationUnitModel,
+				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
 				typesMap);
 
@@ -74,7 +74,7 @@ public class ScopedNameResolverTest {
 				ScopedName.makeScopedName(new String [] { "InImportedNamespace" }),
 				ReferenceType.FIELD,
 				makeCompilationUnit(importStatement),
-				compilationUnitModel,
+				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
 				typesMap);
 
@@ -100,7 +100,7 @@ public class ScopedNameResolverTest {
 				ScopedName.makeScopedName(new String [] { "InImportedNamespace" }),
 				ReferenceType.FIELD,
 				makeCompilationUnit(importStatement),
-				compilationUnitModel,
+				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
 				typesMap);
 

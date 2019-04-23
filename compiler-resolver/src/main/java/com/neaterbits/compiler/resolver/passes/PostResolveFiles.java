@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.resolver.passes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,17 +14,19 @@ import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.ParsedFiles;
 
-public abstract class ResolvedFiles<PARSED_FILE extends ParsedFile, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+public abstract class PostResolveFiles<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 		extends ParsedFiles<PARSED_FILE>
 		implements CompiledAndResolvedFiles {
 
 	private final ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFilesResult;
 
-	protected ResolvedFiles(ResolvedFiles<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> other) {
+	private final List<CompiledAndResolvedFile> files;
+	
+	protected PostResolveFiles(PostResolveFiles<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> other) {
 		this(other, other.resolveFilesResult);
 	}
 
-	protected ResolvedFiles(
+	protected PostResolveFiles(
 			ParsedFiles<PARSED_FILE> other,
 			ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFilesResult) {
 
@@ -32,27 +35,14 @@ public abstract class ResolvedFiles<PARSED_FILE extends ParsedFile, BUILTINTYPE,
 		Objects.requireNonNull(resolveFilesResult);
 		
 		this.resolveFilesResult = resolveFilesResult;
-	}
-
-	public final ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getResolveFilesResult() {
-		return resolveFilesResult;
-	}
-
-	@Override
-	public final CompiledAndResolvedFile getFile(FileSpec fileSpec) {
-
-		Objects.requireNonNull(fileSpec);
 		
-		final CompiledAndResolvedFile result;
+		final List<PARSED_FILE> parsedFiles = getParsedFiles();
 		
-		final PARSED_FILE parsedFile = getParsedFile(fileSpec);
+		this.files = new ArrayList<>(parsedFiles.size());
 		
-		if (parsedFile == null) {
-			result = null;
-		}
-		else {
+		for (PARSED_FILE parsedFile : parsedFiles) {
 
-			result = new CompiledAndResolvedFile() {
+			final CompiledAndResolvedFile file = new CompiledAndResolvedFile() {
 
 				@Override
 				public <AST_ELEMENT> List<AST_ELEMENT> getASTElements(Class<AST_ELEMENT> type) {
@@ -72,9 +62,34 @@ public abstract class ResolvedFiles<PARSED_FILE extends ParsedFile, BUILTINTYPE,
 					
 					return allErrors;
 				}
-			};
-		}
 
-		return result;
+				@Override
+				public ParsedFile getParsedFile() {
+					return parsedFile;
+				}
+			};
+
+			files.add(file);
+		}
+	}
+
+	public final ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getResolveFilesResult() {
+		return resolveFilesResult;
+	}
+
+	@Override
+	public final CompiledAndResolvedFile getFile(FileSpec fileSpec) {
+
+		Objects.requireNonNull(fileSpec);
+
+		return files.stream()
+				.filter(file -> file.getParsedFile().getFileSpec().equals(fileSpec))
+				.findFirst()
+				.orElse(null);
+	}
+
+	@Override
+	public List<CompiledAndResolvedFile> getFiles() {
+		return Collections.unmodifiableList(files);
 	}
 }

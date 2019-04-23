@@ -19,9 +19,11 @@ import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.c.emit.CCompilationUnitEmitter;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseCompilationUnitEmitter;
-import com.neaterbits.compiler.java.JavaProgramModel;
+import com.neaterbits.compiler.java.JavaImportsModel;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.main.convert.ConvertClass;
@@ -112,12 +114,15 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		final ParsedFiles<ASTParsedFile> parsedFiles = new ParsedFiles<>(astParsedFiles);
 		
-		final ResolvedTypeDependencies<ASTParsedFile, BuiltinType, ComplexType<?, ?, ?>, TypeName> resolved =
+		final ResolvedTypeDependencies<ASTParsedFile, CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> resolved =
 				new ResolvedTypeDependencies<>(parsedFiles, resolveResult);
+
+		final CompilerCodeMap codeMap = new IntCompilerCodeMap();
 		
 		// Replaces all resolved type references within the AST
-		final AddTypesAndMembersToCodeMapResult<ASTParsedFile, BuiltinType, ComplexType<?, ?, ?>, TypeName> replaceTypeReferencesResult
-				= AddTypesAndMembersToCodeMapPass.makeCodeMap(resolved, astModel);
+		final AddTypesAndMembersToCodeMapResult<ASTParsedFile, CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName>
+				replaceTypeReferencesResult
+				= AddTypesAndMembersToCodeMapPass.makeCodeMap(resolved, codeMap, astModel);
 		
 		// First map classes to C structs so can access between compilation units
 		final JavaToCDeclarations declarations = convertClassesAndInterfacesToStruct(replaceTypeReferencesResult, new JavaToCClassToStructState());
@@ -170,7 +175,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		}
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				new Context("declarations", 0, 0, 0, 0, 0, 0, null),
+				Context.makeTestContext(),
 				Collections.emptyList(),
 				compilationCode);
 
@@ -200,7 +205,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 				logger,
 				JavaTypes.getBuiltinTypes(),
 				libraryTypes,
-				new JavaProgramModel(),
+				new JavaImportsModel(),
 				astModel);
 		
 		final Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles = ProgramLoader.getCompiledFiles(program);

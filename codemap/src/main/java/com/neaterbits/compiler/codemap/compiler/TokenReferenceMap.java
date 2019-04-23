@@ -7,10 +7,20 @@ final class TokenReferenceMap {
 	
 	static final int TOKEN_UNDEF = 0;
 	
+	private int [][] referencedFromDeclaration; // eg references to a variable declaration from other places
 	
-	private int [][] referencedFromTokens; // eg references to a variable declaration from other places
+	private int [] referenceToDeclaration; 
+
+	/*
+	private static final int MAX_INFO_BITS = 32 - BitDefs.TOKEN_BITS;
+	private static final int MAX_INFO_VALUE = (1 << MAX_INFO_BITS) - 1;
 	
-	private int [] referenceToToken; 
+	static {
+		if (MAX_INFO_BITS <= 0 + BitDefs.WARNING_WORKAROUND) {
+			throw new IllegalStateException();
+		}
+	}
+	*/
 
 	void addTokenReference(int fromToken, int toDeclarationToken) {
 
@@ -21,17 +31,18 @@ final class TokenReferenceMap {
 		if (toDeclarationToken <= TOKEN_UNDEF) {
 			throw new IllegalArgumentException();
 		}
+		
 
-		if (referenceToToken != null && referenceToToken[fromToken] != TOKEN_UNDEF) {
+		if (referenceToDeclaration != null && referenceToDeclaration[fromToken] != TOKEN_UNDEF) {
 			throw new IllegalStateException();
 		}
 		
-		this.referenceToToken = ArrayAllocation.allocateIntArray(referenceToToken, ArrayAllocation.DEFAULT_LENGTH);
-		referenceToToken[fromToken] = toDeclarationToken;
+		this.referenceToDeclaration = ArrayAllocation.allocateIntArray(referenceToDeclaration, ArrayAllocation.DEFAULT_LENGTH);
+		referenceToDeclaration[fromToken] = toDeclarationToken;
 		
-		this.referencedFromTokens = ArrayAllocation.allocateIntArray(referencedFromTokens, ArrayAllocation.DEFAULT_LENGTH);
+		this.referencedFromDeclaration = ArrayAllocation.allocateIntArray(referencedFromDeclaration, ArrayAllocation.DEFAULT_LENGTH);
 		ArrayAllocation.addToSubIntArray(
-				referencedFromTokens,
+				referencedFromDeclaration,
 				toDeclarationToken,
 				fromToken,
 				ArrayAllocation.DEFAULT_LENGTH);
@@ -42,29 +53,29 @@ final class TokenReferenceMap {
 			throw new IllegalArgumentException();
 		}
 
-		return referencedFromTokens[token] != null || referenceToToken[token] != TOKEN_UNDEF;
+		return referencedFromDeclaration[token] != null || referenceToDeclaration[token] != TOKEN_UNDEF;
 	}
 
 	int [] getTokensReferencingDeclaration(int declarationToken) {
-		return ArrayAllocation.subIntArrayCopy(referencedFromTokens[declarationToken]);
+		return ArrayAllocation.subIntArrayCopy(referencedFromDeclaration[declarationToken]);
 	}
 
-	int getDeclarationTokenReferencedFrom(int fromToken) {
-		return referenceToToken[fromToken];
+	int getDeclarationTokenReferencedFrom(int fromReferenceToken) {
+		return referenceToDeclaration[fromReferenceToken];
 	}
 	
 	void removeToken(int token) {
 
-		final int referenceTo = referenceToToken[token];
+		final int referenceTo = referenceToDeclaration[token];
 		
 		if (referenceTo != TOKEN_UNDEF) {
 			
-			final int [] tokens = referencedFromTokens[referenceTo];
+			final int [] tokens = referencedFromDeclaration[referenceTo];
 			
 			removeToken(tokens, token);
 		}
 		
-		referenceToToken[token] = TOKEN_UNDEF;
+		referenceToDeclaration[token] = TOKEN_UNDEF;
 	}
 	
 	static void removeToken(int [] tokens, int token) {

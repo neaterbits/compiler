@@ -3,8 +3,9 @@ package com.neaterbits.compiler.codemap.compiler;
 import com.neaterbits.compiler.codemap.CodeMap;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.CrossReferenceGetters;
 
-public interface CompilerCodeMap extends CodeMap {
+public interface CompilerCodeMap extends CodeMap, CrossReferenceUpdater, CrossReferenceGetters, CompilerCodeMapGetters {
 
 	int addFile(String file, int [] types);
 
@@ -13,8 +14,6 @@ public interface CompilerCodeMap extends CodeMap {
 	Integer getTypeNoByTypeName(TypeName typeName);
 	
 	void removeFile(String file);
-
-	int addToken(int sourceFile, int tokenOffset, int tokenLength);
 
 	default int addType(TypeVariant typeVariant, int numMethods, int [] thisExtendsFromClasses, int [] thisExtendsFromInterfaces) {
 		

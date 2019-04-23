@@ -75,7 +75,7 @@ public class FileResolverTest extends BaseResolveTest {
 				null, 
 				null);
 		
-		final Context context = new Context("", 0, 0, 0, 0, 0, 0, "");
+		final Context context = Context.makeTestContext();
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(context, new ArrayList<>(), new ArrayList<>());
 		

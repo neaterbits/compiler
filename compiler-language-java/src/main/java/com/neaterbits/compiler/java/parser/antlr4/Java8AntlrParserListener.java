@@ -8,6 +8,7 @@ import com.neaterbits.compiler.java.parser.JavaPrimitiveType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.model.Mutability;
 import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -64,15 +65,17 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	private final boolean debug;
 	private final String file;
 	private final ParseLogger logger;
+	private final TokenSequenceNoGenerator gen;
 	
 	private int indent = 0;
 
-	public Java8AntlrParserListener(JavaParserListener delegate, boolean debug, String file, ParseLogger logger) {
+	public Java8AntlrParserListener(JavaParserListener delegate, boolean debug, String file, ParseLogger logger, TokenSequenceNoGenerator gen) {
 
 		this.delegate = delegate;
 		this.debug = debug;
 		this.file = file;
 		this.logger = logger;
+		this.gen = gen;
 	}
 	
 	private boolean isDebugEnabled() {
@@ -88,11 +91,11 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 	
 	private Context context(ParserRuleContext ctx) {
-		return Antlr4.context(ctx, file);
+		return Antlr4.context(ctx, file, gen.getNextTokenSequenceNo());
 	}
 
 	private Context context(TerminalNode ctx) {
-		return Antlr4.context(ctx.getSymbol(), file);
+		return Antlr4.context(ctx.getSymbol(), file, gen.getNextTokenSequenceNo());
 	}
 
 	private Context context(List<TerminalNode> ctx) {
@@ -101,15 +104,16 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				ctx.get(0).getSymbol(),
 				ctx.get(ctx.size() - 1).getSymbol(),
 				Strings.join(ctx, ' ', node -> node.getText()),
-				file);
+				file,
+				gen.getNextTokenSequenceNo());
 	}
 
 	private Context context(Token ctx) {
-		return Antlr4.context(ctx, file);
+		return Antlr4.context(ctx, file, gen.getNextTokenSequenceNo());
 	}
 
 	private Context context(Token startCtx, Token endCtx, String text) {
-		return Antlr4.context(startCtx, endCtx, text, file);
+		return Antlr4.context(startCtx, endCtx, text, file, gen.getNextTokenSequenceNo());
 	}
 
 	@Override

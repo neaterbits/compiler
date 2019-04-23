@@ -19,7 +19,7 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.model.CompilationUnitModel;
+import com.neaterbits.compiler.util.model.ImportsModel;
 
 public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILATION_UNIT> extends ResolveUtil {
 
@@ -28,7 +28,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 	private final Collection<BUILTINTYPE> builtinTypes;
 	private final ResolverLibraryTypes<LIBRARYTYPE> libraryTypes;
 	
-	private final CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel;
+	private final ImportsModel<COMPILATION_UNIT> importsModel;
 	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 
 	private final BuiltinTypesMap<BUILTINTYPE> builtinTypesMap;
@@ -37,11 +37,11 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 			ResolveLogger<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILATION_UNIT> logger,
 			Collection<BUILTINTYPE> builtinTypes,
 			ResolverLibraryTypes<LIBRARYTYPE> libraryTypes,
-			CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel,
+			ImportsModel<COMPILATION_UNIT> importsModel,
 			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
 		Objects.requireNonNull(logger);
-		Objects.requireNonNull(compilationUnitModel);
+		Objects.requireNonNull(importsModel);
 		Objects.requireNonNull(astModel);
 
 		this.logger = logger;
@@ -51,7 +51,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 
 		this.libraryTypes = libraryTypes;
 		
-		this.compilationUnitModel = compilationUnitModel;
+		this.importsModel = importsModel;
 		this.astModel = astModel;
 	}
 
@@ -251,7 +251,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 					typeReferenceScopedName,
 					compiledTypeDependency.getReferenceType(),
 					file.getCompilationUnit(),
-					compilationUnitModel,
+					importsModel,
 					referencedFrom,
 					compiledTypesMap);
 
@@ -278,7 +278,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 								typeReferenceScopedName,
 								compiledTypeDependency.getReferenceType(),
 								file.getCompilationUnit(),
-								compilationUnitModel,
+								importsModel,
 								referencedFrom,
 								libraryTypes);
 						

@@ -63,5 +63,10 @@ public final class ASTParsedFile extends BasePlaceholderASTElement implements Pa
 		
 		return (List)elements;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <COMPILATION_UNIT> COMPILATION_UNIT getCompilationUnit() {
+		return (COMPILATION_UNIT)parsed.get();
+	}
 }

@@ -9,6 +9,7 @@ import com.neaterbits.compiler.javascript.JavaScriptLexer;
 import com.neaterbits.compiler.javascript.JavaScriptParser;
 import com.neaterbits.compiler.javascript.ast.JavascriptProgram;
 import com.neaterbits.compiler.javascript.parser.JSParserListener;
+import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public class JavascriptAntlrParser extends BaseAntlrParser<
@@ -22,7 +23,7 @@ public class JavascriptAntlrParser extends BaseAntlrParser<
 	}
 
 	@Override
-	protected JSParserListener createListener(ParseLogger logger, String file) {
+	protected JSParserListener createListener(ParseLogger logger, String file, TokenSequenceNoGenerator gen) {
 		return new JSParserListener(logger);
 	}
 
@@ -32,7 +33,7 @@ public class JavascriptAntlrParser extends BaseAntlrParser<
 	}
 
 	@Override
-	protected ParseTreeListener makeParseTreeListener(JSParserListener listener, boolean debug, String file, ParseLogger logger) {
+	protected ParseTreeListener makeParseTreeListener(JSParserListener listener, boolean debug, String file, ParseLogger logger, TokenSequenceNoGenerator gen) {
 		return new JavascriptAntlrParserListener(listener, debug, logger);
 	}
 }

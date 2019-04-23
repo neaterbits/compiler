@@ -1,7 +1,8 @@
-package com.neaterbits.compiler.util.language;
+package com.neaterbits.compiler.resolver.util;
 
 import java.util.function.Function;
 
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
@@ -14,11 +15,14 @@ import com.neaterbits.compiler.util.passes.FileParsePass;
 import com.neaterbits.compiler.util.passes.FileParsePassInput;
 import com.neaterbits.compiler.util.passes.LanguageCompiler;
 
-public abstract class CompilerLanguage<COMPILATION_UNIT, PARSED_FILE extends ParsedFile> {
+public abstract class CompilerLanguage<
+		COMPILATION_UNIT,
+		PARSED_FILE extends ParsedFile,
+		OUTPUT extends CompiledAndMappedFiles> {
 
 	public abstract LanguageCompiler<
 		FileParsePassInput<COMPILATION_UNIT>,
-		CompiledAndMappedFiles> makeCompilerPasses(ResolvedTypes resolvedTypes);
+		OUTPUT> makeCompilerPasses(ResolvedTypes resolvedTypes, CompilerCodeMap codeMap);
 	
 	protected abstract Parser<COMPILATION_UNIT> getParser();  
 

@@ -11,6 +11,7 @@ import com.neaterbits.compiler.resolver.codemap.ResolvedTypeBuiltin;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
+import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.FieldInfo;
 import com.neaterbits.compiler.util.model.MethodInfo;
@@ -20,6 +21,8 @@ import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMapGetters;
+import com.neaterbits.compiler.codemap.compiler.CrossReferenceUpdater;
 
 public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 		implements ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
@@ -51,7 +54,11 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		}
 	}
 
-	public int addFile(ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> file, int [] types) {
+	public int addNonResolvedFile(FileSpec fileSpec) {
+		return codeMap.addFile(fileSpec.getDistinctName(), null);
+	}
+
+	public int addResolvedFile(ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> file, int [] types) {
 		return codeMap.addFile(file.getSpec().getDistinctName(), types);
 	}
 
@@ -324,5 +331,23 @@ public final class ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE
 		}
 		
 		return codeMap.getMethodInfo(typeNo, methodName, parameterTypeNos);
+	}
+
+	@Override
+	public int addToken(int sourceFile, int parseTreeRef) {
+		return codeMap.addToken(sourceFile, parseTreeRef);
+	}
+	
+	@Override
+	public void addTokenVariableReference(int fromToken, int toDeclarationToken) {
+		codeMap.addTokenVariableReference(fromToken, toDeclarationToken);
+	}
+
+	public final CompilerCodeMapGetters getCompilerCodeMap() {
+		return codeMap;
+	}
+	
+	public final CrossReferenceUpdater getCrossReferenceUpdater() {
+		return codeMap;
 	}
 }

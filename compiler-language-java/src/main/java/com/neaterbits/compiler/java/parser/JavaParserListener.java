@@ -35,6 +35,7 @@ import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 /**
@@ -53,6 +54,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 	private final ParseLogger logger;
 	private final String file;
+	private final TokenSequenceNoGenerator gen;
 	
 	// Cache packagename
 	private String packageName;
@@ -75,9 +77,10 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		logger.println("stack at " + statement + " " + statementsStack);
 	}
 	
-	public JavaParserListener(ParseLogger logger, String file) {
+	public JavaParserListener(ParseLogger logger, String file, TokenSequenceNoGenerator gen) {
 		this.logger = logger;
 		this.file = file;
+		this.gen = gen;
 		this.delegate = new JavaIterativeListener(logger);
 		this.statementsStack = new StatementsStack();
 	}
@@ -757,9 +760,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onTypeReference(context, typeName);
 	}
 	
-	private static Context updateElseIfContext(Context context, Token elseToken, String file) {
+	private Context updateElseIfContext(Context context, Token elseToken, String file) {
 
-		final Context elseContext = Antlr4.context(elseToken, file);
+		final Context elseContext = Antlr4.context(elseToken, file, gen.getNextTokenSequenceNo());
 		
 		final Context updatedContext;
 		
@@ -772,7 +775,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 					context.getEndLine(),
 					context.getEndPosInLine(),
 					context.getEndOffset(),
-					context.getText());
+					context.getText(),
+					gen.getNextTokenSequenceNo());
 		}
 		else {
 			updatedContext = context;
@@ -802,11 +806,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 			delegate.onElseIfStatementStart(
 					updateElseIfContext(context, elseToken, file),
-					elseText, Antlr4.context(elseToken, file),
-					keywordToken.getText(), Antlr4.context(keywordToken, file));
+					elseText, Antlr4.context(elseToken, file, gen.getNextTokenSequenceNo()),
+					keywordToken.getText(), Antlr4.context(keywordToken, file, gen.getNextTokenSequenceNo()));
 		}
 		else {
-			delegate.onIfStatementStart(context, keywordToken.getText(), Antlr4.context(keywordToken, file));
+			delegate.onIfStatementStart(context, keywordToken.getText(), Antlr4.context(keywordToken, file, gen.getNextTokenSequenceNo()));
 		}
 
 		statementsStack.add(JavaStatement.IF_THEN, keywordToken);
@@ -860,11 +864,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			
 			delegate.onElseIfStatementStart(
 					updateElseIfContext(context, elseToken, file),
-					elseText, Antlr4.context(elseToken, file),
-					ifKeyword.getText(), Antlr4.context(ifKeyword, file));
+					elseText, Antlr4.context(elseToken, file, gen.getNextTokenSequenceNo()),
+					ifKeyword.getText(), Antlr4.context(ifKeyword, file, gen.getNextTokenSequenceNo()));
 		}
 		else {
-			delegate.onIfStatementStart(context, ifKeyword.getText(), Antlr4.context(ifKeyword, file));
+			delegate.onIfStatementStart(context, ifKeyword.getText(), Antlr4.context(ifKeyword, file, gen.getNextTokenSequenceNo()));
 		}
 
 		statementsStack.add(JavaStatement.IF_THEN_ELSE_START, ifKeyword, elseKeyword);
@@ -903,7 +907,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 				delegate.onElseStatementStart(
 						context,
 						ifOrElseStatement.getKeywordToken(0).getText(),
-						Antlr4.context(ifOrElseStatement.getKeywordToken(0), file));
+						Antlr4.context(ifOrElseStatement.getKeywordToken(0), file, gen.getNextTokenSequenceNo()));
 				break;
 				
 			default:

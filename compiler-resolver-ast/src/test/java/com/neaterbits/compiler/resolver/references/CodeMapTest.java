@@ -62,7 +62,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 		final int typeNo = codeMap.addType(resolvedClass);
 
-		final int fileNo = codeMap.addFile(testFile, new int [] { typeNo });
+		final int fileNo = codeMap.addResolvedFile(testFile, new int [] { typeNo });
 		assertThat(fileNo).isGreaterThanOrEqualTo(0);
 
 		final Collection<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> directSubtypes = codeMap.getDirectExtendingThis(
@@ -104,7 +104,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 		final int typeNo = codeMap.addType(resolvedInterface);
 
-		final int fileNo = codeMap.addFile(testFile, new int [] { typeNo });
+		final int fileNo = codeMap.addResolvedFile(testFile, new int [] { typeNo });
 		assertThat(fileNo).isGreaterThanOrEqualTo(0);
 
 		
@@ -170,10 +170,10 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		assertThat(classTypeNo).isEqualTo(interfaceTypeNo + 1);
 
-		final int classFileNo = codeMap.addFile(classTestFile, new int [] { classTypeNo });
+		final int classFileNo = codeMap.addResolvedFile(classTestFile, new int [] { classTypeNo });
 		assertThat(classFileNo).isGreaterThanOrEqualTo(0);
 		
-		final int interfaceFileNo = codeMap.addFile(interfaceTestFile, new int [] { interfaceTypeNo });
+		final int interfaceFileNo = codeMap.addResolvedFile(interfaceTestFile, new int [] { interfaceTypeNo });
 		assertThat(interfaceFileNo).isEqualTo(classFileNo + 1);
 
 		final List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> directExtendingThis = codeMap.getDirectExtendingThis(resolvedInterface.getTypeName());
@@ -226,15 +226,15 @@ public class CodeMapTest extends BaseResolveTest {
 
 		final int typeNo = codeMap.addType(resolvedType);
 
-		codeMap.addFile(resolvedFile, new int [] { typeNo });
+		codeMap.addResolvedFile(resolvedFile, new int [] { typeNo });
 
 		return resolvedType;
 	}
 	
 	private static ClassType makeClassType(Collection<String> namespace, String name) {
 		
-		final Context context = new Context("file", 0, 0, 0, 0, 0, 0, "");
-		final Context nameContext = new Context("file", 0, 0, 0, 0, 0, 0, "");
+		final Context context = Context.makeTestContext();
+		final Context nameContext = Context.makeTestContext();
 		
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
@@ -254,8 +254,8 @@ public class CodeMapTest extends BaseResolveTest {
 
 	private static InterfaceType makeInterfaceType(Collection<String> namespace, String name) {
 		
-		final Context context = new Context("file", 0, 0, 0, 0, 0, 0, "");
-		final Context nameContext = new Context("file", 0, 0, 0, 0, 0, 0, "");
+		final Context context = Context.makeTestContext();
+		final Context nameContext = Context.makeTestContext();
 		
 		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(
 				context,

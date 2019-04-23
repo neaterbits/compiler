@@ -1,19 +1,21 @@
 package com.neaterbits.compiler.resolver.ast.model;
 
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import com.neaterbits.compiler.ast.ASTVisitor;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.FieldNameDeclaration;
-import com.neaterbits.compiler.ast.Import;
 import com.neaterbits.compiler.ast.ImportName;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.NamespaceDeclaration;
 import com.neaterbits.compiler.ast.Program;
+import com.neaterbits.compiler.ast.expression.PrimaryList;
 import com.neaterbits.compiler.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.expression.literal.CharacterLiteral;
@@ -23,7 +25,10 @@ import com.neaterbits.compiler.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.statement.EnumConstant;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
+import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
+import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.ComplexTypeDefinition;
@@ -35,6 +40,9 @@ import com.neaterbits.compiler.ast.typedefinition.InterfaceModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifierHolder;
 import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.variables.InitializerVariableDeclarationElement;
+import com.neaterbits.compiler.ast.variables.NameReference;
+import com.neaterbits.compiler.ast.variables.VarNameDeclaration;
 import com.neaterbits.compiler.resolver.ScopedNameResolver;
 import com.neaterbits.compiler.resolver.TypesMap;
 import com.neaterbits.compiler.util.ArrayStack;
@@ -51,16 +59,15 @@ import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.model.SourceToken;
 import com.neaterbits.compiler.util.model.SourceTokenType;
 import com.neaterbits.compiler.util.model.SourceTokenVisitor;
-import com.neaterbits.compiler.util.model.TypeImportVisitor;
+import com.neaterbits.compiler.util.parse.ScopesListener;
 
-public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, CompilationUnit > {
+public class ObjectProgramModel
+	extends ObjectImportsModel
+	implements ProgramModel<Program, ASTParsedFile, CompilationUnit > {
 
-	private final List<TypeImport> implicitImports;
-	
 	public ObjectProgramModel(List<TypeImport> implicitImports) {
-		this.implicitImports = implicitImports;
+		super(implicitImports);
 	}
-
 
 	@Override
 	public ASTParsedFile getParsedFile(Program program, FileSpec path) {
@@ -165,7 +172,7 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 	}
 
 	@Override
-	public ISourceToken getTokenAt(CompilationUnit compilationUnit, long offset, ResolvedTypes resolvedTypes) {
+	public ISourceToken getTokenAtOffset(CompilationUnit compilationUnit, long offset, ResolvedTypes resolvedTypes) {
 
 		final BaseASTElement found = compilationUnit.findElement(true, element -> {
 
@@ -181,16 +188,16 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 	
 	
 	@Override
-	public void iterateTypeImports(CompilationUnit sourceFile, TypeImportVisitor visitor) {
-		for (Import typeImport : sourceFile.getImports()) {
-			typeImport.visit(visitor);
-		}
-	}
+	public ISourceToken getTokenAtParseTreeRef(CompilationUnit compilationUnit, int parseTreeRef, ResolvedTypes resolvedTypes) {
 
-	
-	@Override
-	public List<TypeImport> getImplicitImports() {
-		return implicitImports;
+		final BaseASTElement found = compilationUnit.findElement(true, element -> {
+
+			final Context context = element.getContext();
+
+			return !element.isPlaceholderElement() && parseTreeRef == context.getTokenSequenceNo();
+		});
+		
+		return found != null ? makeSourceToken(found, compilationUnit, resolvedTypes) : null;
 	}
 
 	private SourceToken makeSourceToken(BaseASTElement element, CompilationUnit compilationUnit, ResolvedTypes resolvedTypes) {
@@ -244,9 +251,14 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 		else if (element instanceof ThisPrimary) {
 			sourceTokenType = SourceTokenType.THIS_REFERENCE;
 		}
+		else if (element instanceof VarNameDeclaration) {
+			sourceTokenType = SourceTokenType.LOCAL_VARIABLE_DECLARATION_NAME;
+		}
+		else if (element instanceof NameReference) {
+			sourceTokenType = SourceTokenType.VARIABLE_REFERENCE;
+		}
 		else if (element instanceof NamespaceDeclaration) {
 			sourceTokenType = SourceTokenType.NAMESPACE_DECLARATION_NAME;
-			
 		}
 		else if (element instanceof ImportName) {
 			sourceTokenType = SourceTokenType.IMPORT_NAME;
@@ -325,9 +337,160 @@ public class ObjectProgramModel implements ProgramModel<Program, ASTParsedFile, 
 		final Context context = element.getContext();
 
 		return new SourceToken(
+				compilationUnit.getParseTreeRefFromElement(element),
 				sourceTokenType,
 				context,
 				typeName,
 				element.getClass().getSimpleName());
+	}
+
+	@Override
+	public void iterateScopesAndVariables(CompilationUnit sourceFile, ScopesListener scopesListener) {
+
+		final ArrayStack<BaseASTElement> stack = new ArrayStack<>();
+		
+		final Stack<BaseASTElement> stackWrapper = new StackDelegator<BaseASTElement>(stack) {
+
+			@Override
+			public void push(BaseASTElement element) {
+
+				if (element instanceof ClassDefinition) {
+					scopesListener.onClassStart(sourceFile.getParseTreeRefFromElement(element));
+				}
+				else if (element instanceof PrimaryList) {
+					
+					final PrimaryList primaryList = (PrimaryList)element;
+					
+					scopesListener.onPrimaryListStart(
+							null,
+							sourceFile.getParseTreeRefFromElement(element),
+							primaryList.getPrimaries().size());
+				}
+					
+				super.push(element);
+			}
+
+			@Override
+			public BaseASTElement pop() {
+
+				final BaseASTElement element = super.pop();
+				
+				if (element instanceof ClassDefinition) {
+					scopesListener.onClassEnd(sourceFile.getParseTreeRefFromElement(element));
+				}
+				else if (element instanceof PrimaryList) {
+					
+					scopesListener.onPrimaryListEnd(null, sourceFile.getParseTreeRefFromElement(element));
+				}
+				
+				return element;
+			}
+		};
+
+		sourceFile.iterateNodeFirstWithStack(
+				stackWrapper,
+				Function.identity(),
+
+				new ASTVisitor() {
+			@Override
+			public void onElement(BaseASTElement element) {
+				
+				if (element instanceof InitializerVariableDeclarationElement) {
+					
+					final InitializerVariableDeclarationElement declaration = (InitializerVariableDeclarationElement)element;
+					
+					scopesListener.onScopeVariableDeclaration(
+							sourceFile.getParseTreeRefFromElement(declaration.getNameDeclaration()),
+							declaration.getVarName().getName(),
+							declaration.getTypeReference().getTypeName());
+				}
+				else if (element instanceof NameReference) {
+					
+					final NameReference nameReference = (NameReference)element;
+					final int parseTreeRef = sourceFile.getParseTreeRefFromElement(element);
+					
+					final BaseASTElement stackElement = stack.get();
+					
+					if (!stack.isEmpty() && stackElement instanceof PrimaryList) {
+					
+						scopesListener.onPrimaryListNameReference(
+								null,
+								parseTreeRef,
+								nameReference.getName());
+						
+					}
+					else {
+						scopesListener.onNonPrimaryListNameReference(parseTreeRef, nameReference.getName());
+					}
+				}
+			}
+		});
+	}
+	
+	@Override
+	public String getMethodName(CompilationUnit sourceFile, int parseTreemethodDeclarationRef) {
+
+		final ClassMethodMember classmethodMember = (ClassMethodMember)sourceFile.getElementFromParseTreeRef(parseTreemethodDeclarationRef);
+		
+		return classmethodMember.getMethod().getName().getName();
+	}
+
+	@Override
+	public String getVariableName(CompilationUnit sourceFile, int parseTreeVariableDeclarationRef) {
+
+		final InitializerVariableDeclarationElement variable
+				= (InitializerVariableDeclarationElement)sourceFile.getElementFromParseTreeRef(parseTreeVariableDeclarationRef);
+		
+		return variable.getNameDeclaration().getVarName().getName();
+	}
+
+	@Override
+	public String getClassDataFieldMemberName(CompilationUnit sourceFile, int parseTreeDataMemberDeclarationRef) {
+
+		final ClassDataFieldMember member = (ClassDataFieldMember)sourceFile.getElementFromParseTreeRef(parseTreeDataMemberDeclarationRef);
+		
+		return member.getNameString();
+	}
+
+	@Override
+	public String getClassName(CompilationUnit sourceFile, int parseTreetypeDeclarationRef) {
+
+		final ClassDefinition classDefinition = (ClassDefinition)sourceFile.getElementFromParseTreeRef(parseTreetypeDeclarationRef);
+		
+		return classDefinition.getNameString();
+	}
+
+	@Override
+	public String getTokenString(CompilationUnit sourceFile, int parseTreeTokenRef) {
+		return sourceFile.getElementFromParseTreeRef(parseTreeTokenRef).getContext().getText();
+	}
+
+	@Override
+	public int getTokenOffset(CompilationUnit sourceFile, int parseTreeTokenRef) {
+		return sourceFile.getElementFromParseTreeRef(parseTreeTokenRef).getContext().getStartOffset();
+	}
+
+	@Override
+	public int getTokenLength(CompilationUnit sourceFile, int parseTreeTokenRef) {
+		return sourceFile.getElementFromParseTreeRef(parseTreeTokenRef).getContext().getLength();
+	}
+
+	@Override
+	public void print(CompilationUnit sourceFile, PrintStream out) {
+
+		sourceFile.iterateNodeFirstWithStack((element, stack) -> {
+			for (int i = 0; i < stack.size(); ++ i) {
+				out.append("  ");
+			}
+			
+			out.append(element.getClass().getSimpleName());
+			
+			if (element.getContext() != null) {
+				out.append(" \"").append(element.getContext().getText()).append("\"");
+			}
+			out.println();
+		});
+		
+		
 	}
 }

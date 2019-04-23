@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
@@ -40,22 +43,35 @@ public abstract class BaseCompilerTest {
 	}
 
 	protected final CompiledAndMappedFiles compileAndMap(FileSpec fileSpec, String text, ResolvedTypes resolvedTypes) throws IOException {
+	
+		return compileAndMap(fileSpec, text, resolvedTypes, new IntCompilerCodeMap());
+	}
+	
+	protected final CodeMapCompiledAndMappedFiles<CompilationUnit> compileAndMap(
+			FileSpec fileSpec,
+			String text,
+			ResolvedTypes resolvedTypes,
+			CompilerCodeMap codeMap) throws IOException {
+		
 		Objects.requireNonNull(fileSpec);
 		Objects.requireNonNull(text);
 		
 		return new CompileFileCollector()
 				.add(fileSpec, text)
-				.compile(resolvedTypes);
+				.compile(resolvedTypes, codeMap);
 		
 	}
 
 		
-	protected static CompiledAndMappedFiles compile(List<FilePassInput> toCompile, ResolvedTypes resolvedTypes) throws IOException {
+	protected static CodeMapCompiledAndMappedFiles<CompilationUnit> compile(
+			List<FilePassInput> toCompile,
+			ResolvedTypes resolvedTypes,
+			CompilerCodeMap codeMap) throws IOException {
 		
 		final JavaAntlrCompilerLanguage compilerLanguage = new JavaAntlrCompilerLanguage();
 		
-		final LanguageCompiler<FileParsePassInput<CompilationUnit>, CompiledAndMappedFiles> compiler
-				= compilerLanguage.makeCompilerPasses(resolvedTypes);
+		final LanguageCompiler<FileParsePassInput<CompilationUnit>, CodeMapCompiledAndMappedFiles<CompilationUnit>> compiler
+				= compilerLanguage.makeCompilerPasses(resolvedTypes, codeMap);
 	
 		final List<FileParsePassInput<CompilationUnit>> parseInputs = toCompile.stream()
 				.map(input -> new FileParsePassInput<>(input.getInputStream(), input.getFile(), compilerLanguage.getParser()))

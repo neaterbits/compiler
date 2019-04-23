@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
@@ -44,6 +48,11 @@ public class CompileFileCollector {
 	}
 
 	public CompiledAndMappedFiles compile(ResolvedTypes resolvedTypes) throws IOException {
+		return compile(resolvedTypes, new IntCompilerCodeMap());
+	}
+
+	public CodeMapCompiledAndMappedFiles<CompilationUnit>
+		compile(ResolvedTypes resolvedTypes, CompilerCodeMap codeMap) throws IOException {
 		
 		final List<FilePassInput> parseInputs = files.stream()
 				
@@ -53,6 +62,6 @@ public class CompileFileCollector {
 
 				.collect(Collectors.toList());
 
-		return BaseCompilerTest.compile(parseInputs, resolvedTypes);
+		return BaseCompilerTest.compile(parseInputs, resolvedTypes, codeMap);
 	}
 }

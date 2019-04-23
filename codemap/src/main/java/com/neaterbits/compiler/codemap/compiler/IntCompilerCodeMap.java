@@ -38,6 +38,10 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 	@Override
 	public int addFile(String file, int[] types) {
 
+		if (sourceFileNo >= BitDefs.MAX_SOURCE_FILE) {
+			throw new IllegalStateException();
+		}
+		
 		Objects.requireNonNull(file);
 		
 		if (!file.trim().equals(file)) {
@@ -90,12 +94,32 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 	}
 
 	@Override
-	public int addToken(int sourceFile, int tokenOffset, int tokenLength) {
+	public int addToken(int sourceFile, int parseTreeRef) {
 		
 		if (sourceFiles[sourceFile] == null) {
 			throw new IllegalArgumentException();
 		}
 
-		return crossReference.addToken(sourceFile, tokenOffset, tokenLength);
+		return crossReference.addToken(sourceFile, parseTreeRef);
+	}
+
+	@Override
+	public int getTokenForParseTreeRef(int sourceFile, int parseTreeRef) {
+		return crossReference.getTokenForParseTreeRef(sourceFile, parseTreeRef);
+	}
+
+	@Override
+	public int getParseTreeRefForToken(int token) {
+		return crossReference.getParseTreeRefForToken(token);
+	}
+
+	@Override
+	public int getVariableDeclarationTokenReferencedFrom(int fromReferenceToken) {
+		return crossReference.getVariableDeclarationTokenReferencedFrom(fromReferenceToken);
+	}
+
+	@Override
+	public void addTokenVariableReference(int fromToken, int toDeclarationToken) {
+		crossReference.addTokenVariableReference(fromToken, toDeclarationToken);
 	}
 }

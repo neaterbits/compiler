@@ -14,9 +14,10 @@ public final class Context {
 	private final int endPosInLine;
 	private final int endOffset;
 	private final String text;
+	private final int tokenSequenceNo;
 
 	public static Context makeTestContext() {
-		return new Context("", 0, 0, 0, 0, 0, 0, "");
+		return new Context("", 0, 0, 0, 0, 0, 0, "", -1);
 	}
 	
 	public static <T> Context merge(Collection<T> elements, Function<T, Context> getContext) {
@@ -59,10 +60,11 @@ public final class Context {
 				lower.file,
 				lower.startLine, lower.startPosInLine, lower.getStartOffset(), 
 				upper.endLine, upper.endPosInLine, upper.endOffset,
-				sb.toString());
+				sb.toString(),
+				lower.tokenSequenceNo);
 	}
 	
-	public Context(String file, int startLine, int startPosInLine, int startOffset, int endLine, int endPos, int endOffset, String text) {
+	public Context(String file, int startLine, int startPosInLine, int startOffset, int endLine, int endPos, int endOffset, String text, int tokenSequenceNo) {
 		
 		this.file = file;
 		this.startLine = startLine;
@@ -72,6 +74,7 @@ public final class Context {
 		this.endPosInLine = endPos;
 		this.endOffset = endOffset;
 		this.text = text;
+		this.tokenSequenceNo = tokenSequenceNo;
 	}
 
 	public String getFile() {
@@ -98,16 +101,20 @@ public final class Context {
 		return endPosInLine;
 	}
 
-	public String getText() {
-		return text;
-	}
-
 	public int getEndOffset() {
 		return endOffset;
 	}
 	
 	public int getLength() {
 		return getEndOffset() - getStartOffset() + 1;
+	}
+	
+	public String getText() {
+		return text;
+	}
+
+	public int getTokenSequenceNo() {
+		return tokenSequenceNo;
 	}
 
 	@Override

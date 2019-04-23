@@ -9,6 +9,8 @@ public interface ISourceToken {
 	long getStartOffset();
 
 	long getLength();
+	
+	int getParseTreeReference();
 
 	TypeName getTypeName();
 	

@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.java.Java8Lexer;
 import com.neaterbits.compiler.java.Java8Parser;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
+import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public class Java8AntlrParser extends BaseAntlrParser<CompilationUnit, JavaParserListener, Java8Lexer, Java8Parser> {
@@ -18,8 +19,8 @@ public class Java8AntlrParser extends BaseAntlrParser<CompilationUnit, JavaParse
 	}
 
 	@Override
-	protected JavaParserListener createListener(ParseLogger parseLogger, String file) {
-		return new JavaParserListener(parseLogger, file);
+	protected JavaParserListener createListener(ParseLogger parseLogger, String file, TokenSequenceNoGenerator gen) {
+		return new JavaParserListener(parseLogger, file, gen);
 	}
 
 	@Override
@@ -28,7 +29,7 @@ public class Java8AntlrParser extends BaseAntlrParser<CompilationUnit, JavaParse
 	}
 
 	@Override
-	protected ParseTreeListener makeParseTreeListener(JavaParserListener listener, boolean debug, String file, ParseLogger parseLogger) {
-		return new Java8AntlrParserListener(listener, debug, file, parseLogger);
+	protected ParseTreeListener makeParseTreeListener(JavaParserListener listener, boolean debug, String file, ParseLogger parseLogger, TokenSequenceNoGenerator gen) {
+		return new Java8AntlrParserListener(listener, debug, file, parseLogger, gen);
 	}
 }

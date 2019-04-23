@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.model.CompilationUnitModel;
+import com.neaterbits.compiler.util.model.ImportsModel;
 
 public final class ScopedNameResolver {
 	
@@ -13,11 +13,11 @@ public final class ScopedNameResolver {
 			ScopedName toResolve,
 			ReferenceType referenceType,
 			COMPILATION_UNIT compilationUnit,
-			CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel,
+			ImportsModel<COMPILATION_UNIT> importsModel,
 			ScopedName referencedFrom,
 			TypesMap<T> compiledTypesMap) {
 		
-		T result = resolveScopedName(toResolve, compilationUnit, compilationUnitModel, referencedFrom, compiledTypesMap);
+		T result = resolveScopedName(toResolve, compilationUnit, importsModel, referencedFrom, compiledTypesMap);
 		
 		if (result == null && referenceType == ReferenceType.STATIC_OR_STATIC_INSTANCE_METHOD_CALL) {
 
@@ -27,14 +27,14 @@ public final class ScopedNameResolver {
 						toResolve.getScope().subList(0, toResolve.getScope().size() - 1),
 						toResolve.getName());
 				
-				result = resolveScopedName(updatedScopeName, compilationUnit, compilationUnitModel, referencedFrom, compiledTypesMap);
+				result = resolveScopedName(updatedScopeName, compilationUnit, importsModel, referencedFrom, compiledTypesMap);
 			}
 			// Class name as part of scopedName
 			else if (toResolve.hasScope() && toResolve.getScope().size() == 1) {
 
 				final ScopedName updatedScopeName = new ScopedName(null, toResolve.getScope().get(0));
 				
-				result = resolveScopedName(updatedScopeName, compilationUnit, compilationUnitModel, referencedFrom, compiledTypesMap);
+				result = resolveScopedName(updatedScopeName, compilationUnit, importsModel, referencedFrom, compiledTypesMap);
 			}
 		}
 		
@@ -44,7 +44,7 @@ public final class ScopedNameResolver {
 	private static <T, COMPILATION_UNIT> T resolveScopedName(
 			ScopedName scopedName,
 			COMPILATION_UNIT compilationUnit,
-			CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel,
+			ImportsModel<COMPILATION_UNIT> importsModel,
 			ScopedName referencedFrom,
 			TypesMap<T> compiledTypesMap) {
 		
@@ -63,7 +63,7 @@ public final class ScopedNameResolver {
 			
 			// Only type name, must look at imports
 			
-			final List<ScopedName> names = FileImports.getAllNameCombinations(compilationUnit, scopedName, compilationUnitModel);
+			final List<ScopedName> names = FileImports.getAllNameCombinations(compilationUnit, scopedName, importsModel);
 			
  // System.out.println("## name combinations: " + names + " for " + scopedName);
 			

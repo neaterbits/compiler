@@ -11,4 +11,6 @@ public interface ParsedFile {
 	List<CompileError> getErrors();
 	
 	<AST_ELEMENT> List<AST_ELEMENT> getASTElements(Class<AST_ELEMENT> type);
+	
+	<COMPILATION_UNIT> COMPILATION_UNIT getCompilationUnit();
 }

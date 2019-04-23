@@ -17,10 +17,10 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.MultiPass;
 
-public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 	extends MultiPass<
-		ResolvedTypeDependencies<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>,
-		ResolvedTypeDependencies<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+		ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>,
+		ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 > {
 
 	private final Function<ScopedName, LIBRARYTYPE> libraryTypes;
@@ -36,8 +36,8 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, B
 	}
 
 	@Override
-	public ResolvedTypeDependencies<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> execute(
-			ResolvedTypeDependencies<PARSED_FILE, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> input) throws IOException {
+	public ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> execute(
+			ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> input) throws IOException {
 
 		replaceResolvedTypeReferences(input.getResolveFilesResult(), libraryTypes, typesModel);
 		

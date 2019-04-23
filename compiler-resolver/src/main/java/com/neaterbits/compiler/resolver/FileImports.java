@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.imports.TypeImport;
-import com.neaterbits.compiler.util.model.CompilationUnitModel;
+import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.model.TypeImportVisitor;
 
 class FileImports {
@@ -14,7 +14,7 @@ class FileImports {
 		List<ScopedName> getAllNameCombinations(
 				COMPILATION_UNIT compilationUnit,
 				ScopedName scopedName,
-				CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel) {
+				ImportsModel<COMPILATION_UNIT> importsModel) {
 		
 		final List<ScopedName> result;
 		
@@ -55,9 +55,9 @@ class FileImports {
 				}
 			};
 
-			compilationUnitModel.iterateTypeImports(compilationUnit, visitor);
+			importsModel.iterateTypeImports(compilationUnit, visitor);
 			
-			final List<TypeImport> implicitImports = compilationUnitModel.getImplicitImports();
+			final List<TypeImport> implicitImports = importsModel.getImplicitImports();
 			
 			if (implicitImports != null) {
 				for (TypeImport implicitImport : implicitImports) {

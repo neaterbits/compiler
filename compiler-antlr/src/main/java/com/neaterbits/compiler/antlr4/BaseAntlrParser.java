@@ -21,6 +21,7 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.parse.BaseParser;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -31,11 +32,11 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 		extends BaseParser<T, LISTENER>
 		implements AntlrParser<T, LISTENER> {
 
-	protected abstract LISTENER createListener(ParseLogger parseLogger, String file);
+	protected abstract LISTENER createListener(ParseLogger parseLogger, String file, TokenSequenceNoGenerator gen);
 
 	protected abstract ParserRuleContext getMainContext(PARSER parser);
 	
-	protected abstract ParseTreeListener makeParseTreeListener(LISTENER listener, boolean debug, String file, ParseLogger parseLogger);
+	protected abstract ParseTreeListener makeParseTreeListener(LISTENER listener, boolean debug, String file, ParseLogger parseLogger, TokenSequenceNoGenerator gen);
 
 	private final boolean debug;
 	
@@ -79,10 +80,13 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 
 	@Override
 	public T parse(String string, Collection<ParseError> errors, ParseLogger parseLogger) {
-		final LISTENER listener = createListener(parseLogger, null);
+		
+		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
+		
+		final LISTENER listener = createListener(parseLogger, null, gen);
 
 		try {
-			parse(new ANTLRInputStream(string), listener, errors, null, parseLogger);
+			parse(new ANTLRInputStream(string), listener, errors, null, parseLogger, gen);
 		} catch (IOException ex) {
 			throw new IllegalStateException(ex);
 		}
@@ -92,18 +96,23 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 
 	@Override
 	public T parse(InputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
-		final LISTENER listener = createListener(parseLogger, file);
 
-		parse(new ANTLRInputStream(stream), listener, errors, file, parseLogger);
+		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
+
+		final LISTENER listener = createListener(parseLogger, file, gen);
+
+		parse(new ANTLRInputStream(stream), listener, errors, file, parseLogger, gen);
 
 		return listener.getResult();
 	}
 
 	private T parse(ANTLRInputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
 
-		final LISTENER listener = createListener(parseLogger, file);
+		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
 
-		parse(stream, listener, errors, file, parseLogger);
+		final LISTENER listener = createListener(parseLogger, file, gen);
+
+		parse(stream, listener, errors, file, parseLogger, gen);
 
 		return listener.getResult();
 	}
@@ -112,7 +121,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 	public final Collection<ParseError> parse(String string, LISTENER listener, ParseLogger parseLogger) {
 		
 		try {
-			return parse(new ANTLRInputStream(string), listener, null, parseLogger);
+			return parse(new ANTLRInputStream(string), listener, null, parseLogger, new TokenSequenceNoGenerator());
 		}
 		catch (IOException ex) {
 			throw new IllegalStateException(ex);
@@ -121,23 +130,24 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 
 	@Override
 	public final Collection<ParseError> parse(InputStream stream, LISTENER listener, String file, ParseLogger parseLogger) throws IOException {
-		return parse(new ANTLRInputStream(stream), listener, file, parseLogger);
+		return parse(new ANTLRInputStream(stream), listener, file, parseLogger, new TokenSequenceNoGenerator());
 	}
 
-	private final Collection<ParseError> parse(ANTLRInputStream stream, LISTENER listener, String file, ParseLogger parseLogger) throws IOException {
+	private final Collection<ParseError> parse(ANTLRInputStream stream, LISTENER listener, String file, ParseLogger parseLogger, TokenSequenceNoGenerator gen) throws IOException {
 		final List<ParseError> errors = new ArrayList<>();
 
-		parse(stream, listener, errors, file, parseLogger);
+		parse(stream, listener, errors, file, parseLogger, gen);
 
 		return errors;
 	}
 
-	private final void parse(ANTLRInputStream stream, LISTENER listener, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
+	private final void parse(ANTLRInputStream stream, LISTENER listener, Collection<ParseError> errors, String file, ParseLogger parseLogger, TokenSequenceNoGenerator gen) throws IOException {
 
 		if (listener == null) {
 			throw new IllegalArgumentException("listener == null");
 		}
 
+		
 
 		/*
 		 * for (Token token = lexer.nextToken(); token.getType() != Token.EOF;
@@ -210,7 +220,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 
 		final ParserRuleContext root = getMainContext(parser);
 
-		final ParseTreeListener parseTreeListener = makeParseTreeListener(listener, debug, file, parseLogger);
+		final ParseTreeListener parseTreeListener = makeParseTreeListener(listener, debug, file, parseLogger, gen);
 
 		new ParseTreeWalker(){
 			

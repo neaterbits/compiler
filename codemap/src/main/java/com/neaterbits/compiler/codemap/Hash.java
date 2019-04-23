@@ -2,9 +2,9 @@ package com.neaterbits.compiler.codemap;
 
 import java.util.Arrays;
 
-final class Hash {
+public final class Hash {
 
-	interface GetCompareValue {
+	public interface GetCompareValue {
 
 		long getKey(long mapValue);
 		
@@ -25,7 +25,7 @@ final class Hash {
 		return hash;
 	}
 	
-	static long [] makeHashMap(int size, long undefValue) {
+	public static long [] makeHashMap(int size, long undefValue) {
 		
 		final long [] hashMap = new long[size + 1];
 		
@@ -36,7 +36,7 @@ final class Hash {
 		return hashMap;
 	}
 	
-	static long [] hashStore(long [] hashMap, long key, long value, long undefValue, GetCompareValue values) {
+	public static long [] hashStore(long [] hashMap, long key, long value, long undefValue, GetCompareValue values) {
 
 		final long numEntries = hashMap[0];
 		
@@ -145,7 +145,7 @@ final class Hash {
 		}
 	}
 	
-	static long hashGet(long [] hashMap, long key, long undefValue, GetCompareValue values) {
+	public static long hashGet(long [] hashMap, long key, long undefValue, GetCompareValue values) {
 		
 		final int hashIndex = hashIndex(hashMap, key);
 		

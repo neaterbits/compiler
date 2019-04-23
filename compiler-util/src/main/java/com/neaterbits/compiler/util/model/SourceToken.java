@@ -7,6 +7,7 @@ import com.neaterbits.compiler.util.TypeName;
 
 public final class SourceToken implements ISourceToken {
 
+	private final int parseTreeReference;
 	private final SourceTokenType tokenType;
 	private final long startOffset;
 	private final long length;
@@ -15,14 +16,14 @@ public final class SourceToken implements ISourceToken {
 	private final boolean isPlaceholder;
 
 	public SourceToken(String astElement) {
-		this(SourceTokenType.UNKNOWN, -1, 0, null, astElement, true);
+		this(-1, SourceTokenType.UNKNOWN, -1, 0, null, astElement, true);
 	}
 
-	public SourceToken(SourceTokenType tokenType, Context context, TypeName typeName, String astElement) {
-		this(tokenType, context.getStartOffset(), context.getEndOffset() - context.getStartOffset() + 1, typeName, astElement, false);
+	public SourceToken(int parseTreeReference, SourceTokenType tokenType, Context context, TypeName typeName, String astElement) {
+		this(parseTreeReference, tokenType, context.getStartOffset(), context.getEndOffset() - context.getStartOffset() + 1, typeName, astElement, false);
 	}
 
-	public SourceToken(SourceTokenType tokenType, long startOffset, long length, TypeName typeName, String astElement, boolean isPlaceholder) {
+	public SourceToken(int parseTreeReference, SourceTokenType tokenType, long startOffset, long length, TypeName typeName, String astElement, boolean isPlaceholder) {
 
 		Objects.requireNonNull(tokenType);
 		Objects.requireNonNull(astElement);
@@ -35,12 +36,18 @@ public final class SourceToken implements ISourceToken {
 			throw new IllegalArgumentException();
 		}
 		
+		this.parseTreeReference = parseTreeReference;
 		this.tokenType = tokenType;
 		this.startOffset = startOffset;
 		this.length = length;
 		this.typeName = typeName;
 		this.astElement = astElement;
 		this.isPlaceholder = isPlaceholder;
+	}
+
+	@Override
+	public int getParseTreeReference() {
+		return parseTreeReference;
 	}
 
 	@Override

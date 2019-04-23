@@ -6,6 +6,8 @@ import java.util.Arrays;
 
 public final class FileReferences {
 
+	private static final int [] EMPTY_ARRAY = new int[0];
+	
 	private int [] fileByType;
 	private int [][] typesByFile;
 	
@@ -17,12 +19,17 @@ public final class FileReferences {
 			throw new IllegalStateException();
 		}
 		
-		typesByFile[fileNo] = Arrays.copyOf(types, types.length);
-		
-		for (int type : types) {
-			this.fileByType = allocateIntArray(fileByType, type + 1);
+		if (types != null) {
+			typesByFile[fileNo] = Arrays.copyOf(types, types.length);
 			
-			this.fileByType[type] = fileNo;
+			for (int type : types) {
+				this.fileByType = allocateIntArray(fileByType, type + 1);
+				
+				this.fileByType[type] = fileNo;
+			}
+		}
+		else {
+			typesByFile[fileNo] = EMPTY_ARRAY;
 		}
 		
 		return fileNo;

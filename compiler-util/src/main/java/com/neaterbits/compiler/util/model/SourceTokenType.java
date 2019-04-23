@@ -16,11 +16,15 @@ public enum SourceTokenType {
 	BUILTIN_TYPE_NAME(false, false, true),
 	
 	INSTANCE_VARIABLE_DECLARATION_NAME(true, false, false),
+	STATIC_VARIABLE_DECLARATION_NAME(true, false, false),
+	LOCAL_VARIABLE_DECLARATION_NAME(true, false, false),
 	
-	INSTANCE_VARIABLE(true, false, false),
-	LOCAL_VARIABLE(true, false, false),
+	// INSTANCE_VARIABLE(true, false, false),
+	// LOCAL_VARIABLE(true, false, false),
 	
-	CALL_PARAMETER(true, false, false),
+	VARIABLE_REFERENCE(true, false, false),
+	
+	CALL_PARAMETER_DECLARATION_NAME(true, false, false),
 	
 	NAMESPACE_DECLARATION_NAME(false, false, false),
 

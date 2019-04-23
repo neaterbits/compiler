@@ -22,7 +22,7 @@ import com.neaterbits.compiler.resolver.passes.ResolveTypeDependenciesPass;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.CompilationUnitModel;
+import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.ModuleSpec;
@@ -127,11 +127,11 @@ public class BuildAndResolve {
 	public static ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveParsedFiles(
 			
 			Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles,
-			CompilationUnitModel<CompilationUnit> programModel,
+			ImportsModel<CompilationUnit> importsModel,
 			Collection<BuiltinType> builtinTypes,
 			ResolvedTypes resolvedTypes) {
 		
-		return ResolveTypeDependenciesPass.resolveParsedFiles(allFiles, programModel, builtinTypes, resolvedTypes::lookup, new ASTModelImpl());
+		return ResolveTypeDependenciesPass.resolveParsedFiles(allFiles, importsModel, builtinTypes, resolvedTypes::lookup, new ASTModelImpl());
 	}
 
 }

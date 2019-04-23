@@ -6,11 +6,12 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import com.neaterbits.compiler.antlr4.AntlrParser;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
@@ -18,12 +19,12 @@ public final class FileTypeParser<LISTENER extends ModelParserListener<Compilati
 		implements LanguageParser {
 
 	private final AntlrParser<CompilationUnit, LISTENER> parser;
-	private final Function<ParseLogger, LISTENER> makeListener;
+	private final BiFunction<ParseLogger, TokenSequenceNoGenerator, LISTENER> makeListener;
 	private final String [] fileExtensions;
 
 	public FileTypeParser(
 			AntlrParser<CompilationUnit, LISTENER> parser,
-			Function<ParseLogger, LISTENER> makeListener,
+			BiFunction<ParseLogger, TokenSequenceNoGenerator, LISTENER> makeListener,
 			String ... fileExtensions) {
 
 		Objects.requireNonNull(parser);
@@ -54,7 +55,10 @@ public final class FileTypeParser<LISTENER extends ModelParserListener<Compilati
 	
 	@Override
 	public CompilationUnit parse(InputStream inputStream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
-		final LISTENER listener = makeListener.apply(parseLogger);
+		
+		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
+		
+		final LISTENER listener = makeListener.apply(parseLogger, gen);
 		
 		final Collection<ParseError> antlrErrors = parser.parse(inputStream, listener, file, parseLogger);
 

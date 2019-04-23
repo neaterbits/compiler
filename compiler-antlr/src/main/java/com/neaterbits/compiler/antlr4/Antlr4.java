@@ -7,7 +7,7 @@ import com.neaterbits.compiler.util.Context;
 
 public class Antlr4 {
 
-	public static Context context(ParserRuleContext antlrContext, String file) {
+	public static Context context(ParserRuleContext antlrContext, String file, int tokenSequenceNo) {
 		return new Context(file,
 				antlrContext.getStart().getLine(),
 				antlrContext.getStart().getCharPositionInLine(),
@@ -15,10 +15,11 @@ public class Antlr4 {
 				antlrContext.getStop().getLine(),
 				antlrContext.getStop().getCharPositionInLine(),
 				antlrContext.getStop().getStopIndex(),
-				antlrContext.getText());
+				antlrContext.getText(),
+				tokenSequenceNo);
 	}
 
-	public static Context context(Token token, String file) {
+	public static Context context(Token token, String file, int tokenSequenceNo) {
 		return new Context(file,
 				token.getLine(),
 				token.getCharPositionInLine(),
@@ -26,10 +27,11 @@ public class Antlr4 {
 				token.getLine(),
 				token.getCharPositionInLine() + token.getText().length() - 1,
 				token.getStopIndex(),
-				token.getText());
+				token.getText(),
+				tokenSequenceNo);
 	}
 
-	public static Context context(Token startToken, Token endToken, String text, String file) {
+	public static Context context(Token startToken, Token endToken, String text, String file, int tokenSequenceNo) {
 		return new Context(file,
 				startToken.getLine(),
 				startToken.getCharPositionInLine(),
@@ -37,6 +39,7 @@ public class Antlr4 {
 				endToken.getLine(),
 				endToken.getCharPositionInLine() + endToken.getText().length() - 1,
 				endToken.getStopIndex(),
-				text);
+				text,
+				tokenSequenceNo);
 	}
 }

@@ -115,7 +115,7 @@ public abstract class BaseJavaCompilerTest {
 		
 		final FileTypeParser<JavaParserListener> javaParser = new FileTypeParser<>(
 				new Java8AntlrParser(true),
-				logger -> new JavaParserListener(logger, "testfile"), 
+				(logger, tokenSequenceNoGenerator) -> new JavaParserListener(logger, "testfile", tokenSequenceNoGenerator), 
 				".java");
 
 		final DirectoryParser directoryParser = new DirectoryParser(javaParser);
@@ -183,7 +183,7 @@ public abstract class BaseJavaCompilerTest {
 	
 	static <T extends MappingJavaToCConverterState<T>>
 	JavaToCDeclarations convertClassesAndInterfacesToStruct(
-			AddTypesAndMembersToCodeMapResult<ASTParsedFile, BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult,
+			AddTypesAndMembersToCodeMapResult<ASTParsedFile, CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult,
 			MappingJavaToCConverterState<T> converterState) {
 		
 		final JavaToCDeclarations declarations = new JavaToCDeclarations();
