@@ -2,7 +2,6 @@ package com.neaterbits.compiler.resolver.ast;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.resolver.ast.TypeFinder;
 import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.util.Strings;
 
@@ -28,7 +27,7 @@ public class TypeFinderTest {
 
 	private String findExpressionPart(TypeResolveMode typeResolveMode, String toResolveParts, String typeScopedNameParts) {
 		
-		final String [] expressionPart = TypeFinder.findExpressionPart(
+		final String [] expressionPart = MethodInvocationExpressionResolver.findExpressionPart(
 				typeResolveMode,
 				Strings.split(toResolveParts, '.'),
 				Strings.split(typeScopedNameParts, '.'));
