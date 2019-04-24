@@ -22,6 +22,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
@@ -154,7 +155,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final ResolvedTypeDependency interfaceDependency = new ResolvedTypeDependency(
 				resolvedInterface.getTypeName(),
 				ReferenceType.EXTENDS_FROM,
-				-1, null,
+				-1, TypeResolveMode.CLASSNAME_TO_COMPLETE,
 				TypeVariant.INTERFACE,
 				null, null);
 		

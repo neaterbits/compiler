@@ -29,14 +29,10 @@ import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.typereference.LibraryTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
-import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ASTFieldVisitor;
 import com.neaterbits.compiler.resolver.ASTMethodVisitor;
 import com.neaterbits.compiler.resolver.ASTTypesModel;
-import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.UpdateOnResolve;
-import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
-import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
@@ -45,7 +41,7 @@ import com.neaterbits.compiler.util.model.MethodVariant;
 import com.neaterbits.compiler.util.model.Mutability;
 import com.neaterbits.compiler.util.model.Visibility;
 
-public class ASTModelImpl implements ASTTypesModel<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> {
+public final class ASTModelImpl implements ASTTypesModel<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> {
 
 	private final FieldModifiers dataFieldDefaultModifiers;
 	
@@ -83,24 +79,6 @@ public class ASTModelImpl implements ASTTypesModel<CompilationUnit, BuiltinType,
 	@Override
 	public TypeName getLibraryTypeName(TypeName libraryType) {
 		return libraryType;
-	}
-
-	@Override
-	public ResolvedTypeDependency makeResolvedTypeDependency(
-			TypeName completeName,
-			ReferenceType referenceType,
-			TypeResolveMode typeResolveMode,
-			TypeVariant typeVariant,
-			CompiledTypeDependency compiledTypeDependency) {
-		
-		return new ResolvedTypeDependency(
-				completeName,
-				referenceType,
-				compiledTypeDependency.getTypeReferenceElementRef(),
-				typeResolveMode,
-				typeVariant,
-				compiledTypeDependency.getUpdateOnResolve(),
-				compiledTypeDependency.getUpdateOnResolveElementRef());
 	}
 
 	@Override

@@ -20,13 +20,11 @@ import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
-import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.NamespaceReference;
@@ -48,23 +46,7 @@ public class FileResolverTest extends BaseResolveTest {
 		
 		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> resolveLogger = new ResolveLogger<>(loggerStream);
 
-		final ASTModelImpl astModel = new ASTModelImpl() {
-
-			@Override
-			public ResolvedTypeDependency makeResolvedTypeDependency(
-					TypeName completeName, ReferenceType referenceType, TypeResolveMode typeResolveMode,
-					TypeVariant typeVariant, CompiledTypeDependency compiledTypeDependency) {
-
-				return new ResolvedTypeDependency(
-						completeName,
-						referenceType,
-						-1,
-						typeResolveMode,
-						typeVariant,
-						null,
-						null);
-			}
-		};
+		final ASTModelImpl astModel = new ASTModelImpl();
 		
 		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> filesResolver
 			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, new ObjectProgramModel(null), astModel);

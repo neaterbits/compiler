@@ -19,6 +19,7 @@ import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.TypeResolveMode;
 
 public abstract class BaseResolveTest {
 
@@ -77,7 +78,7 @@ public abstract class BaseResolveTest {
 				.map(type -> new ResolvedTypeDependency(
 						type.getTypeName(),
 						ReferenceType.EXTENDS_FROM,
-						-1, null,
+						-1, TypeResolveMode.CLASSNAME_TO_COMPLETE,
 						type.getSpec().getTypeVariant(),
 						null, null))
 				.collect(Collectors.toList());

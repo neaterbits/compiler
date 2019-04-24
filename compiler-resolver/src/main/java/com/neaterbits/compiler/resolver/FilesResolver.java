@@ -320,12 +320,14 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 
 				final ResolvedTypeDependency resolvedTypeDependency;
 
-				resolvedTypeDependency = astModel.makeResolvedTypeDependency(
-						typeName,
-						compiledTypeDependency.getReferenceType(),
-						typeResolveMode,
-						null,
-						compiledTypeDependency);
+				resolvedTypeDependency = new ResolvedTypeDependency(
+								typeName,
+								compiledTypeDependency.getReferenceType(),
+								compiledTypeDependency.getTypeReferenceElementRef(),
+								typeResolveMode,
+								null,
+								compiledTypeDependency.getUpdateOnResolve(),
+								compiledTypeDependency.getUpdateOnResolveElementRef());
 
 				resolvedTypes.add(resolvedTypeDependency);
 				unresolvedDependencies.remove(file.getSpec(), compiledTypeDependency);
