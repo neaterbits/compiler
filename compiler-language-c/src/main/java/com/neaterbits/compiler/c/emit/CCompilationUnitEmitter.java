@@ -19,7 +19,7 @@ public class CCompilationUnitEmitter extends BaseProceduralProgramEmitter<Emitte
 	private static final CTypeEmitter TYPE_EMITTER = new CTypeEmitter();
 	
 	private void emitType(TypeReference typeReference, EmitterState param) {
-		typeReference.getType().visit(TYPE_EMITTER, param);
+		getType(typeReference).visit(TYPE_EMITTER, param);
 	}
 	
 	private void emitCode(CompilationCode code, EmitterState param) {

@@ -58,6 +58,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 	
 	public static <PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 		AddTypesAndMembersToCodeMapResult<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> makeCodeMap(
+				
 			PostResolveFiles<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> postResolveFiles,
 			CompilerCodeMap compilerCodeMap,
 			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {

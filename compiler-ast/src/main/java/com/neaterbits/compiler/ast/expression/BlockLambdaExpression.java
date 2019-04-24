@@ -9,8 +9,8 @@ import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.statement.ReturnStatement;
 import com.neaterbits.compiler.ast.statement.Statement;
-import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.type.primitive.UnnamedVoidType;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
+import com.neaterbits.compiler.ast.typereference.UnnamedVoidTypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public final class BlockLambdaExpression extends LambdaExpression {
@@ -30,14 +30,14 @@ public final class BlockLambdaExpression extends LambdaExpression {
 	}
 
 	@Override
-	public BaseType getType() {
+	public TypeReference getType() {
 		
 		final ASTList<Statement> statements = this.block.get().getStatements();
 		
-		final BaseType type;
+		final TypeReference type;
 		
 		if (statements.isEmpty()) {
-			type = UnnamedVoidType.INSTANCE;
+			type = new UnnamedVoidTypeReference(getContext());
 		}
 		else if (statements.getLast() instanceof ReturnStatement) {
 			
@@ -45,10 +45,10 @@ public final class BlockLambdaExpression extends LambdaExpression {
 
 			type = returnStatement.getExpression() != null
 					? returnStatement.getExpression().getType()
-					: UnnamedVoidType.INSTANCE;
+					: new UnnamedVoidTypeReference(getContext());
 		}
 		else {
-			type = UnnamedVoidType.INSTANCE;
+			type = new UnnamedVoidTypeReference(getContext());
 		}
 
 		return type;

@@ -8,7 +8,7 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.operator.Operator;
-import com.neaterbits.compiler.ast.type.BaseType;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public final class ExpressionList extends Expression {
@@ -39,7 +39,7 @@ public final class ExpressionList extends Expression {
 	}
 	
 	@Override
-	public BaseType getType() {
+	public TypeReference getType() {
 		return expressions.iterator().next().getType();
 	}
 

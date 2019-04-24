@@ -13,7 +13,7 @@ final class JavaToCTypeReferenceConverter<T extends MappingJavaToCConverterState
 	@Override
 	public TypeReference onBuiltinTypeReference(BuiltinTypeReference typeReference, T param) {
 
-		final BaseType convertedType = convertType(typeReference.getType(), param);
+		final BaseType convertedType = convertBuiltinType(typeReference, param);
 		
 		final TypeReference converted;
 		

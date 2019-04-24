@@ -6,8 +6,9 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.list.ASTSingle;
-import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
+import com.neaterbits.compiler.ast.typereference.FunctionPointerTypeReference;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public final class FunctionPointerInvocationExpression extends Expression {
@@ -43,8 +44,8 @@ public final class FunctionPointerInvocationExpression extends Expression {
 	}
 
 	@Override
-	public BaseType getType() {
-		return type;
+	public TypeReference getType() {
+		return new FunctionPointerTypeReference(getContext(), type);
 	}
 
 	@Override

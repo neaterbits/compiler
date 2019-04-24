@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.StructType;
+import com.neaterbits.compiler.util.TypeName;
 
 public class OOToProceduralClassDeclaration {
 
@@ -26,6 +27,10 @@ public class OOToProceduralClassDeclaration {
 		return classType;
 	}
 
+	public TypeName getTypeName() {
+		return classType.getTypeName();
+	}
+	
 	public StructType getDataFieldStructType() {
 		return dataFieldStructType;
 	}

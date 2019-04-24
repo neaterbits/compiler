@@ -37,7 +37,7 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 
 	@Override
 	protected void emitType(TypeReference typeReference, EmitterState param) {
-		typeReference.getType().visit(TYPE_EMITTER, param);
+		getType(typeReference).visit(TYPE_EMITTER, param);
 	}
 
 	private static final VariableModifierVisitor<Void, String> VARIABLEMODIFIER_TO_STRING = new VariableModifierVisitor<Void, String>() {

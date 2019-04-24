@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.list.ASTSingle;
-import com.neaterbits.compiler.ast.type.BaseType;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.VariableReference;
 import com.neaterbits.compiler.util.Context;
 
@@ -32,7 +32,7 @@ public class AssignmentExpression extends Expression {
 	}
 
 	@Override
-	public BaseType getType() {
+	public TypeReference getType() {
 		return variable.get().getType();
 	}
 

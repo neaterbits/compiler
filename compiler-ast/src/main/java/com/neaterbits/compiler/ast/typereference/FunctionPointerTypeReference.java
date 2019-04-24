@@ -6,6 +6,7 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.TypeName;
 
 public final class FunctionPointerTypeReference extends ResolvedTypeReference {
 
@@ -21,6 +22,11 @@ public final class FunctionPointerTypeReference extends ResolvedTypeReference {
 
 	public FunctionPointerType getType() {
 		return type;
+	}
+
+	@Override
+	public TypeName getTypeName() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

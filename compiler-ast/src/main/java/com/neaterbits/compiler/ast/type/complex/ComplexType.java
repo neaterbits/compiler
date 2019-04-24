@@ -3,7 +3,6 @@ package com.neaterbits.compiler.ast.type.complex;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.list.ASTList;
-import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.BaseTypeName;
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.ResolvableType;
@@ -12,6 +11,7 @@ import com.neaterbits.compiler.ast.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.ast.typedefinition.DataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.DeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.FieldName;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 
 public abstract class ComplexType<
 					NAME extends BaseTypeName,
@@ -30,7 +30,7 @@ extends ResolvableType {
 		this.definition = definition;
 	}
 
-	public final BaseType getFieldType(FieldName fieldName) {
+	public final TypeReference getFieldType(FieldName fieldName) {
 		
 		Objects.requireNonNull(fieldName);
 		
@@ -39,7 +39,7 @@ extends ResolvableType {
 				final DataFieldMember dataFieldMember = (DataFieldMember)member;
 
 				if (dataFieldMember.getName().equals(fieldName)) {
-					return dataFieldMember.getType().getType();
+					return dataFieldMember.getType();
 				}
 			}
 		}

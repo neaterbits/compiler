@@ -12,5 +12,7 @@ public interface TypeReferenceVisitor<T, R> {
 
 	R onTypeDefTypeReference(TypeDefTypeReference typeReference, T param);
 	
+	R onUnnamedVoid(UnnamedVoidTypeReference typeReference, T param);
+	
 	R onResolveLaterTypeReference(ResolveLaterTypeReference typeReference, T param);
 }

@@ -7,7 +7,6 @@ import com.neaterbits.compiler.ast.block.Parameter;
 import com.neaterbits.compiler.ast.statement.ASTMutability;
 import com.neaterbits.compiler.ast.statement.FieldTransient;
 import com.neaterbits.compiler.ast.statement.FieldVolatile;
-import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
@@ -22,6 +21,7 @@ import com.neaterbits.compiler.ast.typedefinition.FieldModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.FieldStatic;
 import com.neaterbits.compiler.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.ast.typedefinition.Subclassing;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ASTFieldVisitor;
 import com.neaterbits.compiler.resolver.ASTMethodVisitor;
@@ -235,17 +235,17 @@ public class ASTModelImpl implements ASTTypesModel<BuiltinType, ComplexType<?, ?
 		int i = 0;
 		
 		for (Parameter parameter : classMethod.getParameters()) {
-			final NamedType namedType = (NamedType)parameter.getType().getType();
+			final TypeReference namedType = parameter.getType();
 			
-			parameterTypes[i ++] = namedType.getCompleteName().toTypeName();
+			parameterTypes[i ++] = namedType.getTypeName();
 		}
 		
-		final NamedType returnType = (NamedType)classMethod.getReturnType().getType();
+		final TypeReference returnType = classMethod.getReturnType();
 		
 		visitor.onMethod(
 				classMethod.getName().getName(),
 				methodVariant,
-				returnType.getCompleteName().toTypeName(),
+				returnType.getTypeName(),
 				parameterTypes,
 				indexInType);
 	}

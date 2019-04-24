@@ -1,32 +1,30 @@
 package com.neaterbits.compiler.ast.typereference;
 
-import java.util.Objects;
-
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
-import com.neaterbits.compiler.ast.type.TypeDefType;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.TypeName;
 
-public final class TypeDefTypeReference extends ResolvedNamedTypeReference {
+public final class UnnamedVoidTypeReference extends TypeReference {
 
-	private final TypeDefType type;
-
-	public TypeDefTypeReference(Context context, TypeDefType type) {
+	public UnnamedVoidTypeReference(Context context) {
 		super(context);
-
-		Objects.requireNonNull(type);
-
-		this.type = type;
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public TypeDefType getNamedType() {
-		return type;
+	public String getDebugName() {
+		return "unnamed_void";
+	}
+
+	@Override
+	public TypeName getTypeName() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <T, R> R visit(TypeReferenceVisitor<T, R> visitor, T param) {
-		return visitor.onTypeDefTypeReference(this, param);
+		return visitor.onUnnamedVoid(this, param);
 	}
 
 	@Override

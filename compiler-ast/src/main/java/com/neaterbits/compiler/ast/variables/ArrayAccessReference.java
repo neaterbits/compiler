@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.expression.ArrayAccessExpression;
-import com.neaterbits.compiler.ast.type.BaseType;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public final class ArrayAccessReference extends VariableReference {
@@ -25,7 +25,7 @@ public final class ArrayAccessReference extends VariableReference {
 	}
 	
 	@Override
-	public BaseType getType() {
+	public TypeReference getType() {
 		return expression.getType();
 	}
 

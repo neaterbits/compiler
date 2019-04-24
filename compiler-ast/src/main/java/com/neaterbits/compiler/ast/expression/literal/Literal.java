@@ -4,8 +4,9 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
-import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.primitive.ScalarType;
+import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public abstract class Literal extends Primary {
@@ -21,8 +22,8 @@ public abstract class Literal extends Primary {
 	}
 	
 	@Override
-	public final BaseType getType() {
-		return type;
+	public final TypeReference getType() {
+		return new BuiltinTypeReference(getContext(), type);
 	}
 
 	@Override

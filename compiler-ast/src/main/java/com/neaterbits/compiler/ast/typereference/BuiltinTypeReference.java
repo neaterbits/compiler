@@ -4,13 +4,10 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
-import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
-import com.neaterbits.compiler.ast.typereference.ResolvedTypeReference;
 import com.neaterbits.compiler.util.Context;
 
-public final class BuiltinTypeReference extends ResolvedTypeReference {
+public final class BuiltinTypeReference extends ResolvedNamedTypeReference {
 
 	private final BuiltinType type;
 
@@ -23,13 +20,7 @@ public final class BuiltinTypeReference extends ResolvedTypeReference {
 	}
 
 	@Override
-	public String getDebugName() {
-		return ((NamedType)type).getName().getName();
-	}
-
-
-	@Override
-	public BaseType getType() {
+	public BuiltinType getNamedType() {
 		return type;
 	}
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.list.ASTSingle;
-import com.neaterbits.compiler.ast.type.BaseType;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public final class ConditionalExpression extends Expression {
@@ -40,10 +40,10 @@ public final class ConditionalExpression extends Expression {
 	}
 	
 	@Override
-	public BaseType getType() {
+	public TypeReference getType() {
 		
-		final BaseType type1 = part2.get().getType();
-		final BaseType type2 = part3.get().getType();
+		final TypeReference type1 = part2.get().getType();
+		final TypeReference type2 = part3.get().getType();
 		
 		if (!type1.equals(type2)) {
 			throw new IllegalStateException();

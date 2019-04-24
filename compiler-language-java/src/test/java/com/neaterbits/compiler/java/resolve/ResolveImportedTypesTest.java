@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.neaterbits.compiler.ast.BaseASTElement;
-import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompileFileCollector;
@@ -86,7 +85,7 @@ public class ResolveImportedTypesTest extends BaseCompilerTest {
 		assertThat(fieldMember).isNotNull();
 		
 		assertThat(fieldMember.getNameString()).isEqualTo("refered");
-		assertThat(((NamedType)fieldMember.getType().getType()).getTypeName())
+		assertThat(fieldMember.getType().getTypeName())
 				.isEqualTo(new TypeName(new String [] { "com", "test", "imported" }, null, "Refered"));
 		
 	}
@@ -100,7 +99,7 @@ public class ResolveImportedTypesTest extends BaseCompilerTest {
 		assertThat(fieldMember).isNotNull();
 		
 		assertThat(fieldMember.getNameString()).isEqualTo("refered");
-		assertThat(((NamedType)fieldMember.getType().getType()).getTypeName())
+		assertThat(fieldMember.getType().getTypeName())
 				.isEqualTo(new TypeName(new String [] { "com", "test", "imported" }, null, "Refered"));
 		
 	}

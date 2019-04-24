@@ -27,6 +27,6 @@ final class JavaToCConverterState extends MappingJavaToCConverterState<JavaToCCo
 	StructType getStructTypeForClass(ClassType classType) {
 		Objects.requireNonNull(classType);
 		
-		return declarations.getClassStructType(classType);
+		return declarations.getClassStructType(classType.getTypeName());
 	}
 }

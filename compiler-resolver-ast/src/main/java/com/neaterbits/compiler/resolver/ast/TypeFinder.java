@@ -112,7 +112,7 @@ class TypeFinder {
 						if (e instanceof BuiltinTypeReference) {
 							final BuiltinTypeReference typeReference = (BuiltinTypeReference)e;
 							
-							if (!(typeReference.getType() instanceof ScalarType)) {
+							if (!(typeReference.getNamedType() instanceof ScalarType)) {
 								throw new IllegalStateException("Expected only scalar types to be resolved");
 							}
 						}
@@ -273,7 +273,9 @@ class TypeFinder {
 						fieldName));
 
 				if (i < expressionPart.length - 1) {
-					fieldHolderType = (ComplexType<?, ?, ?>)fieldHolderType.getFieldType(fieldName);
+					fieldHolderType = null; // (ComplexType<?, ?, ?>)fieldHolderType.getFieldType(fieldName);
+					
+					throw new UnsupportedOperationException();
 				}
 			}
 			

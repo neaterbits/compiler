@@ -2,7 +2,7 @@ package com.neaterbits.compiler.ast.variables;
 
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
-import com.neaterbits.compiler.ast.type.BaseType;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public final class NameReference extends VariableReference {
@@ -20,7 +20,7 @@ public final class NameReference extends VariableReference {
 	}
 
 	@Override
-	public BaseType getType() {
+	public TypeReference getType() {
 		throw new UnsupportedOperationException();
 	}
 

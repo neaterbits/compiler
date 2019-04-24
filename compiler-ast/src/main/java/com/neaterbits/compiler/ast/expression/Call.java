@@ -7,7 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.block.CallableName;
 import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.list.ASTSingle;
-import com.neaterbits.compiler.ast.type.BaseType;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public abstract class Call<N extends CallableName>
@@ -35,7 +35,7 @@ public abstract class Call<N extends CallableName>
 	}
 	
 	@Override
-	public final BaseType getType() {
+	public final TypeReference getType() {
 		throw new UnsupportedOperationException();
 	}
 

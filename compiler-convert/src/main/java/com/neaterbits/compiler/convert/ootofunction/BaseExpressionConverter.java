@@ -127,7 +127,7 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 				expression.getBase(),
 				expression.isSigned(),
 				expression.getBits(),
-				(IntegerType)convertType(expression.getType(), param));
+				(IntegerType)convertBuiltinType(expression.getType(), param));
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 		return new StringLiteral(
 				expression.getContext(),
 				expression.getValue(),
-				(StringType)convertType(expression.getType(), param));
+				(StringType)convertBuiltinType(expression.getType(), param));
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 				expression.getValue(),
 				expression.getBase(),
 				expression.getBits(),
-				(FloatingPointType)convertType(expression.getType(), param));
+				(FloatingPointType)convertBuiltinType(expression.getType(), param));
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 		return new BooleanLiteral(
 				expression.getContext(),
 				expression.getValue(),
-				(BooleanType)convertType(expression.getType(), param));
+				(BooleanType)convertBuiltinType(expression.getType(), param));
 	}
 
 	@Override
@@ -162,7 +162,7 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 		return new CharacterLiteral(
 				expression.getContext(),
 				expression.getValue(),
-				(CharacterType)convertType(expression.getType(), param));
+				(CharacterType)convertBuiltinType(expression.getType(), param));
 	}
 
 	@Override

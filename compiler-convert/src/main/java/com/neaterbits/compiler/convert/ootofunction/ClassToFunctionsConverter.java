@@ -14,6 +14,7 @@ import com.neaterbits.compiler.ast.block.MethodName;
 import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
+import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.complex.StructType;
@@ -78,10 +79,10 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 					
 					final ComplexTypeReference complexTypeReference = (ComplexTypeReference)fieldType;
 
-					final BaseType type = complexTypeReference.getType();
+					final NamedType type = complexTypeReference.getNamedType();
 					
 					if (type instanceof ClassType) {
-						final StructType alreadyConverted = alreadyConvertedMap.getClassStructType((ClassType)type);
+						final StructType alreadyConverted = alreadyConvertedMap.getClassStructType(type.getTypeName());
 						
 						if (alreadyConverted != null) {
 							convertedTypeReference = new ComplexTypeReference(
@@ -150,7 +151,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 			
 			final ComplexType<?, ?, ?> extendsFromType = codeMap.getType(extendsFromTypeInfo.getTypeNo());
 			
-			final StructType baseStructType = alreadyConvertedMap.getClassStructType(extendsFromType);
+			final StructType baseStructType = alreadyConvertedMap.getClassStructType(extendsFromType.getTypeName());
 			
 			if (baseStructType == null) {
 				throw new IllegalStateException("No struct type for " + extendsFromType.getCompleteName());

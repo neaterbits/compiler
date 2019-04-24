@@ -21,7 +21,6 @@ import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.parser.DirectoryParser;
 import com.neaterbits.compiler.ast.parser.FileTypeParser;
 import com.neaterbits.compiler.ast.parser.ProgramParser;
-import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.complex.StructType;
@@ -212,12 +211,10 @@ public abstract class BaseJavaCompilerTest {
 		// References to not-yet resolved fields in types
 		for (ComplexTypeReference reference : convertLaterTypeReferences) {
 		
-			final ComplexType<?, ?, ?> convertedStructType = declarations.getClassStructType((ClassType)reference.getType());
+			final ComplexType<?, ?, ?> convertedStructType = declarations.getClassStructType(reference.getTypeName());
 			
 			if (convertedStructType == null) {
-				final NamedType namedType = (NamedType)reference.getType();
-				
-				throw new IllegalStateException("Non-converted type " + namedType.getName());
+				throw new IllegalStateException("Non-converted type " + reference.getTypeName());
 			}
 			
 			

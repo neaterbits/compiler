@@ -45,7 +45,7 @@ public class OOToProceduralConverterUtil {
 
 						while (classMethodParameterIter.hasNext()) {
 
-							if (!classMethodParameterIter.next().getType().getType().equals(paramListIter.next().getType())) {
+							if (!classMethodParameterIter.next().getType().equals(paramListIter.next().getType())) {
 								paramsMatch = false;
 								break;
 							}
@@ -70,12 +70,12 @@ public class OOToProceduralConverterUtil {
 		
 		method.getParameters().forEach(parameter -> {
 			parameters.add(new FunctionPointerParameter(
-					convertMethodType.apply(parameter.getType().getType()),
+					null, // convertMethodType.apply(parameter.getType()),
 					parameter.getName()));
 		});
 
 		final FunctionPointerType functionPointerType = new FunctionPointerType(
-				convertMethodType.apply(method.getReturnType().getType()),
+				null, // convertMethodType.apply(method.getReturnType()),
 				parameters); 
 		
 		return functionPointerType;

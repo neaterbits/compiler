@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
-import com.neaterbits.compiler.ast.type.BaseType;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
 public final class SimpleVariableReference extends VariableReference {
@@ -28,8 +28,8 @@ public final class SimpleVariableReference extends VariableReference {
 	}
 
 	@Override
-	public BaseType getType() {
-		return declaration.getType();
+	public TypeReference getType() {
+		return declaration.getTypeReference();
 	}
 
 	@Override

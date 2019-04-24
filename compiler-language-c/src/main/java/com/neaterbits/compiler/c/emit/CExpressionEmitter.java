@@ -37,7 +37,7 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	}
 
 	protected void emitTypeReference(TypeReference type, EmitterState param) {
-		type.getType().visit(TYPE_EMITTER, param);
+		getType(type).visit(TYPE_EMITTER, param);
 	}
 
 	@Override

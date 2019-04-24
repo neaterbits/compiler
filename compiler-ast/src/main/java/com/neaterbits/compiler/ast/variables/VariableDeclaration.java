@@ -2,7 +2,6 @@ package com.neaterbits.compiler.ast.variables;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 
@@ -33,9 +32,11 @@ public final class VariableDeclaration {
 		return type;
 	}
 	
+	/*
 	public BaseType getType() {
 		return getTypeReference().getType();
 	}
+	*/
 
 	public VarName getName() {
 		return name;

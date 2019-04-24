@@ -35,7 +35,7 @@ final class CStatementEmitter extends CLikeStatementEmitter<EmitterState> implem
 
 	@Override
 	protected void emitType(TypeReference typeReference, EmitterState param) {
-		typeReference.getType().visit(TYPE_EMITTER, param);
+		getType(typeReference).visit(TYPE_EMITTER, param);
 	}
 
 	@Override

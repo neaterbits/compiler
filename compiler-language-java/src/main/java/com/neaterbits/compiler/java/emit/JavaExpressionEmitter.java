@@ -44,7 +44,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	@Override
 	protected void emitTypeReference(TypeReference type, EmitterState param) {
-		type.getType().visit(TYPE_EMITTER, param);
+		getType(type).visit(TYPE_EMITTER, param);
 	}
 	
 	protected void emitVariableReference(VariableReference reference, EmitterState param) {

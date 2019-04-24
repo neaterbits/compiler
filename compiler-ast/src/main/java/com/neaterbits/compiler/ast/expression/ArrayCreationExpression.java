@@ -8,7 +8,6 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
-import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 
@@ -34,8 +33,8 @@ public final class ArrayCreationExpression extends Primary {
 	}
 
 	@Override
-	public BaseType getType() {
-		return getTypeReference().getType();
+	public TypeReference getType() {
+		return getTypeReference();
 	}
 
 	public ASTList<Expression> getDimExpressions() {

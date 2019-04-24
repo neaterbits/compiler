@@ -89,8 +89,8 @@ public class ResolveSamePackageTest extends BaseCompilerTest {
 		assertThat(fieldModifierHolder.getModifier() instanceof FieldVisibility).isTrue();
 		
 		final ComplexTypeReference typeReference = get(iter);
-		assertThat(typeReference.getType() instanceof NamedType).isTrue();
-		final NamedType namedType = (NamedType)typeReference.getType();
+		assertThat(typeReference.getNamedType() instanceof NamedType).isTrue();
+		final NamedType namedType = (NamedType)typeReference.getNamedType();
 		assertThat(namedType.getTypeName().getNamespace()).isEqualTo(new String [] { "com", "test" });
 		assertThat(namedType.getTypeName().getOuterTypes()).isNull();
 		assertThat(namedType.getTypeName().getName()).isEqualTo("Refered");

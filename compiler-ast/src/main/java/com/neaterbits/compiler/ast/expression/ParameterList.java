@@ -6,7 +6,7 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.BasePlaceholderASTElement;
 import com.neaterbits.compiler.ast.list.ASTList;
-import com.neaterbits.compiler.ast.type.NamedType;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.TypeName;
 
 public final class ParameterList extends BasePlaceholderASTElement {
@@ -21,20 +21,20 @@ public final class ParameterList extends BasePlaceholderASTElement {
 		return list;
 	}
 
-	private static final NamedType [] NO_TYPES = new NamedType[0];
+	private static final TypeReference [] NO_TYPES = new TypeReference[0];
 	
-	public final NamedType [] getTypes() {
+	public final TypeReference [] getTypes() {
 		
-		final NamedType [] types;
+		final TypeReference [] types;
 		
 		if (list.isEmpty()) {
 			types = NO_TYPES;
 		}
 		else {
-			types = new NamedType[list.size()];
+			types = new TypeReference[list.size()];
 			
 			list.foreachWithIndex((expression, index) -> {
-				types[index] = (NamedType)expression.getType();
+				types[index] = expression.getType();
 			});
 		}
 
@@ -43,12 +43,12 @@ public final class ParameterList extends BasePlaceholderASTElement {
 	
 	public final TypeName [] getTypeNames() {
 		
-		final NamedType [] types = getTypes();
+		final TypeReference [] types = getTypes();
 		
 		final TypeName [] typeNames = new TypeName[types.length];
 		
 		for (int i = 0; i < types.length; ++ i) {
-			typeNames[i] = types[i].getCompleteName().toTypeName();
+			typeNames[i] = types[i].getTypeName();
 		}
 		
 		return typeNames;

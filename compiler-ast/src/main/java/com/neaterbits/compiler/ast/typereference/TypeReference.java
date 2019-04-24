@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.ast.typereference;
 
 import com.neaterbits.compiler.ast.BaseASTElement;
-import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
 
@@ -15,8 +14,6 @@ public abstract class TypeReference extends BaseASTElement {
 		super(context);
 	}
 
-	public abstract BaseType getType();
-	
 	public abstract String getDebugName();
 	
 	public abstract TypeName getTypeName();

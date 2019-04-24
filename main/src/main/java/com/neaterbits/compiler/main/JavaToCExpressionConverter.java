@@ -23,8 +23,8 @@ import com.neaterbits.compiler.ast.expression.literal.ClassExpression;
 import com.neaterbits.compiler.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.parser.FieldAccessType;
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
-import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.typereference.FunctionPointerTypeReference;
+import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.convert.MethodDispatch;
 import com.neaterbits.compiler.convert.OOToProceduralConverterUtil;
 import com.neaterbits.compiler.convert.ootofunction.BaseExpressionConverter;
@@ -98,17 +98,17 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 
 		final Expression converted;
 		
-		final ClassType classType = (ClassType)object.getType();
+		final TypeReference classType = object.getType();
 		
-		final int typeNo = param.getTypeNo(classType.getCompleteName().toTypeName());
+		final int typeNo = param.getTypeNo(classType.getTypeName());
 		
 		final MethodInfo methodInfo = param.getMethodInfo(
-				classType.getCompleteName().toTypeName(),
+				classType.getTypeName(),
 				expression.getCallable().getName(),
 				expression.getParameters().getTypeNames());
 		
 		if (methodInfo == null) {
-			throw new IllegalStateException("No methodinfo for " + expression.getCallable() + " of " + classType.getCompleteName());
+			throw new IllegalStateException("No methodinfo for " + expression.getCallable() + " of " + classType.getTypeName());
 		}
 		
 		final MethodDispatch methodDispatch = param.getMethodDispatch(methodInfo);
@@ -138,7 +138,7 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 			params.add(object);
 			params.addAll(convertedParams);
 			
-			final ClassMethod classMethod = OOToProceduralConverterUtil.findMethod(classType, expression.getCallable(), expression.getParameters());
+			final ClassMethod classMethod = null; // OOToProceduralConverterUtil.findMethod(classType, expression.getCallable(), expression.getParameters());
 			
 			final FunctionPointerType functionPointerType = OOToProceduralConverterUtil.makeFunctionPointerType(
 					classMethod,
