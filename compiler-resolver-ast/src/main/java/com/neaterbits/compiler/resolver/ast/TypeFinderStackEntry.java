@@ -3,16 +3,15 @@ package com.neaterbits.compiler.resolver.ast;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.UpdateOnResolve;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.ast.BaseASTElement;
+import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.NamespaceReference;
-import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
@@ -82,7 +81,7 @@ final class TypeFinderStackEntry {
 		this.nestedTypes.add(nestedType);
 	}
 	
-	void addExtendsFrom(ScopedName extendsFrom, TypeVariant typeVariant, ResolveLaterTypeReference element) {
+	void addExtendsFrom(CompilationUnit compilationUnit, ScopedName extendsFrom, TypeVariant typeVariant, ResolveLaterTypeReference element) {
 
 		Objects.requireNonNull(extendsFrom);
 		
@@ -90,12 +89,31 @@ final class TypeFinderStackEntry {
 			this.extendsFrom = new ArrayList<>();
 		}
 		
-		this.extendsFrom.add(new ParsedTypeReference(extendsFrom, ReferenceType.EXTENDS_FROM, element, null));
+		final int elementRef = compilationUnit.getParseTreeRefFromElement(element);
+		
+		this.extendsFrom.add(new CompiledTypeDependency(extendsFrom, ReferenceType.EXTENDS_FROM, elementRef, null, null));
 	}
 	
-	void addDependency(ScopedName scopedName, ReferenceType type, ResolveLaterTypeReference element, BiConsumer<BaseType, TypeResolveMode> updateOnResolve) {
+	void addDependency(
+			CompilationUnit compilationUnit,
+			ScopedName scopedName,
+			ReferenceType type,
+			ResolveLaterTypeReference element,
+			UpdateOnResolve updateOnResolve,
+			BaseASTElement updateOnResolveElement) {
 
-		final ParsedTypeReference dependency = new ParsedTypeReference(scopedName, type, element, updateOnResolve);
+		final int elementRef = compilationUnit.getParseTreeRefFromElement(element);
+		
+		final Integer updateOnResolveElementRef = updateOnResolveElement != null
+				? compilationUnit.getParseTreeRefFromElement(updateOnResolveElement)
+				: null;
+		
+		final CompiledTypeDependency dependency = new CompiledTypeDependency(
+				scopedName,
+				type,
+				elementRef, 
+				updateOnResolve, 
+				updateOnResolveElementRef);
 		
 		Objects.requireNonNull(dependency);
 		Objects.requireNonNull(type);

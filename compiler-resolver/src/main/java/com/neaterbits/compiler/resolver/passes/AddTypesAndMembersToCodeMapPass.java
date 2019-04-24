@@ -34,13 +34,13 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 			CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>> {
 
 	private final CompilerCodeMap codeMap;
-	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
+	private final ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 	
-	public AddTypesAndMembersToCodeMapPass(ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+	public AddTypesAndMembersToCodeMapPass(ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 		this(new IntCompilerCodeMap(), astModel);
 	}
 
-	public AddTypesAndMembersToCodeMapPass(CompilerCodeMap codeMap, ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+	public AddTypesAndMembersToCodeMapPass(CompilerCodeMap codeMap, ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
 		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(astModel);
@@ -61,7 +61,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 				
 			PostResolveFiles<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> postResolveFiles,
 			CompilerCodeMap compilerCodeMap,
-			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
 		final ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFilesResult = postResolveFiles.getResolveFilesResult();
 		
@@ -73,7 +73,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 		
 		final Map<FileSpec, Integer> sourceFileNos = new HashMap<>();
 		
-		final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap = makeCodeMap(
+		final ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap = makeCodeMap(
 				resolveFilesResult.getResolvedFiles(),
 				resolveFilesResult.getBuiltinTypes(),
 				typesInDependencyOrder,
@@ -115,16 +115,16 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 				typesInDependencyOrder);
 	}
 	
-	private static <BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> 
-		ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> makeCodeMap(
+	private static <COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> 
+		ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> makeCodeMap(
 			List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles,
 			Collection<BUILTINTYPE> builtinTypes,
 			List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typesInDependencyOrder,
 			CompilerCodeMap compilerCodeMap,
-			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel,
+			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel,
 			Map<FileSpec, Integer> sourceFileNos) {
 	
-		final ResolvedTypeCodeMapImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap = new ResolvedTypeCodeMapImpl<>(
+		final ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap = new ResolvedTypeCodeMapImpl<>(
 				compilerCodeMap,
 				builtinTypes,
 				astModel);
@@ -214,7 +214,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 			typeNosList.clear();
 		}
 		
-		final MethodsResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> methodsResolver = new MethodsResolver<>(codeMap, astModel);
+		final MethodsResolver<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> methodsResolver = new MethodsResolver<>(codeMap, astModel);
 	
 		methodsResolver.resolveMethodsForAllTypes(resolvedFiles);
 		

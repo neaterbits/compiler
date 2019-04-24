@@ -12,6 +12,7 @@ import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.references.TestResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
+import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
@@ -56,7 +57,7 @@ public abstract class BaseResolveTest {
 				null,
 				null,
 				Arrays.stream(extendsFrom)
-					.map(extendsFromName -> new TestCompiledTypeDependency(extendsFromName, TypeVariant.CLASS, ReferenceType.EXTENDS_FROM))
+					.map(extendsFromName -> new CompiledTypeDependency(extendsFromName, ReferenceType.EXTENDS_FROM, -1, null, null))
 					.collect(Collectors.toList()),
 				null);
 
@@ -65,7 +66,7 @@ public abstract class BaseResolveTest {
 	
 	@SafeVarargs
 	protected static ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> makeResolvedType(
-			ASTTypesModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel,
+			ASTTypesModel<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel,
 			ResolvedFile<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedFile,
 			String name,
 			TypeVariant typeVariant,

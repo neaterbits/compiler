@@ -29,7 +29,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 	private final ResolverLibraryTypes<LIBRARYTYPE> libraryTypes;
 	
 	private final ImportsModel<COMPILATION_UNIT> importsModel;
-	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
+	private final ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 
 	private final BuiltinTypesMap<BUILTINTYPE> builtinTypesMap;
 	
@@ -38,7 +38,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 			Collection<BUILTINTYPE> builtinTypes,
 			ResolverLibraryTypes<LIBRARYTYPE> libraryTypes,
 			ImportsModel<COMPILATION_UNIT> importsModel,
-			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
 		Objects.requireNonNull(logger);
 		Objects.requireNonNull(importsModel);
@@ -113,7 +113,13 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedFile : resolvedFiles) {
 			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> {
 				if (type.getDependencies() != null) {
-					checkForUpdateOnResolve(type.getDependencies(), compiledTypesMap);
+					
+					final CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> compiledFile = startFiles.stream()
+							.filter(file -> file.getSpec().equals(resolvedFile.getSpec()))
+							.findFirst()
+							.orElseThrow(IllegalStateException::new);
+					
+					checkForUpdateOnResolve(compiledFile.getCompilationUnit(), type.getDependencies(), compiledTypesMap);
 				}
 			});
 		}
@@ -124,19 +130,24 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 	}
 	
 	private void checkForUpdateOnResolve(
+			COMPILATION_UNIT compilationUnit,
 			Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> dependencies,
 			CompiledTypesMap<COMPLEXTYPE> compiledTypesMap) {
 		
 		for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypeDependency : dependencies) {
-
 			
 			if (resolvedTypeDependency.shouldUpdateOnResolve()) {
 			
 				final ScopedName scopedName = resolvedTypeDependency.getScopedName();
 				
 				final CompiledType<COMPLEXTYPE> compiledType = compiledTypesMap.lookupByScopedName(scopedName);
-
-				resolvedTypeDependency.updateOnResolve(compiledType.getType());
+				
+				astModel.updateOnResolve(
+						compilationUnit,
+						resolvedTypeDependency.getUpdateOnResolve(),
+						resolvedTypeDependency.getUpdateOnResolveElementRef(),
+						compiledType.getType(),
+						resolvedTypeDependency.getTypeResolveMode());
 			}
 		}
 			

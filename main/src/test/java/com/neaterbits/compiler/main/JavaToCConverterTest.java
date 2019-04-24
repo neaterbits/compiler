@@ -106,13 +106,13 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		assertThat(printstream.getExtendsFrom()).isNotNull();
 		assertThat(printstream.getExtendsFrom().size()).isEqualTo(1);
 		
-		ReplaceResolvedTypeReferencesPass.replaceResolvedTypeReferences(resolveResult, scopedName -> null, astModel);
-		
 		final List<ASTParsedFile> astParsedFiles = new ArrayList<>();
 		
 		program.getModules().forEach(module -> module.getParsedFiles().forEach(astParsedFiles::add));
 		
 		final ParsedFiles<ASTParsedFile> parsedFiles = new ParsedFiles<>(astParsedFiles);
+		
+		ReplaceResolvedTypeReferencesPass.replaceResolvedTypeReferences(resolveResult, scopedName -> null, parsedFiles, astModel);
 		
 		final ResolvedTypeDependencies<ASTParsedFile, CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> resolved =
 				new ResolvedTypeDependencies<>(parsedFiles, resolveResult);
@@ -196,7 +196,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	private ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveFiles(
 			Program program,
 			ResolverLibraryTypes<TypeName> libraryTypes,
-			ASTTypesModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel) {
+			ASTTypesModel<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel) {
 
 		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit>
 			logger = new ResolveLogger<>(System.out);

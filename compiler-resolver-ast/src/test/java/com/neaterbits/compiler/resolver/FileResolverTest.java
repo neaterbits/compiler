@@ -139,6 +139,6 @@ public class FileResolverTest extends BaseResolveTest {
 	}
 	
 	private static CompiledTypeDependency makeExtendsFromDependency(ScopedName scopedName) {
-		return new TestCompiledTypeDependency(scopedName, TypeVariant.CLASS, ReferenceType.EXTENDS_FROM);
+		return new CompiledTypeDependency(scopedName, ReferenceType.EXTENDS_FROM, -1, null, null);
 	}
 }

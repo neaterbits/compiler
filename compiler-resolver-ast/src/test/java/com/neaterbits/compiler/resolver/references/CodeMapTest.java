@@ -22,6 +22,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
@@ -45,7 +46,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
-		final ResolvedTypeCodeMapImpl<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
+		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
 				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
@@ -87,7 +88,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 
-		final ResolvedTypeCodeMapImpl<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
+		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
 				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
@@ -127,7 +128,7 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
-		final ResolvedTypeCodeMapImpl<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
+		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
 				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 		final TestResolvedFile classTestFile = new TestResolvedFile("TestClass.java");
@@ -213,8 +214,8 @@ public class CodeMapTest extends BaseResolveTest {
 
 	@SafeVarargs
 	private final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> addType(
-			ASTTypesModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel,
-			ResolvedTypeCodeMapImpl<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap,
+			ASTTypesModel<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel,
+			ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap,
 			String file,
 			String name,
 			TypeVariant typeVariant,

@@ -6,8 +6,10 @@ import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.UpdateOnResolve;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.TypeResolveMode;
 
 public final class TestResolvedTypeDependency implements ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
 
@@ -47,22 +49,22 @@ public final class TestResolvedTypeDependency implements ResolvedTypeDependency<
 	}
 
 	@Override
-	public void updateOnResolve(ComplexType<?, ?, ?> type) {
-		
+	public TypeResolveMode getTypeResolveMode() {
+		return null;
 	}
 
 	@Override
-	public void replaceWithComplexType(ComplexType<?, ?, ?> complexType) {
-		
+	public UpdateOnResolve getUpdateOnResolve() {
+		return null;
 	}
 
 	@Override
-	public void replaceWithBuiltinType(BuiltinType builtinType) {
-		
+	public Integer getUpdateOnResolveElementRef() {
+		return null;
 	}
 
 	@Override
-	public void replaceWithLibraryType(TypeName libraryType) {
-		
+	public int getTypeReferenceElement() {
+		return -1;
 	}
 }

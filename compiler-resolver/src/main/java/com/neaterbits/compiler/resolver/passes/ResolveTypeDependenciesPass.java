@@ -24,13 +24,13 @@ public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE ext
 	private final ImportsModel<COMPILATION_UNIT> importsModel;
 	private final Collection<BUILTINTYPE> builtinTypes;
 	private final Function<ScopedName, LIBRARYTYPE> resolvedTypes;
-	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel;
+	private final ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel;
 
 	public ResolveTypeDependenciesPass(
 			ImportsModel<COMPILATION_UNIT> importsModel,
 			Collection<BUILTINTYPE> builtinTypes,
 			Function<ScopedName, LIBRARYTYPE> resolvedTypes,
-			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel) {
+			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel) {
 		
 		Objects.requireNonNull(importsModel);
 		Objects.requireNonNull(builtinTypes);
@@ -50,7 +50,7 @@ public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE ext
 			ImportsModel<COMPILATION_UNIT> importsModel,
 			Collection<BUILTINTYPE> builtinTypes,
 			Function<ScopedName, LIBRARYTYPE> resolvedTypes,
-			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel) {
+			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel) {
 
 		final ResolveLogger<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILATION_UNIT> logger = new ResolveLogger<>(System.out);
 

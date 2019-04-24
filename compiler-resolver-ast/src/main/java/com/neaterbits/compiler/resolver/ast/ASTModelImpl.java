@@ -2,8 +2,11 @@ package com.neaterbits.compiler.resolver.ast;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.ast.BaseASTElement;
+import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.block.ClassMethod;
 import com.neaterbits.compiler.ast.block.Parameter;
+import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.statement.ASTMutability;
 import com.neaterbits.compiler.ast.statement.FieldTransient;
 import com.neaterbits.compiler.ast.statement.FieldVolatile;
@@ -21,12 +24,17 @@ import com.neaterbits.compiler.ast.typedefinition.FieldModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.FieldStatic;
 import com.neaterbits.compiler.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.ast.typedefinition.Subclassing;
+import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
+import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
+import com.neaterbits.compiler.ast.typereference.LibraryTypeReference;
+import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ASTFieldVisitor;
 import com.neaterbits.compiler.resolver.ASTMethodVisitor;
 import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.UpdateOnResolve;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
@@ -37,7 +45,7 @@ import com.neaterbits.compiler.util.model.MethodVariant;
 import com.neaterbits.compiler.util.model.Mutability;
 import com.neaterbits.compiler.util.model.Visibility;
 
-public class ASTModelImpl implements ASTTypesModel<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
+public class ASTModelImpl implements ASTTypesModel<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> {
 
 	private final FieldModifiers dataFieldDefaultModifiers;
 	
@@ -85,15 +93,69 @@ public class ASTModelImpl implements ASTTypesModel<BuiltinType, ComplexType<?, ?
 			TypeVariant typeVariant,
 			CompiledTypeDependency compiledTypeDependency) {
 		
-		final ParsedTypeReference parsedTypeReference = (ParsedTypeReference)compiledTypeDependency;
-		
 		return new ResolvedTypeDependencyImpl(
 				completeName,
 				referenceType,
-				parsedTypeReference.getElement(),
+				compiledTypeDependency.getTypeReferenceElementRef(),
 				typeResolveMode,
 				typeVariant,
-				parsedTypeReference.getUpdateOnResolve());
+				compiledTypeDependency.getUpdateOnResolve(),
+				compiledTypeDependency.getUpdateOnResolveElementRef());
+	}
+
+	@Override
+	public void updateOnResolve(CompilationUnit compilationUnit, UpdateOnResolve mode, int elementParseTreeRef, ComplexType<?, ?, ?> type, TypeResolveMode typeResolveMode) {
+		
+		switch (mode) {
+		case METHOD_INVOCATION_EXPRESSION:
+			
+			final MethodInvocationExpression methodInvocationExpression = (MethodInvocationExpression)compilationUnit.getElementFromParseTreeRef(elementParseTreeRef);
+			final ResolveLaterTypeReference resolveLaterTypeReference = (ResolveLaterTypeReference)methodInvocationExpression.getClassType();
+			
+			final ScopedName toResolve = resolveLaterTypeReference.getScopedName();
+			
+			MethodInvocationExpressionResolver.updateOnResolve(toResolve, type, typeResolveMode, methodInvocationExpression);
+			break;
+			
+		default:
+			throw new IllegalStateException();
+		}
+	}
+
+	@Override
+	public void replaceWithComplexType(CompilationUnit compilationUnit, int typeReferenceParseTreeRef, ComplexType<?, ?, ?> complexType) {
+		
+		final BaseASTElement element = compilationUnit.getElementFromParseTreeRef(typeReferenceParseTreeRef);
+		
+		if (!(element instanceof ResolveLaterTypeReference)) {
+			throw new IllegalStateException();
+		}
+		
+		element.replaceWith(new ComplexTypeReference(element.getContext(), complexType));
+	}
+
+	@Override
+	public void replaceWithBuiltinType(CompilationUnit compilationUnit, int typeReferenceParseTreeRef, BuiltinType builtinType) {
+
+		final BaseASTElement element = compilationUnit.getElementFromParseTreeRef(typeReferenceParseTreeRef);
+
+		if (!(element instanceof ResolveLaterTypeReference)) {
+			throw new IllegalStateException();
+		}
+
+		element.replaceWith(new BuiltinTypeReference(element.getContext(), builtinType));
+	}
+
+	@Override
+	public void replaceWithLibraryType(CompilationUnit compilationUnit, int typeReferenceParseTreeRef, TypeName libraryType) {
+
+		final BaseASTElement element = compilationUnit.getElementFromParseTreeRef(typeReferenceParseTreeRef);
+
+		if (!(element instanceof ResolveLaterTypeReference)) {
+			throw new IllegalStateException();
+		}
+		
+		element.replaceWith(new LibraryTypeReference(element.getContext(), libraryType));
 	}
 
 	@Override

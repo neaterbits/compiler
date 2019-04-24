@@ -16,6 +16,7 @@ import com.neaterbits.compiler.resolver.util.BuiltinTypesMap;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.MultiPass;
+import com.neaterbits.compiler.util.passes.ParsedFiles;
 
 public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 	extends MultiPass<
@@ -24,9 +25,9 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, C
 > {
 
 	private final Function<ScopedName, LIBRARYTYPE> libraryTypes;
-	private final ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel;
+	private final ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel;
 	
-	public ReplaceResolvedTypeReferencesPass(Function<ScopedName, LIBRARYTYPE> libraryTypes, ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel) {
+	public ReplaceResolvedTypeReferencesPass(Function<ScopedName, LIBRARYTYPE> libraryTypes, ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel) {
 
 		Objects.requireNonNull(libraryTypes);
 		Objects.requireNonNull(typesModel);
@@ -39,17 +40,18 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, C
 	public ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> execute(
 			ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> input) throws IOException {
 
-		replaceResolvedTypeReferences(input.getResolveFilesResult(), libraryTypes, typesModel);
+		replaceResolvedTypeReferences(input.getResolveFilesResult(), libraryTypes, input, typesModel);
 		
 		return input;
 	}
 	
-	public static <BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+	public static <PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 		void replaceResolvedTypeReferences(
 
 			ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFilesResult,
 			Function<ScopedName, LIBRARYTYPE> libraryTypes,
-			ASTTypesModel<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+			ParsedFiles<PARSED_FILE> parsedFiles,
+			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
 		final List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles = resolveFilesResult
 				.getResolvedFiles();
@@ -57,19 +59,24 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, C
 		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedFile : resolvedFiles) {
 			replaceResolvedTypeReferences(resolvedFile.getTypes(), resolveFilesResult.getResolvedTypesMap(),
 					resolveFilesResult.getBuiltinTypesMap(),
-					libraryTypes);
+					libraryTypes,
+					parsedFiles.getParsedFile(resolvedFile.getSpec()).getCompilationUnit(),
+					astModel);
 		}
 	}
 	
-	private static <BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> void replaceResolvedTypeReferences(
+	private static <COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> void replaceResolvedTypeReferences(
+			
 			Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedTypes,
 			ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypesMap,
 			BuiltinTypesMap<BUILTINTYPE> builtinTypesMap,
-			Function<ScopedName, LIBRARYTYPE> libraryTypes) {
+			Function<ScopedName, LIBRARYTYPE> libraryTypes,
+			COMPILATION_UNIT compilationUnit,
+			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 		
 		for (ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedType : resolvedTypes) {
 			if (resolvedType.getNestedTypes() != null) {
-				replaceResolvedTypeReferences(resolvedType.getNestedTypes(), resolvedTypesMap, builtinTypesMap, libraryTypes);
+				replaceResolvedTypeReferences(resolvedType.getNestedTypes(), resolvedTypesMap, builtinTypesMap, libraryTypes, compilationUnit, astModel);
 			}
 
 			if (resolvedType.getDependencies() != null) {
@@ -82,13 +89,13 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, C
 					
 						final COMPLEXTYPE type = dependencyType.getType();
 						
-						typeDependency.replaceWithComplexType(type);
+						astModel.replaceWithComplexType(compilationUnit, typeDependency.getTypeReferenceElement(), type);
 					}
 					else {
 						final BUILTINTYPE builtinType = builtinTypesMap.lookupType(typeDependency.getCompleteName().toScopedName());
 						
 						if (builtinType != null) {
-							typeDependency.replaceWithBuiltinType(builtinType);
+							astModel.replaceWithBuiltinType(compilationUnit, typeDependency.getTypeReferenceElement(), builtinType);
 						}
 						else {
 
@@ -98,7 +105,7 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, C
 								throw new IllegalStateException("Unknown type " + typeDependency.getCompleteName());
 							}
 							
-							typeDependency.replaceWithLibraryType(libraryType);
+							astModel.replaceWithLibraryType(compilationUnit, typeDependency.getTypeReferenceElement(), libraryType);
 						}
 					}
 				}

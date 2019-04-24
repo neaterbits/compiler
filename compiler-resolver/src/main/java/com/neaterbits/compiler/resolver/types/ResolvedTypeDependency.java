@@ -2,8 +2,10 @@ package com.neaterbits.compiler.resolver.types;
 
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.UpdateOnResolve;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.TypeResolveMode;
 
 public interface ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
@@ -17,13 +19,13 @@ public interface ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 	
 	TypeVariant getTypeVariant();
 	
+	int getTypeReferenceElement();
+	
+	TypeResolveMode getTypeResolveMode();
+	
 	boolean shouldUpdateOnResolve();
 	
-	void updateOnResolve(COMPLEXTYPE type);
-
-	void replaceWithComplexType(COMPLEXTYPE complexType);
+	UpdateOnResolve getUpdateOnResolve();
 	
-	void replaceWithBuiltinType(BUILTINTYPE builtinType);
-
-	void replaceWithLibraryType(LIBRARYTYPE libraryType);
+	Integer getUpdateOnResolveElementRef();
 }

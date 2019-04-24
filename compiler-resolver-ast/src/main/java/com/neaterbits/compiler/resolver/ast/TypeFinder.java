@@ -3,10 +3,10 @@ package com.neaterbits.compiler.resolver.ast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.ast.BaseASTElement;
+import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.block.ClassMethod;
@@ -16,7 +16,6 @@ import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.statement.CatchBlock;
-import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.complex.EnumType;
@@ -36,13 +35,13 @@ import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.UpdateOnResolve;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
-import com.neaterbits.compiler.util.TypeResolveMode;
 
 class TypeFinder {
 
@@ -58,6 +57,8 @@ class TypeFinder {
 	
 	static List<CompiledType<ComplexType<?, ?, ?>>> findTypes(ASTParsedFile parsedFile, FileSpec compiledFileSpec) {
 
+		final CompilationUnit compilationUnit = parsedFile.getParsed();
+		
 		final TypeFinderStack stack = new TypeFinderStack();
 		
 		final List<CompiledType<ComplexType<?, ?, ?>>> parsedTypes = new ArrayList<>();
@@ -116,21 +117,25 @@ class TypeFinder {
 							
 							final ReferenceType referenceType;
 							
-							final BiConsumer<BaseType, TypeResolveMode> updateOnResolve;
+							final UpdateOnResolve updateOnResolve;
+							final BaseASTElement updateOnResolveElement;
 							
 							if (lastElement instanceof ClassDefinition || lastElement instanceof InterfaceDefinition) {
-								lastStackEntry.addExtendsFrom(name, TypeVariant.CLASS, typeReference);
+								lastStackEntry.addExtendsFrom(compilationUnit, name, TypeVariant.CLASS, typeReference);
 								
 								referenceType = null;
 								updateOnResolve = null;
+								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof Parameter) {
 								referenceType = ReferenceType.PARAMETER;
 								updateOnResolve = null;
+								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof ClassMethod || lastElement instanceof InterfaceMethod) {
 								referenceType = ReferenceType.RETURNTYPE;
 								updateOnResolve = null;
+								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof MethodInvocationExpression) {
 								final MethodInvocationExpression methodInvocationExpression = (MethodInvocationExpression)lastElement;
@@ -139,29 +144,30 @@ class TypeFinder {
 									throw new UnsupportedOperationException("Expected static class invocation");
 								}
 								
-								final ScopedName toResolve = typeReference.getScopedName();
-								
-								updateOnResolve = (type, resolveMode) -> {
-									MethodInvocationExpressionResolver.updateOnResolve(toResolve, type, resolveMode, methodInvocationExpression);
-								};
-								
+								updateOnResolve = UpdateOnResolve.METHOD_INVOCATION_EXPRESSION;
+								updateOnResolveElement = methodInvocationExpression;
+
 								referenceType = ReferenceType.STATIC_OR_STATIC_INSTANCE_METHOD_CALL;
 							}
 							else if (lastElement instanceof InitializerVariableDeclarationElement) {
 								referenceType = ReferenceType.VARIABLE_INITIALIZER;
 								updateOnResolve = null;
+								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof ClassDataFieldMember) {
 								referenceType = ReferenceType.FIELD;
 								updateOnResolve = null;
+								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof CatchBlock) {
 								referenceType = ReferenceType.CATCH_EXCEPTION;
 								updateOnResolve = null;
+								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof ClassInstanceCreationExpression) {
 								referenceType = ReferenceType.CLASS_INSTANCE_CREATION;
 								updateOnResolve = null;
+								updateOnResolveElement = null;
 							}
 							else {
 								throw new UnsupportedOperationException("Unknown scope for type reference " + typeReference.getScopedName()
@@ -173,7 +179,7 @@ class TypeFinder {
 
 								final TypeFinderStackEntry typeFrame = findTypeFrame(stack);
 								
-								typeFrame.addDependency(name, referenceType, typeReference, updateOnResolve);
+								typeFrame.addDependency(compilationUnit, name, referenceType, typeReference, updateOnResolve, updateOnResolveElement);
 							}
 						}
 						else {
