@@ -73,7 +73,7 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 			
 			int numExtendsFrom = 0;
 			
-			for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typeDependency : type.getExtendsFrom()) {
+			for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
 				if (typeDependency.getTypeVariant().equals(typeVariant)) {
 					++ numExtendsFrom;
 				}
@@ -83,7 +83,7 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 			
 			int dstIdx = 0;
 			
-			for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typeDependency : type.getExtendsFrom()) {
+			for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
 				if (typeDependency.getTypeVariant().equals(typeVariant)) {
 
 					final TypeName name = typeDependency.getCompleteName();

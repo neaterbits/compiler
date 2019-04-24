@@ -67,12 +67,12 @@ public final class ResolvedTypeBuiltin<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 	}
 	
 	@Override
-	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getExtendsFrom() {
+	public Collection<ResolvedTypeDependency> getExtendsFrom() {
 		return null;
 	}
 	
 	@Override
-	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getDependencies() {
+	public Collection<ResolvedTypeDependency> getDependencies() {
 		return null;
 	}
 }

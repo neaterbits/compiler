@@ -144,7 +144,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> {
 				
 				if (type.getExtendsFrom() != null) {
-					for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typeDependency : type.getExtendsFrom()) {
+					for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
 						if (!resolvedTypesByName.containsKey(typeDependency.getCompleteName())) {
 							throw new IllegalStateException("Cannot find type " + typeDependency.getCompleteName());
 						}
@@ -175,7 +175,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 				boolean allExtendsFromAdded = true;
 				
 				if (type.getExtendsFrom() != null) {
-					for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typeDependency : type.getExtendsFrom()) {
+					for (ResolvedTypeDependency typeDependency : type.getExtendsFrom()) {
 						if (!codeMap.hasType(typeDependency.getCompleteName())) {
 							allExtendsFromAdded = false;
 							break;

@@ -151,10 +151,12 @@ public class CodeMapTest extends BaseResolveTest {
 				TypeVariant.INTERFACE,
 				makeInterfaceType(interfaceNamespace, interfaceName));
 		
-		final ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName> interfaceDependency = new TestResolvedTypeDependency(
+		final ResolvedTypeDependency interfaceDependency = new ResolvedTypeDependency(
 				resolvedInterface.getTypeName(),
 				ReferenceType.EXTENDS_FROM,
-				TypeVariant.INTERFACE);
+				-1, null,
+				TypeVariant.INTERFACE,
+				null, null);
 		
 		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedClass = new TestResolvedType(
 				classTestFile.getSpec(),

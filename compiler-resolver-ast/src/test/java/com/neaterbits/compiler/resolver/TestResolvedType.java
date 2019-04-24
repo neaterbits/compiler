@@ -19,8 +19,8 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 	private final ComplexType<?, ?, ?> type;
 	
 	private final List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> nestedTypes;
-	private final List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> extendsFrom;
-	private final List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> dependencies;
+	private final List<ResolvedTypeDependency> extendsFrom;
+	private final List<ResolvedTypeDependency> dependencies;
 	
 	public TestResolvedType(
 			FileSpec file,
@@ -28,8 +28,8 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 			TypeVariant typeVariant,
 			ComplexType<?, ?, ?> type,
 			List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> nestedTypes,
-			List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> extendsFrom,
-			List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> dependencies) {
+			List<ResolvedTypeDependency> extendsFrom,
+			List<ResolvedTypeDependency> dependencies) {
 
 		super(file, new TypeSpec(scopedName, typeVariant));
 
@@ -70,12 +70,12 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 	}
 
 	@Override
-	public Collection<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> getExtendsFrom() {
+	public Collection<ResolvedTypeDependency> getExtendsFrom() {
 		return extendsFrom;
 	}
 
 	@Override
-	public Collection<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> getDependencies() {
+	public Collection<ResolvedTypeDependency> getDependencies() {
 		return dependencies;
 	}
 }

@@ -17,7 +17,6 @@ import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
-import com.neaterbits.compiler.resolver.references.TestResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
@@ -52,11 +51,18 @@ public class FileResolverTest extends BaseResolveTest {
 		final ASTModelImpl astModel = new ASTModelImpl() {
 
 			@Override
-			public ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName> makeResolvedTypeDependency(
+			public ResolvedTypeDependency makeResolvedTypeDependency(
 					TypeName completeName, ReferenceType referenceType, TypeResolveMode typeResolveMode,
 					TypeVariant typeVariant, CompiledTypeDependency compiledTypeDependency) {
 
-				return new TestResolvedTypeDependency(completeName, referenceType, typeVariant);
+				return new ResolvedTypeDependency(
+						completeName,
+						referenceType,
+						-1,
+						typeResolveMode,
+						typeVariant,
+						null,
+						null);
 			}
 		};
 		

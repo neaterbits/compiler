@@ -86,14 +86,14 @@ public class ASTModelImpl implements ASTTypesModel<CompilationUnit, BuiltinType,
 	}
 
 	@Override
-	public ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName> makeResolvedTypeDependency(
+	public ResolvedTypeDependency makeResolvedTypeDependency(
 			TypeName completeName,
 			ReferenceType referenceType,
 			TypeResolveMode typeResolveMode,
 			TypeVariant typeVariant,
 			CompiledTypeDependency compiledTypeDependency) {
 		
-		return new ResolvedTypeDependencyImpl(
+		return new ResolvedTypeDependency(
 				completeName,
 				referenceType,
 				compiledTypeDependency.getTypeReferenceElementRef(),

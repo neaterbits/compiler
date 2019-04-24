@@ -9,7 +9,6 @@ import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ReferenceType;
-import com.neaterbits.compiler.resolver.references.TestResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
@@ -74,11 +73,13 @@ public abstract class BaseResolveTest {
 		
 		final ScopedName scopedName = makeScopedName(name);
 		
-		final List<ResolvedTypeDependency<BuiltinType, ComplexType<?, ?, ?>, TypeName>> extendsFromDependencies = Arrays.stream(extendsFrom)
-				.map(type -> new TestResolvedTypeDependency(
+		final List<ResolvedTypeDependency> extendsFromDependencies = Arrays.stream(extendsFrom)
+				.map(type -> new ResolvedTypeDependency(
 						type.getTypeName(),
 						ReferenceType.EXTENDS_FROM,
-						type.getSpec().getTypeVariant()))
+						-1, null,
+						type.getSpec().getTypeVariant(),
+						null, null))
 				.collect(Collectors.toList());
 		
 		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedType

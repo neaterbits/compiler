@@ -16,8 +16,8 @@ public interface ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends Res
 	
 	Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getNestedTypes();
 
-	Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getExtendsFrom();
+	Collection<ResolvedTypeDependency> getExtendsFrom();
 	
-	Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getDependencies();
+	Collection<ResolvedTypeDependency> getDependencies();
 
 }

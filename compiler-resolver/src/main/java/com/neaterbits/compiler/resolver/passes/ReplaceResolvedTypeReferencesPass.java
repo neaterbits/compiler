@@ -81,7 +81,7 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, C
 
 			if (resolvedType.getDependencies() != null) {
 				
-				for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typeDependency : resolvedType.getDependencies()) {
+				for (ResolvedTypeDependency typeDependency : resolvedType.getDependencies()) {
 					
 					final ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> dependencyType = resolvedTypesMap.lookupType(typeDependency.getCompleteName());
 					

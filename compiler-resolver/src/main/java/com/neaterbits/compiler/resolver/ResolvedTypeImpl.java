@@ -19,8 +19,8 @@ final class ResolvedTypeImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends Base
 	private final TypeName typeName;
 	
 	private final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> nestedTypes;
-	private final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> extendsFrom;
-	private final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> dependencies;
+	private final List<ResolvedTypeDependency> extendsFrom;
+	private final List<ResolvedTypeDependency> dependencies;
 
 	public ResolvedTypeImpl(
 			FileSpec file,
@@ -28,8 +28,8 @@ final class ResolvedTypeImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends Base
 			TypeVariant typeVariant,
 			COMPLEXTYPE type,
 			List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> nestedTypes,
-			List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> extendsFrom,
-			List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> dependencies) {
+			List<ResolvedTypeDependency> extendsFrom,
+			List<ResolvedTypeDependency> dependencies) {
 		
 		super(file, new TypeSpec(typeName.toScopedName(), typeVariant));
 		
@@ -76,12 +76,12 @@ final class ResolvedTypeImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends Base
 	}
 
 	@Override
-	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getExtendsFrom() {
+	public Collection<ResolvedTypeDependency> getExtendsFrom() {
 		return extendsFrom;
 	}
 
 	@Override
-	public Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getDependencies() {
+	public Collection<ResolvedTypeDependency> getDependencies() {
 		return dependencies;
 	}
 }

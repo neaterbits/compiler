@@ -131,10 +131,10 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 	
 	private void checkForUpdateOnResolve(
 			COMPILATION_UNIT compilationUnit,
-			Collection<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> dependencies,
+			Collection<ResolvedTypeDependency> dependencies,
 			CompiledTypesMap<COMPLEXTYPE> compiledTypesMap) {
 		
-		for (ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypeDependency : dependencies) {
+		for (ResolvedTypeDependency resolvedTypeDependency : dependencies) {
 			
 			if (resolvedTypeDependency.shouldUpdateOnResolve()) {
 			
@@ -167,7 +167,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 		
 		for (CompiledType<COMPLEXTYPE> type : types) {
 			
-			final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedExtendsFrom;
+			final List<ResolvedTypeDependency> resolvedExtendsFrom;
 			
 			if (type.getExtendsFrom() != null) {
 				 resolvedExtendsFrom = resolveTypeDependencies(
@@ -185,7 +185,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 				resolvedExtendsFrom = null;
 			}
 			
-			final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedDependencies;
+			final List<ResolvedTypeDependency> resolvedDependencies;
 
 			if (type.getDependencies() != null) {
 				resolvedDependencies = resolveTypeDependencies(
@@ -243,7 +243,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 		return resolved ? resolvedTypes : null;
 	}
 	
-	private List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolveTypeDependencies(
+	private List<ResolvedTypeDependency> resolveTypeDependencies(
 			Collection<CompiledTypeDependency> dependencies,
 			ScopedName referencedFrom,
 			CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> file,
@@ -252,7 +252,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 		
 		boolean resolved = true;
 		
-		final List<ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedTypes = new ArrayList<>(dependencies.size());
+		final List<ResolvedTypeDependency> resolvedTypes = new ArrayList<>(dependencies.size());
 		
 		for (CompiledTypeDependency compiledTypeDependency : dependencies) {
 			
@@ -318,7 +318,7 @@ public final class FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILAT
 							? TypeResolveMode.COMPLETE_TO_COMPLETE
 							: TypeResolveMode.CLASSNAME_TO_COMPLETE;
 
-				final ResolvedTypeDependency<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypeDependency;
+				final ResolvedTypeDependency resolvedTypeDependency;
 
 				resolvedTypeDependency = astModel.makeResolvedTypeDependency(
 						typeName,
