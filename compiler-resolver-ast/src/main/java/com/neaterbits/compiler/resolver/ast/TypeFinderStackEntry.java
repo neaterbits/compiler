@@ -70,7 +70,7 @@ final class TypeFinderStackEntry {
 		return dependencies;
 	}
 
-	void addNestedType(ParsedType nestedType) {
+	void addNestedType(CompiledType nestedType) {
 		Objects.requireNonNull(nestedType);
 		
 		if (this.nestedTypes == null) {

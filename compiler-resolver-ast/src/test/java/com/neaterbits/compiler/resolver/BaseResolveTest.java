@@ -49,7 +49,7 @@ public abstract class BaseResolveTest {
 		
 		final ScopedName scopedName = makeScopedName(name);
 
-		final CompiledType compiledType = new TestCompiledType(
+		final CompiledType compiledType = new CompiledType(
 				compiledFile.getSpec(),
 				new TypeSpec(scopedName, typeVariant),
 				null,

@@ -19,6 +19,7 @@ import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
+import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.NameFileSpec;
@@ -61,10 +62,9 @@ public class FileResolverTest extends BaseResolveTest {
 				testFileSpec,
 				testCompilationUnit.getParseTreeRefFromElement(testClassDefinition));
 		
-		final CompiledType testType = new TestCompiledType(
+		final CompiledType testType = new CompiledType(
 				testFileSpec,
-				testClass.toScopedName(),
-				TypeVariant.CLASS,
+				new TypeSpec(testClass.toScopedName(), TypeVariant.CLASS),
 				testClassType,
 				null, 
 				null, 
@@ -89,10 +89,9 @@ public class FileResolverTest extends BaseResolveTest {
 				anotherTestFileSpec,
 				anotherCompilationUnit.getParseTreeRefFromElement(anotherTestClassDefinition));
 
-		final CompiledType anotherTestType = new TestCompiledType(
+		final CompiledType anotherTestType = new CompiledType(
 				anotherTestFileSpec,
-				anotherTestClass.toScopedName(),
-				TypeVariant.CLASS,
+				new TypeSpec(anotherTestClass.toScopedName(), TypeVariant.CLASS),
 				anotherTestClassType,
 				null,
 				Arrays.asList(makeExtendsFromDependency(testClass.toScopedName())),

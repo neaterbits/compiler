@@ -68,7 +68,7 @@ class TypeFinder {
 				
 				final TypeFinderStackEntry stackEntry = super.pop();
 
-				final ParsedType parsedType = makeParsedType(compiledFileSpec, compilationUnit, stack, stackEntry, stack.isEmpty() ? null : stack.get());
+				final CompiledType parsedType = makeParsedType(compiledFileSpec, compilationUnit, stack, stackEntry, stack.isEmpty() ? null : stack.get());
 				
 				if (parsedType != null) {
 					
@@ -287,7 +287,7 @@ class TypeFinder {
 	}
 
 	
-	private static ParsedType makeParsedType(
+	private static CompiledType makeParsedType(
 			FileSpec file,
 			CompilationUnit compilationUnit,
 			TypeFinderStack stack,
@@ -297,7 +297,7 @@ class TypeFinder {
 		return processIfTypeElement(stackEntry, lastStackEntry, true, (name, typeVariant, type) -> makeParsedType(file, stack, stackEntry, name, typeVariant, type), file, compilationUnit);
 	}
 	
-	private static ParsedType makeParsedType(
+	private static CompiledType makeParsedType(
 			FileSpec file,
 			TypeFinderStack stack,
 			TypeFinderStackEntry stackEntry,
@@ -305,7 +305,7 @@ class TypeFinder {
 			TypeVariant typeVariant,
 			UserDefinedTypeRef type) {
 
-		return new ParsedType(
+		return new CompiledType(
 				file,
 				makeTypeSpec(stack, name, TypeVariant.CLASS),
 				type,
