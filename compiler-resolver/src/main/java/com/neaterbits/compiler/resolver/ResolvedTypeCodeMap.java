@@ -8,22 +8,23 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.FieldInfo;
 import com.neaterbits.compiler.util.model.MethodInfo;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
-public interface ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends CrossReferenceUpdater {
+public interface ResolvedTypeCodeMap extends CrossReferenceUpdater {
 
-	ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getClassThisExtendsFrom(TypeName classType);
+	ResolvedType getClassThisExtendsFrom(TypeName classType);
 
 	TypeInfo getClassExtendsFromTypeInfo(TypeName classType);
 
-	Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getInterfacesImplement(TypeName classType);
+	Collection<ResolvedType> getInterfacesImplement(TypeName classType);
 	
-	Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getInterfacesExtendFrom(TypeName interfaceType);
+	Collection<ResolvedType> getInterfacesExtendFrom(TypeName interfaceType);
 	
-	Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getDirectExtendingThis(TypeName type);
+	Collection<ResolvedType> getDirectExtendingThis(TypeName type);
 	
-	Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getAllSubtypes(TypeName type);
+	Collection<ResolvedType> getAllSubtypes(TypeName type);
 	
-	COMPLEXTYPE getType(int typeNo);
+	UserDefinedTypeRef getType(int typeNo);
 	
 	TypeInfo getTypeInfo(TypeName type);
 

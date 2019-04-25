@@ -23,9 +23,8 @@ import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.model.UserDefinedType;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.ast.CompilationUnit;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ClassModifiers;
@@ -57,18 +56,18 @@ public class CodeMapTest extends BaseResolveTest {
 				Arrays.asList(classDefinition));
 		
 		
-		final UserDefinedType classType = new UserDefinedType(
+		final UserDefinedTypeRef classType = new UserDefinedTypeRef(
 				TypeName.fromNamespace(namespace, className),
 				testFile.getSpec(),
 				compilationUnit.getParseTreeRefFromElement(classDefinition));
 		
-		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, UserDefinedType, TypeName> codeMap
+		final ResolvedTypeCodeMapImpl<CompilationUnit> codeMap
 				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 
 		final ScopedName scopedName = new ScopedName(namespace, className);
 		
-		final ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedClass = new TestResolvedType(
+		final ResolvedType resolvedClass = new TestResolvedType(
 				testFile.getSpec(),
 				scopedName,
 				TypeVariant.CLASS,
@@ -79,7 +78,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final int fileNo = codeMap.addResolvedFile(testFile, new int [] { typeNo });
 		assertThat(fileNo).isGreaterThanOrEqualTo(0);
 
-		final Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> directSubtypes = codeMap.getDirectExtendingThis(
+		final Collection<ResolvedType> directSubtypes = codeMap.getDirectExtendingThis(
 				resolvedClass.getTypeName()
 		);
 		
@@ -88,7 +87,7 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		assertThat(codeMap.getClassThisExtendsFrom(resolvedClass.getTypeName())).isNull();
 
-		final Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> allSubtypes = codeMap.getAllSubtypes(
+		final Collection<ResolvedType> allSubtypes = codeMap.getAllSubtypes(
 				resolvedClass.getTypeName());
 		
 		assertThat(allSubtypes).isNotNull();
@@ -101,7 +100,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 
-		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, UserDefinedType, TypeName> codeMap
+		final ResolvedTypeCodeMapImpl<CompilationUnit> codeMap
 				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
@@ -117,12 +116,12 @@ public class CodeMapTest extends BaseResolveTest {
 				Collections.emptyList(),
 				Arrays.asList(interfaceDefinition));
 		
-		final UserDefinedType interfaceType = new UserDefinedType(
+		final UserDefinedTypeRef interfaceType = new UserDefinedTypeRef(
 				TypeName.fromNamespace(namespace, interfaceName),
 				testFile.getSpec(),
 				compilationUnit.getParseTreeRefFromElement(interfaceDefinition));
 		
-		final ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedInterface = new TestResolvedType(
+		final ResolvedType resolvedInterface = new TestResolvedType(
 				testFile.getSpec(),
 				scopedName,
 				TypeVariant.INTERFACE,
@@ -134,7 +133,7 @@ public class CodeMapTest extends BaseResolveTest {
 		assertThat(fileNo).isGreaterThanOrEqualTo(0);
 
 		
-		final Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> directSubtypes = codeMap.getDirectExtendingThis(
+		final Collection<ResolvedType> directSubtypes = codeMap.getDirectExtendingThis(
 					resolvedInterface.getTypeName());
 
 		assertThat(directSubtypes).isNotNull();
@@ -142,7 +141,7 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		assertThat(codeMap.getClassThisExtendsFrom(resolvedInterface.getTypeName())).isNull();
 
-		final Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> allSubtypes = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
+		final Collection<ResolvedType> allSubtypes = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
 		
 		assertThat(allSubtypes).isNotNull();
 		assertThat(allSubtypes).isEmpty();
@@ -153,7 +152,7 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
-		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, UserDefinedType, TypeName> codeMap
+		final ResolvedTypeCodeMapImpl<CompilationUnit> codeMap
 				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 		final TestResolvedFile classTestFile = new TestResolvedFile("TestClass.java");
@@ -170,7 +169,7 @@ public class CodeMapTest extends BaseResolveTest {
 				Collections.emptyList(),
 				Arrays.asList(classDefinition));
 		
-		final UserDefinedType classType = new UserDefinedType(
+		final UserDefinedTypeRef classType = new UserDefinedTypeRef(
 				TypeName.fromNamespace(classNamespace, className),
 				classTestFile.getSpec(),
 				classCompilationUnit.getParseTreeRefFromElement(classDefinition));
@@ -187,12 +186,12 @@ public class CodeMapTest extends BaseResolveTest {
 				Collections.emptyList(),
 				Arrays.asList(interfaceDefinition));
 		
-		final UserDefinedType interfaceType = new UserDefinedType(
+		final UserDefinedTypeRef interfaceType = new UserDefinedTypeRef(
 				TypeName.fromNamespace(interfaceNamespace, interfaceName),
 				interfaceTestFile.getSpec(),
 				interfaceCompilationUnit.getParseTreeRefFromElement(interfaceDefinition));
 		
-		final ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedInterface = new TestResolvedType(
+		final ResolvedType resolvedInterface = new TestResolvedType(
 				interfaceTestFile.getSpec(),
 				interfaceScopedName,
 				TypeVariant.INTERFACE,
@@ -205,7 +204,7 @@ public class CodeMapTest extends BaseResolveTest {
 				TypeVariant.INTERFACE,
 				null, null);
 		
-		final ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedClass = new TestResolvedType(
+		final ResolvedType resolvedClass = new TestResolvedType(
 				classTestFile.getSpec(),
 				classScopedName,
 				TypeVariant.CLASS,
@@ -226,32 +225,32 @@ public class CodeMapTest extends BaseResolveTest {
 		final int interfaceFileNo = codeMap.addResolvedFile(interfaceTestFile, new int [] { interfaceTypeNo });
 		assertThat(interfaceFileNo).isEqualTo(classFileNo + 1);
 
-		final List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> directExtendingThis = codeMap.getDirectExtendingThis(resolvedInterface.getTypeName());
+		final List<ResolvedType> directExtendingThis = codeMap.getDirectExtendingThis(resolvedInterface.getTypeName());
 		
 		assertThat(directExtendingThis).isNotNull();
 		assertThat(directExtendingThis.size()).isEqualTo(1);
 		assertThat(directExtendingThis.iterator().next()).isSameAs(resolvedClass);
 
-		final List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> allExtendingThis = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
+		final List<ResolvedType> allExtendingThis = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
 		assertThat(allExtendingThis).isNotNull();
 		assertThat(allExtendingThis.size()).isEqualTo(1);
 		assertThat(allExtendingThis.iterator().next()).isSameAs(resolvedClass);
 
 		assertThat(codeMap.getClassThisExtendsFrom(resolvedInterface.getTypeName())).isNull();
 
-		final ResolvedType<BuiltinType, UserDefinedType, TypeName> anotherClass
+		final ResolvedType anotherClass
 				= addType(astModel, codeMap, "AnotherTestClass.java", "com.test.AnotherTestClass", TypeVariant.CLASS, resolvedClass);
-		final ResolvedType<BuiltinType, UserDefinedType, TypeName> anotherInterface
+		final ResolvedType anotherInterface
 				= addType(astModel, codeMap, "AnotherTestInterface.java", "com.test.AnotherTestInterface", TypeVariant.INTERFACE, resolvedInterface);
 
-		final List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> directSubtypesUpdated = codeMap.getDirectExtendingThis(resolvedInterface.getTypeName());
+		final List<ResolvedType> directSubtypesUpdated = codeMap.getDirectExtendingThis(resolvedInterface.getTypeName());
 
 		assertThat(directSubtypesUpdated).isNotNull();
 		assertThat(directSubtypesUpdated.size()).isEqualTo(2);
 		assertThat(directSubtypesUpdated.get(0)).isSameAs(resolvedClass);
 		assertThat(directSubtypesUpdated.get(1)).isSameAs(anotherInterface);
 
-		final List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> allSubtypesUpdated = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
+		final List<ResolvedType> allSubtypesUpdated = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
 
 		assertThat(allSubtypesUpdated).isNotNull();
 		
@@ -262,17 +261,17 @@ public class CodeMapTest extends BaseResolveTest {
 	}
 
 	@SafeVarargs
-	private final ResolvedType<BuiltinType, UserDefinedType, TypeName> addType(
-			ASTTypesModel<CompilationUnit, BuiltinType, UserDefinedType, TypeName> astModel,
-			ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, UserDefinedType, TypeName> codeMap,
+	private final ResolvedType addType(
+			ASTTypesModel<CompilationUnit> astModel,
+			ResolvedTypeCodeMapImpl<CompilationUnit> codeMap,
 			String file,
 			String name,
 			TypeVariant typeVariant,
-			ResolvedType<BuiltinType, UserDefinedType, TypeName> ... extendsFrom) {
+			ResolvedType ... extendsFrom) {
 		
-		final ResolvedFile<BuiltinType, UserDefinedType, TypeName> resolvedFile = new TestResolvedFile(file);
+		final ResolvedFile resolvedFile = new TestResolvedFile(file);
 
-		final ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedType = makeResolvedType(astModel, resolvedFile, name, typeVariant, extendsFrom);
+		final ResolvedType resolvedType = makeResolvedType(astModel, resolvedFile, name, typeVariant, extendsFrom);
 
 		final CompilationUnit compilationUnit = new CompilationUnit(
 				Context.makeTestContext(),

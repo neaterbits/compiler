@@ -11,44 +11,42 @@ import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-final class ResolvedTypeImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends BaseResolverType implements ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
+final class ResolvedTypeImpl extends BaseResolverType implements ResolvedType {
 
-	private final COMPLEXTYPE type;
-	private final TypeName typeName;
+	private final UserDefinedTypeRef type;
 	
-	private final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> nestedTypes;
+	private final List<ResolvedType> nestedTypes;
 	private final List<ResolvedTypeDependency> extendsFrom;
 	private final List<ResolvedTypeDependency> dependencies;
 
 	public ResolvedTypeImpl(
 			FileSpec file,
-			TypeName typeName,
 			TypeVariant typeVariant,
-			COMPLEXTYPE type,
-			List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> nestedTypes,
+			UserDefinedTypeRef type,
+			List<ResolvedType> nestedTypes,
 			List<ResolvedTypeDependency> extendsFrom,
 			List<ResolvedTypeDependency> dependencies) {
 		
-		super(file, new TypeSpec(typeName.toScopedName(), typeVariant));
+		super(file, new TypeSpec(type.toScopedName(), typeVariant));
 		
 		Objects.requireNonNull(file);
 		Objects.requireNonNull(type);
-		Objects.requireNonNull(typeName);
 		
 		if (extendsFrom != null) {
 			if (extendsFrom.contains(this)) {
 				throw new IllegalArgumentException();
 			}
 	
-			if (extendsFrom.stream().anyMatch(e -> e.getCompleteName().equals(typeName))) {
+			if (extendsFrom.stream().anyMatch(e -> e.getCompleteName().equals(type.getTypeName()))) {
 				throw new IllegalArgumentException();
 			}
 		}
 
 		this.type = type;
-		this.typeName = typeName;
 		
 		this.nestedTypes = nestedTypes != null ? Collections.unmodifiableList(nestedTypes) : null;
 		this.extendsFrom = extendsFrom != null ? Collections.unmodifiableList(extendsFrom) : null;
@@ -56,22 +54,22 @@ final class ResolvedTypeImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends Base
 	}
 
 	@Override
-	public COMPLEXTYPE getType() {
+	public UserDefinedTypeRef getType() {
 		return type;
 	}
 	
 	@Override
 	public TypeName getTypeName() {
-		return typeName;
+		return type.getTypeName();
 	}
 
 	@Override
-	public BUILTINTYPE getBuiltinType() {
+	public BuiltinTypeRef getBuiltinType() {
 		return null;
 	}
 
 	@Override
-	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getNestedTypes() {
+	public Collection<ResolvedType> getNestedTypes() {
 		return nestedTypes;
 	}
 

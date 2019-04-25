@@ -9,14 +9,14 @@ import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.UserDefinedType;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-public class TestCompiledType extends BaseResolverType implements CompiledType<UserDefinedType> {
+public class TestCompiledType extends BaseResolverType implements CompiledType {
 
-	private final UserDefinedType type;
+	private final UserDefinedTypeRef type;
 	
-	private final Collection<CompiledType<UserDefinedType>> nestedTypes;
+	private final Collection<CompiledType> nestedTypes;
 	private final Collection<CompiledTypeDependency> extendsFrom;
 	private final Collection<CompiledTypeDependency> dependencies;
 	
@@ -24,8 +24,8 @@ public class TestCompiledType extends BaseResolverType implements CompiledType<U
 	public TestCompiledType(
 			FileSpec file,
 			TypeSpec typeSpec,
-			UserDefinedType type,
-			Collection<CompiledType<UserDefinedType>> nestedTypes,
+			UserDefinedTypeRef type,
+			Collection<CompiledType> nestedTypes,
 			Collection<CompiledTypeDependency> extendsFrom,
 			Collection<CompiledTypeDependency> dependencies) {
 		super(file, typeSpec);
@@ -41,15 +41,15 @@ public class TestCompiledType extends BaseResolverType implements CompiledType<U
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
-			UserDefinedType type,
-			Collection<CompiledType<UserDefinedType>> nestedTypes,
+			UserDefinedTypeRef type,
+			Collection<CompiledType> nestedTypes,
 			Collection<CompiledTypeDependency> extendsFrom,
 			Collection<CompiledTypeDependency> dependencies) {
 		this(file, new TypeSpec(scopedName, typeVariant), type, nestedTypes, extendsFrom, dependencies);
 	}
 
 	@Override
-	public UserDefinedType getType() {
+	public UserDefinedTypeRef getType() {
 		return type;
 	}
 
@@ -59,7 +59,7 @@ public class TestCompiledType extends BaseResolverType implements CompiledType<U
 	}
 
 	@Override
-	public Collection<CompiledType<UserDefinedType>> getNestedTypes() {
+	public Collection<CompiledType> getNestedTypes() {
 		return nestedTypes;
 	}
 

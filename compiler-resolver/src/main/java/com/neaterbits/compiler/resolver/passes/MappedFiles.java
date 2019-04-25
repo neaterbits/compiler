@@ -7,14 +7,14 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 
-public abstract class MappedFiles<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
-		extends PostResolveFiles<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+public abstract class MappedFiles<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>
+		extends PostResolveFiles<PARSED_FILE, COMPILATION_UNIT>
 		implements CodeMapCompiledAndMappedFiles<COMPILATION_UNIT> {
 
 	private final Map<FileSpec, Integer> sourceFileNos;
 	
 	protected MappedFiles(
-			PostResolveFiles<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> other,
+			PostResolveFiles<PARSED_FILE, COMPILATION_UNIT> other,
 			Map<FileSpec, Integer> sourceFileNos) {
 		
 		super(other);

@@ -9,13 +9,13 @@ import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.util.FileSpec;
 
-final class CompiledFileImpl<COMPLEXTYPE, COMPILATION_UNIT> implements CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> {
+final class CompiledFileImpl<COMPILATION_UNIT> implements CompiledFile<COMPILATION_UNIT> {
 
 	private final FileSpec spec;
 	private final COMPILATION_UNIT compilationUnit;
-	private final List<CompiledType<COMPLEXTYPE>> types;
+	private final List<CompiledType> types;
 	
-	CompiledFileImpl(FileSpec spec, COMPILATION_UNIT compilationUnit, List<CompiledType<COMPLEXTYPE>> types) {
+	CompiledFileImpl(FileSpec spec, COMPILATION_UNIT compilationUnit, List<CompiledType> types) {
 		
 		Objects.requireNonNull(spec);
 		Objects.requireNonNull(compilationUnit);
@@ -37,7 +37,7 @@ final class CompiledFileImpl<COMPLEXTYPE, COMPILATION_UNIT> implements CompiledF
 	}
 
 	@Override
-	public Collection<CompiledType<COMPLEXTYPE>> getTypes() {
+	public Collection<CompiledType> getTypes() {
 		return types;
 	}
 

@@ -7,14 +7,14 @@ import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.MultiFileInputOutput;
 import com.neaterbits.compiler.util.passes.ParsedFiles;
 
-public class CompiledFiles<COMPLEXTYPE, COMPILATION_UNIT, PARSED_FILE extends ParsedFile> 
+public class CompiledFiles<COMPILATION_UNIT, PARSED_FILE extends ParsedFile> 
 
-	extends MultiFileInputOutput<CompiledFile<COMPLEXTYPE, COMPILATION_UNIT>> {
+	extends MultiFileInputOutput<CompiledFile<COMPILATION_UNIT>> {
 
 	private final ParsedFiles<PARSED_FILE> parsedFiles;
-	private final List<CompiledFile<COMPLEXTYPE, COMPILATION_UNIT>> compiledFiles;
+	private final List<CompiledFile<COMPILATION_UNIT>> compiledFiles;
 	
-	public CompiledFiles(ParsedFiles<PARSED_FILE> parsedFiles, List<CompiledFile<COMPLEXTYPE, COMPILATION_UNIT>> compiledFiles) {
+	public CompiledFiles(ParsedFiles<PARSED_FILE> parsedFiles, List<CompiledFile<COMPILATION_UNIT>> compiledFiles) {
 		
 		this.parsedFiles = parsedFiles;
 		this.compiledFiles = Collections.unmodifiableList(compiledFiles);
@@ -24,7 +24,7 @@ public class CompiledFiles<COMPLEXTYPE, COMPILATION_UNIT, PARSED_FILE extends Pa
 		return parsedFiles;
 	}
 
-	public List<CompiledFile<COMPLEXTYPE, COMPILATION_UNIT>> getCompiledFiles() {
+	public List<CompiledFile<COMPILATION_UNIT>> getCompiledFiles() {
 		return compiledFiles;
 	}
 

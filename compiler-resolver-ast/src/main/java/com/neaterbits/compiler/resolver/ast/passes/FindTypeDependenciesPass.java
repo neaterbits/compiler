@@ -10,21 +10,20 @@ import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledFiles;
-import com.neaterbits.compiler.util.model.UserDefinedType;
 import com.neaterbits.compiler.util.passes.ParsedFiles;
 import com.neaterbits.compiler.util.passes.SingleToMultiPass;
 
 public class FindTypeDependenciesPass 
-	extends SingleToMultiPass<ASTParsedFile, CompiledFiles<UserDefinedType, CompilationUnit, ASTParsedFile>> {
+	extends SingleToMultiPass<ASTParsedFile, CompiledFiles<CompilationUnit, ASTParsedFile>> {
 
 	@Override
-	public CompiledFiles<UserDefinedType, CompilationUnit, ASTParsedFile> execute(Collection<ASTParsedFile> input) throws IOException {
+	public CompiledFiles<CompilationUnit, ASTParsedFile> execute(Collection<ASTParsedFile> input) throws IOException {
 		
-		final List<CompiledFile<UserDefinedType, CompilationUnit>> compiledFiles
+		final List<CompiledFile<CompilationUnit>> compiledFiles
 				= new ArrayList<>(input.size());
 		
 		for (ASTParsedFile parsedFile : input) {
-			final CompiledFile<UserDefinedType, CompilationUnit> compiledFile = ProgramLoader.makeCompiledFile(parsedFile);
+			final CompiledFile<CompilationUnit> compiledFile = ProgramLoader.makeCompiledFile(parsedFile);
 
 			compiledFiles.add(compiledFile);
 		}

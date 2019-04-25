@@ -14,19 +14,20 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.ParsedFiles;
 
 public final class MethodsResolver<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
 	private final ParsedFiles<PARSED_FILE> parsedFiles;
-	private final ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap;
-	private final ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
+	private final ResolvedTypeCodeMapImpl<COMPILATION_UNIT> codeMap;
+	private final ASTTypesModel<COMPILATION_UNIT> astModel;
 	
 	public MethodsResolver(
 			ParsedFiles<PARSED_FILE> parsedFiles,
-			ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap,
-			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+			ResolvedTypeCodeMapImpl<COMPILATION_UNIT> codeMap,
+			ASTTypesModel<COMPILATION_UNIT> astModel) {
 
 		Objects.requireNonNull(parsedFiles);
 		Objects.requireNonNull(codeMap);
@@ -38,13 +39,13 @@ public final class MethodsResolver<PARSED_FILE extends ParsedFile, COMPILATION_U
 	}
 
 
-	void resolveMethodsForAllTypes(Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> allFiles) {
+	void resolveMethodsForAllTypes(Collection<ResolvedFile> allFiles) {
 	
 		// Create a set of all types and just start resolving one by one
 		
-		final Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> map = new HashMap<>(allFiles.size());
+		final Map<TypeSpec, ResolvedType> map = new HashMap<>(allFiles.size());
 	
-		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> file : allFiles) {
+		for (ResolvedFile file : allFiles) {
 			getAllTypes(file.getTypes(), map);
 		}
 		
@@ -53,10 +54,10 @@ public final class MethodsResolver<PARSED_FILE extends ParsedFile, COMPILATION_U
 	
 	
 	private void getAllTypes(
-			Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> types,
-			Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> map) {
+			Collection<ResolvedType> types,
+			Map<TypeSpec, ResolvedType> map) {
 		
-		for (ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> type : types) {
+		for (ResolvedType type : types) {
 
 			if (map.put(type.getSpec(), type) != null) {
 				throw new IllegalStateException();
@@ -68,7 +69,7 @@ public final class MethodsResolver<PARSED_FILE extends ParsedFile, COMPILATION_U
 		}
 	}
 	
-	private void resolveAllMethods(Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> map) {
+	private void resolveAllMethods(Map<TypeSpec, ResolvedType> map) {
 		
 		final Set<TypeSpec> toResolve = new HashSet<>(map.keySet());
 
@@ -82,17 +83,17 @@ public final class MethodsResolver<PARSED_FILE extends ParsedFile, COMPILATION_U
 		}
 	}
 	
-	private void resolveAllMethods(Map<TypeSpec, ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> map, TypeSpec typeSpec) {
+	private void resolveAllMethods(Map<TypeSpec, ResolvedType> map, TypeSpec typeSpec) {
 	
 		Objects.requireNonNull(typeSpec);
 		
-		final ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedType = map.get(typeSpec);
+		final ResolvedType resolvedType = map.get(typeSpec);
 		
 		addTypeAndMethods(resolvedType);
 	}
 	
 	
-	private void addTypeAndMethods(ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedType) {
+	private void addTypeAndMethods(ResolvedType resolvedType) {
 		
 		Objects.requireNonNull(resolvedType);
 		
@@ -119,7 +120,7 @@ public final class MethodsResolver<PARSED_FILE extends ParsedFile, COMPILATION_U
 		}
 	}
 	
-	private void addClassMembers(COMPILATION_UNIT compilationUnit, COMPLEXTYPE classType, int typeNo) {
+	private void addClassMembers(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef classType, int typeNo) {
 		
 		astModel.iterateClassMembers(
 				

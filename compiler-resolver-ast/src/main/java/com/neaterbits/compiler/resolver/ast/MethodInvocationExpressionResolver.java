@@ -19,13 +19,13 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.model.UserDefinedType;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 class MethodInvocationExpressionResolver {
 
 	static void updateOnResolve(
 			ScopedName toResolve,
-			UserDefinedType type,
+			UserDefinedTypeRef type,
 			TypeResolveMode resolveMode,
 			MethodInvocationExpression methodInvocationExpression) {
 		

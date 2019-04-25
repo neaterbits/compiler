@@ -10,15 +10,15 @@ import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.UserDefinedType;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-public class TestResolvedType extends BaseResolverType implements ResolvedType<BuiltinType, UserDefinedType, TypeName> {
+public class TestResolvedType extends BaseResolverType implements ResolvedType {
 	
-	private final UserDefinedType type;
+	private final UserDefinedTypeRef type;
 	
-	private final List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> nestedTypes;
+	private final List<ResolvedType> nestedTypes;
 	private final List<ResolvedTypeDependency> extendsFrom;
 	private final List<ResolvedTypeDependency> dependencies;
 	
@@ -26,8 +26,8 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
-			UserDefinedType type,
-			List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> nestedTypes,
+			UserDefinedTypeRef type,
+			List<ResolvedType> nestedTypes,
 			List<ResolvedTypeDependency> extendsFrom,
 			List<ResolvedTypeDependency> dependencies) {
 
@@ -44,13 +44,13 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
-			UserDefinedType type) {
+			UserDefinedTypeRef type) {
 	
 		this(file, scopedName, typeVariant, type, null, null, null);
 	}
 
 	@Override
-	public UserDefinedType getType() {
+	public UserDefinedTypeRef getType() {
 		return type;
 	}
 	
@@ -60,12 +60,12 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 	}
 
 	@Override
-	public BuiltinType getBuiltinType() {
+	public BuiltinTypeRef getBuiltinType() {
 		return null;
 	}
 
 	@Override
-	public Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> getNestedTypes() {
+	public Collection<ResolvedType> getNestedTypes() {
 		return nestedTypes;
 	}
 

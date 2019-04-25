@@ -11,12 +11,11 @@ import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.model.UserDefinedType;
 
 public class ProgramLoader  {
 
-	public static Collection<CompiledFile<UserDefinedType, CompilationUnit>> getCompiledFiles(Program program) {
-		final List<CompiledFile<UserDefinedType, CompilationUnit>> allFiles = new ArrayList<>();
+	public static Collection<CompiledFile<CompilationUnit>> getCompiledFiles(Program program) {
+		final List<CompiledFile<CompilationUnit>> allFiles = new ArrayList<>();
 		
 		for (Module module : program.getModules()) {
 			for (ASTParsedFile parsedFile : module.getParsedFiles()) {
@@ -26,12 +25,12 @@ public class ProgramLoader  {
 		return allFiles;
 	}
 
-	public static CompiledFile<UserDefinedType, CompilationUnit> makeCompiledFile(ASTParsedFile parsedFile) {
+	public static CompiledFile<CompilationUnit> makeCompiledFile(ASTParsedFile parsedFile) {
 
 		final FileSpec compiledFileSpec = parsedFile.getFileSpec();
 
-		final List<CompiledType<UserDefinedType>> types = TypeFinder.findTypes(parsedFile, compiledFileSpec);
+		final List<CompiledType> types = TypeFinder.findTypes(parsedFile, compiledFileSpec);
 		
-		return new CompiledFileImpl<UserDefinedType, CompilationUnit>(compiledFileSpec, parsedFile.getParsed(), types);
+		return new CompiledFileImpl<CompilationUnit>(compiledFileSpec, parsedFile.getParsed(), types);
 	}
 }

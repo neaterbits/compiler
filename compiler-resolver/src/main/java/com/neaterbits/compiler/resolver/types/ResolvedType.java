@@ -3,18 +3,20 @@ package com.neaterbits.compiler.resolver.types;
 import java.util.Collection;
 
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
-public interface ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> extends ResolveTypeInfo {
+public interface ResolvedType extends ResolveTypeInfo {
 
 	TypeSpec getSpec();
 	
 	FileSpec getFile();
 	
-	COMPLEXTYPE getType();
+	UserDefinedTypeRef getType();
 	
-	BUILTINTYPE getBuiltinType();
+	BuiltinTypeRef getBuiltinType();
 	
-	Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getNestedTypes();
+	Collection<ResolvedType> getNestedTypes();
 
 	Collection<ResolvedTypeDependency> getExtendsFrom();
 	

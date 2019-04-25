@@ -11,21 +11,21 @@ import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.UserDefinedType;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
-final class ParsedType extends BaseResolverType implements CompiledType<UserDefinedType> {
+final class ParsedType extends BaseResolverType implements CompiledType {
 
-	private final UserDefinedType type;
+	private final UserDefinedTypeRef type;
 	
-	private final List<CompiledType<UserDefinedType>> nestedTypes;
+	private final List<CompiledType> nestedTypes;
 	private final List<CompiledTypeDependency> extendsFrom;
 	private final List<CompiledTypeDependency> dependencies;
 
 	ParsedType(
 			FileSpec file,
 			TypeSpec typeSpec,
-			UserDefinedType type,
-			List<CompiledType<UserDefinedType>> nestedTypes,
+			UserDefinedTypeRef type,
+			List<CompiledType> nestedTypes,
 			List<CompiledTypeDependency> extendsFrom,
 			List<CompiledTypeDependency> dependencies) {
 
@@ -42,7 +42,7 @@ final class ParsedType extends BaseResolverType implements CompiledType<UserDefi
 	}
 
 	@Override
-	public UserDefinedType getType() {
+	public UserDefinedTypeRef getType() {
 		return type;
 	}
 	
@@ -52,7 +52,7 @@ final class ParsedType extends BaseResolverType implements CompiledType<UserDefi
 	}
 
 	@Override
-	public Collection<CompiledType<UserDefinedType>> getNestedTypes() {
+	public Collection<CompiledType> getNestedTypes() {
 		return nestedTypes;
 	}
 

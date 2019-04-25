@@ -10,7 +10,6 @@ import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.statement.ASTMutability;
 import com.neaterbits.compiler.ast.statement.FieldTransient;
 import com.neaterbits.compiler.ast.statement.FieldVolatile;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
@@ -36,13 +35,15 @@ import com.neaterbits.compiler.resolver.UpdateOnResolve;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.model.FieldModifiers;
+import com.neaterbits.compiler.util.model.LibraryTypeRef;
 import com.neaterbits.compiler.util.model.MethodVariant;
 import com.neaterbits.compiler.util.model.Mutability;
-import com.neaterbits.compiler.util.model.UserDefinedType;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.model.Visibility;
 
-public final class ASTModelImpl implements ASTTypesModel<CompilationUnit, BuiltinType, UserDefinedType, TypeName> {
+public final class ASTModelImpl implements ASTTypesModel<CompilationUnit> {
 
 	private final FieldModifiers dataFieldDefaultModifiers;
 	
@@ -58,32 +59,7 @@ public final class ASTModelImpl implements ASTTypesModel<CompilationUnit, Builti
 	}
 
 	@Override
-	public ScopedName getBuiltinTypeScopedName(BuiltinType builtinType) {
-		return builtinType.getCompleteName().toScopedName();
-	}
-
-	@Override
-	public String getBuiltinTypeNameString(BuiltinType builtinType) {
-		return builtinType.getName().getName();
-	}
-
-	@Override
-	public TypeName getBuiltinTypeName(BuiltinType builtinType) {
-		return builtinType.getCompleteName().toTypeName();
-	}
-
-	@Override
-	public ScopedName getLibraryTypeScopedName(TypeName libraryType) {
-		return libraryType.toScopedName();
-	}
-
-	@Override
-	public TypeName getLibraryTypeName(TypeName libraryType) {
-		return libraryType;
-	}
-
-	@Override
-	public void updateOnResolve(CompilationUnit compilationUnit, UpdateOnResolve mode, int elementParseTreeRef, UserDefinedType type, TypeResolveMode typeResolveMode) {
+	public void updateOnResolve(CompilationUnit compilationUnit, UpdateOnResolve mode, int elementParseTreeRef, UserDefinedTypeRef type, TypeResolveMode typeResolveMode) {
 		
 		switch (mode) {
 		case METHOD_INVOCATION_EXPRESSION:
@@ -102,7 +78,7 @@ public final class ASTModelImpl implements ASTTypesModel<CompilationUnit, Builti
 	}
 
 	@Override
-	public void replaceWithUserDefinedType(CompilationUnit compilationUnit, int typeReferenceParseTreeRef, UserDefinedType userType) {
+	public void replaceWithUserDefinedType(CompilationUnit compilationUnit, int typeReferenceParseTreeRef, UserDefinedTypeRef userType) {
 		
 		final BaseASTElement element = compilationUnit.getElementFromParseTreeRef(typeReferenceParseTreeRef);
 		
@@ -114,7 +90,7 @@ public final class ASTModelImpl implements ASTTypesModel<CompilationUnit, Builti
 	}
 
 	@Override
-	public void replaceWithBuiltinType(CompilationUnit compilationUnit, int typeReferenceParseTreeRef, BuiltinType builtinType) {
+	public void replaceWithBuiltinType(CompilationUnit compilationUnit, int typeReferenceParseTreeRef, BuiltinTypeRef builtinType) {
 
 		final BaseASTElement element = compilationUnit.getElementFromParseTreeRef(typeReferenceParseTreeRef);
 
@@ -122,11 +98,11 @@ public final class ASTModelImpl implements ASTTypesModel<CompilationUnit, Builti
 			throw new IllegalStateException();
 		}
 
-		element.replaceWith(new BuiltinTypeReference(element.getContext(), builtinType));
+		element.replaceWith(new BuiltinTypeReference(element.getContext(), builtinType.getTypeName(), builtinType.isScalar()));
 	}
 
 	@Override
-	public void replaceWithLibraryType(CompilationUnit compilationUnit, int typeReferenceParseTreeRef, TypeName libraryType) {
+	public void replaceWithLibraryType(CompilationUnit compilationUnit, int typeReferenceParseTreeRef, LibraryTypeRef libraryType) {
 
 		final BaseASTElement element = compilationUnit.getElementFromParseTreeRef(typeReferenceParseTreeRef);
 
@@ -134,11 +110,11 @@ public final class ASTModelImpl implements ASTTypesModel<CompilationUnit, Builti
 			throw new IllegalStateException();
 		}
 		
-		element.replaceWith(new LibraryTypeReference(element.getContext(), libraryType));
+		element.replaceWith(new LibraryTypeReference(element.getContext(), libraryType.getTypeName()));
 	}
 
 	@Override
-	public int getNumMethods(CompilationUnit compilationUnit, UserDefinedType userDefinedType) {
+	public int getNumMethods(CompilationUnit compilationUnit, UserDefinedTypeRef userDefinedType) {
 		int numMethods = 0;
 		
 		final ComplexTypeDefinition<?, ?> complexType = (ComplexTypeDefinition<?, ?>)compilationUnit.getElementFromParseTreeRef(userDefinedType.getParseTreeRef());
@@ -156,7 +132,7 @@ public final class ASTModelImpl implements ASTTypesModel<CompilationUnit, Builti
 	}
 
 	@Override
-	public void iterateClassMembers(CompilationUnit compilationUnit, UserDefinedType userDefinedType, ASTFieldVisitor fieldVisitor, ASTMethodVisitor methodVisitor) {
+	public void iterateClassMembers(CompilationUnit compilationUnit, UserDefinedTypeRef userDefinedType, ASTFieldVisitor fieldVisitor, ASTMethodVisitor methodVisitor) {
 
 		final ClassDefinition complexType = (ClassDefinition)compilationUnit.getElementFromParseTreeRef(userDefinedType.getParseTreeRef());
 		

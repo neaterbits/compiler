@@ -9,12 +9,12 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.FileSpec;
 
-final class ResolvedFileImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> implements ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
+final class ResolvedFileImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> implements ResolvedFile {
 
 	private final FileSpec fileSpec;
-	private final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedTypes;
+	private final List<ResolvedType> resolvedTypes;
 	
-	ResolvedFileImpl(FileSpec fileSpec, List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedTypes) {
+	ResolvedFileImpl(FileSpec fileSpec, List<ResolvedType> resolvedTypes) {
 		
 		Objects.requireNonNull(fileSpec);
 
@@ -33,7 +33,7 @@ final class ResolvedFileImpl<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> implements R
 	}
 
 	@Override
-	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getTypes() {
+	public Collection<ResolvedType> getTypes() {
 		return resolvedTypes;
 	}
 }

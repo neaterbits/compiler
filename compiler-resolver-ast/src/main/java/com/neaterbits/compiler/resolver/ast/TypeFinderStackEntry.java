@@ -9,7 +9,6 @@ import com.neaterbits.compiler.resolver.UpdateOnResolve;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.model.UserDefinedType;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.NamespaceReference;
@@ -24,7 +23,7 @@ final class TypeFinderStackEntry {
 	private final List<DefinitionName> outerTypes;
 	private final boolean mayHaveNestedTypes;
 	
-	private List<CompiledType<UserDefinedType>> nestedTypes;
+	private List<CompiledType> nestedTypes;
 	private List<CompiledTypeDependency> extendsFrom;
 	private List<CompiledTypeDependency> dependencies;
 	
@@ -59,7 +58,7 @@ final class TypeFinderStackEntry {
 		return mayHaveNestedTypes;
 	}
 	
-	List<CompiledType<UserDefinedType>> getNestedTypes() {
+	List<CompiledType> getNestedTypes() {
 		return nestedTypes;
 	}
 

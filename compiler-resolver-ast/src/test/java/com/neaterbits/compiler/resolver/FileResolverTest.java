@@ -24,10 +24,9 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.UserDefinedType;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Keyword;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ClassModifiers;
@@ -41,11 +40,11 @@ public class FileResolverTest extends BaseResolveTest {
 		
 		final PrintStream loggerStream = new PrintStream(new ByteArrayOutputStream());
 		
-		final ResolveLogger<BuiltinType, UserDefinedType, TypeName, CompilationUnit> resolveLogger = new ResolveLogger<>(loggerStream);
+		final ResolveLogger<CompilationUnit> resolveLogger = new ResolveLogger<>(loggerStream);
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
-		final FilesResolver<BuiltinType, UserDefinedType, TypeName, CompilationUnit> filesResolver
+		final FilesResolver<CompilationUnit> filesResolver
 			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, new ObjectProgramModel(null), astModel);
 
 		final FileSpec testFileSpec = new NameFileSpec("TestClass.java");
@@ -57,12 +56,12 @@ public class FileResolverTest extends BaseResolveTest {
 				Collections.emptyList(),
 				Arrays.asList(testClassDefinition));
 		
-		final UserDefinedType testClassType = new UserDefinedType(
+		final UserDefinedTypeRef testClassType = new UserDefinedTypeRef(
 				testClass,
 				testFileSpec,
 				testCompilationUnit.getParseTreeRefFromElement(testClassDefinition));
 		
-		final CompiledType<UserDefinedType> testType = new TestCompiledType(
+		final CompiledType testType = new TestCompiledType(
 				testFileSpec,
 				testClass.toScopedName(),
 				TypeVariant.CLASS,
@@ -85,12 +84,12 @@ public class FileResolverTest extends BaseResolveTest {
 
 		final TestCompiledFile testFile = new TestCompiledFile(testFileSpec, anotherCompilationUnit, testType);
 		
-		final UserDefinedType anotherTestClassType = new UserDefinedType(
+		final UserDefinedTypeRef anotherTestClassType = new UserDefinedTypeRef(
 				anotherTestClass,
 				anotherTestFileSpec,
 				anotherCompilationUnit.getParseTreeRefFromElement(anotherTestClassDefinition));
 
-		final CompiledType<UserDefinedType> anotherTestType = new TestCompiledType(
+		final CompiledType anotherTestType = new TestCompiledType(
 				anotherTestFileSpec,
 				anotherTestClass.toScopedName(),
 				TypeVariant.CLASS,
@@ -101,12 +100,12 @@ public class FileResolverTest extends BaseResolveTest {
 
 		final TestCompiledFile anotherTestFile = new TestCompiledFile(anotherTestFileSpec, anotherCompilationUnit, anotherTestType);
 		
-		final List<CompiledFile<UserDefinedType, CompilationUnit>> compiledFiles = Arrays.asList(
+		final List<CompiledFile<CompilationUnit>> compiledFiles = Arrays.asList(
 				testFile,
 				anotherTestFile
 		);
 
-		final ResolveFilesResult<BuiltinType, UserDefinedType, TypeName> result = filesResolver.resolveFiles(compiledFiles);
+		final ResolveFilesResult result = filesResolver.resolveFiles(compiledFiles);
 		
 		assertThat(result).isNotNull();
 		

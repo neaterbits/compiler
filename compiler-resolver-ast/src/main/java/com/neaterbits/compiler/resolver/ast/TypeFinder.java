@@ -16,7 +16,6 @@ import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.statement.CatchBlock;
-import com.neaterbits.compiler.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ClassName;
@@ -40,7 +39,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.UserDefinedType;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 class TypeFinder {
 
@@ -54,13 +53,13 @@ class TypeFinder {
 			.toString();
 	}
 	
-	static List<CompiledType<UserDefinedType>> findTypes(ASTParsedFile parsedFile, FileSpec compiledFileSpec) {
+	static List<CompiledType> findTypes(ASTParsedFile parsedFile, FileSpec compiledFileSpec) {
 
 		final CompilationUnit compilationUnit = parsedFile.getParsed();
 		
 		final TypeFinderStack stack = new TypeFinderStack();
 		
-		final List<CompiledType<UserDefinedType>> parsedTypes = new ArrayList<>();
+		final List<CompiledType> parsedTypes = new ArrayList<>();
 		
 		final Stack<TypeFinderStackEntry> stackWrapper = new StackDelegator<TypeFinderStackEntry>(stack) {
 
@@ -102,7 +101,7 @@ class TypeFinder {
 						if (e instanceof BuiltinTypeReference) {
 							final BuiltinTypeReference typeReference = (BuiltinTypeReference)e;
 							
-							if (!(typeReference.getBuiltinType() instanceof ScalarType)) {
+							if (!typeReference.isScalar()) {
 								throw new IllegalStateException("Expected only scalar types to be resolved");
 							}
 						}
@@ -210,10 +209,10 @@ class TypeFinder {
 	}
 	
 	interface ProcessTypeElement<R> {
-		R onTypeElement(String name, TypeVariant typeVariant, UserDefinedType type);
+		R onTypeElement(String name, TypeVariant typeVariant, UserDefinedTypeRef type);
 	}
 	
-	private static UserDefinedType makeUserDefinedType(NamespaceReference namespaceReference, List<DefinitionName> outerTypes, ComplexTypeDefinition<?, ?> complexTypeDefinition, FileSpec sourceFile, CompilationUnit compilationUnit) {
+	private static UserDefinedTypeRef makeUserDefinedType(NamespaceReference namespaceReference, List<DefinitionName> outerTypes, ComplexTypeDefinition<?, ?> complexTypeDefinition, FileSpec sourceFile, CompilationUnit compilationUnit) {
 		
 		final String [] outer;
 		
@@ -228,7 +227,7 @@ class TypeFinder {
 			outer = null;
 		}
 		
-		return new UserDefinedType(
+		return new UserDefinedTypeRef(
 				new TypeName(namespaceReference.getParts(), null, complexTypeDefinition.getNameString()),
 				sourceFile,
 				compilationUnit.getParseTreeRefFromElement(complexTypeDefinition));
@@ -304,7 +303,7 @@ class TypeFinder {
 			TypeFinderStackEntry stackEntry,
 			String name,
 			TypeVariant typeVariant,
-			UserDefinedType type) {
+			UserDefinedTypeRef type) {
 
 		return new ParsedType(
 				file,

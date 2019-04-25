@@ -2,7 +2,6 @@ package com.neaterbits.compiler.convert.ootofunction;
 
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.ast.type.PointerType;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.typereference.FunctionPointerTypeReference;
@@ -22,7 +21,8 @@ public abstract class BaseTypeReferenceConverter<T extends ConverterState<T>>
 	public TypeReference onBuiltinTypeReference(BuiltinTypeReference typeReference, T param) {
 		return new BuiltinTypeReference(
 				typeReference.getContext(),
-				(BuiltinType)convertType(typeReference.getBuiltinType(), param));
+				convertType(typeReference, param).getTypeName(),
+				typeReference.isScalar());
 	}
 
 	@Override

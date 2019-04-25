@@ -15,8 +15,8 @@ import com.neaterbits.compiler.resolver.passes.namereferenceresolve.NameReferenc
 import com.neaterbits.compiler.resolver.util.CompilerLanguage;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.CompilationUnitModel;
+import com.neaterbits.compiler.util.model.LibraryTypeRef;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
-import com.neaterbits.compiler.util.model.TypeSource;
 import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.compiler.util.parse.Parser;
 import com.neaterbits.compiler.util.passes.CompilerBuilderIntermediate;
@@ -53,7 +53,11 @@ public class JavaAntlrCompilerLanguage extends CompilerLanguage<CompilationUnit,
 		
 		final ASTModelImpl typesModel = new ASTModelImpl();
 		
-		final LibraryTypes<TypeName> libraryTypes = scopedName -> resolvedTypes.lookup(scopedName, new TypeSources(TypeSource.LIBRARY));
+		final LibraryTypes libraryTypes = scopedName -> {
+			final TypeName typeName = resolvedTypes.lookup(scopedName, TypeSources.LIBRARY);
+			
+			return typeName != null ? new LibraryTypeRef(typeName) : null;
+		};
 		
 		return buildCompilerParsePass()
 		
@@ -61,7 +65,7 @@ public class JavaAntlrCompilerLanguage extends CompilerLanguage<CompilationUnit,
 				
 				.addMultiPass(new ResolveTypeDependenciesPass<>(
 							compilationUnitModel,
-							JavaTypes.getBuiltinTypes(),
+							JavaTypes.getBuiltinTypeRefs(),
 							libraryTypes,
 							typesModel))
 				

@@ -22,7 +22,6 @@ import com.neaterbits.compiler.ast.parser.DirectoryParser;
 import com.neaterbits.compiler.ast.parser.FileTypeParser;
 import com.neaterbits.compiler.ast.parser.ProgramParser;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
@@ -37,8 +36,6 @@ import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.UserDefinedType;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.ModuleSpec;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
@@ -180,7 +177,7 @@ public abstract class BaseJavaCompilerTest {
 	
 	static <T extends MappingJavaToCConverterState<T>>
 	JavaToCDeclarations convertClassesAndInterfacesToStruct(
-			AddTypesAndMembersToCodeMapResult<ASTParsedFile, CompilationUnit, BuiltinType, UserDefinedType, TypeName> resolveResult,
+			AddTypesAndMembersToCodeMapResult<ASTParsedFile, CompilationUnit> resolveResult,
 			MappingJavaToCConverterState<T> converterState) {
 		
 		final JavaToCDeclarations declarations = new JavaToCDeclarations();
@@ -225,14 +222,14 @@ public abstract class BaseJavaCompilerTest {
 	}
 	
 	private static <T extends MappingJavaToCConverterState<T>> void convertTypes(
-			Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> types,
-			ResolvedTypeCodeMap<BuiltinType, UserDefinedType, TypeName> codeMap,
+			Collection<ResolvedType> types,
+			ResolvedTypeCodeMap codeMap,
 			JavaToCDeclarations declarations,
 			List<ComplexTypeReference> convertLaterTypeReferences,
 			MappingJavaToCConverterState<T> converterState) {
 		
 		
-		for (ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedType : types) {
+		for (ResolvedType resolvedType : types) {
 			
 			if (resolvedType.getTypeVariant() == TypeVariant.CLASS) {
 				

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.ast.type.BaseTypeName;
 import com.neaterbits.compiler.ast.type.primitive.BooleanType;
@@ -15,9 +16,11 @@ import com.neaterbits.compiler.ast.type.primitive.FloatType;
 import com.neaterbits.compiler.ast.type.primitive.IntType;
 import com.neaterbits.compiler.ast.type.primitive.LongType;
 import com.neaterbits.compiler.ast.type.primitive.NamedVoidType;
+import com.neaterbits.compiler.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.ast.type.primitive.StringType;
 import com.neaterbits.compiler.util.imports.TypeImport;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 
 public class JavaTypes {
 
@@ -47,6 +50,15 @@ public class JavaTypes {
 	
 	public static Collection<BuiltinType> getBuiltinTypes() {
 		return builtinTypes;
+	}
+	
+	public static Collection<BuiltinTypeRef> getBuiltinTypeRefs() {
+
+		final Collection<BuiltinTypeRef> builtinTypeRefs = getBuiltinTypes().stream()
+				.map(builtinType -> new BuiltinTypeRef(builtinType.getTypeName(), builtinType instanceof ScalarType))
+				.collect(Collectors.toList());
+
+		return builtinTypeRefs;
 	}
 
 	private static final List<TypeImport> IMPLICIT_IMPORTS = Collections.unmodifiableList(Arrays.asList(

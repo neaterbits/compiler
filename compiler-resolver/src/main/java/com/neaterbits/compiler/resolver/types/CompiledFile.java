@@ -2,9 +2,9 @@ package com.neaterbits.compiler.resolver.types;
 
 import java.util.Collection;
 
-public interface CompiledFile<COMPLEXTYPE, COMPILATION_UNIT> extends FileInfo {
+public interface CompiledFile<COMPILATION_UNIT> extends FileInfo {
 	
-	Collection<CompiledType<COMPLEXTYPE>> getTypes();
+	Collection<CompiledType> getTypes();
 	
 	COMPILATION_UNIT getCompilationUnit();
 	
