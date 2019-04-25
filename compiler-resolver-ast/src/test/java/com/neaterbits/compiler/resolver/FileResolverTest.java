@@ -82,7 +82,7 @@ public class FileResolverTest extends BaseResolveTest {
 				Collections.emptyList(),
 				Arrays.asList(anotherTestClassDefinition));
 
-		final TestCompiledFile testFile = new TestCompiledFile(testFileSpec, anotherCompilationUnit, testType);
+		final CompiledFile<CompilationUnit> testFile = new CompiledFile<>(testFileSpec, anotherCompilationUnit, testType);
 		
 		final UserDefinedTypeRef anotherTestClassType = new UserDefinedTypeRef(
 				anotherTestClass,
@@ -98,7 +98,7 @@ public class FileResolverTest extends BaseResolveTest {
 				Arrays.asList(makeExtendsFromDependency(testClass.toScopedName())),
 				null);
 
-		final TestCompiledFile anotherTestFile = new TestCompiledFile(anotherTestFileSpec, anotherCompilationUnit, anotherTestType);
+		final CompiledFile<CompilationUnit> anotherTestFile = new CompiledFile<>(anotherTestFileSpec, anotherCompilationUnit, anotherTestType);
 		
 		final List<CompiledFile<CompilationUnit>> compiledFiles = Arrays.asList(
 				testFile,

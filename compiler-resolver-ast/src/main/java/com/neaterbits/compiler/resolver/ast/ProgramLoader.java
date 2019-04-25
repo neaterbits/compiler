@@ -31,6 +31,6 @@ public class ProgramLoader  {
 
 		final List<CompiledType> types = TypeFinder.findTypes(parsedFile, compiledFileSpec);
 		
-		return new CompiledFileImpl<CompilationUnit>(compiledFileSpec, parsedFile.getParsed(), types);
+		return new CompiledFile<CompilationUnit>(compiledFileSpec, parsedFile.getParsed(), types);
 	}
 }
