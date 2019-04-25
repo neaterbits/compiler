@@ -1,13 +1,14 @@
 package com.neaterbits.compiler.resolver;
 
+import java.util.Arrays;
+
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.util.NameFileSpec;
 
-public class TestResolvedFile extends BaseTestFile<ResolvedType>
-		implements ResolvedFile {
+public class TestResolvedFile extends ResolvedFile {
 
-	@SafeVarargs
 	public TestResolvedFile(String name, ResolvedType ... resolvedTypes) {
-		super(name, resolvedTypes);
+		super(new NameFileSpec(name), Arrays.asList(resolvedTypes));
 	}
 }

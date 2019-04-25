@@ -46,7 +46,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final List<String> namespace = Arrays.asList("com", "test");
 		final String className = "TestClass";
 
-		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
+		final ResolvedFile testFile = new TestResolvedFile("TestFile.java");
 
 		final ClassDefinition classDefinition = makeClassType(namespace, className);
 

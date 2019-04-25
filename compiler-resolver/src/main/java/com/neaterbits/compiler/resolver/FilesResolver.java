@@ -100,7 +100,7 @@ public final class FilesResolver<COMPILATION_UNIT> extends ResolveUtil {
 							unresolvedDependencies);
 		
 					if (resolvedTypes != null) {
-						resolvedFiles.add(new ResolvedFileImpl<>(file.getSpec(), resolvedTypes));
+						resolvedFiles.add(new ResolvedFile(file.getSpec(), resolvedTypes));
 						
 						resolvedFileSpecs.add(file.getSpec());
 					}
