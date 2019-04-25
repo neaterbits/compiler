@@ -11,6 +11,7 @@ import java.util.jar.JarFile;
 
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.TypeSource;
 
 final class JarClassLib extends JavaClassLib {
 
@@ -45,11 +46,11 @@ final class JarClassLib extends JavaClassLib {
 
 	@Override
 	DependencyFile getDependencyFile(TypeName className) {
-		return new DependencyFile(path, true);
+		return new DependencyFile(path, TypeSource.LIBRARY);
 	}
 
 	@Override
 	List<DependencyFile> getFiles() {
-		return Arrays.asList(new DependencyFile(path, true));
+		return Arrays.asList(new DependencyFile(path, TypeSource.LIBRARY));
 	}
 }

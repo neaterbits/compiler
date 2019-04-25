@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.TypeSource;
 
 final class DirectoryClassLib extends JavaClassLib {
 	
@@ -46,7 +47,7 @@ final class DirectoryClassLib extends JavaClassLib {
 
 	@Override
 	DependencyFile getDependencyFile(TypeName className) {
-		return new DependencyFile(getClassFile(className), false);
+		return new DependencyFile(getClassFile(className), TypeSource.COMPILED_PROJECT_MODULE);
 	}
 
 	@Override
@@ -55,7 +56,7 @@ final class DirectoryClassLib extends JavaClassLib {
 		final File [] classFiles = directory.listFiles(file -> file.getName().endsWith(".class"));
 		
 		return Arrays.stream(classFiles)
-				.map(file -> new DependencyFile(file, false))
+				.map(file -> new DependencyFile(file, TypeSource.COMPILED_PROJECT_MODULE))
 				.collect(Collectors.toList());
 	}
 }

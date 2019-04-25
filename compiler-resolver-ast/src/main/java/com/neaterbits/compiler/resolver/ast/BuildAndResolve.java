@@ -24,6 +24,7 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
+import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.ModuleSpec;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
@@ -131,7 +132,12 @@ public class BuildAndResolve {
 			Collection<BuiltinType> builtinTypes,
 			ResolvedTypes resolvedTypes) {
 		
-		return ResolveTypeDependenciesPass.resolveParsedFiles(allFiles, importsModel, builtinTypes, resolvedTypes::lookup, new ASTModelImpl());
+		return ResolveTypeDependenciesPass.resolveParsedFiles(
+				allFiles,
+				importsModel,
+				builtinTypes,
+				scopedName -> resolvedTypes.lookup(scopedName, TypeSources.ALL),
+				new ASTModelImpl());
 	}
 
 }

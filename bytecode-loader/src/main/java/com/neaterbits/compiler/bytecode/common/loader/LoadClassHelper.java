@@ -3,6 +3,7 @@ package com.neaterbits.compiler.bytecode.common.loader;
 import java.io.IOException;
 
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
+import com.neaterbits.compiler.bytecode.common.ClassByteCodeWithTypeSource;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
@@ -18,7 +19,7 @@ public class LoadClassHelper {
 			=  new LoadClassParameters<ClassLibs, Integer, LoadedClassesCache>(
 				loaderMaps.typeMap,
 				loaderMaps.codeMap,
-				(type, typeNo, classByteCode) -> typeNo,
+				(type, typeSource, typeNo, classByteCode) -> typeNo,
 
 				// Not entirely threadsafe since some other thread might be loading same class
 				// However not important whether loading same class multiple times
@@ -35,7 +36,7 @@ public class LoadClassHelper {
 			TypeResult typeResult,
 			LoadClassParameters<CLASSLIBS, TYPE, CACHE> parameters) throws IOException, ClassFileException {
 		
-		final ClassBytecode addedBytecode = parameters.typeMap.addOrGetType(
+		final ClassByteCodeWithTypeSource addedBytecode = parameters.typeMap.addOrGetType(
 				typeName,
 				parameters.codeMap,
 				true,
@@ -44,7 +45,7 @@ public class LoadClassHelper {
 				
 				type -> {
 		
-			final ClassBytecode classBytecode = parameters.loadType.load(type);
+			final ClassByteCodeWithTypeSource classBytecode = parameters.loadType.load(type);
 			
 			if (classBytecode != null) {
 				loadBaseTypes(typeName, classBytecode, parameters);

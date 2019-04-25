@@ -59,6 +59,7 @@ import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.model.SourceToken;
 import com.neaterbits.compiler.util.model.SourceTokenType;
 import com.neaterbits.compiler.util.model.SourceTokenVisitor;
+import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.compiler.util.parse.ScopesListener;
 
 public class ObjectProgramModel
@@ -295,7 +296,7 @@ public class ObjectProgramModel
 
 				@Override
 				public TypeName lookupByScopedName(ScopedName scopedName) {
-					return resolvedTypes.lookup(scopedName);
+					return resolvedTypes.lookup(scopedName, TypeSources.ALL);
 				}
 			};
 
