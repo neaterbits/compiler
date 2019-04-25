@@ -22,6 +22,7 @@ import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseCompilationUnitEmitter;
 import com.neaterbits.compiler.java.JavaImportsModel;
+import com.neaterbits.compiler.java.JavaProgramModel;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.main.convert.ConvertClass;
@@ -32,8 +33,8 @@ import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.ResolverLibraryTypes;
 import com.neaterbits.compiler.resolver.UnresolvedDependencies;
-import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
+import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.passes.AddTypesAndMembersToCodeMapPass;
 import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass;
 import com.neaterbits.compiler.resolver.passes.ResolvedTypeDependencies;
@@ -41,7 +42,7 @@ import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.model.ASTTypesModel;
+import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
 import com.neaterbits.compiler.util.passes.ParsedFiles;
@@ -78,7 +79,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		listProgram(program);
 
-		final ASTModelImpl astModel = new ASTModelImpl();
+		final ObjectProgramModel astModel = new JavaProgramModel();
 
 		// Uses imports to resolve all type references to their class implementations that should now have been loaded
 
@@ -193,7 +194,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	private ResolveFilesResult resolveFiles(
 			Program program,
 			ResolverLibraryTypes libraryTypes,
-			ASTTypesModel<CompilationUnit> astModel) {
+			ResolveTypesModel<CompilationUnit> astModel) {
 
 		final ResolveLogger<CompilationUnit>
 			logger = new ResolveLogger<>(System.out);
@@ -238,7 +239,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		final Program program = parseProgram(Arrays.asList(commonModuleSpec));
 
-		final ASTModelImpl astModel = new ASTModelImpl();
+		final ObjectProgramModel astModel = new JavaProgramModel();
 		
 		resolveFiles(program, null, astModel);
 		

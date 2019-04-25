@@ -19,7 +19,7 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.model.ASTTypesModel;
+import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.model.LibraryTypeRef;
@@ -32,7 +32,7 @@ public final class FilesResolver<COMPILATION_UNIT> extends ResolveUtil {
 	private final ResolverLibraryTypes libraryTypes;
 	
 	private final ImportsModel<COMPILATION_UNIT> importsModel;
-	private final ASTTypesModel<COMPILATION_UNIT> astModel;
+	private final ResolveTypesModel<COMPILATION_UNIT> astModel;
 
 	private final BuiltinTypesMap builtinTypesMap;
 	
@@ -41,7 +41,7 @@ public final class FilesResolver<COMPILATION_UNIT> extends ResolveUtil {
 			Collection<BuiltinTypeRef> builtinTypes,
 			ResolverLibraryTypes libraryTypes,
 			ImportsModel<COMPILATION_UNIT> importsModel,
-			ASTTypesModel<COMPILATION_UNIT> astModel) {
+			ResolveTypesModel<COMPILATION_UNIT> astModel) {
 
 		Objects.requireNonNull(logger);
 		Objects.requireNonNull(importsModel);

@@ -12,7 +12,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ASTTypesModel;
+import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.model.MethodVariant;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.parse.ParsedFile;
@@ -22,12 +22,12 @@ public final class MethodsResolver<PARSED_FILE extends ParsedFile, COMPILATION_U
 
 	private final ParsedFiles<PARSED_FILE> parsedFiles;
 	private final ResolvedTypeCodeMapImpl<COMPILATION_UNIT> codeMap;
-	private final ASTTypesModel<COMPILATION_UNIT> astModel;
+	private final ResolveTypesModel<COMPILATION_UNIT> astModel;
 	
 	public MethodsResolver(
 			ParsedFiles<PARSED_FILE> parsedFiles,
 			ResolvedTypeCodeMapImpl<COMPILATION_UNIT> codeMap,
-			ASTTypesModel<COMPILATION_UNIT> astModel) {
+			ResolveTypesModel<COMPILATION_UNIT> astModel) {
 
 		Objects.requireNonNull(parsedFiles);
 		Objects.requireNonNull(codeMap);

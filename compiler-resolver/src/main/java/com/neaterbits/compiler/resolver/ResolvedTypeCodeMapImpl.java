@@ -13,7 +13,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ASTTypesModel;
+import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.model.FieldInfo;
 import com.neaterbits.compiler.util.model.MethodInfo;
@@ -31,14 +31,14 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT>
 		implements ResolvedTypeCodeMap {
 
 	private final CompilerCodeMap codeMap;
-	private final ASTTypesModel<COMPILATION_UNIT> astModel;
+	private final ResolveTypesModel<COMPILATION_UNIT> astModel;
 	
 	private ResolvedType [] resolvedTypes;
 	
 	public ResolvedTypeCodeMapImpl(
 			CompilerCodeMap codeMap,
 			Collection<BuiltinTypeRef> builtinTypes,
-			ASTTypesModel<COMPILATION_UNIT> astModel) {
+			ResolveTypesModel<COMPILATION_UNIT> astModel) {
 		
 		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(astModel);

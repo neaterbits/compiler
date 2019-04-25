@@ -22,7 +22,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ASTTypesModel;
+import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.MultiPass;
@@ -36,13 +36,13 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 			CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>> {
 
 	private final CompilerCodeMap codeMap;
-	private final ASTTypesModel<COMPILATION_UNIT> astModel;
+	private final ResolveTypesModel<COMPILATION_UNIT> astModel;
 	
-	public AddTypesAndMembersToCodeMapPass(ASTTypesModel<COMPILATION_UNIT> astModel) {
+	public AddTypesAndMembersToCodeMapPass(ResolveTypesModel<COMPILATION_UNIT> astModel) {
 		this(new IntCompilerCodeMap(), astModel);
 	}
 
-	public AddTypesAndMembersToCodeMapPass(CompilerCodeMap codeMap, ASTTypesModel<COMPILATION_UNIT> astModel) {
+	public AddTypesAndMembersToCodeMapPass(CompilerCodeMap codeMap, ResolveTypesModel<COMPILATION_UNIT> astModel) {
 
 		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(astModel);
@@ -63,7 +63,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 				
 			PostResolveFiles<PARSED_FILE, COMPILATION_UNIT> postResolveFiles,
 			CompilerCodeMap compilerCodeMap,
-			ASTTypesModel<COMPILATION_UNIT> astModel) {
+			ResolveTypesModel<COMPILATION_UNIT> astModel) {
 
 		final ResolveFilesResult resolveFilesResult = postResolveFiles.getResolveFilesResult();
 		
@@ -124,7 +124,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 			Collection<BuiltinTypeRef> builtinTypes,
 			List<ResolvedType> typesInDependencyOrder,
 			CompilerCodeMap compilerCodeMap,
-			ASTTypesModel<COMPILATION_UNIT> astModel,
+			ResolveTypesModel<COMPILATION_UNIT> astModel,
 			ParsedFiles<PARSED_FILE> parsedFiles,
 			Map<FileSpec, Integer> sourceFileNos) {
 	

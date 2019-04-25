@@ -13,7 +13,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.util.BuiltinTypesMap;
 import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.model.ASTTypesModel;
+import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.model.LibraryTypeRef;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
@@ -28,9 +28,9 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, C
 > {
 
 	private final LibraryTypes libraryTypes;
-	private final ASTTypesModel<COMPILATION_UNIT> typesModel;
+	private final ResolveTypesModel<COMPILATION_UNIT> typesModel;
 	
-	public ReplaceResolvedTypeReferencesPass(LibraryTypes libraryTypes, ASTTypesModel<COMPILATION_UNIT> typesModel) {
+	public ReplaceResolvedTypeReferencesPass(LibraryTypes libraryTypes, ResolveTypesModel<COMPILATION_UNIT> typesModel) {
 
 		Objects.requireNonNull(libraryTypes);
 		Objects.requireNonNull(typesModel);
@@ -54,7 +54,7 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, C
 			ResolveFilesResult resolveFilesResult,
 			LibraryTypes libraryTypes,
 			ParsedFiles<PARSED_FILE> parsedFiles,
-			ASTTypesModel<COMPILATION_UNIT> astModel) {
+			ResolveTypesModel<COMPILATION_UNIT> astModel) {
 
 		final List<ResolvedFile> resolvedFiles = resolveFilesResult
 				.getResolvedFiles();
@@ -77,7 +77,7 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, C
 			BuiltinTypesMap builtinTypesMap,
 			Function<ScopedName, LibraryTypeRef> libraryTypes,
 			COMPILATION_UNIT compilationUnit,
-			ASTTypesModel<COMPILATION_UNIT> astModel) {
+			ResolveTypesModel<COMPILATION_UNIT> astModel) {
 		
 		for (ResolvedType resolvedType : resolvedTypes) {
 			if (resolvedType.getNestedTypes() != null) {

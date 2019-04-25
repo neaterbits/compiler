@@ -18,7 +18,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.model.ASTTypesModel;
+import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 public abstract class BaseResolveTest {
@@ -66,7 +66,7 @@ public abstract class BaseResolveTest {
 	
 	@SafeVarargs
 	protected static ResolvedType makeResolvedType(
-			ASTTypesModel<CompilationUnit> astModel,
+			ResolveTypesModel<CompilationUnit> astModel,
 			ResolvedFile resolvedFile,
 			TypeName typeName,
 			TypeVariant typeVariant,

@@ -14,7 +14,7 @@ import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.TestResolvedFile;
 import com.neaterbits.compiler.resolver.TestResolvedType;
-import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
+import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
@@ -23,7 +23,7 @@ import com.neaterbits.compiler.util.IntValue;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.model.ASTTypesModel;
+import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
@@ -42,7 +42,7 @@ public class CodeMapTest extends BaseResolveTest {
 	@Test
 	public void testClassCodeMap() {
 
-		final ASTModelImpl astModel = new ASTModelImpl();
+		final ObjectProgramModel astModel = new ObjectProgramModel();
 
 		final List<String> namespace = Arrays.asList("com", "test");
 		final String className = "TestClass";
@@ -100,7 +100,7 @@ public class CodeMapTest extends BaseResolveTest {
 	@Test
 	public void testInterfaceCodeMap() {
 
-		final ASTModelImpl astModel = new ASTModelImpl();
+		final ObjectProgramModel astModel = new ObjectProgramModel();
 
 		final ResolvedTypeCodeMapImpl<CompilationUnit> codeMap
 				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
@@ -154,7 +154,7 @@ public class CodeMapTest extends BaseResolveTest {
 	@Test
 	public void testClassImplementingInterface() {
 		
-		final ASTModelImpl astModel = new ASTModelImpl();
+		final ObjectProgramModel astModel = new ObjectProgramModel();
 		
 		final ResolvedTypeCodeMapImpl<CompilationUnit> codeMap
 				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
@@ -269,7 +269,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 	@SafeVarargs
 	private final ResolvedType addType(
-			ASTTypesModel<CompilationUnit> astModel,
+			ResolveTypesModel<CompilationUnit> astModel,
 			ResolvedTypeCodeMapImpl<CompilationUnit> codeMap,
 			String file,
 			String name,

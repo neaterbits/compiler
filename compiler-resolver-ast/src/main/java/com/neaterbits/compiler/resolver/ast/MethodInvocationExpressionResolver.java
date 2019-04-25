@@ -21,9 +21,9 @@ import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
-class MethodInvocationExpressionResolver {
+public class MethodInvocationExpressionResolver {
 
-	static void updateOnResolve(
+	public static void updateOnResolve(
 			ScopedName toResolve,
 			UserDefinedTypeRef type,
 			TypeResolveMode resolveMode,

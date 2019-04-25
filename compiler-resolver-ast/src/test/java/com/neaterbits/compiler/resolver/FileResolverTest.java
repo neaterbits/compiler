@@ -14,7 +14,6 @@ import com.neaterbits.compiler.resolver.FilesResolver;
 import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
-import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
@@ -44,10 +43,10 @@ public class FileResolverTest extends BaseResolveTest {
 		
 		final ResolveLogger<CompilationUnit> resolveLogger = new ResolveLogger<>(loggerStream);
 
-		final ASTModelImpl astModel = new ASTModelImpl();
+		final ObjectProgramModel astModel = new ObjectProgramModel();
 		
 		final FilesResolver<CompilationUnit> filesResolver
-			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, new ObjectProgramModel(null), astModel);
+			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, astModel, astModel);
 
 		final FileSpec testFileSpec = new NameFileSpec("TestClass.java");
 		final TypeName testClass = makeTypeName("com.test.TestClass");

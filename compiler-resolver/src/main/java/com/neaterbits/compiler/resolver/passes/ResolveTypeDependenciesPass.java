@@ -9,7 +9,7 @@ import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledFiles;
-import com.neaterbits.compiler.util.model.ASTTypesModel;
+import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.parse.ParsedFile;
@@ -23,13 +23,13 @@ public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE ext
 	private final ImportsModel<COMPILATION_UNIT> importsModel;
 	private final Collection<BuiltinTypeRef> builtinTypes;
 	private final LibraryTypes libraryTypes;
-	private final ASTTypesModel<COMPILATION_UNIT> typesModel;
+	private final ResolveTypesModel<COMPILATION_UNIT> typesModel;
 
 	public ResolveTypeDependenciesPass(
 			ImportsModel<COMPILATION_UNIT> importsModel,
 			Collection<BuiltinTypeRef> builtinTypes,
 			LibraryTypes libraryTypes,
-			ASTTypesModel<COMPILATION_UNIT> typesModel) {
+			ResolveTypesModel<COMPILATION_UNIT> typesModel) {
 		
 		Objects.requireNonNull(importsModel);
 		Objects.requireNonNull(builtinTypes);
@@ -49,7 +49,7 @@ public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE ext
 			ImportsModel<COMPILATION_UNIT> importsModel,
 			Collection<BuiltinTypeRef> builtinTypes,
 			LibraryTypes resolvedTypes,
-			ASTTypesModel<COMPILATION_UNIT> typesModel) {
+			ResolveTypesModel<COMPILATION_UNIT> typesModel) {
 
 		final ResolveLogger<COMPILATION_UNIT> logger = new ResolveLogger<>(System.out);
 

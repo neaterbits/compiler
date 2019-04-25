@@ -2,12 +2,8 @@ package com.neaterbits.compiler.util.model;
 
 import com.neaterbits.compiler.util.TypeResolveMode;
 
-public interface ASTTypesModel<COMPILATION_UNIT> {
+public interface ResolveTypesModel<COMPILATION_UNIT> extends ParseTreeModel<COMPILATION_UNIT> {
 
-	int getNumMethods(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef complextype);
-	
-	void iterateClassMembers(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef complexType, ASTFieldVisitor fieldVisitor, ASTMethodVisitor methodVisitor);
-	
 	void updateOnResolve(COMPILATION_UNIT compilationUnit, UpdateOnResolve mode, int elementParseTreeRef, UserDefinedTypeRef type, TypeResolveMode typeResolveMode);
 
 	void replaceWithUserDefinedType(COMPILATION_UNIT compilationUnit, int typeReferenceParseTreeRef, UserDefinedTypeRef complexType);

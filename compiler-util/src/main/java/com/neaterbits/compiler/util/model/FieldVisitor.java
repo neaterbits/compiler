@@ -3,7 +3,7 @@ package com.neaterbits.compiler.util.model;
 import com.neaterbits.compiler.util.TypeName;
 
 @FunctionalInterface
-public interface ASTFieldVisitor {
+public interface FieldVisitor {
 
 	void onField(
 			String name,
