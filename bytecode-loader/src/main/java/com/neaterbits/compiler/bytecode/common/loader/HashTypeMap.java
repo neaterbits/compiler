@@ -6,12 +6,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import com.neaterbits.compiler.bytecode.common.ClassByteCodeWithTypeSource;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.TypeMap;
 import com.neaterbits.compiler.codemap.CodeMap;
 import com.neaterbits.compiler.codemap.CodeMap.TypeResult;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.TypeSource;
+import com.neaterbits.compiler.util.model.TypeSources;
 
 public class HashTypeMap<T> implements TypeMap {
 
@@ -19,28 +22,36 @@ public class HashTypeMap<T> implements TypeMap {
 	
 	@FunctionalInterface
 	public interface LoadType {
-		ClassBytecode load(TypeName typeName) throws IOException, ClassFileException;
+		ClassByteCodeWithTypeSource load(TypeName typeName) throws IOException, ClassFileException;
 	}
 	
 	@FunctionalInterface
 	public interface CreateType<TYPE> {
-		TYPE create(TypeName typeName, int typeNo, ClassBytecode classBytecode);
+		TYPE create(TypeName typeName, TypeSource typeSource, int typeNo, ClassBytecode classBytecode);
 	}
 
 	@FunctionalInterface
 	public interface GetTypeNo<TYPE> {
 		int getTypeNo(TYPE type);
 	}
-	
+
+	@FunctionalInterface
+	public interface GetTypeSource<TYPE> {
+		TypeSource getTypeSource(TYPE type);
+	}
+
 	private final GetTypeNo<T> getTypeNo;
+	private final GetTypeSource<T> getTypeSource;
 	
 	private final Map<TypeName, T> typeByName;
 
-	public HashTypeMap(GetTypeNo<T> getTypeNo) {
+	public HashTypeMap(GetTypeNo<T> getTypeNo, GetTypeSource<T> getTypeSource) {
 		
 		Objects.requireNonNull(getTypeNo);
+		Objects.requireNonNull(getTypeSource);
 		
 		this.getTypeNo = getTypeNo;
+		this.getTypeSource = getTypeSource;
 		this.typeByName = new HashMap<>();
 	}
 
@@ -63,7 +74,7 @@ public class HashTypeMap<T> implements TypeMap {
 		return type;
 	}
 	
-	public final ClassBytecode addOrGetType(
+	public final ClassByteCodeWithTypeSource addOrGetType(
 			TypeName typeName,
 			CodeMap codeMap,
 			boolean baseTypesAlreadyLoaded,
@@ -81,11 +92,11 @@ public class HashTypeMap<T> implements TypeMap {
 			type = typeByName.get(typeName);
 		}
 		
-		final ClassBytecode addedBytecode;
+		final ClassByteCodeWithTypeSource addedBytecode;
 		
 		if (type == null) {
 			
-			final ClassBytecode classByteCode = loadType.load(typeName);
+			final ClassByteCodeWithTypeSource classByteCode = loadType.load(typeName);
 			
 			if (classByteCode != null) {
 
@@ -139,7 +150,7 @@ public class HashTypeMap<T> implements TypeMap {
 									+ (classByteCode.getSuperClass() != null ? classByteCode.getSuperClass().toDebugString() : null));
 						}
 
-						type = createType.create(typeName, typeNo, classByteCode);
+						type = createType.create(typeName, classByteCode.getTypeSource(), typeNo, classByteCode);
 						
 						if (type == null) {
 							throw new IllegalStateException();
@@ -184,6 +195,20 @@ public class HashTypeMap<T> implements TypeMap {
 		
 		synchronized(this) {
 			return typeByName.containsKey(typeName);
+		}
+	}
+
+	public boolean hasType(TypeName typeName, TypeSources typeSources) {
+		
+		Objects.requireNonNull(typeName);
+		
+		synchronized(this) {
+			final T type = typeByName.get(typeName);
+					
+			return type != null
+					? typeSources.isSet(getTypeSource.getTypeSource(type))
+					: false;
+					
 		}
 	}
 }

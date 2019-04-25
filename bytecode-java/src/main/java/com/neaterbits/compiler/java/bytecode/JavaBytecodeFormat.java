@@ -10,7 +10,7 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
-import com.neaterbits.compiler.bytecode.common.ClassBytecode;
+import com.neaterbits.compiler.bytecode.common.ClassByteCodeWithTypeSource;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
@@ -18,6 +18,7 @@ import com.neaterbits.compiler.java.bytecode.reader.ClassFileReader;
 import com.neaterbits.compiler.java.bytecode.reader.ClassFileReaderListener;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.TypeSource;
 
 public class JavaBytecodeFormat implements BytecodeFormat {
 
@@ -48,13 +49,13 @@ public class JavaBytecodeFormat implements BytecodeFormat {
 	}
 	
 	@Override
-	public ClassBytecode loadClassBytecode(ClassLibs classLibs, TypeName className) throws IOException, ClassFileException {
+	public ClassByteCodeWithTypeSource loadClassBytecode(ClassLibs classLibs, TypeName className) throws IOException, ClassFileException {
 		
 		Objects.requireNonNull(className);
 		
 		final DependencyFile file = classLibs.getDependencyFileFor(className);
 		
-		final ClassBytecode classBytecode;
+		final ClassByteCodeWithTypeSource classBytecode;
 		
 		if (file == null) {
 			classBytecode = null;
@@ -65,7 +66,7 @@ public class JavaBytecodeFormat implements BytecodeFormat {
 					: new DirectoryClassLib(file.getFile().getParentFile());
 					
 
-			final ClassFile classFile = new ClassFile();
+			final ClassFileWithTypeSource classFile = new ClassFileWithTypeSource(file.getTypeSource());
 			
 			loadClassByteCode(className, classLib.openClassFile(className), classFile);
 			
@@ -77,9 +78,9 @@ public class JavaBytecodeFormat implements BytecodeFormat {
 
 	
 	@Override
-	public ClassBytecode loadClassBytecode(InputStream inputStream) throws IOException, ClassFileException {
+	public ClassByteCodeWithTypeSource loadClassBytecode(InputStream inputStream, TypeSource typeSource) throws IOException, ClassFileException {
 
-		final ClassFile classFile = new ClassFile();
+		final ClassFileWithTypeSource classFile = new ClassFileWithTypeSource(typeSource);
 		
 		JavaBytecodeFormat.loadClassByteCode(inputStream, classFile);
 		
@@ -87,13 +88,13 @@ public class JavaBytecodeFormat implements BytecodeFormat {
 	}
 	
 	@Override
-	public ClassBytecode loadClassBytecode(File library, TypeName typeName) throws IOException, ClassFileException {
+	public ClassByteCodeWithTypeSource loadClassBytecode(File library, TypeName typeName, TypeSource typeSource) throws IOException, ClassFileException {
 
 		Objects.requireNonNull(library);
 		Objects.requireNonNull(typeName);
 
 		final JarClassLib jarFile = new JarClassLib(library);
-		final ClassFile classFile = new ClassFile();
+		final ClassFileWithTypeSource classFile = new ClassFileWithTypeSource(typeSource);
 		
 		loadClassByteCodeAndCloseStream(jarFile.openClassFile(typeName), classFile);
 		

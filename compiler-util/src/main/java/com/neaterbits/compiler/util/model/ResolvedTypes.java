@@ -7,7 +7,7 @@ import com.neaterbits.compiler.util.TypeName;
 
 public interface ResolvedTypes {
 
-	default TypeName lookup(ScopedName scopedName) {
+	default TypeName lookup(ScopedName scopedName, TypeSources sources) {
 
 		TypeName result;
 		
@@ -30,7 +30,7 @@ public interface ResolvedTypes {
 						
 						parts[parts.length - 1]);
 		
-				if (hasType(typeName)) {
+				if (hasType(typeName, sources)) {
 					result = typeName;
 					break;
 				}
@@ -44,6 +44,6 @@ public interface ResolvedTypes {
 		return result;
 	}
 
-	boolean hasType(TypeName typeName);
+	boolean hasType(TypeName typeName, TypeSources sources);
 	
 }

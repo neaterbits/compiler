@@ -20,6 +20,7 @@ import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.java.bytecode.reader.BaseClassFileReaderTest;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.TypeSource;
 
 public class ReadToClassFileTest extends BaseClassFileReaderTest {
 
@@ -103,10 +104,12 @@ public class ReadToClassFileTest extends BaseClassFileReaderTest {
 	private static class TypeInfo {
 		private final int typeNo;
 		private final TypeName typeName;
+		private final TypeSource typeSource;
 
-		public TypeInfo(int typeNo, TypeName typeName) {
+		public TypeInfo(int typeNo, TypeName typeName, TypeSource typeSource) {
 			this.typeNo = typeNo;
 			this.typeName = typeName;
+			this.typeSource = typeSource;
 		}
 	}
 	
@@ -118,12 +121,12 @@ public class ReadToClassFileTest extends BaseClassFileReaderTest {
 		final LoadClassParameters<File, TypeInfo, Void> parameters = new LoadClassParameters<>(
 				typeMap,
 				codeMap,
-				(typeName, typeNo, classByteCode) -> {
+				(typeName, typeSource, typeNo, classByteCode) -> {
 					
-					return new TypeInfo(typeNo, typeName);
+					return new TypeInfo(typeNo, typeName, typeSource);
 				},
 				null,
-				(typeName) -> javaBytecodeFormat.loadClassBytecode(file, typeName));
+				(typeName) -> javaBytecodeFormat.loadClassBytecode(file, typeName, TypeSource.LIBRARY));
 		
 		return LoadClassHelper.loadClassAndBaseTypesAndAddToCodeMap(
 				parseClassName(className),
@@ -134,7 +137,7 @@ public class ReadToClassFileTest extends BaseClassFileReaderTest {
 	@Test
 	public void testLoadClassHelper() throws IOException, ClassFileException {
 		
-		final HashTypeMap<TypeInfo> typeMap = new HashTypeMap<>(type -> type.typeNo);
+		final HashTypeMap<TypeInfo> typeMap = new HashTypeMap<>(type -> type.typeNo, type -> type.typeSource);
 		final CodeMap codeMap = new IntCodeMap(new DynamicMethodOverrideMap());
 
 		final ClassBytecode classBytecode = loadClassAndBaseTypes("java.util.HashMap", typeMap, codeMap);

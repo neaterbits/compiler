@@ -3,7 +3,6 @@ package com.neaterbits.compiler.resolver.passes;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.function.Function;
 
 import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.FilesResolver;
@@ -11,7 +10,6 @@ import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledFiles;
-import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.MultiPass;
@@ -23,23 +21,23 @@ public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE ext
 
 	private final ImportsModel<COMPILATION_UNIT> importsModel;
 	private final Collection<BUILTINTYPE> builtinTypes;
-	private final Function<ScopedName, LIBRARYTYPE> resolvedTypes;
+	private final LibraryTypes<LIBRARYTYPE> libraryTypes;
 	private final ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel;
 
 	public ResolveTypeDependenciesPass(
 			ImportsModel<COMPILATION_UNIT> importsModel,
 			Collection<BUILTINTYPE> builtinTypes,
-			Function<ScopedName, LIBRARYTYPE> resolvedTypes,
+			LibraryTypes<LIBRARYTYPE> libraryTypes,
 			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel) {
 		
 		Objects.requireNonNull(importsModel);
 		Objects.requireNonNull(builtinTypes);
-		Objects.requireNonNull(resolvedTypes);
+		Objects.requireNonNull(libraryTypes);
 		Objects.requireNonNull(typesModel);
 		
 		this.importsModel = importsModel;
 		this.builtinTypes = builtinTypes;
-		this.resolvedTypes = resolvedTypes;
+		this.libraryTypes = libraryTypes;
 		this.typesModel = typesModel;
 	}
 
@@ -49,7 +47,7 @@ public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE ext
 			Collection<CompiledFile<COMPLEXTYPE, COMPILATION_UNIT>> allFiles,
 			ImportsModel<COMPILATION_UNIT> importsModel,
 			Collection<BUILTINTYPE> builtinTypes,
-			Function<ScopedName, LIBRARYTYPE> resolvedTypes,
+			LibraryTypes<LIBRARYTYPE> resolvedTypes,
 			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel) {
 
 		final ResolveLogger<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILATION_UNIT> logger = new ResolveLogger<>(System.out);
@@ -83,7 +81,7 @@ public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE ext
 				input.getCompiledFiles(),
 				importsModel,
 				builtinTypes,
-				resolvedTypes,
+				libraryTypes,
 				typesModel);
 		
 		return new ResolvedTypeDependencies<>(input.getParsedFiles(), result);

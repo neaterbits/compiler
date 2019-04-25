@@ -3,17 +3,20 @@ package com.neaterbits.compiler.bytecode.common;
 import java.io.File;
 import java.util.Objects;
 
+import com.neaterbits.compiler.util.model.TypeSource;
+
 public final class DependencyFile {
 
 	private final File file;
-	private final boolean isLibraryFile;
+	private final TypeSource typeSource;
 
-	public DependencyFile(File file, boolean isLibraryFile) {
+	public DependencyFile(File file, TypeSource typeSource) {
 		
 		Objects.requireNonNull(file);
+		Objects.requireNonNull(typeSource);
 		
 		this.file = file;
-		this.isLibraryFile = isLibraryFile;
+		this.typeSource = typeSource;
 	}
 	
 	public File getFile() {
@@ -21,7 +24,11 @@ public final class DependencyFile {
 	}
 
 	public boolean isLibraryFile() {
-		return isLibraryFile;
+		return typeSource == TypeSource.LIBRARY;
+	}
+
+	public TypeSource getTypeSource() {
+		return typeSource;
 	}
 
 	@Override

@@ -8,12 +8,16 @@ import com.neaterbits.compiler.resolver.ast.ASTModelImpl;
 import com.neaterbits.compiler.resolver.ast.passes.FindTypeDependenciesPass;
 import com.neaterbits.compiler.resolver.passes.AddTypesAndMembersToCodeMapPass;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
+import com.neaterbits.compiler.resolver.passes.LibraryTypes;
 import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass;
 import com.neaterbits.compiler.resolver.passes.ResolveTypeDependenciesPass;
 import com.neaterbits.compiler.resolver.passes.namereferenceresolve.NameReferenceResolvePass;
 import com.neaterbits.compiler.resolver.util.CompilerLanguage;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.CompilationUnitModel;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
+import com.neaterbits.compiler.util.model.TypeSource;
+import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.compiler.util.parse.Parser;
 import com.neaterbits.compiler.util.passes.CompilerBuilderIntermediate;
 import com.neaterbits.compiler.util.passes.FileParsePassInput;
@@ -49,6 +53,8 @@ public class JavaAntlrCompilerLanguage extends CompilerLanguage<CompilationUnit,
 		
 		final ASTModelImpl typesModel = new ASTModelImpl();
 		
+		final LibraryTypes<TypeName> libraryTypes = scopedName -> resolvedTypes.lookup(scopedName, new TypeSources(TypeSource.LIBRARY));
+		
 		return buildCompilerParsePass()
 		
 				.addSingleToMultiPass(new FindTypeDependenciesPass())
@@ -56,10 +62,10 @@ public class JavaAntlrCompilerLanguage extends CompilerLanguage<CompilationUnit,
 				.addMultiPass(new ResolveTypeDependenciesPass<>(
 							compilationUnitModel,
 							JavaTypes.getBuiltinTypes(),
-							resolvedTypes::lookup,
+							libraryTypes,
 							typesModel))
 				
-				.addMultiPass(new ReplaceResolvedTypeReferencesPass<>(resolvedTypes::lookup, typesModel))
+				.addMultiPass(new ReplaceResolvedTypeReferencesPass<>(libraryTypes, typesModel))
 				.addMultiPass(new AddTypesAndMembersToCodeMapPass<>(codeMap, typesModel))
 				.addMultiPass(new NameReferenceResolvePass<>(model))
 				
