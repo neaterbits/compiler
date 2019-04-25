@@ -4,24 +4,24 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
-import com.neaterbits.compiler.ast.type.TypeDefType;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.TypeName;
 
 public final class TypeDefTypeReference extends ResolvedNamedTypeReference {
 
-	private final TypeDefType type;
+	private final TypeReference aliasedType;
 
-	public TypeDefTypeReference(Context context, TypeDefType type) {
-		super(context);
+	public TypeDefTypeReference(Context context, TypeName type, TypeReference aliasedType) {
+		super(context, type);
 
 		Objects.requireNonNull(type);
+		Objects.requireNonNull(aliasedType);
 
-		this.type = type;
+		this.aliasedType = aliasedType;
 	}
 
-	@Override
-	public TypeDefType getNamedType() {
-		return type;
+	public TypeReference getAliasedType() {
+		return aliasedType;
 	}
 
 	@Override

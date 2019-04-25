@@ -2,8 +2,16 @@ package com.neaterbits.compiler.ast.type;
 
 public final class TypeDefType extends ResolvableType {
 
+	private final BaseType delegate;
+	
 	public TypeDefType(CompleteName completeName, BaseType delegate) {
 		super(completeName, delegate.isNullable());
+
+		this.delegate = delegate;
+	}
+
+	public BaseType getDelegate() {
+		return delegate;
 	}
 
 	@Override

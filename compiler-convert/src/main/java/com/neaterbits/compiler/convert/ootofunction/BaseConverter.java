@@ -14,7 +14,6 @@ import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifiers;
-import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.NameReference;
 import com.neaterbits.compiler.ast.variables.VariableDeclaration;
@@ -33,7 +32,8 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 	}
 
 	protected final BuiltinType convertBuiltinType(TypeReference typeReference, T state) {
-		return ((BuiltinTypeReference)typeReference).getNamedType();
+		throw new UnsupportedOperationException();
+		// return ((BuiltinTypeReference)typeReference).getBuiltinType();
 	}
 
 	protected final BaseType convertType(BaseType type, T state) {

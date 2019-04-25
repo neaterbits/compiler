@@ -17,20 +17,20 @@ import com.neaterbits.compiler.util.model.FieldInfo;
 import com.neaterbits.compiler.util.model.MethodInfo;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 
-public final class AddTypesAndMembersToCodeMapResult<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
-		extends MappedFiles<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+public final class AddTypesAndMembersToCodeMapResult<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>
+		extends MappedFiles<PARSED_FILE, COMPILATION_UNIT>
 		implements CodeMapCompiledAndMappedFiles<COMPILATION_UNIT> {
 
-	private final Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles;
-	private final ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap;
-	private final Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typesInDependencyOrder;
+	private final Collection<ResolvedFile> resolvedFiles;
+	private final ResolvedTypeCodeMapImpl<COMPILATION_UNIT> codeMap;
+	private final Collection<ResolvedType> typesInDependencyOrder;
 
 	public AddTypesAndMembersToCodeMapResult(
-			PostResolveFiles<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> other,
+			PostResolveFiles<PARSED_FILE, COMPILATION_UNIT> other,
 			Map<FileSpec, Integer> sourceFileNos,
-			Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles,
-			ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap,
-			Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typesInDependencyOrder) {
+			Collection<ResolvedFile> resolvedFiles,
+			ResolvedTypeCodeMapImpl<COMPILATION_UNIT> codeMap,
+			Collection<ResolvedType> typesInDependencyOrder) {
 
 		super(other, sourceFileNos);
 		
@@ -42,11 +42,11 @@ public final class AddTypesAndMembersToCodeMapResult<PARSED_FILE extends ParsedF
 		this.typesInDependencyOrder = typesInDependencyOrder;
 	}
 	
-	public Collection<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getResolvedFiles() {
+	public Collection<ResolvedFile> getResolvedFiles() {
 		return resolvedFiles;
 	}
 
-	public ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getCodeMap() {
+	public ResolvedTypeCodeMap getCodeMap() {
 		return codeMap;
 	}
 
@@ -55,7 +55,7 @@ public final class AddTypesAndMembersToCodeMapResult<PARSED_FILE extends ParsedF
 		return codeMap.getCompilerCodeMap();
 	}
 
-	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getTypesInDependencyOrder() {
+	public Collection<ResolvedType> getTypesInDependencyOrder() {
 		return typesInDependencyOrder;
 	}
 

@@ -14,22 +14,23 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.util.BuiltinTypesMap;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 
-public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
+public final class ResolveFilesResult {
 	
-	private final List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles;
+	private final List<ResolvedFile> resolvedFiles;
 	
-	private final ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypesMap;
-	private final BuiltinTypesMap<BUILTINTYPE> builtinTypesMap;
+	private final ResolvedTypesMap resolvedTypesMap;
+	private final BuiltinTypesMap builtinTypesMap;
 	private final UnresolvedDependencies unresolvedDependencies;
 	
-	private final Collection<BUILTINTYPE> builtinTypes;
+	private final Collection<BuiltinTypeRef> builtinTypes;
 	
 	ResolveFilesResult(
-			List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles,
-			ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedTypesMap,
-			BuiltinTypesMap<BUILTINTYPE> builtinTypesMap,
-			Collection<BUILTINTYPE> builtinTypes,
+			List<ResolvedFile> resolvedFiles,
+			ResolvedTypesMap resolvedTypesMap,
+			BuiltinTypesMap builtinTypesMap,
+			Collection<BuiltinTypeRef> builtinTypes,
 			UnresolvedDependencies unresolvedDependencies) {
 		
 		Objects.requireNonNull(resolvedFiles);
@@ -51,20 +52,20 @@ public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 		this.builtinTypes = builtinTypes;
 	}
 
-	public List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getResolvedFiles() {
+	public List<ResolvedFile> getResolvedFiles() {
 		return resolvedFiles;
 	}
 
 	
-	public ResolvedTypesMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getResolvedTypesMap() {
+	public ResolvedTypesMap getResolvedTypesMap() {
 		return resolvedTypesMap;
 	}
 	
-	public BuiltinTypesMap<BUILTINTYPE> getBuiltinTypesMap() {
+	public BuiltinTypesMap getBuiltinTypesMap() {
 		return builtinTypesMap;
 	}
 
-	public ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getType(TypeName completeName) {
+	public ResolvedType getType(TypeName completeName) {
 		
 		Objects.requireNonNull(completeName);
 		
@@ -75,7 +76,7 @@ public final class ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 		return unresolvedDependencies;
 	}
 
-	public Collection<BUILTINTYPE> getBuiltinTypes() {
+	public Collection<BuiltinTypeRef> getBuiltinTypes() {
 		return builtinTypes;
 	}
 	

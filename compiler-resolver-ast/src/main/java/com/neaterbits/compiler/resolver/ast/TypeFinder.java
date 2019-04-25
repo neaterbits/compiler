@@ -16,14 +16,10 @@ import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.statement.CatchBlock;
-import com.neaterbits.compiler.ast.type.complex.ClassType;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.ast.type.complex.EnumType;
-import com.neaterbits.compiler.ast.type.complex.InterfaceType;
-import com.neaterbits.compiler.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ClassName;
+import com.neaterbits.compiler.ast.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceDefinition;
@@ -42,6 +38,8 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
+import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 class TypeFinder {
 
@@ -55,13 +53,13 @@ class TypeFinder {
 			.toString();
 	}
 	
-	static List<CompiledType<ComplexType<?, ?, ?>>> findTypes(ASTParsedFile parsedFile, FileSpec compiledFileSpec) {
+	static List<CompiledType> findTypes(ASTParsedFile parsedFile, FileSpec compiledFileSpec) {
 
 		final CompilationUnit compilationUnit = parsedFile.getParsed();
 		
 		final TypeFinderStack stack = new TypeFinderStack();
 		
-		final List<CompiledType<ComplexType<?, ?, ?>>> parsedTypes = new ArrayList<>();
+		final List<CompiledType> parsedTypes = new ArrayList<>();
 		
 		final Stack<TypeFinderStackEntry> stackWrapper = new StackDelegator<TypeFinderStackEntry>(stack) {
 
@@ -70,9 +68,10 @@ class TypeFinder {
 				
 				final TypeFinderStackEntry stackEntry = super.pop();
 
-				final ParsedType parsedType = makeParsedType(compiledFileSpec, stack, stackEntry, stack.isEmpty() ? null : stack.get());
+				final CompiledType parsedType = makeParsedType(compiledFileSpec, compilationUnit, stack, stackEntry, stack.isEmpty() ? null : stack.get());
 				
 				if (parsedType != null) {
+					
 					parsedTypes.add(parsedType);
 
 					if (DEBUG) {
@@ -102,7 +101,7 @@ class TypeFinder {
 						if (e instanceof BuiltinTypeReference) {
 							final BuiltinTypeReference typeReference = (BuiltinTypeReference)e;
 							
-							if (!(typeReference.getNamedType() instanceof ScalarType)) {
+							if (!typeReference.isScalar()) {
 								throw new IllegalStateException("Expected only scalar types to be resolved");
 							}
 						}
@@ -177,7 +176,7 @@ class TypeFinder {
 							
 							if (referenceType != null) {
 
-								final TypeFinderStackEntry typeFrame = findTypeFrame(stack);
+								final TypeFinderStackEntry typeFrame = findTypeFrame(stack, compiledFileSpec, compilationUnit);
 								
 								typeFrame.addDependency(compilationUnit, name, referenceType, typeReference, updateOnResolve, updateOnResolveElement);
 							}
@@ -193,13 +192,13 @@ class TypeFinder {
 	}
 	
 
-	private static TypeFinderStackEntry findTypeFrame(TypeFinderStack stack) {
+	private static TypeFinderStackEntry findTypeFrame(TypeFinderStack stack, FileSpec fileSpec, CompilationUnit compilationUnit) {
 		for (int i = stack.size() - 1; i >= 0; -- i) {
 			
 			final TypeFinderStackEntry stackEntry = stack.get(i);
 			final TypeFinderStackEntry lastStackEntry = i > 0 ? stack.get(i - 1) : null;
 			
-			final TypeVariant typeVariant = processIfTypeElement(stackEntry, lastStackEntry, false, (n, v, t) -> v);
+			final TypeVariant typeVariant = processIfTypeElement(stackEntry, lastStackEntry, false, (n, v, t) -> v, fileSpec, compilationUnit);
 			
 			if (typeVariant != null) {
 				return stackEntry;
@@ -210,10 +209,32 @@ class TypeFinder {
 	}
 	
 	interface ProcessTypeElement<R> {
-		R onTypeElement(String name, TypeVariant typeVariant, ComplexType<?, ?, ?> type);
+		R onTypeElement(String name, TypeVariant typeVariant, UserDefinedTypeRef type);
 	}
 	
-	private static <R> R processIfTypeElement(TypeFinderStackEntry stackEntry, TypeFinderStackEntry lastStackEntry, boolean createType, ProcessTypeElement<R> process) {
+	private static UserDefinedTypeRef makeUserDefinedType(NamespaceReference namespaceReference, List<DefinitionName> outerTypes, ComplexTypeDefinition<?, ?> complexTypeDefinition, FileSpec sourceFile, CompilationUnit compilationUnit) {
+		
+		final String [] outer;
+		
+		if (outerTypes != null && !outerTypes.isEmpty()) {
+			outer = new String[outerTypes.size()];
+			
+			for (int i = 0; i < outerTypes.size(); ++ i) {
+				outer[i] = outerTypes.get(i).getName();
+			}
+		}
+		else {
+			outer = null;
+		}
+		
+		return new UserDefinedTypeRef(
+				new TypeName(namespaceReference.getParts(), null, complexTypeDefinition.getNameString()),
+				sourceFile,
+				compilationUnit.getParseTreeRefFromElement(complexTypeDefinition));
+	}
+	
+	private static <R> R processIfTypeElement(TypeFinderStackEntry stackEntry, TypeFinderStackEntry lastStackEntry, boolean createType, ProcessTypeElement<R> process,
+			FileSpec fileSpec, CompilationUnit compilationUnit) {
 		
 		final BaseASTElement element = stackEntry.getElement();
 		
@@ -230,7 +251,7 @@ class TypeFinder {
 					name,
 					TypeVariant.CLASS,
 					createType
-						? new ClassType(stackEntry.getNamespace(), outerTypes, classDefinition)
+						? makeUserDefinedType(stackEntry.getNamespace(), outerTypes, classDefinition, fileSpec, compilationUnit)
 						: null);
 		}
 		else if (element instanceof InterfaceDefinition) {
@@ -242,7 +263,7 @@ class TypeFinder {
 					name,
 					TypeVariant.INTERFACE, 
 					createType
-						? new InterfaceType(stackEntry.getNamespace(), outerTypes, interfaceDefinition)
+						? makeUserDefinedType(stackEntry.getNamespace(), outerTypes, interfaceDefinition, fileSpec, compilationUnit)
 						: null);
 		}
 		else if (element instanceof EnumDefinition) {
@@ -255,7 +276,7 @@ class TypeFinder {
 					name,
 					TypeVariant.ENUM,
 					createType 
-						? new EnumType(stackEntry.getNamespace(), outerTypes, enumDefinition)
+						? makeUserDefinedType(stackEntry.getNamespace(), outerTypes, enumDefinition, fileSpec, compilationUnit)
 						: null);
 		}
 		else {
@@ -266,24 +287,25 @@ class TypeFinder {
 	}
 
 	
-	private static ParsedType makeParsedType(
+	private static CompiledType makeParsedType(
 			FileSpec file,
+			CompilationUnit compilationUnit,
 			TypeFinderStack stack,
 			TypeFinderStackEntry stackEntry,
 			TypeFinderStackEntry lastStackEntry) {
 		
-		return processIfTypeElement(stackEntry, lastStackEntry, true, (name, typeVariant, type) -> makeParsedType(file, stack, stackEntry, name, typeVariant, type));
+		return processIfTypeElement(stackEntry, lastStackEntry, true, (name, typeVariant, type) -> makeParsedType(file, stack, stackEntry, name, typeVariant, type), file, compilationUnit);
 	}
 	
-	private static ParsedType makeParsedType(
+	private static CompiledType makeParsedType(
 			FileSpec file,
 			TypeFinderStack stack,
 			TypeFinderStackEntry stackEntry,
 			String name,
 			TypeVariant typeVariant,
-			ComplexType<?, ?, ?> type) {
+			UserDefinedTypeRef type) {
 
-		return new ParsedType(
+		return new CompiledType(
 				file,
 				makeTypeSpec(stack, name, TypeVariant.CLASS),
 				type,

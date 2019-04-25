@@ -1,32 +1,22 @@
 package com.neaterbits.compiler.ast.typereference;
 
-import java.util.Objects;
-
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.TypeName;
 
 public final class BuiltinTypeReference extends ResolvedNamedTypeReference {
 
-	private final BuiltinType type;
-
-	public BuiltinTypeReference(Context context, BuiltinType type) {
-		super(context);
-
-		Objects.requireNonNull(type);
+	private final boolean isScalar;
+	
+	public BuiltinTypeReference(Context context, TypeName type, boolean isScalar) {
+		super(context, type);
 		
-		this.type = type;
+		this.isScalar = isScalar;
 	}
-
-	@Override
-	public BuiltinType getNamedType() {
-		return type;
-	}
-
-	@Override
-	public String toString() {
-		return "ResolvedTypeReference [type=" + type + "]";
+	
+	public boolean isScalar() {
+		return isScalar;
 	}
 
 	@Override
@@ -37,30 +27,5 @@ public final class BuiltinTypeReference extends ResolvedNamedTypeReference {
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BuiltinTypeReference other = (BuiltinTypeReference) obj;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
-		return true;
 	}
 }

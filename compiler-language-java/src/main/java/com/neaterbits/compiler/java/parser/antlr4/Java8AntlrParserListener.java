@@ -37,6 +37,7 @@ import com.neaterbits.compiler.ast.operator.Relational;
 import com.neaterbits.compiler.ast.parser.FieldAccessType;
 import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.statement.ASTMutability;
+import com.neaterbits.compiler.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
@@ -1029,7 +1030,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	// Array creation
 
 	private TypeReference parsePrimitiveType(Context context, String typeString) {
-		return new BuiltinTypeReference(context, delegate.parseJavaPrimitiveType(typeString));
+		final ScalarType scalarType = delegate.parseJavaPrimitiveType(typeString);
+		return new BuiltinTypeReference(context, scalarType.getTypeName(), true);
 	}
 	
 	@Override

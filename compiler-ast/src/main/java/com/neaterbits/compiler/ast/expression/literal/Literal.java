@@ -23,7 +23,7 @@ public abstract class Literal extends Primary {
 	
 	@Override
 	public final TypeReference getType() {
-		return new BuiltinTypeReference(getContext(), type);
+		return new BuiltinTypeReference(getContext(), type.getTypeName(), true);
 	}
 
 	@Override

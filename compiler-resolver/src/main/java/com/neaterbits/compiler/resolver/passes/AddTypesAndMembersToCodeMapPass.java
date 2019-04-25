@@ -23,24 +23,26 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.MultiPass;
+import com.neaterbits.compiler.util.passes.ParsedFiles;
 
 import static com.neaterbits.compiler.resolver.util.ResolveUtil.forEachResolvedTypeNested;
 
-public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>
 	extends MultiPass<
-			ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>,
+			ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT>,
 			CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>> {
 
 	private final CompilerCodeMap codeMap;
-	private final ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
+	private final ASTTypesModel<COMPILATION_UNIT> astModel;
 	
-	public AddTypesAndMembersToCodeMapPass(ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+	public AddTypesAndMembersToCodeMapPass(ASTTypesModel<COMPILATION_UNIT> astModel) {
 		this(new IntCompilerCodeMap(), astModel);
 	}
 
-	public AddTypesAndMembersToCodeMapPass(CompilerCodeMap codeMap, ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+	public AddTypesAndMembersToCodeMapPass(CompilerCodeMap codeMap, ASTTypesModel<COMPILATION_UNIT> astModel) {
 
 		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(astModel);
@@ -50,35 +52,36 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 	}
 
 	@Override
-	public AddTypesAndMembersToCodeMapResult<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> execute(
-			ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> input) throws IOException {
+	public AddTypesAndMembersToCodeMapResult<PARSED_FILE, COMPILATION_UNIT> execute(
+			ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT> input) throws IOException {
 		
 		return makeCodeMap(input, codeMap, astModel);
 	}
 	
-	public static <PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
-		AddTypesAndMembersToCodeMapResult<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> makeCodeMap(
+	public static <PARSED_FILE extends ParsedFile, COMPILATION_UNIT>
+		AddTypesAndMembersToCodeMapResult<PARSED_FILE, COMPILATION_UNIT> makeCodeMap(
 				
-			PostResolveFiles<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> postResolveFiles,
+			PostResolveFiles<PARSED_FILE, COMPILATION_UNIT> postResolveFiles,
 			CompilerCodeMap compilerCodeMap,
-			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+			ASTTypesModel<COMPILATION_UNIT> astModel) {
 
-		final ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFilesResult = postResolveFiles.getResolveFilesResult();
+		final ResolveFilesResult resolveFilesResult = postResolveFiles.getResolveFilesResult();
 		
 		final int numCompletelyResolvedFiles = resolveFilesResult.getResolvedFiles().size();
 		final int numResolvedOrUnresolvedFiles = postResolveFiles.getFiles().size();
 		
-		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typesInDependencyOrder
+		final List<ResolvedType> typesInDependencyOrder
 			= new ArrayList<>(numCompletelyResolvedFiles);
 		
 		final Map<FileSpec, Integer> sourceFileNos = new HashMap<>();
 		
-		final ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap = makeCodeMap(
+		final ResolvedTypeCodeMapImpl<COMPILATION_UNIT> codeMap = makeCodeMap(
 				resolveFilesResult.getResolvedFiles(),
 				resolveFilesResult.getBuiltinTypes(),
 				typesInDependencyOrder,
 				compilerCodeMap,
 				astModel,
+				postResolveFiles,
 				sourceFileNos);
 
 		if (numResolvedOrUnresolvedFiles > numCompletelyResolvedFiles) {
@@ -115,23 +118,24 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 				typesInDependencyOrder);
 	}
 	
-	private static <COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> 
-		ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> makeCodeMap(
-			List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles,
-			Collection<BUILTINTYPE> builtinTypes,
-			List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typesInDependencyOrder,
+	private static <PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> 
+		ResolvedTypeCodeMapImpl<COMPILATION_UNIT> makeCodeMap(
+			List<ResolvedFile> resolvedFiles,
+			Collection<BuiltinTypeRef> builtinTypes,
+			List<ResolvedType> typesInDependencyOrder,
 			CompilerCodeMap compilerCodeMap,
-			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel,
+			ASTTypesModel<COMPILATION_UNIT> astModel,
+			ParsedFiles<PARSED_FILE> parsedFiles,
 			Map<FileSpec, Integer> sourceFileNos) {
 	
-		final ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap = new ResolvedTypeCodeMapImpl<>(
+		final ResolvedTypeCodeMapImpl<COMPILATION_UNIT> codeMap = new ResolvedTypeCodeMapImpl<>(
 				compilerCodeMap,
 				builtinTypes,
 				astModel);
 		
-		final Map<TypeName, ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedTypesByName = new HashMap<>();
+		final Map<TypeName, ResolvedType> resolvedTypesByName = new HashMap<>();
 		
-		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedFile : resolvedFiles) {
+		for (ResolvedFile resolvedFile : resolvedFiles) {
 			
 			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> {
 				resolvedTypesByName.put(type.getTypeName(), type);
@@ -139,7 +143,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 		}
 		
 		// Verify that all dependencies are resolved
-		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedFile : resolvedFiles) {
+		for (ResolvedFile resolvedFile : resolvedFiles) {
 	
 			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> {
 				
@@ -170,7 +174,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 					throw new IllegalStateException();
 				}
 	
-				final ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> type = resolvedTypesByName.get(completeName);
+				final ResolvedType type = resolvedTypesByName.get(completeName);
 				
 				boolean allExtendsFromAdded = true;
 				
@@ -184,7 +188,10 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 				}
 				
 				if (allExtendsFromAdded) {
-					codeMap.addType(type);
+					
+					final COMPILATION_UNIT compilationUnit = parsedFiles.getParsedFile(type.getFile()).getCompilationUnit();
+					
+					codeMap.addType(compilationUnit, type);
 					
 					iterator.remove();
 	
@@ -197,7 +204,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 		
 		final List<Integer> typeNosList = new ArrayList<>();
 			
-		for (ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedFile : resolvedFiles) {
+		for (ResolvedFile resolvedFile : resolvedFiles) {
 			forEachResolvedTypeNested(resolvedFile.getTypes(), type -> {
 				typeNosList.add(codeMap.getTypeNo(type.getTypeName()));
 			});
@@ -214,7 +221,8 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 			typeNosList.clear();
 		}
 		
-		final MethodsResolver<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> methodsResolver = new MethodsResolver<>(codeMap, astModel);
+		final MethodsResolver<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> methodsResolver
+				= new MethodsResolver<>(parsedFiles, codeMap, astModel);
 	
 		methodsResolver.resolveMethodsForAllTypes(resolvedFiles);
 		

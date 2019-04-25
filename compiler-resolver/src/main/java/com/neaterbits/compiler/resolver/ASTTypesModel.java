@@ -1,22 +1,23 @@
 package com.neaterbits.compiler.resolver;
 
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
+import com.neaterbits.compiler.util.model.LibraryTypeRef;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
-public interface ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
-	extends ASTBuiltinTypeModel<BUILTINTYPE>,
-			ASTLibraryTypeModel<LIBRARYTYPE> {
+public interface ASTTypesModel<COMPILATION_UNIT> {
 
-	int getNumMethods(COMPLEXTYPE complextype);
+	int getNumMethods(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef complextype);
 	
-	void iterateClassMembers(COMPLEXTYPE complexType, ASTFieldVisitor fieldVisitor, ASTMethodVisitor methodVisitor);
+	void iterateClassMembers(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef complexType, ASTFieldVisitor fieldVisitor, ASTMethodVisitor methodVisitor);
 	
-	void updateOnResolve(COMPILATION_UNIT compilationUnit, UpdateOnResolve mode, int elementParseTreeRef, COMPLEXTYPE type, TypeResolveMode typeResolveMode);
+	void updateOnResolve(COMPILATION_UNIT compilationUnit, UpdateOnResolve mode, int elementParseTreeRef, UserDefinedTypeRef type, TypeResolveMode typeResolveMode);
 
-	void replaceWithComplexType(COMPILATION_UNIT compilationUnit, int typeReferenceParseTreeRef, COMPLEXTYPE complexType);
+	void replaceWithUserDefinedType(COMPILATION_UNIT compilationUnit, int typeReferenceParseTreeRef, UserDefinedTypeRef complexType);
 	
-	void replaceWithBuiltinType(COMPILATION_UNIT compilationUnit, int typeReferenceParseTreeRef, BUILTINTYPE builtinType);
+	void replaceWithBuiltinType(COMPILATION_UNIT compilationUnit, int typeReferenceParseTreeRef, BuiltinTypeRef builtinType);
 
-	void replaceWithLibraryType(COMPILATION_UNIT compilationUnit, int typeReferenceParseTreeRef, LIBRARYTYPE libraryType);
+	void replaceWithLibraryType(COMPILATION_UNIT compilationUnit, int typeReferenceParseTreeRef, LibraryTypeRef libraryType);
 	
 	
 }

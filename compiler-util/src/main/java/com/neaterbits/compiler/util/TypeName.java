@@ -2,6 +2,7 @@ package com.neaterbits.compiler.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,6 +11,10 @@ public class TypeName {
 	private final String [] namespace;
 	private final String [] outerTypes;
 	private final String name;
+	
+	public static TypeName fromNamespace(Collection<String> namespace, String name) {
+		return new TypeName(namespace.toArray(new String[namespace.size()]), null, name);
+	}
 	
 	public TypeName(String[] namespace, String[] outerTypes, String name) {
 
@@ -20,6 +25,7 @@ public class TypeName {
 		this.name = name;
 	}
 
+	
 	public final String[] getNamespace() {
 		return namespace;
 	}

@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.resolver;
 
-public interface ResolverLibraryTypes<LIBRARYTYPE> extends TypesMap<LIBRARYTYPE> {
+import com.neaterbits.compiler.util.model.LibraryTypeRef;
+
+public interface ResolverLibraryTypes extends TypesMap<LibraryTypeRef> {
 	
 }

@@ -10,30 +10,29 @@ import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
-public final class ResolvedTypeBuiltin<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
-		implements ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
+public final class ResolvedTypeBuiltin
+		implements ResolvedType {
 
-	private final BUILTINTYPE builtinType;
-	private final TypeName typeName;
+	private final BuiltinTypeRef builtinType;
 	
-	public ResolvedTypeBuiltin(BUILTINTYPE builtinType, TypeName typeName) {
+	public ResolvedTypeBuiltin(BuiltinTypeRef builtinType) {
 		
 		Objects.requireNonNull(builtinType);
-		Objects.requireNonNull(typeName);
 		
-		this.typeName = typeName;
 		this.builtinType = builtinType;
 	}
 
 	@Override
 	public ScopedName getScopedName() {
-		return typeName.toScopedName();
+		return builtinType.getTypeName().toScopedName();
 	}
 	
 	@Override
 	public TypeName getTypeName() {
-		return typeName;
+		return builtinType.getTypeName();
 	}
 
 	@Override
@@ -42,12 +41,12 @@ public final class ResolvedTypeBuiltin<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 	}
 
 	@Override
-	public COMPLEXTYPE getType() {
+	public UserDefinedTypeRef getType() {
 		return null;
 	}
 	
 	@Override
-	public BUILTINTYPE getBuiltinType() {
+	public BuiltinTypeRef getBuiltinType() {
 		return builtinType;
 	}
 
@@ -57,7 +56,7 @@ public final class ResolvedTypeBuiltin<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 	}
 	
 	@Override
-	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getNestedTypes() {
+	public Collection<ResolvedType> getNestedTypes() {
 		return null;
 	}
 	

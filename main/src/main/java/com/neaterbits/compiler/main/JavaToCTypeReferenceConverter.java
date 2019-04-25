@@ -3,6 +3,7 @@ package com.neaterbits.compiler.main;
 import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.TypeDefType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
+import com.neaterbits.compiler.ast.type.primitive.ScalarType;
 import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeDefTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
@@ -20,12 +21,17 @@ final class JavaToCTypeReferenceConverter<T extends MappingJavaToCConverterState
 		if (convertedType instanceof BuiltinType) {
 			converted = new BuiltinTypeReference(
 					typeReference.getContext(),
-					(BuiltinType)convertedType);
+					((BuiltinType) convertedType).getTypeName(),
+					convertedType instanceof ScalarType);
 		}
 		else if (convertedType instanceof TypeDefType) {
+			
+			final TypeDefType typeDefType = (TypeDefType)convertedType;
+			
 			converted = new TypeDefTypeReference(
 					typeReference.getContext(),
-					(TypeDefType)convertedType);
+					typeDefType.getTypeName(),
+					null);
 		}
 		else {
 			throw new UnsupportedOperationException();

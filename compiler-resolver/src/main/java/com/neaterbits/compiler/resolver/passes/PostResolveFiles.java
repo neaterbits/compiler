@@ -14,21 +14,21 @@ import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.ParsedFiles;
 
-public abstract class PostResolveFiles<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+public abstract class PostResolveFiles<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>
 		extends ParsedFiles<PARSED_FILE>
 		implements CompiledAndResolvedFiles {
 
-	private final ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFilesResult;
+	private final ResolveFilesResult resolveFilesResult;
 
 	private final List<CompiledAndResolvedFile> files;
 	
-	protected PostResolveFiles(PostResolveFiles<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> other) {
+	protected PostResolveFiles(PostResolveFiles<PARSED_FILE, COMPILATION_UNIT> other) {
 		this(other, other.resolveFilesResult);
 	}
 
 	protected PostResolveFiles(
 			ParsedFiles<PARSED_FILE> other,
-			ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveFilesResult) {
+			ResolveFilesResult resolveFilesResult) {
 
 		super(other);
 		
@@ -73,7 +73,7 @@ public abstract class PostResolveFiles<PARSED_FILE extends ParsedFile, COMPILATI
 		}
 	}
 
-	public final ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getResolveFilesResult() {
+	public final ResolveFilesResult getResolveFilesResult() {
 		return resolveFilesResult;
 	}
 

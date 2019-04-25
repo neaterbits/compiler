@@ -16,8 +16,6 @@ import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Module;
 import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.c.emit.CCompilationUnitEmitter;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
@@ -44,7 +42,6 @@ import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
 import com.neaterbits.compiler.util.passes.ParsedFiles;
@@ -87,7 +84,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
 		// Also builds map of all extended by/extends relationships for classes and interfaces and methods thereof
 		// This information will be used when figuring out how to do method dispatch for each call site 
-		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveResult = resolveFiles(program, null, astModel);
+		final ResolveFilesResult resolveResult = resolveFiles(program, null, astModel);
 		
 		final UnresolvedDependencies unresolved = resolveResult.getUnresolvedDependencies();
 		if (!unresolved.isEmpty()) {
@@ -96,7 +93,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
 		System.out.println("## resolved files: " + resolveResult.getResolvedFiles());
 		
-		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> printstream = resolveResult.getResolvedFiles().stream()
+		final ResolvedType printstream = resolveResult.getResolvedFiles().stream()
 				.flatMap(file -> file.getTypes().stream())
 				.filter(type -> type.getTypeName().equals("PrintStream"))
 				.findFirst().get();
@@ -114,13 +111,13 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		ReplaceResolvedTypeReferencesPass.replaceResolvedTypeReferences(resolveResult, scopedName -> null, parsedFiles, astModel);
 		
-		final ResolvedTypeDependencies<ASTParsedFile, CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> resolved =
+		final ResolvedTypeDependencies<ASTParsedFile, CompilationUnit> resolved =
 				new ResolvedTypeDependencies<>(parsedFiles, resolveResult);
 
 		final CompilerCodeMap codeMap = new IntCompilerCodeMap();
 		
 		// Replaces all resolved type references within the AST
-		final AddTypesAndMembersToCodeMapResult<ASTParsedFile, CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName>
+		final AddTypesAndMembersToCodeMapResult<ASTParsedFile, CompilationUnit>
 				replaceTypeReferencesResult
 				= AddTypesAndMembersToCodeMapPass.makeCodeMap(resolved, codeMap, astModel);
 		
@@ -193,24 +190,24 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		}
 	}
 	
-	private ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveFiles(
+	private ResolveFilesResult resolveFiles(
 			Program program,
-			ResolverLibraryTypes<TypeName> libraryTypes,
-			ASTTypesModel<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel) {
+			ResolverLibraryTypes libraryTypes,
+			ASTTypesModel<CompilationUnit> astModel) {
 
-		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit>
+		final ResolveLogger<CompilationUnit>
 			logger = new ResolveLogger<>(System.out);
 		
-		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> resolver = new FilesResolver<>(
+		final FilesResolver<CompilationUnit> resolver = new FilesResolver<>(
 				logger,
-				JavaTypes.getBuiltinTypes(),
+				JavaTypes.getBuiltinTypeRefs(),
 				libraryTypes,
 				new JavaImportsModel(),
 				astModel);
 		
-		final Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles = ProgramLoader.getCompiledFiles(program);
+		final Collection<CompiledFile<CompilationUnit>> allFiles = ProgramLoader.getCompiledFiles(program);
 		
-		for (CompiledFile<ComplexType<?, ?, ?>, CompilationUnit> compiledFile : allFiles) {
+		for (CompiledFile<CompilationUnit> compiledFile : allFiles) {
 			System.out.println("File " + compiledFile.getSpec() + " with types " + compiledFile.getTypes());
 		}
 		
@@ -260,7 +257,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	private CompilationUnit convert(
 			CompilationUnit javaCompilationUnit,
 			JavaToCDeclarations declarations,
-			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap) {
+			ResolvedTypeCodeMap codeMap) {
 		
 		final JavaToCConverter converter = new JavaToCConverter();
 

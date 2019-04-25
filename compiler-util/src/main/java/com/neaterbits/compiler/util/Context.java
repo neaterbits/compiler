@@ -17,9 +17,13 @@ public final class Context {
 	private final int tokenSequenceNo;
 
 	public static Context makeTestContext() {
-		return new Context("", 0, 0, 0, 0, 0, 0, "", -1);
+		return makeTestContext(-1);
 	}
 	
+	public static Context makeTestContext(int tokenSequenceNo) {
+		return new Context("", 0, 0, 0, 0, 0, 0, "", tokenSequenceNo);
+	}
+
 	public static <T> Context merge(Collection<T> elements, Function<T, Context> getContext) {
 		
 		if (elements.size() <= 1) {

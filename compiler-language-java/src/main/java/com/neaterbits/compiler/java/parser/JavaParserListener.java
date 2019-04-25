@@ -36,6 +36,7 @@ import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 /**
@@ -725,7 +726,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new UnsupportedOperationException("Unknown type " + type);
 		}
 
-		delegate.onTypeReference(context, new BuiltinTypeReference(context, genericType));
+		delegate.onTypeReference(context, new BuiltinTypeReference(context, genericType.getTypeName(), true));
 	}
 	
 	public ScalarType parseJavaPrimitiveType(String typeString) {
@@ -750,6 +751,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		return type;
 	}
 
+	public TypeName parseJavaPrimitiveTypeToTypeName(String typeString) {
+	
+		final ScalarType type = parseJavaPrimitiveType(typeString);
+		
+		return type != null ? type.getTypeName() : null;
+	}
+	
 	public void onJavaClassOrInterfaceReferenceType(Context context, ScopedName typeName) {
 
 		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName));

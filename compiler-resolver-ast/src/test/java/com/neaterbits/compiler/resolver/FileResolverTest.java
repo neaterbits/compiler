@@ -2,7 +2,6 @@ package com.neaterbits.compiler.resolver;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,17 +19,16 @@ import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
+import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.IntValue;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Keyword;
-import com.neaterbits.compiler.ast.NamespaceReference;
-import com.neaterbits.compiler.ast.type.complex.ClassType;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ClassModifiers;
@@ -44,53 +42,76 @@ public class FileResolverTest extends BaseResolveTest {
 		
 		final PrintStream loggerStream = new PrintStream(new ByteArrayOutputStream());
 		
-		final ResolveLogger<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> resolveLogger = new ResolveLogger<>(loggerStream);
+		final ResolveLogger<CompilationUnit> resolveLogger = new ResolveLogger<>(loggerStream);
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
-		final FilesResolver<BuiltinType, ComplexType<?, ?, ?>, TypeName, CompilationUnit> filesResolver
+		final FilesResolver<CompilationUnit> filesResolver
 			= new FilesResolver<>(resolveLogger, Collections.emptyList(), null, new ObjectProgramModel(null), astModel);
 
 		final FileSpec testFileSpec = new NameFileSpec("TestClass.java");
 		final TypeName testClass = makeTypeName("com.test.TestClass");
-		final ClassType testClassType = makeClassType(testClass);
-		final CompiledType<ComplexType<?, ?, ?>> testType = new TestCompiledType(
+		
+		final IntValue tokenSequenceNo = new IntValue(1);
+		
+		final ClassDefinition testClassDefinition = makeClassType(testClass, tokenSequenceNo);
+		
+		final CompilationUnit testCompilationUnit = new CompilationUnit(
+				Context.makeTestContext(tokenSequenceNo.increment()),
+				Collections.emptyList(),
+				Arrays.asList(testClassDefinition));
+		
+		final UserDefinedTypeRef testClassType = new UserDefinedTypeRef(
+				testClass,
 				testFileSpec,
-				testClass.toScopedName(),
-				TypeVariant.CLASS,
+				testCompilationUnit.getParseTreeRefFromElement(testClassDefinition));
+		
+		final CompiledType testType = new CompiledType(
+				testFileSpec,
+				new TypeSpec(testClass.toScopedName(), TypeVariant.CLASS),
 				testClassType,
 				null, 
 				null, 
 				null);
 		
-		final Context context = Context.makeTestContext();
 		
-		final CompilationUnit compilationUnit = new CompilationUnit(context, new ArrayList<>(), new ArrayList<>());
+		final IntValue anotherTokenSequenceNo = new IntValue(1);
 		
-		final TestCompiledFile testFile = new TestCompiledFile(testFileSpec, compilationUnit, testType);
-
+		final Context context = Context.makeTestContext(anotherTokenSequenceNo.increment());
+		
 		final FileSpec anotherTestFileSpec = new NameFileSpec("AnotherTestClass.java");
 		final TypeName anotherTestClass = makeTypeName("com.test.AnotherTestClass");
 		
-		final ClassType anotherTestClassType = makeClassType(anotherTestClass);
+		final ClassDefinition anotherTestClassDefinition = makeClassType(anotherTestClass, anotherTokenSequenceNo);
+
+		final CompilationUnit anotherCompilationUnit = new CompilationUnit(
+				context,
+				Collections.emptyList(),
+				Arrays.asList(anotherTestClassDefinition));
+
+		final CompiledFile<CompilationUnit> testFile = new CompiledFile<>(testFileSpec, anotherCompilationUnit, testType);
 		
-		final CompiledType<ComplexType<?, ?, ?>> anotherTestType = new TestCompiledType(
+		final UserDefinedTypeRef anotherTestClassType = new UserDefinedTypeRef(
+				anotherTestClass,
 				anotherTestFileSpec,
-				anotherTestClass.toScopedName(),
-				TypeVariant.CLASS,
+				anotherCompilationUnit.getParseTreeRefFromElement(anotherTestClassDefinition));
+
+		final CompiledType anotherTestType = new CompiledType(
+				anotherTestFileSpec,
+				new TypeSpec(anotherTestClass.toScopedName(), TypeVariant.CLASS),
 				anotherTestClassType,
 				null,
 				Arrays.asList(makeExtendsFromDependency(testClass.toScopedName())),
 				null);
 
-		final TestCompiledFile anotherTestFile = new TestCompiledFile(anotherTestFileSpec, compilationUnit, anotherTestType);
+		final CompiledFile<CompilationUnit> anotherTestFile = new CompiledFile<>(anotherTestFileSpec, anotherCompilationUnit, anotherTestType);
 		
-		final List<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> compiledFiles = Arrays.asList(
+		final List<CompiledFile<CompilationUnit>> compiledFiles = Arrays.asList(
 				testFile,
 				anotherTestFile
 		);
 
-		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> result = filesResolver.resolveFiles(compiledFiles);
+		final ResolveFilesResult result = filesResolver.resolveFiles(compiledFiles);
 		
 		assertThat(result).isNotNull();
 		
@@ -106,24 +127,17 @@ public class FileResolverTest extends BaseResolveTest {
 		*/
 	}
 	
-	private static ClassType makeClassType(TypeName anotherTestClass) {
+	private static ClassDefinition makeClassType(TypeName anotherTestClass, IntValue tokenSequenceNo) {
 		
-		final NamespaceReference namespaceReference = new NamespaceReference(Arrays.asList(anotherTestClass.getNamespace()));
-		
-		final ClassType anotherTestClassType = new ClassType(
-				namespaceReference,
-				null,
-				new ClassDefinition(
-						Context.makeTestContext(),
+		return new ClassDefinition(
+						Context.makeTestContext(tokenSequenceNo.increment()),
 						new ClassModifiers(Collections.emptyList()),
-						new Keyword(Context.makeTestContext(), "class"),
-						new ClassDeclarationName(Context.makeTestContext(), new ClassName(anotherTestClass.getName())),
+						new Keyword(Context.makeTestContext(tokenSequenceNo.increment()), "class"),
+						new ClassDeclarationName(Context.makeTestContext(tokenSequenceNo.increment()), new ClassName(anotherTestClass.getName())),
 						null,
 						null,
 						null,
-						Collections.emptyList()));
-		
-		return anotherTestClassType;
+						Collections.emptyList());
 	}
 	
 	private static CompiledTypeDependency makeExtendsFromDependency(ScopedName scopedName) {

@@ -11,28 +11,26 @@ import com.neaterbits.compiler.ast.expression.PrimaryList;
 import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.parser.FieldAccessType;
 import com.neaterbits.compiler.ast.parser.MethodInvocationType;
-import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.type.NamedType;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.variables.StaticMemberReference;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 class MethodInvocationExpressionResolver {
 
 	static void updateOnResolve(
 			ScopedName toResolve,
-			BaseType type,
+			UserDefinedTypeRef type,
 			TypeResolveMode resolveMode,
 			MethodInvocationExpression methodInvocationExpression) {
 		
-		final NamedType namedType = (NamedType)type;
 		
-		final ScopedName typeScopedName = namedType.getCompleteName().toScopedName();
+		final ScopedName typeScopedName = type.getTypeName().toScopedName();
 		
 		final String [] toResolveParts = toResolve.getParts();
 		final String [] typeScopedNameParts = typeScopedName.getParts();
@@ -47,16 +45,14 @@ class MethodInvocationExpressionResolver {
 		
 		parameters.take();
 		
-		final ComplexType<?, ?, ?> complexType = (ComplexType<?, ?, ?>)type;
-		
 		final MethodInvocationExpression updatedExpression;
 		
 		if (expressionPart != null && expressionPart.length != 0) {
 			updatedExpression = new MethodInvocationExpression(
 				methodInvocationExpression.getContext(),
 				MethodInvocationType.PRIMARY,
-				new ComplexTypeReference(methodInvocationExpression.getContext(), complexType),
-				makePrimary(methodInvocationExpression.getContext(), complexType, expressionPart),
+				new ComplexTypeReference(methodInvocationExpression.getContext(), type.getTypeName()),
+				makePrimary(methodInvocationExpression.getContext(), type.getTypeName(), expressionPart),
 				methodInvocationExpression.getCallable(),
 				parameters);
 		}
@@ -64,7 +60,7 @@ class MethodInvocationExpressionResolver {
 			updatedExpression = new MethodInvocationExpression(
 					methodInvocationExpression.getContext(),
 					MethodInvocationType.NAMED_CLASS_STATIC,
-					new ComplexTypeReference(methodInvocationExpression.getContext(), complexType),
+					new ComplexTypeReference(methodInvocationExpression.getContext(), type.getTypeName()),
 					null,
 					methodInvocationExpression.getCallable(),
 					parameters);
@@ -74,7 +70,7 @@ class MethodInvocationExpressionResolver {
 		
 	}
 
-	private static Primary makePrimary(Context context, ComplexType<?, ?, ?> type, String [] expressionPart) {
+	private static Primary makePrimary(Context context, TypeName type, String [] expressionPart) {
 		
 		final Primary primary;
 		
@@ -95,7 +91,7 @@ class MethodInvocationExpressionResolver {
 					expressionPart[0],
 					context));
 			
-			ComplexType<?, ?, ?> fieldHolderType = type;
+			TypeName fieldHolderType = type;
 			
 			for (int i = 1; i < expressionPart.length; ++ i) {
 				

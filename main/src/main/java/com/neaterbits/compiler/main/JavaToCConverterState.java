@@ -3,19 +3,14 @@ package com.neaterbits.compiler.main;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.type.complex.ClassType;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.complex.StructType;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
-import com.neaterbits.compiler.util.TypeName;
 
 final class JavaToCConverterState extends MappingJavaToCConverterState<JavaToCConverterState> {
 	
 	private final JavaToCDeclarations declarations;
 	
-	public JavaToCConverterState(
-			JavaToCDeclarations declarations,
-			ResolvedTypeCodeMap<BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap) {
+	public JavaToCConverterState(JavaToCDeclarations declarations, ResolvedTypeCodeMap codeMap) {
 		
 		super(new JavaToCConverters(), codeMap);
 

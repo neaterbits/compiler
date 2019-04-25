@@ -3,9 +3,7 @@ package com.neaterbits.compiler.convert;
 import com.neaterbits.compiler.ast.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.block.FunctionName;
 import com.neaterbits.compiler.ast.block.MethodName;
-import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.StructName;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
@@ -27,9 +25,9 @@ public abstract class OOToProceduralConverterState<T extends OOToProceduralConve
 	
 	public abstract String getClassStaticVTableArrayName();
 	
-	private final ResolvedTypeCodeMap<BuiltinType, ? extends BaseType, TypeName> codeMap;
+	private final ResolvedTypeCodeMap codeMap;
 	
-	protected OOToProceduralConverterState(Converters<T> converters, ResolvedTypeCodeMap<BuiltinType, ? extends BaseType, TypeName> codeMap) {
+	protected OOToProceduralConverterState(Converters<T> converters, ResolvedTypeCodeMap codeMap) {
 		
 		super(converters);
 		

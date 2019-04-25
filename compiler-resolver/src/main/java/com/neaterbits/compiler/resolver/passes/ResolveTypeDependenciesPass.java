@@ -10,25 +10,26 @@ import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledFiles;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.MultiPass;
 
-public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE extends ParsedFile, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE extends ParsedFile>
 		extends MultiPass<
-			CompiledFiles<COMPLEXTYPE, COMPILATION_UNIT, PARSED_FILE>,
-			ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> {
+			CompiledFiles<COMPILATION_UNIT, PARSED_FILE>,
+			ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT>> {
 
 	private final ImportsModel<COMPILATION_UNIT> importsModel;
-	private final Collection<BUILTINTYPE> builtinTypes;
-	private final LibraryTypes<LIBRARYTYPE> libraryTypes;
-	private final ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel;
+	private final Collection<BuiltinTypeRef> builtinTypes;
+	private final LibraryTypes libraryTypes;
+	private final ASTTypesModel<COMPILATION_UNIT> typesModel;
 
 	public ResolveTypeDependenciesPass(
 			ImportsModel<COMPILATION_UNIT> importsModel,
-			Collection<BUILTINTYPE> builtinTypes,
-			LibraryTypes<LIBRARYTYPE> libraryTypes,
-			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel) {
+			Collection<BuiltinTypeRef> builtinTypes,
+			LibraryTypes libraryTypes,
+			ASTTypesModel<COMPILATION_UNIT> typesModel) {
 		
 		Objects.requireNonNull(importsModel);
 		Objects.requireNonNull(builtinTypes);
@@ -41,19 +42,19 @@ public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE ext
 		this.typesModel = typesModel;
 	}
 
-	public static <COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> 
-		ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveParsedFiles(
+	public static <COMPILATION_UNIT> 
+		ResolveFilesResult resolveParsedFiles(
 			
-			Collection<CompiledFile<COMPLEXTYPE, COMPILATION_UNIT>> allFiles,
+			Collection<CompiledFile<COMPILATION_UNIT>> allFiles,
 			ImportsModel<COMPILATION_UNIT> importsModel,
-			Collection<BUILTINTYPE> builtinTypes,
-			LibraryTypes<LIBRARYTYPE> resolvedTypes,
-			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> typesModel) {
+			Collection<BuiltinTypeRef> builtinTypes,
+			LibraryTypes resolvedTypes,
+			ASTTypesModel<COMPILATION_UNIT> typesModel) {
 
-		final ResolveLogger<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILATION_UNIT> logger = new ResolveLogger<>(System.out);
+		final ResolveLogger<COMPILATION_UNIT> logger = new ResolveLogger<>(System.out);
 
-		final FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILATION_UNIT> filesResolver
-			= new FilesResolver<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE, COMPILATION_UNIT>(
+		final FilesResolver<COMPILATION_UNIT> filesResolver
+			= new FilesResolver<COMPILATION_UNIT>(
 					logger,
 					builtinTypes,
 					scopedName -> {
@@ -66,7 +67,7 @@ public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE ext
 					importsModel,
 					typesModel);
 		
-		final ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolveResult = filesResolver.resolveFiles(allFiles);
+		final ResolveFilesResult resolveResult = filesResolver.resolveFiles(allFiles);
 		
 		System.out.println("## resolved files: " + resolveResult.getResolvedFiles());
 	
@@ -74,10 +75,10 @@ public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE ext
 	}
 
 	@Override
-	public ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
-		execute(CompiledFiles<COMPLEXTYPE, COMPILATION_UNIT, PARSED_FILE> input) throws IOException {
+	public ResolvedTypeDependencies<PARSED_FILE, COMPILATION_UNIT>
+		execute(CompiledFiles<COMPILATION_UNIT, PARSED_FILE> input) throws IOException {
 
-		final ResolveFilesResult<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> result = resolveParsedFiles(
+		final ResolveFilesResult result = resolveParsedFiles(
 				input.getCompiledFiles(),
 				importsModel,
 				builtinTypes,

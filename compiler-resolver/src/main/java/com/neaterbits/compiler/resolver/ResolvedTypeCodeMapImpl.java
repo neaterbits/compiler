@@ -13,10 +13,12 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.model.FieldInfo;
 import com.neaterbits.compiler.util.model.MethodInfo;
 import com.neaterbits.compiler.util.model.MethodVariant;
 import com.neaterbits.compiler.util.model.Mutability;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.TypeVariant;
@@ -24,18 +26,18 @@ import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMapGetters;
 import com.neaterbits.compiler.codemap.compiler.CrossReferenceUpdater;
 
-public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
-		implements ResolvedTypeCodeMap<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
+public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT>
+		implements ResolvedTypeCodeMap {
 
 	private final CompilerCodeMap codeMap;
-	private final ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
+	private final ASTTypesModel<COMPILATION_UNIT> astModel;
 	
-	private ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> [] resolvedTypes;
+	private ResolvedType [] resolvedTypes;
 	
 	public ResolvedTypeCodeMapImpl(
 			CompilerCodeMap codeMap,
-			Collection<BUILTINTYPE> builtinTypes,
-			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
+			Collection<BuiltinTypeRef> builtinTypes,
+			ASTTypesModel<COMPILATION_UNIT> astModel) {
 		
 		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(astModel);
@@ -44,11 +46,9 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 		this.astModel = astModel;
 		
 		// Add all builtin types
-		for (BUILTINTYPE builtinType : builtinTypes) {
+		for (BuiltinTypeRef builtinType : builtinTypes) {
 			
-			final ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> resolvedBuiltinType = new ResolvedTypeBuiltin<>(
-					builtinType,
-					astModel.getBuiltinTypeName(builtinType));
+			final ResolvedType resolvedBuiltinType = new ResolvedTypeBuiltin(builtinType);
 			
 			addBuiltinType(resolvedBuiltinType);
 		}
@@ -58,11 +58,11 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 		return codeMap.addFile(fileSpec.getDistinctName(), null);
 	}
 
-	public int addResolvedFile(ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> file, int [] types) {
+	public int addResolvedFile(ResolvedFile file, int [] types) {
 		return codeMap.addFile(file.getSpec().getDistinctName(), types);
 	}
 
-	private int [] getExtendsFrom(ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> type, TypeVariant typeVariant) {
+	private int [] getExtendsFrom(ResolvedType type, TypeVariant typeVariant) {
 		
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(typeVariant);
@@ -109,22 +109,21 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 		return extendsFrom;
 	}
 
-	private int addBuiltinType(ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> type) {
-		return addType(type, astModel.getBuiltinTypeName(type.getBuiltinType()), 0, null, null);
+	private int addBuiltinType(ResolvedType type) {
+		return addType(type, type.getBuiltinType().getTypeName(), 0, null, null);
 	}
 
-	public int addType(ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> type) {
+	public int addType(COMPILATION_UNIT compilationUnit, ResolvedType type) {
 		
 		return addType(
 				type,
 				type.getTypeName(),
-				astModel.getNumMethods(type.getType()),
+				astModel.getNumMethods(compilationUnit, type.getType()),
 				getExtendsFrom(type, TypeVariant.CLASS),
 				getExtendsFrom(type, TypeVariant.INTERFACE));
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public int addType(ResolvedType<?, ?, ?> type, TypeName typeName, int numMethods, int [] classesExtendsFrom, int [] interfacesExtendsFrom) {
+	public int addType(ResolvedType type, TypeName typeName, int numMethods, int [] classesExtendsFrom, int [] interfacesExtendsFrom) {
 		final int typeNo = codeMap.addType(
 				type.getTypeVariant(),
 				numMethods,
@@ -143,7 +142,7 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 		return typeNo;
 	}
 	
-	public ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getType(TypeName completeName) {
+	public ResolvedType getType(TypeName completeName) {
 		final int typeNo = getTypeNo(completeName);
 		
 		return resolvedTypes[typeNo];
@@ -154,7 +153,7 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 	}
 
 	@Override
-	public COMPLEXTYPE getType(int typeNo) {
+	public UserDefinedTypeRef getType(int typeNo) {
 		return resolvedTypes[typeNo].getType();
 	}
 
@@ -166,7 +165,7 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 	}
 
 	@Override
-	public ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> getClassThisExtendsFrom(TypeName classType) {
+	public ResolvedType getClassThisExtendsFrom(TypeName classType) {
 
 		final int type = codeMap.getClassThisExtendsFrom(getTypeNo(classType));
 		
@@ -175,13 +174,13 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 	
 
 	@Override
-	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getInterfacesImplement(TypeName classType) {
+	public Collection<ResolvedType> getInterfacesImplement(TypeName classType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Collection<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getInterfacesExtendFrom(TypeName interfaceType) {
+	public Collection<ResolvedType> getInterfacesExtendFrom(TypeName interfaceType) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -212,6 +211,8 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 		if (numArrayDimensions > 0) {
 			throw new UnsupportedOperationException();
 		}
+
+		System.out.println("## get type " + fieldType);
 		
 		final int fieldTypeNo = codeMap.getTypeNoByTypeName(fieldType);
 		if (fieldTypeNo < 0) {
@@ -242,7 +243,7 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 	}
 
 	@Override
-	public List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getDirectExtendingThis(TypeName type) {
+	public List<ResolvedType> getDirectExtendingThis(TypeName type) {
 		
 		Objects.requireNonNull(type);
 		
@@ -250,7 +251,7 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 		
 		final int [] types = codeMap.getTypesDirectlyExtendingThis(typeNo);
 		
-		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> result = new ArrayList<>(types.length);
+		final List<ResolvedType> result = new ArrayList<>(types.length);
 		
 		for (int resultTypeNo : types) {
 			result.add(resolvedTypes[resultTypeNo]);
@@ -260,7 +261,7 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 	}
 
 	@Override
-	public List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> getAllSubtypes(TypeName type) {
+	public List<ResolvedType> getAllSubtypes(TypeName type) {
 		
 		Objects.requireNonNull(type);
 		
@@ -268,7 +269,7 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 		
 		final int [] types = codeMap.getAllTypesExtendingThis(typeNo);
 		
-		final List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> result = new ArrayList<>(types.length);
+		final List<ResolvedType> result = new ArrayList<>(types.length);
 		
 		for (int resultTypeNo : types) {
 			result.add(resolvedTypes[resultTypeNo]);

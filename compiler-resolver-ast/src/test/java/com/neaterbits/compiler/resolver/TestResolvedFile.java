@@ -1,16 +1,14 @@
 package com.neaterbits.compiler.resolver;
 
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
+import java.util.Arrays;
+
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.NameFileSpec;
 
-public class TestResolvedFile extends BaseTestFile<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>>
-		implements ResolvedFile<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
+public class TestResolvedFile extends ResolvedFile {
 
-	@SafeVarargs
-	public TestResolvedFile(String name, ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> ... resolvedTypes) {
-		super(name, resolvedTypes);
+	public TestResolvedFile(String name, ResolvedType ... resolvedTypes) {
+		super(new NameFileSpec(name), Arrays.asList(resolvedTypes));
 	}
 }
