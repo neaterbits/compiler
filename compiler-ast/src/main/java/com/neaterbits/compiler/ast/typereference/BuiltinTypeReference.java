@@ -12,15 +12,14 @@ public final class BuiltinTypeReference extends ResolvedNamedTypeReference {
 	private final BuiltinType type;
 
 	public BuiltinTypeReference(Context context, BuiltinType type) {
-		super(context);
+		super(context, type.getTypeName());
 
 		Objects.requireNonNull(type);
 		
 		this.type = type;
 	}
 
-	@Override
-	public BuiltinType getNamedType() {
+	public BuiltinType getBuiltinType() {
 		return type;
 	}
 

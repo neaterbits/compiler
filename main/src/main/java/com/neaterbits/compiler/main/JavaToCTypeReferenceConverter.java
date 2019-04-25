@@ -23,9 +23,13 @@ final class JavaToCTypeReferenceConverter<T extends MappingJavaToCConverterState
 					(BuiltinType)convertedType);
 		}
 		else if (convertedType instanceof TypeDefType) {
+			
+			final TypeDefType typeDefType = (TypeDefType)convertedType;
+			
 			converted = new TypeDefTypeReference(
 					typeReference.getContext(),
-					(TypeDefType)convertedType);
+					typeDefType.getTypeName(),
+					null);
 		}
 		else {
 			throw new UnsupportedOperationException();

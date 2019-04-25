@@ -1,24 +1,30 @@
 package com.neaterbits.compiler.ast.typereference;
 
-import com.neaterbits.compiler.ast.type.NamedType;
+import java.util.Objects;
+
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
 
 public abstract class ResolvedNamedTypeReference extends ResolvedTypeReference {
 
-	public ResolvedNamedTypeReference(Context context) {
+	private final TypeName typeName;
+	
+	public ResolvedNamedTypeReference(Context context, TypeName typeName) {
 		super(context);
+		
+		Objects.requireNonNull(typeName);
+		
+		this.typeName = typeName;
 	}
 
-	public abstract NamedType getNamedType();
 
 	@Override
 	public final TypeName getTypeName() {
-		return getNamedType().getTypeName();
+		return typeName;
 	}
 
 	@Override
 	public String getDebugName() {
-		return getTypeName().getName();
+		return typeName.getName();
 	}
 }

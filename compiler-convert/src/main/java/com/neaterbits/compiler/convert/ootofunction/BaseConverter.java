@@ -33,7 +33,7 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 	}
 
 	protected final BuiltinType convertBuiltinType(TypeReference typeReference, T state) {
-		return ((BuiltinTypeReference)typeReference).getNamedType();
+		return ((BuiltinTypeReference)typeReference).getBuiltinType();
 	}
 
 	protected final BaseType convertType(BaseType type, T state) {

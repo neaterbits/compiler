@@ -2,8 +2,6 @@ package com.neaterbits.compiler.convert.ootofunction;
 
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.ast.type.PointerType;
-import com.neaterbits.compiler.ast.type.TypeDefType;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
@@ -24,14 +22,12 @@ public abstract class BaseTypeReferenceConverter<T extends ConverterState<T>>
 	public TypeReference onBuiltinTypeReference(BuiltinTypeReference typeReference, T param) {
 		return new BuiltinTypeReference(
 				typeReference.getContext(),
-				(BuiltinType)convertType(typeReference.getNamedType(), param));
+				(BuiltinType)convertType(typeReference.getBuiltinType(), param));
 	}
 
 	@Override
 	public TypeReference onComplexTypeReference(ComplexTypeReference typeReference, T param) {
-		return new ComplexTypeReference(
-				typeReference.getContext(),
-				(ComplexType<?, ?, ?>)convertType(typeReference.getNamedType(), param));
+		return new ComplexTypeReference(typeReference.getContext(), typeReference.getTypeName());
 	}
 
 	@Override
@@ -52,7 +48,8 @@ public abstract class BaseTypeReferenceConverter<T extends ConverterState<T>>
 	public TypeReference onTypeDefTypeReference(TypeDefTypeReference typeReference, T param) {
 		return new TypeDefTypeReference(
 				typeReference.getContext(),
-				(TypeDefType)convertType(typeReference.getNamedType(), param));
+				typeReference.getTypeName(),
+				typeReference.getAliasedType());
 	}
 
 	@Override

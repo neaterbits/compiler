@@ -14,7 +14,6 @@ import com.neaterbits.compiler.ast.block.MethodName;
 import com.neaterbits.compiler.ast.type.BaseType;
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
-import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.complex.StructType;
@@ -76,13 +75,16 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 					
 				}
 				else if (fieldType instanceof ComplexTypeReference) {
+
+					throw new UnsupportedOperationException();
 					
+					/*
 					final ComplexTypeReference complexTypeReference = (ComplexTypeReference)fieldType;
 
-					final NamedType type = complexTypeReference.getNamedType();
+					final TypeName type = complexTypeReference.getTypeName();
 					
 					if (type instanceof ClassType) {
-						final StructType alreadyConverted = alreadyConvertedMap.getClassStructType(type.getTypeName());
+						final StructType alreadyConverted = alreadyConvertedMap.getClassStructType(type);
 						
 						if (alreadyConverted != null) {
 							convertedTypeReference = new ComplexTypeReference(
@@ -104,6 +106,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 					else {
 						throw new UnsupportedOperationException();
 					}
+					*/
 				}
 				else {
 					throw new UnsupportedOperationException("Unknown field type " + fieldType);
@@ -160,7 +163,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 			// Add a class member for the base type
 			final StructDataFieldMember structDataFieldMember = new StructDataFieldMember(
 					classDefinition.getContext(),
-					new ComplexTypeReference(classDefinition.getContext(), baseStructType),
+					new ComplexTypeReference(classDefinition.getContext(), baseStructType.getTypeName()),
 					classToFieldName.apply(extendsFromType.getCompleteName()));
 			
 			structMembers.add(structDataFieldMember);

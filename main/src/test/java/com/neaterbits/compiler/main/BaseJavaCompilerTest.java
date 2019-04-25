@@ -218,7 +218,7 @@ public abstract class BaseJavaCompilerTest {
 			}
 			
 			
-			final ComplexTypeReference structReference = new ComplexTypeReference(reference.getContext(), convertedStructType);
+			final ComplexTypeReference structReference = new ComplexTypeReference(reference.getContext(), convertedStructType.getTypeName());
 
 			reference.replaceWith(structReference);
 		}

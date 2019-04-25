@@ -281,7 +281,7 @@ public class ObjectProgramModel
 			
 			final BuiltinTypeReference builtinTypeReference = (BuiltinTypeReference)element;
 			
-			final BuiltinType builtinType = (BuiltinType)builtinTypeReference.getNamedType();
+			final BuiltinType builtinType = (BuiltinType)builtinTypeReference.getBuiltinType();
 			
 			typeName = builtinType.getTypeName();
 		}

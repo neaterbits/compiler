@@ -4,7 +4,7 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.list.ASTSingle;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.type.primitive.ArrayType;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolvedNamedTypeReference;
@@ -39,7 +39,7 @@ public final class ArrayAccessExpression extends Primary {
 		final ResolvedNamedTypeReference typeRef = (ResolvedNamedTypeReference)array.get().getType();
 		final ArrayType arrayType = null; // (ArrayType)typeRef.getNamedType();
 
-		return new ComplexTypeReference(getContext(), (ComplexType<?, ?, ?>)arrayType.getElementType());
+		return new ComplexTypeReference(getContext(), ((NamedType)arrayType.getElementType()).getTypeName());
 	}
 
 	@Override

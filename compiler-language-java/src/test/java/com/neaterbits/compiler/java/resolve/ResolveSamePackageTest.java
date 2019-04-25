@@ -15,7 +15,6 @@ import com.neaterbits.compiler.ast.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.NamespaceDeclaration;
-import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
@@ -89,11 +88,9 @@ public class ResolveSamePackageTest extends BaseCompilerTest {
 		assertThat(fieldModifierHolder.getModifier() instanceof FieldVisibility).isTrue();
 		
 		final ComplexTypeReference typeReference = get(iter);
-		assertThat(typeReference.getNamedType() instanceof NamedType).isTrue();
-		final NamedType namedType = (NamedType)typeReference.getNamedType();
-		assertThat(namedType.getTypeName().getNamespace()).isEqualTo(new String [] { "com", "test" });
-		assertThat(namedType.getTypeName().getOuterTypes()).isNull();
-		assertThat(namedType.getTypeName().getName()).isEqualTo("Refered");
+		assertThat(typeReference.getTypeName().getNamespace()).isEqualTo(new String [] { "com", "test" });
+		assertThat(typeReference.getTypeName().getOuterTypes()).isNull();
+		assertThat(typeReference.getTypeName().getName()).isEqualTo("Refered");
 		
 		final FieldNameDeclaration fieldName = get(iter);
 		assertThat(fieldName.getName()).isEqualTo("refered");

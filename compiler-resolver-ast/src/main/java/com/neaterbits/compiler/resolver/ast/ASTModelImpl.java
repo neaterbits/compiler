@@ -92,7 +92,7 @@ public final class ASTModelImpl implements ASTTypesModel<CompilationUnit, Builti
 			
 			final ScopedName toResolve = resolveLaterTypeReference.getScopedName();
 			
-			MethodInvocationExpressionResolver.updateOnResolve(toResolve, type, typeResolveMode, methodInvocationExpression);
+			MethodInvocationExpressionResolver.updateOnResolve(toResolve, type.getTypeName(), typeResolveMode, methodInvocationExpression);
 			break;
 			
 		default:
@@ -109,7 +109,7 @@ public final class ASTModelImpl implements ASTTypesModel<CompilationUnit, Builti
 			throw new IllegalStateException();
 		}
 		
-		element.replaceWith(new ComplexTypeReference(element.getContext(), complexType));
+		element.replaceWith(new ComplexTypeReference(element.getContext(), complexType.getTypeName()));
 	}
 
 	@Override

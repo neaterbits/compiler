@@ -102,7 +102,7 @@ class TypeFinder {
 						if (e instanceof BuiltinTypeReference) {
 							final BuiltinTypeReference typeReference = (BuiltinTypeReference)e;
 							
-							if (!(typeReference.getNamedType() instanceof ScalarType)) {
+							if (!(typeReference.getBuiltinType() instanceof ScalarType)) {
 								throw new IllegalStateException("Expected only scalar types to be resolved");
 							}
 						}
