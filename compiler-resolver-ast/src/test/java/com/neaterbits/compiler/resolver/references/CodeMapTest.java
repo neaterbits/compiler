@@ -20,6 +20,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.IntValue;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
@@ -48,13 +49,14 @@ public class CodeMapTest extends BaseResolveTest {
 
 		final ResolvedFile testFile = new TestResolvedFile("TestFile.java");
 
-		final ClassDefinition classDefinition = makeClassType(namespace, className);
+		final IntValue classTokenSequenceNo = new IntValue(1);
+		
+		final ClassDefinition classDefinition = makeClassType(namespace, className, classTokenSequenceNo);
 
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				Context.makeTestContext(classTokenSequenceNo.getValue()),
 				Collections.emptyList(),
 				Arrays.asList(classDefinition));
-		
 		
 		final UserDefinedTypeRef classType = new UserDefinedTypeRef(
 				TypeName.fromNamespace(namespace, className),
@@ -109,10 +111,12 @@ public class CodeMapTest extends BaseResolveTest {
 		final String interfaceName = "TestInterface";
 		final ScopedName scopedName = new ScopedName(namespace, interfaceName);
 		
-		final InterfaceDefinition interfaceDefinition = makeInterfaceType(namespace, interfaceName);
+		final IntValue interfaceTokenSequenceNo = new IntValue(1);
+		
+		final InterfaceDefinition interfaceDefinition = makeInterfaceType(namespace, interfaceName, interfaceTokenSequenceNo);
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				Context.makeTestContext(interfaceTokenSequenceNo.increment()),
 				Collections.emptyList(),
 				Arrays.asList(interfaceDefinition));
 		
@@ -162,10 +166,11 @@ public class CodeMapTest extends BaseResolveTest {
 		final List<String> classNamespace = Arrays.asList("com", "test");
 		final String className = "TestClass";
 		final ScopedName classScopedName = new ScopedName(classNamespace, className);
-		final ClassDefinition classDefinition = makeClassType(classNamespace, className);
-		
+
+		final IntValue classTokenSequenceNo = new IntValue(1);
+		final ClassDefinition classDefinition = makeClassType(classNamespace, className, classTokenSequenceNo);
 		final CompilationUnit classCompilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				Context.makeTestContext(classTokenSequenceNo.increment()),
 				Collections.emptyList(),
 				Arrays.asList(classDefinition));
 		
@@ -179,10 +184,11 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		final ScopedName interfaceScopedName = new ScopedName(interfaceNamespace, interfaceName);
 		
-		final InterfaceDefinition interfaceDefinition = makeInterfaceType(interfaceNamespace, interfaceName);
+		final IntValue interfaceTokenSequenceNo = new IntValue(1);
+		final InterfaceDefinition interfaceDefinition = makeInterfaceType(interfaceNamespace, interfaceName, interfaceTokenSequenceNo);
 		
 		final CompilationUnit interfaceCompilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				Context.makeTestContext(interfaceTokenSequenceNo.increment()),
 				Collections.emptyList(),
 				Arrays.asList(interfaceDefinition));
 		
@@ -214,6 +220,7 @@ public class CodeMapTest extends BaseResolveTest {
 				null);
 
 		final int interfaceTypeNo = codeMap.addType(interfaceCompilationUnit, resolvedInterface);
+		
 		
 		final int classTypeNo = codeMap.addType(classCompilationUnit, resolvedClass);
 		
@@ -271,12 +278,27 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		final ResolvedFile resolvedFile = new TestResolvedFile(file);
 
-		final ResolvedType resolvedType = makeResolvedType(astModel, resolvedFile, name, typeVariant, extendsFrom);
+		final IntValue classTokenSequenceNo = new IntValue(1);
 
+		final TypeName typeName = makeTypeName(name);
+
+		final ClassDefinition classDefinition = makeClassType(
+				Arrays.asList(typeName.getNamespace()),
+				typeName.getName(),
+				classTokenSequenceNo);
+		
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				Context.makeTestContext(classTokenSequenceNo.increment()),
 				Collections.emptyList(),
-				Collections.emptyList());
+				Arrays.asList(classDefinition));
+
+		final ResolvedType resolvedType = makeResolvedType(
+				astModel,
+				resolvedFile,
+				typeName,
+				typeVariant,
+				compilationUnit.getParseTreeRefFromElement(classDefinition),
+				extendsFrom);
 		
 		final int typeNo = codeMap.addType(compilationUnit, resolvedType);
 
@@ -285,10 +307,10 @@ public class CodeMapTest extends BaseResolveTest {
 		return resolvedType;
 	}
 	
-	private static ClassDefinition makeClassType(Collection<String> namespace, String name) {
+	private static ClassDefinition makeClassType(Collection<String> namespace, String name, IntValue tokenSequenceNo) {
 		
-		final Context context = Context.makeTestContext();
-		final Context nameContext = Context.makeTestContext();
+		final Context context = Context.makeTestContext(tokenSequenceNo.increment());
+		final Context nameContext = Context.makeTestContext(tokenSequenceNo.increment());
 		
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
@@ -303,10 +325,10 @@ public class CodeMapTest extends BaseResolveTest {
 		return classDefinition;
 	}
 
-	private static InterfaceDefinition makeInterfaceType(Collection<String> namespace, String name) {
+	private static InterfaceDefinition makeInterfaceType(Collection<String> namespace, String name, IntValue tokenSequenceNo) {
 		
-		final Context context = Context.makeTestContext();
-		final Context nameContext = Context.makeTestContext();
+		final Context context = Context.makeTestContext(tokenSequenceNo.increment());
+		final Context nameContext = Context.makeTestContext(tokenSequenceNo.increment());
 		
 		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(
 				context,

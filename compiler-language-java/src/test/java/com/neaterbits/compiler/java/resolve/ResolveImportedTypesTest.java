@@ -8,10 +8,13 @@ import org.junit.Test;
 
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
+import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompileFileCollector;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
 import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
 
 public class ResolveImportedTypesTest extends BaseCompilerTest {
@@ -59,11 +62,24 @@ public class ResolveImportedTypesTest extends BaseCompilerTest {
 				+ " private Integer integer;\n"
 				+ "}\n";
 		
-		final CompiledAndResolvedFile compiled = compile(
-				"JavaLangTestClass.java",
+		final TypeName integerType = new TypeName(new String [] { "java", "lang" }, null, "Integer");
+		
+		final IntCompilerCodeMap codeMap = new IntCompilerCodeMap();
+		
+		final int integerTypeNo = codeMap.addType(TypeVariant.CLASS, null, null);
+		
+		codeMap.addMapping(integerType, integerTypeNo);
+		
+		final NameFileSpec fileSpec = new NameFileSpec("JavaLangTestClass.java");
+		
+		final CompiledAndMappedFiles compiledAndMapped = compileAndMap(
+				fileSpec,
 				source,
 				new TestResolvedTypes()
-					.addType("java.lang.Integer"));
+					.addType("java.lang.Integer"),
+				codeMap);
+		
+		final CompiledAndResolvedFile compiled = compiledAndMapped.getFile(fileSpec);
 		
 		assertThat(compiled.getErrors()).isEmpty();
 		

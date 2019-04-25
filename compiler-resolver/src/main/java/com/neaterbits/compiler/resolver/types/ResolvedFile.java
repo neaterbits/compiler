@@ -33,4 +33,9 @@ public class ResolvedFile implements FileInfo {
 	public final Collection<ResolvedType> getTypes() {
 		return resolvedTypes;
 	}
+
+	@Override
+	public String toString() {
+		return "ResolvedFile [fileSpec=" + fileSpec + ", resolvedTypes=" + resolvedTypes + "]";
+	}
 }

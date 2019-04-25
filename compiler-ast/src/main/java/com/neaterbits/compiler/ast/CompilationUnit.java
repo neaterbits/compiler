@@ -21,7 +21,14 @@ public class CompilationUnit extends CompilationCodeLines {
 		this.iterateNodeFirst(e -> {
 		
 			if (!e.isPlaceholderElement()) {
-				elementsByParseTreeRef.put(e.getContext().getStartOffset(), e);
+				
+				final int tokenSequenceNo = e.getContext().getTokenSequenceNo();
+				
+				if (tokenSequenceNo < 0) {
+					throw new IllegalArgumentException("No sequence no for token " + e.getClass().getSimpleName());
+				}
+				
+				elementsByParseTreeRef.put(tokenSequenceNo, e);
 			}
 		});
 	}
@@ -46,7 +53,13 @@ public class CompilationUnit extends CompilationCodeLines {
 		
 		final Context context = element.getContext();
 		
-		return context.getTokenSequenceNo();
+		final int sequenceNo = context.getTokenSequenceNo();
+		
+		if (sequenceNo < 0) {
+			throw new IllegalStateException();
+		}
+		
+		return sequenceNo;
 	}
 
 }

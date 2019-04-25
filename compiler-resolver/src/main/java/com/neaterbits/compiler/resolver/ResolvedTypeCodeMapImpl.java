@@ -211,6 +211,8 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT>
 		if (numArrayDimensions > 0) {
 			throw new UnsupportedOperationException();
 		}
+
+		System.out.println("## get type " + fieldType);
 		
 		final int fieldTypeNo = codeMap.getTypeNoByTypeName(fieldType);
 		if (fieldTypeNo < 0) {

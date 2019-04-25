@@ -22,6 +22,7 @@ import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.IntValue;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
@@ -50,10 +51,13 @@ public class FileResolverTest extends BaseResolveTest {
 
 		final FileSpec testFileSpec = new NameFileSpec("TestClass.java");
 		final TypeName testClass = makeTypeName("com.test.TestClass");
-		final ClassDefinition testClassDefinition = makeClassType(testClass);
+		
+		final IntValue tokenSequenceNo = new IntValue(1);
+		
+		final ClassDefinition testClassDefinition = makeClassType(testClass, tokenSequenceNo);
 		
 		final CompilationUnit testCompilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				Context.makeTestContext(tokenSequenceNo.increment()),
 				Collections.emptyList(),
 				Arrays.asList(testClassDefinition));
 		
@@ -70,12 +74,15 @@ public class FileResolverTest extends BaseResolveTest {
 				null, 
 				null);
 		
-		final Context context = Context.makeTestContext();
+		
+		final IntValue anotherTokenSequenceNo = new IntValue(1);
+		
+		final Context context = Context.makeTestContext(anotherTokenSequenceNo.increment());
 		
 		final FileSpec anotherTestFileSpec = new NameFileSpec("AnotherTestClass.java");
 		final TypeName anotherTestClass = makeTypeName("com.test.AnotherTestClass");
 		
-		final ClassDefinition anotherTestClassDefinition = makeClassType(anotherTestClass);
+		final ClassDefinition anotherTestClassDefinition = makeClassType(anotherTestClass, anotherTokenSequenceNo);
 
 		final CompilationUnit anotherCompilationUnit = new CompilationUnit(
 				context,
@@ -120,13 +127,13 @@ public class FileResolverTest extends BaseResolveTest {
 		*/
 	}
 	
-	private static ClassDefinition makeClassType(TypeName anotherTestClass) {
+	private static ClassDefinition makeClassType(TypeName anotherTestClass, IntValue tokenSequenceNo) {
 		
 		return new ClassDefinition(
-						Context.makeTestContext(),
+						Context.makeTestContext(tokenSequenceNo.increment()),
 						new ClassModifiers(Collections.emptyList()),
-						new Keyword(Context.makeTestContext(), "class"),
-						new ClassDeclarationName(Context.makeTestContext(), new ClassName(anotherTestClass.getName())),
+						new Keyword(Context.makeTestContext(tokenSequenceNo.increment()), "class"),
+						new ClassDeclarationName(Context.makeTestContext(tokenSequenceNo.increment()), new ClassName(anotherTestClass.getName())),
 						null,
 						null,
 						null,

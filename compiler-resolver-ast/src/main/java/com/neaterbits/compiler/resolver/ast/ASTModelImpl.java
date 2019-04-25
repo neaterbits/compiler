@@ -115,6 +115,10 @@ public final class ASTModelImpl implements ASTTypesModel<CompilationUnit> {
 
 	@Override
 	public int getNumMethods(CompilationUnit compilationUnit, UserDefinedTypeRef userDefinedType) {
+
+		Objects.requireNonNull(compilationUnit);
+		Objects.requireNonNull(userDefinedType);
+		
 		int numMethods = 0;
 		
 		final ComplexTypeDefinition<?, ?> complexType = (ComplexTypeDefinition<?, ?>)compilationUnit.getElementFromParseTreeRef(userDefinedType.getParseTreeRef());

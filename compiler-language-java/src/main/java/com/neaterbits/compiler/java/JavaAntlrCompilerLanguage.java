@@ -17,6 +17,7 @@ import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.CompilationUnitModel;
 import com.neaterbits.compiler.util.model.LibraryTypeRef;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
+import com.neaterbits.compiler.util.model.TypeSource;
 import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.compiler.util.parse.Parser;
 import com.neaterbits.compiler.util.passes.CompilerBuilderIntermediate;

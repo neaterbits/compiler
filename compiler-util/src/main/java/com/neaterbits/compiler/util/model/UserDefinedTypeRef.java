@@ -17,6 +17,10 @@ public class UserDefinedTypeRef extends BaseTypeRef {
 		Objects.requireNonNull(typeName);
 		Objects.requireNonNull(sourceFile);
 		
+		if (parseTreeRef < 0) {
+			throw new IllegalArgumentException();
+		}
+		
 		this.sourceFile = sourceFile;
 		this.parseTreeRef = parseTreeRef;
 	}

@@ -2,6 +2,7 @@ package com.neaterbits.compiler.resolver;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import com.neaterbits.compiler.resolver.types.BaseResolverType;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
@@ -33,6 +34,8 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType {
 
 		super(file, new TypeSpec(scopedName, typeVariant));
 
+		Objects.requireNonNull(type);
+		
 		this.type = type;
 		
 		this.nestedTypes = nestedTypes;

@@ -18,6 +18,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 public abstract class BaseResolveTest {
 
@@ -66,11 +67,10 @@ public abstract class BaseResolveTest {
 	protected static ResolvedType makeResolvedType(
 			ASTTypesModel<CompilationUnit> astModel,
 			ResolvedFile resolvedFile,
-			String name,
+			TypeName typeName,
 			TypeVariant typeVariant,
+			int parseTreeRef,
 			ResolvedType ... extendsFrom) {
-		
-		final ScopedName scopedName = makeScopedName(name);
 		
 		final List<ResolvedTypeDependency> extendsFromDependencies = Arrays.stream(extendsFrom)
 				.map(type -> new ResolvedTypeDependency(
@@ -82,7 +82,14 @@ public abstract class BaseResolveTest {
 				.collect(Collectors.toList());
 		
 		final ResolvedType resolvedType
-				= new TestResolvedType(resolvedFile.getSpec(), scopedName, typeVariant, null, null, extendsFromDependencies, null);
+				= new TestResolvedType(
+						resolvedFile.getSpec(),
+						typeName.toScopedName(),
+						typeVariant,
+						new UserDefinedTypeRef(typeName, resolvedFile.getSpec(), parseTreeRef),
+						null,
+						extendsFromDependencies, 
+						null);
 
 		return resolvedType;
 	}

@@ -194,7 +194,6 @@ public class CrossReferenceTest extends BaseCompilerTest {
 		final int sourceFile = compiledAndMapped.getSourceFileNo(mainClass);
 		assertThat(sourceFile).isGreaterThan(0);
 		
-		System.out.println("## parse tree reference " + varDeclarationSourceToken.getParseTreeReference());
 		final int varDeclarationToken = codeMap.getTokenForParseTreeRef(sourceFile, varDeclarationSourceToken.getParseTreeReference());
 		assertThat(varDeclarationToken).isGreaterThan(0);
 		
