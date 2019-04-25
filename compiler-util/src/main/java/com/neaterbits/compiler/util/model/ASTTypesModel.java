@@ -1,9 +1,6 @@
-package com.neaterbits.compiler.resolver;
+package com.neaterbits.compiler.util.model;
 
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.model.BuiltinTypeRef;
-import com.neaterbits.compiler.util.model.LibraryTypeRef;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 public interface ASTTypesModel<COMPILATION_UNIT> {
 

@@ -19,6 +19,7 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.model.ASTTypesModel;
 import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.model.LibraryTypeRef;

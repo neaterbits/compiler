@@ -7,12 +7,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ASTTypesModel;
 import com.neaterbits.compiler.util.model.MethodVariant;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.parse.ParsedFile;

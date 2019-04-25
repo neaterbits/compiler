@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.BaseResolveTest;
 import com.neaterbits.compiler.resolver.ReferenceType;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
@@ -24,6 +23,7 @@ import com.neaterbits.compiler.util.IntValue;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.model.ASTTypesModel;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;

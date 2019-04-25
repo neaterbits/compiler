@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.FilesResolver;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledFiles;
+import com.neaterbits.compiler.util.model.ASTTypesModel;
 import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.parse.ParsedFile;

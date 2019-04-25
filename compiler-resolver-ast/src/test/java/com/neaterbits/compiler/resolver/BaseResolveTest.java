@@ -18,6 +18,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.model.ASTTypesModel;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 public abstract class BaseResolveTest {

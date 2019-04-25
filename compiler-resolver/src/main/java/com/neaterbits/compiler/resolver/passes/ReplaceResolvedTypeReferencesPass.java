@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.neaterbits.compiler.resolver.ASTTypesModel;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolvedTypesMap;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
@@ -14,6 +13,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.util.BuiltinTypesMap;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.model.ASTTypesModel;
 import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 import com.neaterbits.compiler.util.model.LibraryTypeRef;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;

@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver;
+package com.neaterbits.compiler.util.model;
 
 public enum UpdateOnResolve {
 

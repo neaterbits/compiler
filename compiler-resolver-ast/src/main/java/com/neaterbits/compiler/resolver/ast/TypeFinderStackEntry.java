@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.resolver.ReferenceType;
-import com.neaterbits.compiler.resolver.UpdateOnResolve;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.model.UpdateOnResolve;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.NamespaceReference;

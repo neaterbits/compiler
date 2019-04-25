@@ -1,8 +1,6 @@
-package com.neaterbits.compiler.resolver;
+package com.neaterbits.compiler.util.model;
 
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.Mutability;
-import com.neaterbits.compiler.util.model.Visibility;
 
 @FunctionalInterface
 public interface ASTFieldVisitor {

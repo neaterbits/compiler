@@ -31,7 +31,6 @@ import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.ReferenceType;
-import com.neaterbits.compiler.resolver.UpdateOnResolve;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
@@ -39,6 +38,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.UpdateOnResolve;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 class TypeFinder {
