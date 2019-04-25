@@ -89,7 +89,7 @@ public class ReplaceResolvedTypeReferencesPass<PARSED_FILE extends ParsedFile, C
 					
 						final COMPLEXTYPE type = dependencyType.getType();
 						
-						astModel.replaceWithComplexType(compilationUnit, typeDependency.getTypeReferenceElement(), type);
+						astModel.replaceWithUserDefinedType(compilationUnit, typeDependency.getTypeReferenceElement(), type);
 					}
 					else {
 						final BUILTINTYPE builtinType = builtinTypesMap.lookupType(typeDependency.getCompleteName().toScopedName());

@@ -14,19 +14,25 @@ import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.util.parse.ParsedFile;
+import com.neaterbits.compiler.util.passes.ParsedFiles;
 
-public final class MethodsResolver<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
+public final class MethodsResolver<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 
+	private final ParsedFiles<PARSED_FILE> parsedFiles;
 	private final ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap;
 	private final ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel;
 	
 	public MethodsResolver(
+			ParsedFiles<PARSED_FILE> parsedFiles,
 			ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap,
 			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel) {
 
+		Objects.requireNonNull(parsedFiles);
 		Objects.requireNonNull(codeMap);
 		Objects.requireNonNull(astModel);
 
+		this.parsedFiles = parsedFiles;
 		this.codeMap = codeMap;
 		this.astModel = astModel;
 	}
@@ -91,6 +97,7 @@ public final class MethodsResolver<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, L
 		Objects.requireNonNull(resolvedType);
 		
 		// Pass typeNo to references since faster lookup
+		final COMPILATION_UNIT compilationUnit = parsedFiles.getParsedFile(resolvedType.getFile()).getCompilationUnit();
 		
 		final Integer typeNo = codeMap.getTypeNo(resolvedType.getTypeName());
 		
@@ -101,7 +108,7 @@ public final class MethodsResolver<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, L
 		switch (resolvedType.getTypeVariant()) {
 		case CLASS:
 
-			addClassMembers(resolvedType.getType(), typeNo);
+			addClassMembers(compilationUnit, resolvedType.getType(), typeNo);
 
 			// Have added all methods, compute extends from/by
 			codeMap.computeMethodExtends(resolvedType.getTypeName());
@@ -112,12 +119,15 @@ public final class MethodsResolver<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, L
 		}
 	}
 	
-	private void addClassMembers(COMPLEXTYPE classType, int typeNo) {
+	private void addClassMembers(COMPILATION_UNIT compilationUnit, COMPLEXTYPE classType, int typeNo) {
 		
-		astModel.iterateClassMembers(classType,
+		astModel.iterateClassMembers(
 				
+				compilationUnit,
 				
-		(name, type, numArrayDimensions, isStatic, visibility, mutability, isVolatile, isTransient, indexInType) -> {
+				classType,
+				
+				(name, type, numArrayDimensions, isStatic, visibility, mutability, isVolatile, isTransient, indexInType) -> {
 			
 			codeMap.addField(typeNo, name, type, numArrayDimensions, isStatic, visibility, mutability, isVolatile, isTransient, indexInType);
 			

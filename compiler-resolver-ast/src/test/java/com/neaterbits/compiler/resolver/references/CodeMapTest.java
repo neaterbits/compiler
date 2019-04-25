@@ -23,11 +23,8 @@ import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.model.UserDefinedType;
 import com.neaterbits.compiler.ast.CompilationUnit;
-import com.neaterbits.compiler.ast.NamespaceReference;
-import com.neaterbits.compiler.ast.type.complex.ClassType;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
-import com.neaterbits.compiler.ast.type.complex.InterfaceType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
@@ -46,28 +43,43 @@ public class CodeMapTest extends BaseResolveTest {
 	public void testClassCodeMap() {
 
 		final ASTModelImpl astModel = new ASTModelImpl();
-		
-		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
-				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
-		
-		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
 
 		final List<String> namespace = Arrays.asList("com", "test");
 		final String className = "TestClass";
+
+		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
+
+		final ClassDefinition classDefinition = makeClassType(namespace, className);
+
+		final CompilationUnit compilationUnit = new CompilationUnit(
+				Context.makeTestContext(),
+				Collections.emptyList(),
+				Arrays.asList(classDefinition));
+		
+		
+		final UserDefinedType classType = new UserDefinedType(
+				TypeName.fromNamespace(namespace, className),
+				testFile.getSpec(),
+				compilationUnit.getParseTreeRefFromElement(classDefinition));
+		
+		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, UserDefinedType, TypeName> codeMap
+				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
+		
+
 		final ScopedName scopedName = new ScopedName(namespace, className);
 		
-		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedClass = new TestResolvedType(
+		final ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedClass = new TestResolvedType(
 				testFile.getSpec(),
 				scopedName,
 				TypeVariant.CLASS,
-				makeClassType(namespace, className));
+				classType);
 
-		final int typeNo = codeMap.addType(resolvedClass);
+		final int typeNo = codeMap.addType(compilationUnit, resolvedClass);
 
 		final int fileNo = codeMap.addResolvedFile(testFile, new int [] { typeNo });
 		assertThat(fileNo).isGreaterThanOrEqualTo(0);
 
-		final Collection<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> directSubtypes = codeMap.getDirectExtendingThis(
+		final Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> directSubtypes = codeMap.getDirectExtendingThis(
 				resolvedClass.getTypeName()
 		);
 		
@@ -76,7 +88,7 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		assertThat(codeMap.getClassThisExtendsFrom(resolvedClass.getTypeName())).isNull();
 
-		final Collection<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> allSubtypes = codeMap.getAllSubtypes(
+		final Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> allSubtypes = codeMap.getAllSubtypes(
 				resolvedClass.getTypeName());
 		
 		assertThat(allSubtypes).isNotNull();
@@ -89,7 +101,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 		final ASTModelImpl astModel = new ASTModelImpl();
 
-		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
+		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, UserDefinedType, TypeName> codeMap
 				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 		final TestResolvedFile testFile = new TestResolvedFile("TestFile.java");
@@ -98,19 +110,31 @@ public class CodeMapTest extends BaseResolveTest {
 		final String interfaceName = "TestInterface";
 		final ScopedName scopedName = new ScopedName(namespace, interfaceName);
 		
-		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedInterface = new TestResolvedType(
+		final InterfaceDefinition interfaceDefinition = makeInterfaceType(namespace, interfaceName);
+		
+		final CompilationUnit compilationUnit = new CompilationUnit(
+				Context.makeTestContext(),
+				Collections.emptyList(),
+				Arrays.asList(interfaceDefinition));
+		
+		final UserDefinedType interfaceType = new UserDefinedType(
+				TypeName.fromNamespace(namespace, interfaceName),
+				testFile.getSpec(),
+				compilationUnit.getParseTreeRefFromElement(interfaceDefinition));
+		
+		final ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedInterface = new TestResolvedType(
 				testFile.getSpec(),
 				scopedName,
 				TypeVariant.INTERFACE,
-				makeInterfaceType(namespace, interfaceName));
+				interfaceType);
 
-		final int typeNo = codeMap.addType(resolvedInterface);
+		final int typeNo = codeMap.addType(compilationUnit, resolvedInterface);
 
 		final int fileNo = codeMap.addResolvedFile(testFile, new int [] { typeNo });
 		assertThat(fileNo).isGreaterThanOrEqualTo(0);
 
 		
-		final Collection<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> directSubtypes = codeMap.getDirectExtendingThis(
+		final Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> directSubtypes = codeMap.getDirectExtendingThis(
 					resolvedInterface.getTypeName());
 
 		assertThat(directSubtypes).isNotNull();
@@ -118,7 +142,7 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		assertThat(codeMap.getClassThisExtendsFrom(resolvedInterface.getTypeName())).isNull();
 
-		final Collection<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> allSubtypes = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
+		final Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> allSubtypes = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
 		
 		assertThat(allSubtypes).isNotNull();
 		assertThat(allSubtypes).isEmpty();
@@ -129,7 +153,7 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		final ASTModelImpl astModel = new ASTModelImpl();
 		
-		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap
+		final ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, UserDefinedType, TypeName> codeMap
 				= new ResolvedTypeCodeMapImpl<>(new IntCompilerCodeMap(), Collections.emptyList(), astModel);
 		
 		final TestResolvedFile classTestFile = new TestResolvedFile("TestClass.java");
@@ -139,18 +163,40 @@ public class CodeMapTest extends BaseResolveTest {
 		final List<String> classNamespace = Arrays.asList("com", "test");
 		final String className = "TestClass";
 		final ScopedName classScopedName = new ScopedName(classNamespace, className);
-		final ClassType classType = makeClassType(classNamespace, className);
+		final ClassDefinition classDefinition = makeClassType(classNamespace, className);
+		
+		final CompilationUnit classCompilationUnit = new CompilationUnit(
+				Context.makeTestContext(),
+				Collections.emptyList(),
+				Arrays.asList(classDefinition));
+		
+		final UserDefinedType classType = new UserDefinedType(
+				TypeName.fromNamespace(classNamespace, className),
+				classTestFile.getSpec(),
+				classCompilationUnit.getParseTreeRefFromElement(classDefinition));
 		
 		final List<String> interfaceNamespace = Arrays.asList("com", "test");
 		final String interfaceName = "TestInterface";
 		
 		final ScopedName interfaceScopedName = new ScopedName(interfaceNamespace, interfaceName);
 		
-		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedInterface = new TestResolvedType(
+		final InterfaceDefinition interfaceDefinition = makeInterfaceType(interfaceNamespace, interfaceName);
+		
+		final CompilationUnit interfaceCompilationUnit = new CompilationUnit(
+				Context.makeTestContext(),
+				Collections.emptyList(),
+				Arrays.asList(interfaceDefinition));
+		
+		final UserDefinedType interfaceType = new UserDefinedType(
+				TypeName.fromNamespace(interfaceNamespace, interfaceName),
+				interfaceTestFile.getSpec(),
+				interfaceCompilationUnit.getParseTreeRefFromElement(interfaceDefinition));
+		
+		final ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedInterface = new TestResolvedType(
 				interfaceTestFile.getSpec(),
 				interfaceScopedName,
 				TypeVariant.INTERFACE,
-				makeInterfaceType(interfaceNamespace, interfaceName));
+				interfaceType);
 		
 		final ResolvedTypeDependency interfaceDependency = new ResolvedTypeDependency(
 				resolvedInterface.getTypeName(),
@@ -159,7 +205,7 @@ public class CodeMapTest extends BaseResolveTest {
 				TypeVariant.INTERFACE,
 				null, null);
 		
-		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedClass = new TestResolvedType(
+		final ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedClass = new TestResolvedType(
 				classTestFile.getSpec(),
 				classScopedName,
 				TypeVariant.CLASS,
@@ -168,9 +214,9 @@ public class CodeMapTest extends BaseResolveTest {
 				Arrays.asList(interfaceDependency),
 				null);
 
-		final int interfaceTypeNo = codeMap.addType(resolvedInterface);
+		final int interfaceTypeNo = codeMap.addType(interfaceCompilationUnit, resolvedInterface);
 		
-		final int classTypeNo = codeMap.addType(resolvedClass);
+		final int classTypeNo = codeMap.addType(classCompilationUnit, resolvedClass);
 		
 		assertThat(classTypeNo).isEqualTo(interfaceTypeNo + 1);
 
@@ -180,32 +226,32 @@ public class CodeMapTest extends BaseResolveTest {
 		final int interfaceFileNo = codeMap.addResolvedFile(interfaceTestFile, new int [] { interfaceTypeNo });
 		assertThat(interfaceFileNo).isEqualTo(classFileNo + 1);
 
-		final List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> directExtendingThis = codeMap.getDirectExtendingThis(resolvedInterface.getTypeName());
+		final List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> directExtendingThis = codeMap.getDirectExtendingThis(resolvedInterface.getTypeName());
 		
 		assertThat(directExtendingThis).isNotNull();
 		assertThat(directExtendingThis.size()).isEqualTo(1);
 		assertThat(directExtendingThis.iterator().next()).isSameAs(resolvedClass);
 
-		final List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> allExtendingThis = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
+		final List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> allExtendingThis = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
 		assertThat(allExtendingThis).isNotNull();
 		assertThat(allExtendingThis.size()).isEqualTo(1);
 		assertThat(allExtendingThis.iterator().next()).isSameAs(resolvedClass);
 
 		assertThat(codeMap.getClassThisExtendsFrom(resolvedInterface.getTypeName())).isNull();
 
-		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> anotherClass
+		final ResolvedType<BuiltinType, UserDefinedType, TypeName> anotherClass
 				= addType(astModel, codeMap, "AnotherTestClass.java", "com.test.AnotherTestClass", TypeVariant.CLASS, resolvedClass);
-		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> anotherInterface
+		final ResolvedType<BuiltinType, UserDefinedType, TypeName> anotherInterface
 				= addType(astModel, codeMap, "AnotherTestInterface.java", "com.test.AnotherTestInterface", TypeVariant.INTERFACE, resolvedInterface);
 
-		final List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> directSubtypesUpdated = codeMap.getDirectExtendingThis(resolvedInterface.getTypeName());
+		final List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> directSubtypesUpdated = codeMap.getDirectExtendingThis(resolvedInterface.getTypeName());
 
 		assertThat(directSubtypesUpdated).isNotNull();
 		assertThat(directSubtypesUpdated.size()).isEqualTo(2);
 		assertThat(directSubtypesUpdated.get(0)).isSameAs(resolvedClass);
 		assertThat(directSubtypesUpdated.get(1)).isSameAs(anotherInterface);
 
-		final List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> allSubtypesUpdated = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
+		final List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> allSubtypesUpdated = codeMap.getAllSubtypes(resolvedInterface.getTypeName());
 
 		assertThat(allSubtypesUpdated).isNotNull();
 		
@@ -216,26 +262,31 @@ public class CodeMapTest extends BaseResolveTest {
 	}
 
 	@SafeVarargs
-	private final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> addType(
-			ASTTypesModel<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> astModel,
-			ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, ComplexType<?, ?, ?>, TypeName> codeMap,
+	private final ResolvedType<BuiltinType, UserDefinedType, TypeName> addType(
+			ASTTypesModel<CompilationUnit, BuiltinType, UserDefinedType, TypeName> astModel,
+			ResolvedTypeCodeMapImpl<CompilationUnit, BuiltinType, UserDefinedType, TypeName> codeMap,
 			String file,
 			String name,
 			TypeVariant typeVariant,
-			ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> ... extendsFrom) {
+			ResolvedType<BuiltinType, UserDefinedType, TypeName> ... extendsFrom) {
 		
-		final ResolvedFile<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedFile = new TestResolvedFile(file);
+		final ResolvedFile<BuiltinType, UserDefinedType, TypeName> resolvedFile = new TestResolvedFile(file);
 
-		final ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolvedType = makeResolvedType(astModel, resolvedFile, name, typeVariant, extendsFrom);
+		final ResolvedType<BuiltinType, UserDefinedType, TypeName> resolvedType = makeResolvedType(astModel, resolvedFile, name, typeVariant, extendsFrom);
 
-		final int typeNo = codeMap.addType(resolvedType);
+		final CompilationUnit compilationUnit = new CompilationUnit(
+				Context.makeTestContext(),
+				Collections.emptyList(),
+				Collections.emptyList());
+		
+		final int typeNo = codeMap.addType(compilationUnit, resolvedType);
 
 		codeMap.addResolvedFile(resolvedFile, new int [] { typeNo });
 
 		return resolvedType;
 	}
 	
-	private static ClassType makeClassType(Collection<String> namespace, String name) {
+	private static ClassDefinition makeClassType(Collection<String> namespace, String name) {
 		
 		final Context context = Context.makeTestContext();
 		final Context nameContext = Context.makeTestContext();
@@ -249,14 +300,11 @@ public class CodeMapTest extends BaseResolveTest {
 				null,
 				null,
 				Collections.emptyList());
-		
-		return new ClassType(
-				new NamespaceReference(namespace),
-				null,
-				classDefinition);
+
+		return classDefinition;
 	}
 
-	private static InterfaceType makeInterfaceType(Collection<String> namespace, String name) {
+	private static InterfaceDefinition makeInterfaceType(Collection<String> namespace, String name) {
 		
 		final Context context = Context.makeTestContext();
 		final Context nameContext = Context.makeTestContext();
@@ -268,10 +316,7 @@ public class CodeMapTest extends BaseResolveTest {
 				new InterfaceDeclarationName(nameContext, new InterfaceName(name)),
 				null,
 				Collections.emptyList());
-		
-		return new InterfaceType(
-				new NamespaceReference(namespace),
-				null,
-				interfaceDefinition);
+
+		return interfaceDefinition;
 	}
 }

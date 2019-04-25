@@ -19,17 +19,18 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.model.UserDefinedType;
 
 class MethodInvocationExpressionResolver {
 
 	static void updateOnResolve(
 			ScopedName toResolve,
-			TypeName type,
+			UserDefinedType type,
 			TypeResolveMode resolveMode,
 			MethodInvocationExpression methodInvocationExpression) {
 		
 		
-		final ScopedName typeScopedName = type.toScopedName();
+		final ScopedName typeScopedName = type.getTypeName().toScopedName();
 		
 		final String [] toResolveParts = toResolve.getParts();
 		final String [] typeScopedNameParts = typeScopedName.getParts();
@@ -50,8 +51,8 @@ class MethodInvocationExpressionResolver {
 			updatedExpression = new MethodInvocationExpression(
 				methodInvocationExpression.getContext(),
 				MethodInvocationType.PRIMARY,
-				new ComplexTypeReference(methodInvocationExpression.getContext(), type),
-				makePrimary(methodInvocationExpression.getContext(), type, expressionPart),
+				new ComplexTypeReference(methodInvocationExpression.getContext(), type.getTypeName()),
+				makePrimary(methodInvocationExpression.getContext(), type.getTypeName(), expressionPart),
 				methodInvocationExpression.getCallable(),
 				parameters);
 		}
@@ -59,7 +60,7 @@ class MethodInvocationExpressionResolver {
 			updatedExpression = new MethodInvocationExpression(
 					methodInvocationExpression.getContext(),
 					MethodInvocationType.NAMED_CLASS_STATIC,
-					new ComplexTypeReference(methodInvocationExpression.getContext(), type),
+					new ComplexTypeReference(methodInvocationExpression.getContext(), type.getTypeName()),
 					null,
 					methodInvocationExpression.getCallable(),
 					parameters);

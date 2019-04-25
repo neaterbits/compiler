@@ -5,27 +5,27 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.resolver.types.BaseResolverType;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.UserDefinedType;
 
-final class ParsedType extends BaseResolverType implements CompiledType<ComplexType<?, ?, ?>> {
+final class ParsedType extends BaseResolverType implements CompiledType<UserDefinedType> {
 
-	private final ComplexType<?, ?, ?> type;
+	private final UserDefinedType type;
 	
-	private final List<CompiledType<ComplexType<?, ?, ?>>> nestedTypes;
+	private final List<CompiledType<UserDefinedType>> nestedTypes;
 	private final List<CompiledTypeDependency> extendsFrom;
 	private final List<CompiledTypeDependency> dependencies;
 
 	ParsedType(
 			FileSpec file,
 			TypeSpec typeSpec,
-			ComplexType<?, ?, ?> type,
-			List<CompiledType<ComplexType<?, ?, ?>>> nestedTypes,
+			UserDefinedType type,
+			List<CompiledType<UserDefinedType>> nestedTypes,
 			List<CompiledTypeDependency> extendsFrom,
 			List<CompiledTypeDependency> dependencies) {
 
@@ -42,17 +42,17 @@ final class ParsedType extends BaseResolverType implements CompiledType<ComplexT
 	}
 
 	@Override
-	public ComplexType<?, ?, ?> getType() {
+	public UserDefinedType getType() {
 		return type;
 	}
 	
 	@Override
 	public TypeName getTypeName() {
-		return type.getCompleteName().toTypeName();
+		return type.getTypeName();
 	}
 
 	@Override
-	public Collection<CompiledType<ComplexType<?, ?, ?>>> getNestedTypes() {
+	public Collection<CompiledType<UserDefinedType>> getNestedTypes() {
 		return nestedTypes;
 	}
 

@@ -25,6 +25,7 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.passes.MultiPass;
+import com.neaterbits.compiler.util.passes.ParsedFiles;
 
 import static com.neaterbits.compiler.resolver.util.ResolveUtil.forEachResolvedTypeNested;
 
@@ -79,6 +80,7 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 				typesInDependencyOrder,
 				compilerCodeMap,
 				astModel,
+				postResolveFiles,
 				sourceFileNos);
 
 		if (numResolvedOrUnresolvedFiles > numCompletelyResolvedFiles) {
@@ -115,13 +117,14 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 				typesInDependencyOrder);
 	}
 	
-	private static <COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> 
+	private static <PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> 
 		ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> makeCodeMap(
 			List<ResolvedFile<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> resolvedFiles,
 			Collection<BUILTINTYPE> builtinTypes,
 			List<ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>> typesInDependencyOrder,
 			CompilerCodeMap compilerCodeMap,
 			ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> astModel,
+			ParsedFiles<PARSED_FILE> parsedFiles,
 			Map<FileSpec, Integer> sourceFileNos) {
 	
 		final ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> codeMap = new ResolvedTypeCodeMapImpl<>(
@@ -184,7 +187,10 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 				}
 				
 				if (allExtendsFromAdded) {
-					codeMap.addType(type);
+					
+					final COMPILATION_UNIT compilationUnit = parsedFiles.getParsedFile(type.getFile()).getCompilationUnit();
+					
+					codeMap.addType(compilationUnit, type);
 					
 					iterator.remove();
 	
@@ -214,7 +220,8 @@ public final class AddTypesAndMembersToCodeMapPass<PARSED_FILE extends ParsedFil
 			typeNosList.clear();
 		}
 		
-		final MethodsResolver<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> methodsResolver = new MethodsResolver<>(codeMap, astModel);
+		final MethodsResolver<PARSED_FILE, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> methodsResolver
+				= new MethodsResolver<>(parsedFiles, codeMap, astModel);
 	
 		methodsResolver.resolveMethodsForAllTypes(resolvedFiles);
 		

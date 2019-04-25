@@ -9,10 +9,10 @@ import com.neaterbits.compiler.resolver.UpdateOnResolve;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.model.UserDefinedType;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.NamespaceReference;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
@@ -24,7 +24,7 @@ final class TypeFinderStackEntry {
 	private final List<DefinitionName> outerTypes;
 	private final boolean mayHaveNestedTypes;
 	
-	private List<CompiledType<ComplexType<?, ?, ?>>> nestedTypes;
+	private List<CompiledType<UserDefinedType>> nestedTypes;
 	private List<CompiledTypeDependency> extendsFrom;
 	private List<CompiledTypeDependency> dependencies;
 	
@@ -59,7 +59,7 @@ final class TypeFinderStackEntry {
 		return mayHaveNestedTypes;
 	}
 	
-	List<CompiledType<ComplexType<?, ?, ?>>> getNestedTypes() {
+	List<CompiledType<UserDefinedType>> getNestedTypes() {
 		return nestedTypes;
 	}
 

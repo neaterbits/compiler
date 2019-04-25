@@ -14,7 +14,6 @@ import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Module;
 import com.neaterbits.compiler.ast.Program;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
@@ -25,6 +24,7 @@ import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.model.TypeSources;
+import com.neaterbits.compiler.util.model.UserDefinedType;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.ModuleSpec;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
@@ -50,7 +50,7 @@ public class BuildAndResolve {
 			ResolvedTypes resolvedTypes) throws IOException {
 
 		final List<ASTParsedFile> parsedFiles = new ArrayList<>(inputs.size());
-		final List<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles = new ArrayList<>(inputs.size());
+		final List<CompiledFile<UserDefinedType, CompilationUnit>> allFiles = new ArrayList<>(inputs.size());
 
 		for (INPUT input : inputs) {
 			
@@ -68,7 +68,7 @@ public class BuildAndResolve {
 			}
 		}
 		
-		final ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveFilesResult
+		final ResolveFilesResult<BuiltinType, UserDefinedType, TypeName> resolveFilesResult
 				= BuildAndResolve.resolveParsedFiles(allFiles, programModel, builtinTypes, resolvedTypes);
 		
 		return new BuildAndResolveResult(parsedFiles, resolveFilesResult);
@@ -120,14 +120,14 @@ public class BuildAndResolve {
 		
 		final Program program = new Program(module);
 
-		final Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles = ProgramLoader.getCompiledFiles(program);
+		final Collection<CompiledFile<UserDefinedType, CompilationUnit>> allFiles = ProgramLoader.getCompiledFiles(program);
 		
 		resolveParsedFiles(allFiles, programModel, builtinTypes, resolvedTypes);
 	}
 
-	public static ResolveFilesResult<BuiltinType, ComplexType<?, ?, ?>, TypeName> resolveParsedFiles(
+	public static ResolveFilesResult<BuiltinType, UserDefinedType, TypeName> resolveParsedFiles(
 			
-			Collection<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> allFiles,
+			Collection<CompiledFile<UserDefinedType, CompilationUnit>> allFiles,
 			ImportsModel<CompilationUnit> importsModel,
 			Collection<BuiltinType> builtinTypes,
 			ResolvedTypes resolvedTypes) {

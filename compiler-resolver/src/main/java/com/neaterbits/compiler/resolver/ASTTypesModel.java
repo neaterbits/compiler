@@ -6,13 +6,13 @@ public interface ASTTypesModel<COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRA
 	extends ASTBuiltinTypeModel<BUILTINTYPE>,
 			ASTLibraryTypeModel<LIBRARYTYPE> {
 
-	int getNumMethods(COMPLEXTYPE complextype);
+	int getNumMethods(COMPILATION_UNIT compilationUnit, COMPLEXTYPE complextype);
 	
-	void iterateClassMembers(COMPLEXTYPE complexType, ASTFieldVisitor fieldVisitor, ASTMethodVisitor methodVisitor);
+	void iterateClassMembers(COMPILATION_UNIT compilationUnit, COMPLEXTYPE complexType, ASTFieldVisitor fieldVisitor, ASTMethodVisitor methodVisitor);
 	
 	void updateOnResolve(COMPILATION_UNIT compilationUnit, UpdateOnResolve mode, int elementParseTreeRef, COMPLEXTYPE type, TypeResolveMode typeResolveMode);
 
-	void replaceWithComplexType(COMPILATION_UNIT compilationUnit, int typeReferenceParseTreeRef, COMPLEXTYPE complexType);
+	void replaceWithUserDefinedType(COMPILATION_UNIT compilationUnit, int typeReferenceParseTreeRef, COMPLEXTYPE complexType);
 	
 	void replaceWithBuiltinType(COMPILATION_UNIT compilationUnit, int typeReferenceParseTreeRef, BUILTINTYPE builtinType);
 

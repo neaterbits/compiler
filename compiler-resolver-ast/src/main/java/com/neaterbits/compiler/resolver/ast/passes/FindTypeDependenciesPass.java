@@ -7,24 +7,24 @@ import java.util.List;
 
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
 import com.neaterbits.compiler.resolver.ast.ProgramLoader;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledFiles;
+import com.neaterbits.compiler.util.model.UserDefinedType;
 import com.neaterbits.compiler.util.passes.ParsedFiles;
 import com.neaterbits.compiler.util.passes.SingleToMultiPass;
 
 public class FindTypeDependenciesPass 
-	extends SingleToMultiPass<ASTParsedFile, CompiledFiles<ComplexType<?, ?, ?>, CompilationUnit, ASTParsedFile>> {
+	extends SingleToMultiPass<ASTParsedFile, CompiledFiles<UserDefinedType, CompilationUnit, ASTParsedFile>> {
 
 	@Override
-	public CompiledFiles<ComplexType<?, ?, ?>, CompilationUnit, ASTParsedFile> execute(Collection<ASTParsedFile> input) throws IOException {
+	public CompiledFiles<UserDefinedType, CompilationUnit, ASTParsedFile> execute(Collection<ASTParsedFile> input) throws IOException {
 		
-		final List<CompiledFile<ComplexType<?, ?, ?>, CompilationUnit>> compiledFiles
+		final List<CompiledFile<UserDefinedType, CompilationUnit>> compiledFiles
 				= new ArrayList<>(input.size());
 		
 		for (ASTParsedFile parsedFile : input) {
-			final CompiledFile<ComplexType<?, ?, ?>, CompilationUnit> compiledFile = ProgramLoader.makeCompiledFile(parsedFile);
+			final CompiledFile<UserDefinedType, CompilationUnit> compiledFile = ProgramLoader.makeCompiledFile(parsedFile);
 
 			compiledFiles.add(compiledFile);
 		}

@@ -10,15 +10,15 @@ import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.util.model.UserDefinedType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-public class TestResolvedType extends BaseResolverType implements ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName> {
+public class TestResolvedType extends BaseResolverType implements ResolvedType<BuiltinType, UserDefinedType, TypeName> {
 	
-	private final ComplexType<?, ?, ?> type;
+	private final UserDefinedType type;
 	
-	private final List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> nestedTypes;
+	private final List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> nestedTypes;
 	private final List<ResolvedTypeDependency> extendsFrom;
 	private final List<ResolvedTypeDependency> dependencies;
 	
@@ -26,8 +26,8 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
-			ComplexType<?, ?, ?> type,
-			List<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> nestedTypes,
+			UserDefinedType type,
+			List<ResolvedType<BuiltinType, UserDefinedType, TypeName>> nestedTypes,
 			List<ResolvedTypeDependency> extendsFrom,
 			List<ResolvedTypeDependency> dependencies) {
 
@@ -44,19 +44,19 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
-			ComplexType<?, ?, ?> type) {
+			UserDefinedType type) {
 	
 		this(file, scopedName, typeVariant, type, null, null, null);
 	}
 
 	@Override
-	public ComplexType<?, ?, ?> getType() {
+	public UserDefinedType getType() {
 		return type;
 	}
 	
 	@Override
 	public TypeName getTypeName() {
-		return type != null ? type.getCompleteName().toTypeName() : null;
+		return type != null ? type.getTypeName() : null;
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class TestResolvedType extends BaseResolverType implements ResolvedType<B
 	}
 
 	@Override
-	public Collection<ResolvedType<BuiltinType, ComplexType<?, ?, ?>, TypeName>> getNestedTypes() {
+	public Collection<ResolvedType<BuiltinType, UserDefinedType, TypeName>> getNestedTypes() {
 		return nestedTypes;
 	}
 

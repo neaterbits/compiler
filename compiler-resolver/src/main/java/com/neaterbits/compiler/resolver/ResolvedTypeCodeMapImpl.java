@@ -113,12 +113,12 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT, BUILTINTYPE, COMPLE
 		return addType(type, astModel.getBuiltinTypeName(type.getBuiltinType()), 0, null, null);
 	}
 
-	public int addType(ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> type) {
+	public int addType(COMPILATION_UNIT compilationUnit, ResolvedType<BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> type) {
 		
 		return addType(
 				type,
 				type.getTypeName(),
-				astModel.getNumMethods(type.getType()),
+				astModel.getNumMethods(compilationUnit, type.getType()),
 				getExtendsFrom(type, TypeVariant.CLASS),
 				getExtendsFrom(type, TypeVariant.INTERFACE));
 	}

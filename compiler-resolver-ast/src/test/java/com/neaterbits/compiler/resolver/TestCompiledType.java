@@ -9,14 +9,14 @@ import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.ast.type.complex.ComplexType;
+import com.neaterbits.compiler.util.model.UserDefinedType;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
-public class TestCompiledType extends BaseResolverType implements CompiledType<ComplexType<?, ?, ?>> {
+public class TestCompiledType extends BaseResolverType implements CompiledType<UserDefinedType> {
 
-	private final ComplexType<?, ?, ?> type;
+	private final UserDefinedType type;
 	
-	private final Collection<CompiledType<ComplexType<?, ?, ?>>> nestedTypes;
+	private final Collection<CompiledType<UserDefinedType>> nestedTypes;
 	private final Collection<CompiledTypeDependency> extendsFrom;
 	private final Collection<CompiledTypeDependency> dependencies;
 	
@@ -24,8 +24,8 @@ public class TestCompiledType extends BaseResolverType implements CompiledType<C
 	public TestCompiledType(
 			FileSpec file,
 			TypeSpec typeSpec,
-			ComplexType<?, ?, ?> type,
-			Collection<CompiledType<ComplexType<?, ?, ?>>> nestedTypes,
+			UserDefinedType type,
+			Collection<CompiledType<UserDefinedType>> nestedTypes,
 			Collection<CompiledTypeDependency> extendsFrom,
 			Collection<CompiledTypeDependency> dependencies) {
 		super(file, typeSpec);
@@ -41,25 +41,25 @@ public class TestCompiledType extends BaseResolverType implements CompiledType<C
 			FileSpec file,
 			ScopedName scopedName,
 			TypeVariant typeVariant,
-			ComplexType<?, ?, ?> type,
-			Collection<CompiledType<ComplexType<?, ?, ?>>> nestedTypes,
+			UserDefinedType type,
+			Collection<CompiledType<UserDefinedType>> nestedTypes,
 			Collection<CompiledTypeDependency> extendsFrom,
 			Collection<CompiledTypeDependency> dependencies) {
 		this(file, new TypeSpec(scopedName, typeVariant), type, nestedTypes, extendsFrom, dependencies);
 	}
 
 	@Override
-	public ComplexType<?, ?, ?> getType() {
+	public UserDefinedType getType() {
 		return type;
 	}
 
 	@Override
 	public TypeName getTypeName() {
-		return type.getCompleteName().toTypeName();
+		return type.getTypeName();
 	}
 
 	@Override
-	public Collection<CompiledType<ComplexType<?, ?, ?>>> getNestedTypes() {
+	public Collection<CompiledType<UserDefinedType>> getNestedTypes() {
 		return nestedTypes;
 	}
 
