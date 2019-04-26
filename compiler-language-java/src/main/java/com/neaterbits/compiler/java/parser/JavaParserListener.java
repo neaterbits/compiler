@@ -28,8 +28,8 @@ import com.neaterbits.compiler.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.ast.typedefinition.Subclassing;
-import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.util.Context;
@@ -727,7 +727,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new UnsupportedOperationException("Unknown type " + type);
 		}
 
-		delegate.onTypeReference(context, new BuiltinTypeReference(context, genericType.getTypeName(), true));
+		delegate.onTypeReference(context, new ScalarTypeReference(context, genericType.getTypeName()));
 	}
 	
 	public ScalarType parseJavaPrimitiveType(String typeString) {

@@ -56,6 +56,7 @@ import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.typereference.LibraryTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.variables.NameReference;
@@ -572,7 +573,7 @@ public class ObjectProgramModel
 			throw new IllegalStateException();
 		}
 
-		element.replaceWith(new BuiltinTypeReference(element.getContext(), builtinType.getTypeName(), builtinType.isScalar()));
+		element.replaceWith(new ScalarTypeReference(element.getContext(), builtinType.getTypeName()));
 	}
 
 	@Override

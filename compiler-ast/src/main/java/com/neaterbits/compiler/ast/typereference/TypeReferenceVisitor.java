@@ -2,7 +2,7 @@ package com.neaterbits.compiler.ast.typereference;
 
 public interface TypeReferenceVisitor<T, R> {
 
-	R onBuiltinTypeReference(BuiltinTypeReference typeReference, T param);
+	R onScalarTypeReference(ScalarTypeReference typeReference, T param);
 	
 	R onComplexTypeReference(ComplexTypeReference typeReference, T param);
 	

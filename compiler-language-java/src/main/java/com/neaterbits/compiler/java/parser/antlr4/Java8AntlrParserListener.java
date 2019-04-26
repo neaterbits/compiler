@@ -48,8 +48,8 @@ import com.neaterbits.compiler.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.ast.typedefinition.Subclassing;
-import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 
 /**
@@ -1041,7 +1041,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	private TypeReference parsePrimitiveType(Context context, String typeString) {
 		final ScalarType scalarType = delegate.parseJavaPrimitiveType(typeString);
-		return new BuiltinTypeReference(context, scalarType.getTypeName(), true);
+	
+		return new ScalarTypeReference(context, scalarType.getTypeName());
 	}
 	
 	@Override

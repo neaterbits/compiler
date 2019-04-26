@@ -2,11 +2,11 @@ package com.neaterbits.compiler.convert.ootofunction;
 
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.ast.type.PointerType;
-import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.typereference.FunctionPointerTypeReference;
 import com.neaterbits.compiler.ast.typereference.PointerTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeDefTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.typereference.UnnamedVoidTypeReference;
@@ -18,11 +18,10 @@ public abstract class BaseTypeReferenceConverter<T extends ConverterState<T>>
 		implements TypeReferenceConverter<T> {
 
 	@Override
-	public TypeReference onBuiltinTypeReference(BuiltinTypeReference typeReference, T param) {
-		return new BuiltinTypeReference(
+	public TypeReference onScalarTypeReference(ScalarTypeReference typeReference, T param) {
+		return new ScalarTypeReference(
 				typeReference.getContext(),
-				convertType(typeReference, param).getTypeName(),
-				typeReference.isScalar());
+				convertType(typeReference, param).getTypeName());
 	}
 
 	@Override
