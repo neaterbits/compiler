@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.expression.Resource;
 import com.neaterbits.compiler.ast.expression.ResourceList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class TryWithResourcesStatement extends BaseTryCatchFinallyStatement {
 
@@ -20,6 +21,11 @@ public final class TryWithResourcesStatement extends BaseTryCatchFinallyStatemen
 
 	public ResourceList getResources() {
 		return resources.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.TRY_WITH_RESOURCES_STATEMENT;
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class InnerClassMember extends ComplexMemberDefinition {
 
@@ -27,6 +28,11 @@ public final class InnerClassMember extends ComplexMemberDefinition {
 	@Override
 	protected ComplexMemberType getMemberType() {
 		return ComplexMemberType.INNER_CLASS;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.INNER_CLASS_MEMBER;
 	}
 
 	@Override

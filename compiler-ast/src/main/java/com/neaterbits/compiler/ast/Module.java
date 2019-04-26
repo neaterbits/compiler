@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.modules.ModuleSpec;
 
 public final class Module extends BaseASTElement {
@@ -32,6 +33,11 @@ public final class Module extends BaseASTElement {
 
 	public ASTList<ASTParsedFile> getParsedFiles() {
 		return parsedFiles;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.MODULE;
 	}
 
 	@Override

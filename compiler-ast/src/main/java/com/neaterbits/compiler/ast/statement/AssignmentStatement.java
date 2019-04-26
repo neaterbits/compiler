@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class AssignmentStatement extends Statement {
 
@@ -22,6 +23,11 @@ public final class AssignmentStatement extends Statement {
 
 	public AssignmentExpression getExpression() {
 		return expression.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.ASSIGNMENT_STATEMENT;
 	}
 
 	@Override

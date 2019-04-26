@@ -6,6 +6,7 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class StaticMemberReference extends VariableReference {
 
@@ -40,6 +41,11 @@ public final class StaticMemberReference extends VariableReference {
 	@Override
 	public TypeReference getType() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.STATIC_MEMBER_REFERENCE;
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ClassMethod extends CallableCode<MethodName> {
 
@@ -14,6 +15,11 @@ public final class ClassMethod extends CallableCode<MethodName> {
 		super(context, returnType, new MethodName(nameContext, name), parameters, block);
 
 		Objects.requireNonNull(returnType);
+	}
+	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CLASS_METHOD;
 	}
 
 	@Override

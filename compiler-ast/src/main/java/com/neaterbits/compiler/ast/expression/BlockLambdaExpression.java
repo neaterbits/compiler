@@ -12,6 +12,7 @@ import com.neaterbits.compiler.ast.statement.Statement;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.typereference.UnnamedVoidTypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class BlockLambdaExpression extends LambdaExpression {
 
@@ -52,6 +53,11 @@ public final class BlockLambdaExpression extends LambdaExpression {
 		}
 
 		return type;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.BLOCK_LAMBDA_EXPRESSION;
 	}
 
 	@Override

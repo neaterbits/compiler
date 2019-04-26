@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.ReferenceType;
 
 public final class ResolveLaterTypeReference extends TypeReference {
@@ -66,6 +67,11 @@ public final class ResolveLaterTypeReference extends TypeReference {
 	@Override
 	public String toString() {
 		return "ResolveLaterTypeReference [scopedName=" + scopedName + "]";
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.RESOLVE_LATER_TYPE_REFERENCE;
 	}
 
 	@Override

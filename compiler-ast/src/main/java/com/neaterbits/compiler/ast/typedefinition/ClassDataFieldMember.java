@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ClassDataFieldMember extends DataFieldMember {
 
@@ -27,6 +28,11 @@ public final class ClassDataFieldMember extends DataFieldMember {
 
 	public FieldModifiers getModifiers() {
 		return modifiers.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CLASS_INSTANCE_CREATION_EXPRESSION;
 	}
 
 	@Override

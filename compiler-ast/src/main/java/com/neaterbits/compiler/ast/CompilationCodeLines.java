@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public class CompilationCodeLines extends BaseASTElement {
 	
@@ -20,6 +21,11 @@ public class CompilationCodeLines extends BaseASTElement {
 
 	public final ASTList<CompilationCode> getCode() {
 		return code;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.COMPILATION_CODE_LINES;
 	}
 
 	@Override

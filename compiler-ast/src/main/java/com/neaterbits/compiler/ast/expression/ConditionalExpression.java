@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ConditionalExpression extends Expression {
 
@@ -50,6 +51,11 @@ public final class ConditionalExpression extends Expression {
 		}
 		
 		return type1;
+	}
+	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CONDITIONAL_EXPRESSION;
 	}
 
 	@Override

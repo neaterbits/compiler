@@ -5,6 +5,7 @@ import java.util.List;
 import com.neaterbits.compiler.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.typedefinition.ConstructorName;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class Constructor extends CallableCode<ConstructorName> {
 
@@ -15,6 +16,11 @@ public final class Constructor extends CallableCode<ConstructorName> {
 			Block block) {
 		
 		super(context, null, name, parameters, block);
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CONSTRUCTOR;
 	}
 
 	@Override

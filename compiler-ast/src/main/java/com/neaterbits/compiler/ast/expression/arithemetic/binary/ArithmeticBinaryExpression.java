@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.operator.Arithmetic;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public class ArithmeticBinaryExpression extends BinaryExpression {
 
@@ -28,6 +29,12 @@ public class ArithmeticBinaryExpression extends BinaryExpression {
 	@Override
 	public TypeReference getType() {
 		throw new UnsupportedOperationException();
+	}
+
+	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.ARITHMETIC_BINARY_EXPRESSION;
 	}
 
 	@Override

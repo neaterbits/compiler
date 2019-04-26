@@ -4,11 +4,17 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public class LibraryTypeReference extends ResolvedNamedTypeReference {
 
 	public LibraryTypeReference(Context context, TypeName typeName) {
 		super(context, typeName);
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.LIBRARY_TYPE_REFERENCE;
 	}
 
 	@Override

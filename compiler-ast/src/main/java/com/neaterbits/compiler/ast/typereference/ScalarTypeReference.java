@@ -4,6 +4,7 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ScalarTypeReference extends BuiltinTypeReference {
 
@@ -15,7 +16,12 @@ public final class ScalarTypeReference extends BuiltinTypeReference {
 	public boolean isScalar() {
 		return true;
 	}
-	
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.SCALAR_TYPE_REFERENCE;
+	}
+
 	@Override
 	public <T, R> R visit(TypeReferenceVisitor<T, R> visitor, T param) {
 		return visitor.onScalarTypeReference(this, param);

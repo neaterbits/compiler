@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.Name;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class Parameter extends BaseASTElement {
 
@@ -39,6 +40,11 @@ public final class Parameter extends BaseASTElement {
 
 	public boolean isVarArgs() {
 		return varArgs;
+	}
+	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.PARAMETER;
 	}
 
 	@Override

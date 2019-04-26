@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.VariableReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public class AssignmentExpression extends Expression {
 	private final ASTSingle<VariableReference> variable;
@@ -34,6 +35,11 @@ public class AssignmentExpression extends Expression {
 	@Override
 	public TypeReference getType() {
 		return variable.get().getType();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.ASSIGNMENT_EXPRESSION;
 	}
 
 	@Override

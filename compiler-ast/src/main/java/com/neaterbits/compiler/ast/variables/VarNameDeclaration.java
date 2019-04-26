@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.Name;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class VarNameDeclaration extends BaseASTElement {
 
@@ -24,6 +25,11 @@ public final class VarNameDeclaration extends BaseASTElement {
 
 	public VarName getVarName() {
 		return varName;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.VAR_NAME_DECLARATION;
 	}
 
 	@Override

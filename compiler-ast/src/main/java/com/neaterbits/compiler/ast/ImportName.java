@@ -6,6 +6,7 @@ import com.neaterbits.compiler.ast.block.MethodName;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.imports.TypeImport;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.TypeImportVisitor;
 
 public final class ImportName extends BaseASTElement {
@@ -83,7 +84,12 @@ public final class ImportName extends BaseASTElement {
 		
 		return new ImportName(getContext(), typeImport.removeFromNamespace(parts), method);
 	}
-	
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.IMPORT_NAME;
+	}
+
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		

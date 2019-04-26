@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.BasePlaceholderASTElement;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ParameterList extends BasePlaceholderASTElement {
 
@@ -54,6 +55,11 @@ public final class ParameterList extends BasePlaceholderASTElement {
 		return typeNames;
 	}
 	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.PARAMETER_LIST;
+	}
+
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		doIterate(list, recurseMode, iterator);

@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.block.Constructor;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ConstructorMember extends ComplexMemberDefinition {
 
@@ -35,6 +36,11 @@ public final class ConstructorMember extends ComplexMemberDefinition {
 	@Override
 	protected ComplexMemberType getMemberType() {
 		return ComplexMemberType.CONSTRUCTOR;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CONSTRUCTOR_MEMBER;
 	}
 
 	@Override

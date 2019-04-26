@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class EnumSwitchCaseLabel extends SwitchCaseLabel {
 
@@ -23,7 +24,12 @@ public final class EnumSwitchCaseLabel extends SwitchCaseLabel {
 	public String getEnumConstant() {
 		return enumConstant.get().getEnumConstant();
 	}
-	
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.ENUM_SWITCH_CASE_LABEL;
+	}
+
 	@Override
 	public <T, R> R visit(SwitchCaseLabelVisitor<T, R> visitor, T param) {
 		return visitor.onEnum(this, param);

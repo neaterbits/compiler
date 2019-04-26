@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ForExpressionList extends BaseASTElement {
 
@@ -28,6 +29,11 @@ public final class ForExpressionList extends BaseASTElement {
 
 	public ASTList<Expression> getExpressions() {
 		return expressions;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.FOR_EXPRESSION_LIST;
 	}
 
 	@Override

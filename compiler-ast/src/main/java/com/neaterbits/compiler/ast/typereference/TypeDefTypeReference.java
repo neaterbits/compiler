@@ -6,6 +6,7 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class TypeDefTypeReference extends ResolvedNamedTypeReference {
 
@@ -22,6 +23,11 @@ public final class TypeDefTypeReference extends ResolvedNamedTypeReference {
 
 	public TypeReference getAliasedType() {
 		return aliasedType;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.TYPEDEF_TYPE_REFERENCE;
 	}
 
 	@Override

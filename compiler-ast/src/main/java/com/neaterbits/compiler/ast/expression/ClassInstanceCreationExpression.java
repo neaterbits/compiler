@@ -11,6 +11,7 @@ import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.ast.typedefinition.ConstructorName;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ClassInstanceCreationExpression extends Call<ConstructorName> {
 
@@ -34,6 +35,11 @@ public final class ClassInstanceCreationExpression extends Call<ConstructorName>
 	@Override
 	public <T, R> R visit(ExpressionVisitor<T, R> visitor, T param) {
 		return visitor.onClassInstanceCreation(this, param);
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CLASS_INSTANCE_CREATION_EXPRESSION;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReferenceVisitor;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class EncodedTypeReference extends TypeReference {
 
@@ -40,6 +41,11 @@ public final class EncodedTypeReference extends TypeReference {
 	@Override
 	public String getDebugName() {
 		return typeName;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.ENCODED_TYPE_REFERENCE;
 	}
 
 	@Override

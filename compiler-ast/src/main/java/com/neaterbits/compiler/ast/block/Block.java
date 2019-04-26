@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.statement.Statement;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class Block extends BaseASTElement {
 	
@@ -24,6 +25,11 @@ public final class Block extends BaseASTElement {
 
 	public final ASTList<Statement> getStatements() {
 		return statements;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.BLOCK;
 	}
 
 	@Override

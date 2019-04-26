@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class MethodInvocationExpression extends Call<MethodName> {
 
@@ -48,6 +49,11 @@ public final class MethodInvocationExpression extends Call<MethodName> {
 
 	public Expression getObject() {
 		return object != null ? object.get() : null;
+	}
+	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.METHOD_INVOCATION_EXPRESSION;
 	}
 
 	@Override

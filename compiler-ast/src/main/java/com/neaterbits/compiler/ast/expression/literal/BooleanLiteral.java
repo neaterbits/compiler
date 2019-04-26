@@ -3,6 +3,7 @@ package com.neaterbits.compiler.ast.expression.literal;
 import com.neaterbits.compiler.ast.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class BooleanLiteral extends Literal {
 
@@ -16,6 +17,11 @@ public final class BooleanLiteral extends Literal {
 
 	public boolean getValue() {
 		return value;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.BOOLEAN_LITERAL;
 	}
 
 	@Override

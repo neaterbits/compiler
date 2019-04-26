@@ -11,6 +11,7 @@ import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackView;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public abstract class BaseASTElement extends ASTNode {
 	
@@ -18,6 +19,8 @@ public abstract class BaseASTElement extends ASTNode {
 	
 	private final Context context;
 
+	public abstract ParseTreeElement getParseTreeElement();
+	
 	public BaseASTElement(Context context) {
 		
 		if (!isPlaceholderElement()) {

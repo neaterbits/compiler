@@ -11,6 +11,7 @@ import com.neaterbits.compiler.ast.BasePlaceholderASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 
@@ -44,6 +45,11 @@ public final class ASTParsedFile extends BasePlaceholderASTElement implements Pa
 
 	public CompilationUnit getParsed() {
 		return parsed.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.FILE;
 	}
 
 	@Override

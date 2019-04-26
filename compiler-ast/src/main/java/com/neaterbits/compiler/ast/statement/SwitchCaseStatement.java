@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class SwitchCaseStatement extends ConditionStatement {
 
@@ -39,6 +40,12 @@ public final class SwitchCaseStatement extends ConditionStatement {
 
 	public ASTList<SwitchCaseGroup> getGroups() {
 		return groups;
+	}
+
+	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.SWITCH_CASE_STATEMENT;
 	}
 
 	@Override

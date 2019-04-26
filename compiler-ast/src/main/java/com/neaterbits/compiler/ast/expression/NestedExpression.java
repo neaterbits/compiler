@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class NestedExpression extends Primary {
 
@@ -28,6 +29,11 @@ public final class NestedExpression extends Primary {
 	@Override
 	public TypeReference getType() {
 		return expression.get().getType();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.NESTED_EXPRESSION;
 	}
 
 	@Override

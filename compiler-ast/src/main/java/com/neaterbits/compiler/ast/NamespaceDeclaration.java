@@ -3,6 +3,7 @@ package com.neaterbits.compiler.ast;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class NamespaceDeclaration extends BaseASTElement {
 
@@ -18,6 +19,11 @@ public final class NamespaceDeclaration extends BaseASTElement {
 
 	public NamespaceReference getNamespaceReference() {
 		return namespaceReference;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.NAMESPACE_DECLARATION;
 	}
 
 	@Override

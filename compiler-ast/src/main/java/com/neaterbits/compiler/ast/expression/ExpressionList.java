@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.operator.Operator;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ExpressionList extends Expression {
 
@@ -38,6 +39,11 @@ public final class ExpressionList extends Expression {
 		return expressions;
 	}
 	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.EXPRESSION_LIST;
+	}
+
 	@Override
 	public TypeReference getType() {
 		return expressions.iterator().next().getType();

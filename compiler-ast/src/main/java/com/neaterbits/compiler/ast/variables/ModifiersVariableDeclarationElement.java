@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ModifiersVariableDeclarationElement extends VariableDeclarationElement {
 
@@ -23,6 +24,11 @@ public final class ModifiersVariableDeclarationElement extends VariableDeclarati
 
 	public VariableModifiers getModifiers() {
 		return modifiers.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.MODIFIERS_VARIABLE_DECLARATION_ELEMENT;
 	}
 
 	@Override

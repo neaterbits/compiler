@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ArrayAccessReference extends VariableReference {
 	
@@ -27,6 +28,11 @@ public final class ArrayAccessReference extends VariableReference {
 	@Override
 	public TypeReference getType() {
 		return expression.getType();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.ARRAY_ACCESS_REFERENCE;
 	}
 
 	@Override

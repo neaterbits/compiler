@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ClassExpression extends Primary {
 
@@ -34,6 +35,11 @@ public final class ClassExpression extends Primary {
 	@Override
 	public TypeReference getType() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CLASS_EXPRESSION;
 	}
 
 	@Override

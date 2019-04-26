@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class Function extends CallableCode<FunctionName> {
 
@@ -22,6 +23,11 @@ public final class Function extends CallableCode<FunctionName> {
 	
 	public FunctionQualifiers getQualifiers() {
 		return qualifiers;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.FUNCTION;
 	}
 
 	@Override

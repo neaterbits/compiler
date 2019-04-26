@@ -4,6 +4,7 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class UnnamedVoidTypeReference extends TypeReference {
 
@@ -20,6 +21,11 @@ public final class UnnamedVoidTypeReference extends TypeReference {
 	@Override
 	public TypeName getTypeName() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.UNNAMED_VOID_TYPE_REFERENCE;
 	}
 
 	@Override

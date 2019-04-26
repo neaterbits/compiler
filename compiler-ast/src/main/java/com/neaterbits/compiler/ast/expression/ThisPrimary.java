@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ThisPrimary extends Primary {
 
@@ -24,6 +25,11 @@ public final class ThisPrimary extends Primary {
 	@Override
 	public TypeReference getType() {
 		return type.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.THIS_PRIMARY;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.block.Block;
 import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ForStatement extends LoopStatement {
 
@@ -43,6 +44,11 @@ public final class ForStatement extends LoopStatement {
 
 	public ForExpressionList getForUpdate() {
 		return forUpdate != null ? forUpdate.get() : null;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.FOR_STATEMENT;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ComplexMemberType;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class StaticInitializer extends ComplexMemberDefinition {
 
@@ -29,6 +30,11 @@ public final class StaticInitializer extends ComplexMemberDefinition {
 	@Override
 	protected ComplexMemberType getMemberType() {
 		return ComplexMemberType.STATIC_INITIALIZER;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.STATIC_INITIALIZER;
 	}
 
 	@Override

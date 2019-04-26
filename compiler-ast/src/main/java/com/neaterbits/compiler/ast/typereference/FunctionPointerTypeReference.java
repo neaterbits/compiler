@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class FunctionPointerTypeReference extends ResolvedTypeReference {
 
@@ -32,6 +33,11 @@ public final class FunctionPointerTypeReference extends ResolvedTypeReference {
 	@Override
 	public String getDebugName() {
 		return type.toString();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.FUNCTION_POINTER_TYPE_REFERENCE;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.type.NamedType;
 import com.neaterbits.compiler.ast.type.PointerType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class PointerTypeReference extends ResolvedTypeReference {
 
@@ -33,6 +34,11 @@ public final class PointerTypeReference extends ResolvedTypeReference {
 	@Override
 	public TypeName getTypeName() {
 		return ((NamedType)pointerType.getDelegate()).getTypeName();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.POINTER_TYPE_REFERENCE;
 	}
 
 	@Override

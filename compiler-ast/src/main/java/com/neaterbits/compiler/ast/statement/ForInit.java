@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ForInit extends BaseASTElement {
 
@@ -38,6 +39,11 @@ public final class ForInit extends BaseASTElement {
 
 	public ForExpressionList getExpressionList() {
 		return expressionList != null ? expressionList.get() : null;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.FOR_INIT;
 	}
 
 	@Override

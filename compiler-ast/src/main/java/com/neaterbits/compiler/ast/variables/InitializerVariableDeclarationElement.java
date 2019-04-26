@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public class InitializerVariableDeclarationElement extends VariableDeclarationElement {
 
@@ -20,6 +21,11 @@ public class InitializerVariableDeclarationElement extends VariableDeclarationEl
 	
 	public final Expression getInitializer() {
 		return initializer != null ? initializer.get() : null;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.INITIALIZER_VARIABLE_DECLARATION_ELEMENT;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.block.Block;
 import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ConditionBlock extends BaseASTElement {
 
@@ -49,6 +50,11 @@ public final class ConditionBlock extends BaseASTElement {
 
 	public Block getBlock() {
 		return block.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CONDITION_BLOCK;
 	}
 
 	@Override

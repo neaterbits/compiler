@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class Namespace extends CompilationCode {
 
@@ -39,6 +40,10 @@ public final class Namespace extends CompilationCode {
 		this.lines = makeSingle(lines);
 	}
 
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.NAMESPACE;
+	}
 
 	@Override
 	public <T, R> R visit(CompilationCodeVisitor<T, R> visitor, T param) {

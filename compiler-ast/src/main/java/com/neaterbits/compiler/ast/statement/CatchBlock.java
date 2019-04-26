@@ -12,6 +12,7 @@ import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.VarName;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class CatchBlock extends BaseASTElement {
 
@@ -47,6 +48,11 @@ public final class CatchBlock extends BaseASTElement {
 
 	public Block getBlock() {
 		return block.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CATCH_BLOCK;
 	}
 
 	@Override

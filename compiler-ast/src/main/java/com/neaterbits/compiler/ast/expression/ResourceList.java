@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ResourceList extends BaseASTElement {
 
@@ -20,6 +21,11 @@ public final class ResourceList extends BaseASTElement {
 
 	public ASTList<Resource> getList() {
 		return list;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.RESOURCES_LIST;
 	}
 
 	@Override

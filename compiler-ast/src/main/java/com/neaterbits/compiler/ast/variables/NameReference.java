@@ -4,6 +4,7 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class NameReference extends VariableReference {
 
@@ -22,6 +23,11 @@ public final class NameReference extends VariableReference {
 	@Override
 	public TypeReference getType() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.NAME_REFERENCE;
 	}
 
 	@Override

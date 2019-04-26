@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.type.primitive.StringType;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class StringLiteral extends Literal {
 
@@ -20,6 +21,11 @@ public final class StringLiteral extends Literal {
 
 	public String getValue() {
 		return value;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.STRING_LITERAL;
 	}
 
 	@Override

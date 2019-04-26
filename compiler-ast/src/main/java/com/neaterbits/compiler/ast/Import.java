@@ -2,6 +2,7 @@ package com.neaterbits.compiler.ast;
 
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.TypeImportVisitor;
 
 public final class Import extends BaseASTElement {
@@ -22,6 +23,11 @@ public final class Import extends BaseASTElement {
 	
 	public ImportName getPackage() {
 		return _package.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.IMPORT;
 	}
 
 	@Override

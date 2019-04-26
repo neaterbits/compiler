@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ConstantSwitchCaseLabel extends SwitchCaseLabel {
 
@@ -23,6 +24,11 @@ public final class ConstantSwitchCaseLabel extends SwitchCaseLabel {
 
 	public Expression getConstant() {
 		return constant.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CONSTANT_SWITCH_CASE_LABEL;
 	}
 
 	@Override

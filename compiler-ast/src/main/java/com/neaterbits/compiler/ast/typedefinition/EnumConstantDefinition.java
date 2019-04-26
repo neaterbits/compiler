@@ -11,6 +11,7 @@ import com.neaterbits.compiler.ast.expression.ParameterList;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class EnumConstantDefinition extends CompilationCode  {
 
@@ -40,6 +41,11 @@ public final class EnumConstantDefinition extends CompilationCode  {
 
 	public ASTList<ComplexMemberDefinition> getMembers() {
 		return members;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.ENUM_CONSTANT_DEFINITION;
 	}
 
 	@Override

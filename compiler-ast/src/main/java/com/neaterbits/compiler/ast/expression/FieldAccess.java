@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.parser.FieldAccessType;
 import com.neaterbits.compiler.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class FieldAccess extends Primary {
 
@@ -40,6 +41,11 @@ public final class FieldAccess extends Primary {
 		return fieldName;
 	}
 	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.FIELD_ACCESS;
+	}
+
 	@Override
 	public TypeReference getType() {
 		

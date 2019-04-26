@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class LambdaExpressionParameters extends BaseASTElement {
 
@@ -38,6 +39,11 @@ public final class LambdaExpressionParameters extends BaseASTElement {
 
 	public List<String> getInferredParameters() {
 		return inferredParameters;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.LAMBDA_EXPRESSION_PARAMETERS;
 	}
 
 	@Override

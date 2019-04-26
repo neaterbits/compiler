@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.block.Block;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class IfElseIfElseStatement extends ConditionStatement {
 
@@ -43,6 +44,11 @@ public final class IfElseIfElseStatement extends ConditionStatement {
 
 	public Block getElseBlock() {
 		return elseBlock != null ? elseBlock.get() : null;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.IF_ELSE_IF_ELSE_STATEMENT;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.variables.ModifiersVariableDeclarationElement;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class IteratorForStatement extends LoopStatement {
 
@@ -41,6 +42,11 @@ public final class IteratorForStatement extends LoopStatement {
 	@Override
 	public <T, R> R visit(StatementVisitor<T, R> visitor, T param) {
 		return visitor.onIteratorFor(this, param);
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.ITERATOR_FOR_STATEMENT;
 	}
 
 	@Override

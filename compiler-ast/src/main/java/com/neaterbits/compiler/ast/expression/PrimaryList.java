@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class PrimaryList extends Primary {
 
@@ -30,6 +31,11 @@ public final class PrimaryList extends Primary {
 	@Override
 	public TypeReference getType() {
 		return primaries.getLast().getType();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.PRIMARY_LIST;
 	}
 
 	@Override

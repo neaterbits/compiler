@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.statement.Statement;
 import com.neaterbits.compiler.ast.statement.StatementVisitor;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ConstructorInvocationStatement extends Statement {
 
@@ -43,6 +44,11 @@ public final class ConstructorInvocationStatement extends Statement {
 	
 	public ParameterList getParameters() {
 		return parameters.get();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CONSTRUCTOR_INVOCATION_STATEMENT;
 	}
 
 	@Override

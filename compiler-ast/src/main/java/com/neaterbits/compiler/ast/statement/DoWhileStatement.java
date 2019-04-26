@@ -6,6 +6,7 @@ import com.neaterbits.compiler.ast.block.Block;
 import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class DoWhileStatement extends LoopStatement {
 
@@ -21,6 +22,11 @@ public final class DoWhileStatement extends LoopStatement {
 
 	public Expression getCondition() {
 		return condition.get();
+	}
+	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.DO_WHILE_STATEMENT;
 	}
 
 	@Override

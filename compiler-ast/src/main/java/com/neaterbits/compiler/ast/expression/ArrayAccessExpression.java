@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.typereference.ResolvedNamedTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ArrayAccessExpression extends Primary {
 
@@ -40,6 +41,11 @@ public final class ArrayAccessExpression extends Primary {
 		final ArrayType arrayType = null; // (ArrayType)typeRef.getNamedType();
 
 		return new ComplexTypeReference(getContext(), ((NamedType)arrayType.getElementType()).getTypeName());
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.ARRAY_ACCESS_EXPRESSION;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class VariableDeclarationStatement extends Statement {
 
@@ -36,6 +37,12 @@ public final class VariableDeclarationStatement extends Statement {
 
 	public ASTList<InitializerVariableDeclarationElement> getDeclarations() {
 		return declarations;
+	}
+
+	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.VARIABLE_DECLARATION_STATEMENT;
 	}
 
 	@Override

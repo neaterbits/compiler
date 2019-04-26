@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.block.ClassMethod;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ClassMethodMember extends ComplexMemberDefinition {
 
@@ -35,6 +36,11 @@ public final class ClassMethodMember extends ComplexMemberDefinition {
 	@Override
 	protected ComplexMemberType getMemberType() {
 		return ComplexMemberType.CLASS_METHOD;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CLASS_METHOD_MEMBER;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.expression.FieldAccess;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class FieldAccessReference extends VariableReference {
 
@@ -28,6 +29,11 @@ public final class FieldAccessReference extends VariableReference {
 	@Override
 	public TypeReference getType() {
 		return expression.get().getType();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.FIELD_ACCESS_REFERENCE;
 	}
 
 	@Override

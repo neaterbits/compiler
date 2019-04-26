@@ -3,6 +3,7 @@ package com.neaterbits.compiler.ast;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 // Generic placeholder for keywords, useful for syntax highlighting for Context
 public final class Keyword extends BaseASTElement {
@@ -27,6 +28,12 @@ public final class Keyword extends BaseASTElement {
 
 	public String getText() {
 		return text;
+	}
+
+	
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.KEYWORD;
 	}
 
 	@Override

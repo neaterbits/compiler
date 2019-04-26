@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class EnumDefinition extends BaseClassDefinition {
 
@@ -32,6 +33,11 @@ public final class EnumDefinition extends BaseClassDefinition {
 
 	public ASTList<EnumConstantDefinition> getConstants() {
 		return constants;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.ENUM_DEFINITION;
 	}
 
 	@Override

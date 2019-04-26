@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.ast.typereference.FunctionPointerTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class FunctionPointerInvocationExpression extends Expression {
 
@@ -47,6 +48,12 @@ public final class FunctionPointerInvocationExpression extends Expression {
 	public TypeReference getType() {
 		return new FunctionPointerTypeReference(getContext(), type);
 	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.FUNCTION_POINTER_INVOCATION_EXPRESSION;
+	}
+
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {

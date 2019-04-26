@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class InterfaceDefinition extends ComplexTypeDefinition<InterfaceName, InterfaceDeclarationName> {
 
@@ -37,6 +38,11 @@ public final class InterfaceDefinition extends ComplexTypeDefinition<InterfaceNa
 	
 	public ASTList<TypeReference> getExtendsInterfaces() {
 		return extendsInterfaces;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.INTERFACE_DEFINITION;
 	}
 
 	@Override

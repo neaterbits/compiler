@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.neaterbits.compiler.ast.block.CallableName;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ConstructorName extends CallableName {
 
@@ -27,5 +28,10 @@ public final class ConstructorName extends CallableName {
 
 	public List<String> getNames() {
 		return names;
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.CONSTRUCTOR_NAME;
 	}
 }

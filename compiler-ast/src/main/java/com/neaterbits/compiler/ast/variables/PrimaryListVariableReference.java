@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.expression.PrimaryList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class PrimaryListVariableReference extends VariableReference {
 
@@ -28,6 +29,11 @@ public final class PrimaryListVariableReference extends VariableReference {
 	@Override
 	public TypeReference getType() {
 		return list.get().getType();
+	}
+
+	@Override
+	public ParseTreeElement getParseTreeElement() {
+		return ParseTreeElement.PRIMARY_LIST_VARIABLE_REFERENCE;
 	}
 
 	@Override
