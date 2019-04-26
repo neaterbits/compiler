@@ -3,7 +3,7 @@ package com.neaterbits.compiler.resolver.types;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.ReferenceLocation;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
@@ -13,7 +13,7 @@ import com.neaterbits.compiler.util.model.UpdateOnResolve;
 public final class ResolvedTypeDependency {
 
 	private final TypeName completeName;
-	private final ReferenceType referenceType;
+	private final ReferenceLocation referenceType;
 	private final int typeReferenceElement;
 	private final TypeResolveMode typeResolveMode;
 	private final TypeVariant typeVariant;
@@ -22,7 +22,7 @@ public final class ResolvedTypeDependency {
 	
 	public ResolvedTypeDependency(
 			TypeName completeName,
-			ReferenceType referenceType,
+			ReferenceLocation referenceType,
 			int typeReferenceElement,
 			TypeResolveMode typeResolveMode,
 			TypeVariant typeVariant,
@@ -51,7 +51,7 @@ public final class ResolvedTypeDependency {
 		return completeName;
 	}
 
-	public ReferenceType getReferenceType() {
+	public ReferenceLocation getReferenceType() {
 		return referenceType;
 	}
 

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.ReferenceLocation;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
@@ -57,7 +57,7 @@ public abstract class BaseResolveTest {
 				null,
 				null,
 				Arrays.stream(extendsFrom)
-					.map(extendsFromName -> new CompiledTypeDependency(extendsFromName, ReferenceType.EXTENDS_FROM, -1, null, null))
+					.map(extendsFromName -> new CompiledTypeDependency(extendsFromName, ReferenceLocation.EXTENDS_FROM, -1, null, null))
 					.collect(Collectors.toList()),
 				null);
 
@@ -76,7 +76,7 @@ public abstract class BaseResolveTest {
 		final List<ResolvedTypeDependency> extendsFromDependencies = Arrays.stream(extendsFrom)
 				.map(type -> new ResolvedTypeDependency(
 						type.getTypeName(),
-						ReferenceType.EXTENDS_FROM,
+						ReferenceLocation.EXTENDS_FROM,
 						-1, TypeResolveMode.CLASSNAME_TO_COMPLETE,
 						type.getSpec().getTypeVariant(),
 						null, null))

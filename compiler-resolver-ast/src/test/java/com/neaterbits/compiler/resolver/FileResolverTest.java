@@ -11,7 +11,7 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.neaterbits.compiler.resolver.FilesResolver;
-import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.ReferenceLocation;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ast.model.ObjectProgramModel;
@@ -140,6 +140,6 @@ public class FileResolverTest extends BaseResolveTest {
 	}
 	
 	private static CompiledTypeDependency makeExtendsFromDependency(ScopedName scopedName) {
-		return new CompiledTypeDependency(scopedName, ReferenceType.EXTENDS_FROM, -1, null, null);
+		return new CompiledTypeDependency(scopedName, ReferenceLocation.EXTENDS_FROM, -1, null, null);
 	}
 }

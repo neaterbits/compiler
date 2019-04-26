@@ -30,7 +30,7 @@ public class ScopedNameResolverTest {
 		
 		final String scopedName = ScopedNameResolver.resolveScopedName(
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "InSameNamespace"),
-				ReferenceType.FIELD,
+				ReferenceLocation.FIELD,
 				makeCompilationUnit(new IntValue(1)),
 				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
@@ -47,7 +47,7 @@ public class ScopedNameResolverTest {
 		
 		final String scopedName = ScopedNameResolver.resolveScopedName(
 				ScopedName.makeScopedName(new String [] { "com", "test", "othernamespace" }, "InOtherNamespace"),
-				ReferenceType.FIELD,
+				ReferenceLocation.FIELD,
 				makeCompilationUnit(new IntValue(1)),
 				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
@@ -75,7 +75,7 @@ public class ScopedNameResolverTest {
 		
 		final String scopedName = ScopedNameResolver.resolveScopedName(
 				ScopedName.makeScopedName(new String [] { "InImportedNamespace" }),
-				ReferenceType.FIELD,
+				ReferenceLocation.FIELD,
 				makeCompilationUnit(tokenSequenceNo, importStatement),
 				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
@@ -103,7 +103,7 @@ public class ScopedNameResolverTest {
 		
 		final String scopedName = ScopedNameResolver.resolveScopedName(
 				ScopedName.makeScopedName(new String [] { "InImportedNamespace" }),
-				ReferenceType.FIELD,
+				ReferenceLocation.FIELD,
 				makeCompilationUnit(tokenSequenceNo, importStatement),
 				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),

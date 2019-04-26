@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.resolver;
 
-public enum ReferenceType {
+public enum ReferenceLocation {
 
 	EXTENDS_FROM,
 	STATIC_OR_STATIC_INSTANCE_METHOD_CALL,

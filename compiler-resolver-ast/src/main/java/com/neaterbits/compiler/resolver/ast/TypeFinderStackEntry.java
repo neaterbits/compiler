@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.ReferenceLocation;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
@@ -90,13 +90,13 @@ final class TypeFinderStackEntry {
 		
 		final int elementRef = compilationUnit.getParseTreeRefFromElement(element);
 		
-		this.extendsFrom.add(new CompiledTypeDependency(extendsFrom, ReferenceType.EXTENDS_FROM, elementRef, null, null));
+		this.extendsFrom.add(new CompiledTypeDependency(extendsFrom, ReferenceLocation.EXTENDS_FROM, elementRef, null, null));
 	}
 	
 	void addDependency(
 			CompilationUnit compilationUnit,
 			ScopedName scopedName,
-			ReferenceType type,
+			ReferenceLocation type,
 			ResolveLaterTypeReference element,
 			UpdateOnResolve updateOnResolve,
 			BaseASTElement updateOnResolveElement) {

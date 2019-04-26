@@ -11,7 +11,7 @@ public final class ScopedNameResolver {
 	
 	public static <T, COMPILATION_UNIT> T resolveScopedName(
 			ScopedName toResolve,
-			ReferenceType referenceType,
+			ReferenceLocation referenceType,
 			COMPILATION_UNIT compilationUnit,
 			ImportsModel<COMPILATION_UNIT> importsModel,
 			ScopedName referencedFrom,
@@ -19,7 +19,7 @@ public final class ScopedNameResolver {
 		
 		T result = resolveScopedName(toResolve, compilationUnit, importsModel, referencedFrom, compiledTypesMap);
 		
-		if (result == null && referenceType == ReferenceType.STATIC_OR_STATIC_INSTANCE_METHOD_CALL) {
+		if (result == null && referenceType == ReferenceLocation.STATIC_OR_STATIC_INSTANCE_METHOD_CALL) {
 
 			if (toResolve.hasScope() && toResolve.getScope().size() > 1) {
 			

@@ -10,7 +10,7 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.neaterbits.compiler.resolver.BaseResolveTest;
-import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.ReferenceLocation;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.TestResolvedFile;
 import com.neaterbits.compiler.resolver.TestResolvedType;
@@ -205,7 +205,7 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		final ResolvedTypeDependency interfaceDependency = new ResolvedTypeDependency(
 				resolvedInterface.getTypeName(),
-				ReferenceType.EXTENDS_FROM,
+				ReferenceLocation.EXTENDS_FROM,
 				-1, TypeResolveMode.CLASSNAME_TO_COMPLETE,
 				TypeVariant.INTERFACE,
 				null, null);

@@ -30,7 +30,7 @@ import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.ReferenceLocation;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
@@ -114,7 +114,7 @@ class TypeFinder {
 							final TypeFinderStackEntry lastStackEntry = stack.getFromTop(1);
 							final BaseASTElement lastElement = lastStackEntry.getElement();
 							
-							final ReferenceType referenceType;
+							final ReferenceLocation referenceType;
 							
 							final UpdateOnResolve updateOnResolve;
 							final BaseASTElement updateOnResolveElement;
@@ -127,12 +127,12 @@ class TypeFinder {
 								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof Parameter) {
-								referenceType = ReferenceType.PARAMETER;
+								referenceType = ReferenceLocation.PARAMETER;
 								updateOnResolve = null;
 								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof ClassMethod || lastElement instanceof InterfaceMethod) {
-								referenceType = ReferenceType.RETURNTYPE;
+								referenceType = ReferenceLocation.RETURNTYPE;
 								updateOnResolve = null;
 								updateOnResolveElement = null;
 							}
@@ -146,25 +146,25 @@ class TypeFinder {
 								updateOnResolve = UpdateOnResolve.METHOD_INVOCATION_EXPRESSION;
 								updateOnResolveElement = methodInvocationExpression;
 
-								referenceType = ReferenceType.STATIC_OR_STATIC_INSTANCE_METHOD_CALL;
+								referenceType = ReferenceLocation.STATIC_OR_STATIC_INSTANCE_METHOD_CALL;
 							}
 							else if (lastElement instanceof InitializerVariableDeclarationElement) {
-								referenceType = ReferenceType.VARIABLE_INITIALIZER;
+								referenceType = ReferenceLocation.VARIABLE_INITIALIZER;
 								updateOnResolve = null;
 								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof ClassDataFieldMember) {
-								referenceType = ReferenceType.FIELD;
+								referenceType = ReferenceLocation.FIELD;
 								updateOnResolve = null;
 								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof CatchBlock) {
-								referenceType = ReferenceType.CATCH_EXCEPTION;
+								referenceType = ReferenceLocation.CATCH_EXCEPTION;
 								updateOnResolve = null;
 								updateOnResolveElement = null;
 							}
 							else if (lastElement instanceof ClassInstanceCreationExpression) {
-								referenceType = ReferenceType.CLASS_INSTANCE_CREATION;
+								referenceType = ReferenceLocation.CLASS_INSTANCE_CREATION;
 								updateOnResolve = null;
 								updateOnResolveElement = null;
 							}

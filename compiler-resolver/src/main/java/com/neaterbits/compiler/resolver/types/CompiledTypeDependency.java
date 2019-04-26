@@ -2,21 +2,21 @@ package com.neaterbits.compiler.resolver.types;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.ReferenceType;
+import com.neaterbits.compiler.resolver.ReferenceLocation;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.model.UpdateOnResolve;
 
 public final class CompiledTypeDependency {
 	
 	private final ScopedName scopedName;
-	private final ReferenceType type;
+	private final ReferenceLocation type;
 	private final int typeReferenceElementRef;
 	private final UpdateOnResolve updateOnResolve;
 	private final Integer updateOnResolveElementRef;
 	
 	public CompiledTypeDependency(
 			ScopedName scopedName,
-			ReferenceType type,
+			ReferenceLocation type,
 			int typeReferenceElementRef,
 			UpdateOnResolve updateOnResolve,
 			Integer updateOnResolveElementRef) {
@@ -35,7 +35,7 @@ public final class CompiledTypeDependency {
 		return scopedName;
 	}
 
-	public final ReferenceType getReferenceType() {
+	public final ReferenceLocation getReferenceType() {
 		return type;
 	}
 
