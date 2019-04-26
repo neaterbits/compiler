@@ -10,6 +10,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.model.Mutability;
+import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
@@ -872,7 +873,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR,
-				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
+				new ResolveLaterTypeReference(
+						context((ParserRuleContext)ctx.typeName().getRuleContext()),
+						parseName(ctx.typeName().getText()),
+						ReferenceType.NAME),
 				ctx.Identifier().getText(),
 				context(ctx.Identifier()));
 	}
@@ -907,7 +911,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.TYPED_SUPER,
-				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
+				new ResolveLaterTypeReference(
+						context((ParserRuleContext)ctx.typeName().getRuleContext()),
+						parseName(ctx.typeName().getText()),
+						ReferenceType.NAME),
 				ctx.Identifier().getText(),
 				context(ctx.Identifier()));
 	}
@@ -932,7 +939,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR,
-				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
+				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText()), ReferenceType.NAME),
 				ctx.Identifier().getText(),
 				context(ctx.Identifier()));
 	}
@@ -987,7 +994,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.TYPED_SUPER,
-				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
+				new ResolveLaterTypeReference(
+						context((ParserRuleContext)ctx.typeName().getRuleContext()),
+						parseName(ctx.typeName().getText()),
+						ReferenceType.NAME),
 				ctx.Identifier().getText(),
 				context(ctx.Identifier()));
 	}
@@ -1057,7 +1067,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 		delegate.onArrayCreationExpressionStart(
 				context(ctx),
-				new ResolveLaterTypeReference(context(ctx), parseName(ctx.classOrInterfaceType().getText())),
+				new ResolveLaterTypeReference(context(ctx), parseName(ctx.classOrInterfaceType().getText()), ReferenceType.NAME),
 				ctx.dims() != null ? countDims(ctx.dims().getText()) : 0);
 	}
 
@@ -1087,7 +1097,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 			ClassOrInterfaceType_dims_arrayCreationExpressionContext ctx) {
 		delegate.onArrayCreationExpressionStart(
 				context(ctx),
-				new ResolveLaterTypeReference(context(ctx), parseName(ctx.classOrInterfaceType().getText())),
+				new ResolveLaterTypeReference(context(ctx), parseName(ctx.classOrInterfaceType().getText()), ReferenceType.NAME),
 				ctx.dims() != null ? countDims(ctx.dims().getText()) : 0);
 	}
 
@@ -1309,34 +1319,34 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitPrimaryDotIdentifierFieldAccess(PrimaryDotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitSuperDotIdentifierFieldAccess(SuperDotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitTypeNameDotSuperDotIdentifierFieldAccess(TypeNameDotSuperDotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitDotIdentifierFieldAccess(DotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitSuperDotIdentifierFieldAccess_fieldAccess_lfno_primary(
 			SuperDotIdentifierFieldAccess_fieldAccess_lfno_primaryContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 	
 	@Override
 	public void exitTypeNameDotSuperDotIdentifierFieldAccess_fieldAccess_lfno_primary(
 			TypeNameDotSuperDotIdentifierFieldAccess_fieldAccess_lfno_primaryContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override

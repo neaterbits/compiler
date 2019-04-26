@@ -190,6 +190,7 @@ import com.neaterbits.compiler.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public abstract class BaseParserListener {
@@ -392,7 +393,9 @@ public abstract class BaseParserListener {
 		
 		stackNamedClass.setExtendsKeyword(extendsKeyword, extendsKeywordContext);
 		
-		stackNamedClass.addExtendedClass(new ResolveLaterTypeReference(context, className));
+		final ResolveLaterTypeReference typeReference = new ResolveLaterTypeReference(context, className, ReferenceType.NAME);
+		
+		stackNamedClass.addExtendedClass(typeReference);
 		
 		logExit(context);
 	}
@@ -403,7 +406,9 @@ public abstract class BaseParserListener {
 		
 		final StackNamedClass stackNamedClass = get();
 		
-		stackNamedClass.addImplementedInterface(new ResolveLaterTypeReference(context, interfaceName));
+		final ResolveLaterTypeReference typeReference = new ResolveLaterTypeReference(context, interfaceName, ReferenceType.NAME);
+		
+		stackNamedClass.addImplementedInterface(typeReference);
 		
 		logExit(context);
 	}
@@ -913,7 +918,7 @@ public abstract class BaseParserListener {
 		
 		final StackInterface entry = get();
 		
-		entry.addExtendedInterface(new ResolveLaterTypeReference(context, interfaceName));
+		entry.addExtendedInterface(new ResolveLaterTypeReference(context, interfaceName, ReferenceType.NAME));
 		
 		logExit(context);
 	}
@@ -958,7 +963,7 @@ public abstract class BaseParserListener {
 
 		final StackEnum stackEnum = get();
 		
-		stackEnum.addImplementedInterface(new ResolveLaterTypeReference(context, interfaceName));
+		stackEnum.addImplementedInterface(new ResolveLaterTypeReference(context, interfaceName, ReferenceType.NAME));
 		
 		logExit(context);
 	}
@@ -1280,7 +1285,7 @@ public abstract class BaseParserListener {
 	}
 	
 	
-	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, String fieldName, Context fieldNameContext) {
+	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, ReferenceType referenceType, String fieldName, Context fieldNameContext) {
 		
 		logEnter(context);
 		
@@ -1289,7 +1294,7 @@ public abstract class BaseParserListener {
 		final FieldAccess fieldAccess = new FieldAccess(
 				context,
 				fieldAccessType,
-				typeName != null ? new ResolveLaterTypeReference(context, typeName) : null,
+				typeName != null ? new ResolveLaterTypeReference(context, typeName, referenceType) : null,
 				new FieldName(fieldName));
 		
 		primarySetter.addPrimary(fieldAccess);
@@ -1333,7 +1338,12 @@ public abstract class BaseParserListener {
 		
 		final StackNamedClass stackClass = mainStack.getFromTop(StackNamedClass.class);
 		
-		stackPrimaryList.add(new ThisPrimary(context, new ResolveLaterTypeReference(context, new ScopedName(null, stackClass.getName()))));
+		final ResolveLaterTypeReference typeReference = new ResolveLaterTypeReference(
+				context,
+				new ScopedName(null, stackClass.getName()),
+				ReferenceType.NAME);
+		
+		stackPrimaryList.add(new ThisPrimary(context, typeReference));
 		
 		logExit(context);
 	}
@@ -1929,7 +1939,7 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
-	public final void onTypeReference(Context context, ScopedName name) {
+	public final void onTypeReference(Context context, ScopedName name, ReferenceType referenceType) {
 
 		logEnter(context);
 		
@@ -1937,7 +1947,7 @@ public abstract class BaseParserListener {
 	
 		final TypeReferenceSetter typeReferenceSetter = get();
 
-		typeReferenceSetter.setTypeReference(new ResolveLaterTypeReference(context, name));
+		typeReferenceSetter.setTypeReference(new ResolveLaterTypeReference(context, name, referenceType));
 		
 		logExit(context);
 	}

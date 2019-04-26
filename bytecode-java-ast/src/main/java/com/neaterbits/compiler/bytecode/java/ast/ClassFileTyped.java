@@ -43,6 +43,7 @@ import com.neaterbits.compiler.java.bytecode.Field;
 import com.neaterbits.compiler.java.bytecode.Method;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ReferenceType;
 
 final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 
@@ -127,7 +128,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 	private ResolveLaterTypeReference getTypeReference(Context context, int typeName, Function<String, BaseTypeName> createTypeName) {
 		final CompleteName className = getCompleteName(getSuperClassIndex(), createTypeName);
 		
-		final ResolveLaterTypeReference typeReference = new ResolveLaterTypeReference(context, className.toScopedName());
+		final ResolveLaterTypeReference typeReference = new ResolveLaterTypeReference(context, className.toScopedName(), ReferenceType.NAME);
 
 		return typeReference;
 	}
@@ -184,7 +185,10 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 	
 		for (int interfaceIndex : this.getInterfaces()) {
 			
-			final TypeReference typeReference = new ResolveLaterTypeReference(context, getCompleteName(interfaceIndex, InterfaceName::new).toScopedName());
+			final TypeReference typeReference = new ResolveLaterTypeReference(
+					context,
+					getCompleteName(interfaceIndex, InterfaceName::new).toScopedName(),
+					ReferenceType.NAME);
 			
 			interfaces.add(typeReference);
 		}

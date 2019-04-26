@@ -37,6 +37,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 /**
@@ -432,8 +433,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onArrayAccessEnd(context);
 	}
 
-	public void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, String fieldName, Context fieldNameContext) {
-		delegate.onFieldAccess(context, fieldAccessType, typeName, fieldName, fieldNameContext);
+	public void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, ReferenceType referenceType, String fieldName, Context fieldNameContext) {
+		delegate.onFieldAccess(context, fieldAccessType, typeName, referenceType, fieldName, fieldNameContext);
 	}
 
 	public void onCastExpressionStart(Context context) {
@@ -584,7 +585,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 		delegate.onClassInstanceCreationTypeAndConstructorName(
 				context,
-				new ResolveLaterTypeReference(context, name),
+				new ResolveLaterTypeReference(context, name, ReferenceType.NAME),
 				name);
 	}
 
@@ -760,12 +761,12 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	
 	public void onJavaClassOrInterfaceReferenceType(Context context, ScopedName typeName) {
 
-		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName));
+		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName, ReferenceType.REFERENCE));
 	}
 	
-	public void onJavaTypeVariableReferenceType(Context context, ScopedName typeName) {
+	public void onJavaTypeVariableReferenceType(Context context, ScopedName typeName, ReferenceType referenceType) {
 
-		delegate.onTypeReference(context, typeName);
+		delegate.onTypeReference(context, typeName, referenceType);
 	}
 	
 	private Context updateElseIfContext(Context context, Token elseToken, String file) {

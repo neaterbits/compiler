@@ -143,7 +143,9 @@ public abstract class BaseJavaCompilerTest {
 					typeReference.replaceWith(
 							new ResolveLaterTypeReference(
 									typeReference.getContext(),
-									renamedScope));
+									renamedScope,
+									typeReference.getReferenceType(),
+									typeReference.getNumPointers()));
 					
 				}
 			}
