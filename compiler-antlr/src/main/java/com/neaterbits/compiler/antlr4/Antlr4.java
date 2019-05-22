@@ -4,11 +4,12 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ImmutableContext;
 
 public class Antlr4 {
 
 	public static Context context(ParserRuleContext antlrContext, String file, int tokenSequenceNo) {
-		return new Context(file,
+		return new ImmutableContext(file,
 				antlrContext.getStart().getLine(),
 				antlrContext.getStart().getCharPositionInLine(),
 				antlrContext.getStart().getStartIndex(),
@@ -20,7 +21,7 @@ public class Antlr4 {
 	}
 
 	public static Context context(Token token, String file, int tokenSequenceNo) {
-		return new Context(file,
+		return new ImmutableContext(file,
 				token.getLine(),
 				token.getCharPositionInLine(),
 				token.getStartIndex(),
@@ -32,7 +33,7 @@ public class Antlr4 {
 	}
 
 	public static Context context(Token startToken, Token endToken, String text, String file, int tokenSequenceNo) {
-		return new Context(file,
+		return new ImmutableContext(file,
 				startToken.getLine(),
 				startToken.getCharPositionInLine(),
 				startToken.getStartIndex(),

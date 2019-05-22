@@ -4,24 +4,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Function;
 
-public final class Context {
-
-	private final String file;
-	private final int startLine;
-	private final int startPosInLine;
-	private final int startOffset;
-	private final int endLine;
-	private final int endPosInLine;
-	private final int endOffset;
-	private final String text;
-	private final int tokenSequenceNo;
+public interface Context {
 
 	public static Context makeTestContext() {
 		return makeTestContext(-1);
 	}
 	
 	public static Context makeTestContext(int tokenSequenceNo) {
-		return new Context("", 0, 0, 0, 0, 0, 0, "", tokenSequenceNo);
+		return new ImmutableContext("", 0, 0, 0, 0, 0, 0, "", tokenSequenceNo);
 	}
 
 	public static <T> Context merge(Collection<T> elements, Function<T, Context> getContext) {
@@ -56,74 +46,36 @@ public final class Context {
 			sb.append(context.getText());
 		}
 		
-		if (lower.endOffset > upper.startOffset) {
+		if (lower.getEndOffset() > upper.getStartOffset()) {
 			throw new IllegalArgumentException();
 		}
 		
-		return new Context(
-				lower.file,
-				lower.startLine, lower.startPosInLine, lower.getStartOffset(), 
-				upper.endLine, upper.endPosInLine, upper.endOffset,
+		return new ImmutableContext(
+				lower.getFile(),
+				lower.getStartLine(), lower.getStartPosInLine(), lower.getStartOffset(), 
+				upper.getEndLine(), upper.getEndPosInLine(), upper.getEndOffset(),
 				sb.toString(),
-				lower.tokenSequenceNo);
+				lower.getTokenSequenceNo());
 	}
 	
-	public Context(String file, int startLine, int startPosInLine, int startOffset, int endLine, int endPos, int endOffset, String text, int tokenSequenceNo) {
-		
-		this.file = file;
-		this.startLine = startLine;
-		this.startPosInLine = startPosInLine;
-		this.startOffset = startOffset;
-		this.endLine = endLine;
-		this.endPosInLine = endPos;
-		this.endOffset = endOffset;
-		this.text = text;
-		this.tokenSequenceNo = tokenSequenceNo;
-	}
-
-	public String getFile() {
-		return file;
-	}
-
-	public int getStartLine() {
-		return startLine;
-	}
-
-	public int getStartPosInLine() {
-		return startPosInLine;
-	}
+	String getFile();
 	
-	public int getStartOffset() {
-		return startOffset;
-	}
-
-	public int getEndLine() {
-		return endLine;
-	}
-
-	public int getEndPosInLine() {
-		return endPosInLine;
-	}
-
-	public int getEndOffset() {
-		return endOffset;
-	}
+	int getStartLine();
 	
-	public int getLength() {
-		return getEndOffset() - getStartOffset() + 1;
-	}
+	int getStartPosInLine();
 	
-	public String getText() {
-		return text;
-	}
+	int getStartOffset();
+	
+	int getEndLine();
+	
+	int getEndPosInLine();
+	
+	int getEndOffset();
+	
+	int getLength();
+	
+	String getText();
+	
+	int getTokenSequenceNo();
 
-	public int getTokenSequenceNo() {
-		return tokenSequenceNo;
-	}
-
-	@Override
-	public String toString() {
-		return "Context [file=" + file + ", startLine=" + startLine + ", startPosInLine=" + startPosInLine + ", endLine=" + endLine
-				+ ", endPosInLine=" + endPosInLine + "]";
-	}
 }

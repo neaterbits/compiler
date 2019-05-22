@@ -33,6 +33,7 @@ import com.neaterbits.compiler.ast.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
@@ -776,7 +777,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		final Context updatedContext;
 		
 		if (elseContext.getStartOffset() < context.getStartOffset()) {
-			updatedContext = new Context(
+			updatedContext = new ImmutableContext(
 					context.getFile(),
 					elseContext.getStartLine(),
 					elseContext.getStartPosInLine(),
