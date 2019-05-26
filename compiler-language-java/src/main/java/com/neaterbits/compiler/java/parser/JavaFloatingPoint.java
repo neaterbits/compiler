@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.java.parser;
 
-import com.neaterbits.compiler.ast.expression.Base;
+import com.neaterbits.compiler.util.Base;
 
 final class JavaFloatingPoint {
 

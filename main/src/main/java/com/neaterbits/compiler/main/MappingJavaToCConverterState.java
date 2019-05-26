@@ -3,7 +3,6 @@ package com.neaterbits.compiler.main;
 import com.neaterbits.compiler.ast.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.block.FunctionName;
 import com.neaterbits.compiler.ast.block.MethodName;
-import com.neaterbits.compiler.ast.type.BaseTypeName;
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.primitive.IntType;
 import com.neaterbits.compiler.ast.typedefinition.StructName;
@@ -12,6 +11,7 @@ import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.name.BaseTypeName;
 
 public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState<T>> extends OOToProceduralConverterState<T> {
 

@@ -27,30 +27,21 @@ import com.neaterbits.compiler.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
-import com.neaterbits.compiler.ast.statement.ASTMutability;
 import com.neaterbits.compiler.ast.statement.EnumConstant;
-import com.neaterbits.compiler.ast.statement.FieldTransient;
-import com.neaterbits.compiler.ast.statement.FieldVolatile;
 import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodModifiers;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodOverride;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodStatic;
 import com.neaterbits.compiler.ast.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ConstructorModifierHolder;
-import com.neaterbits.compiler.ast.typedefinition.FieldModifier;
 import com.neaterbits.compiler.ast.typedefinition.FieldModifierHolder;
-import com.neaterbits.compiler.ast.typedefinition.FieldStatic;
-import com.neaterbits.compiler.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceDeclarationName;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceMethodName;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceModifierHolder;
-import com.neaterbits.compiler.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifierHolder;
 import com.neaterbits.compiler.ast.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
@@ -92,6 +83,16 @@ import com.neaterbits.compiler.util.model.UpdateOnResolve;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.parse.ScopesListener;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodStatic;
+import com.neaterbits.compiler.util.typedefinition.FieldModifier;
+import com.neaterbits.compiler.util.typedefinition.FieldStatic;
+import com.neaterbits.compiler.util.typedefinition.FieldTransient;
+import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
+import com.neaterbits.compiler.util.typedefinition.FieldVolatile;
+import com.neaterbits.compiler.util.typedefinition.Subclassing;
+
+import statement.ASTMutability;
 
 public class ObjectProgramModel
 	extends ObjectImportsModel

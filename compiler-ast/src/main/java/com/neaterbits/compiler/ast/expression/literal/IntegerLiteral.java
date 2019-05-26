@@ -3,9 +3,9 @@ package com.neaterbits.compiler.ast.expression.literal;
 import java.math.BigInteger;
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.expression.Base;
 import com.neaterbits.compiler.ast.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.type.primitive.IntegerType;
+import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 

@@ -10,14 +10,14 @@ import com.neaterbits.compiler.ast.expression.arithemetic.unary.PostDecrementExp
 import com.neaterbits.compiler.ast.expression.arithemetic.unary.PostIncrementExpression;
 import com.neaterbits.compiler.ast.expression.arithemetic.unary.PreDecrementExpression;
 import com.neaterbits.compiler.ast.expression.arithemetic.unary.PreIncrementExpression;
-import com.neaterbits.compiler.ast.operator.Arithmetic;
-import com.neaterbits.compiler.ast.operator.Bitwise;
-import com.neaterbits.compiler.ast.operator.Logical;
-import com.neaterbits.compiler.ast.operator.Operator;
-import com.neaterbits.compiler.ast.operator.OperatorVisitor;
-import com.neaterbits.compiler.ast.operator.Relational;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseInfixExpressionEmitter;
+import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.Bitwise;
+import com.neaterbits.compiler.util.operator.Logical;
+import com.neaterbits.compiler.util.operator.Operator;
+import com.neaterbits.compiler.util.operator.OperatorVisitor;
+import com.neaterbits.compiler.util.operator.Relational;
 
 public abstract class CLikeExpressionEmitter<T extends EmitterState> extends BaseInfixExpressionEmitter<T> {
 

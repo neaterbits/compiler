@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.neaterbits.compiler.ast.ASTParseTreeFactory;
 import com.neaterbits.compiler.ast.CompilationCode;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
@@ -28,6 +29,7 @@ import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ProgramEmitter;
+import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
@@ -109,7 +111,7 @@ public abstract class BaseJavaCompilerTest {
 		
 		final FileTypeParser<JavaParserListener> javaParser = new FileTypeParser<>(
 				new Java8AntlrParser(true),
-				(logger, tokenSequenceNoGenerator) -> new JavaParserListener(logger, "testfile", tokenSequenceNoGenerator), 
+				(logger, tokenSequenceNoGenerator) -> new JavaParserListener(logger, "testfile", tokenSequenceNoGenerator, new ASTParseTreeFactory(JavaTypes.getBuiltinTypes())), 
 				".java");
 
 		final DirectoryParser directoryParser = new DirectoryParser(javaParser);

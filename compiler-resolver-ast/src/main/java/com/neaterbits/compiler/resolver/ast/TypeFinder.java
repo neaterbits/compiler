@@ -8,19 +8,15 @@ import java.util.stream.Collectors;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Namespace;
-import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.block.ClassMethod;
 import com.neaterbits.compiler.ast.block.Parameter;
 import com.neaterbits.compiler.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
-import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.statement.CatchBlock;
 import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
-import com.neaterbits.compiler.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.ast.typedefinition.ComplexTypeDefinition;
-import com.neaterbits.compiler.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceMethod;
@@ -38,8 +34,12 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.UpdateOnResolve;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
+import com.neaterbits.compiler.util.name.ClassName;
+import com.neaterbits.compiler.util.name.DefinitionName;
+import com.neaterbits.compiler.util.name.NamespaceReference;
 
 class TypeFinder {
 

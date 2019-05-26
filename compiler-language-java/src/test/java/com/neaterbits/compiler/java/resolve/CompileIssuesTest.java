@@ -9,10 +9,10 @@ import org.junit.Test;
 
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
-import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.statement.ReturnStatement;
 import com.neaterbits.compiler.ast.variables.NameReference;
 import com.neaterbits.compiler.java.BaseCompilerTest;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
 
 // Test various compile and resolve issues

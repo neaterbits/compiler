@@ -6,9 +6,9 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.block.MethodName;
 import com.neaterbits.compiler.ast.list.ASTSingle;
-import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class MethodInvocationExpression extends Call<MethodName> {
@@ -17,7 +17,14 @@ public final class MethodInvocationExpression extends Call<MethodName> {
 	private final ASTSingle<TypeReference> classType; // non null for static method calls
 	private final ASTSingle<Expression> object; // object invoked on if non static
 
-	public MethodInvocationExpression(Context context, MethodInvocationType type, TypeReference classType, Expression object, MethodName callable, ParameterList parameters) {
+	public MethodInvocationExpression(
+			Context context,
+			MethodInvocationType type,
+			TypeReference classType,
+			Expression object,
+			MethodName callable,
+			ParameterList parameters) {
+		
 		super(context, callable, parameters);
 
 		Objects.requireNonNull(type);

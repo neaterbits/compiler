@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.variables.VariableReference;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 
+@Deprecated
 public final class VariableExpression extends Primary {
 
 	private final ASTSingle<VariableReference> reference;

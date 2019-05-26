@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.list.ASTSingle;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.name.ClassName;
 
 public abstract class BaseClassDefinition extends ComplexTypeDefinition<ClassName, ClassDeclarationName> {
 

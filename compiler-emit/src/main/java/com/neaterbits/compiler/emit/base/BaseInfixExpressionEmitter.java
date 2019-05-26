@@ -5,10 +5,10 @@ import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.expression.ExpressionList;
 import com.neaterbits.compiler.ast.expression.PrimaryList;
 import com.neaterbits.compiler.ast.list.ASTList;
-import com.neaterbits.compiler.ast.operator.Operator;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.VariableReference;
 import com.neaterbits.compiler.emit.EmitterState;
+import com.neaterbits.compiler.util.operator.Operator;
 
 public abstract class BaseInfixExpressionEmitter<T extends EmitterState> extends BaseExpressionEmitter<T> {
 

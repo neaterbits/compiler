@@ -6,16 +6,17 @@ import com.neaterbits.compiler.ast.list.ASTList;
 import com.neaterbits.compiler.ast.statement.BaseTryCatchFinallyStatement;
 import com.neaterbits.compiler.ast.statement.CatchBlock;
 import com.neaterbits.compiler.ast.statement.IteratorForStatement;
-import com.neaterbits.compiler.ast.statement.ASTMutability;
 import com.neaterbits.compiler.ast.statement.SwitchCaseLabel;
 import com.neaterbits.compiler.ast.statement.ThrowStatement;
 import com.neaterbits.compiler.ast.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.ast.statement.TryWithResourcesStatement;
-import com.neaterbits.compiler.ast.typedefinition.VariableModifierVisitor;
 import com.neaterbits.compiler.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.c.CLikeStatementEmitter;
+import com.neaterbits.compiler.util.typedefinition.VariableModifierVisitor;
+
+import statement.ASTMutability;
 
 public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterState> {
 

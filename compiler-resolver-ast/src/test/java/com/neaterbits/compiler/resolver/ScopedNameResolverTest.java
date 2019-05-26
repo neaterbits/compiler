@@ -11,12 +11,12 @@ import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
 import com.neaterbits.compiler.ast.ImportName;
 import com.neaterbits.compiler.ast.Keyword;
-import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.resolver.ast.model.ObjectImportsModel;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.IntValue;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.name.NamespaceReference;
 
 public class ScopedNameResolverTest {
 

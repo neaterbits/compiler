@@ -7,6 +7,7 @@ import java.util.List;
 import com.neaterbits.compiler.ast.block.CallableName;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.name.ClassName;
 
 public final class ConstructorName extends CallableName {
 

@@ -21,7 +21,6 @@ import com.neaterbits.compiler.ast.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.ast.expression.literal.ClassExpression;
 import com.neaterbits.compiler.ast.expression.literal.StringLiteral;
-import com.neaterbits.compiler.ast.parser.FieldAccessType;
 import com.neaterbits.compiler.ast.type.FunctionPointerType;
 import com.neaterbits.compiler.ast.typereference.FunctionPointerTypeReference;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
@@ -31,6 +30,7 @@ import com.neaterbits.compiler.convert.ootofunction.BaseExpressionConverter;
 import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.MethodInfo;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 
 final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>> extends BaseExpressionConverter<T> {
 

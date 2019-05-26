@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.name.InvocableName;
 
 public abstract class InvocableDefinition<T extends InvocableName, DECLARATION_NAME extends DeclarationName<T>>
 		extends ComplexTypeDefinition<T, DECLARATION_NAME> {

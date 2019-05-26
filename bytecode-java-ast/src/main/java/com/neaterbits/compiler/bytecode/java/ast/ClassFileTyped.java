@@ -6,11 +6,9 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.neaterbits.compiler.ast.FieldNameDeclaration;
-import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.ast.block.ClassMethod;
 import com.neaterbits.compiler.ast.block.Parameter;
 import com.neaterbits.compiler.ast.block.ParameterName;
-import com.neaterbits.compiler.ast.type.BaseTypeName;
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.complex.ClassType;
 import com.neaterbits.compiler.ast.type.complex.InterfaceType;
@@ -23,9 +21,7 @@ import com.neaterbits.compiler.ast.typedefinition.ClassMethodModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.ClassMethodModifiers;
 import com.neaterbits.compiler.ast.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.ClassModifiers;
-import com.neaterbits.compiler.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
-import com.neaterbits.compiler.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.ast.typedefinition.FieldModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.FieldModifiers;
 import com.neaterbits.compiler.ast.typedefinition.InterfaceDeclarationName;
@@ -44,6 +40,10 @@ import com.neaterbits.compiler.java.bytecode.Method;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.util.name.BaseTypeName;
+import com.neaterbits.compiler.util.name.ClassName;
+import com.neaterbits.compiler.util.name.DefinitionName;
+import com.neaterbits.compiler.util.name.NamespaceReference;
 
 final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 

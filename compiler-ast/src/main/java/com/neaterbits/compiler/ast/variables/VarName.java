@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.ast.variables;
 
-import com.neaterbits.compiler.ast.Name;
+import com.neaterbits.compiler.util.name.Name;
 
 public final class VarName extends Name {
 

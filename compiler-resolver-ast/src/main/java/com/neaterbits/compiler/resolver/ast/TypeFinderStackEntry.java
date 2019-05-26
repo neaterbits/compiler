@@ -9,10 +9,10 @@ import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.model.UpdateOnResolve;
+import com.neaterbits.compiler.util.name.DefinitionName;
+import com.neaterbits.compiler.util.name.NamespaceReference;
 import com.neaterbits.compiler.ast.BaseASTElement;
 import com.neaterbits.compiler.ast.CompilationUnit;
-import com.neaterbits.compiler.ast.NamespaceReference;
-import com.neaterbits.compiler.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
 

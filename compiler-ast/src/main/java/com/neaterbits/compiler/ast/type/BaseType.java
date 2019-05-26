@@ -34,7 +34,7 @@ public abstract class BaseType {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BaseType other = (BaseType) obj;
+		final BaseType other = (BaseType) obj;
 		if (nullable != other.nullable)
 			return false;
 		return true;

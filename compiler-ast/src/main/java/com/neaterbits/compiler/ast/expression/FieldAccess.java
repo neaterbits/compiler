@@ -6,11 +6,11 @@ import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.expression.literal.Primary;
 import com.neaterbits.compiler.ast.list.ASTSingle;
-import com.neaterbits.compiler.ast.parser.FieldAccessType;
 import com.neaterbits.compiler.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 
 public final class FieldAccess extends Primary {
 

@@ -2,6 +2,8 @@ package com.neaterbits.compiler.ast.typedefinition;
 
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.typedefinition.InterfaceMethodModifier;
+import com.neaterbits.compiler.util.typedefinition.InterfaceMethodModifierVisitor;
 
 public final class InterfaceMethodModifierHolder extends BaseModifierHolder<InterfaceMethodModifier> implements InterfaceMethodModifier {
 

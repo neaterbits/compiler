@@ -9,10 +9,29 @@ import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
+import com.neaterbits.compiler.util.block.ConstructorInvocation;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.Mutability;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.model.Visibility;
+import com.neaterbits.compiler.util.name.NamespaceReference;
+import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.Bitwise;
+import com.neaterbits.compiler.util.operator.Logical;
+import com.neaterbits.compiler.util.operator.Notation;
+import com.neaterbits.compiler.util.operator.Relational;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
+import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.util.typedefinition.ConstructorVisibility;
+import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
+import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
+import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
+import com.neaterbits.compiler.util.typedefinition.Subclassing;
+
+import statement.ASTMutability;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,30 +46,8 @@ import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.ast.Import;
 import com.neaterbits.compiler.ast.ImportName;
 import com.neaterbits.compiler.ast.Keyword;
-import com.neaterbits.compiler.ast.NamespaceReference;
-import com.neaterbits.compiler.ast.block.ConstructorInvocation;
 import com.neaterbits.compiler.ast.block.MethodName;
-import com.neaterbits.compiler.ast.operator.Arithmetic;
-import com.neaterbits.compiler.ast.operator.Bitwise;
-import com.neaterbits.compiler.ast.operator.Logical;
-import com.neaterbits.compiler.ast.operator.Notation;
-import com.neaterbits.compiler.ast.operator.Relational;
-import com.neaterbits.compiler.ast.parser.FieldAccessType;
-import com.neaterbits.compiler.ast.parser.MethodInvocationType;
-import com.neaterbits.compiler.ast.statement.ASTMutability;
-import com.neaterbits.compiler.ast.type.primitive.ScalarType;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodOverride;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
-import com.neaterbits.compiler.ast.typedefinition.ClassVisibility;
-import com.neaterbits.compiler.ast.typedefinition.ConstructorVisibility;
-import com.neaterbits.compiler.ast.typedefinition.FieldVisibility;
-import com.neaterbits.compiler.ast.typedefinition.InterfaceMethodVisibility;
-import com.neaterbits.compiler.ast.typedefinition.InterfaceVisibility;
-import com.neaterbits.compiler.ast.typedefinition.Subclassing;
-import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
-import com.neaterbits.compiler.ast.typereference.ScalarTypeReference;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
 
 /**
  * 
@@ -860,7 +857,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterNoObjectMethodInvocation_lfno_primary(NoObjectMethodInvocation_lfno_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, ctx.methodName().getText(), context(ctx.methodName()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, null, null, ctx.methodName().getText(), context(ctx.methodName()));
 	}
 
 	@Override
@@ -873,10 +870,9 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR,
-				new ResolveLaterTypeReference(
-						context((ParserRuleContext)ctx.typeName().getRuleContext()),
-						parseName(ctx.typeName().getText()),
-						ReferenceType.NAME),
+				parseName(ctx.typeName().getText()),
+				context((ParserRuleContext)ctx.typeName().getRuleContext()),
+				ReferenceType.NAME,
 				ctx.Identifier().getText(),
 				context(ctx.Identifier()));
 	}
@@ -888,7 +884,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterObjectMethodInvocation_lfno_primary(ObjectMethodInvocation_lfno_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -898,7 +894,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterSuperMethodInvocation_lfno_primary(SuperMethodInvocation_lfno_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -911,10 +907,9 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.TYPED_SUPER,
-				new ResolveLaterTypeReference(
-						context((ParserRuleContext)ctx.typeName().getRuleContext()),
-						parseName(ctx.typeName().getText()),
-						ReferenceType.NAME),
+				parseName(ctx.typeName().getText()),
+				context((ParserRuleContext)ctx.typeName().getRuleContext()),
+				ReferenceType.NAME,
 				ctx.Identifier().getText(),
 				context(ctx.Identifier()));
 	}
@@ -926,7 +921,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterNoObjectMethodInvocation(NoObjectMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, ctx.methodName().getText(), context(ctx.methodName()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, null, null, ctx.methodName().getText(), context(ctx.methodName()));
 	}
 
 	@Override
@@ -939,7 +934,9 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR,
-				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText()), ReferenceType.NAME),
+				parseName(ctx.typeName().getText()),
+				context((ParserRuleContext)ctx.typeName().getRuleContext()),
+				ReferenceType.NAME,
 				ctx.Identifier().getText(),
 				context(ctx.Identifier()));
 	}
@@ -951,7 +948,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterObjectMethodInvocation(ObjectMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -961,7 +958,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterExpressionMethodInvocation(ExpressionMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.PRIMARY, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.PRIMARY, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -971,7 +968,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterSubMethodInvocation_lf_primary(SubMethodInvocation_lf_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUB, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUB, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -981,7 +978,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterSuperMethodInvocation(SuperMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -994,10 +991,9 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.TYPED_SUPER,
-				new ResolveLaterTypeReference(
-						context((ParserRuleContext)ctx.typeName().getRuleContext()),
-						parseName(ctx.typeName().getText()),
-						ReferenceType.NAME),
+				parseName(ctx.typeName().getText()),
+				context((ParserRuleContext)ctx.typeName().getRuleContext()),
+				ReferenceType.NAME,
 				ctx.Identifier().getText(),
 				context(ctx.Identifier()));
 	}
@@ -1039,11 +1035,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	// Array creation
 
-	private TypeReference parsePrimitiveType(Context context, String typeString) {
-		final ScalarType scalarType = delegate.parseJavaPrimitiveType(typeString);
-	
-		return new ScalarTypeReference(context, scalarType.getTypeName());
-	}
 	
 	@Override
 	public void enterPrimitiveType_dimExprs_arrayCreationExpression(
@@ -1051,7 +1042,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 		delegate.onArrayCreationExpressionStart(
 				context(ctx),
-				parsePrimitiveType(context(ctx), ctx.primitiveType().getText()),
+				JavaPrimitiveType.fromString(ctx.primitiveType().getText()).getScopedName(),
+				ReferenceType.SCALAR,
 				ctx.dims() != null ? countDims(ctx.dims().getText()) : 0);
 	}
 
@@ -1068,7 +1060,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 		delegate.onArrayCreationExpressionStart(
 				context(ctx),
-				new ResolveLaterTypeReference(context(ctx), parseName(ctx.classOrInterfaceType().getText()), ReferenceType.NAME),
+				parseName(ctx.classOrInterfaceType().getText()),
+				ReferenceType.NAME,
 				ctx.dims() != null ? countDims(ctx.dims().getText()) : 0);
 	}
 
@@ -1084,7 +1077,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterPrimitiveType_dims_arrayCreationExpression(PrimitiveType_dims_arrayCreationExpressionContext ctx) {
 		delegate.onArrayCreationExpressionStart(
 				context(ctx),
-				parsePrimitiveType(context(ctx), ctx.primitiveType().getText()),
+				JavaPrimitiveType.fromString(ctx.primitiveType().getText()).getScopedName(),
+				ReferenceType.SCALAR,
 				ctx.dims() != null ? countDims(ctx.dims().getText()) : 0);
 	}
 
@@ -1098,7 +1092,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 			ClassOrInterfaceType_dims_arrayCreationExpressionContext ctx) {
 		delegate.onArrayCreationExpressionStart(
 				context(ctx),
-				new ResolveLaterTypeReference(context(ctx), parseName(ctx.classOrInterfaceType().getText()), ReferenceType.NAME),
+				parseName(ctx.classOrInterfaceType().getText()),
+				ReferenceType.NAME,
 				ctx.dims() != null ? countDims(ctx.dims().getText()) : 0);
 	}
 

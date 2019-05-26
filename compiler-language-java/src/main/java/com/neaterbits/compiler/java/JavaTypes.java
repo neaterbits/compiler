@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.ast.type.BaseTypeName;
 import com.neaterbits.compiler.ast.type.primitive.BooleanType;
 import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.type.primitive.ByteType;
@@ -21,6 +20,7 @@ import com.neaterbits.compiler.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.ast.type.primitive.StringType;
 import com.neaterbits.compiler.util.imports.TypeImport;
 import com.neaterbits.compiler.util.model.BuiltinTypeRef;
+import com.neaterbits.compiler.util.name.BaseTypeName;
 
 public class JavaTypes {
 

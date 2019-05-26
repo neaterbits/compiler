@@ -7,10 +7,10 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.ASTIterator;
 import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.list.ASTList;
-import com.neaterbits.compiler.ast.operator.Operator;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.operator.Operator;
 
 public final class ExpressionList extends Expression {
 

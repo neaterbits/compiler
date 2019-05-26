@@ -7,13 +7,13 @@ import com.neaterbits.compiler.ast.Namespace;
 import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.statement.Statement;
 import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.type.BaseTypeName;
 import com.neaterbits.compiler.ast.type.CompleteName;
 import com.neaterbits.compiler.ast.type.primitive.IntType;
-import com.neaterbits.compiler.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.VariableDeclaration;
 import com.neaterbits.compiler.ast.variables.VariableReference;
+import com.neaterbits.compiler.util.name.BaseTypeName;
+import com.neaterbits.compiler.util.name.DefinitionName;
 
 public abstract class ConverterState<T extends ConverterState<T>> {
 

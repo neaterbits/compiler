@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.ast.type.primitive;
 
-import com.neaterbits.compiler.ast.type.BaseTypeName;
+import com.neaterbits.compiler.util.name.BaseTypeName;
 
 public abstract class ScalarType extends BuiltinType {
 	

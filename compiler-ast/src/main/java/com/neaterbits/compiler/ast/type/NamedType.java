@@ -2,8 +2,9 @@ package com.neaterbits.compiler.ast.type;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.NamespaceReference;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.name.BaseTypeName;
+import com.neaterbits.compiler.util.name.NamespaceReference;
 
 public abstract class NamedType extends BaseType {
 

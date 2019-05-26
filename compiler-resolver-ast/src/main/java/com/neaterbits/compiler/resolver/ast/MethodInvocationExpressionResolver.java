@@ -9,8 +9,6 @@ import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.expression.ParameterList;
 import com.neaterbits.compiler.ast.expression.PrimaryList;
 import com.neaterbits.compiler.ast.expression.literal.Primary;
-import com.neaterbits.compiler.ast.parser.FieldAccessType;
-import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.variables.StaticMemberReference;
@@ -19,7 +17,9 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 
 public class MethodInvocationExpressionResolver {
 

@@ -5,8 +5,8 @@ import com.neaterbits.compiler.ast.ASTRecurseMode;
 import com.neaterbits.compiler.ast.CompilationCode;
 import com.neaterbits.compiler.ast.Keyword;
 import com.neaterbits.compiler.ast.list.ASTSingle;
-import com.neaterbits.compiler.ast.type.BaseTypeName;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.name.BaseTypeName;
 
 public abstract class TypeDefinition<T extends BaseTypeName, DECLARATION_NAME extends DeclarationName<T>> extends CompilationCode {
 	

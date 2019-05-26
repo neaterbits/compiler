@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.ast.expression.ArrayCreationExpression;
-import com.neaterbits.compiler.ast.expression.Base;
 import com.neaterbits.compiler.ast.expression.BlockLambdaExpression;
 import com.neaterbits.compiler.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.ast.expression.FieldAccess;
@@ -19,14 +18,15 @@ import com.neaterbits.compiler.ast.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.expression.literal.StringLiteral;
-import com.neaterbits.compiler.ast.operator.Bitwise;
-import com.neaterbits.compiler.ast.operator.Operator;
 import com.neaterbits.compiler.ast.statement.Statement;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.VariableReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.c.CLikeExpressionEmitter;
+import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.operator.Bitwise;
+import com.neaterbits.compiler.util.operator.Operator;
 
 final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 

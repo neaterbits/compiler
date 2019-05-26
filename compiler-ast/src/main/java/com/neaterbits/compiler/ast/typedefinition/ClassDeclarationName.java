@@ -2,6 +2,7 @@ package com.neaterbits.compiler.ast.typedefinition;
 
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.name.ClassName;
 
 public final class ClassDeclarationName extends DeclarationName<ClassName> {
 

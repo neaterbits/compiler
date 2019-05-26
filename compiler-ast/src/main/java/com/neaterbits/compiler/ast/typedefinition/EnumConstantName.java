@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.ast.typedefinition;
 
-import com.neaterbits.compiler.ast.Name;
+import com.neaterbits.compiler.util.name.Name;
 
 public final class EnumConstantName extends Name {
 

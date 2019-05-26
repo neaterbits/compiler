@@ -1,0 +1,45 @@
+package com.neaterbits.compiler.util.parse.stackstate;
+
+import java.util.List;
+import java.util.Objects;
+
+import com.neaterbits.compiler.util.block.ConstructorInvocation;
+import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.parse.stackstate.setters.ParametersSetter;
+
+public final class StackConstructorInvocation<EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY>
+
+	extends StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE>
+	implements ParametersSetter<EXPRESSION> {
+
+	private final ConstructorInvocation type;
+	private List<EXPRESSION> parameters;
+	
+	public StackConstructorInvocation(ParseLogger parseLogger, ConstructorInvocation type) {
+		super(parseLogger);
+		
+		Objects.requireNonNull(type);
+		
+		this.type = type;
+	}
+
+	public ConstructorInvocation getType() {
+		return type;
+	}
+
+	@Override
+	public void setParameters(List<EXPRESSION> parameters) {
+
+		Objects.requireNonNull(parameters);
+		
+		if (this.parameters != null) {
+			throw new IllegalStateException("Parameters already set");
+		}
+		
+		this.parameters = parameters;
+	}
+
+	public List<EXPRESSION> getParameters() {
+		return parameters;
+	}
+}

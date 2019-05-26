@@ -5,10 +5,10 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.expression.BinaryExpression;
 import com.neaterbits.compiler.ast.expression.Expression;
 import com.neaterbits.compiler.ast.expression.ExpressionVisitor;
-import com.neaterbits.compiler.ast.operator.Arithmetic;
 import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.operator.Arithmetic;
 
 public class ArithmeticBinaryExpression extends BinaryExpression {
 

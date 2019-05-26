@@ -3,7 +3,7 @@ package com.neaterbits.compiler.emit;
 import java.math.BigInteger;
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.expression.Base;
+import com.neaterbits.compiler.util.Base;
 
 public class EmitterState {
 

@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.neaterbits.compiler.ast.NamespaceReference;
-import com.neaterbits.compiler.ast.typedefinition.DefinitionName;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.name.BaseTypeName;
+import com.neaterbits.compiler.util.name.DefinitionName;
+import com.neaterbits.compiler.util.name.NamespaceReference;
 
 public final class CompleteName {
 

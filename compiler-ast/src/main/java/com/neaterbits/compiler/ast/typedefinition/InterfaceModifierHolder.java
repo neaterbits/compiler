@@ -3,6 +3,8 @@ package com.neaterbits.compiler.ast.typedefinition;
 
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.typedefinition.InterfaceModifier;
+import com.neaterbits.compiler.util.typedefinition.InterfaceModifierVisitor;
 
 public final class InterfaceModifierHolder extends BaseModifierHolder<InterfaceModifier> implements InterfaceModifier {
 

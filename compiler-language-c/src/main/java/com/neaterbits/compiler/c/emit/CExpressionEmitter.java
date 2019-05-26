@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.c.emit;
 
 import com.neaterbits.compiler.ast.expression.ArrayCreationExpression;
-import com.neaterbits.compiler.ast.expression.Base;
 import com.neaterbits.compiler.ast.expression.BlockLambdaExpression;
 import com.neaterbits.compiler.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.ast.expression.FieldAccess;
@@ -23,6 +22,7 @@ import com.neaterbits.compiler.ast.typereference.TypeReference;
 import com.neaterbits.compiler.ast.variables.VariableReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.c.CLikeExpressionEmitter;
+import com.neaterbits.compiler.util.Base;
 
 final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 

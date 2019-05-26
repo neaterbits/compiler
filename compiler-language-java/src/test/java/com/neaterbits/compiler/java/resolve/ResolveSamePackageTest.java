@@ -21,7 +21,6 @@ import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.typedefinition.ClassModifiers;
 import com.neaterbits.compiler.ast.typedefinition.FieldModifierHolder;
 import com.neaterbits.compiler.ast.typedefinition.FieldModifiers;
-import com.neaterbits.compiler.ast.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompileFileCollector;
@@ -29,6 +28,7 @@ import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
 import com.neaterbits.compiler.util.model.Visibility;
+import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 
 public class ResolveSamePackageTest extends BaseCompilerTest {
 

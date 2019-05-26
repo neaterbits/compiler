@@ -9,38 +9,32 @@ import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.ast.Import;
-import com.neaterbits.compiler.ast.block.ConstructorInvocation;
-import com.neaterbits.compiler.ast.operator.Arithmetic;
-import com.neaterbits.compiler.ast.operator.Notation;
-import com.neaterbits.compiler.ast.operator.Operator;
-import com.neaterbits.compiler.ast.parser.FieldAccessType;
-import com.neaterbits.compiler.ast.parser.MethodInvocationType;
 import com.neaterbits.compiler.ast.parser.iterative.BaseIterativeOOParserListener;
-import com.neaterbits.compiler.ast.statement.ASTMutability;
-import com.neaterbits.compiler.ast.type.primitive.BuiltinType;
-import com.neaterbits.compiler.ast.type.primitive.IntegerType;
-import com.neaterbits.compiler.ast.type.primitive.ScalarType;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodOverride;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodVisibility;
-import com.neaterbits.compiler.ast.typedefinition.ClassVisibility;
-import com.neaterbits.compiler.ast.typedefinition.ConstructorVisibility;
-import com.neaterbits.compiler.ast.typedefinition.FieldVisibility;
-import com.neaterbits.compiler.ast.typedefinition.InterfaceMethodVisibility;
-import com.neaterbits.compiler.ast.typedefinition.InterfaceVisibility;
-import com.neaterbits.compiler.ast.typedefinition.Subclassing;
-import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
-import com.neaterbits.compiler.ast.typereference.ScalarTypeReference;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
-import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.compiler.util.block.ConstructorInvocation;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.Notation;
+import com.neaterbits.compiler.util.operator.Operator;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
+import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.util.typedefinition.ConstructorVisibility;
+import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
+import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
+import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
+import com.neaterbits.compiler.util.typedefinition.Subclassing;
 
+import statement.ASTMutability;
+
+import com.neaterbits.compiler.util.parse.baseparserlistener.ParseTreeFactory;
 /**
  * Listener for the Java grammars
  */
@@ -50,8 +44,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	// Delegate to make sure make all special handling here
 	private static class JavaIterativeListener extends BaseIterativeOOParserListener {
 
-		JavaIterativeListener(ParseLogger logger) {
-			super(logger);
+		JavaIterativeListener(ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+			super(logger, parseTreeFactory);
 		}
 	}
 
@@ -80,11 +74,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		logger.println("stack at " + statement + " " + statementsStack);
 	}
 	
-	public JavaParserListener(ParseLogger logger, String file, TokenSequenceNoGenerator gen) {
+	public JavaParserListener(ParseLogger logger, String file, TokenSequenceNoGenerator gen, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
 		this.logger = logger;
 		this.file = file;
 		this.gen = gen;
-		this.delegate = new JavaIterativeListener(logger);
+		this.delegate = new JavaIterativeListener(logger, parseTreeFactory);
 		this.statementsStack = new StatementsStack();
 	}
 
@@ -493,37 +487,12 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		final int bits = javaInteger.getBits();
 		
-		final IntegerType type;
-		
-		switch (bits) {
-		case 8:
-			type = JavaTypes.BYTE_TYPE;
-			break;
-			
-		case 16:
-			type = JavaTypes.SHORT_TYPE;
-			break;
-			
-		case 32:
-			type = JavaTypes.INT_TYPE;
-			break;
-			
-		case 64:
-			type = JavaTypes.LONG_TYPE;
-			break;
-			
-		default:
-			throw new UnsupportedOperationException();
-		}
-		
-		
 		delegate.onIntegerLiteral(
 				context,
 				BigInteger.valueOf(javaInteger.getValue()),
 				javaInteger.getBase(),
 				true,
-				bits,
-				type);
+				bits);
 	}
 
 	public void onJavaFloatingPointLiteral(Context context, String literal) {
@@ -547,7 +516,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new IllegalStateException("Not a boolean literal: " + literal);
 		}
 
-		delegate.onBooleanLiteral(context, value, JavaTypes.BOOLEAN_TYPE);
+		delegate.onBooleanLiteral(context, value);
 	}
 	
 	public void onJavaCharacterLiteral(Context context, String literal) {
@@ -558,7 +527,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 		final String s = literal.substring(1, literal.length() - 1);
 		
-		delegate.onCharacterLiteral(context, s.charAt(0), JavaTypes.CHAR_TYPE);
+		delegate.onCharacterLiteral(context, s.charAt(0));
 	}
 	
 	public void onJavaStringLiteral(Context context, String literal) {
@@ -566,7 +535,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new IllegalStateException("Not a String literal");
 		}
 
-		delegate.onStringLiteral(context, literal.substring(1, literal.length() - 1), JavaTypes.STRING_TYPE);
+		delegate.onStringLiteral(context, literal.substring(1, literal.length() - 1));
 	}
 	
 	public void onJavaNullLiteral(Context context, String literal) {
@@ -586,7 +555,6 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 		delegate.onClassInstanceCreationTypeAndConstructorName(
 				context,
-				new ResolveLaterTypeReference(context, name, ReferenceType.NAME),
 				name);
 	}
 
@@ -594,8 +562,16 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onClassInstanceCreationExpressionEnd(context);
 	}
 	
-	public void onMethodInvocationStart(Context context, MethodInvocationType type, TypeReference classType, String methodName, Context methodNameContext) {
-		delegate.onMethodInvocationStart(context, type, classType, methodName, methodNameContext);
+	public void onMethodInvocationStart(
+			Context context,
+			MethodInvocationType type,
+			ScopedName classTypeName,
+			Context classTypeNameContext,
+			ReferenceType referenceType,
+			String methodName,
+			Context methodNameContext) {
+
+		delegate.onMethodInvocationStart(context, type, classTypeName, classTypeNameContext, referenceType, methodName, methodNameContext);
 	}
 	
 	public void onMethodInvocationEnd(Context context) {
@@ -618,8 +594,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onParametersEnd(context);
 	}
 	
-	public void onArrayCreationExpressionStart(Context context, TypeReference typeReference, int numDims) {
-		delegate.onArrayCreationExpressionStart(context, typeReference, numDims);
+	public void onArrayCreationExpressionStart(Context context, ScopedName typeName, ReferenceType referenceType, int numDims) {
+		delegate.onArrayCreationExpressionStart(context, typeName, referenceType, numDims);
 	}
 	
 	public void onDimExpressionStart(Context context) {
@@ -677,7 +653,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		// to suppert eg. C# namespace { }, namespace { }
 		delegate.onNameSpaceEnd(context);
 		
-		final CompilationUnit compilationUnit = delegate.onCompilationUnitEnd(context);
+		final CompilationUnit compilationUnit = (CompilationUnit)delegate.onCompilationUnitEnd(context);
 		
 		this.compilationUnit = compilationUnit;
 		
@@ -708,61 +684,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onVariableName(context, name, numDims);
 	}
 
-	
 	public void onJavaPrimitiveType(Context context, JavaPrimitiveType type) {
-		
-		final BuiltinType genericType;
-		
-		switch (type) {
-		case BYTE:	genericType = JavaTypes.BYTE_TYPE; break;
-		case SHORT:	genericType = JavaTypes.SHORT_TYPE; break;
-		case INT:	genericType = JavaTypes.INT_TYPE; break;
-		case LONG:	genericType = JavaTypes.LONG_TYPE; break;
-		case CHAR:	genericType = JavaTypes.CHAR_TYPE; break;
-		case FLOAT:	genericType = JavaTypes.FLOAT_TYPE; break;
-		case DOUBLE:  genericType = JavaTypes.DOUBLE_TYPE; break;
-		case BOOLEAN: genericType = JavaTypes.BOOLEAN_TYPE; break;
-		case VOID:	genericType = JavaTypes.VOID_TYPE; break;
-		
-		default:
-			throw new UnsupportedOperationException("Unknown type " + type);
-		}
-
-		delegate.onTypeReference(context, new ScalarTypeReference(context, genericType.getTypeName()));
-	}
-	
-	public ScalarType parseJavaPrimitiveType(String typeString) {
-		
-		final ScalarType type;
-		
-		switch (typeString) {
-		
-		case "byte": 	type = JavaTypes.BYTE_TYPE; break;
-		case "short": 	type = JavaTypes.SHORT_TYPE; break;
-		case "int": 	type = JavaTypes.INT_TYPE; break;
-		case "long": 	type = JavaTypes.LONG_TYPE; break;
-		case "char": 	type = JavaTypes.CHAR_TYPE; break;
-		case "float": 	type = JavaTypes.FLOAT_TYPE; break;
-		case "double": 	type = JavaTypes.DOUBLE_TYPE; break;
-		case "boolean": type = JavaTypes.BOOLEAN_TYPE; break;
-		
-		default:
-			throw new UnsupportedOperationException("Unknown type " + typeString);
-		}
-		
-		return type;
-	}
-
-	public TypeName parseJavaPrimitiveTypeToTypeName(String typeString) {
-	
-		final ScalarType type = parseJavaPrimitiveType(typeString);
-		
-		return type != null ? type.getTypeName() : null;
+		delegate.onTypeReference(context, type.getScopedName(), ReferenceType.SCALAR);
 	}
 	
 	public void onJavaClassOrInterfaceReferenceType(Context context, ScopedName typeName) {
 
-		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName, ReferenceType.REFERENCE));
+		delegate.onTypeReference(context, typeName, ReferenceType.REFERENCE);
 	}
 	
 	public void onJavaTypeVariableReferenceType(Context context, ScopedName typeName, ReferenceType referenceType) {
