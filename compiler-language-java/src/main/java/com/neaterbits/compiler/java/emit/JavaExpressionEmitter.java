@@ -10,7 +10,6 @@ import com.neaterbits.compiler.ast.expression.LambdaExpressionParameters;
 import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.expression.ThisPrimary;
-import com.neaterbits.compiler.ast.expression.VariableExpression;
 import com.neaterbits.compiler.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.expression.literal.ClassExpression;
@@ -64,14 +63,6 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		}
 
 		return s;
-	}
-
-	@Override
-	public Void onVariable(VariableExpression expression, EmitterState param) {
-		
-		emitVariableReference(expression.getReference(), param);
-
-		return null;
 	}
 
 	@Override

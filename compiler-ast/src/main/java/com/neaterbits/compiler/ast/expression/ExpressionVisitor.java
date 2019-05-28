@@ -16,8 +16,6 @@ import com.neaterbits.compiler.ast.variables.VariableReference;
 
 public interface ExpressionVisitor<T, R> {
 
-	R onVariable(VariableExpression expression, T param);
-	
 	R onAssignment(AssignmentExpression expression, T param);
 	
 	R onFunctionCall(FunctionCallExpression expression, T param);

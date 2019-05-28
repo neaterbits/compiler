@@ -11,7 +11,6 @@ import com.neaterbits.compiler.ast.expression.ExpressionList;
 import com.neaterbits.compiler.ast.expression.FieldAccess;
 import com.neaterbits.compiler.ast.expression.NestedExpression;
 import com.neaterbits.compiler.ast.expression.PrimaryList;
-import com.neaterbits.compiler.ast.expression.VariableExpression;
 import com.neaterbits.compiler.ast.expression.arithemetic.binary.ArithmeticBinaryExpression;
 import com.neaterbits.compiler.ast.expression.arithemetic.unary.PostDecrementExpression;
 import com.neaterbits.compiler.ast.expression.arithemetic.unary.PostIncrementExpression;
@@ -45,11 +44,6 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 		return (Primary)convertExpression(primary, param);
 	}
 	
-	@Override
-	public final Expression onVariable(VariableExpression expression, T param) {
-		return new VariableExpression(expression.getContext(), convertVariableReference(expression.getReference(), param));
-	}
-
 	@Override
 	public final Expression onAssignment(AssignmentExpression expression, T param) {
 		

@@ -9,7 +9,6 @@ import com.neaterbits.compiler.ast.expression.FunctionPointerInvocationExpressio
 import com.neaterbits.compiler.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.expression.ThisPrimary;
-import com.neaterbits.compiler.ast.expression.VariableExpression;
 import com.neaterbits.compiler.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.expression.literal.ClassExpression;
@@ -43,14 +42,6 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	@Override
 	protected void emitStatement(Statement statement, EmitterState state) {
 		statement.visit(STATEMENT_EMITTER, state);
-	}
-
-	@Override
-	public Void onVariable(VariableExpression expression, EmitterState param) {
-
-		emitVariableReference(expression.getReference(), param);
-
-		return null;
 	}
 
 	@Override
