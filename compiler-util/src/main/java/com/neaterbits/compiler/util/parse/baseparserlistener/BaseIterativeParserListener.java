@@ -2,6 +2,7 @@ package com.neaterbits.compiler.util.parse.baseparserlistener;
 
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.parse.parserlistener.IterativeParserListener;
 import com.neaterbits.compiler.util.parse.stackstate.StackConditionBlock;
 import com.neaterbits.compiler.util.parse.stackstate.StackConstantSwitchLabel;
 import com.neaterbits.compiler.util.parse.stackstate.StackElseBlock;
@@ -257,14 +258,15 @@ public abstract class BaseIterativeParserListener<
 		BREAK_STATEMENT
 		
 		
-		> {
+		> 
+	implements IterativeParserListener<COMPILATION_UNIT> {
 	
 	protected BaseIterativeParserListener(ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
 		super(logger, parseTreeFactory);
 	}
 
+	@Override
 	public final void onIfStatementStart(Context context, String ifKeyword, Context ifKeywordContext) {
-		
 		
 		push(new StackIfElseIfElse<>(getLogger()));
 		push(new StackConditionBlock<>(getLogger(), context, null, null, ifKeyword, ifKeywordContext));
@@ -293,6 +295,7 @@ public abstract class BaseIterativeParserListener<
 	}
 	
 	// End of initial if-statement and block
+	@Override
 	public final void onIfStatementInitialBlockEnd(Context context) {
 
 		logEnter(context);
@@ -304,6 +307,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 
+	@Override
 	public final void onElseIfStatementStart(Context context, String elseKeyword, Context elseKeywordContext, String ifKeyword, Context ifKeywordContext) {
 
 		logEnter(context);
@@ -315,6 +319,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 	
+	@Override
 	public final void onElseIfStatementEnd(Context context) {
 
 		logEnter(context);
@@ -333,6 +338,7 @@ public abstract class BaseIterativeParserListener<
 	}
 	*/
 
+	@Override
 	public final void onElseStatementStart(Context context, String keyword, Context keywordContext) {
 		
 		logEnter(context);
@@ -344,6 +350,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 	
+	@Override
 	public final void onElseStatementEnd(Context context) {
 
 		logEnter(context);
@@ -364,6 +371,7 @@ public abstract class BaseIterativeParserListener<
 	}
 
 	// Called after last part of statement (ie end if in if-else if-else-end if)
+	@Override
 	public final void onEndIfStatement(Context context) {
 		
 		logEnter(context);
@@ -383,6 +391,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 
+	@Override
 	public final void onSwitchStatementStart(Context context, String keyword, Context keywordContext) {
 
 		logEnter(context);
@@ -392,6 +401,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 
+	@Override
 	public final void onJavaSwitchBlockStart(Context context) {
 		
 		logEnter(context);
@@ -399,6 +409,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 	
+	@Override
 	public final void onJavaSwitchBlockStatementGroupStart(Context context) {
 		
 		logEnter(context);
@@ -408,6 +419,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 
+	@Override
 	public final void onSwitchLabelsStart(Context context) {
 		
 		logEnter(context);
@@ -415,6 +427,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 	
+	@Override
 	public final void onSwitchLabelsEnd(Context context) {
 		
 		logEnter(context);
@@ -422,6 +435,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 
+	@Override
 	public final void onJavaSwitchBlockStatementGroupEnd(Context context) {
 		
 		logEnter(context);
@@ -440,6 +454,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 
+	@Override
 	public final void onConstantSwitchLabelStart(Context context, String keyword, Context keywordContext) {
 		
 		logEnter(context);
@@ -449,6 +464,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 	
+	@Override
 	public final void onConstantSwitchLabelEnd(Context context) {
 		
 		logEnter(context);
@@ -467,6 +483,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 	
+	@Override
 	public final void onEnumSwitchLabel(
 			Context context,
 			String keyword, Context keywordContext,
@@ -488,7 +505,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 	
-	
+	@Override
 	public final void onDefaultSwitchLabel(Context context, String keyword, Context keywordContext) {
 		
 		logEnter(context);
@@ -502,6 +519,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 	
+	@Override
 	public final void onJavaSwitchBlockEnd(Context context) {
 		
 		logEnter(context);
@@ -509,6 +527,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 	
+	@Override
 	public final void onSwitchStatementEnd(Context context) {
 		
 		logEnter(context);
@@ -530,6 +549,7 @@ public abstract class BaseIterativeParserListener<
 		logExit(context);
 	}
 	
+	@Override
 	public final void onBreakStatement(Context context, String keyword, Context keywordContext, String label) {
 		
 		logEnter(context);

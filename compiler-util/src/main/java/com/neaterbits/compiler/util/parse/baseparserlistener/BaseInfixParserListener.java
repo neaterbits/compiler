@@ -5,6 +5,7 @@ import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Notation;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.parse.parserlistener.InfixParserListener;
 import com.neaterbits.compiler.util.parse.stackstate.StackExpressionList;
 import com.neaterbits.compiler.util.parse.stackstate.StackIncrementDecrementExpression;
 import com.neaterbits.compiler.util.parse.stackstate.setters.ExpressionSetter;
@@ -253,12 +254,15 @@ public abstract class BaseInfixParserListener<
 		SWITCH_CASE_STATEMENT,
 		
 		BREAK_STATEMENT
-		> {
+		>
+
+	implements InfixParserListener<COMPILATION_UNIT> {
 
 	protected BaseInfixParserListener(ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
 		super(logger, parseTreeFactory);
 	}
 
+	@Override
 	public final void onExpressionBinaryOperator(Context context, Operator operator) {
 		
 		logEnter(context);
@@ -270,6 +274,7 @@ public abstract class BaseInfixParserListener<
 		logExit(context);
 	}
 	
+	@Override
 	public final void onIncrementDecrementExpressionStart(Context context, Arithmetic operator, Notation notation) {
 
 		logEnter(context);
@@ -279,6 +284,7 @@ public abstract class BaseInfixParserListener<
 		logExit(context);
 	}
 
+	@Override
 	public final void onIncrementDecrementExpressionEnd(Context context) {
 
 		final StackIncrementDecrementExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackIncrementDecrementExpression = pop();
