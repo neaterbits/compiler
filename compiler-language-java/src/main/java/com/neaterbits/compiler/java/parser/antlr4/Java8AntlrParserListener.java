@@ -14,7 +14,6 @@ import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.Mutability;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.model.Visibility;
-import com.neaterbits.compiler.util.name.NamespaceReference;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Bitwise;
 import com.neaterbits.compiler.util.operator.Logical;
@@ -34,7 +33,6 @@ import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import statement.ASTMutability;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,11 +41,6 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.neaterbits.compiler.antlr4.Antlr4;
-import com.neaterbits.compiler.ast.Import;
-import com.neaterbits.compiler.ast.ImportName;
-import com.neaterbits.compiler.ast.Keyword;
-import com.neaterbits.compiler.ast.block.MethodName;
-import com.neaterbits.compiler.ast.typedefinition.ClassOrInterfaceName;
 
 /**
  * 
@@ -111,9 +104,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		return Antlr4.context(ctx, file, gen.getNextTokenSequenceNo());
 	}
 
-	private Context context(Token startCtx, Token endCtx, String text) {
-		return Antlr4.context(startCtx, endCtx, text, file, gen.getNextTokenSequenceNo());
-	}
 
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
@@ -155,101 +145,81 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void exitPackageDeclaration(PackageDeclarationContext ctx) {
+
 		delegate.onPackageDeclaration(
 				context(ctx),
 				ctx.keyword.getText(), context(ctx.keyword),
 				ctx.packageName().getText(), context(ctx.packageName()));
 	}
 
-	private static NamespaceReference namespaceReference(String typeName) {
-		final String [] names = Strings.split(typeName, '.');
-
-		final String [] parts = Arrays.copyOf(names, names.length - 1);
+	
+	
+	@Override
+	public void enterSingleTypeImportDeclaration(SingleTypeImportDeclarationContext ctx) {
 		
-		return new NamespaceReference(parts);
+		delegate.onImportStart(
+				context(ctx),
+				ctx.keyword.getText(),
+				context(ctx.keyword),
+				null,
+				null);
 	}
-
-	private static ClassOrInterfaceName classOrInterfaceName(String typeName) {
-		final String [] names = Strings.split(typeName, '.');
-		
-		return new ClassOrInterfaceName(names[names.length - 1]);
-	}
+	
 	
 	@Override
 	public void exitSingleTypeImportDeclaration(SingleTypeImportDeclarationContext ctx) {
-	
-		final Keyword keyword = new Keyword(
+		delegate.onImportEnd(context(ctx), false);
+	}
+
+	@Override
+	public void enterTypeImportOnDemandDeclaration(TypeImportOnDemandDeclarationContext ctx) {
+		
+		delegate.onImportStart(
+				context(ctx),
+				ctx.keyword.getText(),
 				context(ctx.keyword),
-				ctx.keyword.getText());
-		
-		final String typeName = ctx.typeName().getText();
-		
-		final ImportName importPackage = new ImportName(
-				context(ctx.typeName()),
-				namespaceReference(typeName),
-				classOrInterfaceName(typeName));
-		
-		final Import importStatement = new Import(context(ctx), keyword, importPackage);
-		
-		delegate.onImport(importStatement);
+				null,
+				null);
 	}
 
 	@Override
 	public void exitTypeImportOnDemandDeclaration(TypeImportOnDemandDeclarationContext ctx) {
 		
-		final Keyword keyword = new Keyword(
+		delegate.onImportEnd(context(ctx), true);
+	}
+
+	@Override
+	public void enterSingleStaticImportDeclaration(SingleStaticImportDeclarationContext ctx) {
+		
+		delegate.onImportStart(
+				context(ctx),
+				ctx.keyword.getText(),
 				context(ctx.keyword),
-				ctx.keyword.getText());
-
-		final String packageOrTypeName = ctx.packageOrTypeName().getText();
-		
-		final String [] s = Strings.split(packageOrTypeName, '.');
-		
-		final ImportName importPackage= new ImportName(context(ctx.packageOrTypeName()), s);
-		
-		final Import importStatement = new Import(context(ctx), keyword, importPackage);
-
-		delegate.onImport(importStatement);
+				ctx.modifier.getText(),
+				context(ctx.modifier));
 	}
 
 	@Override
 	public void exitSingleStaticImportDeclaration(SingleStaticImportDeclarationContext ctx) {
 
-		final Keyword keyword = new Keyword(
+		delegate.onImportEnd(context(ctx), false);
+	}
+
+	@Override
+	public void enterStaticImportOnDemandDeclaration(StaticImportOnDemandDeclarationContext ctx) {
+		
+		delegate.onImportStart(
+				context(ctx),
+				ctx.keyword.getText(),
 				context(ctx.keyword),
-				ctx.keyword.getText());
-
-		final String typeName = ctx.typeName().getText();
-		
-		final ImportName importPackage = new ImportName(
-				context(ctx.modifier, ctx.Identifier().getSymbol(), "static " + typeName + '.' + ctx.Identifier().getText()),
-				namespaceReference(typeName),
-				classOrInterfaceName(typeName),
-				new MethodName(context(ctx.Identifier()), ctx.Identifier().getText()));
-		
-		final Import importStatement = new Import(context(ctx), keyword, importPackage);
-
-		delegate.onImport(importStatement);
+				ctx.modifier.getText(),
+				context(ctx.modifier));
 	}
 
 	@Override
 	public void exitStaticImportOnDemandDeclaration(StaticImportOnDemandDeclarationContext ctx) {
 
-		final Keyword keyword = new Keyword(
-				context(ctx.keyword),
-				ctx.keyword.getText());
-
-		final String typeName = ctx.typeName().getText();
-		
-		final ImportName importPackage = new ImportName(
-				context(ctx.modifier, ctx.asterisk, "static " + typeName + ".*"),
-				namespaceReference(typeName),
-				classOrInterfaceName(typeName),
-				null);
-
-		final Import importStatement = new Import(context(ctx), keyword, importPackage);
-		
-		delegate.onImport(importStatement);
+		delegate.onImportEnd(context(ctx), true);
 	}
 
 	@Override

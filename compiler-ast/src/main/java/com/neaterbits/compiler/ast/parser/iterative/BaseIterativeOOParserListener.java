@@ -7,6 +7,7 @@ import com.neaterbits.compiler.util.parse.baseparserlistener.ParseTreeFactory;
 public abstract class BaseIterativeOOParserListener<
 
 		KEYWORD,
+		IDENTIFIER,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
@@ -128,6 +129,7 @@ public abstract class BaseIterativeOOParserListener<
 	extends BaseIterativeParserListener<
 
 		KEYWORD,
+		IDENTIFIER,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,

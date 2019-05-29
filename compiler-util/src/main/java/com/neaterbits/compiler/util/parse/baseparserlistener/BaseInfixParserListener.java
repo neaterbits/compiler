@@ -12,6 +12,7 @@ import com.neaterbits.compiler.util.parse.stackstate.setters.ExpressionSetter;
 public abstract class BaseInfixParserListener<
 
 		KEYWORD,
+		IDENTIFIER,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
@@ -134,6 +135,7 @@ public abstract class BaseInfixParserListener<
 	extends BaseParserListener<
 
 		KEYWORD,
+		IDENTIFIER,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,

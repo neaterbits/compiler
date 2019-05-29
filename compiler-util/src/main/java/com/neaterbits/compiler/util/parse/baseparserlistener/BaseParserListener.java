@@ -47,6 +47,7 @@ import com.neaterbits.compiler.util.parse.stackstate.StackFinallyBlock;
 import com.neaterbits.compiler.util.parse.stackstate.StackForInit;
 import com.neaterbits.compiler.util.parse.stackstate.StackForStatement;
 import com.neaterbits.compiler.util.parse.stackstate.StackForUpdate;
+import com.neaterbits.compiler.util.parse.stackstate.StackImport;
 import com.neaterbits.compiler.util.parse.stackstate.StackInitializerVariableDeclarationElement;
 import com.neaterbits.compiler.util.parse.stackstate.StackInterface;
 import com.neaterbits.compiler.util.parse.stackstate.StackInterfaceMethod;
@@ -123,6 +124,7 @@ import statement.ASTMutability;
 public abstract class BaseParserListener<
 
 		KEYWORD,
+		IDENTIFIER,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
@@ -244,6 +246,7 @@ public abstract class BaseParserListener<
 	private final ParseLogger logger;
 	final ParseTreeFactory<
 			KEYWORD,
+			IDENTIFIER,
 			TYPE_REFERENCE,
 			COMPILATION_UNIT,
 			IMPORT,
@@ -465,11 +468,37 @@ public abstract class BaseParserListener<
 		return compilationUnit;
 	}
 
-	public final void onImport(IMPORT importStatement) {
-		Objects.requireNonNull(importStatement);
+	public final void onImportStart(Context context, String importKeyword, Context importKeywordContext, String staticKeyword, Context staticKeywordContext) {
+		
+		Objects.requireNonNull(importKeyword);
 
+		push(new StackImport<>(logger, importKeyword, importKeywordContext, staticKeyword, staticKeywordContext));
+		
+	}
+
+	public final void onImportIdentifier(Context context, String identifier) {
+		
+		final StackImport<IDENTIFIER> stackImport = get();
+		
+		stackImport.addIdentifier(parseTreeFactory.createIdentifier(context, identifier));
+	}
+		
+	
+	public final void onImportEnd(Context context, boolean ondemand) {
+		
+		final StackImport<IDENTIFIER> stackImport = pop();
+		
 		final StackCompilationUnit<COMPILATION_CODE, IMPORT> stackCompilationUnit = get(StackCompilationUnit.class);
 
+		final IMPORT importStatement = parseTreeFactory.createImport(
+				context,
+				parseTreeFactory.createKeyword(stackImport.getImportKeywordContext(), stackImport.getImportKeyword()),
+				stackImport.getStaticKeyword() != null
+					? parseTreeFactory.createKeyword(stackImport.getStaticKeywordContext(), stackImport.getStaticKeyword())
+					: null,
+				stackImport.getIdentifiers(),
+				ondemand);
+		
 		stackCompilationUnit.addImport(importStatement);
 	}
 
@@ -2106,26 +2135,6 @@ public abstract class BaseParserListener<
 
 		logExit(context);
 	}
-
-	/*
-	public final void onTypeReference(Context context, TypeReference typeReference) {
-
-		logEnter(context);
-
-		Objects.requireNonNull(typeReference);
-
-		try {
-			final TypeReferenceSetter<TYPE_REFERENCE> typeReferenceSetter = get();
-
-			typeReferenceSetter.setTypeReference(typeReference);
-		} catch (Exception ex) {
-			System.err.println("## exception at " + context);
-			ex.printStackTrace(System.err);
-		}
-
-		logExit(context);
-	}
-	*/
 
 	public final void onTypeReference(Context context, ScopedName name, ReferenceType referenceType) {
 

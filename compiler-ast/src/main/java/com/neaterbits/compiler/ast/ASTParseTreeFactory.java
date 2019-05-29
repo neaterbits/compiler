@@ -126,6 +126,7 @@ import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.ClassName;
+import com.neaterbits.compiler.util.name.NamespaceReference;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.baseparserlistener.ParseTreeFactory;
@@ -139,6 +140,7 @@ import com.neaterbits.compiler.util.typedefinition.VariableModifier;
 
 public class ASTParseTreeFactory implements ParseTreeFactory<
 	Keyword,
+	Identifier,
 	TypeReference,
 	CompilationUnit,
 	Import,
@@ -249,9 +251,96 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 		return new CompilationUnit(context, imports, code);
 	}
 	
+	private static String [] getIdentifierArray(List<Identifier> identifiers, int length) {
+		
+		if (length <= 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		final String [] parts = new String[length];
+		
+		for (int i = 0; i < length; ++ i) {
+			parts[i] = identifiers.get(i).getText();
+		}
+
+		return parts;
+	}
+	
+	private static NamespaceReference getNamespaceReference(List<Identifier> identifiers, int length) {
+		
+		return new NamespaceReference(getIdentifierArray(identifiers, length));
+	}
+	
+	@Override
+	public Import createImport(
+			Context context,
+			Keyword importKeyword,
+			Keyword staticKeyword,
+			List<Identifier> identifiers,
+			boolean ondemand) {
+		
+		final ImportName importName;
+		
+		if (ondemand) {
+			
+			if (staticKeyword != null) {
+				
+				if (identifiers.size() <= 1) {
+					throw new IllegalArgumentException();
+				}
+				
+				final NamespaceReference namespaceOrTypeName = getNamespaceReference(identifiers, identifiers.size() - 1);
+				final String classOrInterfaceName = identifiers.get(identifiers.size() - 1).getText();
+				
+				importName = new ImportName(context, namespaceOrTypeName, new ClassOrInterfaceName(classOrInterfaceName), null);
+			}
+			else {
+				importName = new ImportName(context, getIdentifierArray(identifiers, identifiers.size()));
+			}
+		}
+		else {
+
+			if (staticKeyword != null) {
+
+				if (identifiers.size() <= 2) {
+					throw new IllegalArgumentException();
+				}
+				
+				final NamespaceReference namespaceOrTypeName = getNamespaceReference(identifiers, identifiers.size() - 2);
+				final String classOrInterfaceName = identifiers.get(identifiers.size() - 2).getText();
+
+				final Identifier methodName = identifiers.get(identifiers.size() - 1);
+
+				importName = new ImportName(
+						context,
+						namespaceOrTypeName,
+						new ClassOrInterfaceName(classOrInterfaceName),
+						new MethodName(methodName.getContext(), methodName.getText()));
+				
+			}
+			else {
+				final NamespaceReference namespaceOrTypeName = getNamespaceReference(identifiers, identifiers.size() - 1);
+				final String classOrInterfaceName = identifiers.get(identifiers.size() - 1).getText();
+
+				importName = new ImportName(
+						context,
+						namespaceOrTypeName,
+						new ClassOrInterfaceName(classOrInterfaceName),
+						null);
+			}
+		}
+		
+		return new Import(context, importKeyword, importName);
+	}
+
 	@Override
 	public Keyword createKeyword(Context context, String name) {
 		return new Keyword(context, name);
+	}
+
+	@Override
+	public Identifier createIdentifier(Context context, String name) {
+		return new Identifier(context, name);
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.Token;
 import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.ast.CompilationUnit;
-import com.neaterbits.compiler.ast.Import;
 import com.neaterbits.compiler.ast.parser.iterative.BaseIterativeOOParserListener;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ImmutableContext;
@@ -35,6 +34,7 @@ import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import statement.ASTMutability;
 
 import com.neaterbits.compiler.util.parse.baseparserlistener.ParseTreeFactory;
+
 /**
  * Listener for the Java grammars
  */
@@ -97,10 +97,18 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onCompilationUnitStart(context);
 	}
 	
-	public void onImport(Import importStatement) {
-		delegate.onImport(importStatement);
+	public final void onImportStart(Context context, String importKeyword, Context importKeywordContext, String staticKeyword, Context staticKeywordContext) {
+		delegate.onImportStart(context, importKeyword, importKeywordContext, staticKeyword, staticKeywordContext);
+	}
+
+	public final void onImportIdentifier(Context context, String identifier) {
+		delegate.onImportIdentifier(context, identifier);
 	}
 	
+	public final void onImportEnd(Context context, boolean ondemand) {
+		delegate.onImportEnd(context, ondemand);
+	}
+
 	public void onClassStart(Context context, String classKeyword, Context classKeywordContext, String name, Context nameContext) {
 		delegate.onClassStart(context, classKeyword, classKeywordContext, name, nameContext);
 	}

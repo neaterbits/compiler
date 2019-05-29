@@ -13,6 +13,7 @@ import com.neaterbits.compiler.util.parse.stackstate.setters.StatementSetter;
 public abstract class BaseIterativeParserListener<
 
 		KEYWORD,
+		IDENTIFIER,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
@@ -136,6 +137,7 @@ public abstract class BaseIterativeParserListener<
 	extends BaseInfixParserListener<
 
 		KEYWORD,
+		IDENTIFIER,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
