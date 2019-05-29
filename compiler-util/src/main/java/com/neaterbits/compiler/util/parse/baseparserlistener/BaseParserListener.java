@@ -119,6 +119,8 @@ import com.neaterbits.compiler.util.typedefinition.InterfaceStrictfp;
 import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.typedefinition.VariableModifier;
+import com.neaterbits.util.io.strings.StringSource;
+import com.neaterbits.util.io.strings.StringRef;
 
 import statement.ASTMutability;
 
@@ -246,7 +248,9 @@ public abstract class BaseParserListener<
 
 	implements ParserListener<COMPILATION_UNIT> {
 
+	private StringSource stringSource;
 	private final ParseLogger logger;
+
 	final ParseTreeFactory<
 			KEYWORD,
 			IDENTIFIER,
@@ -395,9 +399,10 @@ public abstract class BaseParserListener<
 	}
 
 	@SuppressWarnings("unchecked")
-	protected BaseParserListener(ParseLogger logger,
+	protected BaseParserListener(StringSource stringSource, ParseLogger logger,
 			@SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
 
+		this.stringSource = stringSource;
 		this.logger = logger;
 		this.parseTreeFactory = parseTreeFactory;
 
@@ -474,20 +479,23 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onImportStart(Context context, String importKeyword, Context importKeywordContext, String staticKeyword, Context staticKeywordContext) {
+	public final void onImportStart(Context context, long importKeyword, Context importKeywordContext, long staticKeyword, Context staticKeywordContext) {
 		
 		Objects.requireNonNull(importKeyword);
 
-		push(new StackImport<>(logger, importKeyword, importKeywordContext, staticKeyword, staticKeywordContext));
+		final String importKeywordString = stringSource.asString(importKeyword);
+		final String staticKeywordString = staticKeyword != StringRef.STRING_NONE ? stringSource.asString(staticKeyword) : null;
+		
+		push(new StackImport<>(logger, importKeywordString, importKeywordContext, staticKeywordString, staticKeywordContext));
 		
 	}
 
 	@Override
-	public final void onImportIdentifier(Context context, String identifier) {
+	public final void onImportIdentifier(Context context, long identifier) {
 		
 		final StackImport<IDENTIFIER> stackImport = get();
 		
-		stackImport.addIdentifier(parseTreeFactory.createIdentifier(context, identifier));
+		stackImport.addIdentifier(parseTreeFactory.createIdentifier(context, stringSource.asString(identifier)));
 	}
 		
 	@Override
@@ -510,12 +518,12 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onNamespaceStart(Context context, String namespaceKeyword, Context namespaceKeywordContext,
-			String name, Context nameContext, String[] parts) {
+	public final void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext,
+			long name, Context nameContext, String[] parts) {
 
 		logEnter(context);
 
-		push(new StackNamespace<>(logger, namespaceKeyword, namespaceKeywordContext, name, nameContext, parts));
+		push(new StackNamespace<>(logger, stringSource.asString(namespaceKeyword), namespaceKeywordContext, stringSource.asString(name), nameContext, parts));
 
 		logExit(context);
 	}
@@ -540,12 +548,12 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onClassStart(Context context, String classKeyword, Context classKeywordContext, String name,
+	public final void onClassStart(Context context, long classKeyword, Context classKeywordContext, long name,
 			Context nameContext) {
 
 		logEnter(context);
 
-		push(new StackNamedClass<>(logger, classKeyword, classKeywordContext, name, nameContext));
+		push(new StackNamedClass<>(logger, stringSource.asString(classKeyword), classKeywordContext, stringSource.asString(name), nameContext));
 
 		logExit(context);
 	}
@@ -601,14 +609,14 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onClassExtends(Context context, String extendsKeyword, Context extendsKeywordContext,
+	public final void onClassExtends(Context context, long extendsKeyword, Context extendsKeywordContext,
 			ScopedName className) {
 
 		logEnter(context);
 
 		final StackNamedClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER, CLASS_MODIFIER_HOLDER, TYPE_REFERENCE> stackNamedClass = get();
 
-		stackNamedClass.setExtendsKeyword(extendsKeyword, extendsKeywordContext);
+		stackNamedClass.setExtendsKeyword(stringSource.asString(extendsKeyword), extendsKeywordContext);
 
 		final TYPE_REFERENCE typeReference = parseTreeFactory.createResolveLaterTypeReference(context, className,
 				ReferenceType.NAME);
@@ -754,13 +762,13 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConstructorName(Context context, String constructorName) {
+	public final void onConstructorName(Context context, long constructorName) {
 
 		logEnter(context);
 
 		final StackConstructor<STATEMENT, PARAMETER, TYPE_REFERENCE, CONSTRUCTOR_MODIFIER_HOLDER> constructor = get();
 
-		constructor.setName(constructorName, context);
+		constructor.setName(stringSource.asString(constructorName), context);
 
 		logExit(context);
 	}
@@ -853,13 +861,13 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMethodName(Context context, String methodName) {
+	public final void onMethodName(Context context, long methodName) {
 
 		logEnter(context);
 
 		final CallableStackEntry<STATEMENT, PARAMETER, TYPE_REFERENCE> method = get();
 
-		method.setName(methodName, context);
+		method.setName(stringSource.asString(methodName), context);
 
 		logExit(context);
 	}
@@ -1105,12 +1113,12 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onInterfaceStart(Context context, String interfaceKeyword, Context interfaceKeywordContext,
-			String name, Context nameContext) {
+	public final void onInterfaceStart(Context context, long interfaceKeyword, Context interfaceKeywordContext,
+			long name, Context nameContext) {
 
 		logEnter(context);
 
-		push(new StackInterface<>(logger, interfaceKeyword, interfaceKeywordContext, name, nameContext));
+		push(new StackInterface<>(logger, stringSource.asString(interfaceKeyword), interfaceKeywordContext, stringSource.asString(name), nameContext));
 
 		logExit(context);
 	}
@@ -1205,12 +1213,12 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onEnumStart(Context context, String enumKeyword, Context enumKeywordContext, String name,
+	public final void onEnumStart(Context context, long enumKeyword, Context enumKeywordContext, long name,
 			Context nameContext) {
 
 		logEnter(context);
 
-		push(new StackEnum<>(logger, enumKeyword, enumKeywordContext, name, nameContext));
+		push(new StackEnum<>(logger, stringSource.asString(enumKeyword), enumKeywordContext, stringSource.asString(name), nameContext));
 
 		logExit(context);
 	}
@@ -1228,11 +1236,11 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onEnumConstantStart(Context context, String name) {
+	public final void onEnumConstantStart(Context context, long name) {
 
 		logEnter(context);
 
-		push(new StackEnumConstant<>(logger, name));
+		push(new StackEnumConstant<>(logger, stringSource.asString(name)));
 
 		logExit(context);
 	}
@@ -1469,26 +1477,26 @@ public abstract class BaseParserListener<
 
 	// Variable or class member
 	@Override
-	public final void onNameReference(Context context, String name) {
+	public final void onNameReference(Context context, long name) {
 
 		logEnter(context);
 
 		final VariableReferenceSetter<VARIABLE_REFERENCE> variableReferenceSetter = get();
 
-		variableReferenceSetter.setVariableReference(parseTreeFactory.createNameReference(context, name));
+		variableReferenceSetter.setVariableReference(parseTreeFactory.createNameReference(context, stringSource.asString(name)));
 
 		logExit(context);
 	}
 
 	// Resolved as variable
 	@Override
-	public final void onVariableReference(Context context, String name) {
+	public final void onVariableReference(Context context, long name) {
 
 		logEnter(context);
 
 		final VariableReferenceSetter<VARIABLE_REFERENCE> variableReferenceSetter = get();
 
-		final VARIABLE_DECLARATION declaration = findVariableDeclaration(name);
+		final VARIABLE_DECLARATION declaration = findVariableDeclaration(stringSource.asString(name));
 
 		if (declaration == null) {
 			throw new CompileException(context, "No variable declared for name " + name);
@@ -1570,7 +1578,7 @@ public abstract class BaseParserListener<
 
 	@Override
 	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName,
-			ReferenceType referenceType, String fieldName, Context fieldNameContext) {
+			ReferenceType referenceType, long fieldName, Context fieldNameContext) {
 
 		logEnter(context);
 
@@ -1580,7 +1588,7 @@ public abstract class BaseParserListener<
 				context,
 				fieldAccessType,
 				typeName != null ? parseTreeFactory.createResolveLaterTypeReference(context, typeName, referenceType) : null,
-				fieldName);
+				stringSource.asString(fieldName));
 
 		primarySetter.addPrimary(fieldAccess);
 
@@ -1802,13 +1810,13 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStringLiteral(Context context, String value) {
+	public final void onStringLiteral(Context context, long value) {
 
 		logEnter(context);
 
 		final PrimarySetter<PRIMARY> primarySetter = get();
 
-		primarySetter.addPrimary(parseTreeFactory.createStringLiteral(context, value));
+		primarySetter.addPrimary(parseTreeFactory.createStringLiteral(context, stringSource.asString(value)));
 
 		logExit(context);
 	}
@@ -1877,7 +1885,7 @@ public abstract class BaseParserListener<
 			ScopedName classTypeName,
 			Context classTypeNameContext,
 			ReferenceType referenceType,
-			String methodName,
+			long methodName,
 			Context methodNameContext) {
 
 		logEnter(context);
@@ -1898,7 +1906,7 @@ public abstract class BaseParserListener<
 			}
 		}
 
-		push(new StackMethodInvocation<>(logger, type, classType, methodName, methodNameContext));
+		push(new StackMethodInvocation<>(logger, type, classType, stringSource.asString(methodName), methodNameContext));
 
 		logExit(context);
 	}
@@ -2034,11 +2042,11 @@ public abstract class BaseParserListener<
 
 	// Class expressions
 	@Override
-	public final void onClassExpression(Context context, String className, int numArrayDims) {
+	public final void onClassExpression(Context context, long className, int numArrayDims) {
 
 		logEnter(context);
 
-		final CLASS_EXPRESSION expression = parseTreeFactory.createClassExpression(context, className, numArrayDims);
+		final CLASS_EXPRESSION expression = parseTreeFactory.createClassExpression(context, stringSource.asString(className), numArrayDims);
 
 		final PrimarySetter<PRIMARY> primarySetter = get();
 
@@ -2061,13 +2069,13 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onSingleLambdaParameter(Context context, String varName, Context varNameContext) {
+	public final void onSingleLambdaParameter(Context context, long varName, Context varNameContext) {
 
 		logEnter(context);
 
 		final StackLambdaExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackLambdaExpression = get();
 
-		stackLambdaExpression.setSingleParameter(varName, varNameContext);
+		stackLambdaExpression.setSingleParameter(stringSource.asString(varName), varNameContext);
 
 		logExit(context);
 	}
@@ -2304,11 +2312,11 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onForStatementStart(Context context, String keyword, Context keywordContext) {
+	public final void onForStatementStart(Context context, long keyword, Context keywordContext) {
 
 		logEnter(context);
 
-		push(new StackForStatement<>(logger, keyword, keywordContext));
+		push(new StackForStatement<>(logger, stringSource.asString(keyword), keywordContext));
 
 		logExit(context);
 	}
@@ -2545,13 +2553,13 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onVariableName(Context context, String name, int numDims) {
+	public final void onVariableName(Context context, long name, int numDims) {
 
 		logEnter(context);
 
 		final VariableNameSetter variableNameSetter = get();
 
-		variableNameSetter.init(name, context, numDims);
+		variableNameSetter.init(stringSource.asString(name), context, numDims);
 
 		logExit(context);
 	}

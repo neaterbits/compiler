@@ -2,6 +2,7 @@ package com.neaterbits.compiler.java;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +16,6 @@ import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.passes.FilePassInput;
-
 
 public class CompileFileCollector {
 
@@ -58,6 +58,7 @@ public class CompileFileCollector {
 				
 				.map(compileFile -> new FilePassInput(
 						new ByteArrayInputStream(compileFile.text.getBytes()),
+						Charset.defaultCharset(),
 						compileFile.name))
 
 				.collect(Collectors.toList());

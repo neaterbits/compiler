@@ -28,18 +28,18 @@ public interface ParserListener<COMPILATION_UNIT> {
 
 	COMPILATION_UNIT onCompilationUnitEnd(Context context);
 	
-	void onImportStart(Context context, String importKeyword, Context importKeywordContext, String staticKeyword, Context staticKeywordContext);
+	void onImportStart(Context context, long importKeyword, Context importKeywordContext, long staticKeyword, Context staticKeywordContext);
 	
-	void onImportIdentifier(Context context, String identifier);
+	void onImportIdentifier(Context context, long identifier);
 	
 	void onImportEnd(Context context, boolean ondemand);
 	
-	void onNamespaceStart(Context context, String namespaceKeyword, Context namespaceKeywordContext,
-			String name, Context nameContext, String [] parts);
+	void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext,
+			long name, Context nameContext, String [] parts);
 	
 	void onNameSpaceEnd(Context context);
 	
-	void onClassStart(Context context, String classKeyword, Context classKeywordContext, String name,
+	void onClassStart(Context context, long classKeyword, Context classKeywordContext, long name,
 			Context nameContext);
 
 	void onVisibilityClassModifier(Context context, ClassVisibility visibility);
@@ -50,7 +50,7 @@ public interface ParserListener<COMPILATION_UNIT> {
 
 	void onStrictfpClassModifier(Context context);
 	
-	void onClassExtends(Context context, String extendsKeyword, Context extendsKeywordContext, ScopedName className);
+	void onClassExtends(Context context, long extendsKeyword, Context extendsKeywordContext, ScopedName className);
 
 	void onClassImplements(Context context, ScopedName interfaceName);
 
@@ -68,7 +68,7 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onConstructorVisibilityModifier(Context context, ConstructorVisibility visibility);
 	
-	void onConstructorName(Context context, String constructorName);
+	void onConstructorName(Context context, long constructorName);
 	
 	void onConstructorInvocationStart(Context context, ConstructorInvocation type);
 	
@@ -82,7 +82,7 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onMethodReturnTypeEnd(Context context);
 	
-	void onMethodName(Context context, String methodName);
+	void onMethodName(Context context, long methodName);
 
 	void onMethodSignatureParametersStart(Context context);
 
@@ -120,8 +120,8 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onFieldDeclarationEnd(Context context);
 	
-	void onInterfaceStart(Context context, String interfaceKeyword, Context interfaceKeywordContext,
-			String name, Context nameContext);
+	void onInterfaceStart(Context context, long interfaceKeyword, Context interfaceKeywordContext,
+			long name, Context nameContext);
 	
 	void onVisibilityInterfaceModifier(Context context, InterfaceVisibility visibility);
 	
@@ -135,12 +135,12 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onInterfaceEnd(Context context);
 	
-	void onEnumStart(Context context, String enumKeyword, Context enumKeywordContext, String name,
+	void onEnumStart(Context context, long enumKeyword, Context enumKeywordContext, long name,
 			Context nameContext);
 	
 	void onEnumImplements(Context context, ScopedName interfaceName);
 	
-	void onEnumConstantStart(Context context, String name);
+	void onEnumConstantStart(Context context, long name);
 	
 	void onEnumConstantEnd(Context context);
 
@@ -172,9 +172,9 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onNestedExpressionEnd(Context context);
 	
-	void onNameReference(Context context, String name);
+	void onNameReference(Context context, long name);
 	
-	void onVariableReference(Context context, String name);
+	void onVariableReference(Context context, long name);
 	
 	void onPrimaryStart(Context context);
 	
@@ -187,7 +187,7 @@ public interface ParserListener<COMPILATION_UNIT> {
 	void onArrayAccessEnd(Context context);
 	
 	void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName,
-			ReferenceType referenceType, String fieldName, Context fieldNameContext);
+			ReferenceType referenceType, long fieldName, Context fieldNameContext);
 	
 	void onCastExpressionStart(Context context);
 	
@@ -221,7 +221,7 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onCharacterLiteral(Context context, char value);
 	
-	void onStringLiteral(Context context, String value);
+	void onStringLiteral(Context context, long value);
 	
 	void onNullLiteral(Context context);
 	
@@ -237,7 +237,7 @@ public interface ParserListener<COMPILATION_UNIT> {
 			ScopedName classTypeName,
 			Context classTypeNameContext,
 			ReferenceType referenceType,
-			String methodName,
+			long methodName,
 			Context methodNameContext);
 	
 	void onParametersStart(Context context);
@@ -258,11 +258,11 @@ public interface ParserListener<COMPILATION_UNIT> {
 
 	void onArrayCreationExpressionEnd(Context context);
 
-	void onClassExpression(Context context, String className, int numArrayDims);
+	void onClassExpression(Context context, long className, int numArrayDims);
 	
 	void onLambdaExpressionStart(Context context);
 	
-	void onSingleLambdaParameter(Context context, String varName, Context varNameContext);
+	void onSingleLambdaParameter(Context context, long varName, Context varNameContext);
 	
 	void onFormalLambdaParameterListStart(Context context);
 	
@@ -292,7 +292,7 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onExpressionStatementEnd(Context context);
 	
-	void onForStatementStart(Context context, String keyword, Context keywordContext);
+	void onForStatementStart(Context context, long keyword, Context keywordContext);
 	
 	void onForInitStart(Context context);
 	
@@ -324,7 +324,7 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onResourceStart(Context context);
 	
-	void onVariableName(Context context, String name, int numDims);
+	void onVariableName(Context context, long name, int numDims);
 	
 	void onResourceEnd(Context context);
 	

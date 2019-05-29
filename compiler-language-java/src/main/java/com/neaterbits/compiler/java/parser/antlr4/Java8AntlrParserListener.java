@@ -29,6 +29,8 @@ import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
+import com.neaterbits.util.io.strings.OffsetLengthStringRef;
+import com.neaterbits.util.io.strings.StringRef;
 
 import statement.ASTMutability;
 
@@ -42,12 +44,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.neaterbits.compiler.antlr4.Antlr4;
 
-/**
- * 
- */
-/**
- * 
- */
 public class Java8AntlrParserListener extends Java8BaseListener {
 
 	private final JavaParserListener delegate;
@@ -104,6 +100,17 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		return Antlr4.context(ctx, file, gen.getNextTokenSequenceNo());
 	}
 
+	private static long stringRef(ParserRuleContext ctx) {
+		return OffsetLengthStringRef.encode(ctx.start.getStartIndex(), ctx.getText().length());
+	}
+
+	private static long stringRef(Token ctx) {
+		return OffsetLengthStringRef.encode(ctx.getStartIndex(), ctx.getText().length());
+	}
+
+	private static long stringRef(TerminalNode ctx) {
+		return stringRef(ctx.getSymbol());
+	}
 
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
@@ -148,8 +155,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 		delegate.onPackageDeclaration(
 				context(ctx),
-				ctx.keyword.getText(), context(ctx.keyword),
-				ctx.packageName().getText(), context(ctx.packageName()));
+				stringRef(ctx.keyword), context(ctx.keyword),
+				stringRef(ctx.packageName()), context(ctx.packageName()));
 	}
 
 	
@@ -159,9 +166,9 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		delegate.onImportStart(
 				context(ctx),
-				ctx.keyword.getText(),
+				stringRef(ctx.keyword),
 				context(ctx.keyword),
-				null,
+				StringRef.STRING_NONE,
 				null);
 	}
 	
@@ -176,9 +183,9 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		delegate.onImportStart(
 				context(ctx),
-				ctx.keyword.getText(),
+				stringRef(ctx.keyword),
 				context(ctx.keyword),
-				null,
+				StringRef.STRING_NONE,
 				null);
 	}
 
@@ -193,9 +200,9 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		delegate.onImportStart(
 				context(ctx),
-				ctx.keyword.getText(),
+				stringRef(ctx.keyword),
 				context(ctx.keyword),
-				ctx.modifier.getText(),
+				stringRef(ctx.modifier),
 				context(ctx.modifier));
 	}
 
@@ -210,9 +217,9 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		delegate.onImportStart(
 				context(ctx),
-				ctx.keyword.getText(),
+				stringRef(ctx.keyword),
 				context(ctx.keyword),
-				ctx.modifier.getText(),
+				stringRef(ctx.modifier),
 				context(ctx.modifier));
 	}
 
@@ -226,8 +233,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterNormalClassDeclaration(NormalClassDeclarationContext ctx) {
 		delegate.onClassStart(
 				context(ctx),
-				ctx.keyword.getText(), context(ctx.keyword),
-				ctx.Identifier().getText(), context(ctx.Identifier()));
+				stringRef(ctx.keyword), context(ctx.keyword),
+				stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 	
 	@Override
@@ -269,7 +276,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterSuperclass(SuperclassContext ctx) {
 		delegate.onClassExtends(
 				context(ctx),
-				ctx.keyword.getText(), context(ctx.keyword),
+				stringRef(ctx.keyword), context(ctx.keyword),
 				parseName(ctx.classType().getText()));
 	}
 
@@ -333,7 +340,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterConstructorDeclarator(ConstructorDeclaratorContext ctx) {
-		delegate.onConstructorName(context(ctx.simpleTypeName()), ctx.simpleTypeName().getText());
+		delegate.onConstructorName(context(ctx.simpleTypeName()), stringRef(ctx.simpleTypeName()));
 	}
 
 	@Override
@@ -387,7 +394,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterMethodDeclarator(MethodDeclaratorContext ctx) {
-		delegate.onMethodName(context(ctx.Identifier()), ctx.Identifier().getText());
+		delegate.onMethodName(context(ctx.Identifier()), stringRef(ctx.Identifier()));
 	}
 	
 	@Override
@@ -517,8 +524,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterNormalInterfaceDeclaration(NormalInterfaceDeclarationContext ctx) {
 		delegate.onInterfaceStart(
 				context(ctx),
-				ctx.keyword.getText(), context(ctx.keyword),
-				ctx.Identifier().getText(), context(ctx.Identifier()));
+				stringRef(ctx.keyword), context(ctx.keyword),
+				stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 	
 	@Override
@@ -590,8 +597,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterEnumDeclaration(EnumDeclarationContext ctx) {
 		delegate.onEnumStart(
 				context(ctx),
-				ctx.keyword.getText(), context(ctx.keyword),
-				ctx.Identifier().getText(), context(ctx.Identifier()));
+				stringRef(ctx.keyword), context(ctx.keyword),
+				stringRef(ctx.Identifier()), context(ctx.Identifier()));
 		
 		if (ctx.superinterfaces() != null) {
 			for (InterfaceTypeContext interfaceCtx : ctx.superinterfaces().interfaceTypeList().interfaceType()) {
@@ -602,7 +609,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterEnumConstant(EnumConstantContext ctx) {
-		delegate.onEnumConstantStart(context(ctx), ctx.Identifier().getText());
+		delegate.onEnumConstantStart(context(ctx), stringRef(ctx.Identifier()));
 	}
 
 	@Override
@@ -624,7 +631,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitExpressionName(ExpressionNameContext ctx) {
-		delegate.onNameReference(context(ctx), ctx.getText());
+		delegate.onNameReference(context(ctx), stringRef(ctx));
 	}
 
 	@Override
@@ -827,7 +834,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterNoObjectMethodInvocation_lfno_primary(NoObjectMethodInvocation_lfno_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, null, null, ctx.methodName().getText(), context(ctx.methodName()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, null, null, stringRef(ctx.methodName()), context(ctx.methodName()));
 	}
 
 	@Override
@@ -843,7 +850,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				parseName(ctx.typeName().getText()),
 				context((ParserRuleContext)ctx.typeName().getRuleContext()),
 				ReferenceType.NAME,
-				ctx.Identifier().getText(),
+				stringRef(ctx.Identifier()),
 				context(ctx.Identifier()));
 	}
 
@@ -854,7 +861,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterObjectMethodInvocation_lfno_primary(ObjectMethodInvocation_lfno_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -864,7 +871,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterSuperMethodInvocation_lfno_primary(SuperMethodInvocation_lfno_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -880,7 +887,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				parseName(ctx.typeName().getText()),
 				context((ParserRuleContext)ctx.typeName().getRuleContext()),
 				ReferenceType.NAME,
-				ctx.Identifier().getText(),
+				stringRef(ctx.Identifier()),
 				context(ctx.Identifier()));
 	}
 
@@ -891,7 +898,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterNoObjectMethodInvocation(NoObjectMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, null, null, ctx.methodName().getText(), context(ctx.methodName()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.NO_OBJECT, null, null, null, stringRef(ctx.methodName()), context(ctx.methodName()));
 	}
 
 	@Override
@@ -907,7 +914,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				parseName(ctx.typeName().getText()),
 				context((ParserRuleContext)ctx.typeName().getRuleContext()),
 				ReferenceType.NAME,
-				ctx.Identifier().getText(),
+				stringRef(ctx.Identifier()),
 				context(ctx.Identifier()));
 	}
 
@@ -918,7 +925,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterObjectMethodInvocation(ObjectMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.VARIABLE_REFERENCE, null, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -928,7 +935,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterExpressionMethodInvocation(ExpressionMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.PRIMARY, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.PRIMARY, null, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -938,7 +945,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterSubMethodInvocation_lf_primary(SubMethodInvocation_lf_primaryContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUB, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUB, null, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -948,7 +955,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterSuperMethodInvocation(SuperMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUPER, null, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -964,7 +971,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 				parseName(ctx.typeName().getText()),
 				context((ParserRuleContext)ctx.typeName().getRuleContext()),
 				ReferenceType.NAME,
-				ctx.Identifier().getText(),
+				stringRef(ctx.Identifier()),
 				context(ctx.Identifier()));
 	}
 
@@ -1089,39 +1096,39 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterTypeNameClassExpression_primaryNoNewArray(TypeNameClassExpression_primaryNoNewArrayContext ctx) {
-		delegate.onClassExpression(context(ctx), ctx.typeName().getText(), countDims(ctx.typeNameArray().getText()));
+		delegate.onClassExpression(context(ctx), stringRef(ctx.typeName()), countDims(ctx.typeNameArray().getText()));
 	}
 
 
 	@Override
 	public void enterTypeNameClassExpression_primaryNoNewArray_lfno_arrayAccess(
 			TypeNameClassExpression_primaryNoNewArray_lfno_arrayAccessContext ctx) {
-		delegate.onClassExpression(context(ctx), ctx.typeName().getText(), countDims(ctx.typeNameArray().getText()));
+		delegate.onClassExpression(context(ctx), stringRef(ctx.typeName()), countDims(ctx.typeNameArray().getText()));
 	}
 	
 	@Override
 	public void enterTypeNameClassExpression_primaryNoNewArray_lfno_primary(
 			TypeNameClassExpression_primaryNoNewArray_lfno_primaryContext ctx) {
-		delegate.onClassExpression(context(ctx), ctx.typeName().getText(), countDims(ctx.typeNameArray().getText()));
+		delegate.onClassExpression(context(ctx), stringRef(ctx.typeName()), countDims(ctx.typeNameArray().getText()));
 	}
 
 	@Override
 	public void enterPrimitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary(
 			PrimitiveTypeNameClassExpression_primaryNoNewArray_lfno_primaryContext ctx) {
-		delegate.onClassExpression(context(ctx), ctx.unannPrimitiveType().getText(), countDims(ctx.typeNameArray().getText()));
+		delegate.onClassExpression(context(ctx), stringRef(ctx.unannPrimitiveType()), countDims(ctx.typeNameArray().getText()));
 	}
 	
 	
 	@Override
 	public void enterTypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
 			TypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
-		delegate.onClassExpression(context(ctx), ctx.typeName().getText(), countDims(ctx.typeNameArray().getText()));
+		delegate.onClassExpression(context(ctx), stringRef(ctx.typeName()), countDims(ctx.typeNameArray().getText()));
 	}
 
 	@Override
 	public void enterPrimitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
 			PrimitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
-		delegate.onClassExpression(context(ctx), ctx.unannPrimitiveType().getText(), countDims(ctx.typeNameArray().getText()));
+		delegate.onClassExpression(context(ctx), stringRef(ctx.unannPrimitiveType()), countDims(ctx.typeNameArray().getText()));
 	}
 
 	
@@ -1138,7 +1145,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void exitLambdaSingleParameter(LambdaSingleParameterContext ctx) {
 
-		delegate.onSingleLambdaParameter(context(ctx), ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onSingleLambdaParameter(context(ctx), stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -1285,34 +1292,34 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitPrimaryDotIdentifierFieldAccess(PrimaryDotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitSuperDotIdentifierFieldAccess(SuperDotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitTypeNameDotSuperDotIdentifierFieldAccess(TypeNameDotSuperDotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitDotIdentifierFieldAccess(DotIdentifierFieldAccessContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.FIELD, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
 	public void exitSuperDotIdentifierFieldAccess_fieldAccess_lfno_primary(
 			SuperDotIdentifierFieldAccess_fieldAccess_lfno_primaryContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.SUPER_FIELD, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 	
 	@Override
 	public void exitTypeNameDotSuperDotIdentifierFieldAccess_fieldAccess_lfno_primary(
 			TypeNameDotSuperDotIdentifierFieldAccess_fieldAccess_lfno_primaryContext ctx) {
-		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, null, ctx.Identifier().getText(), context(ctx.Identifier()));
+		delegate.onFieldAccess(context(ctx), FieldAccessType.TYPE_SUPER_FIELD, null, null, stringRef(ctx.Identifier()), context(ctx.Identifier()));
 	}
 
 	@Override
@@ -1402,7 +1409,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitStringLiteral(StringLiteralContext ctx) {
-		delegate.onJavaStringLiteral(context(ctx), ctx.getText());
+		delegate.onJavaStringLiteral(context(ctx), stringRef(ctx));
 	}
 
 	@Override
@@ -1573,7 +1580,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitVariableDeclaratorId(VariableDeclaratorIdContext ctx) {
 		delegate.onVariableName(
 				context(ctx),
-				ctx.Identifier().getText(),
+				stringRef(ctx.Identifier()),
 				ctx.dims() != null
 					? countDims(ctx.dims().getText())
 					: 0);
@@ -1745,7 +1752,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterBasicForStatement(BasicForStatementContext ctx) {
-		delegate.onForStatementStart(context(ctx), ctx.keyword.getText(), context(ctx.keyword));
+		delegate.onForStatementStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 
 	@Override
@@ -1755,7 +1762,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterBasicForStatementNoShortIf(BasicForStatementNoShortIfContext ctx) {
-		delegate.onForStatementStart(context(ctx), ctx.keyword.getText(), context(ctx.keyword));
+		delegate.onForStatementStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 
 	@Override

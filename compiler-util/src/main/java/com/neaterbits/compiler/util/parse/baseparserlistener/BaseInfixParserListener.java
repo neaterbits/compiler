@@ -9,6 +9,7 @@ import com.neaterbits.compiler.util.parse.parserlistener.InfixParserListener;
 import com.neaterbits.compiler.util.parse.stackstate.StackExpressionList;
 import com.neaterbits.compiler.util.parse.stackstate.StackIncrementDecrementExpression;
 import com.neaterbits.compiler.util.parse.stackstate.setters.ExpressionSetter;
+import com.neaterbits.util.io.strings.StringSource;
 
 public abstract class BaseInfixParserListener<
 
@@ -258,8 +259,8 @@ public abstract class BaseInfixParserListener<
 
 	implements InfixParserListener<COMPILATION_UNIT> {
 
-	protected BaseInfixParserListener(ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
-		super(logger, parseTreeFactory);
+	protected BaseInfixParserListener(StringSource stringSource, ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+		super(stringSource, logger, parseTreeFactory);
 	}
 
 	@Override

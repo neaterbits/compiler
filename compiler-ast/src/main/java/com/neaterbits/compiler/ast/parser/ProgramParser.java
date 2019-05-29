@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.ast.parser;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -17,9 +18,9 @@ public final class ProgramParser {
 		this.moduleParser = new ModuleParser(directoryParser);
 	}
 	
-	public Program parseProgram(List<ModuleSpec> modules, ModuleSpec systemModule, Consumer<Module> postProcessSystemModule, ParseLogger debugParseLogger) throws IOException {
+	public Program parseProgram(List<ModuleSpec> modules, Charset charset, ModuleSpec systemModule, Consumer<Module> postProcessSystemModule, ParseLogger debugParseLogger) throws IOException {
 
-		final List<Module> parsedModules = moduleParser.parseModules(modules, systemModule, postProcessSystemModule, debugParseLogger);
+		final List<Module> parsedModules = moduleParser.parseModules(modules, charset, systemModule, postProcessSystemModule, debugParseLogger);
 
 		return new Program(parsedModules);
 	}

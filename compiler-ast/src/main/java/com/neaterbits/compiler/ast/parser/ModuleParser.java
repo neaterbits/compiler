@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.ast.parser;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ final class ModuleParser {
 
 	List<Module> parseModules(
 			Collection<ModuleSpec> modules,
+			Charset charset,
 			ModuleSpec systemModule,
 			Consumer<Module> postProcessSystemModule,
 			ParseLogger debugParseLogger) throws IOException {
@@ -44,6 +46,7 @@ final class ModuleParser {
 
 			final List<ASTParsedFile> parsedFiles = directoryParser.parseDirectory(
 					systemModule.getBaseDirectory(),
+					charset,
 					debugParseLogger);
 			
 			final Module module = new Module(systemModule, parsedFiles);
@@ -75,7 +78,7 @@ final class ModuleParser {
 					iter.remove();
 				}
 				else {
-					final List<ASTParsedFile> parsedFiles = directoryParser.parseDirectory(moduleSpec.getBaseDirectory(), debugParseLogger);
+					final List<ASTParsedFile> parsedFiles = directoryParser.parseDirectory(moduleSpec.getBaseDirectory(), charset, debugParseLogger);
 					
 					final Module module = new Module(moduleSpec, parsedFiles);
 					

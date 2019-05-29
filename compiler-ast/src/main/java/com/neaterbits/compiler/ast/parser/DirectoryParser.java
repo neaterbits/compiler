@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,11 +46,11 @@ public class DirectoryParser {
 		return null;
 	}
 	
-	public List<ASTParsedFile> parseDirectory(File directory) {
-		return parseDirectory(directory, null);
+	public List<ASTParsedFile> parseDirectory(File directory, Charset charset) {
+		return parseDirectory(directory, charset, null);
 	}
 
-	public List<ASTParsedFile> parseDirectory(File directory, ParseLogger debugParseLogger) {
+	public List<ASTParsedFile> parseDirectory(File directory, Charset charset, ParseLogger debugParseLogger) {
 
 		final List<ASTParsedFile> parsedFiles = new ArrayList<>();
 		
@@ -76,7 +77,7 @@ public class DirectoryParser {
 					
 					final ParseLogger parseLogger = new ParseLogger(printStream);
 					
-					compilationUnit = parser.parse(fileInputStream, parseErrors, file.getName(), debugParseLogger != null ? debugParseLogger : parseLogger);
+					compilationUnit = parser.parse(fileInputStream, charset, parseErrors, file.getName(), debugParseLogger != null ? debugParseLogger : parseLogger);
 					
 					printStream.flush();
 					

@@ -41,6 +41,7 @@ public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
 		
 		final COMPILATION_UNIT compilationUnit = input.getParser().parse(
 				input.getInputStream(),
+				input.getCharset(),
 				errors,
 				input.getFile().getParseContextName(),
 				parseLogger);

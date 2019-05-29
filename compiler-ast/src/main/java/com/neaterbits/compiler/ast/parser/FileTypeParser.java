@@ -3,10 +3,10 @@ package com.neaterbits.compiler.ast.parser;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.function.BiFunction;
 
 import com.neaterbits.compiler.antlr4.AntlrParser;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
@@ -14,17 +14,24 @@ import com.neaterbits.compiler.ast.CompilationUnit;
 import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.io.strings.StringSourceInputStream;
+import com.neaterbits.util.io.strings.StringSource;
 
 public final class FileTypeParser<LISTENER extends ModelParserListener<CompilationUnit>>
 		implements LanguageParser {
 
+	@FunctionalInterface
+	public interface ParserListenerFactory<LISTENER> {
+		LISTENER create(StringSource stringSource, ParseLogger logger, TokenSequenceNoGenerator gen);
+	}
+	
 	private final AntlrParser<CompilationUnit, LISTENER> parser;
-	private final BiFunction<ParseLogger, TokenSequenceNoGenerator, LISTENER> makeListener;
+	private final ParserListenerFactory<LISTENER> makeListener;
 	private final String [] fileExtensions;
 
 	public FileTypeParser(
 			AntlrParser<CompilationUnit, LISTENER> parser,
-			BiFunction<ParseLogger, TokenSequenceNoGenerator, LISTENER> makeListener,
+			ParserListenerFactory<LISTENER> makeListener,
 			String ... fileExtensions) {
 
 		Objects.requireNonNull(parser);
@@ -54,11 +61,14 @@ public final class FileTypeParser<LISTENER extends ModelParserListener<Compilati
 
 	
 	@Override
-	public CompilationUnit parse(InputStream inputStream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
+	public CompilationUnit parse(InputStream inputStream, Charset charset, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
 		
 		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
 		
-		final LISTENER listener = makeListener.apply(parseLogger, gen);
+		final LISTENER listener = makeListener.create(
+				new StringSourceInputStream(inputStream, charset),
+				parseLogger,
+				gen);
 		
 		final Collection<ParseError> antlrErrors = parser.parse(inputStream, listener, file, parseLogger);
 

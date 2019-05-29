@@ -2,6 +2,7 @@ package com.neaterbits.compiler.antlr4;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -25,6 +26,8 @@ import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.parse.BaseParser;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.io.strings.StringSource;
+import com.neaterbits.util.io.strings.StringSourceInputStream;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
 
@@ -32,7 +35,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 		extends BaseParser<T, LISTENER>
 		implements AntlrParser<T, LISTENER> {
 
-	protected abstract LISTENER createListener(ParseLogger parseLogger, String file, TokenSequenceNoGenerator gen);
+	protected abstract LISTENER createListener(StringSource stringSource, ParseLogger parseLogger, String file, TokenSequenceNoGenerator gen);
 
 	protected abstract ParserRuleContext getMainContext(PARSER parser);
 	
@@ -64,7 +67,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 	public final T parse(String string, boolean log) {
 		try {
 			return parse(
-					new ANTLRInputStream(string),
+					StringSourceInputStream.fromString(string),
 					new ArrayList<>(),
 					null,
 					log ? new ParseLogger(System.out) : null);
@@ -74,48 +77,36 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 	}
 
 	@Override
-	public final T parse(InputStream stream, String file) throws IOException {
-		return parse(new ANTLRInputStream(stream), new ArrayList<>(), file, new ParseLogger(System.out));
+	public final T parse(InputStream stream, Charset charset, String file) throws IOException {
+		return parse(new StringSourceInputStream(stream, charset), new ArrayList<>(), file, new ParseLogger(System.out));
 	}
 
 	@Override
 	public T parse(String string, Collection<ParseError> errors, ParseLogger parseLogger) {
 		
-		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
-		
-		final LISTENER listener = createListener(parseLogger, null, gen);
-
 		try {
-			parse(new ANTLRInputStream(string), listener, errors, null, parseLogger, gen);
+			return parse(StringSourceInputStream.fromString(string), errors, null, parseLogger);
 		} catch (IOException ex) {
 			throw new IllegalStateException(ex);
 		}
-
-		return listener.getResult();
 	}
 
 	@Override
-	public T parse(InputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
+	public T parse(InputStream stream, Charset charset, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
+		return parse(new StringSourceInputStream(stream, charset), errors, file, parseLogger);
+	}
+
+	private T parse(StringSourceInputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
 
 		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
 
-		final LISTENER listener = createListener(parseLogger, file, gen);
+		final LISTENER listener = createListener(stream, parseLogger, file, gen);
 
 		parse(new ANTLRInputStream(stream), listener, errors, file, parseLogger, gen);
 
 		return listener.getResult();
 	}
 
-	private T parse(ANTLRInputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
-
-		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
-
-		final LISTENER listener = createListener(parseLogger, file, gen);
-
-		parse(stream, listener, errors, file, parseLogger, gen);
-
-		return listener.getResult();
-	}
 
 	@Override
 	public final Collection<ParseError> parse(String string, LISTENER listener, ParseLogger parseLogger) {

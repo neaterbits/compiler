@@ -30,6 +30,8 @@ import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
+import com.neaterbits.util.io.strings.OffsetLengthStringRef;
+import com.neaterbits.util.io.strings.StringSource;
 
 import statement.ASTMutability;
 
@@ -44,11 +46,12 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	// Delegate to make sure make all special handling here
 	private static class JavaIterativeListener extends BaseIterativeOOParserListener {
 
-		JavaIterativeListener(ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
-			super(logger, parseTreeFactory);
+		JavaIterativeListener(StringSource stringSource, ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+			super(stringSource, logger, parseTreeFactory);
 		}
 	}
 
+	private final StringSource stringSource;
 	private final ParseLogger logger;
 	private final String file;
 	private final TokenSequenceNoGenerator gen;
@@ -74,11 +77,12 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		logger.println("stack at " + statement + " " + statementsStack);
 	}
 	
-	public JavaParserListener(ParseLogger logger, String file, TokenSequenceNoGenerator gen, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+	public JavaParserListener(StringSource stringSource, ParseLogger logger, String file, TokenSequenceNoGenerator gen, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+		this.stringSource = stringSource;
 		this.logger = logger;
 		this.file = file;
 		this.gen = gen;
-		this.delegate = new JavaIterativeListener(logger, parseTreeFactory);
+		this.delegate = new JavaIterativeListener(stringSource, logger, parseTreeFactory);
 		this.statementsStack = new StatementsStack();
 	}
 
@@ -87,8 +91,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		return compilationUnit;
 	}
 
-	public void onPackageDeclaration(Context context, String packageKeyword, Context packageKeywordContext, String name, Context nameContext) {
-		this.packageName = name;
+	public void onPackageDeclaration(Context context, long packageKeyword, Context packageKeywordContext, long name, Context nameContext) {
+		this.packageName = stringSource.asString(name);
 		
 		delegate.onNamespaceStart(context, packageKeyword, packageKeywordContext, name, nameContext, Strings.split(packageName, '.'));
 	}
@@ -97,11 +101,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onCompilationUnitStart(context);
 	}
 	
-	public final void onImportStart(Context context, String importKeyword, Context importKeywordContext, String staticKeyword, Context staticKeywordContext) {
+	public final void onImportStart(Context context, long importKeyword, Context importKeywordContext, long staticKeyword, Context staticKeywordContext) {
 		delegate.onImportStart(context, importKeyword, importKeywordContext, staticKeyword, staticKeywordContext);
 	}
 
-	public final void onImportIdentifier(Context context, String identifier) {
+	public final void onImportIdentifier(Context context, long identifier) {
 		delegate.onImportIdentifier(context, identifier);
 	}
 	
@@ -109,7 +113,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onImportEnd(context, ondemand);
 	}
 
-	public void onClassStart(Context context, String classKeyword, Context classKeywordContext, String name, Context nameContext) {
+	public void onClassStart(Context context, long classKeyword, Context classKeywordContext, long name, Context nameContext) {
 		delegate.onClassStart(context, classKeyword, classKeywordContext, name, nameContext);
 	}
 	
@@ -129,7 +133,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onStrictfpClassModifier(context);
 	}
 	
-	public void onClassExtends(Context context, String extendsKeyword, Context extendsKeywordContext, ScopedName className) {
+	public void onClassExtends(Context context, long extendsKeyword, Context extendsKeywordContext, ScopedName className) {
 		delegate.onClassExtends(context, extendsKeyword, extendsKeywordContext, className);
 	}
 	
@@ -173,7 +177,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onConstructorVisibilityModifier(context, visibility);
 	}
 	
-	public void onConstructorName(Context context, String constructorName) {
+	public void onConstructorName(Context context, long constructorName) {
 		delegate.onConstructorName(context, constructorName);
 	}
 	
@@ -206,7 +210,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onMethodReturnTypeEnd(context);
 	}
 
-	public void onMethodName(Context context, String methodName) {
+	public void onMethodName(Context context, long methodName) {
 		delegate.onMethodName(context, methodName);
 	}
 
@@ -256,7 +260,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		statementsStack.pop();
 	}
 
-	public void onInterfaceStart(Context context, String interfaceKeyword, Context interfaceKeywordContext, String name, Context nameContext) {
+	public void onInterfaceStart(Context context, long interfaceKeyword, Context interfaceKeywordContext, long name, Context nameContext) {
 		delegate.onInterfaceStart(context, interfaceKeyword, interfaceKeywordContext, name, nameContext);
 	}
 	
@@ -317,7 +321,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		statementsStack.pop();
 	}
 	
-	public void onEnumStart(Context context, String enumKeyword, Context enumKeywordContext, String name, Context nameContext) {
+	public void onEnumStart(Context context, long enumKeyword, Context enumKeywordContext, long name, Context nameContext) {
 		statementsStack.push();
 		
 		delegate.onEnumStart(context, enumKeyword, enumKeywordContext, name, nameContext);
@@ -327,7 +331,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onEnumImplements(context, interfaceName);
 	}
 	
-	public void onEnumConstantStart(Context context, String name) {
+	public void onEnumConstantStart(Context context, long name) {
 		delegate.onEnumConstantStart(context, name);
 	}
 	
@@ -383,11 +387,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onEnterAssignmentExpression(context);
 	}
 	
-	public void onNameReference(Context context, String name) {
+	public void onNameReference(Context context, long name) {
 		delegate.onNameReference(context, name);
 	}
 
-	public void onVariableReference(Context context, String name) {
+	public void onVariableReference(Context context, long name) {
 		delegate.onVariableReference(context, name);
 	}
 
@@ -436,7 +440,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onArrayAccessEnd(context);
 	}
 
-	public void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, ReferenceType referenceType, String fieldName, Context fieldNameContext) {
+	public void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, ReferenceType referenceType, long fieldName, Context fieldNameContext) {
 		delegate.onFieldAccess(context, fieldAccessType, typeName, referenceType, fieldName, fieldNameContext);
 	}
 
@@ -538,12 +542,15 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onCharacterLiteral(context, s.charAt(0));
 	}
 	
-	public void onJavaStringLiteral(Context context, String literal) {
-		if (literal.length() < 2) {
+	public void onJavaStringLiteral(Context context, long literal) {
+		
+		final int length = OffsetLengthStringRef.decodeLength(literal);
+		
+		if (length < 2) {
 			throw new IllegalStateException("Not a String literal");
 		}
 
-		delegate.onStringLiteral(context, literal.substring(1, literal.length() - 1));
+		delegate.onStringLiteral(context, OffsetLengthStringRef.substring(literal, 1, length - 1));
 	}
 	
 	public void onJavaNullLiteral(Context context, String literal) {
@@ -576,7 +583,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			ScopedName classTypeName,
 			Context classTypeNameContext,
 			ReferenceType referenceType,
-			String methodName,
+			long methodName,
 			Context methodNameContext) {
 
 		delegate.onMethodInvocationStart(context, type, classTypeName, classTypeNameContext, referenceType, methodName, methodNameContext);
@@ -618,7 +625,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onArrayCreationExpressionEnd(context);
 	}
 	
-	public void onClassExpression(Context context, String className, int numArrayDims) {
+	public void onClassExpression(Context context, long className, int numArrayDims) {
 		delegate.onClassExpression(context, className, numArrayDims);
 	}
 	
@@ -627,7 +634,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onLambdaExpressionStart(context);
 	}
 	
-	public void onSingleLambdaParameter(Context context, String varName, Context varNameContext) {
+	public void onSingleLambdaParameter(Context context, long varName, Context varNameContext) {
 		delegate.onSingleLambdaParameter(context, varName, varNameContext);
 	}
 	
@@ -688,7 +695,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onVariableDeclaratorEnd(context);
 	}
 
-	public void onVariableName(Context context, String name, int numDims) {
+	public void onVariableName(Context context, long name, int numDims) {
 		delegate.onVariableName(context, name, numDims);
 	}
 
@@ -1070,7 +1077,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onWhileStatementEnd(context);
 	}
 	
-	public void onForStatementStart(Context context, String keyword, Context keywordContext) {
+	public void onForStatementStart(Context context, long keyword, Context keywordContext) {
 		
 		statementsStack.add(JavaStatement.FOR);
 		

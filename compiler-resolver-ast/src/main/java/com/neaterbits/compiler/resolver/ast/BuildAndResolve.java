@@ -3,6 +3,7 @@ package com.neaterbits.compiler.resolver.ast;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,6 +43,7 @@ public class BuildAndResolve {
 			Parser<CompilationUnit> parser,
 			Collection<INPUT> inputs,
 			GetInputStream<INPUT> getInputStream,
+			Function<INPUT, Charset> getCharset,
 			Function<INPUT, FileSpec> getFileSpec,
 			Consumer<ASTParsedFile> onParsedFile,
 			ObjectProgramModel programModel,
@@ -55,9 +57,10 @@ public class BuildAndResolve {
 			
 			try (InputStream inputStream = getInputStream.getInputStream(input)) {
 			
+				final Charset charset = getCharset.apply(input);
 				final FileSpec fileSpec = getFileSpec.apply(input);
 				
-				final ASTParsedFile parsedFile = BuildAndResolve.parseFile(parser, inputStream, fileSpec, resolvedTypes);
+				final ASTParsedFile parsedFile = BuildAndResolve.parseFile(parser, inputStream, charset, fileSpec, resolvedTypes);
 				
 				parsedFiles.add(parsedFile);
 				
@@ -76,12 +79,13 @@ public class BuildAndResolve {
 	public static ASTParsedFile parseFile(
 			Parser<CompilationUnit> parser,
 			InputStream inputStream,
+			Charset charset,
 			FileSpec fileSpec,
 			ResolvedTypes resolvedTypes) throws IOException {
 		
 		final List<ParseError> errors = new ArrayList<>();
 		
-		final CompilationUnit compilationUnit = parser.parse(inputStream, errors, fileSpec.getParseContextName(), null);
+		final CompilationUnit compilationUnit = parser.parse(inputStream, charset, errors, fileSpec.getParseContextName(), null);
 		
 		if (compilationUnit == null) {
 			throw new IllegalStateException();

@@ -3,6 +3,7 @@ package com.neaterbits.compiler.ast.parser.iterative;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.compiler.util.parse.baseparserlistener.BaseIterativeParserListener;
 import com.neaterbits.compiler.util.parse.baseparserlistener.ParseTreeFactory;
+import com.neaterbits.util.io.strings.StringSource;
 
 public abstract class BaseIterativeOOParserListener<
 
@@ -249,7 +250,7 @@ public abstract class BaseIterativeOOParserListener<
 		BREAK_STATEMENT
 	> {
 
-	protected BaseIterativeOOParserListener(ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
-		super(logger, parseTreeFactory);
+	protected BaseIterativeOOParserListener(StringSource stringSource, ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+		super(stringSource, logger, parseTreeFactory);
 	}
 }

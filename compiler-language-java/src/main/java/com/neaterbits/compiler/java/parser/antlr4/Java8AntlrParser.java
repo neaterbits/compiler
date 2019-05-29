@@ -13,6 +13,7 @@ import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.io.strings.StringSource;
 
 public class Java8AntlrParser extends BaseAntlrParser<CompilationUnit, JavaParserListener, Java8Lexer, Java8Parser> {
 
@@ -21,8 +22,8 @@ public class Java8AntlrParser extends BaseAntlrParser<CompilationUnit, JavaParse
 	}
 
 	@Override
-	protected JavaParserListener createListener(ParseLogger parseLogger, String file, TokenSequenceNoGenerator gen) {
-		return new JavaParserListener(parseLogger, file, gen, new ASTParseTreeFactory(JavaTypes.getBuiltinTypes()));
+	protected JavaParserListener createListener(StringSource stringSource, ParseLogger parseLogger, String file, TokenSequenceNoGenerator gen) {
+		return new JavaParserListener(stringSource, parseLogger, file, gen, new ASTParseTreeFactory(JavaTypes.getBuiltinTypes()));
 	}
 
 	@Override

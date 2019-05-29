@@ -62,7 +62,6 @@ public abstract class BaseCompilerTest {
 		
 	}
 
-		
 	protected static CodeMapCompiledAndMappedFiles<CompilationUnit> compile(
 			List<FilePassInput> toCompile,
 			ResolvedTypes resolvedTypes,
@@ -74,7 +73,7 @@ public abstract class BaseCompilerTest {
 				= compilerLanguage.makeCompilerPasses(resolvedTypes, codeMap);
 	
 		final List<FileParsePassInput<CompilationUnit>> parseInputs = toCompile.stream()
-				.map(input -> new FileParsePassInput<>(input.getInputStream(), input.getFile(), compilerLanguage.getParser()))
+				.map(input -> new FileParsePassInput<>(input.getInputStream(), input.getCharset(), input.getFile(), compilerLanguage.getParser()))
 				.collect(Collectors.toList());
 		
 		return compiler.compile(parseInputs);

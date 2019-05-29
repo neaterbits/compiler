@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.util.passes;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.FileSpec;
@@ -10,8 +11,8 @@ public final class FileParsePassInput<COMPILATION_UNIT> extends FilePassInput {
 
 	private final Parser<COMPILATION_UNIT> parser;
 
-	public FileParsePassInput(InputStream inputStream, FileSpec file, Parser<COMPILATION_UNIT> parser) {
-		super(inputStream, file);
+	public FileParsePassInput(InputStream inputStream, Charset charset, FileSpec file, Parser<COMPILATION_UNIT> parser) {
+		super(inputStream, charset, file);
 	
 		Objects.requireNonNull(parser);
 		

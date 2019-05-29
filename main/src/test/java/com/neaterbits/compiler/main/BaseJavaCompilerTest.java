@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -55,7 +56,7 @@ public abstract class BaseJavaCompilerTest {
 		final File file = new File(fileName);
 		
 		try (FileInputStream inputStream = new FileInputStream(file)) {
-			compilationUnit = parser.parse(inputStream, errors, file.getName(), new ParseLogger(System.out));
+			compilationUnit = parser.parse(inputStream, Charset.defaultCharset(), errors, file.getName(), new ParseLogger(System.out));
 		}
 
 		assertThat(errors.isEmpty()).isTrue();
@@ -111,7 +112,7 @@ public abstract class BaseJavaCompilerTest {
 		
 		final FileTypeParser<JavaParserListener> javaParser = new FileTypeParser<>(
 				new Java8AntlrParser(true),
-				(logger, tokenSequenceNoGenerator) -> new JavaParserListener(logger, "testfile", tokenSequenceNoGenerator, new ASTParseTreeFactory(JavaTypes.getBuiltinTypes())), 
+				(stringSource, logger, tokenSequenceNoGenerator) -> new JavaParserListener(stringSource, logger, "testfile", tokenSequenceNoGenerator, new ASTParseTreeFactory(JavaTypes.getBuiltinTypes())), 
 				".java");
 
 		final DirectoryParser directoryParser = new DirectoryParser(javaParser);
@@ -120,6 +121,7 @@ public abstract class BaseJavaCompilerTest {
 		
 		final Program program = programParser.parseProgram(
 				modules,
+				Charset.defaultCharset(),
 				getSystemModule(),
 				systemModule -> renameSystemPackages(systemModule, SYSTEM_LIB_PLACEHOLDER_CLASS.getPackage()),
 				new ParseLogger(System.out));
