@@ -96,7 +96,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		final ResolvedType printstream = resolveResult.getResolvedFiles().stream()
 				.flatMap(file -> file.getTypes().stream())
-				.filter(type -> type.getTypeName().equals("PrintStream"))
+				.filter(type -> type.getTypeName().getName().equals("PrintStream"))
 				.findFirst().get();
 				
 		assertThat(printstream).isNotNull();

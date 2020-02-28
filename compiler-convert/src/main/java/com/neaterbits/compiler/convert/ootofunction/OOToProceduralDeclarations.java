@@ -44,7 +44,7 @@ public class OOToProceduralDeclarations<T extends OOToProceduralClassDeclaration
 
 		Objects.requireNonNull(classDeclaration);
 
-		if (declarations.containsKey(classDeclaration.getClassType())) {
+		if (declarations.containsKey(classDeclaration.getClassType().getTypeName())) {
 			throw new IllegalStateException();
 		}
 

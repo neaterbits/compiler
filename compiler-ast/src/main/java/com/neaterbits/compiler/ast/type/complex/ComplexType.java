@@ -38,7 +38,7 @@ extends ResolvableType {
 			if (member instanceof DataFieldMember) {
 				final DataFieldMember dataFieldMember = (DataFieldMember)member;
 
-				if (dataFieldMember.getName().equals(fieldName)) {
+				if (dataFieldMember.getName().getName().equals(fieldName.getName())) {
 					return dataFieldMember.getType();
 				}
 			}

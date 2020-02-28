@@ -38,6 +38,7 @@ public final class BytecodeToX86StackBased extends BytecodeToMachinecode impleme
 			throw new IllegalStateException();
 		}
 		
+		@SuppressWarnings("unused")
 		final int length;
 
 		final int offset = getOffset(srcOperand); 

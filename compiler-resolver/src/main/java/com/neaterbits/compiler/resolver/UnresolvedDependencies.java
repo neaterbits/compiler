@@ -45,7 +45,7 @@ public final class UnresolvedDependencies {
 		Objects.requireNonNull(fileSpec);
 		Objects.requireNonNull(dependency);
 		
-		final Set<CompiledTypeDependency> dependencies = map.get(dependency);
+		final Set<CompiledTypeDependency> dependencies = map.get(fileSpec);
 		
 		if (dependencies != null) {
 			if (dependencies.remove(dependency)) {
