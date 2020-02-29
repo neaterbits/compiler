@@ -129,7 +129,7 @@ import com.neaterbits.compiler.util.name.ClassName;
 import com.neaterbits.compiler.util.name.NamespaceReference;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
-import com.neaterbits.compiler.util.parse.baseparserlistener.ParseTreeFactory;
+import com.neaterbits.compiler.util.parse.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodModifier;
 import com.neaterbits.compiler.util.typedefinition.ClassModifier;
 import com.neaterbits.compiler.util.typedefinition.ConstructorModifier;

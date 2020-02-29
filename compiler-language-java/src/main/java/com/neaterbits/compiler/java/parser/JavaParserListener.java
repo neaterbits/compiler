@@ -22,6 +22,7 @@ import com.neaterbits.compiler.util.operator.Notation;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.parse.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
@@ -34,8 +35,6 @@ import com.neaterbits.util.io.strings.OffsetLengthStringRef;
 import com.neaterbits.util.io.strings.StringSource;
 
 import statement.ASTMutability;
-
-import com.neaterbits.compiler.util.parse.baseparserlistener.ParseTreeFactory;
 
 /**
  * Listener for the Java grammars
