@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.emit.base;
 
 
-import com.neaterbits.compiler.ast.CompilationCode;
-import com.neaterbits.compiler.ast.CompilationCodeLines;
-import com.neaterbits.compiler.ast.statement.Statement;
+import com.neaterbits.compiler.ast.objects.CompilationCode;
+import com.neaterbits.compiler.ast.objects.CompilationCodeLines;
+import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ProgramEmitter;
 

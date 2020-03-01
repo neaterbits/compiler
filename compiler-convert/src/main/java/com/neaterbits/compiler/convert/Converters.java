@@ -2,11 +2,11 @@ package com.neaterbits.compiler.convert;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.expression.Expression;
-import com.neaterbits.compiler.ast.statement.Statement;
-import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
-import com.neaterbits.compiler.ast.variables.VariableReference;
+import com.neaterbits.compiler.ast.objects.expression.Expression;
+import com.neaterbits.compiler.ast.objects.statement.Statement;
+import com.neaterbits.compiler.ast.objects.type.BaseType;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 
 public class Converters<T extends ConverterState<T>> {
 	private final StatementConverter<T> statementConverter;

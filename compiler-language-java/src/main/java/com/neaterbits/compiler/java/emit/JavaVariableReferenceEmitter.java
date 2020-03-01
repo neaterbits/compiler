@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.java.emit;
 
-import com.neaterbits.compiler.ast.variables.StaticMemberReference;
+import com.neaterbits.compiler.ast.objects.variables.StaticMemberReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.c.CLikeVariableReferenceEmitter;
 import com.neaterbits.compiler.util.TypeName;

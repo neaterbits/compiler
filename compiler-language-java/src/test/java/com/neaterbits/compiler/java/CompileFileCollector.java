@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;

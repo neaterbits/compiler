@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.java;
 
-import com.neaterbits.compiler.ast.CompilationUnit;
-import com.neaterbits.compiler.ast.parser.ASTParsedFile;
+import com.neaterbits.compiler.ast.objects.CompilationUnit;
+import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
-import com.neaterbits.compiler.resolver.ast.passes.FindTypeDependenciesPass;
+import com.neaterbits.compiler.resolver.ast.objects.passes.FindTypeDependenciesPass;
 import com.neaterbits.compiler.resolver.passes.AddTypesAndMembersToCodeMapPass;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.resolver.passes.LibraryTypes;

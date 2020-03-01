@@ -2,10 +2,10 @@ package com.neaterbits.compiler.bytecode.ast;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.ASTIterator;
-import com.neaterbits.compiler.ast.ASTRecurseMode;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
-import com.neaterbits.compiler.ast.typereference.TypeReferenceVisitor;
+import com.neaterbits.compiler.ast.objects.ASTIterator;
+import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReferenceVisitor;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.ParseTreeElement;

@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.c.emit;
 
-import com.neaterbits.compiler.ast.statement.ConstantSwitchCaseLabel;
-import com.neaterbits.compiler.ast.statement.DefaultSwitchCaseLabel;
-import com.neaterbits.compiler.ast.statement.EnumSwitchCaseLabel;
+import com.neaterbits.compiler.ast.objects.statement.ConstantSwitchCaseLabel;
+import com.neaterbits.compiler.ast.objects.statement.DefaultSwitchCaseLabel;
+import com.neaterbits.compiler.ast.objects.statement.EnumSwitchCaseLabel;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.SwitchCaseLabelEmitter;
 

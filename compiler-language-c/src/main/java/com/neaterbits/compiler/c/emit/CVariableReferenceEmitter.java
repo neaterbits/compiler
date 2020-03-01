@@ -1,13 +1,13 @@
 package com.neaterbits.compiler.c.emit;
 
-import com.neaterbits.compiler.ast.expression.Expression;
-import com.neaterbits.compiler.ast.statement.Statement;
-import com.neaterbits.compiler.ast.variables.ArrayAccessReference;
-import com.neaterbits.compiler.ast.variables.FieldAccessReference;
-import com.neaterbits.compiler.ast.variables.NameReference;
-import com.neaterbits.compiler.ast.variables.PrimaryListVariableReference;
-import com.neaterbits.compiler.ast.variables.SimpleVariableReference;
-import com.neaterbits.compiler.ast.variables.StaticMemberReference;
+import com.neaterbits.compiler.ast.objects.expression.Expression;
+import com.neaterbits.compiler.ast.objects.statement.Statement;
+import com.neaterbits.compiler.ast.objects.variables.ArrayAccessReference;
+import com.neaterbits.compiler.ast.objects.variables.FieldAccessReference;
+import com.neaterbits.compiler.ast.objects.variables.NameReference;
+import com.neaterbits.compiler.ast.objects.variables.PrimaryListVariableReference;
+import com.neaterbits.compiler.ast.objects.variables.SimpleVariableReference;
+import com.neaterbits.compiler.ast.objects.variables.StaticMemberReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.VariableReferenceEmitter;
 import com.neaterbits.compiler.emit.base.BaseEmitter;

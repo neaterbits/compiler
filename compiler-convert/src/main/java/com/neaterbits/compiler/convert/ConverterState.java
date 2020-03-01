@@ -3,15 +3,15 @@ package com.neaterbits.compiler.convert;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.Namespace;
-import com.neaterbits.compiler.ast.expression.Expression;
-import com.neaterbits.compiler.ast.statement.Statement;
-import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.type.primitive.IntType;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
-import com.neaterbits.compiler.ast.variables.VariableDeclaration;
-import com.neaterbits.compiler.ast.variables.VariableReference;
+import com.neaterbits.compiler.ast.objects.Namespace;
+import com.neaterbits.compiler.ast.objects.expression.Expression;
+import com.neaterbits.compiler.ast.objects.statement.Statement;
+import com.neaterbits.compiler.ast.objects.type.BaseType;
+import com.neaterbits.compiler.ast.objects.type.CompleteName;
+import com.neaterbits.compiler.ast.objects.type.primitive.IntType;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.VariableDeclaration;
+import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.util.name.BaseTypeName;
 import com.neaterbits.compiler.util.name.DefinitionName;
 

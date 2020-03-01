@@ -5,17 +5,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.block.ClassMethod;
-import com.neaterbits.compiler.ast.block.MethodName;
-import com.neaterbits.compiler.ast.block.Parameter;
-import com.neaterbits.compiler.ast.expression.Expression;
-import com.neaterbits.compiler.ast.expression.ParameterList;
-import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.type.FunctionPointerParameter;
-import com.neaterbits.compiler.ast.type.FunctionPointerType;
-import com.neaterbits.compiler.ast.type.complex.ClassType;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
-import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
+import com.neaterbits.compiler.ast.objects.block.ClassMethod;
+import com.neaterbits.compiler.ast.objects.block.MethodName;
+import com.neaterbits.compiler.ast.objects.block.Parameter;
+import com.neaterbits.compiler.ast.objects.expression.Expression;
+import com.neaterbits.compiler.ast.objects.expression.ParameterList;
+import com.neaterbits.compiler.ast.objects.type.BaseType;
+import com.neaterbits.compiler.ast.objects.type.FunctionPointerParameter;
+import com.neaterbits.compiler.ast.objects.type.FunctionPointerType;
+import com.neaterbits.compiler.ast.objects.type.complex.ClassType;
+import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
+import com.neaterbits.compiler.ast.objects.typedefinition.ComplexMemberDefinition;
 
 public class OOToProceduralConverterUtil {
 

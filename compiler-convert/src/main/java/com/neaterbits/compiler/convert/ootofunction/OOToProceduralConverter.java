@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.neaterbits.compiler.ast.CompilationCode;
-import com.neaterbits.compiler.ast.CompilationCodeLines;
-import com.neaterbits.compiler.ast.CompilationUnit;
-import com.neaterbits.compiler.ast.Namespace;
-import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.ast.objects.CompilationCode;
+import com.neaterbits.compiler.ast.objects.CompilationCodeLines;
+import com.neaterbits.compiler.ast.objects.CompilationUnit;
+import com.neaterbits.compiler.ast.objects.Namespace;
+import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 
 public abstract class OOToProceduralConverter<T extends OOToProceduralConverterState<T>> {

@@ -1,15 +1,15 @@
 package com.neaterbits.compiler.convert.ootofunction;
 
-import com.neaterbits.compiler.ast.type.FunctionPointerType;
-import com.neaterbits.compiler.ast.type.PointerType;
-import com.neaterbits.compiler.ast.typereference.ComplexTypeReference;
-import com.neaterbits.compiler.ast.typereference.FunctionPointerTypeReference;
-import com.neaterbits.compiler.ast.typereference.PointerTypeReference;
-import com.neaterbits.compiler.ast.typereference.ResolveLaterTypeReference;
-import com.neaterbits.compiler.ast.typereference.ScalarTypeReference;
-import com.neaterbits.compiler.ast.typereference.TypeDefTypeReference;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
-import com.neaterbits.compiler.ast.typereference.UnnamedVoidTypeReference;
+import com.neaterbits.compiler.ast.objects.type.FunctionPointerType;
+import com.neaterbits.compiler.ast.objects.type.PointerType;
+import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.FunctionPointerTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.PointerTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.TypeDefTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnnamedVoidTypeReference;
 import com.neaterbits.compiler.convert.ConverterState;
 import com.neaterbits.compiler.convert.TypeReferenceConverter;
 

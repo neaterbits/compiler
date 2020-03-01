@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.neaterbits.compiler.ast.list.ASTList;
-import com.neaterbits.compiler.ast.list.ASTNode;
+import com.neaterbits.compiler.ast.objects.list.ASTList;
+import com.neaterbits.compiler.ast.objects.list.ASTNode;
 import com.neaterbits.compiler.emit.EmitterState;
 
 public class EmitterUtil<T extends EmitterState> {

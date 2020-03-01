@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.emit.base;
 
-import com.neaterbits.compiler.ast.statement.Statement;
+import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.StatementEmitter;
 

@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.emit.base;
 
-import com.neaterbits.compiler.ast.block.Function;
-import com.neaterbits.compiler.ast.typedefinition.StructDataFieldMember;
-import com.neaterbits.compiler.ast.typedefinition.StructDefinition;
+import com.neaterbits.compiler.ast.objects.block.Function;
+import com.neaterbits.compiler.ast.objects.typedefinition.StructDataFieldMember;
+import com.neaterbits.compiler.ast.objects.typedefinition.StructDefinition;
 import com.neaterbits.compiler.emit.EmitterState;
 
 public abstract class BaseOOCompilationUnitEmitter<T extends EmitterState>

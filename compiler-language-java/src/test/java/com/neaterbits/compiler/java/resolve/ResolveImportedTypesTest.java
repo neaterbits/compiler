@@ -6,8 +6,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.ast.BaseASTElement;
-import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
+import com.neaterbits.compiler.ast.objects.BaseASTElement;
+import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.BaseCompilerTest;

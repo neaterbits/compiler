@@ -1,17 +1,17 @@
 package com.neaterbits.compiler.emit.base;
 
-import com.neaterbits.compiler.ast.Namespace;
-import com.neaterbits.compiler.ast.block.ClassMethod;
-import com.neaterbits.compiler.ast.block.Constructor;
-import com.neaterbits.compiler.ast.block.StaticInitializer;
-import com.neaterbits.compiler.ast.typedefinition.ClassDataFieldMember;
-import com.neaterbits.compiler.ast.typedefinition.ClassDefinition;
-import com.neaterbits.compiler.ast.typedefinition.ClassMethodMember;
-import com.neaterbits.compiler.ast.typedefinition.ConstructorMember;
-import com.neaterbits.compiler.ast.typedefinition.InnerClassMember;
-import com.neaterbits.compiler.ast.typedefinition.InterfaceDefinition;
-import com.neaterbits.compiler.ast.typedefinition.InterfaceMethod;
-import com.neaterbits.compiler.ast.typedefinition.InterfaceMethodMember;
+import com.neaterbits.compiler.ast.objects.Namespace;
+import com.neaterbits.compiler.ast.objects.block.ClassMethod;
+import com.neaterbits.compiler.ast.objects.block.Constructor;
+import com.neaterbits.compiler.ast.objects.block.StaticInitializer;
+import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
+import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
+import com.neaterbits.compiler.ast.objects.typedefinition.ConstructorMember;
+import com.neaterbits.compiler.ast.objects.typedefinition.InnerClassMember;
+import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceDefinition;
+import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceMethod;
+import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceMethodMember;
 import com.neaterbits.compiler.emit.EmitterState;
 
 public abstract class BaseProceduralProgramEmitter<T extends EmitterState> extends BaseCompilationUnitEmitter<T> {

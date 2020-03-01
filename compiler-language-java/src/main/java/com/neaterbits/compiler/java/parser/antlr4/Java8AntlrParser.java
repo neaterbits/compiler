@@ -5,8 +5,8 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 import com.neaterbits.compiler.antlr4.AntlrParserFactory;
 import com.neaterbits.compiler.antlr4.BaseAntlrParser;
-import com.neaterbits.compiler.ast.ASTParseTreeFactory;
-import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory;
+import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.java.Java8Lexer;
 import com.neaterbits.compiler.java.Java8Parser;
 import com.neaterbits.compiler.java.JavaTypes;

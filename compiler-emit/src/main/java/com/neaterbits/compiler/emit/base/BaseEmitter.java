@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.emit.base;
 
 
-import com.neaterbits.compiler.ast.block.Block;
-import com.neaterbits.compiler.ast.statement.Statement;
-import com.neaterbits.compiler.ast.type.NamedType;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.block.Block;
+import com.neaterbits.compiler.ast.objects.statement.Statement;
+import com.neaterbits.compiler.ast.objects.type.NamedType;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.emit.EmitterState;
 
 public abstract class BaseEmitter<T extends EmitterState> extends EmitterUtil<T> {

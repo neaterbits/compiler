@@ -1,0 +1,7 @@
+package com.neaterbits.compiler.resolver.ast.objects;
+
+import com.neaterbits.compiler.util.ArrayStack;
+
+final class TypeFinderStack extends ArrayStack<TypeFinderStackEntry> {
+	
+}

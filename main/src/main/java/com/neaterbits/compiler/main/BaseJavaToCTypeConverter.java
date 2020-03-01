@@ -1,11 +1,11 @@
 package com.neaterbits.compiler.main;
 
-import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.type.PointerType;
-import com.neaterbits.compiler.ast.type.TypeDefType;
-import com.neaterbits.compiler.ast.type.primitive.NamedVoidType;
-import com.neaterbits.compiler.ast.type.primitive.StringType;
+import com.neaterbits.compiler.ast.objects.type.BaseType;
+import com.neaterbits.compiler.ast.objects.type.CompleteName;
+import com.neaterbits.compiler.ast.objects.type.PointerType;
+import com.neaterbits.compiler.ast.objects.type.TypeDefType;
+import com.neaterbits.compiler.ast.objects.type.primitive.NamedVoidType;
+import com.neaterbits.compiler.ast.objects.type.primitive.StringType;
 import com.neaterbits.compiler.convert.ConverterState;
 import com.neaterbits.compiler.convert.ootofunction.BaseTypeConverter;
 import com.neaterbits.compiler.util.name.BaseTypeName;

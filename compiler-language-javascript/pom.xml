@@ -17,7 +17,7 @@
   	</dependency>
   	<dependency>
   		<groupId>${project.groupId}</groupId>
-  		<artifactId>compiler-ast</artifactId>
+  		<artifactId>compiler-ast-objects</artifactId>
   		<version>${project.version}</version>
   	</dependency>
   </dependencies>

@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.convert;
 
-import com.neaterbits.compiler.ast.FieldNameDeclaration;
-import com.neaterbits.compiler.ast.block.FunctionName;
-import com.neaterbits.compiler.ast.block.MethodName;
-import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.typedefinition.StructName;
+import com.neaterbits.compiler.ast.objects.FieldNameDeclaration;
+import com.neaterbits.compiler.ast.objects.block.FunctionName;
+import com.neaterbits.compiler.ast.objects.block.MethodName;
+import com.neaterbits.compiler.ast.objects.type.CompleteName;
+import com.neaterbits.compiler.ast.objects.typedefinition.StructName;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.util.TypeName;

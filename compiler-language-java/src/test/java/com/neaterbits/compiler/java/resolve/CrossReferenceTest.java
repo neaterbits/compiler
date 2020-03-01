@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.ast.CompilationUnit;
+import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompileFileCollector;

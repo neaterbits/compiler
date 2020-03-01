@@ -1,14 +1,14 @@
 package com.neaterbits.compiler.c.emit;
 
-import com.neaterbits.compiler.ast.CompilationCode;
-import com.neaterbits.compiler.ast.block.Function;
-import com.neaterbits.compiler.ast.statement.Statement;
-import com.neaterbits.compiler.ast.typedefinition.ComplexMemberDefinition;
-import com.neaterbits.compiler.ast.typedefinition.EnumConstantDefinition;
-import com.neaterbits.compiler.ast.typedefinition.EnumDefinition;
-import com.neaterbits.compiler.ast.typedefinition.StructDataFieldMember;
-import com.neaterbits.compiler.ast.typedefinition.StructDefinition;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.CompilationCode;
+import com.neaterbits.compiler.ast.objects.block.Function;
+import com.neaterbits.compiler.ast.objects.statement.Statement;
+import com.neaterbits.compiler.ast.objects.typedefinition.ComplexMemberDefinition;
+import com.neaterbits.compiler.ast.objects.typedefinition.EnumConstantDefinition;
+import com.neaterbits.compiler.ast.objects.typedefinition.EnumDefinition;
+import com.neaterbits.compiler.ast.objects.typedefinition.StructDataFieldMember;
+import com.neaterbits.compiler.ast.objects.typedefinition.StructDefinition;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseProceduralProgramEmitter;
 

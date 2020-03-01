@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.emit.base;
 
-import com.neaterbits.compiler.ast.expression.Expression;
+import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ExpressionEmitter;
 

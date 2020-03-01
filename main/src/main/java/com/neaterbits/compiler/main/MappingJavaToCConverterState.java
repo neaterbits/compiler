@@ -1,11 +1,11 @@
 package com.neaterbits.compiler.main;
 
-import com.neaterbits.compiler.ast.FieldNameDeclaration;
-import com.neaterbits.compiler.ast.block.FunctionName;
-import com.neaterbits.compiler.ast.block.MethodName;
-import com.neaterbits.compiler.ast.type.CompleteName;
-import com.neaterbits.compiler.ast.type.primitive.IntType;
-import com.neaterbits.compiler.ast.typedefinition.StructName;
+import com.neaterbits.compiler.ast.objects.FieldNameDeclaration;
+import com.neaterbits.compiler.ast.objects.block.FunctionName;
+import com.neaterbits.compiler.ast.objects.block.MethodName;
+import com.neaterbits.compiler.ast.objects.type.CompleteName;
+import com.neaterbits.compiler.ast.objects.type.primitive.IntType;
+import com.neaterbits.compiler.ast.objects.typedefinition.StructName;
 import com.neaterbits.compiler.convert.Converters;
 import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.java.JavaTypes;

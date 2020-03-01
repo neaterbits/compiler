@@ -1,19 +1,19 @@
 package com.neaterbits.compiler.convert.ootofunction;
 
-import com.neaterbits.compiler.ast.type.BaseType;
-import com.neaterbits.compiler.ast.type.primitive.ArrayType;
-import com.neaterbits.compiler.ast.type.primitive.BooleanType;
-import com.neaterbits.compiler.ast.type.primitive.ByteType;
-import com.neaterbits.compiler.ast.type.primitive.Char16Type;
-import com.neaterbits.compiler.ast.type.primitive.Char8Type;
-import com.neaterbits.compiler.ast.type.primitive.DoubleType;
-import com.neaterbits.compiler.ast.type.primitive.FloatType;
-import com.neaterbits.compiler.ast.type.primitive.IntType;
-import com.neaterbits.compiler.ast.type.primitive.LongType;
-import com.neaterbits.compiler.ast.type.primitive.NamedVoidType;
-import com.neaterbits.compiler.ast.type.primitive.NullType;
-import com.neaterbits.compiler.ast.type.primitive.ShortType;
-import com.neaterbits.compiler.ast.type.primitive.UnnamedVoidType;
+import com.neaterbits.compiler.ast.objects.type.BaseType;
+import com.neaterbits.compiler.ast.objects.type.primitive.ArrayType;
+import com.neaterbits.compiler.ast.objects.type.primitive.BooleanType;
+import com.neaterbits.compiler.ast.objects.type.primitive.ByteType;
+import com.neaterbits.compiler.ast.objects.type.primitive.Char16Type;
+import com.neaterbits.compiler.ast.objects.type.primitive.Char8Type;
+import com.neaterbits.compiler.ast.objects.type.primitive.DoubleType;
+import com.neaterbits.compiler.ast.objects.type.primitive.FloatType;
+import com.neaterbits.compiler.ast.objects.type.primitive.IntType;
+import com.neaterbits.compiler.ast.objects.type.primitive.LongType;
+import com.neaterbits.compiler.ast.objects.type.primitive.NamedVoidType;
+import com.neaterbits.compiler.ast.objects.type.primitive.NullType;
+import com.neaterbits.compiler.ast.objects.type.primitive.ShortType;
+import com.neaterbits.compiler.ast.objects.type.primitive.UnnamedVoidType;
 import com.neaterbits.compiler.convert.ConverterState;
 import com.neaterbits.compiler.convert.TypeConverter;
 

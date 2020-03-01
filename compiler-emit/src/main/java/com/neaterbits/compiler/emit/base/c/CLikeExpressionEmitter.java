@@ -1,15 +1,15 @@
 package com.neaterbits.compiler.emit.base.c;
 
-import com.neaterbits.compiler.ast.expression.ArrayAccessExpression;
-import com.neaterbits.compiler.ast.expression.AssignmentExpression;
-import com.neaterbits.compiler.ast.expression.CastExpression;
-import com.neaterbits.compiler.ast.expression.ConditionalExpression;
-import com.neaterbits.compiler.ast.expression.NestedExpression;
-import com.neaterbits.compiler.ast.expression.arithemetic.binary.ArithmeticBinaryExpression;
-import com.neaterbits.compiler.ast.expression.arithemetic.unary.PostDecrementExpression;
-import com.neaterbits.compiler.ast.expression.arithemetic.unary.PostIncrementExpression;
-import com.neaterbits.compiler.ast.expression.arithemetic.unary.PreDecrementExpression;
-import com.neaterbits.compiler.ast.expression.arithemetic.unary.PreIncrementExpression;
+import com.neaterbits.compiler.ast.objects.expression.ArrayAccessExpression;
+import com.neaterbits.compiler.ast.objects.expression.AssignmentExpression;
+import com.neaterbits.compiler.ast.objects.expression.CastExpression;
+import com.neaterbits.compiler.ast.objects.expression.ConditionalExpression;
+import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
+import com.neaterbits.compiler.ast.objects.expression.arithemetic.binary.ArithmeticBinaryExpression;
+import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostDecrementExpression;
+import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostIncrementExpression;
+import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreDecrementExpression;
+import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreIncrementExpression;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseInfixExpressionEmitter;
 import com.neaterbits.compiler.util.operator.Arithmetic;

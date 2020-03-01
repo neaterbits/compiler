@@ -1,14 +1,14 @@
 package com.neaterbits.compiler.convert.ootofunction;
 
-import com.neaterbits.compiler.ast.expression.ArrayAccessExpression;
-import com.neaterbits.compiler.ast.expression.FieldAccess;
-import com.neaterbits.compiler.ast.expression.PrimaryList;
-import com.neaterbits.compiler.ast.variables.ArrayAccessReference;
-import com.neaterbits.compiler.ast.variables.FieldAccessReference;
-import com.neaterbits.compiler.ast.variables.NameReference;
-import com.neaterbits.compiler.ast.variables.PrimaryListVariableReference;
-import com.neaterbits.compiler.ast.variables.SimpleVariableReference;
-import com.neaterbits.compiler.ast.variables.VariableReference;
+import com.neaterbits.compiler.ast.objects.expression.ArrayAccessExpression;
+import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
+import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
+import com.neaterbits.compiler.ast.objects.variables.ArrayAccessReference;
+import com.neaterbits.compiler.ast.objects.variables.FieldAccessReference;
+import com.neaterbits.compiler.ast.objects.variables.NameReference;
+import com.neaterbits.compiler.ast.objects.variables.PrimaryListVariableReference;
+import com.neaterbits.compiler.ast.objects.variables.SimpleVariableReference;
+import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.convert.ConverterState;
 import com.neaterbits.compiler.convert.VariableReferenceConverter;
 

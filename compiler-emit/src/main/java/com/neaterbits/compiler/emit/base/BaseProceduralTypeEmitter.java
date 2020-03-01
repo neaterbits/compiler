@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.emit.base;
 
-import com.neaterbits.compiler.ast.type.complex.ClassType;
-import com.neaterbits.compiler.ast.type.complex.EnumType;
-import com.neaterbits.compiler.ast.type.complex.InterfaceType;
-import com.neaterbits.compiler.ast.type.primitive.NullType;
-import com.neaterbits.compiler.ast.type.primitive.UnnamedVoidType;
+import com.neaterbits.compiler.ast.objects.type.complex.ClassType;
+import com.neaterbits.compiler.ast.objects.type.complex.EnumType;
+import com.neaterbits.compiler.ast.objects.type.complex.InterfaceType;
+import com.neaterbits.compiler.ast.objects.type.primitive.NullType;
+import com.neaterbits.compiler.ast.objects.type.primitive.UnnamedVoidType;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.TypeEmitter;
 

@@ -32,9 +32,10 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<!-- Test dependencies -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>compiler-resolver-ast</artifactId>
+			<artifactId>compiler-resolver-ast-objects</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

@@ -1,12 +1,12 @@
 package com.neaterbits.compiler.emit.base;
 
 
-import com.neaterbits.compiler.ast.expression.Expression;
-import com.neaterbits.compiler.ast.expression.ExpressionList;
-import com.neaterbits.compiler.ast.expression.PrimaryList;
-import com.neaterbits.compiler.ast.list.ASTList;
-import com.neaterbits.compiler.ast.typereference.TypeReference;
-import com.neaterbits.compiler.ast.variables.VariableReference;
+import com.neaterbits.compiler.ast.objects.expression.Expression;
+import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
+import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
+import com.neaterbits.compiler.ast.objects.list.ASTList;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.util.operator.Operator;
 
