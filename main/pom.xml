@@ -28,7 +28,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>compiler-language-java</artifactId>
+			<artifactId>compiler-language-java-parser-antlr</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

@@ -37,8 +37,8 @@
 		<module>runtime-native</module>
 		<module>main</module>
 		<module>compiler-language-c</module>
-		<module>compiler-language-java</module>
-		<module>compiler-language-javascript</module>
+		<module>compiler-language-java-parser-antlr</module>
+		<module>compiler-language-javascript-parser-antlr</module>
 	</modules>
 
 	<dependencies>

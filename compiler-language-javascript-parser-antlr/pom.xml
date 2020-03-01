@@ -7,7 +7,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
-  <artifactId>compiler-language-javascript</artifactId>
+  <artifactId>compiler-language-javascript-parser-antlr</artifactId>
   
   <dependencies>
   	<dependency>
