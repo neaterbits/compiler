@@ -7,10 +7,11 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.compiler.util.parse.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.util.io.strings.StringSource;
 
+@SuppressWarnings("rawtypes")
 public class JSParserListener extends BaseIterativeOOParserListener
 			implements ModelParserListener<JavascriptProgram> {
 
-	public JSParserListener(StringSource stringSource, ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+	public JSParserListener(StringSource stringSource, ParseLogger logger, ParseTreeFactory parseTreeFactory) {
 		super(stringSource, logger, parseTreeFactory);
 	}
 

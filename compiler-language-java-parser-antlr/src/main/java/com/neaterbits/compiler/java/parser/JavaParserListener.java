@@ -43,9 +43,10 @@ import statement.ASTMutability;
 public class JavaParserListener implements ModelParserListener<CompilationUnit> {
 
 	// Delegate to make sure make all special handling here
-	private static class JavaIterativeListener extends BaseIterativeOOParserListener {
+	@SuppressWarnings("rawtypes")
+    private static class JavaIterativeListener extends BaseIterativeOOParserListener {
 
-		JavaIterativeListener(StringSource stringSource, ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+		JavaIterativeListener(StringSource stringSource, ParseLogger logger, ParseTreeFactory parseTreeFactory) {
 			super(stringSource, logger, parseTreeFactory);
 		}
 	}
@@ -645,7 +646,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onFormalLambdaParameterListEnd(context);
 	}
 	
-	public void onInferredLambdaParameterList(Context context, List<String> varNames, Context varNamesContext) {
+	@SuppressWarnings("unchecked")
+    public void onInferredLambdaParameterList(Context context, List<String> varNames, Context varNamesContext) {
 		delegate.onInferredLambdaParameterList(context, varNames, varNamesContext);
 	}
 	

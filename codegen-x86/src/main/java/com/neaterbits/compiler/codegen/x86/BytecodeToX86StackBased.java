@@ -15,7 +15,8 @@ public final class BytecodeToX86StackBased extends BytecodeToMachinecode impleme
 		return offset > 7;
 	}
 	
-	private static byte offsetToRegisterCode(int offset) {
+	@SuppressWarnings("unused")
+    private static byte offsetToRegisterCode(int offset) {
 		return (byte)(offset > 7 ? offset - 8 : offset);
 	}
 

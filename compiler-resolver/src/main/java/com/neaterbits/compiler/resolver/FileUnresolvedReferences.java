@@ -8,7 +8,6 @@ import java.util.Set;
 
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
-import com.neaterbits.compiler.util.ScopedName;
 
 final class FileUnresolvedReferences<COMPILATION_UNIT> {
 	private final CompiledFile<COMPILATION_UNIT> fileToResolve;
@@ -30,13 +29,6 @@ final class FileUnresolvedReferences<COMPILATION_UNIT> {
 
 	CompiledFile<COMPILATION_UNIT> getFileToResolve() {
 		return fileToResolve;
-	}
-
-	void removeExtendsFrom(ScopedName scopedName) {
-		
-		Objects.requireNonNull(scopedName);
-
-		extendsFrom.remove(scopedName);
 	}
 
 	void removeDependency(CompiledTypeDependency dependency) {
