@@ -11,7 +11,7 @@ public class ImmutableContext implements Context {
 	private final int endOffset;
 	private final String text;
 	private final int tokenSequenceNo;
-
+	
 	public ImmutableContext(String file, int startLine, int startPosInLine, int startOffset, int endLine, int endPos, int endOffset, String text, int tokenSequenceNo) {
 		
 		this.file = file;
@@ -23,6 +23,19 @@ public class ImmutableContext implements Context {
 		this.endOffset = endOffset;
 		this.text = text;
 		this.tokenSequenceNo = tokenSequenceNo;
+	}
+	
+	public ImmutableContext(Context context) {
+	    this(
+	            context.getFile(),
+	            context.getStartLine(),
+	            context.getStartPosInLine(),
+	            context.getStartOffset(),
+	            context.getEndLine(),
+	            context.getEndPosInLine(),
+	            context.getEndOffset(),
+	            context.getText(),
+	            context.getTokenSequenceNo());
 	}
 
 	@Override
