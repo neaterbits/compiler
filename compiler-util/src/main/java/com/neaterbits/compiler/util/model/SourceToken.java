@@ -23,7 +23,7 @@ public final class SourceToken implements ISourceToken {
 		this(parseTreeReference, tokenType, context.getStartOffset(), context.getEndOffset() - context.getStartOffset() + 1, typeName, astElement, false);
 	}
 
-	public SourceToken(int parseTreeReference, SourceTokenType tokenType, long startOffset, long length, TypeName typeName, String astElement, boolean isPlaceholder) {
+	private SourceToken(int parseTreeReference, SourceTokenType tokenType, long startOffset, long length, TypeName typeName, String astElement, boolean isPlaceholder) {
 
 		Objects.requireNonNull(tokenType);
 		Objects.requireNonNull(astElement);
