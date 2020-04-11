@@ -519,16 +519,33 @@ public abstract class BaseParserListener<
 
 	@Override
 	public final void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext,
-			long name, Context nameContext, String[] parts) {
+			long name, Context nameContext) {
 
 		logEnter(context);
-
-		push(new StackNamespace<>(logger, stringSource.asString(namespaceKeyword), namespaceKeywordContext, stringSource.asString(name), nameContext, parts));
+		
+		push(new StackNamespace<>(
+		        logger,
+		        stringSource.asString(namespaceKeyword),
+		        namespaceKeywordContext,
+		        stringSource.asString(name),
+		        nameContext));
 
 		logExit(context);
 	}
 
 	@Override
+    public final void onNamespacePart(Context context, long part) {
+
+	    logEnter(context);
+	    
+	    final StackNamespace<COMPILATION_CODE> namespace = get();
+	    
+	    namespace.addPart(stringSource.asString(part));
+	    
+	    logExit(context);
+    }
+
+    @Override
 	public final void onNameSpaceEnd(Context context) {
 
 		logEnter(context);
@@ -540,7 +557,9 @@ public abstract class BaseParserListener<
 		final NAMESPACE nameSpace = parseTreeFactory.createNamespace(context,
 				parseTreeFactory.createKeyword(stackNamespace.getNamespaceKeywordContext(),
 						stackNamespace.getNamespaceKeyword()),
-				stackNamespace.getParts(), stackNamespace.getNameContext(), namespaceCode);
+				stackNamespace.getParts().toArray(new String[stackNamespace.getParts().size()]),
+				stackNamespace.getNameContext(),
+				namespaceCode);
 
 		mainStack.addElement(nameSpace);
 

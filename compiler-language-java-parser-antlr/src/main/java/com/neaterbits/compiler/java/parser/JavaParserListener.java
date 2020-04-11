@@ -94,7 +94,33 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onPackageDeclaration(Context context, long packageKeyword, Context packageKeywordContext, long name, Context nameContext) {
 		this.packageName = stringSource.asString(name);
 		
-		delegate.onNamespaceStart(context, packageKeyword, packageKeywordContext, name, nameContext, Strings.split(packageName, '.'));
+		delegate.onNamespaceStart(context, packageKeyword, packageKeywordContext, name, nameContext);
+		
+		final String [] parts = Strings.split(packageName, '.');
+		
+		int indexInName = 0;
+		
+		for (String part : parts) {
+		    
+		    final int partLength = part.length();
+		    
+		    final Context partContext = new ImmutableContext(
+		            nameContext.getFile(),
+		            nameContext.getStartLine(),
+		            indexInName + nameContext.getStartPosInLine(),
+		            indexInName + nameContext.getStartOffset(),
+		            nameContext.getEndLine(),
+		            indexInName + partLength + nameContext.getStartPosInLine(),
+		            indexInName + partLength + nameContext.getStartOffset(),
+		            part,
+		            gen.getNextTokenSequenceNo());
+		    
+		    final long partRef = OffsetLengthStringRef.encode(indexInName, partLength);
+		    
+		    delegate.onNamespacePart(partContext, partRef);
+		    
+		    indexInName += partLength;
+		}
 	}
 
 	public void onCompilationUnitStart(Context context) {

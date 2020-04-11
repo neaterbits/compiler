@@ -35,7 +35,9 @@ public interface ParserListener<COMPILATION_UNIT> {
 	void onImportEnd(Context context, boolean ondemand);
 	
 	void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext,
-			long name, Context nameContext, String [] parts);
+			long name, Context nameContext);
+	
+	void onNamespacePart(Context context, long part);
 	
 	void onNameSpaceEnd(Context context);
 	

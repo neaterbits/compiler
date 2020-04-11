@@ -1,6 +1,8 @@
 package com.neaterbits.compiler.parser.listener.stackbased.state;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.NamedListStackEntry;
 import com.neaterbits.compiler.util.Context;
@@ -11,15 +13,19 @@ public final class StackNamespace<COMPILATION_CODE> extends NamedListStackEntry<
 	private final String namespaceKeyword;
 	private final Context namespaceKeywordContext;
 	
-	private final String [] parts;
+	private final List<String> parts;
 	
-	public StackNamespace(ParseLogger parseLogger, String namespaceKeyword, Context namespaceKeywordContext, String name, Context nameContext, String [] parts) {
+	public StackNamespace(
+	        ParseLogger parseLogger,
+	        String namespaceKeyword, Context namespaceKeywordContext,
+	        String name, Context nameContext) {
+	    
 		super(parseLogger, name, nameContext);
 
 		this.namespaceKeyword = namespaceKeyword;
 		this.namespaceKeywordContext = namespaceKeywordContext;
 		
-		this.parts = Arrays.copyOf(parts, parts.length);
+		this.parts = new ArrayList<>();
 	}
 
 	public String getNamespaceKeyword() {
@@ -29,8 +35,15 @@ public final class StackNamespace<COMPILATION_CODE> extends NamedListStackEntry<
 	public Context getNamespaceKeywordContext() {
 		return namespaceKeywordContext;
 	}
+	
+	public void addPart(String part) {
+	    
+	    Objects.requireNonNull(part);
 
-	public String[] getParts() {
+	    parts.add(part);
+	}
+
+	public List<String> getParts() {
 		return parts;
 	}
 }

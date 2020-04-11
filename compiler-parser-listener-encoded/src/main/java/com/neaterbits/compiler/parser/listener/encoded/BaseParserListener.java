@@ -159,21 +159,20 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
     @Override
     public void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext, long name,
-            Context nameContext, String[] parts) {
+            Context nameContext) {
 
         writeContext(namespaceKeywordContext);
         
         astBuffer.writeElementStart(ParseTreeElement.NAMESPACE);
+    }
+    
+
+    @Override
+    public void onNamespacePart(Context context, long part) {
+
+        astBuffer.writeElementStart(ParseTreeElement.NAMESPACE_PART);
         
-        if (parts.length > Byte.MAX_VALUE) {
-            throw new IllegalArgumentException();
-        }
-        
-        astBuffer.writeByte((byte)parts.length);
-        
-        for (String part : parts) {
-            astBuffer.writeInt(stringBuffer.add(part));
-        }
+        astBuffer.writeInt(getStringIndex(part));
     }
 
     @Override
