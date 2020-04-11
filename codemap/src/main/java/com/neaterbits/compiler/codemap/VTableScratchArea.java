@@ -2,6 +2,8 @@ package com.neaterbits.compiler.codemap;
 
 import java.util.Arrays;
 
+import com.neaterbits.compiler.util.IntSet;
+
 public final class VTableScratchArea {
 
 	private int count;

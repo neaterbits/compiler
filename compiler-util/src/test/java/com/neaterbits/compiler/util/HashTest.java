@@ -1,42 +1,18 @@
-package com.neaterbits.compiler.codemap;
+package com.neaterbits.compiler.util;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.codemap.Hash;
-import com.neaterbits.compiler.codemap.Hash.GetCompareValue;
+import com.neaterbits.compiler.util.Hash;
+import com.neaterbits.compiler.util.Hash.GetCompareValue;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 public class HashTest {
 
-	private static final long HASH_UNDEF = 0xFFFFFFFFFFFFFFFFL;
+	private static final long HASH_UNDEF = Hash.UNDEF;
 
-	private static final GetCompareValue getCompareValue = new GetCompareValue() {
-		@Override
-		public long makeMapValue(long key, long value) {
-			final long mapValue = key << 32 | value;
-			
-			return mapValue;
-		}
-		
-		@Override
-		public long getValue(long mapValue) {
-			final long value = mapValue & 0x00000000FFFFFFFFL;
-			
-			return value;
-		}
-		
-		@Override
-		public long getKey(long mapValue) {
-			return mapValue >>> 32;
-		}
-		
-		@Override
-		public long getDefaultValue() {
-			return HASH_UNDEF;
-		}
-	};
+	private static final GetCompareValue getCompareValue = Hash.INT_KEY_INT_VALUE;
 	
 	@Test
 	public void testHash() {

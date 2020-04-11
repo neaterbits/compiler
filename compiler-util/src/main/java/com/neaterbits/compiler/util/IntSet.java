@@ -1,6 +1,6 @@
-package com.neaterbits.compiler.codemap;
+package com.neaterbits.compiler.util;
 
-import com.neaterbits.compiler.codemap.Hash.GetCompareValue;
+import com.neaterbits.compiler.util.Hash.GetCompareValue;
 
 public final class IntSet {
 

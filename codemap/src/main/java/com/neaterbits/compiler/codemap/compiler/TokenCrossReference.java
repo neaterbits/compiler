@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.codemap.compiler;
 
 import com.neaterbits.compiler.codemap.ArrayAllocation;
-import com.neaterbits.compiler.codemap.Hash;
-import com.neaterbits.compiler.codemap.Hash.GetCompareValue;
 import com.neaterbits.compiler.util.Bits;
+import com.neaterbits.compiler.util.Hash;
+import com.neaterbits.compiler.util.Hash.GetCompareValue;
 import com.neaterbits.compiler.util.model.CrossReferenceGetters;
 
 public final class TokenCrossReference implements CrossReferenceUpdater, CrossReferenceGetters {

@@ -10,12 +10,13 @@ import static com.neaterbits.compiler.codemap.Encode.encodeMethod;
 import static com.neaterbits.compiler.codemap.Encode.encodeMethodWithoutTypeVariant;
 import static com.neaterbits.compiler.codemap.Encode.encodeType;
 import static com.neaterbits.compiler.codemap.Encode.getMethodVariant;
-import static com.neaterbits.compiler.codemap.Hash.GetCompareValue;
+import static com.neaterbits.compiler.util.Hash.GetCompareValue;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.CodeMap.MethodFilter;
+import com.neaterbits.compiler.util.Hash;
 import com.neaterbits.compiler.util.model.MethodInfo;
 import com.neaterbits.compiler.util.model.MethodVariant;
 

@@ -1,8 +1,10 @@
-package com.neaterbits.compiler.codemap;
+package com.neaterbits.compiler.util;
 
 import java.util.Arrays;
 
 public final class Hash {
+    
+    public static final long UNDEF = 0xFFFFFFFFFFFFFFFFL;
 
 	public interface GetCompareValue {
 
@@ -14,6 +16,32 @@ public final class Hash {
 		
 		long makeMapValue(long key, long value);
 	}
+	
+	public static final GetCompareValue INT_KEY_INT_VALUE = new GetCompareValue() {
+        @Override
+        public long makeMapValue(long key, long value) {
+            final long mapValue = key << 32 | value;
+            
+            return mapValue;
+        }
+        
+        @Override
+        public long getValue(long mapValue) {
+            final long value = mapValue & 0x00000000FFFFFFFFL;
+            
+            return value;
+        }
+        
+        @Override
+        public long getKey(long mapValue) {
+            return mapValue >>> 32;
+        }
+        
+        @Override
+        public long getDefaultValue() {
+            return UNDEF;
+        }
+    };
 	
 	private static int hash(long key, int size) {
 		return (int)(key % size);

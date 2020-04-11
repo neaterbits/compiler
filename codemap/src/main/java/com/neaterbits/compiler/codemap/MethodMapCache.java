@@ -1,10 +1,12 @@
 package com.neaterbits.compiler.codemap;
 
-import static com.neaterbits.compiler.codemap.Hash.GetCompareValue;
+import static com.neaterbits.compiler.util.Hash.GetCompareValue;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.neaterbits.compiler.util.Hash;
 
 // Utilized while building integer maps, reusing same index for same names or signatures
 public final class MethodMapCache {
