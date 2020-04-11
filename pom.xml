@@ -19,6 +19,7 @@
 
 	<modules>
 		<module>compiler-ast-objects</module>
+		<module>compiler-ast-encoded</module>
 		<module>compiler-convert</module>
 		<module>compiler-emit</module>
 		<module>compiler-resolver</module>
@@ -41,6 +42,7 @@
 		<module>compiler-language-javascript-parser-antlr</module>
 		<module>compiler-parser-listener-stackbased</module>
 		<module>compiler-parser-listener-common</module>
+		<module>compiler-parser-listener-encoded</module>
 	</modules>
 
 	<dependencies>
