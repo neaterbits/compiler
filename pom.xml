@@ -39,6 +39,8 @@
 		<module>compiler-language-c</module>
 		<module>compiler-language-java-parser-antlr</module>
 		<module>compiler-language-javascript-parser-antlr</module>
+		<module>compiler-parser-listener-stackbased</module>
+		<module>compiler-parser-listener-common</module>
 	</modules>
 
 	<dependencies>

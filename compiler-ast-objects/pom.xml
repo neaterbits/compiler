@@ -17,7 +17,7 @@
   	</dependency>
   	<dependency>
   		<groupId>${project.groupId}</groupId>
-  		<artifactId>compiler-util</artifactId>
+  		<artifactId>compiler-parser-listener-stackbased</artifactId>
   		<version>${project.version}</version>
   	</dependency>
   </dependencies>

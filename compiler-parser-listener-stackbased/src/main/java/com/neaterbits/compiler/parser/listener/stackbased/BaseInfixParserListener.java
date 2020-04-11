@@ -1,11 +1,17 @@
-package com.neaterbits.compiler.ast.objects.parser.iterative;
+package com.neaterbits.compiler.parser.listener.stackbased;
 
-import com.neaterbits.compiler.parser.listener.stackbased.BaseIterativeParserListener;
-import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
+import com.neaterbits.compiler.parser.listener.common.InfixParserListener;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackExpressionList;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackIncrementDecrementExpression;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ExpressionSetter;
+import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.Notation;
+import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 
-public abstract class BaseIterativeOOParserListener<
+public abstract class BaseInfixParserListener<
 
 		KEYWORD,
 		IDENTIFIER,
@@ -64,7 +70,7 @@ public abstract class BaseIterativeOOParserListener<
 		
 		PRE_DECREMENT_EXPRESSION extends EXPRESSION,
 		POST_DECREMENT_EXPRESSION extends EXPRESSION,
-		
+
 		LAMBDA_EXPRESSION extends EXPRESSION,
 		SINGLE_LAMBDA_EXPRESSION extends LAMBDA_EXPRESSION,
 		BLOCK_LAMBDA_EXPRESSION extends LAMBDA_EXPRESSION,
@@ -125,9 +131,10 @@ public abstract class BaseIterativeOOParserListener<
 		SWITCH_CASE_GROUP,
 		SWITCH_CASE_STATEMENT extends STATEMENT,
 		
-		BREAK_STATEMENT extends STATEMENT>
+		BREAK_STATEMENT extends STATEMENT
+		>
 
-	extends BaseIterativeParserListener<
+	extends BaseParserListener<
 
 		KEYWORD,
 		IDENTIFIER,
@@ -186,7 +193,7 @@ public abstract class BaseIterativeOOParserListener<
 		
 		PRE_DECREMENT_EXPRESSION,
 		POST_DECREMENT_EXPRESSION,
-	
+
 		LAMBDA_EXPRESSION,
 		SINGLE_LAMBDA_EXPRESSION,
 		BLOCK_LAMBDA_EXPRESSION,
@@ -248,9 +255,80 @@ public abstract class BaseIterativeOOParserListener<
 		SWITCH_CASE_STATEMENT,
 		
 		BREAK_STATEMENT
-	> {
+		>
 
-	protected BaseIterativeOOParserListener(StringSource stringSource, ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+	implements InfixParserListener<COMPILATION_UNIT> {
+
+	protected BaseInfixParserListener(StringSource stringSource, ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
 		super(stringSource, logger, parseTreeFactory);
+	}
+
+	@Override
+	public final void onExpressionBinaryOperator(Context context, Operator operator) {
+		
+		logEnter(context);
+		
+		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> expressionList = get();
+		
+		expressionList.addOperator(operator);
+		
+		logExit(context);
+	}
+	
+	@Override
+	public final void onIncrementDecrementExpressionStart(Context context, Arithmetic operator, Notation notation) {
+
+		logEnter(context);
+		
+		push(new StackIncrementDecrementExpression<>(getLogger(), operator, notation));
+		
+		logExit(context);
+	}
+
+	@Override
+	public final void onIncrementDecrementExpressionEnd(Context context) {
+
+		final StackIncrementDecrementExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackIncrementDecrementExpression = pop();
+		
+		final EXPRESSION expression;
+		
+		switch (stackIncrementDecrementExpression.getOperator()) {
+		case INCREMENT:
+			switch (stackIncrementDecrementExpression.getNotation()) {
+			case POSTFIX:
+				expression = parseTreeFactory.createPostIncrementExpression(context, stackIncrementDecrementExpression.getExpression());
+				break;
+				
+			case PREFIX:
+				expression = parseTreeFactory.createPreIncrementExpression(context, stackIncrementDecrementExpression.getExpression());
+				break;
+				
+			default:
+				throw new UnsupportedOperationException("Unknown notation " + stackIncrementDecrementExpression.getNotation());
+			}
+			break;
+			
+		case DECREMENT:
+			switch (stackIncrementDecrementExpression.getNotation()) {
+			case POSTFIX:
+				expression = parseTreeFactory.createPostDecrementExpression(context, stackIncrementDecrementExpression.getExpression());
+				break;
+				
+			case PREFIX:
+				expression = parseTreeFactory.createPreDecrementExpression(context, stackIncrementDecrementExpression.getExpression());
+				break;
+				
+			default:
+				throw new UnsupportedOperationException("Unknown notation " + stackIncrementDecrementExpression.getNotation());
+			}
+			break;
+		
+		default:
+			throw new UnsupportedOperationException("Unknown operator " + stackIncrementDecrementExpression.getOperator());
+		}
+		
+		final ExpressionSetter<EXPRESSION> expressionSetter = get();
+		
+		expressionSetter.addExpression(expression);
 	}
 }
