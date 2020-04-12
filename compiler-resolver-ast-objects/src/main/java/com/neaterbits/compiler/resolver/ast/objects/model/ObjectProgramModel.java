@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.resolver.ast.objects.model;
 
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -10,40 +9,19 @@ import java.util.function.Function;
 import com.neaterbits.compiler.ast.objects.ASTVisitor;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
-import com.neaterbits.compiler.ast.objects.FieldNameDeclaration;
-import com.neaterbits.compiler.ast.objects.ImportName;
-import com.neaterbits.compiler.ast.objects.Keyword;
-import com.neaterbits.compiler.ast.objects.Namespace;
-import com.neaterbits.compiler.ast.objects.NamespaceDeclaration;
 import com.neaterbits.compiler.ast.objects.Program;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Parameter;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
-import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
-import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
-import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
-import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
-import com.neaterbits.compiler.ast.objects.expression.literal.NullLiteral;
-import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
-import com.neaterbits.compiler.ast.objects.statement.EnumConstant;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
-import com.neaterbits.compiler.ast.objects.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
-import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodModifierHolder;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodModifiers;
-import com.neaterbits.compiler.ast.objects.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexTypeDefinition;
-import com.neaterbits.compiler.ast.objects.typedefinition.ConstructorModifierHolder;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldModifierHolder;
-import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceDeclarationName;
-import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceMethodName;
-import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceModifierHolder;
-import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifierHolder;
-import com.neaterbits.compiler.ast.objects.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.LibraryTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
@@ -51,10 +29,8 @@ import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
-import com.neaterbits.compiler.ast.objects.variables.VarNameDeclaration;
-import com.neaterbits.compiler.resolver.ScopedNameResolver;
-import com.neaterbits.compiler.resolver.TypesMap;
 import com.neaterbits.compiler.resolver.ast.objects.MethodInvocationExpressionResolver;
+import com.neaterbits.compiler.resolver.util.SourceTokenUtil;
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FileSpec;
@@ -76,9 +52,7 @@ import com.neaterbits.compiler.util.model.ProgramModel;
 import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.model.SourceToken;
-import com.neaterbits.compiler.util.model.SourceTokenType;
 import com.neaterbits.compiler.util.model.SourceTokenVisitor;
-import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.compiler.util.model.UpdateOnResolve;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.model.Visibility;
@@ -97,7 +71,9 @@ import statement.ASTMutability;
 public class ObjectProgramModel
 	extends ObjectImportsModel
 	implements ProgramModel<Program, ASTParsedFile, CompilationUnit>,
-				ResolveTypesModel<CompilationUnit>{
+				ResolveTypesModel<CompilationUnit> {
+    
+    private static final ObjectASTAccess AST_ACCESS = new ObjectASTAccess();
 
 	private final FieldModifiers dataFieldDefaultModifiers;
 	
@@ -243,145 +219,8 @@ public class ObjectProgramModel
 	}
 
 	private SourceToken makeSourceToken(BaseASTElement element, CompilationUnit compilationUnit, ResolvedTypes resolvedTypes) {
-		
-		final SourceToken sourceToken;
-		
-		if (element.isPlaceholderElement()) {
-			sourceToken = new SourceToken(element.getClass().getSimpleName());
-		}
-		else {
-			sourceToken = makeSourceTokenForNonPlaceholder(element, compilationUnit, resolvedTypes);
-		}
-		
-		return sourceToken;
-	}
-
-	private SourceToken makeSourceTokenForNonPlaceholder(BaseASTElement element, CompilationUnit compilationUnit, ResolvedTypes resolvedTypes) {
-		
-		Objects.requireNonNull(element);
-
-		final SourceTokenType sourceTokenType;
-		TypeName typeName = null;
-		
-		if (element instanceof Keyword) {
-			sourceTokenType = SourceTokenType.KEYWORD;
-		}
-		else if (   element instanceof InterfaceModifierHolder
-				 || element instanceof ClassModifierHolder
-				 || element instanceof ConstructorModifierHolder
-				 || element instanceof ClassMethodModifierHolder
-				 || element instanceof FieldModifierHolder
-				 || element instanceof VariableModifierHolder) {
-			
-			sourceTokenType = SourceTokenType.KEYWORD;
-		}
-		else if (element instanceof CharacterLiteral) {
-			sourceTokenType = SourceTokenType.CHARACTER_LITERAL;
-		}
-		else if (element instanceof StringLiteral) {
-			sourceTokenType = SourceTokenType.STRING_LITERAL;
-		}
-		else if (element instanceof IntegerLiteral) {
-			sourceTokenType = SourceTokenType.INTEGER_LITERAL;
-		}
-		else if (element instanceof BooleanLiteral) {
-			sourceTokenType = SourceTokenType.BOOLEAN_LITERAL;
-		}
-		else if (element instanceof NullLiteral) {
-			sourceTokenType = SourceTokenType.NULL_LITERAL;
-		}
-		else if (element instanceof ThisPrimary) {
-			sourceTokenType = SourceTokenType.THIS_REFERENCE;
-		}
-		else if (element instanceof VarNameDeclaration) {
-			sourceTokenType = SourceTokenType.LOCAL_VARIABLE_DECLARATION_NAME;
-		}
-		else if (element instanceof NameReference) {
-			sourceTokenType = SourceTokenType.VARIABLE_REFERENCE;
-		}
-		else if (element instanceof NamespaceDeclaration) {
-			sourceTokenType = SourceTokenType.NAMESPACE_DECLARATION_NAME;
-		}
-		else if (element instanceof ImportName) {
-			sourceTokenType = SourceTokenType.IMPORT_NAME;
-		}
-		else if (element instanceof ClassDeclarationName) {
-			sourceTokenType = SourceTokenType.CLASS_DECLARATION_NAME;
-		}
-		else if (element instanceof FieldNameDeclaration) {
-			sourceTokenType = SourceTokenType.INSTANCE_VARIABLE_DECLARATION_NAME;
-		}
-		else if (element instanceof InterfaceDeclarationName) {
-			sourceTokenType = SourceTokenType.INTERFACE_DECLARATION_NAME;
-		}
-		else if (element instanceof InterfaceMethodName) {
-			sourceTokenType = SourceTokenType.METHOD_DECLARATION_NAME;
-		}
-		else if (element instanceof BuiltinTypeReference) {
-			sourceTokenType = SourceTokenType.BUILTIN_TYPE_NAME;
-			
-			final BuiltinTypeReference builtinTypeReference = (BuiltinTypeReference)element;
-			
-			typeName = builtinTypeReference.getTypeName();
-		}
-		else if (element instanceof EnumConstant) {
-			sourceTokenType = SourceTokenType.ENUM_CONSTANT;
-		}
-		else if (element instanceof ResolveLaterTypeReference) {
-
-			// Resolve from already resolved types
-			final ResolveLaterTypeReference typeReference = (ResolveLaterTypeReference)element;
-			final TypesMap<TypeName> compiledTypesMap = new TypesMap<TypeName>() {
-
-				@Override
-				public TypeName lookupByScopedName(ScopedName scopedName) {
-					return resolvedTypes.lookup(scopedName, TypeSources.ALL);
-				}
-			};
-
-			final Namespace namespace = (Namespace)compilationUnit.findElement(false, e -> e instanceof Namespace);
-			final ComplexTypeDefinition<?, ?> definition = (ComplexTypeDefinition<?, ?>)compilationUnit.findElement(false, e -> e instanceof ComplexTypeDefinition<?, ?>);
-
-			if (definition != null) {
-			
-				final ScopedName referencedFrom = new ScopedName(
-						namespace != null
-							? Arrays.asList(namespace.getParts())
-							: null,
-						definition.getNameString());
-				
-				final TypeName resolved = ScopedNameResolver.resolveScopedName(
-						typeReference.getScopedName(),
-						null,
-						compilationUnit,
-						this,
-						referencedFrom,
-						compiledTypesMap);
-				
-				if (resolved != null) {
-					sourceTokenType = SourceTokenType.CLASS_REFERENCE_NAME;
-					typeName = resolved;
-				}
-				else {
-					sourceTokenType = SourceTokenType.UNKNOWN;
-				}
-			}
-			else {
-				sourceTokenType = SourceTokenType.UNKNOWN;
-			}
-		}
-		else {
-			sourceTokenType = SourceTokenType.UNKNOWN;
-		}
-		
-		final Context context = element.getContext();
-
-		return new SourceToken(
-				compilationUnit.getParseTreeRefFromElement(element),
-				sourceTokenType,
-				context,
-				typeName,
-				element.getClass().getSimpleName());
+	    
+	    return SourceTokenUtil.makeSourceToken(element, compilationUnit, resolvedTypes, this, AST_ACCESS);
 	}
 
 	@Override
