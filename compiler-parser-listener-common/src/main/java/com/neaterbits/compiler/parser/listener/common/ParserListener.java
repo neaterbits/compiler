@@ -27,14 +27,15 @@ public interface ParserListener<COMPILATION_UNIT> {
 
 	COMPILATION_UNIT onCompilationUnitEnd(Context context);
 	
-	void onImportStart(Context context, long importKeyword, Context importKeywordContext, long staticKeyword, Context staticKeywordContext);
+	void onImportStart(Context context,
+	        long importKeyword, Context importKeywordContext,
+	        long staticKeyword, Context staticKeywordContext);
 	
 	void onImportIdentifier(Context context, long identifier);
 	
 	void onImportEnd(Context context, boolean ondemand);
 	
-	void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext,
-			long name, Context nameContext);
+	void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext);
 	
 	void onNamespacePart(Context context, long part);
 	

@@ -517,17 +517,14 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext,
-			long name, Context nameContext) {
+	public final void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext) {
 
 		logEnter(context);
 		
 		push(new StackNamespace<>(
 		        logger,
 		        stringSource.asString(namespaceKeyword),
-		        namespaceKeywordContext,
-		        stringSource.asString(name),
-		        nameContext));
+		        namespaceKeywordContext));
 
 		logExit(context);
 	}
@@ -539,7 +536,7 @@ public abstract class BaseParserListener<
 	    
 	    final StackNamespace<COMPILATION_CODE> namespace = get();
 	    
-	    namespace.addPart(stringSource.asString(part));
+	    namespace.addPart(stringSource.asString(part), context);
 	    
 	    logExit(context);
     }

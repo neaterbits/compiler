@@ -90,7 +90,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onPackageDeclaration(Context context, long packageKeyword, Context packageKeywordContext, long name, Context nameContext) {
 		this.packageName = stringSource.asString(name);
 		
-		delegate.onNamespaceStart(context, packageKeyword, packageKeywordContext, name, nameContext);
+		delegate.onNamespaceStart(context, packageKeyword, packageKeywordContext);
 		
 		final String [] parts = Strings.split(packageName, '.');
 		

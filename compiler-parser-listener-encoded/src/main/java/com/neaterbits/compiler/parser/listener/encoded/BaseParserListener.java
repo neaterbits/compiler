@@ -157,8 +157,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext, long name,
-            Context nameContext) {
+    public void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext) {
 
         writeContext(namespaceKeywordContext);
         
