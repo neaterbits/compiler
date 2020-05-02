@@ -32,6 +32,11 @@ final class ASTBufferImpl implements ASTBuffer {
     }
     
     @Override
+    public int getWritePos() {
+        return index;
+    }
+
+    @Override
     public void writeBoolean(boolean value) {
 
         checkSpace(1);
