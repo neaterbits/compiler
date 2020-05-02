@@ -85,11 +85,23 @@ public final class ParseLogger {
 	}
 	
 	public void onEnterListenerFunction(String methodName, Context context) {
-		indent().append("enter " + methodName).append(' ').append(context.getText()).println();
+		final PrintStream stream = indent().append("enter " + methodName);
+		
+		if (context != null) {
+		    stream.append(' ').append(context.getText());
+		}
+		
+		stream.println();
 	}
 	
 	public void onExitListenerFunction(String methodName, Context context) {
-		indent().append("exit " + methodName).append(' ').append(context.getText()).println();
+		final PrintStream stream = indent().append("exit " + methodName);
+		
+		if (context != null) {
+		    stream.append(' ').append(context.getText());
+		}
+		
+		stream.println();
 	}
 
 	public void onStackPush(String type, Collection<String> stack) {
