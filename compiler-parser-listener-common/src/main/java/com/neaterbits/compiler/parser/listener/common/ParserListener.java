@@ -11,6 +11,7 @@ import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
@@ -19,8 +20,6 @@ import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
-
-import statement.ASTMutability;
 
 public interface ParserListener<COMPILATION_UNIT> {
 

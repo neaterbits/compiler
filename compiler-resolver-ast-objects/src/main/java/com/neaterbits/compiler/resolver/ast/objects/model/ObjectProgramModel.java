@@ -57,6 +57,7 @@ import com.neaterbits.compiler.util.model.UpdateOnResolve;
 import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.parse.ScopesListener;
+import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodStatic;
 import com.neaterbits.compiler.util.typedefinition.FieldModifier;
@@ -65,8 +66,6 @@ import com.neaterbits.compiler.util.typedefinition.FieldTransient;
 import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.FieldVolatile;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
-
-import statement.ASTMutability;
 
 public class ObjectProgramModel
 	extends ObjectImportsModel

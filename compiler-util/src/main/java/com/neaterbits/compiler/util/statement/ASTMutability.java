@@ -1,4 +1,4 @@
-package statement;
+package com.neaterbits.compiler.util.statement;
 
 import java.util.Objects;
 

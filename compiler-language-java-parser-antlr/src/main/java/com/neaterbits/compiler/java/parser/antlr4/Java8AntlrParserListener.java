@@ -21,6 +21,7 @@ import com.neaterbits.compiler.util.operator.Notation;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
@@ -31,8 +32,6 @@ import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.util.io.strings.OffsetLengthStringRef;
 import com.neaterbits.util.io.strings.StringRef;
-
-import statement.ASTMutability;
 
 import java.util.ArrayList;
 import java.util.List;

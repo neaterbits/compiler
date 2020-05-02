@@ -89,6 +89,7 @@ import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.CompileException;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodModifier;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodNative;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
@@ -121,8 +122,6 @@ import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.typedefinition.VariableModifier;
 import com.neaterbits.util.io.strings.StringSource;
 import com.neaterbits.util.io.strings.StringRef;
-
-import statement.ASTMutability;
 
 public abstract class BaseParserListener<
 

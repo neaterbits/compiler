@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.util.typedefinition;
 
-import statement.ASTMutability;
+import com.neaterbits.compiler.util.statement.ASTMutability;
 
 public interface FieldModifierVisitor<T, R> {
 

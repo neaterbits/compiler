@@ -17,6 +17,7 @@ import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
@@ -29,8 +30,6 @@ import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
-
-import statement.ASTMutability;
 
 abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<COMPILATION_UNIT> {
 
