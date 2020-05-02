@@ -9,8 +9,8 @@ import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.java.Java8Lexer;
 import com.neaterbits.compiler.java.Java8Parser;
-import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
+import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaTypes;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 

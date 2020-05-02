@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.java;
+package com.neaterbits.compiler.language.java.parser.listener.stackbased;
 
 import java.util.Arrays;
 import java.util.Collection;

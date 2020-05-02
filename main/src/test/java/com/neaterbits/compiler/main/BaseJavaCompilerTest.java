@@ -30,9 +30,9 @@ import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReferen
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ProgramEmitter;
-import com.neaterbits.compiler.java.JavaTypes;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
+import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaTypes;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
 import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
