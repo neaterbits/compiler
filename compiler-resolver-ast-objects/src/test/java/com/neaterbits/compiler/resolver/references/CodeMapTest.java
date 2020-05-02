@@ -49,12 +49,10 @@ public class CodeMapTest extends BaseResolveTest {
 
 		final ResolvedFile testFile = new TestResolvedFile("TestFile.java");
 
-		final IntValue classTokenSequenceNo = new IntValue(1);
-		
-		final ClassDefinition classDefinition = makeClassType(namespace, className, classTokenSequenceNo);
+		final ClassDefinition classDefinition = makeClassType(namespace, className);
 
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				Context.makeTestContext(classTokenSequenceNo.getValue()),
+				Context.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(classDefinition));
 		
@@ -116,7 +114,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final InterfaceDefinition interfaceDefinition = makeInterfaceType(namespace, interfaceName, interfaceTokenSequenceNo);
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				Context.makeTestContext(interfaceTokenSequenceNo.increment()),
+				Context.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(interfaceDefinition));
 		
@@ -167,10 +165,9 @@ public class CodeMapTest extends BaseResolveTest {
 		final String className = "TestClass";
 		final ScopedName classScopedName = new ScopedName(classNamespace, className);
 
-		final IntValue classTokenSequenceNo = new IntValue(1);
-		final ClassDefinition classDefinition = makeClassType(classNamespace, className, classTokenSequenceNo);
+		final ClassDefinition classDefinition = makeClassType(classNamespace, className);
 		final CompilationUnit classCompilationUnit = new CompilationUnit(
-				Context.makeTestContext(classTokenSequenceNo.increment()),
+				Context.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(classDefinition));
 		
@@ -188,7 +185,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final InterfaceDefinition interfaceDefinition = makeInterfaceType(interfaceNamespace, interfaceName, interfaceTokenSequenceNo);
 		
 		final CompilationUnit interfaceCompilationUnit = new CompilationUnit(
-				Context.makeTestContext(interfaceTokenSequenceNo.increment()),
+				Context.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(interfaceDefinition));
 		
@@ -278,17 +275,14 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		final ResolvedFile resolvedFile = new TestResolvedFile(file);
 
-		final IntValue classTokenSequenceNo = new IntValue(1);
-
 		final TypeName typeName = makeTypeName(name);
 
 		final ClassDefinition classDefinition = makeClassType(
 				Arrays.asList(typeName.getNamespace()),
-				typeName.getName(),
-				classTokenSequenceNo);
+				typeName.getName());
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				Context.makeTestContext(classTokenSequenceNo.increment()),
+				Context.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(classDefinition));
 
@@ -307,10 +301,10 @@ public class CodeMapTest extends BaseResolveTest {
 		return resolvedType;
 	}
 	
-	private static ClassDefinition makeClassType(Collection<String> namespace, String name, IntValue tokenSequenceNo) {
+	private static ClassDefinition makeClassType(Collection<String> namespace, String name) {
 		
-		final Context context = Context.makeTestContext(tokenSequenceNo.increment());
-		final Context nameContext = Context.makeTestContext(tokenSequenceNo.increment());
+		final Context context = Context.makeTestContext();
+		final Context nameContext = Context.makeTestContext();
 		
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
@@ -327,8 +321,8 @@ public class CodeMapTest extends BaseResolveTest {
 
 	private static InterfaceDefinition makeInterfaceType(Collection<String> namespace, String name, IntValue tokenSequenceNo) {
 		
-		final Context context = Context.makeTestContext(tokenSequenceNo.increment());
-		final Context nameContext = Context.makeTestContext(tokenSequenceNo.increment());
+		final Context context = Context.makeTestContext();
+		final Context nameContext = Context.makeTestContext();
 		
 		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(
 				context,

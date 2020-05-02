@@ -11,7 +11,6 @@ import java.util.Objects;
 import com.neaterbits.compiler.antlr4.AntlrParser;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
-import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSourceInputStream;
@@ -22,7 +21,7 @@ public final class FileTypeParser<LISTENER extends ModelParserListener<Compilati
 
 	@FunctionalInterface
 	public interface ParserListenerFactory<LISTENER> {
-		LISTENER create(StringSource stringSource, ParseLogger logger, TokenSequenceNoGenerator gen);
+		LISTENER create(StringSource stringSource, ParseLogger logger);
 	}
 	
 	private final AntlrParser<CompilationUnit, LISTENER> parser;
@@ -63,12 +62,9 @@ public final class FileTypeParser<LISTENER extends ModelParserListener<Compilati
 	@Override
 	public CompilationUnit parse(InputStream inputStream, Charset charset, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
 		
-		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
-		
 		final LISTENER listener = makeListener.create(
 				new StringSourceInputStream(inputStream, charset),
-				parseLogger,
-				gen);
+				parseLogger);
 		
 		final Collection<ParseError> antlrErrors = parser.parse(inputStream, listener, file, parseLogger);
 

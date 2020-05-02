@@ -6,29 +6,33 @@ import java.util.Map;
 
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
+import com.neaterbits.util.IdentityKey;
 
 public class CompilationUnit extends CompilationCodeLines {
 
 	private final ASTList<Import> imports;
 	private final Map<Integer, BaseASTElement> elementsByParseTreeRef;
+	private final Map<IdentityKey<BaseASTElement>, Integer> parseTreeRefsByLement;
 
 	public CompilationUnit(Context context, List<Import> imports, List<CompilationCode> code) {
 		super(context, code);
 		
 		this.imports = makeList(imports);
 		this.elementsByParseTreeRef = new HashMap<>();
+		this.parseTreeRefsByLement = new HashMap<>();
 		
+		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
+
 		this.iterateNodeFirst(e -> {
 		
 			if (!e.isPlaceholderElement()) {
+			    
 				
-				final int tokenSequenceNo = e.getContext().getTokenSequenceNo();
-				
-				if (tokenSequenceNo < 0) {
-					throw new IllegalArgumentException("No sequence no for token " + e.getClass().getSimpleName());
-				}
+				final int tokenSequenceNo = gen.getNextTokenSequenceNo();
 				
 				elementsByParseTreeRef.put(tokenSequenceNo, e);
+				parseTreeRefsByLement.put(new IdentityKey<>(e), tokenSequenceNo);
 			}
 		});
 	}
@@ -51,15 +55,8 @@ public class CompilationUnit extends CompilationCodeLines {
 	
 	public int getParseTreeRefFromElement(BaseASTElement element) {
 		
-		final Context context = element.getContext();
-		
-		final int sequenceNo = context.getTokenSequenceNo();
-		
-		if (sequenceNo < 0) {
-			throw new IllegalStateException();
-		}
-		
-		return sequenceNo;
+	    final int parseTreeRef = parseTreeRefsByLement.get(new IdentityKey<>(element));
+	    
+		return parseTreeRef;
 	}
-
 }

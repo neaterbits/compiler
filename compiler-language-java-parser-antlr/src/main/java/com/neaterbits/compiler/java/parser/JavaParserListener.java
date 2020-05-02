@@ -14,7 +14,6 @@ import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
@@ -53,7 +52,6 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	private final StringSource stringSource;
 	private final ParseLogger logger;
 	private final String file;
-	private final TokenSequenceNoGenerator gen;
 	
 	// Cache packagename
 	private String packageName;
@@ -76,11 +74,10 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		logger.println("stack at " + statement + " " + statementsStack);
 	}
 	
-	public JavaParserListener(StringSource stringSource, ParseLogger logger, String file, TokenSequenceNoGenerator gen, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+	public JavaParserListener(StringSource stringSource, ParseLogger logger, String file, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
 		this.stringSource = stringSource;
 		this.logger = logger;
 		this.file = file;
-		this.gen = gen;
 		this.delegate = new JavaIterativeListener(stringSource, logger, parseTreeFactory);
 		this.statementsStack = new StatementsStack();
 	}
@@ -111,8 +108,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		            nameContext.getEndLine(),
 		            indexInName + partLength + nameContext.getStartPosInLine(),
 		            indexInName + partLength + nameContext.getStartOffset(),
-		            part,
-		            gen.getNextTokenSequenceNo());
+		            part);
 		    
 		    final long partRef = OffsetLengthStringRef.encode(indexInName, partLength);
 		    
@@ -741,7 +737,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	
 	private Context updateElseIfContext(Context context, Token elseToken, String file) {
 
-		final Context elseContext = Antlr4.context(elseToken, file, gen.getNextTokenSequenceNo());
+		final Context elseContext = Antlr4.context(elseToken, file);
 		
 		final Context updatedContext;
 		
@@ -754,8 +750,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 					context.getEndLine(),
 					context.getEndPosInLine(),
 					context.getEndOffset(),
-					context.getText(),
-					gen.getNextTokenSequenceNo());
+					context.getText());
 		}
 		else {
 			updatedContext = context;
@@ -785,11 +780,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 			delegate.onElseIfStatementStart(
 					updateElseIfContext(context, elseToken, file),
-					elseText, Antlr4.context(elseToken, file, gen.getNextTokenSequenceNo()),
-					keywordToken.getText(), Antlr4.context(keywordToken, file, gen.getNextTokenSequenceNo()));
+					elseText, Antlr4.context(elseToken, file),
+					keywordToken.getText(), Antlr4.context(keywordToken, file));
 		}
 		else {
-			delegate.onIfStatementStart(context, keywordToken.getText(), Antlr4.context(keywordToken, file, gen.getNextTokenSequenceNo()));
+			delegate.onIfStatementStart(context, keywordToken.getText(), Antlr4.context(keywordToken, file));
 		}
 
 		statementsStack.add(JavaStatement.IF_THEN, keywordToken);
@@ -843,11 +838,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			
 			delegate.onElseIfStatementStart(
 					updateElseIfContext(context, elseToken, file),
-					elseText, Antlr4.context(elseToken, file, gen.getNextTokenSequenceNo()),
-					ifKeyword.getText(), Antlr4.context(ifKeyword, file, gen.getNextTokenSequenceNo()));
+					elseText, Antlr4.context(elseToken, file),
+					ifKeyword.getText(), Antlr4.context(ifKeyword, file));
 		}
 		else {
-			delegate.onIfStatementStart(context, ifKeyword.getText(), Antlr4.context(ifKeyword, file, gen.getNextTokenSequenceNo()));
+			delegate.onIfStatementStart(context, ifKeyword.getText(), Antlr4.context(ifKeyword, file));
 		}
 
 		statementsStack.add(JavaStatement.IF_THEN_ELSE_START, ifKeyword, elseKeyword);
@@ -886,7 +881,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 				delegate.onElseStatementStart(
 						context,
 						ifOrElseStatement.getKeywordToken(0).getText(),
-						Antlr4.context(ifOrElseStatement.getKeywordToken(0), file, gen.getNextTokenSequenceNo()));
+						Antlr4.context(ifOrElseStatement.getKeywordToken(0), file));
 				break;
 				
 			default:

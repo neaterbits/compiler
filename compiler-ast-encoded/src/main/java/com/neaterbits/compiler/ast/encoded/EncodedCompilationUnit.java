@@ -93,8 +93,7 @@ public final class EncodedCompilationUnit {
                 contexts.getInt(index + INDEX_END_LINE),
                 contexts.getInt(index + INDEX_END_POS_IN_LINE),
                 contexts.getInt(index + INDEX_END_OFFSET),
-                getTokenStringFromIndex(index),
-                -1);
+                getTokenStringFromIndex(index));
         
         return context;
     }

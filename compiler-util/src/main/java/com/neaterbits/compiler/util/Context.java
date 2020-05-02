@@ -7,11 +7,7 @@ import java.util.function.Function;
 public interface Context {
 
 	public static Context makeTestContext() {
-		return makeTestContext(-1);
-	}
-	
-	public static Context makeTestContext(int tokenSequenceNo) {
-		return new ImmutableContext("", 0, 0, 0, 0, 0, 0, "", tokenSequenceNo);
+		return new ImmutableContext("", 0, 0, 0, 0, 0, 0, "");
 	}
 
 	public static <T> Context merge(Collection<T> elements, Function<T, Context> getContext) {
@@ -54,8 +50,7 @@ public interface Context {
 				lower.getFile(),
 				lower.getStartLine(), lower.getStartPosInLine(), lower.getStartOffset(), 
 				upper.getEndLine(), upper.getEndPosInLine(), upper.getEndOffset(),
-				sb.toString(),
-				lower.getTokenSequenceNo());
+				sb.toString());
 	}
 	
 	String getFile();
@@ -75,7 +70,5 @@ public interface Context {
 	int getLength();
 	
 	String getText();
-	
-	int getTokenSequenceNo();
 
 }

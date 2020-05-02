@@ -209,9 +209,7 @@ public class ObjectProgramModel
 
 		final BaseASTElement found = compilationUnit.findElement(true, element -> {
 
-			final Context context = element.getContext();
-
-			return !element.isPlaceholderElement() && parseTreeRef == context.getTokenSequenceNo();
+			return !element.isPlaceholderElement() && parseTreeRef == compilationUnit.getParseTreeRefFromElement(element);
 		});
 		
 		return found != null ? makeSourceToken(found, compilationUnit, resolvedTypes) : null;

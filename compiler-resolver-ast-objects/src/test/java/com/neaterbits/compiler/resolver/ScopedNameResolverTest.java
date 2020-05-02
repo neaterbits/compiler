@@ -14,7 +14,6 @@ import com.neaterbits.compiler.ast.objects.Keyword;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.resolver.ast.objects.model.ObjectImportsModel;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.IntValue;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.name.NamespaceReference;
 
@@ -31,7 +30,7 @@ public class ScopedNameResolverTest {
 		final String scopedName = ScopedNameResolver.resolveScopedName(
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "InSameNamespace"),
 				ReferenceLocation.FIELD,
-				makeCompilationUnit(new IntValue(1)),
+				makeCompilationUnit(),
 				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
 				typesMap);
@@ -48,7 +47,7 @@ public class ScopedNameResolverTest {
 		final String scopedName = ScopedNameResolver.resolveScopedName(
 				ScopedName.makeScopedName(new String [] { "com", "test", "othernamespace" }, "InOtherNamespace"),
 				ReferenceLocation.FIELD,
-				makeCompilationUnit(new IntValue(1)),
+				makeCompilationUnit(),
 				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
 				typesMap);
@@ -63,20 +62,18 @@ public class ScopedNameResolverTest {
 		
 		final NamespaceReference namespaceReference = new NamespaceReference(new String [] { "com", "test", "importnamespace" });
 		
-		final IntValue tokenSequenceNo = new IntValue(1);
-		
 		final Import importStatement = new Import(
-				Context.makeTestContext(tokenSequenceNo.increment()),
-				new Keyword(Context.makeTestContext(tokenSequenceNo.increment()), "testtoken"),
+				Context.makeTestContext(),
+				new Keyword(Context.makeTestContext(), "testtoken"),
 				new ImportName(
-					Context.makeTestContext(tokenSequenceNo.increment()),
+					Context.makeTestContext(),
 					namespaceReference,
 					new ClassOrInterfaceName("InImportedNamespace")));
 		
 		final String scopedName = ScopedNameResolver.resolveScopedName(
 				ScopedName.makeScopedName(new String [] { "InImportedNamespace" }),
 				ReferenceLocation.FIELD,
-				makeCompilationUnit(tokenSequenceNo, importStatement),
+				makeCompilationUnit(importStatement),
 				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
 				typesMap);
@@ -91,20 +88,18 @@ public class ScopedNameResolverTest {
 		
 		final NamespaceReference namespaceReference = new NamespaceReference(new String [] { "com", "test", "importnamespace" });
 		
-		final IntValue tokenSequenceNo = new IntValue(1);
-		
 		final Import importStatement = new Import(
-				Context.makeTestContext(tokenSequenceNo.increment()),
-				new Keyword(Context.makeTestContext(tokenSequenceNo.increment()), "import"),
+				Context.makeTestContext(),
+				new Keyword(Context.makeTestContext(), "import"),
 				new ImportName(
-						Context.makeTestContext(tokenSequenceNo.increment()),
+						Context.makeTestContext(),
 						namespaceReference,
 						new ClassOrInterfaceName("InImportedNamespace")));
 		
 		final String scopedName = ScopedNameResolver.resolveScopedName(
 				ScopedName.makeScopedName(new String [] { "InImportedNamespace" }),
 				ReferenceLocation.FIELD,
-				makeCompilationUnit(tokenSequenceNo, importStatement),
+				makeCompilationUnit(importStatement),
 				importsModel,
 				ScopedName.makeScopedName(new String [] { "com", "test" }, "ClassReferenceFrom"),
 				typesMap);
@@ -112,9 +107,9 @@ public class ScopedNameResolverTest {
 		assertThat(scopedName).isNull();
 	}
 
-	private static CompilationUnit makeCompilationUnit(IntValue tokenSequenceNo, Import ... imports) {
+	private static CompilationUnit makeCompilationUnit(Import ... imports) {
 
-		final Context context = Context.makeTestContext(tokenSequenceNo.increment());
+		final Context context = Context.makeTestContext();
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(context, Arrays.asList(imports), new ArrayList<>());
 		
