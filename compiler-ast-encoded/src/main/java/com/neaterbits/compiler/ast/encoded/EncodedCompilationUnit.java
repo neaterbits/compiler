@@ -8,8 +8,8 @@ import com.neaterbits.compiler.util.IntKeyIntValueHash;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead;
-import com.neaterbits.util.buffers.DuplicateDetectingStringStorageBuffer;
 
 public final class EncodedCompilationUnit {
 
@@ -19,14 +19,14 @@ public final class EncodedCompilationUnit {
 
     private final TypeName [] indexToTypeName;
     
-    private final DuplicateDetectingStringStorageBuffer stringBuffer;
+    private final MapStringStorageBuffer stringBuffer;
 
     public EncodedCompilationUnit(
             ASTBufferRead astBuffer,
             ASTBufferRead contextBuffer,
             IntKeyIntValueHash parseTreeRefToContextHash,
             Map<TypeName, Integer> typeNameToIndex,
-            DuplicateDetectingStringStorageBuffer stringBuffer) {
+            MapStringStorageBuffer stringBuffer) {
 
         Objects.requireNonNull(astBuffer);
         Objects.requireNonNull(parseTreeRefToContextHash);

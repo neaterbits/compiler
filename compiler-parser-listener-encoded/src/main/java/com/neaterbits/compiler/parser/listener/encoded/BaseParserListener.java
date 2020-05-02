@@ -26,7 +26,7 @@ import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
-import com.neaterbits.util.buffers.DuplicateDetectingStringStorageBuffer;
+import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
 
@@ -44,14 +44,14 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     
     private final Map<TypeName, Integer> typeNameToIndex;
 
-    private final DuplicateDetectingStringStorageBuffer stringBuffer;
+    private final MapStringStorageBuffer stringBuffer;
 
     protected abstract COMPILATION_UNIT makeCompilationUnit(
             ASTBufferRead astBuffer,
             ASTBufferRead contextBuffer,
             IntKeyIntValueHash parseTreeRefToContextHash,
             Map<TypeName, Integer> typeNameToIndex,
-            DuplicateDetectingStringStorageBuffer stringBuffer);
+            MapStringStorageBuffer stringBuffer);
     
     BaseParserListener(Tokenizer tokenizer) {
         
@@ -66,7 +66,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         this.typeNameToIndex = new HashMap<>();
         
-        this.stringBuffer = new DuplicateDetectingStringStorageBuffer();
+        this.stringBuffer = new MapStringStorageBuffer();
     }
     
     private int getStringIndex(long stringRef) {
