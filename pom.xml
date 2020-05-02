@@ -43,6 +43,7 @@
 		<module>compiler-parser-listener-stackbased</module>
 		<module>compiler-parser-listener-common</module>
 		<module>compiler-parser-listener-encoded</module>
+		<module>compiler-language-java-parser-listener-stackbased</module>
 	</modules>
 
 	<dependencies>

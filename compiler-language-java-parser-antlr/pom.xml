@@ -20,5 +20,10 @@
   		<artifactId>compiler-resolver-ast-objects</artifactId>
   		<version>${project.version}</version>
   	</dependency>
+  	<dependency>
+  		<groupId>${project.groupId}</groupId>
+  		<artifactId>compiler-language-java-parser-listener-stackbased</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
   </dependencies>
 </project>

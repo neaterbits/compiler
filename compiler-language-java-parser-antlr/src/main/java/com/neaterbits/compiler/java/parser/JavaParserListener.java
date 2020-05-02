@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.Token;
 import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
-import com.neaterbits.compiler.ast.objects.parser.iterative.BaseIterativeOOParserListener;
+import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
 import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ImmutableContext;
@@ -41,13 +41,6 @@ import com.neaterbits.util.io.strings.StringSource;
 public class JavaParserListener implements ModelParserListener<CompilationUnit> {
 
 	// Delegate to make sure make all special handling here
-	@SuppressWarnings("rawtypes")
-    private static class JavaIterativeListener extends BaseIterativeOOParserListener {
-
-		JavaIterativeListener(StringSource stringSource, ParseLogger logger, ParseTreeFactory parseTreeFactory) {
-			super(stringSource, logger, parseTreeFactory);
-		}
-	}
 
 	private final StringSource stringSource;
 	private final ParseLogger logger;
