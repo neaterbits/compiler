@@ -278,7 +278,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 			Keyword staticKeyword,
 			List<Identifier> identifiers,
 			boolean ondemand) {
-		
+	    
 		final ImportName importName;
 		
 		if (ondemand) {
@@ -325,8 +325,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				importName = new ImportName(
 						context,
 						namespaceOrTypeName,
-						new ClassOrInterfaceName(classOrInterfaceName),
-						null);
+						new ClassOrInterfaceName(classOrInterfaceName));
 			}
 		}
 		

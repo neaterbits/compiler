@@ -115,7 +115,7 @@ public class SourceTokenUtil {
             sourceTokenType = SourceTokenType.NAMESPACE_DECLARATION_NAME;
             break;
             
-        case IMPORT_NAME:
+        case IMPORT_NAME_PART:
             sourceTokenType = SourceTokenType.IMPORT_NAME;
             break;
 

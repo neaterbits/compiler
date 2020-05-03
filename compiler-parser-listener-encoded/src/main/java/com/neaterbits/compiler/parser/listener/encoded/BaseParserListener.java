@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
@@ -28,74 +27,63 @@ import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
-import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
 
 abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<COMPILATION_UNIT> {
 
-    private final Tokenizer tokenizer;
-
-    private final ASTBuffer astBuffer;
+    private final String file;
+    private final StringASTBuffer astBuffer;
 
     private final ASTBuffer contextBuffer;
     
-    private final IntKeyIntValueHash parseTreeRefToContextHash;
+    private final IntKeyIntValueHash parseTreeRefToStartContextHash;
+    private final IntKeyIntValueHash parseTreeRefToEndContextHash;
     
     private final Map<TypeName, Integer> typeNameToIndex;
 
-    private final MapStringStorageBuffer stringBuffer;
-
     protected abstract COMPILATION_UNIT makeCompilationUnit(
+            String file,
             ASTBufferRead astBuffer,
             ASTBufferRead contextBuffer,
-            IntKeyIntValueHash parseTreeRefToContextHash,
+            IntKeyIntValueHash parseTreeRefToStartContextHash,
+            IntKeyIntValueHash parseTreeRefToEndContextHash,
             Map<TypeName, Integer> typeNameToIndex,
             MapStringStorageBuffer stringBuffer);
     
-    BaseParserListener(Tokenizer tokenizer) {
-        
-        Objects.requireNonNull(tokenizer);
-        
-        this.tokenizer = tokenizer;
+    BaseParserListener(String file, Tokenizer tokenizer) {
 
-        this.astBuffer = new ASTBufferImpl();
+        this.file = file;
+        this.astBuffer = new StringASTBuffer(tokenizer);
+
         this.contextBuffer = new ASTBufferImpl();
         
-        this.parseTreeRefToContextHash = new IntKeyIntValueHash(100);
+        this.parseTreeRefToStartContextHash = new IntKeyIntValueHash(100);
+        this.parseTreeRefToEndContextHash = new IntKeyIntValueHash(100);
         
         this.typeNameToIndex = new HashMap<>();
-        
-        this.stringBuffer = new MapStringStorageBuffer();
     }
     
-    private int getStringIndex(long stringRef) {
+    private void writeStartElementContext(Context context) {
         
-        // TODO fix allocation
-        return tokenizer.addToBuffer(stringBuffer, stringRef);
+        final int parseTreeRef = astBuffer.getParseTreeRef();
+        
+        final int contextBufferPos = contextBuffer.getWritePos();
+        
+        AST.writeContext(contextBuffer, context);
+        
+        parseTreeRefToStartContextHash.put(parseTreeRef, contextBufferPos);
+    }
+
+    private void addEndElementContext(Context context) {
+        
+        // final int parseTreeRef = astBuffer.getParseTreeRef();
+        
+        // parseTreeRefToEndContextHash.put(parseTreeRef, contextBufferPos);
     }
     
-    private void writeStringRef(long stringRef) {
+    private int writeOtherContext(Context context) {
         
-        astBuffer.writeInt(getStringIndex(stringRef));
-    }
-    
-    private void writeContext(Context context) {
-        
-        Objects.requireNonNull(context);
-        
-        contextBuffer.writeInt(context.getStartLine());
-        
-        contextBuffer.writeInt(context.getStartPosInLine());
-        
-        contextBuffer.writeInt(context.getStartOffset());
-        
-        contextBuffer.writeInt(context.getEndLine());
-        
-        contextBuffer.writeInt(context.getEndPosInLine());
-        
-        contextBuffer.writeInt(context.getEndOffset());
-        
-        contextBuffer.writeInt(context.getLength());
+        return AST.writeContext(contextBuffer, context);
     }
     
     @Override
@@ -110,11 +98,13 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         astBuffer.writeElementEnd(ParseTreeElement.COMPILATION_UNIT);
 
         return makeCompilationUnit(
-                astBuffer,
+                file,
+                astBuffer.getASTReadBuffer(),
                 contextBuffer,
-                parseTreeRefToContextHash,
+                parseTreeRefToStartContextHash,
+                parseTreeRefToEndContextHash,
                 typeNameToIndex,
-                stringBuffer);
+                astBuffer.getStringBuffer());
     }
 
     @Override
@@ -125,73 +115,75 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
             long staticKeyword,
             Context staticKeywordContext) {
 
-        writeContext(importKeywordContext);
+        writeStartElementContext(importKeywordContext);
 
-        if (staticKeywordContext != null) {
-            writeContext(staticKeywordContext);
-        }
+        final int importKeywordContextRef = writeOtherContext(importKeywordContext);
         
-        astBuffer.writeElementStart(ParseTreeElement.IMPORT);
+        final int staticKeywordContextRef = staticKeywordContext != null
+                ? writeOtherContext(staticKeywordContext)
+                : AST.NO_CONTEXTREF;
         
-        astBuffer.writeBoolean(staticKeyword != StringRef.STRING_NONE);
-        
+        AST.encodeImportStart(
+                astBuffer,
+                importKeyword,
+                importKeywordContextRef,
+                staticKeyword,
+                staticKeywordContextRef);
     }
 
     @Override
     public void onImportIdentifier(Context context, long identifier) {
         
-        writeContext(context);
-        
-        astBuffer.writeLeafElement(ParseTreeElement.IMPORT_NAME);
-        
-        writeStringRef(identifier);
+        writeStartElementContext(context);
+
+        AST.encodeImportNamePart(astBuffer, identifier);
     }
 
     @Override
     public void onImportEnd(Context context, boolean ondemand) {
-
-        astBuffer.writeElementEnd(ParseTreeElement.IMPORT);
-
-        astBuffer.writeBoolean(ondemand);
         
+        addEndElementContext(context);
+        
+        AST.encodeImportEnd(astBuffer, ondemand);
     }
 
     @Override
     public void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext) {
 
-        writeContext(namespaceKeywordContext);
-        
-        astBuffer.writeElementStart(ParseTreeElement.NAMESPACE);
+        if (context != null) {
+            writeStartElementContext(context);
+        }
+
+        final int namespaceKeywordContextRef = writeOtherContext(namespaceKeywordContext);
+
+        AST.encodeNamespaceStart(astBuffer, namespaceKeyword, namespaceKeywordContextRef);
     }
     
 
     @Override
     public void onNamespacePart(Context context, long part) {
 
-        astBuffer.writeElementStart(ParseTreeElement.NAMESPACE_PART);
+        writeStartElementContext(context);
         
-        astBuffer.writeInt(getStringIndex(part));
+        AST.encodeNamespacePart(astBuffer, part);
     }
 
     @Override
     public void onNameSpaceEnd(Context context) {
 
-        writeContext(context);
-        
-        astBuffer.writeElementEnd(ParseTreeElement.NAMESPACE);
+        AST.encodeNamespaceEnd(astBuffer);
     }
 
     @Override
-    public void onClassStart(Context context, long classKeyword, Context classKeywordContext, long name,
-            Context nameContext) {
+    public void onClassStart(Context context, long classKeyword, Context classKeywordContext, long name, Context nameContext) {
 
-        writeContext(context);
+        writeStartElementContext(context);
         
-        writeContext(classKeywordContext);
+        writeOtherContext(classKeywordContext);
         
-        writeContext(nameContext);
+        writeOtherContext(nameContext);
         
-        astBuffer.writeElementStart(ParseTreeElement.CLASS_DEFINITION);
+        AST.encodeClassStart(astBuffer);
     }
 
     @Override

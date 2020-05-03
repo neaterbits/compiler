@@ -182,6 +182,30 @@ final class ASTBufferImpl implements ASTBuffer {
     }
 
     @Override
+    public boolean hasStringRef(int index) {
+        
+        return getInt(index) != AST.NO_STRINGREF;
+    }
+
+    @Override
+    public int getStringRef(int index) {
+
+        return getInt(index);
+    }
+
+    @Override
+    public boolean hasContextRef(int index) {
+
+        return getInt(index) != AST.NO_CONTEXTREF;
+    }
+
+    @Override
+    public int getContextRef(int index) {
+        
+        return getInt(index);
+    }
+
+    @Override
     public ParseTreeElement getParseTreeElement(int index) {
 
         final byte b = buffer[index];
@@ -191,5 +215,20 @@ final class ASTBufferImpl implements ASTBuffer {
         }
         
         return ParseTreeElement.values()[b];
+    }
+
+    @Override
+    public void getParseTreeElement(int index, ParseTreeElementRef ref) {
+        
+        final byte b = buffer[index];
+        
+        if (b >= 0) {
+            ref.element = ParseTreeElement.values()[b];
+            ref.isStart = true;
+        }
+        else {
+            ref.element = ParseTreeElement.values()[- b];
+            ref.isStart = false;
+        }
     }
 }

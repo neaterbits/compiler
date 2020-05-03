@@ -24,6 +24,7 @@
 		<module>compiler-emit</module>
 		<module>compiler-resolver</module>
 		<module>compiler-resolver-ast-objects</module>
+		<module>compiler-resolver-ast-encoded</module>
 		<module>compiler-antlr</module>
 		<module>compiler-util</module>
 		<module>codemap</module>
@@ -42,6 +43,7 @@
 		<module>compiler-language-javascript-parser-antlr</module>
 		<module>compiler-parser-listener-stackbased</module>
 		<module>compiler-parser-listener-common</module>
+		<module>compiler-language-java-parser-recursive</module>
 		<module>compiler-parser-listener-encoded</module>
 		<module>compiler-language-java-parser-listener-stackbased</module>
 	</modules>

@@ -60,6 +60,10 @@ public class TypeImport {
 	public String[] getNamespaceOrTypeName() {
 		return namespaceOrTypeName;
 	}
+	
+	public boolean isOnDemandImport() {
+	    return type == ImportType.ON_DEMAND_NAMESPACE_OR_TYPE || type == ImportType.STATIC_ON_DEMAND_METHOD;
+	}
 
 	public boolean isMethodImport() {
 		return type == ImportType.STATIC_KNOWN_METHOD || type == ImportType.STATIC_ON_DEMAND_METHOD;

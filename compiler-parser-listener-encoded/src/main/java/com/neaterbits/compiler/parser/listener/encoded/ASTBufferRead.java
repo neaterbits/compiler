@@ -14,5 +14,20 @@ public interface ASTBufferRead {
     
     long getLong(int index);
     
+    boolean hasStringRef(int index);
+    
+    int getStringRef(int index);
+    
+    boolean hasContextRef(int index);
+    
+    int getContextRef(int index);
+    
     ParseTreeElement getParseTreeElement(int index);
+    
+    public static class ParseTreeElementRef {
+        public ParseTreeElement element;
+        public boolean isStart;
+    }
+
+    void getParseTreeElement(int index, ParseTreeElementRef ref);
 }

@@ -10,8 +10,8 @@ import com.neaterbits.util.io.strings.Tokenizer;
 abstract class BaseInfixParserListener<COMPILATION_UNIT>
     extends BaseParserListener<COMPILATION_UNIT> implements InfixParserListener<COMPILATION_UNIT> {
 
-    BaseInfixParserListener(Tokenizer tokenizer) {
-        super(tokenizer);
+    BaseInfixParserListener(String file, Tokenizer tokenizer) {
+        super(file, tokenizer);
     }
 
     @Override

@@ -15,6 +15,8 @@ import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public abstract class BaseASTElement extends ASTNode {
 	
+    public static boolean REQUIRE_CONTEXT = true;
+    
 	protected static final boolean CONTINUE_ITERATION = true;
 	
 	private final Context context;
@@ -23,7 +25,7 @@ public abstract class BaseASTElement extends ASTNode {
 	
 	public BaseASTElement(Context context) {
 		
-		if (!isPlaceholderElement()) {
+		if (REQUIRE_CONTEXT && !isPlaceholderElement()) {
 			Objects.requireNonNull(context);
 		}
 		

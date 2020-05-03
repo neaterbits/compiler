@@ -8,34 +8,48 @@ import com.neaterbits.compiler.util.IntKeyIntValueHash;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.util.buffers.MapStringStorageBuffer;
+import com.neaterbits.util.buffers.MapStringStorageBuffer;import com.neaterbits.compiler.parser.listener.common.ParserListener;
+import com.neaterbits.compiler.parser.listener.encoded.AST;
 import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead;
+import com.neaterbits.compiler.parser.listener.encoded.ContextGetter;
+import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead.ParseTreeElementRef;
 
 public final class EncodedCompilationUnit {
 
+    private final String file;
     private final ASTBufferRead astBuffer;
-    private final IntKeyIntValueHash parseTreeRefToContextHash;
+    private final IntKeyIntValueHash parseTreeRefToStartContextHash;
+    private final IntKeyIntValueHash parseTreeRefToEndContextHash;
     private final ASTBufferRead contexts;
 
     private final TypeName [] indexToTypeName;
     
     private final MapStringStorageBuffer stringBuffer;
+    
+    private final boolean passContextToDecode;
 
     public EncodedCompilationUnit(
+            String file,
             ASTBufferRead astBuffer,
             ASTBufferRead contextBuffer,
-            IntKeyIntValueHash parseTreeRefToContextHash,
+            IntKeyIntValueHash parseTreeRefToStartContextHash,
+            IntKeyIntValueHash parseTreeRefToEndContextHash,
             Map<TypeName, Integer> typeNameToIndex,
-            MapStringStorageBuffer stringBuffer) {
+            MapStringStorageBuffer stringBuffer,
+            boolean passContextToDecode) {
 
+        Objects.requireNonNull(file);
         Objects.requireNonNull(astBuffer);
-        Objects.requireNonNull(parseTreeRefToContextHash);
+        Objects.requireNonNull(parseTreeRefToStartContextHash);
         Objects.requireNonNull(contextBuffer);
 
+        this.file = file;
         this.astBuffer = astBuffer;
-        this.parseTreeRefToContextHash = parseTreeRefToContextHash;
+        this.parseTreeRefToStartContextHash = parseTreeRefToStartContextHash;
+        this.parseTreeRefToEndContextHash = parseTreeRefToEndContextHash;
         this.contexts = contextBuffer;
         this.stringBuffer = stringBuffer;
+        this.passContextToDecode = passContextToDecode;
         
         this.indexToTypeName = new TypeName[typeNameToIndex.size()];
         
@@ -59,9 +73,15 @@ public final class EncodedCompilationUnit {
         return astBuffer.getParseTreeElement(parseTreeRef);
     }
     
-    public String getString(int astBufferOffset) {
+    
+    public String getStringFromASTBufferOffset(int astBufferOffset) {
         
         final int stringRef = astBuffer.getInt(astBufferOffset);
+        
+        return stringBuffer.getString(stringRef);
+    }
+
+    public String getStringFromRef(int stringRef) {
         
         return stringBuffer.getString(stringRef);
     }
@@ -81,12 +101,26 @@ public final class EncodedCompilationUnit {
     private static final int INDEX_END_OFFSET       = 20;
     private static final int INDEX_TEXT           = 24;
     
-    public Context getContext(int parseTreeRef) {
+    public Context getContextByStartElementRef(int parseTreeRef) {
         
-        final int index = parseTreeRefToContextHash.get(parseTreeRef);
+        final int index = parseTreeRefToStartContextHash.get(parseTreeRef);
+     
+        return getContextFromIndex(index);
+    }
+
+    public Context getContextByEndElementRef(int parseTreeRef) {
         
-        final ImmutableContext context = new ImmutableContext(
-                null,
+        final int index = parseTreeRefToEndContextHash.get(parseTreeRef);
+     
+        return getContextFromIndex(index);
+    }
+
+    public Context getContextFromIndex(int index) {
+        final ImmutableContext context;
+        
+        if (index >= 0) {
+            context = new ImmutableContext(
+                file,
                 contexts.getInt(index + INDEX_START_LINE),
                 contexts.getInt(index + INDEX_START_POS_IN_LINE),
                 contexts.getInt(index + INDEX_START_OFFSET),
@@ -94,13 +128,17 @@ public final class EncodedCompilationUnit {
                 contexts.getInt(index + INDEX_END_POS_IN_LINE),
                 contexts.getInt(index + INDEX_END_OFFSET),
                 getTokenStringFromIndex(index));
+        }
+        else {
+            context = null;
+        }
         
         return context;
     }
     
     public String getTokenString(int parseTreeRef) {
         
-        final int index = parseTreeRefToContextHash.get(parseTreeRef);
+        final int index = parseTreeRefToStartContextHash.get(parseTreeRef);
         
         return getTokenStringFromIndex(index);
     }
@@ -114,17 +152,125 @@ public final class EncodedCompilationUnit {
     
     public int getTokenOffset(int parseTreeRef) {
         
-        final int index = parseTreeRefToContextHash.get(parseTreeRef);
+        final int index = parseTreeRefToStartContextHash.get(parseTreeRef);
 
         return contexts.getInt(index + INDEX_START_OFFSET);
     }
     
     public int getTokenLength(int parseTreeRef) {
 
-        final int index = parseTreeRefToContextHash.get(parseTreeRef);
+        final int index = parseTreeRefToStartContextHash.get(parseTreeRef);
 
         return    contexts.getInt(index + INDEX_END_OFFSET)
                 - contexts.getInt(index + INDEX_START_OFFSET)
                 + 1;
+    }
+    
+    public <COMP_UNIT> COMP_UNIT iterate(ParserListener<COMP_UNIT> listener) {
+     
+        int parseTreeRef = 0;
+
+        final ParseTreeElementRef ref = new ParseTreeElementRef();
+        
+        final ContextGetter contextGetter;
+        
+        if (passContextToDecode) {
+            contextGetter = new ContextGetter() {
+                
+                @Override
+                public Context getElementContext(int parseTreeRef) {
+                    return EncodedCompilationUnit.this.getContextByStartElementRef(parseTreeRef);
+                }
+                
+                @Override
+                public Context getContextFromRef(int ref) {
+    
+                    return EncodedCompilationUnit.this.getContextFromIndex(ref);
+                }
+            };
+        }
+        else {
+            contextGetter = null;
+        }
+        
+        COMP_UNIT compUnit = null;
+        
+        do {
+            astBuffer.getParseTreeElement(parseTreeRef, ref);
+            
+            final Context context;
+            
+            if (passContextToDecode) {
+                if (ref.isStart) {
+                    context = getContextByStartElementRef(parseTreeRef);
+                }
+                else {
+                    context = getContextByEndElementRef(parseTreeRef);
+                }
+            }
+            else {
+                context = null;
+            }
+            
+            switch (ref.element) {
+            
+            case COMPILATION_UNIT:
+                if (ref.isStart) {
+                    listener.onCompilationUnitStart(context);
+                }
+                else {
+                    compUnit = listener.onCompilationUnitEnd(context);
+                }
+                break;
+            
+            case NAMESPACE:
+                if (ref.isStart) {
+                    AST.decodeNamespaceStart(astBuffer, contextGetter, parseTreeRef, listener);
+                }
+                else {
+                    AST.decodeNamespaceEnd(context, listener);
+                }
+                break;
+                
+                
+            case NAMESPACE_PART:
+                if (ref.isStart) {
+                    AST.decodeNamespacePart(astBuffer, context, parseTreeRef, listener);
+                }
+                break;
+                
+            case IMPORT:
+                if (ref.isStart) {
+                    AST.decodeImportStart(astBuffer, contextGetter, parseTreeRef, listener);
+                }
+                else {
+                    AST.decodeImportEnd(astBuffer, context, parseTreeRef, listener);
+                }
+                break;
+                
+            case IMPORT_NAME_PART:
+                if (ref.isStart) {
+                    AST.decodeImportNamePart(
+                             astBuffer,
+                            context,
+                            parseTreeRef,
+                            listener);
+                }
+                else {
+                    throw new UnsupportedOperationException();
+                }
+                break;
+                
+            default:
+                throw new UnsupportedOperationException("element " + ref.element);
+            }
+            
+            parseTreeRef += ref.isStart
+                    ? AST.sizeStart(ref.element)
+                    : AST.sizeEnd(ref.element);
+        }
+        while (compUnit == null);
+
+        return compUnit;
     }
 }

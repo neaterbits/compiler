@@ -53,15 +53,23 @@ public final class ImportName extends BaseASTElement {
 	}
 
 	public NamespaceReference getNamespace() {
-		return new NamespaceReference(typeImport.getNamespace());
+		return typeImport.getNamespace() != null
+		        ? new NamespaceReference(typeImport.getNamespace())
+                : null;
 	}
 
 	public ClassOrInterfaceName getTypeName() {
-		return new ClassOrInterfaceName(typeImport.getTypeName());
+		return typeImport.getTypeName() != null
+		        ? new ClassOrInterfaceName(typeImport.getTypeName())
+                : null;
 	}
 
 	public String[] getNamespaceOrTypeName() {
 		return typeImport.getNamespaceOrTypeName();
+	}
+	
+	public boolean isOnDemandImport() {
+	    return typeImport.isOnDemandImport();
 	}
 
 	public boolean isMethodImport() {
@@ -88,7 +96,7 @@ public final class ImportName extends BaseASTElement {
 
 	@Override
 	public ParseTreeElement getParseTreeElement() {
-		return ParseTreeElement.IMPORT_NAME;
+		return ParseTreeElement.IMPORT_NAME_PART;
 	}
 
 	@Override

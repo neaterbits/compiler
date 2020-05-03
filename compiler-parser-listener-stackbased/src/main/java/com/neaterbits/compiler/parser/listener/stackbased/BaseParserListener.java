@@ -480,6 +480,8 @@ public abstract class BaseParserListener<
 	@Override
 	public final void onImportStart(Context context, long importKeyword, Context importKeywordContext, long staticKeyword, Context staticKeywordContext) {
 		
+	    logEnter(context);
+	    
 		Objects.requireNonNull(importKeyword);
 
 		final String importKeywordString = stringSource.asString(importKeyword);
@@ -487,19 +489,26 @@ public abstract class BaseParserListener<
 		
 		push(new StackImport<>(logger, importKeywordString, importKeywordContext, staticKeywordString, staticKeywordContext));
 		
+		logExit(context);
 	}
 
 	@Override
 	public final void onImportIdentifier(Context context, long identifier) {
 		
+	    logEnter(context);
+	    
 		final StackImport<IDENTIFIER> stackImport = get();
 		
 		stackImport.addIdentifier(parseTreeFactory.createIdentifier(context, stringSource.asString(identifier)));
+		
+		logExit(context);
 	}
 		
 	@Override
 	public final void onImportEnd(Context context, boolean ondemand) {
 		
+	    logEnter(context);
+	    
 		final StackImport<IDENTIFIER> stackImport = pop();
 		
 		final StackCompilationUnit<COMPILATION_CODE, IMPORT> stackCompilationUnit = get(StackCompilationUnit.class);
@@ -514,6 +523,8 @@ public abstract class BaseParserListener<
 				ondemand);
 		
 		stackCompilationUnit.addImport(importStatement);
+		
+		logExit(context);
 	}
 
 	@Override

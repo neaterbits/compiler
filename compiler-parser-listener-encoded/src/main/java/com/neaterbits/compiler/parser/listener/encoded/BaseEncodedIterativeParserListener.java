@@ -8,8 +8,8 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
     extends BaseInfixParserListener<COMPILATION_UNIT>
     implements IterativeParserListener<COMPILATION_UNIT> {
 
-    protected BaseEncodedIterativeParserListener(Tokenizer tokenizer) {
-        super(tokenizer);
+    protected BaseEncodedIterativeParserListener(String file, Tokenizer tokenizer) {
+        super(file, tokenizer);
     }
 
     @Override
