@@ -9,6 +9,7 @@ import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.util.io.loadstream.SimpleLoadStream;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.parse.Lexer;
+import com.neaterbits.util.parse.ParserException;
 import com.test.util.io.buffers.StringBuffers;
 
 public final class JavaParser<COMPILATION_UNIT> {
@@ -22,7 +23,7 @@ public final class JavaParser<COMPILATION_UNIT> {
         this.createListener = createListener;
     }
     
-    public COMPILATION_UNIT parse(String file, InputStream inputStream) throws IOException, ParseException {
+    public COMPILATION_UNIT parse(String file, InputStream inputStream) throws IOException, ParserException {
 
         Objects.requireNonNull(inputStream);
         

@@ -11,6 +11,10 @@ import com.neaterbits.compiler.ast.objects.CompilationCode;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.Namespace;
+import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.util.typedefinition.Subclassing;
+import com.neaterbits.util.parse.ParserException;
 
 public abstract class BaseJavaParserTest {
 
@@ -18,10 +22,10 @@ public abstract class BaseJavaParserTest {
         BaseASTElement.REQUIRE_CONTEXT = false;
     }
 
-    abstract CompilationUnit parse(String source) throws IOException, ParseException;
+    abstract CompilationUnit parse(String source) throws IOException, ParserException;
 
     @Test
-    public void testParseNamespace() throws IOException, ParseException {
+    public void testParseNamespace() throws IOException, ParserException {
         
         final String source = "package com.test;\n";
         
@@ -39,7 +43,7 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
-    public void testParseClassImport() throws IOException, ParseException {
+    public void testParseClassImport() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
                 + ""
@@ -64,7 +68,7 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
-    public void testParsePackageOnDemandImport() throws IOException, ParseException {
+    public void testParsePackageOnDemandImport() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
                 + ""
@@ -86,7 +90,7 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
-    public void testParseClassOnDemandImport() throws IOException, ParseException {
+    public void testParseClassOnDemandImport() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
                 + ""
@@ -108,7 +112,7 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
-    public void testParseStaticOnDemandStaticImport() throws IOException, ParseException {
+    public void testParseStaticOnDemandStaticImport() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
                 + ""
@@ -132,7 +136,7 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
-    public void testParseStaticMethodStaticImport() throws IOException, ParseException {
+    public void testParseStaticMethodStaticImport() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
                 + ""
@@ -156,4 +160,182 @@ public abstract class BaseJavaParserTest {
         assertThat(importEntry.getPackage().getNamespace().getParts()[2]).isEqualTo("importtest");
     }
 
+    @Test
+    public void testParseClassWithoutModifiers() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseFinalClass() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "final class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().hasModifier(Subclassing.FINAL)).isTrue();
+        assertThat(classDefinition.getModifiers().count()).isEqualTo(1);
+
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseAbstractClass() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "abstract class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().hasModifier(Subclassing.ABSTRACT)).isTrue();
+        assertThat(classDefinition.getModifiers().count()).isEqualTo(1);
+
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParsePublicClass() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "public class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().hasModifier(ClassVisibility.PUBLIC)).isTrue();
+        assertThat(classDefinition.getModifiers().count()).isEqualTo(1);
+
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParsePublicFinalClass() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "public final class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().hasModifier(ClassVisibility.PUBLIC)).isTrue();
+        assertThat(classDefinition.getModifiers().hasModifier(Subclassing.FINAL)).isTrue();
+        assertThat(classDefinition.getModifiers().count()).isEqualTo(2);
+
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseFinalPublicClass() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "final public class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().hasModifier(ClassVisibility.PUBLIC)).isTrue();
+        assertThat(classDefinition.getModifiers().hasModifier(Subclassing.FINAL)).isTrue();
+        assertThat(classDefinition.getModifiers().count()).isEqualTo(2);
+
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParsePublicAbstractClass() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "public abstract class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().hasModifier(ClassVisibility.PUBLIC)).isTrue();
+        assertThat(classDefinition.getModifiers().hasModifier(Subclassing.ABSTRACT)).isTrue();
+        assertThat(classDefinition.getModifiers().count()).isEqualTo(2);
+
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseAbstractPublicClass() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "abstract public class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().hasModifier(ClassVisibility.PUBLIC)).isTrue();
+        assertThat(classDefinition.getModifiers().hasModifier(Subclassing.ABSTRACT)).isTrue();
+        assertThat(classDefinition.getModifiers().count()).isEqualTo(2);
+
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
 }

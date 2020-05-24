@@ -179,23 +179,27 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeStartElementContext(context);
         
-        writeOtherContext(classKeywordContext);
+        final int classKeywordContextRef = writeOtherContext(classKeywordContext);
         
-        writeOtherContext(nameContext);
+        final int nameContextRef = writeOtherContext(nameContext);
         
-        AST.encodeClassStart(astBuffer);
+        AST.encodeClassStart(astBuffer, classKeyword, classKeywordContextRef, name, nameContextRef);
     }
 
     @Override
     public final void onVisibilityClassModifier(Context context, ClassVisibility visibility) {
+        
+        writeStartElementContext(context);
 
-        throw new UnsupportedOperationException();
+        AST.encodeVisibilityClassModifier(astBuffer, visibility);
     }
 
     @Override
     public final void onSubclassingModifier(Context context, Subclassing subclassing) {
 
-        throw new UnsupportedOperationException();
+        writeStartElementContext(context);
+
+        AST.encodeSubclassingModifier(astBuffer, subclassing);
     }
 
     @Override
@@ -226,7 +230,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onClassEnd(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeClassEnd(astBuffer);
     }
 
     @Override

@@ -214,6 +214,14 @@ final class ASTBufferImpl implements ASTBuffer {
     }
 
     @Override
+    public <T extends Enum<T>> T getEnumByte(int index, Class<T> type) {
+
+        final int ordinal = getByte(index);
+        
+        return type.getEnumConstants()[ordinal];
+    }
+
+    @Override
     public boolean hasContextRef(int index) {
 
         return getInt(index) != AST.NO_CONTEXTREF;

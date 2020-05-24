@@ -134,7 +134,7 @@ public final class ASTMutableList<T extends ASTNode> extends ASTList<T> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	T get(int index) {
+	T getAt(int index) {
 		
 		if (index < 0) {
 			throw new IllegalArgumentException("index < 0");

@@ -75,11 +75,27 @@ final class StringASTBuffer {
         astBuffer.writeBoolean(value);
     }
     
+    <T extends Enum<T>> void writeEnumByte(Enum<T> enumValue) {
+        
+        final int ordinal = enumValue.ordinal();
+        
+        if (ordinal > 127) {
+            throw new IllegalArgumentException();
+        }
+        
+        astBuffer.writeByte((byte)ordinal);
+    }
+    
     ASTBufferRead getASTReadBuffer() {
         return astBuffer;
     }
 
     MapStringStorageBuffer getStringBuffer() {
         return stringBuffer;
+    }
+
+    @Override
+    public String toString() {
+        return "StringASTBuffer [astBuffer=" + astBuffer.getWritePos() + "]";
     }
 }

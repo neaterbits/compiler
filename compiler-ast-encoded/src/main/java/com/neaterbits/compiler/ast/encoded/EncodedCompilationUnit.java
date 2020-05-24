@@ -261,6 +261,24 @@ public final class EncodedCompilationUnit {
                 }
                 break;
                 
+            case CLASS_DEFINITION:
+                if (ref.isStart) {
+                    AST.decodeClassStart(astBuffer, contextGetter, parseTreeRef, listener);
+                }
+                else {
+                    AST.decodeClassEnd(astBuffer, context, listener);
+                }
+                break;
+                
+            case CLASS_MODIFIER_HOLDER:
+                if (ref.isStart) {
+                    AST.decodeClassModifierHolder(astBuffer, context, parseTreeRef, listener);
+                }
+                else {
+                    throw new UnsupportedOperationException();
+                }
+                break;
+                
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }

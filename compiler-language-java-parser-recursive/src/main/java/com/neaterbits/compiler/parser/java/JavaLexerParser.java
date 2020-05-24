@@ -5,11 +5,14 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ImmutableContext;
+import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
+import com.neaterbits.util.parse.ParserException;
 
 final class JavaLexerParser<COMPILATION_UNIT> {
 
@@ -33,7 +36,7 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         this.context = new LexerContext(file, lexer, tokenizer);
     }
 
-    COMPILATION_UNIT parse() throws IOException, ParseException {
+    COMPILATION_UNIT parse() throws IOException, ParserException {
         
         return parseCompilationUnit();
     }
@@ -47,17 +50,32 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         return lexer.getStringRef(0, 0);
     }
     
-    private static JavaToken [] IMPORT_OR_CLASS_OR_EOF = new JavaToken [] {
+    private static JavaToken [] IMPORT_OR_TYPE_OR_EOF = new JavaToken [] {
             JavaToken.IMPORT,
+            
+            JavaToken.PUBLIC,
+            JavaToken.FINAL,
+            JavaToken.ABSTRACT,
+            
             JavaToken.CLASS,
             JavaToken.EOF
     };
 
-    private COMPILATION_UNIT parseCompilationUnit() throws IOException, ParseException {
+    private static JavaToken [] TYPE_OR_EOF = new JavaToken [] {
+
+            JavaToken.PUBLIC,
+            JavaToken.FINAL,
+            JavaToken.ABSTRACT,
+            
+            JavaToken.CLASS,
+            JavaToken.EOF
+    };
+
+    private COMPILATION_UNIT parseCompilationUnit() throws IOException, ParserException {
 
         listener.onCompilationUnitStart(context);
 
-        final JavaToken token = lexer.lexSkipWS(JavaToken.PACKAGE);
+        JavaToken token = lexer.lexSkipWS(JavaToken.PACKAGE);
 
         if (token != JavaToken.NONE) {
 
@@ -68,25 +86,99 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         // Either import or class
         boolean done = false;
         
+        long modifierClassVisibilityKeyword = StringRef.STRING_NONE;
+        ClassVisibility classVisibility = null;
+        ImmutableContext modifierClassVisibilityKeywordContext = null;
+        
+        long modifierSubclassingKeyword = StringRef.STRING_NONE;
+        Subclassing subclassing = null;
+        ImmutableContext modifierSubclassingKeywordContext = null;
+        
         do {
-            final JavaToken importOrClass = lexer.lexSkipWS(IMPORT_OR_CLASS_OR_EOF);
+            token = lexer.lexSkipWS(IMPORT_OR_TYPE_OR_EOF);
             
-            switch (importOrClass) {
+            switch (token) {
             case IMPORT:
                 parseImport(getStringRef(), getCurrentContext());
                 break;
                 
+            case PUBLIC:
+            case ABSTRACT:
+            case FINAL:
             case CLASS:
-                break;
-                
-            default:
+            case EOF:
                 done = true;
                 break;
+
+            default:
+                throw lexer.unexpectedToken();
             }
             
+        } while (!done);
+
+        done = false;
+        
+        do {
+            // token might be set from while scanning for imports
+            switch (token) {
             
-        } while(!done);
+            case PUBLIC:
+                classVisibility = ClassVisibility.PUBLIC;
+                modifierClassVisibilityKeyword = getStringRef();
+                modifierClassVisibilityKeywordContext = getCurrentContext();
+                break;
                 
+            case ABSTRACT:
+                if (modifierSubclassingKeyword != StringRef.STRING_NONE) {
+                    throw lexer.unexpectedToken();
+                }
+                
+                subclassing = Subclassing.ABSTRACT;
+                modifierSubclassingKeyword = getStringRef();
+                modifierSubclassingKeywordContext = getCurrentContext();
+                break;
+                
+            case FINAL:
+                if (modifierSubclassingKeyword != StringRef.STRING_NONE) {
+                    throw lexer.unexpectedToken();
+                }
+                
+                subclassing = Subclassing.FINAL;
+                modifierSubclassingKeyword = getStringRef();
+                modifierSubclassingKeywordContext = getCurrentContext();
+                break;
+                
+            case CLASS:
+                parseClass(
+                        getStringRef(),
+                        getCurrentContext(),
+                        modifierClassVisibilityKeyword,
+                        classVisibility,
+                        modifierClassVisibilityKeywordContext,
+                        modifierSubclassingKeyword,
+                        subclassing,
+                        modifierSubclassingKeywordContext);
+
+                if (lexer.lexSkipWS(JavaToken.EOF) != JavaToken.EOF) {
+                    throw lexer.unexpectedToken();
+                }
+             
+                done = true;
+                break;
+                
+            case EOF:
+                done = true;
+                break;
+
+            default:
+                throw lexer.unexpectedToken();
+            }
+
+            if (!done) {
+                token = lexer.lexSkipWS(TYPE_OR_EOF);
+            }
+
+        } while(!done);
 
         return listener.onCompilationUnitEnd(context);
     }
@@ -96,7 +188,9 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             JavaToken.SEMI
     };
     
-    private void parsePackageNameAndSemiColon(long namespaceKeyword, Context namespaceKeywordContext) throws IOException, ParseException {
+    private void parsePackageNameAndSemiColon(
+            long namespaceKeyword,
+            Context namespaceKeywordContext) throws IOException, ParserException {
 
         listener.onNamespaceStart(
                 null,
@@ -119,11 +213,11 @@ final class JavaLexerParser<COMPILATION_UNIT> {
                 break;
             }
             else if (nextToken == JavaToken.NONE) {
-                throw new ParseException("Neither period nor semicolon at end of package declaration");
+                throw new ParserException("Neither period nor semicolon at end of package declaration");
             }
             else {
                 if (nextToken != JavaToken.PERIOD) {
-                    throw new IllegalStateException();
+                    throw lexer.unexpectedToken();
                 }
             }
         }
@@ -144,7 +238,7 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             JavaToken.ASTERISK
     };
     
-    private void parseImport(long importKeyword, ImmutableContext importKeywordContext) throws IOException, ParseException {
+    private void parseImport(long importKeyword, ImmutableContext importKeywordContext) throws IOException, ParserException {
         
         final JavaToken staticOrIdentifiertoken = lexer.lexSkipWS(IMPORT_STATIC_OR_IDENTIFIER);
         
@@ -183,10 +277,17 @@ final class JavaLexerParser<COMPILATION_UNIT> {
                 final JavaToken identifierToken = lexer.lexSkipWS(IMPORT_IDENTIFIER_OR_ASTERISK);
 
                 if (identifierToken == JavaToken.NONE) {
+                    if (lexer.lexSkipWS(JavaToken.SEMI) != JavaToken.SEMI) {
+                        throw lexer.unexpectedToken();
+                    }
                     break;
                 }
                 else if (identifierToken == JavaToken.ASTERISK) {
                     ondemand = true;
+
+                    if (lexer.lexSkipWS(JavaToken.SEMI) != JavaToken.SEMI) {
+                        throw lexer.unexpectedToken();
+                    }
                     break;
                 }
                 
@@ -202,7 +303,7 @@ final class JavaLexerParser<COMPILATION_UNIT> {
                 break;
             }
             else if (nextToken == JavaToken.NONE) {
-                throw new ParseException("Neither period nor semicolon at end of package declaration");
+                throw new ParserException("Neither period nor semicolon at end of package declaration");
             }
             else {
                 if (nextToken != JavaToken.PERIOD) {
@@ -212,5 +313,77 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         }
         
         listener.onImportEnd(null, ondemand);
+    }
+    
+    private static final JavaToken [] AFTER_CLASSNAME = new JavaToken [] {
+            JavaToken.LT, // generics type start
+            JavaToken.EXTENDS,
+            JavaToken.IMPLEMENTS,
+            JavaToken.LBRACE
+    };
+    
+    private void parseClass(
+            long classKeyword,
+            Context classKeywordContext,
+            long modifierClassVisibilityKeyword,
+            ClassVisibility classVisibility,
+            Context modifierClassVisibilityKeywordContext,
+            long modifierSubclassingKeyword,
+            Subclassing subclassing,
+            Context modifierSubclassingKeywordContext) throws IOException, ParserException {
+        
+        final JavaToken classNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+        if (classNameToken != JavaToken.IDENTIFIER) {
+            throw lexer.unexpectedToken();
+        }
+        
+        // Initial context of class is either class visibility or subclassing or class keyword
+        final Context classStartContext;
+        
+        if (modifierClassVisibilityKeywordContext != null && modifierSubclassingKeywordContext != null) {
+            
+            classStartContext = modifierClassVisibilityKeywordContext.getStartOffset() < modifierSubclassingKeywordContext.getStartOffset()
+                    ? modifierClassVisibilityKeywordContext
+                    : modifierSubclassingKeywordContext;
+        }
+        else if (modifierClassVisibilityKeywordContext != null) {
+            classStartContext = modifierClassVisibilityKeywordContext;
+        }
+        else if (modifierSubclassingKeywordContext != null) {
+            classStartContext = modifierSubclassingKeywordContext;
+        }
+        else {
+            classStartContext = classKeywordContext;
+        }
+        
+        listener.onClassStart(classStartContext, classKeyword, classKeywordContext, getStringRef(), getCurrentContext());
+        
+        if (modifierClassVisibilityKeyword != StringRef.STRING_NONE) {
+            listener.onVisibilityClassModifier(modifierClassVisibilityKeywordContext, classVisibility);
+        }
+        
+        if (modifierSubclassingKeyword != StringRef.STRING_NONE) {
+            listener.onSubclassingModifier(modifierSubclassingKeywordContext, subclassing);
+        }
+
+        final JavaToken afterClassName = lexer.lexSkipWS(AFTER_CLASSNAME);
+        
+        switch (afterClassName) {
+        case LBRACE:
+            parseClassBody();
+            break;
+            
+        default:
+            throw lexer.unexpectedToken();
+        }
+        
+        listener.onClassEnd(null);
+    }
+    
+    private void parseClassBody() throws IOException, ParserException {
+        
+        if (lexer.lexSkipWS(JavaToken.RBRACE) != JavaToken.RBRACE) {
+            throw lexer.unexpectedToken();
+        }
     }
 }

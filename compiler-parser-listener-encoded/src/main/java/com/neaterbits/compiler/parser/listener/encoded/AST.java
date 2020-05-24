@@ -5,6 +5,9 @@ import java.util.Objects;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.typedefinition.ClassModifier;
+import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.util.io.strings.StringRef;
 
 public class AST {
@@ -59,7 +62,15 @@ public class AST {
         case NAMESPACE_PART:
             size = NAMESPACE_PART_SIZE;
             break;
+            
+        case CLASS_DEFINITION:
+            size = CLASS_START_SIZE;
+            break;
         
+        case CLASS_MODIFIER_HOLDER:
+            size = CLASS_MODIFIER_SIZE;
+            break;
+            
         default:
             size = 0; // ParseTreeElement
             break;
@@ -239,8 +250,100 @@ public class AST {
         listener.onNameSpaceEnd(context);
     }
 
-    static void encodeClassStart(StringASTBuffer astBuffer) {
+    private static final int CLASS_START_SIZE = 2 * (STRING_REF_SIZE + CONTEXT_REF_SIZE);
+
+    static void encodeClassStart(StringASTBuffer astBuffer, long classKeyword, int classKeywordContext, long name, int nameContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.CLASS_DEFINITION);
+        
+        astBuffer.writeStringRef(classKeyword);
+        astBuffer.writeContextRef(classKeywordContext);
+        
+        astBuffer.writeStringRef(name);
+        astBuffer.writeContextRef(nameContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeClassStart(
+            ASTBufferRead astBuffer,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final Context elementContext;
+        final Context classKeywordContext;
+        final Context nameContext;
+        
+        if (contextGetter != null) {
+            
+            elementContext = contextGetter.getElementContext(index);
+            
+            classKeywordContext = astBuffer.hasContextRef(index + 1 + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 1 + 4))
+                    : null;
+                    
+            nameContext = astBuffer.hasContextRef(index + 1 + 4 + 4 + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 1 + 4 + 4 + 4))
+                    : null;
+        }
+        else {
+            elementContext = null;
+            classKeywordContext = null;
+            nameContext = null;
+        }
+
+        listener.onClassStart(
+                elementContext,
+                astBuffer.getStringRef(index + 1),
+                classKeywordContext,
+                astBuffer.getStringRef(index + 1 + 4 + 4),
+                nameContext);
+    }
+
+    static void encodeClassEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.CLASS_DEFINITION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeClassEnd(ASTBufferRead astBuffer, Context context, ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onClassEnd(context);
+    }
+    
+    private static final int CLASS_MODIFIER_SIZE = 1 + 1;
+
+    static void encodeVisibilityClassModifier(StringASTBuffer astBuffer, ClassVisibility classVisibility) {
+
+        astBuffer.writeElementStart(ParseTreeElement.CLASS_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(ClassModifier.Type.VISIBILITY);
+        astBuffer.writeEnumByte(classVisibility);
+    }
+
+    static void encodeSubclassingModifier(StringASTBuffer astBuffer, Subclassing subclassing) {
+
+        astBuffer.writeElementStart(ParseTreeElement.CLASS_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(ClassModifier.Type.SUBCLASSING);
+        astBuffer.writeEnumByte(subclassing);
+    }
+
+    public static <COMPILATION_UNIT> void decodeClassModifierHolder(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        final ClassModifier.Type type = astBuffer.getEnumByte(index + 1, ClassModifier.Type.class);
+        
+        switch (type) {
+        case VISIBILITY:
+            listener.onVisibilityClassModifier(context, astBuffer.getEnumByte(index + 2, ClassVisibility.class));
+            break;
+            
+        case SUBCLASSING:
+            listener.onSubclassingModifier(context, astBuffer.getEnumByte(index + 2, Subclassing.class));
+            break;
+            
+         default:
+             throw new UnsupportedOperationException();
+        }
     }
 }

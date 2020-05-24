@@ -22,6 +22,8 @@ public interface ASTBufferRead {
     
     int getContextRef(int index);
     
+    <T extends Enum<T>> T getEnumByte(int index, Class<T> type);
+    
     ParseTreeElement getParseTreeElement(int index);
     
     public static class ParseTreeElementRef {

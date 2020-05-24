@@ -38,6 +38,8 @@ public enum JavaToken implements IToken {
     EXTENDS("extends"),
 
     FINAL("final"),
+    ABSTRACT("abstract"),
+    
     STATIC("static"),
 
     PUBLIC("public"),
@@ -58,6 +60,9 @@ public enum JavaToken implements IToken {
     SEMI(';'),
     COLON(':'),
     ASTERISK('*'),
+    
+    LT('<'),
+    GT('>'),
 
     DIGIT(CharTypeInteger.INSTANCE),
 

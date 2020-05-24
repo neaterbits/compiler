@@ -12,11 +12,12 @@ import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaType
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
+import com.neaterbits.util.parse.ParserException;
 
 public class TestJavaParserWithObjectParserListener extends BaseJavaParserTest {
-
+        
     @Override
-    CompilationUnit parse(String source) throws IOException, ParseException {
+    CompilationUnit parse(String source) throws IOException, ParserException {
 
         final InputStream inputStream = new ByteArrayInputStream(source.getBytes());
         

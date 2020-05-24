@@ -34,10 +34,21 @@ public abstract class BaseModifiers<MODIFIER, MODIFIER_HOLDER extends BaseModifi
 		return modifierHolder != null ? (T)modifierHolder.getDelegate() : null;
 	}
 	
+	public final boolean isEmpty() {
+	    return modifiers.isEmpty();
+	}
+	
+	public final int count() {
+	    return modifiers.size();
+	}
 	
 	public final boolean hasModifier(Class<? extends MODIFIER> cl) {
 		return getModifier(cl) != null;
 	}
+
+	public final boolean hasModifier(MODIFIER modifier) {
+        return modifiers.find(holder -> holder.getModifier().equals(modifier)) != null;
+    }
 
 	@Override
 	protected final void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
