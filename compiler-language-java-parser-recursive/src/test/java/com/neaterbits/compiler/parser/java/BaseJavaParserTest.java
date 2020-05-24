@@ -12,6 +12,7 @@ import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
+import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.util.parse.ParserException;
@@ -335,6 +336,32 @@ public abstract class BaseJavaParserTest {
 
         assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
         assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseClassExtends() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass extends OtherClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses().size()).isEqualTo(1);
+        
+        final ResolveLaterTypeReference typeRef = (ResolveLaterTypeReference)classDefinition.getExtendsClasses().get(0);
+        assertThat(typeRef.getScopedName().getScope()).isNull();
+        assertThat(typeRef.getScopedName().getName()).isEqualTo("OtherClass");
+
         assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
         assertThat(classDefinition.getMembers()).isEmpty();
     }

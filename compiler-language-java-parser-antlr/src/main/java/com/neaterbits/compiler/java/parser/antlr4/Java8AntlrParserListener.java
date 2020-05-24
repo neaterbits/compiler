@@ -271,8 +271,21 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterSuperclass(SuperclassContext ctx) {
 		delegate.onClassExtends(
 				context(ctx),
-				stringRef(ctx.keyword), context(ctx.keyword),
-				parseName(ctx.classType().getText()));
+				stringRef(ctx.keyword), context(ctx.keyword));
+		
+		if (Boolean.TRUE) {
+		    throw new UnsupportedOperationException("Not maintained for now");
+		}
+		else {
+		    /*
+            final ScopedName scopedName = parseName(ctx.classType().getText());
+            final String [] parts = scopedName.getParts();
+            
+    		for (String part : parts) {
+    		    delegate.onClassExtendsNamePart(null, -1L);
+    		}
+    		*/
+		}
 	}
 
 	@Override

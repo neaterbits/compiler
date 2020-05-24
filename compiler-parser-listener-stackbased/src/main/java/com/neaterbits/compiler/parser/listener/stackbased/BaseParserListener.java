@@ -54,6 +54,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackPrimaryList
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackResource;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackResourceList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackReturnType;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackScopedName;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackStaticInitializer;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackThrowStatement;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTryBlock;
@@ -635,24 +636,64 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onClassExtends(Context context, long extendsKeyword, Context extendsKeywordContext,
-			ScopedName className) {
+	public final void onClassExtendsStart(Context context, long extendsKeyword, Context extendsKeywordContext) {
 
 		logEnter(context);
 
-		final StackNamedClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER, CLASS_MODIFIER_HOLDER, TYPE_REFERENCE> stackNamedClass = get();
+		final StackNamedClass<
+		        COMPLEX_MEMBER_DEFINITION,
+		        CONSTRUCTOR_MEMBER,
+		        CLASS_METHOD_MEMBER,
+		        CLASS_MODIFIER_HOLDER,
+		        TYPE_REFERENCE> stackNamedClass = get();
 
 		stackNamedClass.setExtendsKeyword(stringSource.asString(extendsKeyword), extendsKeywordContext);
 
-		final TYPE_REFERENCE typeReference = parseTreeFactory.createResolveLaterTypeReference(context, className,
-				ReferenceType.NAME);
+		final StackScopedName stackScopedName = new StackScopedName(getLogger());
 
-		stackNamedClass.addExtendedClass(typeReference);
+		push(stackScopedName);
 
 		logExit(context);
 	}
-
+	
 	@Override
+    public void onClassExtendsNamePart(Context context, long identifier) {
+        
+	    logEnter(context);
+
+	    final StackScopedName stackScopedName = get();
+    
+	    stackScopedName.addPart(stringSource.asString(identifier), context);
+	    
+	    logExit(context);
+	}
+	
+
+    @Override
+    public void onClassExtendsEnd(Context context) {
+        
+        logEnter(context);
+
+        final StackScopedName stackScopedName = pop();
+
+        final StackNamedClass<
+                COMPLEX_MEMBER_DEFINITION,
+                CONSTRUCTOR_MEMBER,
+                CLASS_METHOD_MEMBER,
+                CLASS_MODIFIER_HOLDER,
+                TYPE_REFERENCE> stackNamedClass = get();
+                
+        final TYPE_REFERENCE typeReference = parseTreeFactory.createResolveLaterTypeReference(
+                stackScopedName.getNameContext(),
+                stackScopedName.getScopedName(),
+                ReferenceType.NAME);
+
+        stackNamedClass.addExtendedClass(typeReference);
+        
+        logExit(context);
+    }
+
+    @Override
 	public final void onClassImplements(Context context, ScopedName interfaceName) {
 
 		logEnter(context);

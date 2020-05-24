@@ -315,13 +315,6 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         listener.onImportEnd(null, ondemand);
     }
     
-    private static final JavaToken [] AFTER_CLASSNAME = new JavaToken [] {
-            JavaToken.LT, // generics type start
-            JavaToken.EXTENDS,
-            JavaToken.IMPLEMENTS,
-            JavaToken.LBRACE
-    };
-    
     private void parseClass(
             long classKeyword,
             Context classKeywordContext,
@@ -366,9 +359,29 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             listener.onSubclassingModifier(modifierSubclassingKeywordContext, subclassing);
         }
 
+        parseClassGenericsOrExtendsOrImplementsOrBody();
+        
+        listener.onClassEnd(null);
+    }
+    
+    private static final JavaToken [] AFTER_CLASSNAME = new JavaToken [] {
+            JavaToken.LT, // generics type start
+            JavaToken.EXTENDS,
+            JavaToken.IMPLEMENTS,
+            JavaToken.LBRACE
+    };
+
+    private void parseClassGenericsOrExtendsOrImplementsOrBody() throws IOException, ParserException {
+        
         final JavaToken afterClassName = lexer.lexSkipWS(AFTER_CLASSNAME);
         
         switch (afterClassName) {
+        case EXTENDS:
+            parseExtends();
+            
+            parseImplementsOrBody();
+            break;
+            
         case LBRACE:
             parseClassBody();
             break;
@@ -376,8 +389,66 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         default:
             throw lexer.unexpectedToken();
         }
+    }
+
+    private static final JavaToken [] AFTER_EXTENDS = new JavaToken [] {
+            JavaToken.IMPLEMENTS,
+            JavaToken.LBRACE
+    };
+
+    private void parseImplementsOrBody() throws IOException, ParserException {
         
-        listener.onClassEnd(null);
+        final JavaToken afterExtends = lexer.lexSkipWS(AFTER_EXTENDS);
+        
+        switch (afterExtends) {
+            
+        case LBRACE:
+            parseClassBody();
+            break;
+            
+        default:
+            throw lexer.unexpectedToken();
+        }
+    }
+    
+    private void parseExtends() throws IOException, ParserException {
+
+        final Context extendsContext = getCurrentContext();
+        
+        final long extendsKeyword = lexer.getStringRef();
+        
+        listener.onClassExtendsStart(
+                extendsContext,
+                extendsKeyword,
+                extendsContext);
+        
+        parseScopedName(listener::onClassExtendsNamePart);
+        
+        listener.onClassExtendsEnd(extendsContext);
+    }
+    
+    @FunctionalInterface
+    interface ScopedNamePart {
+        
+        void onPart(Context context, long identifier);
+    }
+    
+    private void parseScopedName(ScopedNamePart processPart) throws IOException, ParserException {
+
+        for (;;) {
+            final JavaToken identifierToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+            
+            processPart.onPart(getCurrentContext(), lexer.getStringRef());
+            
+            if (identifierToken == JavaToken.NONE) {
+                throw lexer.unexpectedToken();
+            }
+            
+            final JavaToken periodToken = lexer.lexSkipWS(JavaToken.PERIOD);
+            if (periodToken == JavaToken.NONE) {
+                break;
+            }
+        }
     }
     
     private void parseClassBody() throws IOException, ParserException {

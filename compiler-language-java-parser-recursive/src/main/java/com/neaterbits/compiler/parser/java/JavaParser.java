@@ -31,7 +31,7 @@ public final class JavaParser<COMPILATION_UNIT> {
         
         final IterativeParserListener<COMPILATION_UNIT> listener = createListener.apply(stringBuffers);
 
-        Lexer<JavaToken, CharInput> lexer = new Lexer<>(
+        final Lexer<JavaToken, CharInput> lexer = new Lexer<>(
                 stringBuffers,
                 JavaToken.class,
                 JavaToken.NONE,

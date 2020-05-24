@@ -278,6 +278,24 @@ public final class EncodedCompilationUnit {
                     throw new UnsupportedOperationException();
                 }
                 break;
+            
+            case CLASS_EXTENDS:
+                if (ref.isStart) {
+                    AST.decodeClassExtendsStart(astBuffer, contextGetter, parseTreeRef, listener);
+                }
+                else {
+                    AST.decodeClassExtendsEnd(astBuffer, context, listener);
+                }
+                break;
+                
+            case CLASS_EXTENDS_NAME_PART:
+                if (ref.isStart) {
+                    AST.decodeClassExtendsNamePart(astBuffer, context, parseTreeRef, listener);
+                }
+                else {
+                    throw new UnsupportedOperationException();
+                }
+                break;
                 
             default:
                 throw new UnsupportedOperationException("element " + ref.element);

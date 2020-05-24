@@ -50,27 +50,35 @@ public class AST {
         case IMPORT:
             size = IMPORT_START_SIZE;
             break;
-            
+
         case IMPORT_NAME_PART:
             size = IMPORT_PART_SIZE;
             break;
-            
+
         case NAMESPACE:
             size = NAMESPACE_START_SIZE;
             break;
-            
+
         case NAMESPACE_PART:
             size = NAMESPACE_PART_SIZE;
             break;
-            
+
         case CLASS_DEFINITION:
             size = CLASS_START_SIZE;
             break;
-        
+
         case CLASS_MODIFIER_HOLDER:
             size = CLASS_MODIFIER_SIZE;
             break;
-            
+
+        case CLASS_EXTENDS:
+            size = CLASS_EXTENDS_SIZE;
+            break;
+
+        case CLASS_EXTENDS_NAME_PART:
+            size = CLASS_EXTENDS_NAME_PART_SIZE;
+            break;
+
         default:
             size = 0; // ParseTreeElement
             break;
@@ -345,5 +353,75 @@ public class AST {
          default:
              throw new UnsupportedOperationException();
         }
+    }
+    
+    private static final int CLASS_EXTENDS_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+
+    static void encodeClassExtendsStart(StringASTBuffer astBuffer, long extendsKeyword, int extendsKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.CLASS_EXTENDS);
+        astBuffer.writeStringRef(extendsKeyword);
+        astBuffer.writeContextRef(extendsKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeClassExtendsStart(
+            ASTBufferRead astBuffer,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final Context elementContext;
+        final Context extendsKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            elementContext = contextGetter.getElementContext(index);
+            
+            extendsKeywordContext = astBuffer.hasContextRef(index + 1 + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 1 + 4))
+                    : null;
+        }
+        else {
+            elementContext = null;
+            extendsKeywordContext = null;
+        }
+
+        listener.onClassExtendsStart(
+                elementContext,
+                astBuffer.getStringRef(index + 1),
+                extendsKeywordContext);
+    }
+    
+    private static final int CLASS_EXTENDS_NAME_PART_SIZE = STRING_REF_SIZE;
+    
+    static void encodeClassExtendsNamePart(StringASTBuffer astBuffer, long identifier) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.CLASS_EXTENDS_NAME_PART);
+        
+        astBuffer.writeStringRef(identifier);
+    }
+
+    public static <COMPILATION_UNIT> void decodeClassExtendsNamePart(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onClassExtendsNamePart(
+                context,
+                astBuffer.getStringRef(index + 1));
+    }
+
+    static void encodeClassExtendsEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.CLASS_EXTENDS);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeClassExtendsEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onClassExtendsEnd(context);
     }
 }

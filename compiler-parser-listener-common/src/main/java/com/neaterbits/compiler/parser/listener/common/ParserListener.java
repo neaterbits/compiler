@@ -52,7 +52,11 @@ public interface ParserListener<COMPILATION_UNIT> {
 
 	void onStrictfpClassModifier(Context context);
 	
-	void onClassExtends(Context context, long extendsKeyword, Context extendsKeywordContext, ScopedName className);
+	void onClassExtendsStart(Context context, long extendsKeyword, Context extendsKeywordContext);
+
+	void onClassExtendsNamePart(Context context, long identifier);
+	
+	void onClassExtendsEnd(Context context);
 
 	void onClassImplements(Context context, ScopedName interfaceName);
 

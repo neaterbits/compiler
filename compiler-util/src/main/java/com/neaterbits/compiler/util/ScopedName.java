@@ -24,6 +24,19 @@ public final class ScopedName {
 				parts[parts.length - 1]);
 	}
 
+	public static ScopedName makeScopedName(List<String> parts) {
+        
+        Objects.requireNonNull(parts);
+        
+        if (parts.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        
+        return new ScopedName(
+                parts.size() > 1 ? parts.subList(0, parts.size() - 1) : null,
+                parts.get(parts.size() - 1));
+    }
+
 	public static ScopedName makeScopedName(String [] namespaceParts, String name) {
 
 		Objects.requireNonNull(namespaceParts);
