@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.parser.java;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -363,6 +364,99 @@ public abstract class BaseJavaParserTest {
         assertThat(typeRef.getScopedName().getName()).isEqualTo("OtherClass");
 
         assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseClassImplementsOne() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass implements SomeInterface { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        
+        assertThat(classDefinition.getImplementsInterfaces().size()).isEqualTo(1);
+        final ResolveLaterTypeReference typeRef = (ResolveLaterTypeReference)classDefinition.getImplementsInterfaces().get(0);
+        assertThat(typeRef.getScopedName().getScope()).isNull();
+        assertThat(typeRef.getScopedName().getName()).isEqualTo("SomeInterface");
+
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseClassImplementsMultiple() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass implements SomeInterface, AnotherInterface, com.test.YetAnInterface { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        
+        assertThat(classDefinition.getImplementsInterfaces().size()).isEqualTo(3);
+        
+        ResolveLaterTypeReference typeRef = (ResolveLaterTypeReference)classDefinition.getImplementsInterfaces().get(0);
+        assertThat(typeRef.getScopedName().getScope()).isNull();
+        assertThat(typeRef.getScopedName().getName()).isEqualTo("SomeInterface");
+        
+        typeRef = (ResolveLaterTypeReference)classDefinition.getImplementsInterfaces().get(1);
+        assertThat(typeRef.getScopedName().getScope()).isNull();
+        assertThat(typeRef.getScopedName().getName()).isEqualTo("AnotherInterface");
+
+        typeRef = (ResolveLaterTypeReference)classDefinition.getImplementsInterfaces().get(2);
+        assertThat(typeRef.getScopedName().getScope()).isEqualTo(Arrays.asList("com", "test"));
+        assertThat(typeRef.getScopedName().getName()).isEqualTo("YetAnInterface");
+        
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseClassExtendsAndImplements() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass extends OtherClass implements SomeInterface { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses().size()).isEqualTo(1);
+        
+        ResolveLaterTypeReference typeRef = (ResolveLaterTypeReference)classDefinition.getExtendsClasses().get(0);
+        assertThat(typeRef.getScopedName().getScope()).isNull();
+        assertThat(typeRef.getScopedName().getName()).isEqualTo("OtherClass");
+
+        assertThat(classDefinition.getImplementsInterfaces().size()).isEqualTo(1);
+        typeRef = (ResolveLaterTypeReference)classDefinition.getImplementsInterfaces().get(0);
+        assertThat(typeRef.getScopedName().getScope()).isNull();
+        assertThat(typeRef.getScopedName().getName()).isEqualTo("SomeInterface");
+        
         assertThat(classDefinition.getMembers()).isEmpty();
     }
 }

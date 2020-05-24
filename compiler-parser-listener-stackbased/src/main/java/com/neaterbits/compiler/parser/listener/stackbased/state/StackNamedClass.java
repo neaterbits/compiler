@@ -112,7 +112,7 @@ public final class StackNamedClass<
 		extendedClasses.add(extendedClass);
 	}
 
-	public void addImplementedInterface(TYPE_REFERENCE implementedInterface) {
+	public void addImplementedInterface(String implementsKeyword, Context implementsKeywordContext, TYPE_REFERENCE implementedInterface) {
 		Objects.requireNonNull(implementedInterface);
 
 		implementedInterfaces.add(implementedInterface);

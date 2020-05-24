@@ -290,8 +290,24 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterSuperinterfaces(com.neaterbits.compiler.java.Java8Parser.SuperinterfacesContext ctx) {
-		for (InterfaceTypeContext interfaceCtx : ctx.interfaceTypeList().interfaceType()) {
-			delegate.onClassImplements(context(ctx), parseName(interfaceCtx.getText()));
+
+        delegate.onClassImplementsStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
+
+        if (Boolean.TRUE) {
+            throw new UnsupportedOperationException("Not maintained for now");
+        }
+        else {
+            /*
+            for (InterfaceTypeContext interfaceCtx : ctx.interfaceTypeList().interfaceType()) {
+
+	            final ScopedName scopedName = parseName(ctx.classType().getText());
+	            final String [] parts = scopedName.getParts();
+	            
+	            for (String part : parts) {
+	                delegate.onClassImplementsNamePart(null, -1L);
+	            }
+	        }
+             */
 		}
 	}
 

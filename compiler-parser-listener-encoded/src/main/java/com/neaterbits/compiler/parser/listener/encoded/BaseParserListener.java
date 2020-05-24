@@ -240,9 +240,39 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onClassImplements(Context context, ScopedName interfaceName) {
+    public final void onClassImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext) {
 
-        throw new UnsupportedOperationException();
+        writeStartElementContext(context);
+        
+        final int implementsKeywordContextRef = writeOtherContext(implementsKeywordContext);
+        
+        AST.encodeClassImplementsStart(astBuffer, implementsKeyword, implementsKeywordContextRef);
+    }
+    
+    @Override
+    public void onClassImplementsTypeStart(Context context) {
+
+        AST.encodeClassImplementsTypeStart(astBuffer);
+    }
+
+    @Override
+    public void onClassImplementsNamePart(Context context, long identifier) {
+        
+        writeStartElementContext(context);
+
+        AST.encodeClassImplementsNamePart(astBuffer, identifier);
+    }
+
+    @Override
+    public void onClassImplementsTypeEnd(Context context) {
+
+        AST.encodeClassImplementsTypeEnd(astBuffer);
+    }
+
+    @Override
+    public void onClassImplementsEnd(Context context) {
+
+        AST.encodeClassImplementsEnd(astBuffer);
     }
 
     @Override

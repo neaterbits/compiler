@@ -58,8 +58,16 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onClassExtendsEnd(Context context);
 
-	void onClassImplements(Context context, ScopedName interfaceName);
+	void onClassImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext);
+	
+	void onClassImplementsTypeStart(Context context);
 
+    void onClassImplementsNamePart(Context context, long identifier);
+    
+    void onClassImplementsTypeEnd(Context context);
+    
+    void onClassImplementsEnd(Context context);
+	
 	void onClassEnd(Context context);
 
 	void onAnonymousClassStart(Context context);

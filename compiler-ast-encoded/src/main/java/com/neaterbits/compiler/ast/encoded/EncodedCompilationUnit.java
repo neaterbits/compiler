@@ -297,6 +297,33 @@ public final class EncodedCompilationUnit {
                 }
                 break;
                 
+            case CLASS_IMPLEMENTS:
+                if (ref.isStart) {
+                    AST.decodeClassImplementsStart(astBuffer, contextGetter, parseTreeRef, listener);
+                }
+                else {
+                    AST.decodeClassImplementsEnd(astBuffer, context, listener);
+                }
+                break;
+
+            case CLASS_IMPLEMENTS_TYPE:
+                if (ref.isStart) {
+                    AST.decodeClassImplementsTypeStart(astBuffer, context, listener);
+                }
+                else {
+                    AST.decodeClassImplementsTypeEnd(astBuffer, context, listener);
+                }
+                break;
+
+            case CLASS_IMPLEMENTS_NAME_PART:
+                if (ref.isStart) {
+                    AST.decodeClassImplementsNamePart(astBuffer, context, parseTreeRef, listener);
+                }
+                else {
+                    throw new UnsupportedOperationException();
+                }
+                break;
+
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }

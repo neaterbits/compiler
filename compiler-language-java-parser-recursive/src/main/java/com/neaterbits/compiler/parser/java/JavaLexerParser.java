@@ -382,6 +382,12 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             parseImplementsOrBody();
             break;
             
+        case IMPLEMENTS:
+            parseImplements();
+            
+            parseClassBody();
+            break;
+            
         case LBRACE:
             parseClassBody();
             break;
@@ -401,6 +407,12 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         final JavaToken afterExtends = lexer.lexSkipWS(AFTER_EXTENDS);
         
         switch (afterExtends) {
+        
+        case IMPLEMENTS:
+            parseImplements();
+            
+            parseClassBody();
+            break;
             
         case LBRACE:
             parseClassBody();
@@ -425,6 +437,43 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         parseScopedName(listener::onClassExtendsNamePart);
         
         listener.onClassExtendsEnd(extendsContext);
+    }
+    
+    private static final JavaToken [] AFTER_IMPLEMENTS_TYPE = new JavaToken [] {
+            JavaToken.LBRACE,
+            JavaToken.COMMA
+    };
+    
+    private void parseImplements() throws IOException, ParserException {
+        
+        final Context implementsContext = getCurrentContext();
+        
+        final long implementsKeyword = lexer.getStringRef();
+        
+        listener.onClassImplementsStart(implementsContext, implementsKeyword, implementsContext);
+    
+        for (;;) {
+
+            listener.onClassImplementsTypeStart(implementsContext);
+
+            parseScopedName(listener::onClassImplementsNamePart);
+
+            listener.onClassImplementsTypeEnd(implementsContext);
+
+            final JavaToken afterType = lexer.lexSkipWS(AFTER_IMPLEMENTS_TYPE);
+            
+            if (afterType == JavaToken.LBRACE) {
+                break;
+            }
+            else if (afterType == JavaToken.COMMA) {
+                // Continue
+            }
+            else {
+                throw lexer.unexpectedToken();
+            }
+        }
+        
+        listener.onClassImplementsEnd(implementsContext);
     }
     
     @FunctionalInterface

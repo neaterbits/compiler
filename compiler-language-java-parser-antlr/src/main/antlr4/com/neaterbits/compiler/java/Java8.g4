@@ -301,7 +301,7 @@ superclass
 	;
 
 superinterfaces
-	:	'implements' interfaceTypeList
+	:	keyword = 'implements' interfaceTypeList
 	;
 
 interfaceTypeList

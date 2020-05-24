@@ -155,9 +155,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	    delegate.onClassExtendsNamePart(context, identifier);
 	}
 	
-	public void onClassImplements(Context context, ScopedName interfaceName) {
-		delegate.onClassImplements(context, interfaceName);
+	public void onClassImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext) {
+		delegate.onClassImplementsStart(context, implementsKeyword, implementsKeywordContext);
 	}
+
+    public void onClassImplementsNamePart(Context context, long identifier) {
+        delegate.onClassImplementsNamePart(context, identifier);
+    }
 	
 	public void onClassEnd(Context context) {
 		delegate.onClassEnd(context);

@@ -37,6 +37,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackFinallyBloc
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackForInit;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackForStatement;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackForUpdate;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackImplements;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackImport;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackInitializerVariableDeclarationElement;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackInterface;
@@ -82,6 +83,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Variable
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ContextScopedName;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
@@ -694,21 +696,86 @@ public abstract class BaseParserListener<
     }
 
     @Override
-	public final void onClassImplements(Context context, ScopedName interfaceName) {
+	public final void onClassImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext) {
 
 		logEnter(context);
 
-		final StackNamedClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER, CLASS_MODIFIER_HOLDER, TYPE_REFERENCE> stackNamedClass = get();
-
-		final TYPE_REFERENCE typeReference = parseTreeFactory.createResolveLaterTypeReference(context, interfaceName,
-				ReferenceType.NAME);
-
-		stackNamedClass.addImplementedInterface(typeReference);
-
+		push(new StackImplements(getLogger(), implementsKeyword, implementsKeywordContext));
+		
 		logExit(context);
 	}
+    
+    @Override
+    public void onClassImplementsTypeStart(Context context) {
 
-	@Override
+        logEnter(context);
+
+        final StackScopedName stackScopedName = new StackScopedName(getLogger());
+
+        push(stackScopedName);
+
+        logExit(context);
+    }
+
+    @Override
+    public void onClassImplementsNamePart(Context context, long identifier) {
+        
+        logEnter(context);
+
+        final StackScopedName stackScopedName = get();
+    
+        stackScopedName.addPart(stringSource.asString(identifier), context);
+        
+        logExit(context);
+    }
+    
+    @Override
+    public void onClassImplementsTypeEnd(Context context) {
+
+        logEnter(context);
+
+        final StackScopedName stackScopedName = pop();
+
+        final StackImplements stackImplements = get();
+        
+        final ContextScopedName contextScopedName = new ContextScopedName(context, stackScopedName.getScopedName());
+        
+        stackImplements.add(contextScopedName);
+        
+        logExit(context);
+    }
+
+    @Override
+    public void onClassImplementsEnd(Context context) {
+        
+        logEnter(context);
+
+        final StackImplements stackImplements = pop();
+
+        final StackNamedClass<
+                COMPLEX_MEMBER_DEFINITION,
+                CONSTRUCTOR_MEMBER,
+                CLASS_METHOD_MEMBER,
+                CLASS_MODIFIER_HOLDER,
+                TYPE_REFERENCE> stackNamedClass = get();
+        
+        for (ContextScopedName contextScopedName : stackImplements.getList()) {
+            
+            final TYPE_REFERENCE typeReference = parseTreeFactory.createResolveLaterTypeReference(
+                    contextScopedName.getContext(),
+                    contextScopedName.getScopedName(),
+                    ReferenceType.NAME);
+    
+            stackNamedClass.addImplementedInterface(
+                    stringSource.asString(stackImplements.getImplementsKeyword()),
+                    stackImplements.getImplementsKeywordContext(),
+                    typeReference);
+        }
+        
+        logExit(context);
+    }
+
+    @Override
 	public final void onClassEnd(Context context) {
 
 		logEnter(context);
