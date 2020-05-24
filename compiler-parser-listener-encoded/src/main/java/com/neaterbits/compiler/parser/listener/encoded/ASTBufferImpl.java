@@ -23,14 +23,28 @@ final class ASTBufferImpl implements ASTBuffer {
     }
     
     private void writeUnsigned(int toWrite) {
-        
+     
         if (toWrite >= 256) {
             throw new IllegalArgumentException();
         }
         
         buffer[index ++] = (byte)toWrite;
     }
-    
+
+    private static int unsigned(byte value) {
+        
+        final int result;
+        
+        if (value < 0) {
+            result = 0xFF + value + 1;
+        }
+        else {
+            result = value;
+        }
+        
+        return result;
+    }
+
     @Override
     public int getWritePos() {
         return index;
@@ -57,8 +71,10 @@ final class ASTBufferImpl implements ASTBuffer {
         
         checkSpace(2);
         
-        writeUnsigned(value >>> 16);
-        writeUnsigned(value & 0x000000FF);
+        final short shifted = (short)(value >>> 8);
+        
+        writeUnsigned(shifted);
+        writeUnsigned(value & 0x00FF);
     }
 
     @Override
@@ -77,8 +93,8 @@ final class ASTBufferImpl implements ASTBuffer {
 
         checkSpace(8);
         
-        writeUnsigned((int)(value >>> 56));
-        writeUnsigned((int)(value >>> 48));
+        writeUnsigned((int)(value  >>> 56));
+        writeUnsigned((int)((value >>> 48) & 0x000000FF));
         writeUnsigned((int)((value >>> 40) & 0x000000FF));
         writeUnsigned((int)((value >>> 32) & 0x000000FF));
         writeUnsigned((int)((value >>> 24) & 0x000000FF));
@@ -158,27 +174,31 @@ final class ASTBufferImpl implements ASTBuffer {
     @Override
     public short getShort(int index) {
 
-        return (short)(((short)buffer[index]) << 8 | (short)buffer[index + 1]);
+        return (short)(((short)unsigned(buffer[index])) << 8 | (short)unsigned(buffer[index + 1]));
     }
 
     @Override
     public int getInt(int index) {
         
-        return buffer[index] << 24 | buffer[index + 1] << 16 | buffer[index + 2] << 8 | buffer[index + 3];
+        return 
+                  unsigned(buffer[index])     << 24 
+                | unsigned(buffer[index + 1]) << 16
+                | unsigned(buffer[index + 2]) << 8
+                | unsigned(buffer[index + 3]);
     }
 
     @Override
     public long getLong(int index) {
 
         return 
-                  (long)buffer[index] << 56
-                | (long)buffer[index + 1] << 48
-                | (long)buffer[index + 2] << 40
-                | (long)buffer[index + 3] << 32
-                | (long)buffer[index] << 24
-                | (long)buffer[index + 1] << 16
-                | (long)buffer[index + 2] << 8
-                | (long)buffer[index + 3];
+                  (long)unsigned(buffer[index])     << 56
+                | (long)unsigned(buffer[index + 1]) << 48
+                | (long)unsigned(buffer[index + 2]) << 40
+                | (long)unsigned(buffer[index + 3]) << 32
+                | (long)unsigned(buffer[index + 4]) << 24
+                | (long)unsigned(buffer[index + 5]) << 16
+                | (long)unsigned(buffer[index + 6]) << 8
+                | (long)unsigned(buffer[index + 7]);
     }
 
     @Override
