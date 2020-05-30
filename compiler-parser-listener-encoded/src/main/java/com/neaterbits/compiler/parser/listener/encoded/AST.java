@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.typedefinition.ClassModifier;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
@@ -87,6 +88,14 @@ public class AST {
             size = CLASS_IMPLEMENTS_NAME_PART_SIZE;
             break;
 
+        case SCALAR_TYPE_REFERENCE:
+            size = SCALAR_TYPE_REFERENCE_SIZE;
+            break;
+        
+        case VAR_NAME_DECLARATION:
+            size = VARIABLE_NAME_SIZE;
+            break;
+            
         default:
             size = 0; // ParseTreeElement
             break;
@@ -533,5 +542,97 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onClassImplementsTypeEnd(context);
+    }
+
+    static void encodeFieldDeclarationStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.CLASS_DATA_FIELD_MEMBER);
+    }
+
+    public static <COMPILATION_UNIT> void decodeFieldDeclarationStart(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onFieldDeclarationStart(context);
+    }
+
+    static void encodeFieldDeclarationEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.CLASS_DATA_FIELD_MEMBER);
+    }
+
+    public static <COMPILATION_UNIT> void decodeFieldDeclarationEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onFieldDeclarationEnd(context);
+    }
+
+    private static final int SCALAR_TYPE_REFERENCE_SIZE = STRING_REF_SIZE;
+    
+    static void encodeScalarTypeReference(StringASTBuffer astBuffer, long typeName) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.SCALAR_TYPE_REFERENCE);
+
+        astBuffer.writeStringRef(typeName);
+    }
+
+    public static <COMPILATION_UNIT> void decodeScalarTypeReference(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onNonScopedTypeReference(context, astBuffer.getStringRef(index), ReferenceType.SCALAR);
+    }
+
+    static void encodeVariableDeclaratorStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.VARIABLE_DECLARATION_ELEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeVariableDeclaratorStart(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onVariableDeclaratorStart(context);
+    }
+
+    static void encodeVariableDeclaratorEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.VARIABLE_DECLARATION_ELEMENT);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeVariableDeclaratorEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onVariableDeclaratorEnd(context);
+    }
+
+    private static final int VARIABLE_NAME_SIZE = STRING_REF_SIZE + 4;
+
+    static void encodeVariableName(StringASTBuffer astBuffer, long name, int numDims) {
+        
+        astBuffer.writeLeafElement(ParseTreeElement.VAR_NAME_DECLARATION);
+        
+        astBuffer.writeStringRef(name);
+        astBuffer.writeInt(numDims);
+    }
+
+    public static <COMPILATION_UNIT> void decodeVariableName(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onVariableName(
+                context,
+                astBuffer.getStringRef(index),
+                astBuffer.getInt(index + 4));
     }
 }

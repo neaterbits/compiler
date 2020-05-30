@@ -10,6 +10,7 @@ import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.util.io.strings.Tokenizer;
 
+
 public class JavaEncodedParserListener
     extends BaseEncodedIterativeParserListener<EncodedCompilationUnit> {
 

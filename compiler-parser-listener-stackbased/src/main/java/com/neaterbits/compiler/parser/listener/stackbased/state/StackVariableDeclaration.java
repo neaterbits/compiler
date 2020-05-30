@@ -20,7 +20,6 @@ public class StackVariableDeclaration<EXPRESSION, PRIMARY extends EXPRESSION, VA
 	@Override
 	public void init(String name, Context nameContext, int numDims) {
 		Objects.requireNonNull(name);
-		Objects.requireNonNull(nameContext);
 		
 		if (this.name != null) {
 			throw new IllegalStateException("Name already set");

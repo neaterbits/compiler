@@ -58,6 +58,11 @@ public final class ScopedName {
 		return new ScopedName(scope, name);
 	}
 	
+	public static ScopedName makeScopedName(String name) {
+	    
+	    return new ScopedName(null, name);
+	}
+	
 	public ScopedName(List<String> scope, String name) {
 		
 		Objects.requireNonNull(name);

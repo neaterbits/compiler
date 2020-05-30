@@ -1,10 +1,12 @@
 package com.neaterbits.compiler.parser.java;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ImmutableContext;
+import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
@@ -477,12 +479,12 @@ final class JavaLexerParser<COMPILATION_UNIT> {
     }
     
     @FunctionalInterface
-    interface ScopedNamePart {
+    interface OnScopedNamePart {
         
         void onPart(Context context, long identifier);
     }
     
-    private void parseScopedName(ScopedNamePart processPart) throws IOException, ParserException {
+    private void parseScopedName(OnScopedNamePart processPart) throws IOException, ParserException {
 
         for (;;) {
             final JavaToken identifierToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
@@ -502,8 +504,146 @@ final class JavaLexerParser<COMPILATION_UNIT> {
     
     private void parseClassBody() throws IOException, ParserException {
         
-        if (lexer.lexSkipWS(JavaToken.RBRACE) != JavaToken.RBRACE) {
+        do {
+            
+            parseMember();
+            
+        } while (lexer.lexSkipWS(JavaToken.RBRACE) != JavaToken.RBRACE);
+    }
+    
+    private static JavaToken [] MEMBER_START_TOKENS = new JavaToken [] {
+      
+            JavaToken.PRIVATE,
+            JavaToken.PUBLIC,
+            
+            JavaToken.LT, // generic method
+            
+            JavaToken.BYTE,
+            JavaToken.SHORT,
+            JavaToken.INT,
+            JavaToken.LONG,
+            JavaToken.FLOAT,
+            JavaToken.DOUBLE,
+            JavaToken.CHAR,
+
+            JavaToken.IDENTIFIER // type
+    };
+    
+    private void parseMember() throws IOException, ParserException {
+
+        final JavaToken initialToken = lexer.lexSkipWS(MEMBER_START_TOKENS);
+        
+        switch (initialToken) {
+        
+        case BYTE:
+        case SHORT:
+        case INT:
+        case LONG:
+        case FLOAT:
+        case DOUBLE:
+        case CHAR:
+            parseRestOfTypeAndFieldScalar(getCurrentContext(), getStringRef());
+            break;
+        
+        case IDENTIFIER:
+            // Probably a type, is it a scoped type?
+            final long typeName = lexer.getStringRef();
+            
+            parseRestOfTypeAndFieldScopedType(getCurrentContext(), typeName);
+            break;
+        
+        case NONE:
+            // Not a member variable or method
+            break;
+            
+        default:
             throw lexer.unexpectedToken();
         }
+    }
+    
+    private static final JavaToken [] AFTER_FIELD_NAME = new JavaToken [] {
+            
+            JavaToken.SEMI,
+            JavaToken.COMMA,
+            JavaToken.LBRACKET,
+            JavaToken.LPAREN
+    };
+
+    private void parseRestOfTypeAndFieldScalar(Context context, long typeName) throws IOException, ParserException {
+        
+        parseRestOfMember(typeName, null, ReferenceType.SCALAR);
+    }
+
+    private void parseRestOfTypeAndFieldScopedType(Context context, long typeName) throws IOException, ParserException {
+        
+        final JavaToken periodToken = lexer.lexSkipWS(JavaToken.PERIOD);
+        
+        if (periodToken == JavaToken.PERIOD) {
+            parseRestOfScopedName(typeName);
+        }
+        else {
+            parseRestOfMember(typeName, null, ReferenceType.REFERENCE);
+        }
+    }
+    
+    private void parseRestOfMember(long typeName, List<ScopedNamePart> scopedTypeName, ReferenceType referenceType) throws ParserException, IOException {
+
+        // Next should be the name of the field or member
+        final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+    
+        if (fieldNameToken != JavaToken.IDENTIFIER) {
+            throw lexer.unexpectedToken();
+        }
+        
+        final long identifier = getStringRef();
+        
+        final Context declaratorContext = getCurrentContext();
+        
+        // Next should be start of method, semicolon after type, array indicator or comma separated variables
+        final JavaToken afterFieldToken = lexer.lexSkipWS(AFTER_FIELD_NAME);
+        
+        switch (afterFieldToken) {
+        case SEMI:
+            // This is a field with a single variable name, like 'int a;'
+            listener.onFieldDeclarationStart(context);
+            
+            onType(declaratorContext, typeName, scopedTypeName, referenceType);
+
+            listener.onVariableDeclaratorStart(declaratorContext);
+            
+            listener.onVariableName(declaratorContext, identifier, 0);
+            
+            listener.onVariableDeclaratorEnd(declaratorContext);
+            
+            listener.onFieldDeclarationEnd(context);
+            break;
+            
+        default:
+            throw lexer.unexpectedToken();
+        }
+    }
+    
+    private void onType(Context context, long typeName, List<ScopedNamePart> scopedTypeName, ReferenceType referenceType) {
+        
+        if (typeName != StringRef.STRING_NONE) {
+            listener.onNonScopedTypeReference(context, typeName, referenceType);
+        }
+        else if (scopedTypeName != null) {
+            listener.onScopedTypeReferenceStart(context, referenceType);
+            
+            for (ScopedNamePart part : scopedTypeName) {
+                listener.onScopedTypeReferencePart(part.getContext(), part.getPart());
+            }
+            
+            listener.onScopedTypeReferenceEnd(context);
+        }
+        else {
+            throw new IllegalStateException();
+        }
+    }
+    
+    private void parseRestOfScopedName(long typeName) {
+        
+        throw new UnsupportedOperationException();
     }
 }

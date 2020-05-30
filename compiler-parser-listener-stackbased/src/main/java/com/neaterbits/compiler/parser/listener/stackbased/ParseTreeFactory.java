@@ -148,7 +148,9 @@ public interface ParseTreeFactory<
 	KEYWORD createKeyword(Context context, String name);
 
 	IDENTIFIER createIdentifier(Context context, String name);
-	
+
+    TYPE_REFERENCE createScalarTypeReference(Context context, String name);
+
 	TYPE_REFERENCE createResolveLaterTypeReference(Context context, ScopedName name, ReferenceType type);
 		
 	COMPILATION_UNIT createCompilationUnit(Context context, List<IMPORT> imports, List<COMPILATION_CODE> code);

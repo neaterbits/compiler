@@ -300,8 +300,14 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onVariableDeclaratorEnd(Context context);
 	
-	void onTypeReference(Context context, ScopedName name, ReferenceType referenceType);
+	void onNonScopedTypeReference(Context context, long name, ReferenceType referenceType);
 	
+	void onScopedTypeReferenceStart(Context context, ReferenceType referenceType);
+
+	void onScopedTypeReferencePart(Context context, long part);
+	
+	void onScopedTypeReferenceEnd(Context context);
+
 	void onExpressionStatementStart(Context context);
 	
 	void onExpressionStatementEnd(Context context);

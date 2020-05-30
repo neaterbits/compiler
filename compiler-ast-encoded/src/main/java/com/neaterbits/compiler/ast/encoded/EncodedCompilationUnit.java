@@ -324,6 +324,37 @@ public final class EncodedCompilationUnit {
                 }
                 break;
 
+            case CLASS_DATA_FIELD_MEMBER:
+                if (ref.isStart) {
+                    AST.decodeFieldDeclarationStart(astBuffer, context, listener);
+                }
+                else {
+                    AST.decodeFieldDeclarationEnd(astBuffer, context, listener);
+                }
+                break;
+                
+            case SCALAR_TYPE_REFERENCE:
+                if (ref.isStart) {
+                    AST.decodeScalarTypeReference(astBuffer, context, ref.index, listener);
+                }
+                else {
+                    throw new UnsupportedOperationException();
+                }
+                break;
+                
+            case VARIABLE_DECLARATION_ELEMENT:
+                if (ref.isStart) {
+                    AST.decodeVariableDeclaratorStart(astBuffer, context, listener);
+                }
+                else {
+                    AST.decodeVariableDeclaratorEnd(astBuffer, context, listener);
+                }
+                break;
+          
+            case VAR_NAME_DECLARATION:
+                AST.decodeVariableName(astBuffer, context, ref.index, listener);
+                break;
+
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }

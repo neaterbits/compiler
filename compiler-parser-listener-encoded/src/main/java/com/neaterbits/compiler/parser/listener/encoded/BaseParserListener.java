@@ -434,7 +434,9 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onFieldDeclarationStart(Context context) {
 
-        throw new UnsupportedOperationException();
+        writeStartElementContext(context);
+
+        AST.encodeFieldDeclarationStart(astBuffer);
     }
 
     @Override
@@ -470,7 +472,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onFieldDeclarationEnd(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeFieldDeclarationEnd(astBuffer);
     }
 
     @Override
@@ -937,17 +939,42 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onVariableDeclaratorStart(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeVariableDeclaratorStart(astBuffer);
     }
 
     @Override
     public final void onVariableDeclaratorEnd(Context context) {
 
+        AST.encodeVariableDeclaratorEnd(astBuffer);
+    }
+
+    @Override
+    public void onNonScopedTypeReference(Context context, long name, ReferenceType referenceType) {
+
+        switch (referenceType) {
+        case SCALAR:
+            AST.encodeScalarTypeReference(astBuffer, name);
+            break;
+            
+        default:
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    @Override
+    public void onScopedTypeReferenceStart(Context context, ReferenceType referenceType) {
+
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onTypeReference(Context context, ScopedName name, ReferenceType referenceType) {
+    public void onScopedTypeReferencePart(Context context, long part) {
+
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onScopedTypeReferenceEnd(Context context) {
 
         throw new UnsupportedOperationException();
     }
@@ -1063,7 +1090,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onVariableName(Context context, long name, int numDims) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeVariableName(astBuffer, name, numDims);
     }
 
     @Override

@@ -74,7 +74,12 @@ final class StringASTBuffer {
         
         astBuffer.writeBoolean(value);
     }
-    
+
+    void writeInt(int value) {
+        
+        astBuffer.writeInt(value);
+    }
+
     <T extends Enum<T>> void writeEnumByte(Enum<T> enumValue) {
         
         final int ordinal = enumValue.ordinal();

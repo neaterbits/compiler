@@ -56,6 +56,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackResource;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackResourceList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackReturnType;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackScopedName;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackScopedTypeReference;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackStaticInitializer;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackThrowStatement;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTryBlock;
@@ -2405,21 +2406,83 @@ public abstract class BaseParserListener<
 		logExit(context);
 	}
 
+    @Override
+    public final void onNonScopedTypeReference(Context context, long name, ReferenceType referenceType) {
+
+        logEnter(context);
+
+        Objects.requireNonNull(name);
+
+        final TypeReferenceSetter<TYPE_REFERENCE> typeReferenceSetter = get();
+        
+        final TYPE_REFERENCE typeReference;
+        
+        switch (referenceType) {
+        case SCALAR:
+            typeReference = parseTreeFactory.createScalarTypeReference(context, stringSource.asString(name));
+            break;
+            
+        default:
+            final ScopedName scopedName = ScopedName.makeScopedName(stringSource.asString(name));
+            
+            typeReference = parseTreeFactory.createResolveLaterTypeReference(
+                    context,
+                    scopedName,
+                    referenceType);
+            break;
+        }
+
+        typeReferenceSetter.setTypeReference(typeReference);
+
+        logExit(context);
+    }
+	
 	@Override
-	public final void onTypeReference(Context context, ScopedName name, ReferenceType referenceType) {
+	public final void onScopedTypeReferenceStart(Context context, ReferenceType referenceType) {
 
 		logEnter(context);
-
-		Objects.requireNonNull(name);
-
-		final TypeReferenceSetter<TYPE_REFERENCE> typeReferenceSetter = get();
-
-		typeReferenceSetter.setTypeReference(parseTreeFactory.createResolveLaterTypeReference(context, name, referenceType));
+		
+		push(new StackScopedTypeReference(getLogger(), referenceType));
+		
+		push(new StackScopedName(getLogger()));
 
 		logExit(context);
 	}
 
 	@Override
+    public void onScopedTypeReferencePart(Context context, long part) {
+
+	    logEnter(context);
+
+	    final StackScopedName stackScopedName = get();
+	            
+        stackScopedName.addPart(stringSource.asString(part), context);
+	    
+	    logExit(context);
+    }
+
+    @Override
+    public void onScopedTypeReferenceEnd(Context context) {
+
+        logEnter(context);
+        
+        final StackScopedName stackScopedName = pop();
+        
+        final StackScopedTypeReference stackScopedTypeReference = pop();
+        
+        final TypeReferenceSetter<TYPE_REFERENCE> typeReferenceSetter = get();
+
+        final TYPE_REFERENCE typeReference = parseTreeFactory.createResolveLaterTypeReference(
+                            context,
+                            stackScopedName.getScopedName(),
+                            stackScopedTypeReference.getReferenceType());
+        
+        typeReferenceSetter.setTypeReference(typeReference);
+        
+        logExit(context);
+    }
+
+    @Override
 	public final void onExpressionStatementStart(Context context) {
 
 		logEnter(context);

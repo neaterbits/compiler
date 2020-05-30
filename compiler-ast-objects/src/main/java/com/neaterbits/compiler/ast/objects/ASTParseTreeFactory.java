@@ -108,6 +108,7 @@ import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceName;
 import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifierHolder;
 import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.ArrayAccessReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
@@ -123,6 +124,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
@@ -343,6 +345,11 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
+    public TypeReference createScalarTypeReference(Context context, String name) {
+        return new ScalarTypeReference(context, new TypeName(null, null, name));
+    }
+
+    @Override
 	public TypeReference createResolveLaterTypeReference(Context context, ScopedName name, ReferenceType type) {
 		return new ResolveLaterTypeReference(context, name, type);
 	}

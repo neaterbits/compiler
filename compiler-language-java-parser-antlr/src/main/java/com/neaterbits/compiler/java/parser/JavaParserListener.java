@@ -723,17 +723,24 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 
 	public void onJavaPrimitiveType(Context context, JavaPrimitiveType type) {
-		delegate.onTypeReference(context, type.getScopedName(), ReferenceType.SCALAR);
+	    
+        throw new UnsupportedOperationException("Not maintained for now");
+	    
+		// delegate.onTypeReference(context, type.getScopedName(), ReferenceType.SCALAR);
 	}
 	
 	public void onJavaClassOrInterfaceReferenceType(Context context, ScopedName typeName) {
 
-		delegate.onTypeReference(context, typeName, ReferenceType.REFERENCE);
+	    throw new UnsupportedOperationException("Not maintained for now");
+
+		// delegate.onTypeReference(context, typeName, ReferenceType.REFERENCE);
 	}
 	
 	public void onJavaTypeVariableReferenceType(Context context, ScopedName typeName, ReferenceType referenceType) {
 
-		delegate.onTypeReference(context, typeName, referenceType);
+	    throw new UnsupportedOperationException("Not maintained for now");
+
+		// delegate.onTypeReference(context, typeName, referenceType);
 	}
 	
 	private Context updateElseIfContext(Context context, Token elseToken, String file) {
