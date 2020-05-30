@@ -106,43 +106,59 @@ final class ASTBufferImpl implements ASTBuffer {
     @Override
     public void writeElementStart(ParseTreeElement element) {
 
-        checkSpace(1);
-        
-        final int value = element.ordinal();
-        
-        if (value > Byte.MAX_VALUE) {
+        if (element.isLeaf()) {
             throw new IllegalArgumentException();
         }
         
-        writeByte((byte)value);
+        checkSpace(2);
+        
+        final int value = element.ordinal();
+        
+        if (value >= 256) {
+            throw new IllegalArgumentException();
+        }
+        
+        writeUnsigned(value);
+        
+        writeByte((byte)25); // start
     }
 
     @Override
     public void writeElementEnd(ParseTreeElement element) {
-        
-        checkSpace(1);
+
+        if (element.isLeaf()) {
+            throw new IllegalArgumentException();
+        }
+
+        checkSpace(2);
 
         final int value = element.ordinal();
         
-        if (value > Byte.MAX_VALUE) {
+        if (value >= 256) {
             throw new IllegalArgumentException();
         }
         
-        writeByte((byte) -value);
+        writeUnsigned(value);
+        
+        writeByte((byte)35); // end
     }
 
     @Override
     public void writeLeafElement(ParseTreeElement element) {
-    
+
+        if (!element.isLeaf()) {
+            throw new IllegalArgumentException();
+        }
+
         checkSpace(1);
         
         final int value = element.ordinal();
         
-        if (value > Byte.MAX_VALUE) {
+        if (value >= 256) {
             throw new IllegalArgumentException();
         }
         
-        writeByte((byte)value);
+        writeUnsigned(value);
     }
 
     @Override
@@ -248,15 +264,29 @@ final class ASTBufferImpl implements ASTBuffer {
     @Override
     public void getParseTreeElement(int index, ParseTreeElementRef ref) {
         
-        final byte b = buffer[index];
+        final int b = unsigned(buffer[index]);
         
-        if (b >= 0) {
-            ref.element = ParseTreeElement.values()[b];
+        ref.element = ParseTreeElement.values()[b];
+        
+        if (ref.element.isLeaf()) {
             ref.isStart = true;
+            ref.index = index + 1;
         }
         else {
-            ref.element = ParseTreeElement.values()[- b];
-            ref.isStart = false;
+            switch (buffer[index + 1]) {
+            case 25:
+                ref.isStart = true;
+                break;
+                
+            case 35:
+                ref.isStart = false;
+                break;
+                
+            default:
+                throw new IllegalStateException();
+            }
+    
+            ref.index = index + 1 + 1;
         }
     }
 }

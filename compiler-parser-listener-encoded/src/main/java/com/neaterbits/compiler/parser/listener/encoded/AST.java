@@ -92,7 +92,9 @@ public class AST {
             break;
         }
         
-        return size + 1;
+        return size + (element.isLeaf()
+                ? 1
+                : 1 + 1); // enum + start/end boolean
     }
 
     public static int sizeEnd(ParseTreeElement element) {
@@ -110,7 +112,9 @@ public class AST {
             break;
         }
         
-        return size + 1;
+        return size + (element.isLeaf()
+                ? 1
+                : 1 + 1); // enum + start/end boolean
     }
     
 
@@ -151,12 +155,12 @@ public class AST {
         if (contextGetter != null) {
             elementContext = contextGetter.getElementContext(index);
             
-            importKeywordContext = astBuffer.hasContextRef(index + 1 + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 1 + 4))
+            importKeywordContext = astBuffer.hasContextRef(index + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
                     : null;
 
-            staticKeywordContext = astBuffer.hasContextRef(index + 1 + 4 + 4 + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 1 + 4 + 4 + 4))
+            staticKeywordContext = astBuffer.hasContextRef(index + 4 + 4 + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4 + 4 + 4))
                     : null;
         }
         else {
@@ -167,9 +171,9 @@ public class AST {
         
         listener.onImportStart(
                 elementContext,
-                astBuffer.hasStringRef(index + 1) ? astBuffer.getInt(index + 1) : StringRef.STRING_NONE,
+                astBuffer.hasStringRef(index) ? astBuffer.getInt(index) : StringRef.STRING_NONE,
                 importKeywordContext,
-                astBuffer.hasStringRef(index + 1 + 4 + 4) ? astBuffer.getInt(index + 1 + 4 + 4) : StringRef.STRING_NONE,
+                astBuffer.hasStringRef(index + 4 + 4) ? astBuffer.getInt(index + 4 + 4) : StringRef.STRING_NONE,
                 staticKeywordContext);
     }
 
@@ -188,7 +192,7 @@ public class AST {
         
         listener.onImportIdentifier(
                 context,
-                astBuffer.getStringRef(index + 1));
+                astBuffer.getStringRef(index));
     }
 
     static void encodeImportEnd(StringASTBuffer astBuffer, boolean onDemand) {
@@ -200,7 +204,7 @@ public class AST {
     
     public static <COMPILATION_UNIT> void decodeImportEnd(ASTBufferRead astBuffer, Context context, int index, ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onImportEnd(context, astBuffer.getBoolean(index + 1));
+        listener.onImportEnd(context, astBuffer.getBoolean(index));
 
     }
 
@@ -220,8 +224,8 @@ public class AST {
         if (contextGetter != null) {
             elementContext = contextGetter.getElementContext(index);
             
-            namespaceKeywordContext = astBuffer.hasContextRef(index + 1 + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 1 + 4))
+            namespaceKeywordContext = astBuffer.hasContextRef(index + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
                     : null;
         }
         else {
@@ -231,7 +235,7 @@ public class AST {
         
         listener.onNamespaceStart(
                 elementContext,
-                astBuffer.hasStringRef(index + 1) ? astBuffer.getInt(index + 1) : StringRef.STRING_NONE,
+                astBuffer.hasStringRef(index) ? astBuffer.getInt(index) : StringRef.STRING_NONE,
                 namespaceKeywordContext);
     }
 
@@ -240,7 +244,7 @@ public class AST {
     
     static void encodeNamespacePart(StringASTBuffer astBuffer, long part) {
         
-        astBuffer.writeElementStart(ParseTreeElement.NAMESPACE_PART);
+        astBuffer.writeLeafElement(ParseTreeElement.NAMESPACE_PART);
         
         astBuffer.writeStringRef(part);
     }
@@ -253,7 +257,7 @@ public class AST {
         
         listener.onNamespacePart(
                 context,
-                astBuffer.getStringRef(index + 1));
+                astBuffer.getStringRef(index));
     }
 
     static void encodeNamespaceEnd(StringASTBuffer astBuffer) {
@@ -293,12 +297,12 @@ public class AST {
             
             elementContext = contextGetter.getElementContext(index);
             
-            classKeywordContext = astBuffer.hasContextRef(index + 1 + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 1 + 4))
+            classKeywordContext = astBuffer.hasContextRef(index + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
                     : null;
                     
-            nameContext = astBuffer.hasContextRef(index + 1 + 4 + 4 + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 1 + 4 + 4 + 4))
+            nameContext = astBuffer.hasContextRef(index + 4 + 4 + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4 + 4 + 4))
                     : null;
         }
         else {
@@ -309,9 +313,9 @@ public class AST {
 
         listener.onClassStart(
                 elementContext,
-                astBuffer.getStringRef(index + 1),
+                astBuffer.getStringRef(index),
                 classKeywordContext,
-                astBuffer.getStringRef(index + 1 + 4 + 4),
+                astBuffer.getStringRef(index + 4 + 4),
                 nameContext);
     }
 
@@ -329,14 +333,14 @@ public class AST {
 
     static void encodeVisibilityClassModifier(StringASTBuffer astBuffer, ClassVisibility classVisibility) {
 
-        astBuffer.writeElementStart(ParseTreeElement.CLASS_MODIFIER_HOLDER);
+        astBuffer.writeLeafElement(ParseTreeElement.CLASS_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(ClassModifier.Type.VISIBILITY);
         astBuffer.writeEnumByte(classVisibility);
     }
 
     static void encodeSubclassingModifier(StringASTBuffer astBuffer, Subclassing subclassing) {
 
-        astBuffer.writeElementStart(ParseTreeElement.CLASS_MODIFIER_HOLDER);
+        astBuffer.writeLeafElement(ParseTreeElement.CLASS_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(ClassModifier.Type.SUBCLASSING);
         astBuffer.writeEnumByte(subclassing);
     }
@@ -347,15 +351,15 @@ public class AST {
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        final ClassModifier.Type type = astBuffer.getEnumByte(index + 1, ClassModifier.Type.class);
+        final ClassModifier.Type type = astBuffer.getEnumByte(index, ClassModifier.Type.class);
         
         switch (type) {
         case VISIBILITY:
-            listener.onVisibilityClassModifier(context, astBuffer.getEnumByte(index + 2, ClassVisibility.class));
+            listener.onVisibilityClassModifier(context, astBuffer.getEnumByte(index + 1, ClassVisibility.class));
             break;
             
         case SUBCLASSING:
-            listener.onSubclassingModifier(context, astBuffer.getEnumByte(index + 2, Subclassing.class));
+            listener.onSubclassingModifier(context, astBuffer.getEnumByte(index + 1, Subclassing.class));
             break;
             
          default:
@@ -385,8 +389,8 @@ public class AST {
             
             elementContext = contextGetter.getElementContext(index);
             
-            extendsKeywordContext = astBuffer.hasContextRef(index + 1 + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 1 + 4))
+            extendsKeywordContext = astBuffer.hasContextRef(index + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
                     : null;
         }
         else {
@@ -396,7 +400,7 @@ public class AST {
 
         listener.onClassExtendsStart(
                 elementContext,
-                astBuffer.getStringRef(index + 1),
+                astBuffer.getStringRef(index),
                 extendsKeywordContext);
     }
     
@@ -404,7 +408,7 @@ public class AST {
     
     static void encodeClassExtendsNamePart(StringASTBuffer astBuffer, long identifier) {
         
-        astBuffer.writeElementStart(ParseTreeElement.CLASS_EXTENDS_NAME_PART);
+        astBuffer.writeLeafElement(ParseTreeElement.CLASS_EXTENDS_NAME_PART);
         
         astBuffer.writeStringRef(identifier);
     }
@@ -417,7 +421,7 @@ public class AST {
         
         listener.onClassExtendsNamePart(
                 context,
-                astBuffer.getStringRef(index + 1));
+                astBuffer.getStringRef(index));
     }
 
     static void encodeClassExtendsEnd(StringASTBuffer astBuffer) {
@@ -455,8 +459,8 @@ public class AST {
             
             elementContext = contextGetter.getElementContext(index);
             
-            implementsKeywordContext = astBuffer.hasContextRef(index + 1 + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 1 + 4))
+            implementsKeywordContext = astBuffer.hasContextRef(index + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
                     : null;
         }
         else {
@@ -466,7 +470,7 @@ public class AST {
 
         listener.onClassImplementsStart(
                 elementContext,
-                astBuffer.getStringRef(index + 1),
+                astBuffer.getStringRef(index),
                 implementsKeywordContext);
     }
 
@@ -486,7 +490,7 @@ public class AST {
     
     static void encodeClassImplementsNamePart(StringASTBuffer astBuffer, long identifier) {
         
-        astBuffer.writeElementStart(ParseTreeElement.CLASS_IMPLEMENTS_NAME_PART);
+        astBuffer.writeLeafElement(ParseTreeElement.CLASS_IMPLEMENTS_NAME_PART);
         
         astBuffer.writeStringRef(identifier);
     }
@@ -499,7 +503,7 @@ public class AST {
         
         listener.onClassImplementsNamePart(
                 context,
-                astBuffer.getStringRef(index + 1));
+                astBuffer.getStringRef(index));
     }
 
     static void encodeClassImplementsEnd(StringASTBuffer astBuffer) {

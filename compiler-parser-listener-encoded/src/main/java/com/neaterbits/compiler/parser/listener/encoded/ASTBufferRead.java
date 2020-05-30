@@ -29,6 +29,7 @@ public interface ASTBufferRead {
     public static class ParseTreeElementRef {
         public ParseTreeElement element;
         public boolean isStart;
+        public int index;
     }
 
     void getParseTreeElement(int index, ParseTreeElementRef ref);

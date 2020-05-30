@@ -225,7 +225,7 @@ public final class EncodedCompilationUnit {
             
             case NAMESPACE:
                 if (ref.isStart) {
-                    AST.decodeNamespaceStart(astBuffer, contextGetter, parseTreeRef, listener);
+                    AST.decodeNamespaceStart(astBuffer, contextGetter, ref.index, listener);
                 }
                 else {
                     AST.decodeNamespaceEnd(context, listener);
@@ -235,16 +235,16 @@ public final class EncodedCompilationUnit {
                 
             case NAMESPACE_PART:
                 if (ref.isStart) {
-                    AST.decodeNamespacePart(astBuffer, context, parseTreeRef, listener);
+                    AST.decodeNamespacePart(astBuffer, context, ref.index, listener);
                 }
                 break;
                 
             case IMPORT:
                 if (ref.isStart) {
-                    AST.decodeImportStart(astBuffer, contextGetter, parseTreeRef, listener);
+                    AST.decodeImportStart(astBuffer, contextGetter, ref.index, listener);
                 }
                 else {
-                    AST.decodeImportEnd(astBuffer, context, parseTreeRef, listener);
+                    AST.decodeImportEnd(astBuffer, context, ref.index, listener);
                 }
                 break;
                 
@@ -253,7 +253,7 @@ public final class EncodedCompilationUnit {
                     AST.decodeImportNamePart(
                              astBuffer,
                             context,
-                            parseTreeRef,
+                            ref.index,
                             listener);
                 }
                 else {
@@ -263,7 +263,7 @@ public final class EncodedCompilationUnit {
                 
             case CLASS_DEFINITION:
                 if (ref.isStart) {
-                    AST.decodeClassStart(astBuffer, contextGetter, parseTreeRef, listener);
+                    AST.decodeClassStart(astBuffer, contextGetter, ref.index, listener);
                 }
                 else {
                     AST.decodeClassEnd(astBuffer, context, listener);
@@ -272,7 +272,7 @@ public final class EncodedCompilationUnit {
                 
             case CLASS_MODIFIER_HOLDER:
                 if (ref.isStart) {
-                    AST.decodeClassModifierHolder(astBuffer, context, parseTreeRef, listener);
+                    AST.decodeClassModifierHolder(astBuffer, context, ref.index, listener);
                 }
                 else {
                     throw new UnsupportedOperationException();
@@ -281,7 +281,7 @@ public final class EncodedCompilationUnit {
             
             case CLASS_EXTENDS:
                 if (ref.isStart) {
-                    AST.decodeClassExtendsStart(astBuffer, contextGetter, parseTreeRef, listener);
+                    AST.decodeClassExtendsStart(astBuffer, contextGetter, ref.index, listener);
                 }
                 else {
                     AST.decodeClassExtendsEnd(astBuffer, context, listener);
@@ -290,7 +290,7 @@ public final class EncodedCompilationUnit {
                 
             case CLASS_EXTENDS_NAME_PART:
                 if (ref.isStart) {
-                    AST.decodeClassExtendsNamePart(astBuffer, context, parseTreeRef, listener);
+                    AST.decodeClassExtendsNamePart(astBuffer, context, ref.index, listener);
                 }
                 else {
                     throw new UnsupportedOperationException();
@@ -299,7 +299,7 @@ public final class EncodedCompilationUnit {
                 
             case CLASS_IMPLEMENTS:
                 if (ref.isStart) {
-                    AST.decodeClassImplementsStart(astBuffer, contextGetter, parseTreeRef, listener);
+                    AST.decodeClassImplementsStart(astBuffer, contextGetter, ref.index, listener);
                 }
                 else {
                     AST.decodeClassImplementsEnd(astBuffer, context, listener);
@@ -317,7 +317,7 @@ public final class EncodedCompilationUnit {
 
             case CLASS_IMPLEMENTS_NAME_PART:
                 if (ref.isStart) {
-                    AST.decodeClassImplementsNamePart(astBuffer, context, parseTreeRef, listener);
+                    AST.decodeClassImplementsNamePart(astBuffer, context, ref.index, listener);
                 }
                 else {
                     throw new UnsupportedOperationException();
