@@ -90,7 +90,7 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 		
 		param.append(' ');
 		
-		emitType(statement.getVariableDeclaration().getTypeReference(), param);
+		emitType(statement.getTypeReference(), param);
 
 		param.append(' ');
 
@@ -131,8 +131,7 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 
 			param.append(' ');
 
-			emitVariableDeclaration(r.getTypeReference(), r.getVarName(), param);
-			
+			emitVariableDeclaration(r.getVarName(), param);
 		});
 		
 		emitVariableDeclarationElements(statement.getResources().getList(), param);

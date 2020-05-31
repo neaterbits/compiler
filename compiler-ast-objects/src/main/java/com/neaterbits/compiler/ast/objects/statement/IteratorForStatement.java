@@ -7,6 +7,7 @@ import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.block.Block;
 import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.ModifiersVariableDeclarationElement;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
@@ -37,6 +38,10 @@ public final class IteratorForStatement extends LoopStatement {
 
 	public final Expression getCollectionExpression() {
 		return collectionExpression.get();
+	}
+	
+	public final TypeReference getTypeReference() {
+	    return variableDeclaration.get().getTypeReference();
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.convert.ootofunction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.neaterbits.compiler.ast.objects.CompilationCode;
@@ -28,6 +29,7 @@ import com.neaterbits.compiler.ast.objects.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.FunctionPointerTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.convert.OOToProceduralConverterUtil;
@@ -111,11 +113,19 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 					throw new UnsupportedOperationException("Unknown field type " + fieldType);
 				}
 				
+				final List<FieldNameDeclaration> fieldNameDeclarations = new ArrayList<>(field.getInitializers().size());
+				
+				for (InitializerVariableDeclarationElement initializer : field.getInitializers()) {
+				    
+				    final FieldNameDeclaration declaration = new FieldNameDeclaration(initializer.getNameDeclaration());
+				    
+				    fieldNameDeclarations.add(declaration);
+				}
 				
 				final StructDataFieldMember structField = new StructDataFieldMember(
 						field.getContext(),
 						convertedTypeReference,
-						field.getName());
+						fieldNameDeclarations);
 				
 				structMembers.add(structField);
 			}
@@ -141,7 +151,6 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 			java.util.function.Function<TypeName, FieldNameDeclaration> classToFieldName,
 			java.util.function.Function<MethodName, FieldNameDeclaration> methodToFieldName) {
 		
-
 		final ClassDefinition classDefinition = classType.getDefinition();
 		
 		final int numMembers = classDefinition.getMembers().size();
@@ -163,7 +172,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 			final StructDataFieldMember structDataFieldMember = new StructDataFieldMember(
 					classDefinition.getContext(),
 					new ComplexTypeReference(classDefinition.getContext(), baseStructType.getTypeName()),
-					classToFieldName.apply(extendsFromType.getTypeName()));
+					Arrays.asList(classToFieldName.apply(extendsFromType.getTypeName())));
 			
 			structMembers.add(structDataFieldMember);
 		}
@@ -181,7 +190,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 				final StructDataFieldMember structMember = new StructDataFieldMember(
 						methodMember.getContext(),
 						new FunctionPointerTypeReference(methodMember.getContext(), functionPointerType),
-						methodToFieldName.apply(methodMember.getMethod().getName()));
+						Arrays.asList(methodToFieldName.apply(methodMember.getMethod().getName())));
 				
 				structMembers.add(structMember);
 			}

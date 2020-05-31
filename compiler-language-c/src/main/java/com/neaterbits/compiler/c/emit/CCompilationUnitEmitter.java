@@ -128,7 +128,7 @@ public class CCompilationUnitEmitter extends BaseProceduralProgramEmitter<Emitte
 		
 		emitType(field.getType(), param);
 		
-		param.append(' ').append(field.getName().getName());
+		param.append(' ').append(field.getNames().get(0).getName());
 		
 		param.append(';').newline();
 		

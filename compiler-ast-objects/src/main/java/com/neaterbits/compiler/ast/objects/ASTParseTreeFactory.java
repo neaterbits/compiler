@@ -469,14 +469,13 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
 	@Override
 	public ClassDataFieldMember createClassFieldMember(Context context, List<FieldModifierHolder> modifiers,
-			TypeReference type, String name, Context nameContext, Expression initializer) {
+			TypeReference type, List<InitializerVariableDeclarationElement> initializers) {
 		
 		return new ClassDataFieldMember(
 				context,
 				new FieldModifiers(modifiers),
 				type,
-				new FieldNameDeclaration(new VarNameDeclaration(nameContext, name)),
-				initializer);
+				initializers);
 	}
 
 	@Override
@@ -775,15 +774,20 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
 	@Override
 	public InitializerVariableDeclarationElement createInitializerVariableDeclarationElement(Context context,
-			TypeReference typeReference, String varName, Context varNameContext, int numDims, Expression initializer) {
+			String varName, Context varNameContext, int numDims, Expression initializer) {
 
-		return new InitializerVariableDeclarationElement(varNameContext, typeReference, new VarNameDeclaration(varNameContext, varName), numDims, initializer);
+		return new InitializerVariableDeclarationElement(
+		        varNameContext,
+		        new VarNameDeclaration(varNameContext, varName),
+		        numDims,
+		        initializer);
 	}
 
 	@Override
 	public VariableDeclarationStatement createVariableDeclarationStatement(Context context,
-			List<VariableModifierHolder> modifiers, List<InitializerVariableDeclarationElement> elements) {
-		return new VariableDeclarationStatement(context, new VariableModifiers(modifiers), elements);
+			List<VariableModifierHolder> modifiers, TypeReference typeReference,
+			List<InitializerVariableDeclarationElement> elements) {
+		return new VariableDeclarationStatement(context, new VariableModifiers(modifiers), typeReference, elements);
 	}
 
 	@Override
@@ -837,11 +841,12 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	@Override
 	public Resource createResource(Context context, List<VariableModifierHolder> modifiers, TypeReference type,
 			String varName, Context varNameContext, int numDims, Expression initializer) {
+	    
 		return new Resource(
 				new VariableModifiers(modifiers),
+                type,
 				new InitializerVariableDeclarationElement(
 						context,
-						type,
 						new VarNameDeclaration(varNameContext, varName),
 						numDims,
 						initializer));

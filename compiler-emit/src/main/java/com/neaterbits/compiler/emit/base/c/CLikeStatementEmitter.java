@@ -32,10 +32,8 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 
 	protected abstract void emitSwitchCaseLabel(SwitchCaseLabel label, T param);
 
-	protected final void emitVariableDeclaration(TypeReference typeReference, VarName varName, T param) {
+	protected final void emitVariableDeclaration(VarName varName, T param) {
 
-		emitType(typeReference, param);
-		
 		param.append(' ');
 		
 		param.append(varName.getName());
@@ -44,7 +42,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 	
 	protected final void emitVariableDeclarationElement(InitializerVariableDeclarationElement element, T param) {
 		
-		emitVariableDeclaration(element.getTypeReference(), element.getVarName(), param);
+		emitVariableDeclaration(element.getVarName(), param);
 
 		if (element.getInitializer() != null) {
 			param.append(" = ");

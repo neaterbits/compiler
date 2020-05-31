@@ -273,12 +273,14 @@ public class ObjectProgramModel
 				
 				if (element instanceof InitializerVariableDeclarationElement) {
 					
+                    /*
 					final InitializerVariableDeclarationElement declaration = (InitializerVariableDeclarationElement)element;
 					
 					scopesListener.onScopeVariableDeclaration(
 							sourceFile.getParseTreeRefFromElement(declaration.getNameDeclaration()),
 							declaration.getVarName().getName(),
 							declaration.getTypeReference().getTypeName());
+					*/
 				}
 				else if (element instanceof NameReference) {
 					
@@ -325,7 +327,7 @@ public class ObjectProgramModel
 
 		final ClassDataFieldMember member = (ClassDataFieldMember)sourceFile.getElementFromParseTreeRef(parseTreeDataMemberDeclarationRef);
 		
-		return member.getNameString();
+		return member.getInitializer(0).getNameString();
 	}
 
 	@Override
@@ -516,17 +518,20 @@ public class ObjectProgramModel
 				throw new UnsupportedOperationException();
 			}
 		}
-
-		visitor.onField(
-				dataField.getNameString(),
-				dataField.getType().getTypeName(),
-				0,
-				isStatic,
-				visibility,
-				mutability,
-				isVolatile,
-				isTransient,
-				indexInType);
+		
+		for (InitializerVariableDeclarationElement element : dataField.getInitializers()) {
+    
+    		visitor.onField(
+    				element.getNameString(),
+    				dataField.getType().getTypeName(),
+    				0,
+    				isStatic,
+    				visibility,
+    				mutability,
+    				isVolatile,
+    				isTransient,
+    				indexInType);
+		}
 	}
 	
 	private MethodVariant findMethodVariant(ClassMethodMember classMethodMember, Subclassing subclassing) {

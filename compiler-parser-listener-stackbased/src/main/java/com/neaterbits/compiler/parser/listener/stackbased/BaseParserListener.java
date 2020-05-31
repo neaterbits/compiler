@@ -2,6 +2,7 @@ package com.neaterbits.compiler.parser.listener.stackbased;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -1219,30 +1220,29 @@ public abstract class BaseParserListener<
 
 		final StackClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER> stackClass = get();
 
+		final List<INITIALIZER_VARIABLE_DECLARATION_ELEMENT> initializers = new ArrayList<>(stackFieldDeclarationList.getList().size());
+		
 		for (StackInitializerVariableDeclarationElement<TYPE_REFERENCE, EXPRESSION> element : stackFieldDeclarationList.getList()) {
 
-			final EXPRESSION initializer = element.getInitializer();
-			final TYPE_REFERENCE typeReference = element.getTypeReference();
+			final INITIALIZER_VARIABLE_DECLARATION_ELEMENT initializerElement
+			    = parseTreeFactory.createInitializerVariableDeclarationElement(
+		                 element.getContext(),
+    		             element.getVarName(),
+    		             element.getVarNameContext(),
+    		             element.getNumDims(),
+    		             element.getInitializer());
 
-			/*
-			if (initializer != null) {
-				initializer.take();
-			}
-
-			typeReference.take();
-			*/
-
-			final CLASS_FIELD_MEMBER dataFieldMember = parseTreeFactory.createClassFieldMember(
-				context,
-				stackFieldDeclarationList.getModifiers(),
-				typeReference,
-				element.getVarName(),
-				element.getVarNameContext(),
-				initializer
-			);
-			
-			stackClass.add(dataFieldMember);
+			initializers.add(initializerElement);
 		}
+
+        final CLASS_FIELD_MEMBER dataFieldMember = parseTreeFactory.createClassFieldMember(
+                context,
+                stackFieldDeclarationList.getModifiers(),
+                stackFieldDeclarationList.getTypeReference(),
+                initializers
+            );
+            
+        stackClass.add(dataFieldMember);
 
 		logExit(context);
 	}
@@ -2352,6 +2352,7 @@ public abstract class BaseParserListener<
 		final VARIABLE_DECLARATION_STATEMENT statement = parseTreeFactory.createVariableDeclarationStatement(
 				context,
 				variableDeclaration.getModifiers(),
+				variableDeclaration.getTypeReference(),
 				elements);
 
 		variableDeclaration.getList().forEach(e -> {
@@ -2359,7 +2360,7 @@ public abstract class BaseParserListener<
 			final VARIABLE_DECLARATION var = parseTreeFactory.createVariableDeclaration(
 					context,
 					variableDeclaration.getModifiers(),
-					e.getTypeReference(),
+					variableDeclaration.getTypeReference(),
 					e.getVarName(),
 					e.getNumDims());
 			
@@ -2395,7 +2396,6 @@ public abstract class BaseParserListener<
 		final StackInitializerVariableDeclarationElement<TYPE_REFERENCE, EXPRESSION> variableDeclarationElement
 			= new StackInitializerVariableDeclarationElement<TYPE_REFERENCE, EXPRESSION>(
 					context,
-					declarationList.getTypeReference(),
 					stackDeclaration.getName(),
 					stackDeclaration.getNameContext(),
 					stackDeclaration.getNumDims(),
@@ -3144,9 +3144,9 @@ public abstract class BaseParserListener<
 	}
 
 	private INITIALIZER_VARIABLE_DECLARATION_ELEMENT createInitializer(StackInitializerVariableDeclarationElement<TYPE_REFERENCE, EXPRESSION> e) {
-		return parseTreeFactory.createInitializerVariableDeclarationElement(
+
+	    return parseTreeFactory.createInitializerVariableDeclarationElement(
 				e.getContext(),
-				e.getTypeReference(),
 				e.getVarName(),
 				e.getVarNameContext(),
 				e.getNumDims(),

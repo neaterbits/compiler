@@ -13,20 +13,33 @@ import com.neaterbits.compiler.util.model.ParseTreeElement;
 public final class ModifiersVariableDeclarationElement extends VariableDeclarationElement {
 
 	private final ASTSingle<VariableModifiers> modifiers;
+	private final ASTSingle<TypeReference> type;
 
-	public ModifiersVariableDeclarationElement(Context context, VariableModifiers modifiers, TypeReference type, VarNameDeclaration name, int numDims) {
-		super(context, type, name, numDims);
+	public ModifiersVariableDeclarationElement(
+	        Context context,
+	        VariableModifiers modifiers,
+	        TypeReference type,
+	        VarNameDeclaration name,
+	        int numDims) {
+	    
+		super(context, name, numDims);
 
 		Objects.requireNonNull(modifiers);
+		Objects.requireNonNull(type);
 
 		this.modifiers = makeSingle(modifiers);
+		this.type = makeSingle(type);
 	}
 
 	public VariableModifiers getModifiers() {
 		return modifiers.get();
 	}
 
-	@Override
+	public TypeReference getTypeReference() {
+        return type.get();
+    }
+
+    @Override
 	public ParseTreeElement getParseTreeElement() {
 		return ParseTreeElement.MODIFIERS_VARIABLE_DECLARATION_ELEMENT;
 	}

@@ -8,6 +8,7 @@ import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifiers;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
@@ -15,19 +16,23 @@ import com.neaterbits.compiler.util.model.ParseTreeElement;
 public final class VariableDeclarationStatement extends Statement {
 
 	private final ASTSingle<VariableModifiers> modifiers;
+	private final ASTSingle<TypeReference> typeReference;
 	private final ASTList<InitializerVariableDeclarationElement> declarations;
 	
 	public VariableDeclarationStatement(
 			Context context,
 			VariableModifiers modifiers,
+			TypeReference typeReference,
 			List<InitializerVariableDeclarationElement> declarations) {
 		
 		super(context);
 		
 		Objects.requireNonNull(modifiers);
+		Objects.requireNonNull(typeReference);
 		Objects.requireNonNull(declarations);
 
 		this.modifiers = makeSingle(modifiers);
+		this.typeReference = makeSingle(typeReference);
 		this.declarations = makeList(declarations);
 	}
 
@@ -35,10 +40,13 @@ public final class VariableDeclarationStatement extends Statement {
 		return modifiers.get();
 	}
 
-	public ASTList<InitializerVariableDeclarationElement> getDeclarations() {
+	public TypeReference getTypeReference() {
+        return typeReference.get();
+    }
+
+    public ASTList<InitializerVariableDeclarationElement> getDeclarations() {
 		return declarations;
 	}
-
 	
 	@Override
 	public ParseTreeElement getParseTreeElement() {

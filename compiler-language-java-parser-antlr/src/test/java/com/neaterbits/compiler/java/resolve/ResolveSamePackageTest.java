@@ -78,7 +78,7 @@ public class ResolveSamePackageTest extends BaseCompilerTest {
 		checkClassHeader(iter);
 		
 		final ClassDataFieldMember field = get(iter);
-		assertThat(field.getNameString()).isEqualTo("refered");
+		assertThat(field.getInitializer(0).getNameString()).isEqualTo("refered");
 	
 		final FieldModifiers fieldModifiers = get(iter);
 		assertThat(fieldModifiers.hasModifier(FieldVisibility.class)).isTrue();

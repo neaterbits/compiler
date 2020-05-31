@@ -571,7 +571,7 @@ final class JavaLexerParser<COMPILATION_UNIT> {
 
     private void parseRestOfTypeAndFieldScalar(Context context, long typeName) throws IOException, ParserException {
         
-        parseRestOfMember(typeName, null, ReferenceType.SCALAR);
+        parseRestOfMember(context, typeName, null, ReferenceType.SCALAR);
     }
 
     private void parseRestOfTypeAndFieldScopedType(Context context, long typeName) throws IOException, ParserException {
@@ -582,11 +582,11 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             parseRestOfScopedName(typeName);
         }
         else {
-            parseRestOfMember(typeName, null, ReferenceType.REFERENCE);
+            parseRestOfMember(context, typeName, null, ReferenceType.REFERENCE);
         }
     }
     
-    private void parseRestOfMember(long typeName, List<ScopedNamePart> scopedTypeName, ReferenceType referenceType) throws ParserException, IOException {
+    private void parseRestOfMember(Context fieldContext, long typeName, List<ScopedNamePart> scopedTypeName, ReferenceType referenceType) throws ParserException, IOException {
 
         // Next should be the name of the field or member
         final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
@@ -618,6 +618,22 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             listener.onFieldDeclarationEnd(context);
             break;
             
+        case COMMA:
+            // This is a field with multiple variable names, like 'int a, b, c;'
+            listener.onFieldDeclarationStart(context);
+            
+            onType(declaratorContext, typeName, scopedTypeName, referenceType);
+
+            // Initial variable name
+            listener.onVariableDeclaratorStart(declaratorContext);
+            listener.onVariableName(declaratorContext, identifier, 0);
+            listener.onVariableDeclaratorEnd(declaratorContext);
+
+            parseVariableDeclaratorList(fieldContext);
+            
+            listener.onFieldDeclarationEnd(context);
+            break;
+            
         default:
             throw lexer.unexpectedToken();
         }
@@ -640,6 +656,49 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         else {
             throw new IllegalStateException();
         }
+    }
+
+    private static final JavaToken [] AFTER_VARIABLE_NAME = new JavaToken [] {
+            
+            JavaToken.SEMI,
+            JavaToken.COMMA,
+            JavaToken.LBRACKET
+    };
+
+    private void parseVariableDeclaratorList(Context fieldContext) throws IOException, ParserException {
+
+        boolean done = false;
+        
+        do {
+            
+            final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+            
+            if (fieldNameToken != JavaToken.IDENTIFIER) {
+                throw lexer.unexpectedToken();
+            }
+            
+            final long identifier = getStringRef();
+            
+            final Context declaratorContext = getCurrentContext();
+            
+            final JavaToken afterVarNameToken = lexer.lexSkipWS(AFTER_VARIABLE_NAME);
+
+            switch (afterVarNameToken) {
+            case COMMA:
+            case SEMI:
+                listener.onVariableDeclaratorStart(declaratorContext);
+                listener.onVariableName(declaratorContext, identifier, 0);
+                listener.onVariableDeclaratorEnd(declaratorContext);
+                
+                if (afterVarNameToken == JavaToken.SEMI) {
+                    done = true;
+                }
+                break;
+                
+            default:
+                throw lexer.unexpectedToken();
+            }
+        } while (!done);
     }
     
     private void parseRestOfScopedName(long typeName) {

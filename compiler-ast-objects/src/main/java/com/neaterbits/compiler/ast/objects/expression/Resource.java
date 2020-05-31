@@ -15,31 +15,39 @@ import com.neaterbits.compiler.util.Context;
 public final class Resource extends InitializerVariableDeclarationElement {
 
 	private final ASTSingle<VariableModifiers> modifiers;
+	private final ASTSingle<TypeReference> type;
 	
 	public Resource(Context context, VariableModifiers modifiers, TypeReference type, VarNameDeclaration name, int numDims, Expression initializer) {
-		super(context, type, name, numDims, initializer);
+		super(context, name, numDims, initializer);
 		
 		Objects.requireNonNull(modifiers);
+		Objects.requireNonNull(type);
 		
 		this.modifiers = makeSingle(modifiers);
+		this.type = makeSingle(type);
 	}
 	
-	public Resource(VariableModifiers modifiers, InitializerVariableDeclarationElement element) {
-		this(element.getContext(), modifiers, element.getTypeReference(), element.getNameDeclaration(), element.getNumDims(), element.getInitializer());
+	public Resource(VariableModifiers modifiers, TypeReference type, InitializerVariableDeclarationElement element) {
+		this(element.getContext(), modifiers, type, element.getNameDeclaration(), element.getNumDims(), element.getInitializer());
 	}
 
 	public VariableModifiers getModifiers() {
 		return modifiers.get();
 	}
 
-	public VariableDeclaration makeVariableDeclaration() {
-		return super.makeVariableDeclaration(modifiers.get());
+	public TypeReference getTypeReference() {
+        return type.get();
+    }
+
+    public VariableDeclaration makeVariableDeclaration() {
+		return super.makeVariableDeclaration(modifiers.get(), type.get());
 	}
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
 		doIterate(modifiers, recurseMode, iterator);
+		doIterate(type, recurseMode, iterator);
 		
 		super.doRecurse(recurseMode, iterator);
 	}

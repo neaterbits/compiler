@@ -86,7 +86,7 @@ public class ResolveImportedTypesTest extends BaseCompilerTest {
 		final ClassDataFieldMember fieldMember = getNext(compiled.getASTElements(BaseASTElement.class).iterator(), ClassDataFieldMember.class);
 		assertThat(fieldMember).isNotNull();
 		
-		assertThat(fieldMember.getNameString()).isEqualTo("integer");
+		assertThat(fieldMember.getInitializer(0).getNameString()).isEqualTo("integer");
 		assertThat(fieldMember.getType().getTypeName())
 				.isEqualTo(new TypeName(new String [] { "java", "lang" }, null, "Integer"));
 
@@ -100,7 +100,7 @@ public class ResolveImportedTypesTest extends BaseCompilerTest {
 		final ClassDataFieldMember fieldMember = getNext(referer.getASTElements(BaseASTElement.class).iterator(), ClassDataFieldMember.class);
 		assertThat(fieldMember).isNotNull();
 		
-		assertThat(fieldMember.getNameString()).isEqualTo("refered");
+		assertThat(fieldMember.getInitializer(0).getNameString()).isEqualTo("refered");
 		assertThat(fieldMember.getType().getTypeName())
 				.isEqualTo(new TypeName(new String [] { "com", "test", "imported" }, null, "Refered"));
 		
@@ -114,7 +114,7 @@ public class ResolveImportedTypesTest extends BaseCompilerTest {
 		final ClassDataFieldMember fieldMember = getNext(referer.getASTElements(BaseASTElement.class).iterator(), ClassDataFieldMember.class);
 		assertThat(fieldMember).isNotNull();
 		
-		assertThat(fieldMember.getNameString()).isEqualTo("refered");
+		assertThat(fieldMember.getInitializer(0).getNameString()).isEqualTo("refered");
 		assertThat(fieldMember.getType().getTypeName())
 				.isEqualTo(new TypeName(new String [] { "com", "test", "imported" }, null, "Refered"));
 		

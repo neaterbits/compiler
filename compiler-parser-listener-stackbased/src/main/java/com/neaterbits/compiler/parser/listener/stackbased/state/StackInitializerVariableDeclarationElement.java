@@ -5,15 +5,13 @@ import com.neaterbits.compiler.util.Context;
 public final class StackInitializerVariableDeclarationElement<TYPE_REFERENCE, EXPRESSION> {
 
 	private Context context;
-	private TYPE_REFERENCE typeReference;
 	private String varName;
 	private Context varNameContext;
 	private int numDims;
 	private EXPRESSION initializer;
 	
-	public StackInitializerVariableDeclarationElement(Context context, TYPE_REFERENCE typeReference, String varName, Context varNameContext, int numDims, EXPRESSION initializer) {
+	public StackInitializerVariableDeclarationElement(Context context, String varName, Context varNameContext, int numDims, EXPRESSION initializer) {
 		this.context = context;
-		this.typeReference = typeReference;
 		this.varName = varName;
 		this.varNameContext = varNameContext;
 		this.numDims = numDims;
@@ -22,10 +20,6 @@ public final class StackInitializerVariableDeclarationElement<TYPE_REFERENCE, EX
 
 	public Context getContext() {
 		return context;
-	}
-
-	public TYPE_REFERENCE getTypeReference() {
-		return typeReference;
 	}
 
 	public String getVarName() {

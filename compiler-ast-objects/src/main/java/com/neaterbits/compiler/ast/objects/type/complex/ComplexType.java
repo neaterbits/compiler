@@ -5,12 +5,13 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.type.CompleteName;
 import com.neaterbits.compiler.ast.objects.type.ResolvableType;
+import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexTypeDefinition;
-import com.neaterbits.compiler.ast.objects.typedefinition.DataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.DeclarationName;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.util.name.BaseTypeName;
 
 public abstract class ComplexType<
@@ -35,11 +36,14 @@ extends ResolvableType {
 		Objects.requireNonNull(fieldName);
 		
 		for (ComplexMemberDefinition member : getMembers()) {
-			if (member instanceof DataFieldMember) {
-				final DataFieldMember dataFieldMember = (DataFieldMember)member;
+			if (member instanceof ClassDataFieldMember) {
+				final ClassDataFieldMember dataFieldMember = (ClassDataFieldMember)member;
+				
+				for (InitializerVariableDeclarationElement element : dataFieldMember.getInitializers()) {
 
-				if (dataFieldMember.getName().getName().equals(fieldName.getName())) {
-					return dataFieldMember.getType();
+    				if (element.getNameString().equals(fieldName.getName())) {
+    					return dataFieldMember.getType();
+    				}
 				}
 			}
 		}

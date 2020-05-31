@@ -212,9 +212,7 @@ public interface ParseTreeFactory<
 			Context context,
 			List<FIELD_MODIFIER_HOLDER> modifiers,
 			TYPE_REFERENCE type,
-			String name,
-			Context nameContext,
-			EXPRESSION initializer);
+			List<INITIALIZER_VARIABLE_DECLARATION_ELEMENT> initializers);
 	
 	FIELD_MODIFIER_HOLDER createFieldModifierHolder(Context context, FieldModifier modifier);
 	
@@ -333,7 +331,6 @@ public interface ParseTreeFactory<
 
 	INITIALIZER_VARIABLE_DECLARATION_ELEMENT createInitializerVariableDeclarationElement(
 			Context context,
-			TYPE_REFERENCE typeReference,
 			String varName,
 			Context varNameContext,
 			int numDims,
@@ -342,6 +339,7 @@ public interface ParseTreeFactory<
 	VARIABLE_DECLARATION_STATEMENT createVariableDeclarationStatement(
 			Context context,
 			List<VARIABLE_MODIFIER_HOLDER> modifiers,
+			TYPE_REFERENCE typeReference,
 			List<INITIALIZER_VARIABLE_DECLARATION_ELEMENT> elements);
 	
 	EXPRESSION_STATEMENT createExpressionStatement(Context context, EXPRESSION expression);

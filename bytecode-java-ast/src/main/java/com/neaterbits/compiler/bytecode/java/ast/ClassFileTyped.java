@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import com.neaterbits.compiler.ast.objects.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Parameter;
 import com.neaterbits.compiler.ast.objects.block.ParameterName;
@@ -31,6 +30,8 @@ import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceModifiers;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceName;
 import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
+import com.neaterbits.compiler.ast.objects.variables.VarNameDeclaration;
 import com.neaterbits.compiler.bytecode.ast.ClassBytecodeTyped;
 import com.neaterbits.compiler.bytecode.ast.EncodedTypeReference;
 import com.neaterbits.compiler.java.bytecode.AccessFlags;
@@ -117,12 +118,19 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 		
 		final String descriptor = getUTF8(field.getDescriptorIndex());
 		
+		final String name = getUTF8(field.getNameIndex());
+		
+		final InitializerVariableDeclarationElement initializer = new InitializerVariableDeclarationElement(
+		        null,
+		        new VarNameDeclaration(null, name),
+		        0,
+		        null);
+		
 		return new ClassDataFieldMember(
 				context,
 				modifiers,
 				new EncodedTypeReference(context, descriptor),
-				new FieldNameDeclaration(null, getUTF8(field.getNameIndex())),
-				null);
+				Arrays.asList(initializer));
 	}
 
 	private ResolveLaterTypeReference getTypeReference(Context context, int typeName, Function<String, BaseTypeName> createTypeName) {

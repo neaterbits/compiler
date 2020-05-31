@@ -12,10 +12,12 @@ import com.neaterbits.compiler.ast.objects.CompilationCode;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.Namespace;
+import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
+import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.util.parse.ParserException;
@@ -483,9 +485,44 @@ public abstract class BaseJavaParserTest {
         
         final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
     
-        assertThat(member.getNameString()).isEqualTo("memberVariable");
+        assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
         
         final ScalarTypeReference type = (ScalarTypeReference)member.getType(); 
+        assertThat(type.getTypeName().getName()).isEqualTo("int");
+    }
+
+    @Test
+    public void testParseCommaSeparatedClassMemberVariables() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { int a, b, c; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        
+        final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
+        final ASTList<InitializerVariableDeclarationElement> initializers = member.getInitializers();
+        
+        assertThat(initializers.get(0).getNameString()).isEqualTo("a");
+        ScalarTypeReference type = (ScalarTypeReference)member.getType(); 
+        assertThat(type.getTypeName().getName()).isEqualTo("int");
+        
+        assertThat(initializers.get(1).getNameString()).isEqualTo("b");
+        type = (ScalarTypeReference)member.getType(); 
+        assertThat(type.getTypeName().getName()).isEqualTo("int");
+        
+        assertThat(initializers.get(2).getNameString()).isEqualTo("c");
+        type = (ScalarTypeReference)member.getType(); 
         assertThat(type.getTypeName().getName()).isEqualTo("int");
     }
 }
