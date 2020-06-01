@@ -96,6 +96,10 @@ public class AST {
             size = VARIABLE_NAME_SIZE;
             break;
             
+        case RESOLVE_LATER_IDENTIFIER_TYPE_REFERENCE:
+            size = IDENTIFIER_TYPE_REFERENCE_SIZE;
+            break;
+
         default:
             size = 0; // ParseTreeElement
             break;
@@ -586,6 +590,24 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onNonScopedTypeReference(context, astBuffer.getStringRef(index), ReferenceType.SCALAR);
+    }
+
+    private static final int IDENTIFIER_TYPE_REFERENCE_SIZE = STRING_REF_SIZE;
+    
+    static void encodeIdentifierTypeReference(StringASTBuffer astBuffer, long typeName) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.RESOLVE_LATER_IDENTIFIER_TYPE_REFERENCE);
+
+        astBuffer.writeStringRef(typeName);
+    }
+
+    public static <COMPILATION_UNIT> void decodeIdentifierTypeReference(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onNonScopedTypeReference(context, astBuffer.getStringRef(index), ReferenceType.REFERENCE);
     }
 
     static void encodeVariableDeclaratorStart(StringASTBuffer astBuffer) {

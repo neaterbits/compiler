@@ -465,7 +465,7 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
-    public void testParseClassMemberVariable() throws IOException, ParserException {
+    public void testParseScalarClassMemberVariable() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
                 
@@ -489,6 +489,34 @@ public abstract class BaseJavaParserTest {
         
         final ScalarTypeReference type = (ScalarTypeReference)member.getType(); 
         assertThat(type.getTypeName().getName()).isEqualTo("int");
+    }
+
+    @Test
+    public void testParseIdentifierClassMemberVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { SomeType memberVariable; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        
+        final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
+    
+        assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
+        
+        final ResolveLaterTypeReference type = (ResolveLaterTypeReference)member.getType(); 
+        assertThat(type.getScopedName().getScope()).isNull();
+        assertThat(type.getScopedName().getName()).isEqualTo("SomeType");
     }
 
     @Test

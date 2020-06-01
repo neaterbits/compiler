@@ -956,6 +956,10 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
             AST.encodeScalarTypeReference(astBuffer, name);
             break;
             
+        case REFERENCE:
+            AST.encodeIdentifierTypeReference(astBuffer, name);
+            break;
+            
         default:
             throw new UnsupportedOperationException();
         }

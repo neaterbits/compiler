@@ -355,6 +355,10 @@ public final class EncodedCompilationUnit {
                 AST.decodeVariableName(astBuffer, context, ref.index, listener);
                 break;
 
+            case RESOLVE_LATER_IDENTIFIER_TYPE_REFERENCE:
+                AST.decodeIdentifierTypeReference(astBuffer, context, ref.index, listener);
+                break;
+
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }
