@@ -773,7 +773,39 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             break;
             
         case IDENTIFIER:
-            listener.onNonScopedTypeReference(getCurrentContext(), getStringRef(), ReferenceType.REFERENCE);
+            
+            final Context identifierContext = getCurrentContext();
+            final long stringRef = getStringRef();
+
+            JavaToken scopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
+            if (scopeToken == JavaToken.PERIOD) {
+
+                listener.onScopedTypeReferenceStart(identifierContext, ReferenceType.REFERENCE);
+                
+                listener.onScopedTypeReferencePart(identifierContext, stringRef);
+
+                for (;;) {
+
+                    final JavaToken partToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+                    
+                    if (partToken != JavaToken.IDENTIFIER) {
+                        throw lexer.unexpectedToken();
+                    }
+                    
+                    listener.onScopedTypeReferencePart(getCurrentContext(), getStringRef());
+                    
+                    final JavaToken endOfScopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
+                    
+                    if (endOfScopeToken != JavaToken.PERIOD) {
+                        break;
+                    }
+                }
+
+                listener.onScopedTypeReferenceEnd(identifierContext);
+            }
+            else {
+                listener.onNonScopedTypeReference(identifierContext, stringRef, ReferenceType.REFERENCE);
+            }
             break;
             
         default:

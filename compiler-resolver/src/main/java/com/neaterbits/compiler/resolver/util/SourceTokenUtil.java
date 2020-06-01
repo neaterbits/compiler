@@ -145,7 +145,7 @@ public class SourceTokenUtil {
             sourceTokenType = SourceTokenType.ENUM_CONSTANT;
             break;
 
-        case RESOLVE_LATER_TYPE_REFERENCE:
+        case RESOLVE_LATER_SCOPED_TYPE_REFERENCE:
 
             // Resolve from already resolved types
             final TypesMap<TypeName> compiledTypesMap = new TypesMap<TypeName>() {

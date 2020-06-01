@@ -966,19 +966,19 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public void onScopedTypeReferenceStart(Context context, ReferenceType referenceType) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeScopedTypeReferenceStart(astBuffer, context);
     }
 
     @Override
     public void onScopedTypeReferencePart(Context context, long part) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeScopedTypeReferencePart(astBuffer, context, part);
     }
 
     @Override
     public void onScopedTypeReferenceEnd(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeScopedTypeReferenceEnd(astBuffer, context);
     }
 
     @Override

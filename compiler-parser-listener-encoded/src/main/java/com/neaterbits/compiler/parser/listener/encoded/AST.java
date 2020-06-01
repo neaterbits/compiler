@@ -108,6 +108,10 @@ public class AST {
             size = SIGNATURE_PARAMETER_SIZE;
             break;
             
+        case RESOLVE_LATER_SCOPED_TYPE_REFERENCE_PART:
+            size = SCOPED_TYPE_REFERENCE_PART_SIZE;
+            break;
+            
         default:
             size = 0; // ParseTreeElement
             break;
@@ -769,5 +773,51 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
         
         listener.onMethodSignatureParameterEnd(context);
+    }
+
+    static void encodeScopedTypeReferenceStart(StringASTBuffer astBuffer, Context context) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.RESOLVE_LATER_SCOPED_TYPE_REFERENCE);
+    }
+
+    public static <COMPILATION_UNIT> void decodeScopedTypeReferenceStart(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onScopedTypeReferenceStart(context, ReferenceType.REFERENCE);
+    }
+
+    private static final int SCOPED_TYPE_REFERENCE_PART_SIZE = STRING_REF_SIZE;
+    
+    static void encodeScopedTypeReferencePart(StringASTBuffer astBuffer, Context context, long part) {
+        
+        astBuffer.writeLeafElement(ParseTreeElement.RESOLVE_LATER_SCOPED_TYPE_REFERENCE_PART);
+        
+        astBuffer.writeStringRef(part);
+    }
+
+    public static <COMPILATION_UNIT> void decodeScopedTypeReferencePart(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onScopedTypeReferencePart(context, astBuffer.getStringRef(index));
+    }
+
+    static void encodeScopedTypeReferenceEnd(StringASTBuffer astBuffer, Context context) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.RESOLVE_LATER_SCOPED_TYPE_REFERENCE);
+    }
+
+    public static <COMPILATION_UNIT> void decodeScopedTypeReferenceEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onScopedTypeReferenceEnd(context);
     }
 }

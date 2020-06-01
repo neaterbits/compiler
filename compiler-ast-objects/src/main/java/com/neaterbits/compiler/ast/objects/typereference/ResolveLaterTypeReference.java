@@ -71,7 +71,7 @@ public final class ResolveLaterTypeReference extends TypeReference {
 
 	@Override
 	public ParseTreeElement getParseTreeElement() {
-		return ParseTreeElement.RESOLVE_LATER_TYPE_REFERENCE;
+		return ParseTreeElement.RESOLVE_LATER_SCOPED_TYPE_REFERENCE;
 	}
 
 	@Override

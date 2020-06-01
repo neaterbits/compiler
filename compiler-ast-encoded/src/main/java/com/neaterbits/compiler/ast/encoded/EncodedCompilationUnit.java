@@ -390,6 +390,19 @@ public final class EncodedCompilationUnit {
                 }
                 break;
                 
+            case RESOLVE_LATER_SCOPED_TYPE_REFERENCE:
+                if (ref.isStart) {
+                    AST.decodeScopedTypeReferenceStart(astBuffer, context, ref.index, listener);
+                }
+                else {
+                    AST.decodeScopedTypeReferenceEnd(astBuffer, context, ref.index, listener);
+                }
+                break;
+                
+            case RESOLVE_LATER_SCOPED_TYPE_REFERENCE_PART:
+                AST.decodeScopedTypeReferencePart(astBuffer, context, ref.index, listener);
+                break;
+                
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }

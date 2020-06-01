@@ -26,7 +26,6 @@ public final class StackScopedName extends ListStackEntry<String> {
     public void addPart(String part, Context partContext) {
         
         Objects.requireNonNull(part);
-        Objects.requireNonNull(partContext);
 
         parts.add(part);
         partContexts.add(partContext);
