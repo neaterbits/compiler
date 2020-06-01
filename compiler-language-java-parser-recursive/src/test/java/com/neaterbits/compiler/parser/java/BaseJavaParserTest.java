@@ -587,6 +587,36 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testMethodWithReferenceReturnType() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { SomeType someMethod() { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        final ResolveLaterTypeReference returnType = (ResolveLaterTypeReference)method.getReturnType();
+        
+        assertThat(returnType.getScopedName().getScope()).isNull();
+        assertThat(returnType.getScopedName().getName()).isEqualTo("SomeType");
+        
+        assertThat(method.getParameters().isEmpty()).isTrue();
+    }
+
+    @Test
     public void testMethodWithOneParameter() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
