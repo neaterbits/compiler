@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.parser.java;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -578,15 +579,22 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         
         final JavaToken periodToken = lexer.lexSkipWS(JavaToken.PERIOD);
         
+        final List<ScopedNamePart> scopedName;
         if (periodToken == JavaToken.PERIOD) {
-            parseRestOfScopedName(typeName);
+            scopedName = parseRestOfScopedName(typeNameContext, typeName);
         }
         else {
-            parseRestOfMember(typeNameContext, typeName, null, ReferenceType.REFERENCE);
+            scopedName = null;
         }
+        
+        parseRestOfMember(typeNameContext, typeName, scopedName, ReferenceType.REFERENCE);
     }
     
-    private void parseRestOfMember(Context typeNameContext, long typeName, List<ScopedNamePart> scopedTypeName, ReferenceType referenceType) throws ParserException, IOException {
+    private void parseRestOfMember(
+            Context typeNameContext,
+            long typeName,
+            List<ScopedNamePart> scopedTypeName,
+            ReferenceType referenceType) throws ParserException, IOException {
 
         // Next should be the name of the field or member
         final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
@@ -651,10 +659,8 @@ final class JavaLexerParser<COMPILATION_UNIT> {
     
     private void onType(Context context, long typeName, List<ScopedNamePart> scopedTypeName, ReferenceType referenceType) {
         
-        if (typeName != StringRef.STRING_NONE) {
-            listener.onNonScopedTypeReference(context, typeName, referenceType);
-        }
-        else if (scopedTypeName != null) {
+        
+        if (scopedTypeName != null) {
             listener.onScopedTypeReferenceStart(context, referenceType);
             
             for (ScopedNamePart part : scopedTypeName) {
@@ -662,6 +668,9 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             }
             
             listener.onScopedTypeReferenceEnd(context);
+        }
+        else if (typeName != StringRef.STRING_NONE) {
+            listener.onNonScopedTypeReference(context, typeName, referenceType);
         }
         else {
             throw new IllegalStateException();
@@ -904,8 +913,29 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         } while (!done);
     }
 
-    private void parseRestOfScopedName(long typeName) {
+    private List<ScopedNamePart> parseRestOfScopedName(Context identifierContext, long identifier) throws IOException, ParserException {
         
-        throw new UnsupportedOperationException();
+        final List<ScopedNamePart> scopedTypeName = new ArrayList<>();
+
+        scopedTypeName.add(new ScopedNamePart(identifierContext, identifier));
+
+        for (;;) {
+
+            final JavaToken partToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+            
+            if (partToken != JavaToken.IDENTIFIER) {
+                throw lexer.unexpectedToken();
+            }
+            
+            scopedTypeName.add(new ScopedNamePart(getCurrentContext(), getStringRef()));
+            
+            final JavaToken endOfScopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
+            
+            if (endOfScopeToken != JavaToken.PERIOD) {
+                break;
+            }
+        }
+        
+        return scopedTypeName;
     }
 }

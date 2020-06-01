@@ -38,7 +38,6 @@ public abstract class BaseJavaParserTest {
         final String source = "package com.test;\n";
         
         final CompilationUnit compilationUnit = parse(source);
-        
         assertThat(compilationUnit.getCode()).isNotNull();
         
         final CompilationCode next = compilationUnit.getCode().iterator().next();
@@ -89,6 +88,7 @@ public abstract class BaseJavaParserTest {
         final Import importEntry = compilationUnit.getImports().iterator().next();
         
         assertThat(importEntry.getKeyword().getText()).isEqualTo("import");
+        
         assertThat(importEntry.getPackage().getMethod()).isNull();
         assertThat(importEntry.getPackage().isMethodImport()).isFalse();
         assertThat(importEntry.getPackage().getTypeName()).isNull();
@@ -111,6 +111,7 @@ public abstract class BaseJavaParserTest {
         final Import importEntry = compilationUnit.getImports().iterator().next();
         
         assertThat(importEntry.getKeyword().getText()).isEqualTo("import");
+        
         assertThat(importEntry.getPackage().getMethod()).isNull();
         assertThat(importEntry.getPackage().isMethodImport()).isFalse();
         assertThat(importEntry.getPackage().getTypeName()).isNull();
@@ -133,6 +134,7 @@ public abstract class BaseJavaParserTest {
         final Import importEntry = compilationUnit.getImports().iterator().next();
         
         assertThat(importEntry.getKeyword().getText()).isEqualTo("import");
+        
         assertThat(importEntry.getPackage().getMethod()).isNull();
         assertThat(importEntry.getPackage().isMethodImport()).isTrue();
         assertThat(importEntry.getPackage().getTypeName().getName()).isEqualTo("TestClass");
@@ -157,6 +159,7 @@ public abstract class BaseJavaParserTest {
         final Import importEntry = compilationUnit.getImports().iterator().next();
         
         assertThat(importEntry.getKeyword().getText()).isEqualTo("import");
+        
         assertThat(importEntry.getPackage().getMethod().getName()).isEqualTo("someMethod");
         assertThat(importEntry.getPackage().isMethodImport()).isTrue();
         assertThat(importEntry.getPackage().getTypeName().getName()).isEqualTo("TestClass");
@@ -611,6 +614,38 @@ public abstract class BaseJavaParserTest {
         final ResolveLaterTypeReference returnType = (ResolveLaterTypeReference)method.getReturnType();
         
         assertThat(returnType.getScopedName().getScope()).isNull();
+        assertThat(returnType.getScopedName().getName()).isEqualTo("SomeType");
+        
+        assertThat(method.getParameters().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testMethodWithScopedReferenceReturnType() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { com.test.SomeType someMethod() { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        final ResolveLaterTypeReference returnType = (ResolveLaterTypeReference)method.getReturnType();
+        
+        assertThat(returnType.getScopedName().getScope())
+            .isEqualTo(Arrays.asList("com", "test"));
+        
         assertThat(returnType.getScopedName().getName()).isEqualTo("SomeType");
         
         assertThat(method.getParameters().isEmpty()).isTrue();
