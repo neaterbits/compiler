@@ -713,7 +713,37 @@ final class JavaLexerParser<COMPILATION_UNIT> {
     }
     
     private static final JavaToken [] PARAM_TYPE_RPAREN = {
-            JavaToken.RPAREN,
+            JavaToken.RPAREN
+    };
+
+    private void parseParametersAndMethod(Context methodContext) throws IOException, ParserException {
+
+        listener.onMethodSignatureParametersStart(methodContext);
+        
+        final JavaToken initialToken = lexer.lexSkipWS(PARAM_TYPE_RPAREN);
+        
+        switch (initialToken) {
+        
+        case RPAREN:
+            parseMethodBodyOrSemicolon(methodContext);
+            break;
+
+        default:
+            parseParameters();
+            
+            final JavaToken token = lexer.lexSkipWS(PARAM_TYPE_RPAREN);
+            if (token != JavaToken.RPAREN) {
+                throw lexer.unexpectedToken();
+            }
+            
+            parseMethodBodyOrSemicolon(methodContext);
+            break;
+        }
+        
+        listener.onMethodSignatureParametersEnd(methodContext);
+    }
+
+    private static final JavaToken [] PARAM_TYPE = {
             
             JavaToken.BYTE,
             JavaToken.SHORT,
@@ -724,16 +754,12 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             JavaToken.CHAR,
     };
 
-    private void parseParametersAndMethod(Context methodContext) throws IOException, ParserException {
+    private void parseParameterType() throws IOException, ParserException {
 
-        final JavaToken initialToken = lexer.lexSkipWS(PARAM_TYPE_RPAREN);
+        final JavaToken typeToken = lexer.lexSkipWS(PARAM_TYPE);
         
-        switch (initialToken) {
-        
-        case RPAREN:
-            parseMethodBodyOrSemicolon(methodContext);
-            break;
-
+        switch (typeToken) {
+            
         case BYTE:
         case SHORT:
         case INT:
@@ -741,16 +767,9 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         case FLOAT:
         case DOUBLE:
         case CHAR:
-            parseParameters(getCurrentContext(), getStringRef(), ReferenceType.SCALAR);
-            
-            final JavaToken token = lexer.lexSkipWS(PARAM_TYPE_RPAREN);
-            if (token != JavaToken.RPAREN) {
-                throw lexer.unexpectedToken();
-            }
-            
-            parseMethodBodyOrSemicolon(methodContext);
+            listener.onNonScopedTypeReference(getCurrentContext(), getStringRef(), ReferenceType.SCALAR);
             break;
-
+            
         default:
             throw lexer.unexpectedToken();
         }
@@ -761,19 +780,17 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             JavaToken.COMMA
     };
     
-    private void parseParameters(Context parameterContext, long parameterType, ReferenceType referenceType) throws IOException, ParserException {
-        
-        listener.onMethodSignatureParametersStart(parameterContext);
-
-        listener.onMethodSignatureParameterStart(parameterContext, false);
+    private void parseParameters() throws IOException, ParserException {
         
         boolean done = false;
         
-        Context curParameterContext = parameterContext;
-        
         do {
-            listener.onNonScopedTypeReference(parameterContext, parameterType, referenceType);
+            Context curParameterContext = getCurrentContext();
 
+            listener.onMethodSignatureParameterStart(curParameterContext, false);
+
+            parseParameterType();
+            
             final JavaToken parameterNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
             
             final long parameterName = lexer.getStringRef();
@@ -783,22 +800,23 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             }
 
             listener.onVariableName(curParameterContext, parameterName, 0);
-            
-            listener.onMethodSignatureParameterEnd(curParameterContext);
 
             final JavaToken afterParameterName = lexer.lexSkipWS(PARAMETER_TOKENS);
             
             switch (afterParameterName) {
+            case COMMA:
+                listener.onMethodSignatureParameterEnd(curParameterContext);
+                // Next parameter
+                break;
 
             default:
+                listener.onMethodSignatureParameterEnd(curParameterContext);
                 done = true;
                 break;
             }
 
         } while(!done);
         
-        
-        listener.onMethodSignatureParametersEnd(parameterContext);
     }
     
     private static final JavaToken [] BODY_OR_SEMI_COLON = new JavaToken [] {

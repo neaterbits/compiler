@@ -619,4 +619,46 @@ public abstract class BaseJavaParserTest {
         assertThat(paramType.getTypeName().getName()).isEqualTo("byte");
         assertThat(method.getParameters().get(0).getNameString()).isEqualTo("a");
     }
+
+    @Test
+    public void testMethodWithMultipleParameters() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { int someMethod(byte a, int b, char c) { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        final ScalarTypeReference returnType = (ScalarTypeReference)method.getReturnType();
+        
+        assertThat(returnType.getTypeName().getName()).isEqualTo("int");
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        
+        assertThat(method.getParameters().size()).isEqualTo(3);
+        
+        ScalarTypeReference paramType = (ScalarTypeReference)method.getParameters().get(0).getType();
+        assertThat(paramType.getTypeName().getName()).isEqualTo("byte");
+        assertThat(method.getParameters().get(0).getNameString()).isEqualTo("a");
+        
+        paramType = (ScalarTypeReference)method.getParameters().get(1).getType();
+        assertThat(paramType.getTypeName().getName()).isEqualTo("int");
+        assertThat(method.getParameters().get(1).getNameString()).isEqualTo("b");
+        
+        paramType = (ScalarTypeReference)method.getParameters().get(2).getType();
+        assertThat(paramType.getTypeName().getName()).isEqualTo("char");
+        assertThat(method.getParameters().get(2).getNameString()).isEqualTo("c");
+    }
 }
