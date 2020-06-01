@@ -752,6 +752,8 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             JavaToken.FLOAT,
             JavaToken.DOUBLE,
             JavaToken.CHAR,
+            
+            JavaToken.IDENTIFIER
     };
 
     private void parseParameterType() throws IOException, ParserException {
@@ -768,6 +770,10 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         case DOUBLE:
         case CHAR:
             listener.onNonScopedTypeReference(getCurrentContext(), getStringRef(), ReferenceType.SCALAR);
+            break;
+            
+        case IDENTIFIER:
+            listener.onNonScopedTypeReference(getCurrentContext(), getStringRef(), ReferenceType.REFERENCE);
             break;
             
         default:
