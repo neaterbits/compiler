@@ -34,7 +34,6 @@ public class NamedListStackEntry<T> extends ListStackEntry<T> {
 	public final void setName(String name, Context nameContext) {
 		
 		Objects.requireNonNull(name);
-		Objects.requireNonNull(nameContext);
 		
 		if (this.name != null) {
 			throw new IllegalStateException("Name already set");

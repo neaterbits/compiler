@@ -18,6 +18,7 @@ import com.neaterbits.util.parse.ParserException;
 
 final class JavaLexerParser<COMPILATION_UNIT> {
 
+    
     private final Lexer<JavaToken, CharInput> lexer;
     private final IterativeParserListener<COMPILATION_UNIT> listener;
 
@@ -569,12 +570,12 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             JavaToken.LPAREN
     };
 
-    private void parseRestOfTypeAndFieldScalar(Context context, long typeName) throws IOException, ParserException {
+    private void parseRestOfTypeAndFieldScalar(Context typeNameContext, long typeName) throws IOException, ParserException {
         
-        parseRestOfMember(context, typeName, null, ReferenceType.SCALAR);
+        parseRestOfMember(typeNameContext, typeName, null, ReferenceType.SCALAR);
     }
 
-    private void parseRestOfTypeAndFieldScopedType(Context context, long typeName) throws IOException, ParserException {
+    private void parseRestOfTypeAndFieldScopedType(Context typeNameContext, long typeName) throws IOException, ParserException {
         
         final JavaToken periodToken = lexer.lexSkipWS(JavaToken.PERIOD);
         
@@ -582,11 +583,11 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             parseRestOfScopedName(typeName);
         }
         else {
-            parseRestOfMember(context, typeName, null, ReferenceType.REFERENCE);
+            parseRestOfMember(typeNameContext, typeName, null, ReferenceType.REFERENCE);
         }
     }
     
-    private void parseRestOfMember(Context fieldContext, long typeName, List<ScopedNamePart> scopedTypeName, ReferenceType referenceType) throws ParserException, IOException {
+    private void parseRestOfMember(Context typeNameContext, long typeName, List<ScopedNamePart> scopedTypeName, ReferenceType referenceType) throws ParserException, IOException {
 
         // Next should be the name of the field or member
         final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
@@ -629,9 +630,19 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             listener.onVariableName(declaratorContext, identifier, 0);
             listener.onVariableDeclaratorEnd(declaratorContext);
 
-            parseVariableDeclaratorList(fieldContext);
+            parseVariableDeclaratorList(typeNameContext);
             
             listener.onFieldDeclarationEnd(context);
+            break;
+         
+        case LPAREN:
+            listener.onClassMethodStart(typeNameContext);
+            listener.onMethodReturnTypeStart(declaratorContext);
+            onType(typeNameContext, typeName, scopedTypeName, referenceType);
+            listener.onMethodReturnTypeEnd(typeNameContext);
+            listener.onMethodName(declaratorContext, identifier);
+
+            parseParametersAndMethod(typeNameContext);
             break;
             
         default:
@@ -670,7 +681,6 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         boolean done = false;
         
         do {
-            
             final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
             
             if (fieldNameToken != JavaToken.IDENTIFIER) {
@@ -687,7 +697,9 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             case COMMA:
             case SEMI:
                 listener.onVariableDeclaratorStart(declaratorContext);
+                
                 listener.onVariableName(declaratorContext, identifier, 0);
+                
                 listener.onVariableDeclaratorEnd(declaratorContext);
                 
                 if (afterVarNameToken == JavaToken.SEMI) {
@@ -701,6 +713,73 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         } while (!done);
     }
     
+    private static final JavaToken [] PARAM_TYPE_RPAREN = {
+            JavaToken.IDENTIFIER,
+            JavaToken.RPAREN
+    };
+
+    private void parseParametersAndMethod(Context methodContext) throws IOException, ParserException {
+
+        final JavaToken initialToken = lexer.lexSkipWS(PARAM_TYPE_RPAREN);
+        
+        switch (initialToken) {
+        
+        case RPAREN:
+            parseMethodBodyOrSemicolon(methodContext);
+            break;
+            
+        default:
+            throw lexer.unexpectedToken();
+        }
+    }
+    
+    private static final JavaToken [] BODY_OR_SEMI_COLON = new JavaToken [] {
+            
+            JavaToken.LBRACE,
+            JavaToken.SEMI
+    }; 
+    
+    private void parseMethodBodyOrSemicolon(Context methodContext) throws ParserException, IOException {
+        
+        final JavaToken token = lexer.lexSkipWS(BODY_OR_SEMI_COLON);
+        
+        switch (token) {
+
+        case LBRACE:
+            parseMethodBody();
+            
+            listener.onClassMethodEnd(methodContext);
+            break;
+            
+        default:
+            throw lexer.unexpectedToken();
+        }
+    }
+
+    private static final JavaToken [] STATEMENT_TOKENS = new JavaToken [] {
+            
+            JavaToken.RBRACE
+    };
+
+    private void parseMethodBody() throws IOException, ParserException {
+        
+        boolean done = false;
+        
+        do {
+            final JavaToken statementToken = lexer.lexSkipWS(STATEMENT_TOKENS);
+            
+            switch (statementToken) {
+            case RBRACE:
+                done = true;
+                break;
+                
+            default:
+                throw lexer.unexpectedToken();
+            }
+            
+        } while (!done);
+    }
+
     private void parseRestOfScopedName(long typeName) {
         
         throw new UnsupportedOperationException();

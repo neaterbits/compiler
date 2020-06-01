@@ -36,6 +36,7 @@ public enum ParseTreeElement {
 	CLASS_METHOD_MODIFIERS(false, true),
 	CLASS_METHOD_MODIFIER_HOLDER(true),
 	CLASS_METHOD(false),
+    METHOD_RETURN_TYPE(false),
 	METHOD_NAME(true),
 	
 	PARAMETER_LIST(false, true),

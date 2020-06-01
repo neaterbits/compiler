@@ -100,6 +100,10 @@ public class AST {
             size = IDENTIFIER_TYPE_REFERENCE_SIZE;
             break;
 
+        case METHOD_NAME:
+            size = METHOD_NAME_SIZE;
+            break;
+            
         default:
             size = 0; // ParseTreeElement
             break;
@@ -656,5 +660,78 @@ public class AST {
                 context,
                 astBuffer.getStringRef(index),
                 astBuffer.getInt(index + 4));
+    }
+
+    static void encodeClassMethodStart(StringASTBuffer astBuffer, Context context) {
+
+        astBuffer.writeElementStart(ParseTreeElement.CLASS_METHOD_MEMBER);
+        
+    }
+
+    public static <COMPILATION_UNIT> void decodeClassMethodStart(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onClassMethodStart(context);
+    }
+
+    static void encodeMethodReturnTypeStart(StringASTBuffer astBuffer, Context context) {
+
+        astBuffer.writeElementStart(ParseTreeElement.METHOD_RETURN_TYPE);
+        
+    }
+
+    public static <COMPILATION_UNIT> void decodeMethodReturnTypeStart(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onMethodReturnTypeStart(context);
+    }
+
+    static void encodeMethodReturnTypeEnd(StringASTBuffer astBuffer, Context context) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.METHOD_RETURN_TYPE);
+    }
+
+    public static <COMPILATION_UNIT> void decodeMethodReturnTypeEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onMethodReturnTypeEnd(context);
+    }
+    
+    private static final int METHOD_NAME_SIZE = STRING_REF_SIZE;
+
+    static void encodeMethodName(StringASTBuffer astBuffer, Context context, long methodName) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.METHOD_NAME);
+        
+        astBuffer.writeStringRef(methodName);
+    }
+
+    public static <COMPILATION_UNIT> void decodeMethodName(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onMethodName(context, astBuffer.getStringRef(index));
+    }
+
+    static void encodeClassMethodEnd(StringASTBuffer astBuffer, Context context) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.CLASS_METHOD_MEMBER);
+        
+    }
+
+    public static <COMPILATION_UNIT> void decodeClassMethodEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onClassMethodEnd(context);
     }
 }

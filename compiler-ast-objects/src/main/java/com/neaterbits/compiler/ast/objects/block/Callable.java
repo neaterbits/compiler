@@ -36,6 +36,10 @@ public abstract class Callable<NAME extends CallableName> extends CompilationCod
 		return name.get();
 	}
 
+	public final String getNameString() {
+	    return name.get().getName();
+	}
+	
 	public final ASTList<Parameter> getParameters() {
 		return parameters;
 	}

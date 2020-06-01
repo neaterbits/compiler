@@ -344,25 +344,25 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onClassMethodStart(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeClassMethodStart(astBuffer, context);
     }
 
     @Override
     public final void onMethodReturnTypeStart(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeMethodReturnTypeStart(astBuffer, context);
     }
 
     @Override
     public final void onMethodReturnTypeEnd(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeMethodReturnTypeEnd(astBuffer, context);
     }
 
     @Override
     public final void onMethodName(Context context, long methodName) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeMethodName(astBuffer, context, methodName);
     }
 
     @Override
@@ -428,7 +428,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onClassMethodEnd(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeClassMethodEnd(astBuffer, context);
     }
 
     @Override

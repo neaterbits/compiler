@@ -358,6 +358,28 @@ public final class EncodedCompilationUnit {
             case RESOLVE_LATER_IDENTIFIER_TYPE_REFERENCE:
                 AST.decodeIdentifierTypeReference(astBuffer, context, ref.index, listener);
                 break;
+                
+            case CLASS_METHOD_MEMBER:
+                if (ref.isStart) {
+                    AST.decodeClassMethodStart(astBuffer, context, listener);
+                }
+                else {
+                    AST.decodeClassMethodEnd(astBuffer, context, listener);
+                }
+                break;
+                
+            case METHOD_RETURN_TYPE:
+                if (ref.isStart) {
+                    AST.decodeMethodReturnTypeStart(astBuffer, context, listener);
+                }
+                else {
+                    AST.decodeMethodReturnTypeEnd(astBuffer, context, listener);
+                }
+                break;
+                
+            case METHOD_NAME:
+                AST.decodeMethodName(astBuffer, context, ref.index, listener);
+                break;
 
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
