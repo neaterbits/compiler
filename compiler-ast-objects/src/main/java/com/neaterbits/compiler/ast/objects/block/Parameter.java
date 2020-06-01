@@ -38,6 +38,10 @@ public final class Parameter extends BaseASTElement {
 		return name.get();
 	}
 
+	public String getNameString() {
+        return name.get().getName();
+    }
+
 	public boolean isVarArgs() {
 		return varArgs;
 	}

@@ -1010,7 +1010,10 @@ public abstract class BaseParserListener<
 
 	@Override
 	public final void onMethodSignatureParametersStart(Context context) {
+	    
+	    logEnter(context);
 
+	    logExit(context);
 	}
 
 	@Override
@@ -1048,6 +1051,9 @@ public abstract class BaseParserListener<
 	@Override
 	public final void onMethodSignatureParametersEnd(Context context) {
 
+	    logEnter(context);
+	    
+	    logExit(context);
 	}
 
 	private final void addClassMethodModifier(Context context, ClassMethodModifier modifier) {

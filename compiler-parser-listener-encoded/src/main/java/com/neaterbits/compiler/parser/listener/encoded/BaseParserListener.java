@@ -368,25 +368,23 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onMethodSignatureParametersStart(Context context) {
 
-        throw new UnsupportedOperationException();
     }
 
     @Override
     public final void onMethodSignatureParameterStart(Context context, boolean varArgs) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeSignatureParameterStart(astBuffer, context, varArgs);
     }
 
     @Override
     public final void onMethodSignatureParameterEnd(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeSignatureParameterEnd(astBuffer, context);
     }
 
     @Override
     public final void onMethodSignatureParametersEnd(Context context) {
 
-        throw new UnsupportedOperationException();
     }
 
     @Override

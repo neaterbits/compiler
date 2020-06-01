@@ -49,7 +49,6 @@ public abstract class BaseStackVariableDeclaration<VARIABLE_MODIFIER_HOLDER, TYP
 	@Override
 	public final void init(String name, Context nameContext, int numDims) {
 		Objects.requireNonNull(name);
-		Objects.requireNonNull(nameContext);
 
 		if (this.name != null) {
 			throw new IllegalStateException("Name already set");

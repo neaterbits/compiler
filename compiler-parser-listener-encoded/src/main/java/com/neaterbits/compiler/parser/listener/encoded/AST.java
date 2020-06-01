@@ -104,6 +104,10 @@ public class AST {
             size = METHOD_NAME_SIZE;
             break;
             
+        case SIGNATURE_PARAMETER:
+            size = SIGNATURE_PARAMETER_SIZE;
+            break;
+            
         default:
             size = 0; // ParseTreeElement
             break;
@@ -733,5 +737,37 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
         
         listener.onClassMethodEnd(context);
+    }
+    
+    private static final int SIGNATURE_PARAMETER_SIZE = 1;
+    
+    static void encodeSignatureParameterStart(StringASTBuffer astBuffer, Context context, boolean varArgs) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.SIGNATURE_PARAMETER);
+        
+        astBuffer.writeBoolean(varArgs);
+    }
+
+    public static <COMPILATION_UNIT> void decodeSignatureParameterStart(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onMethodSignatureParameterStart(context, astBuffer.getBoolean(index));
+    }
+
+    static void encodeSignatureParameterEnd(StringASTBuffer astBuffer, Context context) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.SIGNATURE_PARAMETER);
+    }
+
+    public static <COMPILATION_UNIT> void decodeSignatureParameterEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onMethodSignatureParameterEnd(context);
     }
 }

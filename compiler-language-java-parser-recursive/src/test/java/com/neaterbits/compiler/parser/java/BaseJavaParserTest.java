@@ -585,4 +585,38 @@ public abstract class BaseJavaParserTest {
         
         assertThat(method.getParameters().isEmpty()).isTrue();
     }
+
+    @Test
+    public void testMethodWithOneParameter() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { int someMethod(byte a) { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        final ScalarTypeReference returnType = (ScalarTypeReference)method.getReturnType();
+        
+        assertThat(returnType.getTypeName().getName()).isEqualTo("int");
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        
+        assertThat(method.getParameters().size()).isEqualTo(1);
+        
+        final ScalarTypeReference paramType = (ScalarTypeReference)method.getParameters().get(0).getType();
+        assertThat(paramType.getTypeName().getName()).isEqualTo("byte");
+        assertThat(method.getParameters().get(0).getNameString()).isEqualTo("a");
+    }
 }

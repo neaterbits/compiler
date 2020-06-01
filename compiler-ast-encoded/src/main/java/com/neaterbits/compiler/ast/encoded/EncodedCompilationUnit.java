@@ -381,6 +381,15 @@ public final class EncodedCompilationUnit {
                 AST.decodeMethodName(astBuffer, context, ref.index, listener);
                 break;
 
+            case SIGNATURE_PARAMETER:
+                if (ref.isStart) {
+                    AST.decodeSignatureParameterStart(astBuffer, context, ref.index, listener);
+                }
+                else {
+                    AST.decodeSignatureParameterEnd(astBuffer, context, ref.index, listener);
+                }
+                break;
+                
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }
