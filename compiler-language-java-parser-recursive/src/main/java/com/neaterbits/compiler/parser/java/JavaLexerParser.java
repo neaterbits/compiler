@@ -931,6 +931,15 @@ final class JavaLexerParser<COMPILATION_UNIT> {
                 parseNonScopedTypeVariableDeclarationStatement(context, typeName, ReferenceType.SCALAR);
                 break;
             }
+            
+            case IDENTIFIER: {
+                // Can be method invocation, for now parse as variable name
+                final Context context = getCurrentContext();
+                final long typeName = getStringRef();
+                
+                parseNonScopedTypeVariableDeclarationStatement(context, typeName, ReferenceType.REFERENCE);
+                break;
+            }
 
             case RBRACE:
                 done = true;

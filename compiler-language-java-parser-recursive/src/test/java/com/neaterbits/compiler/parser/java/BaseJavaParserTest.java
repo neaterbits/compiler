@@ -763,6 +763,31 @@ public abstract class BaseJavaParserTest {
         assertThat(statement.getDeclarations().get(2).getNameString()).isEqualTo("c");
     }
 
+    @Test
+    public void testMethodOneIdentifierLocalVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { SomeType a; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final VariableDeclarationStatement statement = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+        checkIdentifierType(statement.getTypeReference(), "SomeType");
+        
+        assertThat(statement.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(statement.getDeclarations().size()).isEqualTo(1);
+        assertThat(statement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+    }
+
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
         
         final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
