@@ -402,7 +402,16 @@ public final class EncodedCompilationUnit {
             case RESOLVE_LATER_SCOPED_TYPE_REFERENCE_PART:
                 AST.decodeScopedTypeReferencePart(astBuffer, context, ref.index, listener);
                 break;
-                
+            
+            case VARIABLE_DECLARATION_STATEMENT:
+                if (ref.isStart) {
+                    AST.decodeVariableDeclarationStatementStart(astBuffer, context, listener);
+                }
+                else {
+                    AST.decodeVariableDeclarationStatementEnd(astBuffer, context, listener);
+                }
+                break;
+
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }

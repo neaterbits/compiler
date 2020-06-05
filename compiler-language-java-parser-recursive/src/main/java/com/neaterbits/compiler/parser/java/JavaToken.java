@@ -34,6 +34,8 @@ public enum JavaToken implements IToken {
     INTERFACE("interface"),
     PACKAGE("package"),
     
+    VOID("void"),
+    
     BYTE("byte"),
     SHORT("short"),
     INT("int"),

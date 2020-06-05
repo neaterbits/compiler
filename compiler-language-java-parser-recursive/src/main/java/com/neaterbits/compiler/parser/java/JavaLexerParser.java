@@ -519,6 +519,8 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             
             JavaToken.LT, // generic method
             
+            JavaToken.VOID,
+            
             JavaToken.BYTE,
             JavaToken.SHORT,
             JavaToken.INT,
@@ -536,6 +538,7 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         
         switch (initialToken) {
         
+        case VOID:
         case BYTE:
         case SHORT:
         case INT:
@@ -890,7 +893,20 @@ final class JavaLexerParser<COMPILATION_UNIT> {
     }
 
     private static final JavaToken [] STATEMENT_TOKENS = new JavaToken [] {
+
+            // Local variables
+            JavaToken.BYTE,
+            JavaToken.SHORT,
+            JavaToken.INT,
+            JavaToken.LONG,
+            JavaToken.FLOAT,
+            JavaToken.DOUBLE,
+            JavaToken.CHAR,
             
+            JavaToken.IDENTIFIER,
+            
+
+            // End of method
             JavaToken.RBRACE
     };
 
@@ -902,6 +918,20 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             final JavaToken statementToken = lexer.lexSkipWS(STATEMENT_TOKENS);
             
             switch (statementToken) {
+            case BYTE:
+            case SHORT:
+            case INT:
+            case LONG:
+            case FLOAT:
+            case DOUBLE:
+            case CHAR: {
+                final Context context = getCurrentContext();
+                final long typeName = getStringRef();
+                
+                parseNonScopedTypeVariableDeclarationStatement(context, typeName, ReferenceType.SCALAR);
+                break;
+            }
+
             case RBRACE:
                 done = true;
                 break;
@@ -911,6 +941,21 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             }
             
         } while (!done);
+    }
+    
+    //private static JavaToken [] VARIABLE_DECLARATION_STATEMENT_TOKENS = new JavaToken [] {
+    //        JavaToken.COMMA
+    // };
+    
+    private void parseNonScopedTypeVariableDeclarationStatement(Context typeContext, long typeName, ReferenceType referenceType) throws ParserException, IOException {
+
+        listener.onVariableDeclarationStatementStart(context);
+        
+        listener.onNonScopedTypeReference(typeContext, typeName, referenceType);
+
+        parseVariableDeclaratorList(typeContext);
+        
+        listener.onVariableDeclarationStatementEnd(context);
     }
 
     private List<ScopedNamePart> parseRestOfScopedName(Context identifierContext, long identifier) throws IOException, ParserException {

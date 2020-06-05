@@ -820,4 +820,30 @@ public class AST {
         
         listener.onScopedTypeReferenceEnd(context);
     }
+    
+    static void encodeVariableDeclarationStatementStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.VARIABLE_DECLARATION_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeVariableDeclarationStatementStart(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onVariableDeclarationStatementStart(context);
+    }
+
+    static void encodeVariableDeclarationStatementEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.VARIABLE_DECLARATION_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeVariableDeclarationStatementEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onVariableDeclarationStatementEnd(context);
+    }
 }

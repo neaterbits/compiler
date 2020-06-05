@@ -15,6 +15,7 @@ import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
+import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
@@ -709,7 +710,32 @@ public abstract class BaseJavaParserTest {
         checkScopedType(method.getParameters().get(2).getType(), "com", "test", "YetAType");
         assertThat(method.getParameters().get(2).getNameString()).isEqualTo("c");
     }
-    
+
+    @Test
+    public void testMethodOneScalarLocalVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final VariableDeclarationStatement statement = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+        checkScalarType(statement.getTypeReference(), "int");
+        
+        assertThat(statement.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(statement.getDeclarations().size()).isEqualTo(1);
+        assertThat(statement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+    }
+
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
         
         final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
@@ -723,6 +749,23 @@ public abstract class BaseJavaParserTest {
         return classDefinition;
     }
     
+    private ClassMethod checkBasicMethod(CompilationUnit compilationUnit, String className, String methodName) {
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, className);
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        final ScalarTypeReference returnType = (ScalarTypeReference)method.getReturnType();
+        
+        assertThat(returnType.getTypeName().getName()).isEqualTo("void");
+        assertThat(method.getNameString()).isEqualTo(methodName);
+        
+        assertThat(method.getParameters().isEmpty()).isTrue();
+        
+        return method;
+    }
+
     private static void checkScalarType(TypeReference typeReference, String typeName) {
 
         final ScalarTypeReference type = (ScalarTypeReference)typeReference;

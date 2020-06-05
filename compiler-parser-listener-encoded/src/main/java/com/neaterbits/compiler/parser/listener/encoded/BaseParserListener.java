@@ -925,13 +925,13 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onVariableDeclarationStatementStart(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeVariableDeclarationStatementStart(astBuffer);
     }
 
     @Override
     public final void onVariableDeclarationStatementEnd(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeVariableDeclarationStatementEnd(astBuffer);
     }
 
     @Override
