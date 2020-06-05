@@ -2,6 +2,7 @@ package com.neaterbits.compiler.parser.java;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,6 +20,7 @@ import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
@@ -368,9 +370,7 @@ public abstract class BaseJavaParserTest {
         assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
         assertThat(classDefinition.getExtendsClasses().size()).isEqualTo(1);
         
-        final ResolveLaterTypeReference typeRef = (ResolveLaterTypeReference)classDefinition.getExtendsClasses().get(0);
-        assertThat(typeRef.getScopedName().getScope()).isNull();
-        assertThat(typeRef.getScopedName().getName()).isEqualTo("OtherClass");
+        checkIdentifierType(classDefinition.getExtendsClasses().get(0), "OtherClass");
 
         assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
         assertThat(classDefinition.getMembers()).isEmpty();
@@ -396,9 +396,7 @@ public abstract class BaseJavaParserTest {
         assertThat(classDefinition.getExtendsClasses()).isEmpty();
         
         assertThat(classDefinition.getImplementsInterfaces().size()).isEqualTo(1);
-        final ResolveLaterTypeReference typeRef = (ResolveLaterTypeReference)classDefinition.getImplementsInterfaces().get(0);
-        assertThat(typeRef.getScopedName().getScope()).isNull();
-        assertThat(typeRef.getScopedName().getName()).isEqualTo("SomeInterface");
+        checkIdentifierType(classDefinition.getImplementsInterfaces().get(0), "SomeInterface");
 
         assertThat(classDefinition.getMembers()).isEmpty();
     }
@@ -424,17 +422,11 @@ public abstract class BaseJavaParserTest {
         
         assertThat(classDefinition.getImplementsInterfaces().size()).isEqualTo(3);
         
-        ResolveLaterTypeReference typeRef = (ResolveLaterTypeReference)classDefinition.getImplementsInterfaces().get(0);
-        assertThat(typeRef.getScopedName().getScope()).isNull();
-        assertThat(typeRef.getScopedName().getName()).isEqualTo("SomeInterface");
+        checkIdentifierType(classDefinition.getImplementsInterfaces().get(0), "SomeInterface");
         
-        typeRef = (ResolveLaterTypeReference)classDefinition.getImplementsInterfaces().get(1);
-        assertThat(typeRef.getScopedName().getScope()).isNull();
-        assertThat(typeRef.getScopedName().getName()).isEqualTo("AnotherInterface");
+        checkIdentifierType(classDefinition.getImplementsInterfaces().get(1), "AnotherInterface");
 
-        typeRef = (ResolveLaterTypeReference)classDefinition.getImplementsInterfaces().get(2);
-        assertThat(typeRef.getScopedName().getScope()).isEqualTo(Arrays.asList("com", "test"));
-        assertThat(typeRef.getScopedName().getName()).isEqualTo("YetAnInterface");
+        checkScopedType(classDefinition.getImplementsInterfaces().get(2), "com", "test", "YetAnInterface");
         
         assertThat(classDefinition.getMembers()).isEmpty();
     }
@@ -455,16 +447,12 @@ public abstract class BaseJavaParserTest {
         assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
         
         assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses().size()).isEqualTo(1);
         
-        ResolveLaterTypeReference typeRef = (ResolveLaterTypeReference)classDefinition.getExtendsClasses().get(0);
-        assertThat(typeRef.getScopedName().getScope()).isNull();
-        assertThat(typeRef.getScopedName().getName()).isEqualTo("OtherClass");
+        assertThat(classDefinition.getExtendsClasses().size()).isEqualTo(1);
+        checkIdentifierType(classDefinition.getExtendsClasses().get(0), "OtherClass");
 
         assertThat(classDefinition.getImplementsInterfaces().size()).isEqualTo(1);
-        typeRef = (ResolveLaterTypeReference)classDefinition.getImplementsInterfaces().get(0);
-        assertThat(typeRef.getScopedName().getScope()).isNull();
-        assertThat(typeRef.getScopedName().getName()).isEqualTo("SomeInterface");
+        checkIdentifierType(classDefinition.getImplementsInterfaces().get(0), "SomeInterface");
         
         assertThat(classDefinition.getMembers()).isEmpty();
     }
@@ -486,8 +474,7 @@ public abstract class BaseJavaParserTest {
     
         assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
         
-        final ScalarTypeReference type = (ScalarTypeReference)member.getType(); 
-        assertThat(type.getTypeName().getName()).isEqualTo("int");
+        checkScalarType(member.getType(), "int");
     }
 
     @Test
@@ -507,9 +494,7 @@ public abstract class BaseJavaParserTest {
     
         assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
         
-        final ResolveLaterTypeReference type = (ResolveLaterTypeReference)member.getType(); 
-        assertThat(type.getScopedName().getScope()).isNull();
-        assertThat(type.getScopedName().getName()).isEqualTo("SomeType");
+        checkIdentifierType(member.getType(), "SomeType");
     }
 
     @Test
@@ -527,18 +512,14 @@ public abstract class BaseJavaParserTest {
         
         final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
         final ASTList<InitializerVariableDeclarationElement> initializers = member.getInitializers();
-        
+
+        checkScalarType(member.getType(), "int");
+
         assertThat(initializers.get(0).getNameString()).isEqualTo("a");
-        ScalarTypeReference type = (ScalarTypeReference)member.getType(); 
-        assertThat(type.getTypeName().getName()).isEqualTo("int");
         
         assertThat(initializers.get(1).getNameString()).isEqualTo("b");
-        type = (ScalarTypeReference)member.getType(); 
-        assertThat(type.getTypeName().getName()).isEqualTo("int");
         
         assertThat(initializers.get(2).getNameString()).isEqualTo("c");
-        type = (ScalarTypeReference)member.getType(); 
-        assertThat(type.getTypeName().getName()).isEqualTo("int");
     }
 
     @Test
@@ -557,9 +538,9 @@ public abstract class BaseJavaParserTest {
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
         final ClassMethod method = member.getMethod();
-        final ScalarTypeReference returnType = (ScalarTypeReference)method.getReturnType();
         
-        assertThat(returnType.getTypeName().getName()).isEqualTo("int");
+        checkScalarType(method.getReturnType(), "int");
+        
         assertThat(method.getNameString()).isEqualTo("someMethod");
         
         assertThat(method.getParameters().isEmpty()).isTrue();
@@ -581,10 +562,7 @@ public abstract class BaseJavaParserTest {
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
         final ClassMethod method = member.getMethod();
-        final ResolveLaterTypeReference returnType = (ResolveLaterTypeReference)method.getReturnType();
-        
-        assertThat(returnType.getScopedName().getScope()).isNull();
-        assertThat(returnType.getScopedName().getName()).isEqualTo("SomeType");
+        checkIdentifierType(method.getReturnType(), "SomeType");
         
         assertThat(method.getParameters().isEmpty()).isTrue();
     }
@@ -605,12 +583,8 @@ public abstract class BaseJavaParserTest {
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
         final ClassMethod method = member.getMethod();
-        final ResolveLaterTypeReference returnType = (ResolveLaterTypeReference)method.getReturnType();
-        
-        assertThat(returnType.getScopedName().getScope())
-            .isEqualTo(Arrays.asList("com", "test"));
-        
-        assertThat(returnType.getScopedName().getName()).isEqualTo("SomeType");
+
+        checkScopedType(method.getReturnType(), "com", "test", "SomeType");
         
         assertThat(method.getParameters().isEmpty()).isTrue();
     }
@@ -631,15 +605,14 @@ public abstract class BaseJavaParserTest {
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
         final ClassMethod method = member.getMethod();
-        final ScalarTypeReference returnType = (ScalarTypeReference)method.getReturnType();
         
-        assertThat(returnType.getTypeName().getName()).isEqualTo("int");
+        checkScalarType(method.getReturnType(), "int");
+        
         assertThat(method.getNameString()).isEqualTo("someMethod");
         
         assertThat(method.getParameters().size()).isEqualTo(1);
         
-        final ScalarTypeReference paramType = (ScalarTypeReference)method.getParameters().get(0).getType();
-        assertThat(paramType.getTypeName().getName()).isEqualTo("byte");
+        checkScalarType(method.getParameters().get(0).getType(), "byte");
         assertThat(method.getParameters().get(0).getNameString()).isEqualTo("a");
     }
 
@@ -659,23 +632,18 @@ public abstract class BaseJavaParserTest {
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
         final ClassMethod method = member.getMethod();
-        final ScalarTypeReference returnType = (ScalarTypeReference)method.getReturnType();
-        
-        assertThat(returnType.getTypeName().getName()).isEqualTo("int");
+        checkScalarType(method.getReturnType(), "int");
         assertThat(method.getNameString()).isEqualTo("someMethod");
         
         assertThat(method.getParameters().size()).isEqualTo(3);
         
-        ScalarTypeReference paramType = (ScalarTypeReference)method.getParameters().get(0).getType();
-        assertThat(paramType.getTypeName().getName()).isEqualTo("byte");
+        checkScalarType(method.getParameters().get(0).getType(), "byte");
         assertThat(method.getParameters().get(0).getNameString()).isEqualTo("a");
         
-        paramType = (ScalarTypeReference)method.getParameters().get(1).getType();
-        assertThat(paramType.getTypeName().getName()).isEqualTo("int");
+        checkScalarType(method.getParameters().get(1).getType(), "int");
         assertThat(method.getParameters().get(1).getNameString()).isEqualTo("b");
         
-        paramType = (ScalarTypeReference)method.getParameters().get(2).getType();
-        assertThat(paramType.getTypeName().getName()).isEqualTo("char");
+        checkScalarType(method.getParameters().get(2).getType(), "char");
         assertThat(method.getParameters().get(2).getNameString()).isEqualTo("c");
     }
 
@@ -695,26 +663,18 @@ public abstract class BaseJavaParserTest {
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
         final ClassMethod method = member.getMethod();
-        final ScalarTypeReference returnType = (ScalarTypeReference)method.getReturnType();
-        
-        assertThat(returnType.getTypeName().getName()).isEqualTo("int");
+        checkScalarType(method.getReturnType(), "int");
         assertThat(method.getNameString()).isEqualTo("someMethod");
         
         assertThat(method.getParameters().size()).isEqualTo(3);
         
-        ResolveLaterTypeReference paramType = (ResolveLaterTypeReference)method.getParameters().get(0).getType();
-        assertThat(paramType.getScopedName().getScope()).isNull();
-        assertThat(paramType.getScopedName().getName()).isEqualTo("SomeType");
+        checkIdentifierType(method.getParameters().get(0).getType(), "SomeType");
         assertThat(method.getParameters().get(0).getNameString()).isEqualTo("a");
         
-        paramType = (ResolveLaterTypeReference)method.getParameters().get(1).getType();
-        assertThat(paramType.getScopedName().getScope()).isNull();
-        assertThat(paramType.getScopedName().getName()).isEqualTo("AnotherType");
+        checkIdentifierType(method.getParameters().get(1).getType(), "AnotherType");
         assertThat(method.getParameters().get(1).getNameString()).isEqualTo("b");
         
-        paramType = (ResolveLaterTypeReference)method.getParameters().get(2).getType();
-        assertThat(paramType.getScopedName().getScope()).isNull();
-        assertThat(paramType.getScopedName().getName()).isEqualTo("YetAType");
+        checkIdentifierType(method.getParameters().get(2).getType(), "YetAType");
         assertThat(method.getParameters().get(2).getNameString()).isEqualTo("c");
     }
 
@@ -734,26 +694,19 @@ public abstract class BaseJavaParserTest {
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
         final ClassMethod method = member.getMethod();
-        final ScalarTypeReference returnType = (ScalarTypeReference)method.getReturnType();
         
-        assertThat(returnType.getTypeName().getName()).isEqualTo("int");
+        checkScalarType(method.getReturnType(), "int");
         assertThat(method.getNameString()).isEqualTo("someMethod");
         
         assertThat(method.getParameters().size()).isEqualTo(3);
         
-        ResolveLaterTypeReference paramType = (ResolveLaterTypeReference)method.getParameters().get(0).getType();
-        assertThat(paramType.getScopedName().getScope()).isEqualTo(Arrays.asList("com", "test"));
-        assertThat(paramType.getScopedName().getName()).isEqualTo("SomeType");
+        checkScopedType(method.getParameters().get(0).getType(), "com", "test", "SomeType");
         assertThat(method.getParameters().get(0).getNameString()).isEqualTo("a");
         
-        paramType = (ResolveLaterTypeReference)method.getParameters().get(1).getType();
-        assertThat(paramType.getScopedName().getScope()).isEqualTo(Arrays.asList("com", "test"));
-        assertThat(paramType.getScopedName().getName()).isEqualTo("AnotherType");
+        checkScopedType(method.getParameters().get(1).getType(), "com", "test", "AnotherType");
         assertThat(method.getParameters().get(1).getNameString()).isEqualTo("b");
         
-        paramType = (ResolveLaterTypeReference)method.getParameters().get(2).getType();
-        assertThat(paramType.getScopedName().getScope()).isEqualTo(Arrays.asList("com", "test"));
-        assertThat(paramType.getScopedName().getName()).isEqualTo("YetAType");
+        checkScopedType(method.getParameters().get(2).getType(), "com", "test", "YetAType");
         assertThat(method.getParameters().get(2).getNameString()).isEqualTo("c");
     }
     
@@ -768,5 +721,30 @@ public abstract class BaseJavaParserTest {
         assertThat(classDefinition.getMembers().size()).isEqualTo(1);
         
         return classDefinition;
+    }
+    
+    private static void checkScalarType(TypeReference typeReference, String typeName) {
+
+        final ScalarTypeReference type = (ScalarTypeReference)typeReference;
+        
+        assertThat(type.getTypeName().getName()).isEqualTo(typeName);
+    }
+
+    private static void checkIdentifierType(TypeReference typeReference, String typeName) {
+
+        final ResolveLaterTypeReference type = (ResolveLaterTypeReference)typeReference;
+        
+        assertThat(type.getScopedName().getScope()).isNull();
+        assertThat(type.getScopedName().getName()).isEqualTo(typeName);
+    }
+
+    private static void checkScopedType(TypeReference typeReference, String ...names) {
+
+        final List<String> parts = Arrays.asList(names);
+        
+        final ResolveLaterTypeReference type = (ResolveLaterTypeReference)typeReference;
+        
+        assertThat(type.getScopedName().getScope()).isEqualTo(parts.subList(0, parts.size() - 1));
+        assertThat(type.getScopedName().getName()).isEqualTo(parts.get(parts.size() - 1));
     }
 }
