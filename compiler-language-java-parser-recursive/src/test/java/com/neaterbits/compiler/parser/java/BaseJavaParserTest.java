@@ -480,13 +480,7 @@ public abstract class BaseJavaParserTest {
         
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
-        
-        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
-        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses()).isEmpty();
-        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
     
@@ -507,13 +501,7 @@ public abstract class BaseJavaParserTest {
         
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
-        
-        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
-        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses()).isEmpty();
-        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
     
@@ -535,13 +523,7 @@ public abstract class BaseJavaParserTest {
         
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
-        
-        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
-        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses()).isEmpty();
-        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
         final ASTList<InitializerVariableDeclarationElement> initializers = member.getInitializers();
@@ -570,13 +552,7 @@ public abstract class BaseJavaParserTest {
         
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
-        
-        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
-        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses()).isEmpty();
-        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
@@ -600,13 +576,7 @@ public abstract class BaseJavaParserTest {
         
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
-        
-        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
-        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses()).isEmpty();
-        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
@@ -630,13 +600,7 @@ public abstract class BaseJavaParserTest {
         
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
-        
-        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
-        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses()).isEmpty();
-        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
@@ -662,13 +626,7 @@ public abstract class BaseJavaParserTest {
         
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
-        
-        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
-        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses()).isEmpty();
-        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
@@ -696,13 +654,7 @@ public abstract class BaseJavaParserTest {
         
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
-        
-        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
-        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses()).isEmpty();
-        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
@@ -738,13 +690,7 @@ public abstract class BaseJavaParserTest {
         
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
-        
-        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
-        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses()).isEmpty();
-        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
@@ -783,13 +729,7 @@ public abstract class BaseJavaParserTest {
         
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
-        
-        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
-        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
-        assertThat(classDefinition.getExtendsClasses()).isEmpty();
-        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
         
@@ -815,5 +755,18 @@ public abstract class BaseJavaParserTest {
         assertThat(paramType.getScopedName().getScope()).isEqualTo(Arrays.asList("com", "test"));
         assertThat(paramType.getScopedName().getName()).isEqualTo("YetAType");
         assertThat(method.getParameters().get(2).getNameString()).isEqualTo("c");
+    }
+    
+    private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        assertThat(classDefinition.getNameString()).isEqualTo(className);
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        
+        return classDefinition;
     }
 }
