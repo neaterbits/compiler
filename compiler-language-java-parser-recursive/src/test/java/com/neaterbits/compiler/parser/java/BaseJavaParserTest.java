@@ -736,6 +736,33 @@ public abstract class BaseJavaParserTest {
         assertThat(statement.getDeclarations().get(0).getNameString()).isEqualTo("a");
     }
 
+    @Test
+    public void testMethodOneMultipleScalarLocalVariables() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a, b, c; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final VariableDeclarationStatement statement = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+        checkScalarType(statement.getTypeReference(), "int");
+        
+        assertThat(statement.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(statement.getDeclarations().size()).isEqualTo(3);
+        assertThat(statement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        assertThat(statement.getDeclarations().get(1).getNameString()).isEqualTo("b");
+        assertThat(statement.getDeclarations().get(2).getNameString()).isEqualTo("c");
+    }
+
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
         
         final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
