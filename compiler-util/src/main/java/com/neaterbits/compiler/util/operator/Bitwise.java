@@ -16,6 +16,16 @@ public enum Bitwise implements NumericOperator {
 	}
 
 	@Override
+    public OperatorType getOperatorType() {
+        return OperatorType.BITWISE;
+    }
+
+    @Override
+    public Enum<?> getEnumValue() {
+        return this;
+    }
+
+    @Override
 	public Arity getArity() {
 		return arity;
 	}

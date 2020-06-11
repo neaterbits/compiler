@@ -35,7 +35,7 @@ public class EncodedImportsModel extends BaseImportsModel<EncodedCompilationUnit
             }
             
             index += ref.isStart
-                    ? AST.sizeStart(ref.element)
+                    ? AST.sizeStart(ref.element, buffer, ref.index)
                     : AST.sizeEnd(ref.element);
         }
     }

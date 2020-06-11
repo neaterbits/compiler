@@ -2,10 +2,18 @@ package com.neaterbits.compiler.parser.listener.encoded;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
+import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.Bitwise;
+import com.neaterbits.compiler.util.operator.Logical;
+import com.neaterbits.compiler.util.operator.Operator;
+import com.neaterbits.compiler.util.operator.OperatorType;
+import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.typedefinition.ClassModifier;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
@@ -42,7 +50,7 @@ public class AST {
         return writePos;
     }
 
-    public static int sizeStart(ParseTreeElement element) {
+    public static int sizeStart(ParseTreeElement element, ASTBufferRead astBuffer, int index) {
         
         final int size;
         
@@ -112,6 +120,27 @@ public class AST {
             size = SCOPED_TYPE_REFERENCE_PART_SIZE;
             break;
             
+        case IF_ELSE_IF_ELSE_STATEMENT:
+            size = IF_STATEMENT_SIZE;
+            break;
+            
+        case ELSE_IF_CONDITION_BLOCK:
+            size = ELSE_IF_CONDITION_BLOCK_SIZE;
+            break;
+         
+        case SIMPLE_VARIABLE_REFERENCE:
+            size = VARIABLE_REFERENCE_SIZE;
+            break;
+            
+        case INTEGER_LITERAL:
+            // Size of literal storage in bytes stored as initial byte
+            size = 1 + astBuffer.getByte(index) + 1 + 1 + 1;
+            break;
+            
+        case EXPRESSION_BINARY_OPERATOR:
+            size = EXPRESSION_BINARY_OPERATOR_SIZE;
+            break;
+
         default:
             size = 0; // ParseTreeElement
             break;
@@ -845,5 +874,263 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
         
         listener.onVariableDeclarationStatementEnd(context);
+    }
+    
+    private static final int IF_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeIfElseIfElseStatementStart(StringASTBuffer astBuffer, long ifKeyword, int ifKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.IF_ELSE_IF_ELSE_STATEMENT);
+        
+        astBuffer.writeStringRef(ifKeyword);
+        astBuffer.writeContextRef(ifKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeIfElseIfElseStatementStart(
+            ASTBufferRead astBuffer,
+            Context elementContext,
+            ContextGetter contextGetter,
+            int index,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        final Context ifKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            ifKeywordContext = astBuffer.hasContextRef(index + 4)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
+                    : null;
+        }
+        else {
+            ifKeywordContext = null;
+        }
+        
+        listener.onIfStatementStart(elementContext, astBuffer.getStringRef(index), ifKeywordContext);
+    }
+
+    static void encodeIfElseIfElseStatementEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.IF_ELSE_IF_ELSE_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT >void decodeIfElseIfElseStatementEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onEndIfStatement(context);
+    }
+    
+    static void encodeIfConditionBlockStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.IF_CONDITION_BLOCK);
+    }
+    
+    static void encodeIfConditionBlockEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.IF_CONDITION_BLOCK);
+    }
+
+    public static <COMPILATION_UNIT> void decodeIfConditionBlockEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onIfStatementInitialBlockEnd(context);
+    }
+
+    private static final int ELSE_IF_CONDITION_BLOCK_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeElseIfConditionBlockStart(StringASTBuffer astBuffer, long elseIfKeyword, int elseIfKeywordContext) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.ELSE_IF_CONDITION_BLOCK);
+        astBuffer.writeStringRef(elseIfKeyword);
+        astBuffer.writeContextRef(elseIfKeywordContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeElseIfConditionBlockStart(
+            ASTBufferRead astBuffer,
+            Context context,
+            ContextGetter contextGetter,
+            int index,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        
+        final Context elseIfKeywordContext;
+
+        if (contextGetter != null) {
+            
+            elseIfKeywordContext = astBuffer.hasContextRef(index + STRING_REF_SIZE)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + STRING_REF_SIZE))
+                    : null;
+        }
+        else {
+            elseIfKeywordContext = null;
+        }
+
+        listener.onElseIfStatementStart(context, astBuffer.getStringRef(index), elseIfKeywordContext);
+    }
+
+    static void encodeElseIfConditionBlockEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ELSE_IF_CONDITION_BLOCK);
+    }
+
+    public static <COMPILATION_UNIT> void decodeElseIfConditionBlockEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onElseIfStatementEnd(context);
+    }
+
+    static void encodeElseBlockStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.ELSE_BLOCK);
+    }
+    
+    static void encodeElseBlockEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ELSE_BLOCK);
+    }
+
+    private static final int VARIABLE_REFERENCE_SIZE = STRING_REF_SIZE;
+    
+    static void encodeVariableReference(StringASTBuffer astBuffer, long name) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.SIMPLE_VARIABLE_REFERENCE);
+        
+        astBuffer.writeStringRef(name);
+    }
+
+    public static <COMPILATION_UNIT> void decodeVariableReference(
+            ASTBufferRead astBuffer,
+            Context elementContext,
+            int index,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onVariableReference(elementContext, astBuffer.getStringRef(index));
+    }
+
+    private static final int EXPRESSION_BINARY_OPERATOR_SIZE = 1 + 1;
+    
+    static void encodeExpressionBinaryOperator(StringASTBuffer astBuffer, Operator operator) {
+        
+        astBuffer.writeLeafElement(ParseTreeElement.EXPRESSION_BINARY_OPERATOR);
+        
+        astBuffer.writeEnumByte(operator.getOperatorType());
+        astBuffer.writeEnumByte(operator.getEnumValue());
+    }
+
+    public static <COMPILATION_UNIT> void decodeExpressionBinaryOperator(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        final OperatorType operatorType = astBuffer.getEnumByte(index, OperatorType.class);
+        
+        final Operator operator;
+        
+        switch (operatorType) {
+        case ARITHMETIC:
+            operator = astBuffer.getEnumByte(index + 1, Arithmetic.class);
+            break;
+            
+        case BITWISE:
+            operator = astBuffer.getEnumByte(index + 1, Bitwise.class);
+            break;
+            
+        case RELATIONAL:
+            operator = astBuffer.getEnumByte(index + 1, Relational.class);
+            break;
+            
+        case LOGICAL:
+            operator = astBuffer.getEnumByte(index + 1, Logical.class);
+            break;
+        
+        default:
+            throw new IllegalStateException();
+        }
+        
+        listener.onExpressionBinaryOperator(context, operator);
+    }
+
+    static void encodeIntegerLiteral(StringASTBuffer astBuffer, long value, Base base, boolean signed, int bits) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.INTEGER_LITERAL);
+        
+       if (value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE) {
+           astBuffer.writeByte((byte)1);
+           astBuffer.writeByte((byte)value);
+       }
+       else if (value >= Short.MIN_VALUE && value <= Short.MAX_VALUE) {
+           astBuffer.writeByte((byte)2);
+           astBuffer.writeShort((short)value);
+       }
+       else if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
+           astBuffer.writeByte((byte)4);
+           astBuffer.writeInt((int)value);
+       }
+       else {
+           astBuffer.writeByte((byte)8);
+           astBuffer.writeLong(value);
+       }
+       
+       astBuffer.writeEnumByte(base);
+       astBuffer.writeBoolean(signed);
+
+       if (bits > Byte.MAX_VALUE) {
+           throw new IllegalArgumentException();
+       }
+
+       astBuffer.writeByte((byte)bits);
+    }
+
+    public static <COMPILATION_UNIT> void decodeIntegerLiteral(
+            ASTBufferRead astBuffer,
+            Context context,
+            int index,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+        
+        final long value;
+        // length
+        final int valueSize = astBuffer.getByte(index);
+        
+        final int valueIndex = index + 1;
+        
+        switch (valueSize) {
+        case 1:
+            value = astBuffer.getByte(valueIndex);
+            break;
+            
+        case 2:
+            value = astBuffer.getShort(valueIndex);
+            break;
+            
+        case 4:
+            value = astBuffer.getInt(valueIndex);
+            break;
+            
+        case 8:
+            value = astBuffer.getLong(valueIndex);
+            break;
+            
+        default:
+            throw new IllegalStateException();
+        }
+
+        final int afterValueIndex = index + 1 + valueSize;
+        
+        final Base base = astBuffer.getEnumByte(afterValueIndex, Base.class);
+        final boolean signed = astBuffer.getBoolean(afterValueIndex + 1);
+        final int bits = astBuffer.getByte(afterValueIndex + 2); 
+
+        listener.onIntegerLiteral(
+                context,
+                value,
+                base,
+                signed,
+                bits);
     }
 }

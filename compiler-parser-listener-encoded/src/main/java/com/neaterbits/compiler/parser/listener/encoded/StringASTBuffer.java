@@ -29,7 +29,7 @@ final class StringASTBuffer {
         // TODO fix allocation
         return tokenizer.addToBuffer(stringBuffer, stringRef);
     }
-    
+
     void writeStringRef(long stringRef) {
         
         astBuffer.writeInt(getStringIndex(stringRef));
@@ -70,14 +70,24 @@ final class StringASTBuffer {
         astBuffer.writeLeafElement(element);
     }
     
-    void writeBoolean(boolean value) {
-        
-        astBuffer.writeBoolean(value);
+    void writeByte(byte value) {
+        astBuffer.writeByte(value);
+    }
+    
+    void writeShort(short value) {
+        astBuffer.writeShort(value);
+    }
+    
+    void writeInt(int value) {
+        astBuffer.writeInt(value);
+    }
+    
+    void writeLong(long value) {
+        astBuffer.writeLong(value);
     }
 
-    void writeInt(int value) {
-        
-        astBuffer.writeInt(value);
+    void writeBoolean(boolean value) {
+        astBuffer.writeBoolean(value);
     }
 
     <T extends Enum<T>> void writeEnumByte(Enum<T> enumValue) {

@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.ast.objects;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -53,12 +52,15 @@ import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.ConstantSwitchCaseLabel;
 import com.neaterbits.compiler.ast.objects.statement.DefaultSwitchCaseLabel;
 import com.neaterbits.compiler.ast.objects.statement.DoWhileStatement;
+import com.neaterbits.compiler.ast.objects.statement.ElseBlock;
+import com.neaterbits.compiler.ast.objects.statement.ElseIfConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.EnumConstant;
 import com.neaterbits.compiler.ast.objects.statement.EnumSwitchCaseLabel;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
 import com.neaterbits.compiler.ast.objects.statement.ForExpressionList;
 import com.neaterbits.compiler.ast.objects.statement.ForInit;
 import com.neaterbits.compiler.ast.objects.statement.ForStatement;
+import com.neaterbits.compiler.ast.objects.statement.IfConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.IteratorForStatement;
 import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
@@ -227,8 +229,11 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	ReturnStatement,
 	ThrowStatement,
 	
-	ConditionBlock,
 	IfElseIfElseStatement,
+	ConditionBlock,
+    IfConditionBlock,
+    ElseIfConditionBlock,
+    ElseBlock,
 	
 	SwitchCaseLabel,
 	ConstantSwitchCaseLabel,
@@ -738,7 +743,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public IntegerLiteral createIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits) {
+	public IntegerLiteral createIntegerLiteral(Context context, long value, Base base, boolean signed, int bits) {
 		return new IntegerLiteral(context, value, base, signed, bits, getNumericalType(true, bits));
 	}
 
@@ -880,18 +885,24 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 	
 	@Override
-	public ConditionBlock createConditionBlock(Context context, Keyword elseKeyword, Keyword ifKeyword,
-			Expression condition, Block block) {
-		return new ConditionBlock(context, elseKeyword, ifKeyword, condition, block);
-	}
-
-	@Override
 	public IfElseIfElseStatement createIfElseIfElseStatement(Context context, List<ConditionBlock> conditions,
 			Keyword elseKeyword, Block elseBlock) {
 		return new IfElseIfElseStatement(context, conditions, elseKeyword, elseBlock);
 	}
 
-	@Override
+    @Override
+    public IfConditionBlock createIfConditionBlock(Context context, Keyword ifKeyword,
+            Expression condition, Block block) {
+        return new IfConditionBlock(context, ifKeyword, condition, block);
+    }
+
+    @Override
+    public ElseIfConditionBlock createElseIfConditionBlock(Context context, Keyword elseIfKeyword,
+            Expression condition, Block block) {
+        return new ElseIfConditionBlock(context, elseIfKeyword, condition, block);
+    }
+
+    @Override
 	public ConstantSwitchCaseLabel createConstantSwitchCaseLabel(Context context, Keyword keyword, Expression constant) {
 		return new ConstantSwitchCaseLabel(context, keyword, constant);
 	}

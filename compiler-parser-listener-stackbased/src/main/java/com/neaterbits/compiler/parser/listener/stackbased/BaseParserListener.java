@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.parser.listener.stackbased;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -237,8 +236,11 @@ public abstract class BaseParserListener<
 		
 		THROW_STATEMENT extends STATEMENT,
 		
-		CONDITION_BLOCK,
 		IF_ELSE_IF_ELSE_STATEMENT extends STATEMENT,
+        CONDITION_BLOCK,
+        IF_CONDITION_BLOCK extends CONDITION_BLOCK,
+        ELSE_IF_CONDITION_BLOCK extends CONDITION_BLOCK,
+        ELSE_BLOCK,
 		
 		SWITCH_CASE_LABEL,
 		CONSTANT_SWITCH_CASE_LABEL extends SWITCH_CASE_LABEL,
@@ -252,7 +254,7 @@ public abstract class BaseParserListener<
 
 	implements ParserListener<COMPILATION_UNIT> {
 
-	private StringSource stringSource;
+	final StringSource stringSource;
 	private final ParseLogger logger;
 
 	final ParseTreeFactory<
@@ -367,8 +369,11 @@ public abstract class BaseParserListener<
 			
 			THROW_STATEMENT,
 			
-			CONDITION_BLOCK,
 			IF_ELSE_IF_ELSE_STATEMENT,
+            CONDITION_BLOCK,
+            IF_CONDITION_BLOCK,
+            ELSE_IF_CONDITION_BLOCK,
+            ELSE_BLOCK,
 
 			SWITCH_CASE_LABEL,
 			CONSTANT_SWITCH_CASE_LABEL,
@@ -1903,7 +1908,7 @@ public abstract class BaseParserListener<
 	// Literals
 
 	@Override
-	public final void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits) {
+	public final void onIntegerLiteral(Context context, long value, Base base, boolean signed, int bits) {
 
 		logEnter(context);
 

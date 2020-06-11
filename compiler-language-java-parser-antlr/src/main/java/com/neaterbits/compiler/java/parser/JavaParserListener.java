@@ -1,7 +1,8 @@
 package com.neaterbits.compiler.java.parser;
 
-import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.antlr.v4.runtime.Token;
 
@@ -33,6 +34,8 @@ import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.util.io.strings.OffsetLengthStringRef;
 import com.neaterbits.util.io.strings.StringSource;
+
+import static com.neaterbits.compiler.antlr4.AntlrStringRefs.stringRef;
 
 /**
  * Listener for the Java grammars
@@ -523,7 +526,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		delegate.onIntegerLiteral(
 				context,
-				BigInteger.valueOf(javaInteger.getValue()),
+				javaInteger.getValue(),
 				javaInteger.getBase(),
 				true,
 				bits);
@@ -783,16 +786,21 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			
 			statementsStack.pop();
 
-			final String elseText = ifOrElseStatement.getKeywordToken(0).getText();
 			final Token elseToken = ifOrElseStatement.getKeywordToken(0);
 
+			final Context merged = Context.merge(
+                    Arrays.asList(
+                            Antlr4.context(elseToken, file),
+                            Antlr4.context(keywordToken, file)),
+                    Function.identity());
+			
 			delegate.onElseIfStatementStart(
 					updateElseIfContext(context, elseToken, file),
-					elseText, Antlr4.context(elseToken, file),
-					keywordToken.getText(), Antlr4.context(keywordToken, file));
+					stringRef(merged),
+					merged);
 		}
 		else {
-			delegate.onIfStatementStart(context, keywordToken.getText(), Antlr4.context(keywordToken, file));
+			delegate.onIfStatementStart(context, stringRef(keywordToken), Antlr4.context(keywordToken, file));
 		}
 
 		statementsStack.add(JavaStatement.IF_THEN, keywordToken);
@@ -841,16 +849,22 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			// Previous was if-statement so this is else-statement
 			statementsStack.pop();
 
-			final String elseText = ifOrElseStatement.getKeywordToken(0).getText();
 			final Token elseToken = ifOrElseStatement.getKeywordToken(0);
+			
+			final Context merged = Context.merge(
+                    Arrays.asList(
+                            Antlr4.context(elseToken, file),
+                            Antlr4.context(ifKeyword, file)),
+                        Function.identity());
 			
 			delegate.onElseIfStatementStart(
 					updateElseIfContext(context, elseToken, file),
-					elseText, Antlr4.context(elseToken, file),
-					ifKeyword.getText(), Antlr4.context(ifKeyword, file));
+					stringRef(merged),
+					merged
+	        );
 		}
 		else {
-			delegate.onIfStatementStart(context, ifKeyword.getText(), Antlr4.context(ifKeyword, file));
+			delegate.onIfStatementStart(context, stringRef(ifKeyword), Antlr4.context(ifKeyword, file));
 		}
 
 		statementsStack.add(JavaStatement.IF_THEN_ELSE_START, ifKeyword, elseKeyword);

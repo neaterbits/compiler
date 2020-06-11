@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.parser.listener.common;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 import com.neaterbits.compiler.util.Base;
@@ -227,7 +226,7 @@ public interface ParserListener<COMPILATION_UNIT> {
 	
 	void onConditionalExpressionEnd(Context context);
 	
-	void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits);
+	void onIntegerLiteral(Context context, long value, Base base, boolean signed, int bits);
 	
 	void onFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits);
 	

@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.parser.listener.encoded;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,7 @@ import com.neaterbits.util.io.strings.Tokenizer;
 abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<COMPILATION_UNIT> {
 
     private final String file;
-    private final StringASTBuffer astBuffer;
+    final StringASTBuffer astBuffer;
 
     private final ASTBuffer contextBuffer;
     
@@ -63,7 +62,17 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         this.typeNameToIndex = new HashMap<>();
     }
     
-    private void writeStartElementContext(Context context) {
+    final void writeStartElementContext(Context context) {
+        
+        writeElementContext(context);
+    }
+    
+    final void writeLeafElementContext(Context context) {
+        
+        writeElementContext(context);
+    }
+    
+    private void writeElementContext(Context context) {
         
         final int parseTreeRef = astBuffer.getParseTreeRef();
         
@@ -81,7 +90,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         // parseTreeRefToEndContextHash.put(parseTreeRef, contextBufferPos);
     }
     
-    private int writeOtherContext(Context context) {
+    final int writeOtherContext(Context context) {
         
         return AST.writeContext(contextBuffer, context);
     }
@@ -634,7 +643,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onVariableReference(Context context, long name) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeVariableReference(astBuffer, name);
     }
 
     @Override
@@ -747,9 +756,11 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits) {
+    public final void onIntegerLiteral(Context context, long value, Base base, boolean signed, int bits) {
 
-        throw new UnsupportedOperationException();
+        writeLeafElementContext(context);
+        
+        AST.encodeIntegerLiteral(astBuffer, value, base, signed, bits);
     }
 
     @Override

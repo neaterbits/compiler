@@ -90,7 +90,6 @@ public enum ParseTreeElement {
 	FUNCTION_NAME(true),
 	
 	BLOCK(false),
-	CONDITION_BLOCK(false),
 	CATCH_BLOCK(false),
 	
 	CHARACTER_LITERAL(true),
@@ -130,6 +129,8 @@ public enum ParseTreeElement {
 	THIS_PRIMARY(true),
 	VARIABLE_EXPRESSION(false),
 	
+	EXPRESSION_BINARY_OPERATOR(true),
+	
 	CONSTANT_SWITCH_CASE_LABEL(true),
 	DEFAULT_SWITCH_CASE_LABEL(true),
 	ENUM_SWITCH_CASE_LABEL(true),
@@ -151,6 +152,10 @@ public enum ParseTreeElement {
 	FOR_EXPRESSION_LIST(false),
 
 	IF_ELSE_IF_ELSE_STATEMENT(false),
+	IF_CONDITION_BLOCK(false),
+	ELSE_IF_CONDITION_BLOCK(false),
+	ELSE_BLOCK(false),
+
 	ITERATOR_FOR_STATEMENT(false),
 	
 	RETURN_STATEMENT(false),

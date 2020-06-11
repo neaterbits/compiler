@@ -1,9 +1,10 @@
 package com.neaterbits.compiler.parser.listener.stackbased;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
-import com.neaterbits.compiler.parser.listener.stackbased.state.StackConditionBlock;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackConstantSwitchLabel;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackElseBlock;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackElseIfConditionBlock;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackIfConditionBlock;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackIfElseIfElse;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackSwitchCase;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackSwitchCaseGroup;
@@ -121,9 +122,11 @@ public abstract class BaseIterativeParserListener<
 		
 		THROW_STATEMENT extends STATEMENT,
 		
-		CONDITION_BLOCK,
-		
 		IF_ELSE_IF_ELSE_STATEMENT extends STATEMENT,
+        CONDITION_BLOCK,
+        IF_CONDITION_BLOCK extends CONDITION_BLOCK,
+        ELSE_IF_CONDITION_BLOCK extends CONDITION_BLOCK,
+        ELSE_BLOCK,
 		
 		SWITCH_CASE_LABEL,
 		CONSTANT_SWITCH_CASE_LABEL extends SWITCH_CASE_LABEL,
@@ -245,8 +248,11 @@ public abstract class BaseIterativeParserListener<
 		
 		THROW_STATEMENT,
 		
-		CONDITION_BLOCK,
 		IF_ELSE_IF_ELSE_STATEMENT,
+        CONDITION_BLOCK,
+        IF_CONDITION_BLOCK,
+        ELSE_IF_CONDITION_BLOCK,
+        ELSE_BLOCK,
 		
 		SWITCH_CASE_LABEL,
 		CONSTANT_SWITCH_CASE_LABEL,
@@ -267,41 +273,55 @@ public abstract class BaseIterativeParserListener<
 	}
 
 	@Override
-	public final void onIfStatementStart(Context context, String ifKeyword, Context ifKeywordContext) {
+	public final void onIfStatementStart(Context context, long ifKeyword, Context ifKeywordContext) {
 		
 		push(new StackIfElseIfElse<>(getLogger()));
-		push(new StackConditionBlock<>(getLogger(), context, null, null, ifKeyword, ifKeywordContext));
+		push(new StackIfConditionBlock<>(getLogger(), context, stringSource.asString(ifKeyword), ifKeywordContext));
 		
 		pushVariableScope();
 	}
 	
-	private void popAndAddConditionBlock(Context context) {
+	private void popAndAddIfConditionBlock(Context context) {
 		
-		final StackConditionBlock<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackConditionBlock = pop();
+		final StackIfConditionBlock<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackConditionBlock = pop();
 		
 		final StackIfElseIfElse<KEYWORD, CONDITION_BLOCK, STATEMENT> ifElseIfElse = get();
 		
-		final CONDITION_BLOCK conditionBlock = parseTreeFactory.createConditionBlock(
+		final IF_CONDITION_BLOCK conditionBlock = parseTreeFactory.createIfConditionBlock(
 				stackConditionBlock.getUpdatedContext(),
-				stackConditionBlock.getElseKeyword() != null
-					? parseTreeFactory.createKeyword(stackConditionBlock.getElseKeywordContext(), stackConditionBlock.getElseKeyword())
-					: null,
-				stackConditionBlock.getIfKeyword() != null
-					? parseTreeFactory.createKeyword(stackConditionBlock.getIfKeywordContext(), stackConditionBlock.getIfKeyword())
-					: null,
+				parseTreeFactory.createKeyword(
+				        stackConditionBlock.getIfKeywordContext(),
+				        stackConditionBlock.getIfKeyword()),
 				makeExpression(context, stackConditionBlock),
 				parseTreeFactory.createBlock(context, stackConditionBlock.getStatements()));
 
 		ifElseIfElse.add(conditionBlock);
 	}
-	
+
+	   private void popAndAddElseIfConditionBlock(Context context) {
+	        
+	        final StackElseIfConditionBlock<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackConditionBlock = pop();
+	        
+	        final StackIfElseIfElse<KEYWORD, CONDITION_BLOCK, STATEMENT> ifElseIfElse = get();
+	        
+	        final ELSE_IF_CONDITION_BLOCK conditionBlock = parseTreeFactory.createElseIfConditionBlock(
+	                stackConditionBlock.getUpdatedContext(),
+	                parseTreeFactory.createKeyword(
+	                        stackConditionBlock.getElseIfKeywordContext(),
+	                        stackConditionBlock.getElseIfKeyword()),
+	                makeExpression(context, stackConditionBlock),
+	                parseTreeFactory.createBlock(context, stackConditionBlock.getStatements()));
+
+	        ifElseIfElse.add(conditionBlock);
+	    }
+
 	// End of initial if-statement and block
 	@Override
 	public final void onIfStatementInitialBlockEnd(Context context) {
 
 		logEnter(context);
 		
-		popAndAddConditionBlock(context);
+		popAndAddIfConditionBlock(context);
 
 		popVariableScope();
 		
@@ -309,11 +329,11 @@ public abstract class BaseIterativeParserListener<
 	}
 
 	@Override
-	public final void onElseIfStatementStart(Context context, String elseKeyword, Context elseKeywordContext, String ifKeyword, Context ifKeywordContext) {
+	public final void onElseIfStatementStart(Context context, long elseIfKeyword, Context elseIfKeywordContext) {
 
 		logEnter(context);
 		
-		push(new StackConditionBlock<>(getLogger(), context, elseKeyword, elseKeywordContext, ifKeyword, ifKeywordContext));
+		push(new StackElseIfConditionBlock<>(getLogger(), context, stringSource.asString(elseIfKeyword), elseIfKeywordContext));
 		
 		pushVariableScope();
 		
@@ -325,7 +345,7 @@ public abstract class BaseIterativeParserListener<
 
 		logEnter(context);
 
-		popAndAddConditionBlock(context);
+		popAndAddElseIfConditionBlock(context);
 		
 		popVariableScope();
 		

@@ -12,6 +12,7 @@ import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.DoWhileStatement;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
 import com.neaterbits.compiler.ast.objects.statement.ForStatement;
+import com.neaterbits.compiler.ast.objects.statement.IfConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
@@ -39,9 +40,8 @@ public abstract class BaseStatementConverter<T extends ConverterState<T>>
 		
 		for (ConditionBlock conditionBlock : statement.getConditions()) {
 
-			final ConditionBlock convertedConditionBlock = new ConditionBlock(
+			final ConditionBlock convertedConditionBlock = new IfConditionBlock(
 					conditionBlock.getContext(),
-					null,
 					null,
 					convertExpression(conditionBlock.getCondition(), param),
 					convertBlock(conditionBlock.getBlock(), param));

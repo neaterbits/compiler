@@ -13,46 +13,53 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
     }
 
     @Override
-    public final void onIfStatementStart(Context context, String ifKeyword, Context ifKeywordContext) {
+    public final void onIfStatementStart(Context context, long ifKeyword, Context ifKeywordContext) {
 
-        throw new UnsupportedOperationException();
+        writeStartElementContext(context);
+
+        final int ifKeywordContextRef = writeOtherContext(ifKeywordContext);
+
+        AST.encodeIfElseIfElseStatementStart(astBuffer, ifKeyword, ifKeywordContextRef);
+        
+        AST.encodeIfConditionBlockStart(astBuffer);
     }
 
     @Override
     public final void onIfStatementInitialBlockEnd(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeIfConditionBlockEnd(astBuffer);
     }
 
     @Override
-    public final void onElseIfStatementStart(Context context, String elseKeyword, Context elseKeywordContext,
-            String ifKeyword, Context ifKeywordContext) {
+    public final void onElseIfStatementStart(Context context, long elseIfKeyword, Context elseIfKeywordContext) {
+        
+        final int elseIfKeywordContextRef = writeOtherContext(elseIfKeywordContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeElseIfConditionBlockStart(astBuffer, elseIfKeyword, elseIfKeywordContextRef);
     }
 
     @Override
     public final void onElseIfStatementEnd(Context context) {
-
-        throw new UnsupportedOperationException();
+        
+        AST.encodeElseIfConditionBlockEnd(astBuffer);
     }
 
     @Override
     public final void onElseStatementStart(Context context, String keyword, Context keywordContext) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeElseBlockStart(astBuffer);
     }
 
     @Override
     public final void onElseStatementEnd(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeElseBlockEnd(astBuffer);
     }
 
     @Override
     public final void onEndIfStatement(Context context) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeIfElseIfElseStatementEnd(astBuffer);
     }
 
     @Override

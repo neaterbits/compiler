@@ -31,7 +31,12 @@ public class EmitterState {
 			this.atStartOfLine = false;
 		}
 	}
-	
+
+	public final EmitterState append(long integer, Base base) {
+
+        return append(BigInteger.valueOf(integer), base);
+    }
+
 	public final EmitterState append(BigInteger bigInt, Base base) {
 
 		append(bigInt.toString(base.getRadix()));

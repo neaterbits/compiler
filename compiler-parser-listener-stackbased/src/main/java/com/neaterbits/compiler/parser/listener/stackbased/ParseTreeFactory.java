@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.parser.listener.stackbased;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 import com.neaterbits.compiler.util.Base;
@@ -130,8 +129,11 @@ public interface ParseTreeFactory<
 	
 	THROW_STATEMENT extends STATEMENT,
 	
-	CONDITION_BLOCK,
 	IF_ELSE_IF_ELSE_STATEMENT extends STATEMENT,
+	CONDITION_BLOCK,
+    IF_CONDITION_BLOCK extends CONDITION_BLOCK,
+    ELSE_IF_CONDITION_BLOCK extends CONDITION_BLOCK,
+    ELSE_BLOCK,
 	
 	SWITCH_CASE_LABEL,
 	CONSTANT_SWITCH_CASE_LABEL extends SWITCH_CASE_LABEL,
@@ -313,7 +315,7 @@ public interface ParseTreeFactory<
 	
 	SIMPLE_VARIABLE_REFERENCE createSimpleVariableReference(Context context, VARIABLE_DECLARATION variableDeclaration);
 	
-	INTEGER_LITERAL createIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits);
+	INTEGER_LITERAL createIntegerLiteral(Context context, long value, Base base, boolean signed, int bits);
 
 	FLOATING_POINT_LITERAL createFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits);
 
@@ -387,9 +389,11 @@ public interface ParseTreeFactory<
 
 	THROW_STATEMENT createThrowStatement(Context context, EXPRESSION expression);
 
-	CONDITION_BLOCK createConditionBlock(Context context, KEYWORD elseKeyword, KEYWORD ifKeyword, EXPRESSION condition, BLOCK block);
-
 	IF_ELSE_IF_ELSE_STATEMENT createIfElseIfElseStatement(Context context, List<CONDITION_BLOCK> conditions, KEYWORD elseKeyword, BLOCK elseBlock);
+
+	IF_CONDITION_BLOCK createIfConditionBlock(Context context, KEYWORD ifKeyword, EXPRESSION condition, BLOCK block);
+
+    ELSE_IF_CONDITION_BLOCK createElseIfConditionBlock(Context context, KEYWORD elseIfKeyword, EXPRESSION condition, BLOCK block);
 
 	CONSTANT_SWITCH_CASE_LABEL createConstantSwitchCaseLabel(Context context, KEYWORD keyword, EXPRESSION constant);
 

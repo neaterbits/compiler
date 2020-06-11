@@ -38,19 +38,33 @@ public interface Context {
 			}
 			
 			upper = context;
-			
-			sb.append(context.getText());
+
+			if (context != null) {
+			    sb.append(context.getText());
+			}
 		}
 		
-		if (lower.getEndOffset() > upper.getStartOffset()) {
-			throw new IllegalArgumentException();
-		}
+		final Context result;
 		
-		return new ImmutableContext(
-				lower.getFile(),
-				lower.getStartLine(), lower.getStartPosInLine(), lower.getStartOffset(), 
-				upper.getEndLine(), upper.getEndPosInLine(), upper.getEndOffset(),
-				sb.toString());
+		if (lower != null && upper != null) {
+		    
+		    /* TODO add this back
+    		if (lower.getEndOffset() > upper.getStartOffset()) {
+    			throw new IllegalArgumentException();
+    		}
+    		*/
+    		
+    		result = new ImmutableContext(
+    				lower.getFile(),
+    				lower.getStartLine(), lower.getStartPosInLine(), lower.getStartOffset(), 
+    				upper.getEndLine(), upper.getEndPosInLine(), upper.getEndOffset(),
+    				sb.toString());
+		}
+		else {
+		    result = null;
+		}
+
+		return result;
 	}
 	
 	String getFile();

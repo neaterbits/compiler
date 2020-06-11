@@ -12,6 +12,16 @@ public enum Logical implements Operator {
 	}
 
 	@Override
+    public OperatorType getOperatorType() {
+        return OperatorType.LOGICAL;
+    }
+
+    @Override
+    public Enum<?> getEnumValue() {
+        return this;
+    }
+
+    @Override
 	public Arity getArity() {
 		return arity;
 	}

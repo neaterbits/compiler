@@ -29,7 +29,6 @@ import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
-import com.neaterbits.util.io.strings.OffsetLengthStringRef;
 import com.neaterbits.util.io.strings.StringRef;
 
 import java.util.ArrayList;
@@ -41,6 +40,8 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import com.neaterbits.compiler.antlr4.Antlr4;
+
+import static com.neaterbits.compiler.antlr4.AntlrStringRefs.stringRef;
 
 public class Java8AntlrParserListener extends Java8BaseListener {
 
@@ -93,18 +94,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	private Context context(Token ctx) {
 		return Antlr4.context(ctx, file);
-	}
-
-	private static long stringRef(ParserRuleContext ctx) {
-		return OffsetLengthStringRef.encode(ctx.start.getStartIndex(), ctx.getText().length());
-	}
-
-	private static long stringRef(Token ctx) {
-		return OffsetLengthStringRef.encode(ctx.getStartIndex(), ctx.getText().length());
-	}
-
-	private static long stringRef(TerminalNode ctx) {
-		return stringRef(ctx.getSymbol());
 	}
 
 	@Override

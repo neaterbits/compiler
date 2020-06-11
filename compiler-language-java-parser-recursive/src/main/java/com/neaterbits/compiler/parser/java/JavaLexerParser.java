@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.util.operator.Operator;
+import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
@@ -20,6 +23,7 @@ import com.neaterbits.util.parse.ParserException;
 final class JavaLexerParser<COMPILATION_UNIT> {
     
     private final Lexer<JavaToken, CharInput> lexer;
+    private final Tokenizer tokenizer;
     private final IterativeParserListener<COMPILATION_UNIT> listener;
 
     private final Context context;
@@ -35,6 +39,7 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         
         this.lexer = lexer;
         this.listener = listener;
+        this.tokenizer = tokenizer;
         
         this.context = new LexerContext(file, lexer, tokenizer);
     }
@@ -737,6 +742,8 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         switch (initialToken) {
         
         case RPAREN:
+            listener.onMethodSignatureParametersEnd(methodContext);
+            
             parseMethodBodyOrSemicolon(methodContext);
             break;
 
@@ -870,59 +877,253 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             JavaToken.FLOAT,
             JavaToken.DOUBLE,
             JavaToken.CHAR,
-            
-            JavaToken.IDENTIFIER,
-            
 
-            // End of method
-            JavaToken.RBRACE
+            JavaToken.IF,
+
+            JavaToken.IDENTIFIER,
     };
 
     private void parseMethodBodyAndRBrace() throws IOException, ParserException {
         
+        parseBlockAndRBrace();
+    }
+    
+    private void parseBlockAndRBrace() throws ParserException, IOException {
+
+        parseBlock();
+        
+        final JavaToken rbraceToken = lexer.lexSkipWS(JavaToken.RBRACE);
+        
+        if (rbraceToken != JavaToken.RBRACE) {
+            throw lexer.unexpectedToken();
+        }
+    }
+    
+    private void parseBlock() throws ParserException, IOException {
+        
+        
         boolean done = false;
         
         do {
-            final JavaToken statementToken = lexer.lexSkipWS(STATEMENT_TOKENS);
+            final boolean statementFound = parseStatement();
             
-            switch (statementToken) {
-            case BYTE:
-            case SHORT:
-            case INT:
-            case LONG:
-            case FLOAT:
-            case DOUBLE:
-            case CHAR: {
-                final Context context = getCurrentContext();
-                final long typeName = getStringRef();
-                
-                parseNonScopedTypeVariableDeclarationStatement(context, typeName, ReferenceType.SCALAR);
-                break;
-            }
-            
-            case IDENTIFIER: {
-                final Context context = getCurrentContext();
-                
-                // Can be method invocation, for now parse as variable name
-                listener.onVariableDeclarationStatementStart(context);
-
-                parseUserType();
-                
-                parseVariableDeclaratorList(context);
-                
-                listener.onVariableDeclarationStatementEnd(context);
-                break;
-            }
-
-            case RBRACE:
-                done = true;
-                break;
-                
-            default:
-                throw lexer.unexpectedToken();
-            }
+            done = !statementFound;
             
         } while (!done);
+    }
+    
+    private static JavaToken [] ELSE_IF_OR_ELSE = new JavaToken [] {
+            JavaToken.ELSE_IF,
+            JavaToken.ELSE
+    };
+    
+    private void parseIfElseIfElse(Context context, long ifKeyword, Context ifKeywordContext) throws IOException, ParserException {
+
+        listener.onIfStatementStart(context, ifKeyword, ifKeywordContext);
+        
+        parseConditionInParenthesis();
+
+        final JavaToken optionalLBrace = lexer.lexSkipWS(JavaToken.LBRACE);
+        
+        if (optionalLBrace == JavaToken.LBRACE) {
+            parseBlockAndRBrace();
+        }
+        else {
+            parseStatement();
+        }
+        
+        final JavaToken elseIfOrElseToken = lexer.lexSkipWS(ELSE_IF_OR_ELSE);
+        switch (elseIfOrElseToken) {
+        default:
+            listener.onIfStatementInitialBlockEnd(ifKeywordContext);
+            listener.onEndIfStatement(ifKeywordContext);
+            break;
+        }
+    }
+    
+    private void parseConditionInParenthesis() throws IOException, ParserException {
+        
+        final JavaToken lparen = lexer.lexSkipWS(JavaToken.LPAREN);
+        
+        if (lparen != JavaToken.LPAREN) {
+            throw lexer.unexpectedToken();
+        }
+        
+        parseExpressionList();
+
+        final JavaToken rparen = lexer.lexSkipWS(JavaToken.RPAREN);
+        
+        if (rparen != JavaToken.RPAREN) {
+            throw lexer.unexpectedToken();
+        }
+    }
+    
+    private static final JavaToken [] OPERATOR_TOKENS = new JavaToken [] {
+            JavaToken.EQUALS,
+            JavaToken.NOT_EQUALS,
+            JavaToken.LT,
+            JavaToken.GT,
+            JavaToken.LTE,
+            JavaToken.GTE
+    };
+    
+    private void parseExpressionList() throws IOException, ParserException {
+
+        boolean done = false;
+        boolean initial = false;
+        
+        do {
+            final boolean expressionFound = parseExpression();
+            
+            if (!expressionFound) {
+                if (initial) {
+                    throw lexer.unexpectedToken();
+                }
+                else {
+                    done = true;
+                }
+            }
+            else {
+                
+                initial = false;
+                
+                final JavaToken operatorToken = lexer.lexSkipWS(OPERATOR_TOKENS);
+                
+                switch (operatorToken) {
+                case EQUALS:
+                    callListenerAndParseExpression(getCurrentContext(), Relational.EQUALS);
+                    break;
+                    
+                case NOT_EQUALS:
+                    callListenerAndParseExpression(getCurrentContext(), Relational.NOT_EQUALS);
+                    break;
+                    
+                case LT:
+                    callListenerAndParseExpression(getCurrentContext(), Relational.LESS_THAN);
+                    break;
+                    
+                case GT:
+                    callListenerAndParseExpression(getCurrentContext(), Relational.GREATER_THAN);
+                    break;
+    
+                case LTE:
+                    callListenerAndParseExpression(getCurrentContext(), Relational.LESS_THAN_OR_EQUALS);
+                    break;
+                    
+                case GTE:
+                    callListenerAndParseExpression(getCurrentContext(), Relational.GREATER_THAN_OR_EQUALS);
+                    break;
+                    
+                default:
+                    done = true;
+                    break;
+                }
+            }
+        } while (!done);
+    }
+    
+    private void callListenerAndParseExpression(Context context, Operator operator) throws IOException, ParserException {
+        
+        listener.onExpressionBinaryOperator(context, operator);
+        
+    }
+
+    private static final JavaToken [] EXPRESSION_TOKENS = new JavaToken [] {
+            
+            JavaToken.IDENTIFIER,
+            JavaToken.NUMBER,
+    };
+            
+    
+    private boolean parseExpression() throws IOException, ParserException {
+        
+        final JavaToken token = lexer.lexSkipWS(EXPRESSION_TOKENS);
+        
+        boolean expressionFound = true;
+        
+        switch (token) {
+        case IDENTIFIER:
+            // Variable or 'this' or method call
+            parseVariableReferenceExpression(getCurrentContext(), getStringRef());
+            break;
+
+        case NUMBER:
+            parseNumericLiteral(getCurrentContext(), getStringRef());
+            break;
+
+        default:
+            expressionFound = false;
+            break;
+        }
+        
+        return expressionFound;
+    }
+    
+    private void parseVariableReferenceExpression(Context context, long stringRef) {
+        
+        // For now just say this is a variable
+        listener.onVariableReference(context, stringRef);
+        
+    }
+    
+    private void parseNumericLiteral(Context context, long stringRef) {
+
+        listener.onIntegerLiteral(
+                context,
+                tokenizer.asInt(stringRef),
+                Base.DECIMAL,
+                true,
+                32);
+    }
+    
+    private boolean parseStatement() throws ParserException, IOException {
+        
+        boolean foundStatement = true;
+        
+        final JavaToken statementToken = lexer.lexSkipWS(STATEMENT_TOKENS);
+        
+        switch (statementToken) {
+        case BYTE:
+        case SHORT:
+        case INT:
+        case LONG:
+        case FLOAT:
+        case DOUBLE:
+        case CHAR: {
+            final Context context = getCurrentContext();
+            final long typeName = getStringRef();
+            
+            parseNonScopedTypeVariableDeclarationStatement(context, typeName, ReferenceType.SCALAR);
+            break;
+        }
+        
+        case IDENTIFIER: {
+            final Context context = getCurrentContext();
+            
+            // Can be method invocation, for now parse as variable name
+            listener.onVariableDeclarationStatementStart(context);
+
+            parseUserType();
+            
+            parseVariableDeclaratorList(context);
+            
+            listener.onVariableDeclarationStatementEnd(context);
+            break;
+        }
+        
+        case IF: {
+            final Context context = getCurrentContext();
+            
+            parseIfElseIfElse(context, getStringRef(), context);
+            break;
+        }
+
+        default:
+            foundStatement = false;
+            break;
+        }
+
+        return foundStatement;
     }
     
     //private static JavaToken [] VARIABLE_DECLARATION_STATEMENT_TOKENS = new JavaToken [] {

@@ -17,11 +17,19 @@ public enum Arithmetic implements NumericOperator {
 	}
 
 	@Override
+    public OperatorType getOperatorType() {
+        return OperatorType.ARITHMETIC;
+    }
+
+    @Override
+    public Enum<?> getEnumValue() {
+        return this;
+    }
+
+    @Override
 	public Arity getArity() {
 		return arity;
 	}
-
-
 
 	@Override
 	public <T, R> R visit(OperatorVisitor<T, R> visitor, T param) {

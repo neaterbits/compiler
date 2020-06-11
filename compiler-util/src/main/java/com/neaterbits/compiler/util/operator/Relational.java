@@ -18,6 +18,16 @@ public enum Relational implements Operator {
 	}
 
 	@Override
+    public OperatorType getOperatorType() {
+        return OperatorType.RELATIONAL;
+    }
+
+    @Override
+    public Enum<?> getEnumValue() {
+        return this;
+    }
+
+    @Override
 	public Arity getArity() {
 		return arity;
 	}

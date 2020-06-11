@@ -4,11 +4,11 @@ import com.neaterbits.compiler.util.Context;
 
 public interface IterativeParserListener<COMPILATION_UNIT> extends InfixParserListener<COMPILATION_UNIT> {
 
-	void onIfStatementStart(Context context, String ifKeyword, Context ifKeywordContext);
+	void onIfStatementStart(Context context, long ifKeyword, Context ifKeywordContext);
 	
 	void onIfStatementInitialBlockEnd(Context context);
 	
-	void onElseIfStatementStart(Context context, String elseKeyword, Context elseKeywordContext, String ifKeyword, Context ifKeywordContext);
+	void onElseIfStatementStart(Context context, long elseIfKeyword, Context elseIfKeywordContext);
 	
 	void onElseIfStatementEnd(Context context);
 

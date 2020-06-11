@@ -15,6 +15,8 @@ public enum JavaToken implements IToken {
     EOF(TokenType.EOF),
 
     IF("if"),
+    ELSE_IF("else if"),
+    ELSE("else"),
 
     FOR("for"),
     WHILE("while"),
@@ -71,10 +73,14 @@ public enum JavaToken implements IToken {
     COLON(':'),
     ASTERISK('*'),
     
+    EQUALS("=="),
+    NOT_EQUALS("!="),
     LT('<'),
     GT('>'),
+    LTE("<="),
+    GTE(">="),
 
-    DIGIT(CharTypeInteger.INSTANCE),
+    NUMBER(CharTypeInteger.INSTANCE),
 
     IDENTIFIER(string -> {
         

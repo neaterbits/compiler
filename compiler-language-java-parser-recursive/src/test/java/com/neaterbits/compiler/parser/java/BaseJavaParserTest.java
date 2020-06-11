@@ -14,7 +14,10 @@ import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
+import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
+import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
+import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
@@ -23,6 +26,7 @@ import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReferen
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
+import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.util.parse.ParserException;
@@ -811,6 +815,41 @@ public abstract class BaseJavaParserTest {
         
         assertThat(statement.getDeclarations().size()).isEqualTo(1);
         assertThat(statement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+    }
+
+    @Test
+    public void testIfStatement() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a; if (a == 1) { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+
+        final VariableDeclarationStatement declarationStatement = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+        checkScalarType(declarationStatement.getTypeReference(), "int");
+        assertThat(declarationStatement.getModifiers().isEmpty()).isTrue();
+        assertThat(declarationStatement.getDeclarations().size()).isEqualTo(1);
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+
+        final IfElseIfElseStatement ifStatement = (IfElseIfElseStatement)method.getBlock().getStatements().get(1);
+        assertThat(ifStatement.getConditions().size()).isEqualTo(1);
+        
+        final ConditionBlock condition = ifStatement.getConditions().get(0);
+
+        final ExpressionList expressionList = (ExpressionList)condition.getCondition();
+        assertThat(expressionList.getExpressions().size()).isEqualTo(2);
+        assertThat(expressionList.getOperators().size()).isEqualTo(1);
+        assertThat(expressionList.getOperators().get(0)).isEqualTo(Relational.EQUALS);
+        
+        assertThat(condition.getBlock().getStatements().isEmpty()).isTrue();
     }
 
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {

@@ -17,7 +17,9 @@ abstract class BaseInfixParserListener<COMPILATION_UNIT>
     @Override
     public final void onExpressionBinaryOperator(Context context, Operator operator) {
 
-        throw new UnsupportedOperationException();
+        writeLeafElementContext(context);
+        
+        AST.encodeExpressionBinaryOperator(astBuffer, operator);
     }
 
     @Override

@@ -8,7 +8,8 @@ import com.neaterbits.compiler.util.IntKeyIntValueHash;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.util.buffers.MapStringStorageBuffer;import com.neaterbits.compiler.parser.listener.common.ParserListener;
+import com.neaterbits.util.buffers.MapStringStorageBuffer;
+import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.listener.encoded.AST;
 import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead;
 import com.neaterbits.compiler.parser.listener.encoded.ContextGetter;
@@ -166,7 +167,7 @@ public final class EncodedCompilationUnit {
                 + 1;
     }
     
-    public <COMP_UNIT> COMP_UNIT iterate(ParserListener<COMP_UNIT> listener) {
+    public <COMP_UNIT> COMP_UNIT iterate(IterativeParserListener<COMP_UNIT> listener) {
      
         int parseTreeRef = 0;
 
@@ -411,13 +412,67 @@ public final class EncodedCompilationUnit {
                     AST.decodeVariableDeclarationStatementEnd(astBuffer, context, listener);
                 }
                 break;
+                
+            case IF_ELSE_IF_ELSE_STATEMENT:
+                if (ref.isStart) {
+                    AST.decodeIfElseIfElseStatementStart(astBuffer, context, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeIfElseIfElseStatementEnd(astBuffer, context, listener);
+                }
+                break;
+                
+            case IF_CONDITION_BLOCK:
+                if (ref.isStart) {
+                    // No listener
+                }
+                else {
+                    AST.decodeIfConditionBlockEnd(astBuffer, context, listener);
+                }
+                break;
 
+            case ELSE_IF_CONDITION_BLOCK:
+                if (ref.isStart) {
+                    AST.decodeElseIfConditionBlockStart(astBuffer, context, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeElseIfConditionBlockEnd(astBuffer, context, listener);
+                }
+                break;
+
+            case SIMPLE_VARIABLE_REFERENCE:
+                if (ref.isStart) {
+                    AST.decodeVariableReference(astBuffer, context, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+                
+            case EXPRESSION_BINARY_OPERATOR:
+                if (ref.isStart) {
+                    AST.decodeExpressionBinaryOperator(astBuffer, context, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+
+            case INTEGER_LITERAL:
+                if (ref.isStart) {
+                    AST.decodeIntegerLiteral(astBuffer, context, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+                
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }
             
             parseTreeRef += ref.isStart
-                    ? AST.sizeStart(ref.element)
+                    ? AST.sizeStart(ref.element, astBuffer, ref.index)
                     : AST.sizeEnd(ref.element);
         }
         while (compUnit == null);

@@ -1,6 +1,5 @@
 package com.neaterbits.compiler.ast.objects.expression.literal;
 
-import java.math.BigInteger;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
@@ -11,16 +10,16 @@ import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class IntegerLiteral extends Literal {
 
-	private final BigInteger value;
+	private final long value;
 	private final Base base;
 	private final boolean signed;
 	private final int bits;
 
 	public IntegerLiteral(Context context, long value, boolean signed, int bits, IntegerType type) {
-		this(context, BigInteger.valueOf(value), Base.DECIMAL, signed, bits, type);
+		this(context, value, Base.DECIMAL, signed, bits, type);
 	}
 
-	public IntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits, IntegerType type) {
+	public IntegerLiteral(Context context, long value, Base base, boolean signed, int bits, IntegerType type) {
 		super(context, type);
 
 		Objects.requireNonNull(value);
@@ -36,7 +35,7 @@ public final class IntegerLiteral extends Literal {
 		this.bits = bits;
 	}
 
-	public BigInteger getValue() {
+	public long getValue() {
 		return value;
 	}
 
