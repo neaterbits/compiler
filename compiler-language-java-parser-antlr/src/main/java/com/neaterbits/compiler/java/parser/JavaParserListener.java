@@ -902,7 +902,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 				// We are at block2 of if <block1> else <block2>
 				delegate.onElseStatementStart(
 						context,
-						ifOrElseStatement.getKeywordToken(0).getText(),
+						stringRef(ifOrElseStatement.getKeywordToken(0)),
 						Antlr4.context(ifOrElseStatement.getKeywordToken(0), file));
 				break;
 				

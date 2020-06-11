@@ -127,6 +127,10 @@ public class AST {
         case ELSE_IF_CONDITION_BLOCK:
             size = ELSE_IF_CONDITION_BLOCK_SIZE;
             break;
+            
+        case ELSE_BLOCK:
+            size = ELSE_BLOCK_SIZE;
+            break;
          
         case SIMPLE_VARIABLE_REFERENCE:
             size = VARIABLE_REFERENCE_SIZE;
@@ -984,14 +988,49 @@ public class AST {
         listener.onElseIfStatementEnd(context);
     }
 
-    static void encodeElseBlockStart(StringASTBuffer astBuffer) {
+    private static final int ELSE_BLOCK_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeElseBlockStart(StringASTBuffer astBuffer, long elseKeyword, int elseKeywordContext) {
         
         astBuffer.writeElementStart(ParseTreeElement.ELSE_BLOCK);
+        astBuffer.writeStringRef(elseKeyword);
+        astBuffer.writeContextRef(elseKeywordContext);
     }
-    
+
+    public static <COMPILATION_UNIT> void decodeElseBlockStart(
+            ASTBufferRead astBuffer,
+            Context context,
+            ContextGetter contextGetter,
+            int index,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        
+        final Context elseKeywordContext;
+
+        if (contextGetter != null) {
+            
+            elseKeywordContext = astBuffer.hasContextRef(index + STRING_REF_SIZE)
+                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + STRING_REF_SIZE))
+                    : null;
+        }
+        else {
+            elseKeywordContext = null;
+        }
+
+        listener.onElseStatementStart(context, astBuffer.getStringRef(index), elseKeywordContext);
+    }
+
     static void encodeElseBlockEnd(StringASTBuffer astBuffer) {
         
         astBuffer.writeElementEnd(ParseTreeElement.ELSE_BLOCK);
+    }
+
+    public static <COMPILATION_UNIT> void decodeElseBlockEnd(
+            ASTBufferRead astBuffer,
+            Context context,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onElseStatementEnd(context);
     }
 
     private static final int VARIABLE_REFERENCE_SIZE = STRING_REF_SIZE;

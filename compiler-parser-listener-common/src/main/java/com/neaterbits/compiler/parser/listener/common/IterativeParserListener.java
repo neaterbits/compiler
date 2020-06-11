@@ -12,7 +12,7 @@ public interface IterativeParserListener<COMPILATION_UNIT> extends InfixParserLi
 	
 	void onElseIfStatementEnd(Context context);
 
-	void onElseStatementStart(Context context, String keyword, Context keywordContext);
+	void onElseStatementStart(Context context, long elseKeyword, Context elseKeywordContext);
 	
 	void onElseStatementEnd(Context context);
 

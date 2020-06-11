@@ -439,6 +439,15 @@ public final class EncodedCompilationUnit {
                     AST.decodeElseIfConditionBlockEnd(astBuffer, context, listener);
                 }
                 break;
+                
+            case ELSE_BLOCK:
+                if (ref.isStart) {
+                    AST.decodeElseBlockStart(astBuffer, context, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeElseBlockEnd(astBuffer, context, listener);
+                }
+                break;
 
             case SIMPLE_VARIABLE_REFERENCE:
                 if (ref.isStart) {

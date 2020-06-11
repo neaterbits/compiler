@@ -360,11 +360,11 @@ public abstract class BaseIterativeParserListener<
 	*/
 
 	@Override
-	public final void onElseStatementStart(Context context, String keyword, Context keywordContext) {
+	public final void onElseStatementStart(Context context, long keyword, Context keywordContext) {
 		
 		logEnter(context);
 		
-		push(new StackElseBlock<>(getLogger(), keyword, keywordContext));
+		push(new StackElseBlock<>(getLogger(), stringSource.asString(keyword), keywordContext));
 		
 		pushVariableScope();
 		

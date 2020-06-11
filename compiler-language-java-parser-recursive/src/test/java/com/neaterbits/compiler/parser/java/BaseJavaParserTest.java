@@ -18,6 +18,7 @@ import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
+import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
@@ -833,25 +834,41 @@ public abstract class BaseJavaParserTest {
         assertThat(method.getBlock()).isNotNull();
         assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
 
-        final VariableDeclarationStatement declarationStatement = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
-        checkScalarType(declarationStatement.getTypeReference(), "int");
-        assertThat(declarationStatement.getModifiers().isEmpty()).isTrue();
-        assertThat(declarationStatement.getDeclarations().size()).isEqualTo(1);
-        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", "a");
+
+        final IfElseIfElseStatement ifStatement = (IfElseIfElseStatement)method.getBlock().getStatements().get(1);
+        assertThat(ifStatement.getConditions().size()).isEqualTo(1);
+
+        checkVarLiteralCondition(ifStatement.getConditions().get(0), Relational.EQUALS);
+    }
+
+    @Test
+    public void testIfElseStatement() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a; if (a == 1) { } else { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+
+        checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", "a");
 
         final IfElseIfElseStatement ifStatement = (IfElseIfElseStatement)method.getBlock().getStatements().get(1);
         assertThat(ifStatement.getConditions().size()).isEqualTo(1);
         
-        final ConditionBlock condition = ifStatement.getConditions().get(0);
-
-        final ExpressionList expressionList = (ExpressionList)condition.getCondition();
-        assertThat(expressionList.getExpressions().size()).isEqualTo(2);
-        assertThat(expressionList.getOperators().size()).isEqualTo(1);
-        assertThat(expressionList.getOperators().get(0)).isEqualTo(Relational.EQUALS);
+        checkVarLiteralCondition(ifStatement.getConditions().get(0), Relational.EQUALS);
         
-        assertThat(condition.getBlock().getStatements().isEmpty()).isTrue();
+        assertThat(ifStatement.getElseBlock()).isNotNull();
+        assertThat(ifStatement.getElseBlock().getStatements().isEmpty()).isTrue();
     }
-
+    
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
         
         final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
@@ -905,5 +922,25 @@ public abstract class BaseJavaParserTest {
         
         assertThat(type.getScopedName().getScope()).isEqualTo(parts.subList(0, parts.size() - 1));
         assertThat(type.getScopedName().getName()).isEqualTo(parts.get(parts.size() - 1));
+    }
+
+    private void checkScalarVariableDeclarationStatement(Statement statement, String scalarType, String varName) {
+        
+        final VariableDeclarationStatement declarationStatement = (VariableDeclarationStatement)statement;
+        
+        checkScalarType(declarationStatement.getTypeReference(), scalarType);
+        assertThat(declarationStatement.getModifiers().isEmpty()).isTrue();
+        assertThat(declarationStatement.getDeclarations().size()).isEqualTo(1);
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo(varName);
+    }
+
+    private void checkVarLiteralCondition(ConditionBlock conditionBlock, Relational operator) {
+        final ExpressionList expressionList = (ExpressionList)conditionBlock.getCondition();
+        
+        assertThat(expressionList.getExpressions().size()).isEqualTo(2);
+        assertThat(expressionList.getOperators().size()).isEqualTo(1);
+        assertThat(expressionList.getOperators().get(0)).isEqualTo(operator);
+        
+        assertThat(conditionBlock.getBlock().getStatements().isEmpty()).isTrue();
     }
 }

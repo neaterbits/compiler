@@ -43,11 +43,13 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
         
         AST.encodeElseIfConditionBlockEnd(astBuffer);
     }
-
+    
     @Override
-    public final void onElseStatementStart(Context context, String keyword, Context keywordContext) {
+    public final void onElseStatementStart(Context context, long elseKeyword, Context elseKeywordContext) {
 
-        AST.encodeElseBlockStart(astBuffer);
+        final int elseKeywordContextRef = writeOtherContext(elseKeywordContext);
+        
+        AST.encodeElseBlockStart(astBuffer, elseKeyword, elseKeywordContextRef);
     }
 
     @Override

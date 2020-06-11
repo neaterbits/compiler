@@ -901,7 +901,6 @@ final class JavaLexerParser<COMPILATION_UNIT> {
     
     private void parseBlock() throws ParserException, IOException {
         
-        
         boolean done = false;
         
         do {
@@ -923,6 +922,36 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         
         parseConditionInParenthesis();
 
+        parseStatementOrBlock();
+
+        listener.onIfStatementInitialBlockEnd(ifKeywordContext);
+        
+        final JavaToken elseIfOrElseToken = lexer.lexSkipWS(ELSE_IF_OR_ELSE);
+        switch (elseIfOrElseToken) {
+        case ELSE:
+            final Context elseKeywordContext = getCurrentContext();
+            
+            final long elseKeyword = getStringRef();
+            
+            System.out.println("## else keyword '" + tokenizer.asString(elseKeyword) + "'");
+            
+            listener.onElseStatementStart(elseKeywordContext, elseKeyword, elseKeywordContext);
+            
+            parseStatementOrBlock();
+            
+            listener.onElseStatementEnd(elseKeywordContext);
+            
+            listener.onEndIfStatement(getCurrentContext());
+            break;
+            
+        default:
+            listener.onEndIfStatement(ifKeywordContext);
+            break;
+        }
+    }
+    
+    private void parseStatementOrBlock() throws ParserException, IOException {
+
         final JavaToken optionalLBrace = lexer.lexSkipWS(JavaToken.LBRACE);
         
         if (optionalLBrace == JavaToken.LBRACE) {
@@ -930,14 +959,6 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         }
         else {
             parseStatement();
-        }
-        
-        final JavaToken elseIfOrElseToken = lexer.lexSkipWS(ELSE_IF_OR_ELSE);
-        switch (elseIfOrElseToken) {
-        default:
-            listener.onIfStatementInitialBlockEnd(ifKeywordContext);
-            listener.onEndIfStatement(ifKeywordContext);
-            break;
         }
     }
     
