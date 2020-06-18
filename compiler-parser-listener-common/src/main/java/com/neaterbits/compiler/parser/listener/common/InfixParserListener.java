@@ -7,9 +7,9 @@ import com.neaterbits.compiler.util.operator.Operator;
 
 public interface InfixParserListener<COMPILATION_UNIT> extends ParserListener<COMPILATION_UNIT> {
 
-	void onExpressionBinaryOperator(Context context, Operator operator);
+	void onExpressionBinaryOperator(int leafContext, Operator operator);
 	
-	void onIncrementDecrementExpressionStart(Context context, Arithmetic operator, Notation notation);
+	void onIncrementDecrementExpressionStart(int startContext, Arithmetic operator, Notation notation);
 	
-	void onIncrementDecrementExpressionEnd(Context context);
+	void onIncrementDecrementExpressionEnd(int startContext, Context endContext);
 }

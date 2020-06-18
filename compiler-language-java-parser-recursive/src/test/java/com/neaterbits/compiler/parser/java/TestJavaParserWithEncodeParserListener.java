@@ -64,7 +64,11 @@ public class TestJavaParserWithEncodeParserListener extends BaseJavaParserTest {
             }
         };
         
-        final JavaIterativeListener astListener = new JavaIterativeListener(stringSource, logger, parseTreeFactory);
+        final JavaIterativeListener astListener = new JavaIterativeListener(
+                stringSource,
+                encodedCompilationUnit.getContextAccess(),
+                logger,
+                parseTreeFactory);
         
         return (CompilationUnit)encodedCompilationUnit.iterate(astListener);
     }

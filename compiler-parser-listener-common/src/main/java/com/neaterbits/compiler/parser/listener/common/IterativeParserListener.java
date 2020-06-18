@@ -4,46 +4,48 @@ import com.neaterbits.compiler.util.Context;
 
 public interface IterativeParserListener<COMPILATION_UNIT> extends InfixParserListener<COMPILATION_UNIT> {
 
-	void onIfStatementStart(Context context, long ifKeyword, Context ifKeywordContext);
-	
-	void onIfStatementInitialBlockEnd(Context context);
-	
-	void onElseIfStatementStart(Context context, long elseIfKeyword, Context elseIfKeywordContext);
-	
-	void onElseIfStatementEnd(Context context);
+	void onIfStatementStart(int ifStartContext, long ifKeyword, int ifKeywordContext);
 
-	void onElseStatementStart(Context context, long elseKeyword, Context elseKeywordContext);
-	
-	void onElseStatementEnd(Context context);
+	void onIfStatementInitialBlockStart(int ifStatementInitialBlockStartContext);
 
-	void onEndIfStatement(Context context);
+	void onIfStatementInitialBlockEnd(int ifStartContext, Context endContext);
 	
-	void onSwitchStatementStart(Context context, String keyword, Context keywordContext);
+	void onElseIfStatementStart(int elseIfStartContext, long elseIfKeyword, int elseIfKeywordContext);
+	
+	void onElseIfStatementEnd(int elseIfStartContext, Context endContext);
 
-	void onJavaSwitchBlockStart(Context context);
+	void onElseStatementStart(int elseStartContext, long elseKeyword, int elseKeywordContext);
 	
-	void onJavaSwitchBlockStatementGroupStart(Context context);
+	void onElseStatementEnd(int elseStartContext, Context elseEndContext);
 
-	void onSwitchLabelsStart(Context context);
+	void onEndIfStatement(int ifStartContext, Context endIfContext);
 	
-	void onSwitchLabelsEnd(Context context);
+	void onSwitchStatementStart(int startContext, long keyword, int keywordContext);
+
+	void onJavaSwitchBlockStart(int startContext);
 	
-	void onJavaSwitchBlockStatementGroupEnd(Context context);
+	void onJavaSwitchBlockStatementGroupStart(int startContext);
+
+	void onSwitchLabelsStart(int startContext);
 	
-	void onConstantSwitchLabelStart(Context context, String keyword, Context keywordContext);
+	void onSwitchLabelsEnd(int startContext, Context endContext);
 	
-	void onConstantSwitchLabelEnd(Context context);
+	void onJavaSwitchBlockStatementGroupEnd(int startContext, Context endContext);
+	
+	void onConstantSwitchLabelStart(int startContext, long keyword, int keywordContext);
+	
+	void onConstantSwitchLabelEnd(int startContext, Context endContext);
 	
 	void onEnumSwitchLabel(
-			Context context,
-			String keyword, Context keywordContext,
-			String constantName, Context constantNameContext);
+			int leafContext,
+			long keyword, int keywordContext,
+			long constantName, int constantNameContext);
 	
-	void onDefaultSwitchLabel(Context context, String keyword, Context keywordContext);
+	void onDefaultSwitchLabel(int leafContext, long keyword);
 	
-	void onJavaSwitchBlockEnd(Context context);
+	void onJavaSwitchBlockEnd(int startContext, Context endContext);
 	
-	void onSwitchStatementEnd(Context context);
+	void onSwitchStatementEnd(int startContext, Context endContext);
 	
-	void onBreakStatement(Context context, String keyword, Context keywordContext, String label);
+	void onBreakStatement(int startContext, long keyword, int keywordContext, long label, int labelContext, Context endContext);
 }

@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.parser.listener.stackbased;
 
+import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.common.InfixParserListener;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackExpressionList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackIncrementDecrementExpression;
@@ -265,13 +266,20 @@ public abstract class BaseInfixParserListener<
 
 	implements InfixParserListener<COMPILATION_UNIT> {
 
-	protected BaseInfixParserListener(StringSource stringSource, ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
-		super(stringSource, logger, parseTreeFactory);
+	protected BaseInfixParserListener(
+	        StringSource stringSource,
+	        ContextAccess contextAccess,
+	        ParseLogger logger,
+	        @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+
+		super(stringSource, contextAccess, logger, parseTreeFactory);
 	}
 
 	@Override
-	public final void onExpressionBinaryOperator(Context context, Operator operator) {
+	public final void onExpressionBinaryOperator(int leafContext, Operator operator) {
 		
+	    final Context context = getLeafContext(leafContext);
+
 		logEnter(context);
 		
 		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> expressionList = get();
@@ -282,7 +290,9 @@ public abstract class BaseInfixParserListener<
 	}
 	
 	@Override
-	public final void onIncrementDecrementExpressionStart(Context context, Arithmetic operator, Notation notation) {
+	public final void onIncrementDecrementExpressionStart(int startContext, Arithmetic operator, Notation notation) {
+
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 		
@@ -292,7 +302,9 @@ public abstract class BaseInfixParserListener<
 	}
 
 	@Override
-	public final void onIncrementDecrementExpressionEnd(Context context) {
+	public final void onIncrementDecrementExpressionEnd(int startContext, Context endContext) {
+
+	    final Context context = getEndContext(startContext, endContext);
 
 		final StackIncrementDecrementExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackIncrementDecrementExpression = pop();
 		

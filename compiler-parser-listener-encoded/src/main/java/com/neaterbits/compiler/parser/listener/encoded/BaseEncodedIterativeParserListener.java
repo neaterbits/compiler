@@ -13,133 +13,190 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
     }
 
     @Override
-    public final void onIfStatementStart(Context context, long ifKeyword, Context ifKeywordContext) {
+    public final void onIfStatementStart(int ifStatementStartContext, long ifKeyword, int ifKeywordContext) {
 
-        writeStartElementContext(context);
+        // whole if - else if - else statement
+        writeStartElementContextRef(ifStatementStartContext);
+        AST.encodeIfElseIfElseStatementStart(astBuffer, ifKeyword, ifKeywordContext);
+    }
 
-        final int ifKeywordContextRef = writeOtherContext(ifKeywordContext);
+    @Override
+    public void onIfStatementInitialBlockStart(int ifStatementInitialBlockStartContext) {
 
-        AST.encodeIfElseIfElseStatementStart(astBuffer, ifKeyword, ifKeywordContextRef);
-        
+        writeStartElementContextRef(ifStatementInitialBlockStartContext);
         AST.encodeIfConditionBlockStart(astBuffer);
     }
 
     @Override
-    public final void onIfStatementInitialBlockEnd(Context context) {
+    public final void onIfStatementInitialBlockEnd(int ifStatementInitialBlockStartContext, Context endContext) {
 
+        writeEndElementContext(ifStatementInitialBlockStartContext, endContext);
+        
         AST.encodeIfConditionBlockEnd(astBuffer);
     }
 
     @Override
-    public final void onElseIfStatementStart(Context context, long elseIfKeyword, Context elseIfKeywordContext) {
+    public final void onElseIfStatementStart(int elseIfStatementStartContext, long elseIfKeyword, int elseIfKeywordContext) {
         
-        final int elseIfKeywordContextRef = writeOtherContext(elseIfKeywordContext);
-
-        AST.encodeElseIfConditionBlockStart(astBuffer, elseIfKeyword, elseIfKeywordContextRef);
+        verifyNotSameContext(elseIfStatementStartContext, elseIfKeywordContext);
+        
+        writeStartElementContextRef(elseIfStatementStartContext);
+        
+        AST.encodeElseIfConditionBlockStart(astBuffer, elseIfKeyword, elseIfKeywordContext);
     }
 
     @Override
-    public final void onElseIfStatementEnd(Context context) {
+    public final void onElseIfStatementEnd(int elseIfStatementStartContext, Context endContext) {
+        
+        writeEndElementContext(elseIfStatementStartContext, endContext);
         
         AST.encodeElseIfConditionBlockEnd(astBuffer);
     }
     
     @Override
-    public final void onElseStatementStart(Context context, long elseKeyword, Context elseKeywordContext) {
-
-        final int elseKeywordContextRef = writeOtherContext(elseKeywordContext);
+    public final void onElseStatementStart(int elseStatementStartContext, long elseKeyword, int elseKeywordContext) {
         
-        AST.encodeElseBlockStart(astBuffer, elseKeyword, elseKeywordContextRef);
+        verifyNotSameContext(elseStatementStartContext, elseKeywordContext);
+
+        writeStartElementContextRef(elseStatementStartContext);
+        
+        AST.encodeElseBlockStart(astBuffer, elseKeyword, elseKeywordContext);
     }
 
     @Override
-    public final void onElseStatementEnd(Context context) {
+    public final void onElseStatementEnd(int elseStatementStartContext, Context endContext) {
 
+        writeEndElementContext(elseStatementStartContext, endContext);
+        
         AST.encodeElseBlockEnd(astBuffer);
     }
 
     @Override
-    public final void onEndIfStatement(Context context) {
+    public final void onEndIfStatement(int ifStatementStartContext, Context endContext) {
 
+        writeEndElementContext(ifStatementStartContext, endContext);
+        
         AST.encodeIfElseIfElseStatementEnd(astBuffer);
     }
 
     @Override
-    public final void onSwitchStatementStart(Context context, String keyword, Context keywordContext) {
+    public final void onSwitchStatementStart(int switchStatementStartContext, long keyword, int keywordContext) {
+        
+        verifyNotSameContext(switchStatementStartContext, keywordContext);
+        
+        writeStartElementContextRef(switchStatementStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onJavaSwitchBlockStart(Context context) {
+    public final void onJavaSwitchBlockStart(int javaSwitchBlockStartContext) {
+
+        writeStartElementContextRef(javaSwitchBlockStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onJavaSwitchBlockStatementGroupStart(int javaSwitchBlockStatementGroupStartContext) {
+
+        writeStartElementContextRef(javaSwitchBlockStatementGroupStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onSwitchLabelsStart(int switchLabelsStartContext) {
+
+        writeStartElementContextRef(switchLabelsStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onSwitchLabelsEnd(int switchLabelsStartContext, Context endContext) {
+
+        writeEndElementContext(switchLabelsStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onJavaSwitchBlockStatementGroupEnd(int javaSwitchBlockStatementGroupStartContext, Context endContext) {
+
+        writeEndElementContext(javaSwitchBlockStatementGroupStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onConstantSwitchLabelStart(int constantSwitchLabelStartContext, long keyword, int keywordContext) {
+        
+        verifyNotSameContext(constantSwitchLabelStartContext, keywordContext);
+
+        writeStartElementContextRef(constantSwitchLabelStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onConstantSwitchLabelEnd(int constantSwitchLabelStartContext, Context endContext) {
+        
+        writeEndElementContext(constantSwitchLabelStartContext, endContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onJavaSwitchBlockStatementGroupStart(Context context) {
+    public final void onEnumSwitchLabel(int enumSwitchLabelStartContext, long keyword, int keywordContext, long constantName,
+            int constantNameContext) {
+        
+        verifyNotSameContext(enumSwitchLabelStartContext, keywordContext, constantNameContext);
+        
+        writeStartElementContextRef(enumSwitchLabelStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onSwitchLabelsStart(Context context) {
+    public final void onDefaultSwitchLabel(int leafContext, long keyword) {
 
+        writeLeafElementContextRef(leafContext);
+        
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onSwitchLabelsEnd(Context context) {
+    public final void onJavaSwitchBlockEnd(int javaSwitchBlockStartContext, Context endContext) {
 
+        writeEndElementContext(javaSwitchBlockStartContext, endContext);
+        
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onJavaSwitchBlockStatementGroupEnd(Context context) {
+    public final void onSwitchStatementEnd(int switchStatementStartContext, Context endContext) {
 
+        writeEndElementContext(switchStatementStartContext, endContext);
+        
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onConstantSwitchLabelStart(Context context, String keyword, Context keywordContext) {
+    public final void onBreakStatement(
+            int breakStatementStartContext,
+            long keyword,
+            int keywordContext,
+            long label,
+            int labelContext,
+            Context endContext) {
 
-        throw new UnsupportedOperationException();
-    }
+        writeStartElementContextRef(breakStatementStartContext);
+        
+        if (Boolean.TRUE) {
+            throw new UnsupportedOperationException();
+        }
 
-    @Override
-    public final void onConstantSwitchLabelEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onEnumSwitchLabel(Context context, String keyword, Context keywordContext, String constantName,
-            Context constantNameContext) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onDefaultSwitchLabel(Context context, String keyword, Context keywordContext) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onJavaSwitchBlockEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onSwitchStatementEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onBreakStatement(Context context, String keyword, Context keywordContext, String label) {
-
-        throw new UnsupportedOperationException();
+        writeEndElementContext(breakStatementStartContext, endContext);
     }
 }

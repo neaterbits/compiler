@@ -61,48 +61,66 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         this.typeNameToIndex = new HashMap<>();
     }
-    
-    final void writeStartElementContext(Context context) {
-        
-        writeElementContext(context);
-    }
-    
-    final void writeLeafElementContext(Context context) {
-        
-        writeElementContext(context);
-    }
-    
-    private void writeElementContext(Context context) {
+
+    final void writeStartElementContextRef(int startElementContextRef) {
         
         final int parseTreeRef = astBuffer.getParseTreeRef();
         
-        final int contextBufferPos = contextBuffer.getWritePos();
-        
-        AST.writeContext(contextBuffer, context);
-        
-        parseTreeRefToStartContextHash.put(parseTreeRef, contextBufferPos);
+        parseTreeRefToStartContextHash.put(parseTreeRef, startElementContextRef);
+    }
+    
+    final void verifyNotSameContext(int context1, int context2) {
+        if (context1 == context2) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    private void addEndElementContext(Context context) {
-        
-        // final int parseTreeRef = astBuffer.getParseTreeRef();
-        
-        // parseTreeRefToEndContextHash.put(parseTreeRef, contextBufferPos);
+    final void verifyNotSameContext(int context1, int context2, int context3) {
+
+        verifyNotSameContext(context1, context2);
+        verifyNotSameContext(context1, context3);
+        verifyNotSameContext(context2, context3);
     }
-    
-    final int writeOtherContext(Context context) {
+
+    final void writeLeafElementContextRef(int leafContextRef) {
+
+        final int parseTreeRef = astBuffer.getParseTreeRef();
         
+        parseTreeRefToStartContextHash.put(parseTreeRef, leafContextRef);
+
+        // writeElementContext(context);
+    }
+
+    final void writeEndElementContext(int startElementContextRef, Context endContext) {
+        
+        // TODO update start context with end context information
+        // to merge start pos with end pos
+    }
+
+    @Override
+    public int writeContext(Context context) {
+
         return AST.writeContext(contextBuffer, context);
     }
-    
+
     @Override
-    public void onCompilationUnitStart(Context context) {
+    public int writeContext(int otherContext) {
+        
+        return AST.writeContext(contextBuffer, otherContext);
+    }
+
+    @Override
+    public void onCompilationUnitStart(int compilationUnitStartContext) {
+        
+        writeStartElementContextRef(compilationUnitStartContext);
 
         astBuffer.writeElementStart(ParseTreeElement.COMPILATION_UNIT);
     }
 
     @Override
-    public COMPILATION_UNIT onCompilationUnitEnd(Context context) {
+    public COMPILATION_UNIT onCompilationUnitEnd(int compilationUnitStartContext, Context endContext) {
+        
+        writeEndElementContext(compilationUnitStartContext, endContext);
         
         astBuffer.writeElementEnd(ParseTreeElement.COMPILATION_UNIT);
 
@@ -118,847 +136,1039 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
     @Override
     public void onImportStart(
-            Context context,
+            int importStartContext,
             long importKeyword,
-            Context importKeywordContext,
+            int importKeywordContext,
             long staticKeyword,
-            Context staticKeywordContext) {
-
-        writeStartElementContext(importKeywordContext);
-
-        final int importKeywordContextRef = writeOtherContext(importKeywordContext);
+            int staticKeywordContext) {
         
-        final int staticKeywordContextRef = staticKeywordContext != null
-                ? writeOtherContext(staticKeywordContext)
-                : AST.NO_CONTEXTREF;
-        
+        verifyNotSameContext(importStartContext, importKeywordContext, staticKeywordContext);
+
+        writeStartElementContextRef(importStartContext);
+
         AST.encodeImportStart(
                 astBuffer,
                 importKeyword,
-                importKeywordContextRef,
+                importKeywordContext,
                 staticKeyword,
-                staticKeywordContextRef);
+                staticKeywordContext);
     }
 
     @Override
-    public void onImportIdentifier(Context context, long identifier) {
+    public void onImportIdentifier(int identifierContext, long identifier) {
         
-        writeStartElementContext(context);
+        writeLeafElementContextRef(identifierContext);
 
         AST.encodeImportNamePart(astBuffer, identifier);
     }
 
     @Override
-    public void onImportEnd(Context context, boolean ondemand) {
+    public void onImportEnd(int importStartContext, Context endContext, boolean ondemand) {
         
-        addEndElementContext(context);
+        writeEndElementContext(importStartContext, endContext);
         
         AST.encodeImportEnd(astBuffer, ondemand);
     }
 
     @Override
-    public void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext) {
+    public void onNamespaceStart(int namespaceStartContext, long namespaceKeyword, int namespaceKeywordContext) {
 
-        if (context != null) {
-            writeStartElementContext(context);
-        }
+        verifyNotSameContext(namespaceStartContext, namespaceKeywordContext);
+        
+        writeStartElementContextRef(namespaceStartContext);
 
-        final int namespaceKeywordContextRef = writeOtherContext(namespaceKeywordContext);
-
-        AST.encodeNamespaceStart(astBuffer, namespaceKeyword, namespaceKeywordContextRef);
+        AST.encodeNamespaceStart(astBuffer, namespaceKeyword, namespaceKeywordContext);
     }
     
 
     @Override
-    public void onNamespacePart(Context context, long part) {
+    public void onNamespacePart(int namespacePartContext, long part) {
 
-        writeStartElementContext(context);
+        writeLeafElementContextRef(namespacePartContext);
         
         AST.encodeNamespacePart(astBuffer, part);
     }
 
     @Override
-    public void onNameSpaceEnd(Context context) {
+    public void onNameSpaceEnd(int namespaceEndContext, Context endContext) {
+        
+        writeEndElementContext(namespaceEndContext, endContext);
 
         AST.encodeNamespaceEnd(astBuffer);
     }
 
     @Override
-    public void onClassStart(Context context, long classKeyword, Context classKeywordContext, long name, Context nameContext) {
+    public void onClassStart(int classStartContext, long classKeyword, int classKeywordContext, long name, int nameContext) {
 
-        writeStartElementContext(context);
+        writeStartElementContextRef(classStartContext);
         
-        final int classKeywordContextRef = writeOtherContext(classKeywordContext);
-        
-        final int nameContextRef = writeOtherContext(nameContext);
-        
-        AST.encodeClassStart(astBuffer, classKeyword, classKeywordContextRef, name, nameContextRef);
+        AST.encodeClassStart(astBuffer, classKeyword, classKeywordContext, name, nameContext);
     }
 
     @Override
-    public final void onVisibilityClassModifier(Context context, ClassVisibility visibility) {
+    public final void onVisibilityClassModifier(int context, ClassVisibility visibility) {
         
-        writeStartElementContext(context);
+        writeLeafElementContextRef(context);
 
         AST.encodeVisibilityClassModifier(astBuffer, visibility);
     }
 
     @Override
-    public final void onSubclassingModifier(Context context, Subclassing subclassing) {
+    public final void onSubclassingModifier(int context, Subclassing subclassing) {
 
-        writeStartElementContext(context);
+        writeLeafElementContextRef(context);
 
         AST.encodeSubclassingModifier(astBuffer, subclassing);
     }
 
     @Override
-    public final void onStaticClassModifier(Context context) {
+    public final void onStaticClassModifier(int context) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onStrictfpClassModifier(Context context) {
+    public final void onStrictfpClassModifier(int context) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onClassExtendsStart(Context context, long extendsKeyword, Context extendsKeywordContext) {
+    public final void onClassExtendsStart(int classExtendsStartContext, long extendsKeyword, int extendsKeywordContext) {
+        
+        verifyNotSameContext(classExtendsStartContext, extendsKeywordContext);
 
-        writeStartElementContext(context);
+        writeStartElementContextRef(classExtendsStartContext);
         
-        final int extendsKeywordContextRef = writeOtherContext(extendsKeywordContext);
-        
-        AST.encodeClassExtendsStart(astBuffer, extendsKeyword, extendsKeywordContextRef);
+        AST.encodeClassExtendsStart(astBuffer, extendsKeyword, extendsKeywordContext);
     }
     
 
     @Override
-    public void onClassExtendsNamePart(Context context, long identifier) {
+    public void onClassExtendsNamePart(int leafContext, long identifier) {
         
-        writeStartElementContext(context);
+        writeLeafElementContextRef(leafContext);
 
         AST.encodeClassExtendsNamePart(astBuffer, identifier);
     }
 
     @Override
-    public void onClassExtendsEnd(Context context) {
+    public void onClassExtendsEnd(int classExtendsStartContext, Context endContext) {
 
+        writeEndElementContext(classExtendsStartContext, endContext);
+        
         AST.encodeClassExtendsEnd(astBuffer);
     }
 
     @Override
-    public final void onClassImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext) {
+    public final void onClassImplementsStart(int classImplementsStartContext, long implementsKeyword, int implementsKeywordContext) {
 
-        writeStartElementContext(context);
+        verifyNotSameContext(classImplementsStartContext, implementsKeywordContext);
         
-        final int implementsKeywordContextRef = writeOtherContext(implementsKeywordContext);
+        writeStartElementContextRef(classImplementsStartContext);
         
-        AST.encodeClassImplementsStart(astBuffer, implementsKeyword, implementsKeywordContextRef);
+        AST.encodeClassImplementsStart(astBuffer, implementsKeyword, implementsKeywordContext);
     }
     
     @Override
-    public void onClassImplementsTypeStart(Context context) {
+    public void onClassImplementsTypeStart(int classImplementsTypeStartContext) {
 
+        writeStartElementContextRef(classImplementsTypeStartContext);
+        
         AST.encodeClassImplementsTypeStart(astBuffer);
     }
 
     @Override
-    public void onClassImplementsNamePart(Context context, long identifier) {
+    public void onClassImplementsNamePart(int leafContext, long identifier) {
         
-        writeStartElementContext(context);
+        writeLeafElementContextRef(leafContext);
 
         AST.encodeClassImplementsNamePart(astBuffer, identifier);
     }
 
     @Override
-    public void onClassImplementsTypeEnd(Context context) {
+    public void onClassImplementsTypeEnd(int classImplementsTypeEndContext, Context endContext) {
 
+        writeEndElementContext(classImplementsTypeEndContext, endContext);
+        
         AST.encodeClassImplementsTypeEnd(astBuffer);
     }
 
     @Override
-    public void onClassImplementsEnd(Context context) {
+    public void onClassImplementsEnd(int classImplementsStartContext, Context endContext) {
 
+        writeEndElementContext(classImplementsStartContext, endContext);
+        
         AST.encodeClassImplementsEnd(astBuffer);
     }
 
     @Override
-    public final void onClassEnd(Context context) {
+    public final void onClassEnd(int classStartContext, Context endContext) {
 
+        writeEndElementContext(classStartContext, endContext);
+        
         AST.encodeClassEnd(astBuffer);
     }
 
     @Override
-    public final void onAnonymousClassStart(Context context) {
+    public final void onAnonymousClassStart(int anonymousClassStartContext) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onAnonymousClassEnd(Context context) {
+    public final void onAnonymousClassEnd(int anonymousClassStartContext, Context endContext) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onStaticInitializerStart(Context context) {
+    public final void onStaticInitializerStart(int staticInitializerStartContext) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onStaticInitializerEnd(Context context) {
+    public final void onStaticInitializerEnd(int staticInitializerStartContext, Context endContext) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onConstructorStart(Context context) {
+    public final void onConstructorStart(int constructorStartContext) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onConstructorVisibilityModifier(Context context, ConstructorVisibility visibility) {
+    public final void onConstructorVisibilityModifier(int context, ConstructorVisibility visibility) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onConstructorName(Context context, long constructorName) {
+    public final void onConstructorName(int context, long constructorName) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onConstructorInvocationStart(Context context, ConstructorInvocation type) {
+    public final void onConstructorInvocationStart(int constructorInvoicationStartContext, ConstructorInvocation type) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onConstructorInvocationEnd(Context context) {
+    public final void onConstructorInvocationEnd(int constructorInvoicationStartContext, Context endContext) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onConstructorEnd(Context context) {
+    public final void onConstructorEnd(int constructorStartContext, Context endContext) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onClassMethodStart(Context context) {
+    public final void onClassMethodStart(int classMethodStartContext) {
 
-        AST.encodeClassMethodStart(astBuffer, context);
+        writeStartElementContextRef(classMethodStartContext);
+        
+        AST.encodeClassMethodStart(astBuffer);
     }
 
     @Override
-    public final void onMethodReturnTypeStart(Context context) {
+    public final void onMethodReturnTypeStart(int methodReturnTypeStartContext) {
 
-        AST.encodeMethodReturnTypeStart(astBuffer, context);
+        writeStartElementContextRef(methodReturnTypeStartContext);
+        
+        AST.encodeMethodReturnTypeStart(astBuffer);
     }
 
     @Override
-    public final void onMethodReturnTypeEnd(Context context) {
+    public final void onMethodReturnTypeEnd(int methodReturnTypeStartContext, Context endContext) {
 
-        AST.encodeMethodReturnTypeEnd(astBuffer, context);
+        writeEndElementContext(methodReturnTypeStartContext, endContext);
+        
+        AST.encodeMethodReturnTypeEnd(astBuffer);
     }
 
     @Override
-    public final void onMethodName(Context context, long methodName) {
+    public final void onMethodName(int leafContext, long methodName) {
+        
+        writeLeafElementContextRef(leafContext);
 
-        AST.encodeMethodName(astBuffer, context, methodName);
+        AST.encodeMethodName(astBuffer, methodName);
     }
 
     @Override
-    public final void onMethodSignatureParametersStart(Context context) {
+    public final void onMethodSignatureParametersStart(int methodSignatureParametersStartContext) {
 
+        writeStartElementContextRef(methodSignatureParametersStartContext);
+        
+        AST.encodeSignatureParametersStart(astBuffer);
     }
 
     @Override
-    public final void onMethodSignatureParameterStart(Context context, boolean varArgs) {
+    public final void onMethodSignatureParameterStart(int methodSignatureParameterStartContext, boolean varArgs) {
+        
+        writeStartElementContextRef(methodSignatureParameterStartContext);
 
-        AST.encodeSignatureParameterStart(astBuffer, context, varArgs);
+        AST.encodeSignatureParameterStart(astBuffer, varArgs);
     }
 
     @Override
-    public final void onMethodSignatureParameterEnd(Context context) {
+    public final void onMethodSignatureParameterEnd(int methodSignatureParameterStartContext, Context endContext) {
+        
+        writeEndElementContext(methodSignatureParameterStartContext, endContext);
 
-        AST.encodeSignatureParameterEnd(astBuffer, context);
+        AST.encodeSignatureParameterEnd(astBuffer);
     }
 
     @Override
-    public final void onMethodSignatureParametersEnd(Context context) {
+    public final void onMethodSignatureParametersEnd(int methodSignatureParametersStartContext, Context endContext) {
 
+        writeEndElementContext(methodSignatureParametersStartContext, endContext);
+        
+        AST.encodeSignatureParametersEnd(astBuffer);
     }
 
     @Override
-    public final void onVisibilityClassMethodModifier(Context context, ClassMethodVisibility visibility) {
+    public final void onVisibilityClassMethodModifier(int leafContext, ClassMethodVisibility visibility) {
+
+        writeLeafElementContextRef(leafContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onOverrideClassMethodModifier(int leafContext, ClassMethodOverride methodOverride) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onOverrideClassMethodModifier(Context context, ClassMethodOverride methodOverride) {
+    public final void onStaticClassMethodModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onStaticClassMethodModifier(Context context) {
+    public final void onStrictfpClassMethodModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onStrictfpClassMethodModifier(Context context) {
+    public final void onSynchronizedClassMethodModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onSynchronizedClassMethodModifier(Context context) {
+    public final void onNativeClassMethodModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onNativeClassMethodModifier(Context context) {
+    public final void onClassMethodEnd(int classMethodStartContext, Context endContext) {
 
-        throw new UnsupportedOperationException();
+        writeEndElementContext(classMethodStartContext, endContext);
+
+        AST.encodeClassMethodEnd(astBuffer);
     }
 
     @Override
-    public final void onClassMethodEnd(Context context) {
+    public final void onFieldDeclarationStart(int fieldDeclarationStartContext) {
 
-        AST.encodeClassMethodEnd(astBuffer, context);
-    }
-
-    @Override
-    public final void onFieldDeclarationStart(Context context) {
-
-        writeStartElementContext(context);
+        writeStartElementContextRef(fieldDeclarationStartContext);
 
         AST.encodeFieldDeclarationStart(astBuffer);
     }
 
     @Override
-    public final void onVisibilityFieldModifier(Context context, FieldVisibility visibility) {
+    public final void onVisibilityFieldModifier(int leafContext, FieldVisibility visibility) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onStaticFieldModifier(Context context) {
+    public final void onStaticFieldModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onMutabilityFieldModifier(Context context, ASTMutability mutability) {
+    public final void onMutabilityFieldModifier(int leafContext, ASTMutability mutability) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onTransientFieldModifier(Context context) {
+    public final void onTransientFieldModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onVolatileFieldModifier(Context context) {
+    public final void onVolatileFieldModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onFieldDeclarationEnd(Context context) {
+    public final void onFieldDeclarationEnd(int fieldDeclaratrionStartContext, Context endContext) {
+
+        writeEndElementContext(fieldDeclaratrionStartContext, endContext);
 
         AST.encodeFieldDeclarationEnd(astBuffer);
     }
 
     @Override
-    public final void onInterfaceStart(Context context, long interfaceKeyword, Context interfaceKeywordContext, long name,
-            Context nameContext) {
+    public final void onInterfaceStart(int interfaceStartContext, long interfaceKeyword, int interfaceKeywordContext, long name,
+            int nameContext) {
+        
+        writeStartElementContextRef(interfaceStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onVisibilityInterfaceModifier(Context context, InterfaceVisibility visibility) {
+    public final void onVisibilityInterfaceModifier(int leafContext, InterfaceVisibility visibility) {
+        
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onAbstractInterfaceModifier(Context context) {
+    public final void onAbstractInterfaceModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onStaticInterfaceModifier(Context context) {
+    public final void onStaticInterfaceModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onStrictfpInterfaceModifier(Context context) {
+    public final void onStrictfpInterfaceModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onInterfaceExtends(Context context, ScopedName interfaceName) {
+    public final void onInterfaceExtends(int interfaceExtendsStartContext, ScopedName interfaceName) {
+
+        writeStartElementContextRef(interfaceExtendsStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onInterfaceEnd(int interfaceExtendsStartContext, Context endContext) {
+
+        writeEndElementContext(interfaceExtendsStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onEnumStart(int enumStartContext, long enumKeyword, int enumKeywordContext, long name,
+            int nameContext) {
+
+        writeStartElementContextRef(enumStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onEnumImplements(int context, ScopedName interfaceName) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onInterfaceEnd(Context context) {
+    public final void onEnumConstantStart(int enumConstantStartContext, long name) {
+        
+        writeStartElementContextRef(enumConstantStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onEnumStart(Context context, long enumKeyword, Context enumKeywordContext, long name,
-            Context nameContext) {
+    public final void onEnumConstantEnd(int enumConstantStartContext, Context endContext) {
+
+        writeEndElementContext(enumConstantStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onEnumEnd(int enumStartContext, Context endContext) {
+
+        writeEndElementContext(enumStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onInterfaceMethodStart(int interfaceMethodStartContext) {
+
+        writeStartElementContextRef(interfaceMethodStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onVisibilityInterfaceMethodModifier(int leafContext, InterfaceMethodVisibility visibility) {
+        
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onEnumImplements(Context context, ScopedName interfaceName) {
+    public final void onAbstractInterfaceMethodModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onDefaultInterfaceMethodModifier(int leafContext) {
+        
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onEnumConstantStart(Context context, long name) {
+    public final void onStaticInterfaceMethodModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onStrictfpInterfaceMethodModifier(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onInterfaceMethodEnd(int interfaceMethodStartContext, Context endContext) {
+
+        writeEndElementContext(interfaceMethodStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onEnterAssignmentExpression(int assignmentExpressionStartContext) {
+
+        writeStartElementContextRef(assignmentExpressionStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onEnterAssignmentLHS(int assignmentLHSStartContext) {
+
+        writeStartElementContextRef(assignmentLHSStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onExitAssignmentLHS(int assignmentLHSStartContext, Context endContext) {
+
+        writeEndElementContext(assignmentLHSStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onExitAssignmentExpression(int assignmenExpressionContext, Context endContext) {
+
+        writeEndElementContext(assignmenExpressionContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onNestedExpressionStart(int nestedExpressionStartContext) {
+
+        writeStartElementContextRef(nestedExpressionStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onNestedExpressionEnd(int nestedExpressionStartContext, Context endContext) {
+
+        writeEndElementContext(nestedExpressionStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onNameReference(int leafContext, long name) {
+        
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onEnumConstantEnd(Context context) {
+    public final void onVariableReference(int leafContext, long name) {
 
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onEnumEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onInterfaceMethodStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onVisibilityInterfaceMethodModifier(Context context, InterfaceMethodVisibility visibility) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onAbstractInterfaceMethodModifier(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onDefaultInterfaceMethodModifier(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onStaticInterfaceMethodModifier(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onStrictfpInterfaceMethodModifier(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onInterfaceMethodEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onEnterAssignmentExpression(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onEnterAssignmentLHS(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onExitAssignmentLHS(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onExitAssignmentExpression(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onNestedExpressionStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onNestedExpressionEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onNameReference(Context context, long name) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onVariableReference(Context context, long name) {
-
+        writeLeafElementContextRef(leafContext);
+        
         AST.encodeVariableReference(astBuffer, name);
     }
 
     @Override
-    public final void onPrimaryStart(Context context) {
+    public final void onPrimaryStart(int primaryStartContext) {
+
+        writeStartElementContextRef(primaryStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onArrayAccessStart(int arrayAccessStartContext) {
+
+        writeStartElementContextRef(arrayAccessStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onArrayIndexStart(int arrayIndexStartContext) {
+
+        writeStartElementContextRef(arrayIndexStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onArrayIndexEnd(int arrayIndexStartContext, Context endContext) {
+
+        writeEndElementContext(arrayIndexStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onArrayAccessEnd(int arrayAccesStartContext, Context endContext) {
+
+        writeEndElementContext(arrayAccesStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onFieldAccess(int context, FieldAccessType fieldAccessType, ScopedName typeName,
+            ReferenceType referenceType, long fieldName, int fieldNameContext) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onArrayAccessStart(Context context) {
+    public final void onCastExpressionStart(int castExpressionStartContext) {
+
+        writeStartElementContextRef(castExpressionStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onCastExpressionEnd(int castExpressionStartContext, Context endContext) {
+
+        writeEndElementContext(castExpressionStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onThisPrimary(int leafContext) {
+        
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onArrayIndexStart(Context context) {
+    public final void onPrimaryEnd(int primaryStartContext, Context endContext) {
+
+        writeEndElementContext(primaryStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onConditionalExpressionStart(int conditionalExpressionStartContext) {
+
+        writeStartElementContextRef(conditionalExpressionStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onConditionalExpressionPart1Start(int startContext) {
+        
+        writeStartElementContextRef(startContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onArrayIndexEnd(Context context) {
+    public final void onConditionalExpressionPart1End(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onConditionalExpressionPart2Start(int startContext) {
+
+        writeStartElementContextRef(startContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onConditionalExpressionPart2End(int startContext, Context endContext) {
+        
+        writeEndElementContext(startContext, endContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onArrayAccessEnd(Context context) {
+    public final void onConditionalExpressionPart3Start(int startContext) {
+        
+        writeStartElementContextRef(startContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName,
-            ReferenceType referenceType, long fieldName, Context fieldNameContext) {
+    public final void onConditionalExpressionPart3End(int startContext, Context endContext) {
+        
+        writeEndElementContext(startContext, endContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onCastExpressionStart(Context context) {
+    public final void onConditionalExpressionEnd(int conditionalExpressionStartContext, Context endContext) {
 
+        writeEndElementContext(conditionalExpressionStartContext, endContext);
+        
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onCastExpressionEnd(Context context) {
+    public final void onIntegerLiteral(int leafContext, long value, Base base, boolean signed, int bits) {
 
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onThisPrimary(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onPrimaryEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onConditionalExpressionStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onConditionalExpressionPart1Start(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onConditionalExpressionPart1End(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onConditionalExpressionPart2Start(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onConditionalExpressionPart2End(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onConditionalExpressionPart3Start(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onConditionalExpressionPart3End(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onConditionalExpressionEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onIntegerLiteral(Context context, long value, Base base, boolean signed, int bits) {
-
-        writeLeafElementContext(context);
+        writeLeafElementContextRef(leafContext);
         
         AST.encodeIntegerLiteral(astBuffer, value, base, signed, bits);
     }
 
     @Override
-    public final void onFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits) {
+    public final void onFloatingPointLiteral(int leafContext, BigDecimal value, Base base, int bits) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onBooleanLiteral(Context context, boolean value) {
+    public final void onBooleanLiteral(int leafContext, boolean value) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onCharacterLiteral(Context context, char value) {
+    public final void onCharacterLiteral(int leafContext, char value) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onStringLiteral(Context context, long value) {
+    public final void onStringLiteral(int leafContext, long value) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onNullLiteral(Context context) {
+    public final void onNullLiteral(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onClassInstanceCreationExpressionStart(Context context) {
+    public final void onClassInstanceCreationExpressionStart(int classInstanceCreationExpressionStartContext) {
+
+        writeStartElementContextRef(classInstanceCreationExpressionStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onClassInstanceCreationTypeAndConstructorName(int context, ScopedName name) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onClassInstanceCreationTypeAndConstructorName(Context context, ScopedName name) {
+    public final void onClassInstanceCreationExpressionEnd(int classInstanceCreationExpressionStartContext, Context endContext) {
+
+        writeEndElementContext(classInstanceCreationExpressionStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onMethodInvocationStart(int context, MethodInvocationType type, ScopedName classTypeName,
+            int classTypeNameContext, ReferenceType referenceType, long methodName, int methodNameContext) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onClassInstanceCreationExpressionEnd(Context context) {
+    public final void onParametersStart(int parametersStartContext) {
+
+        writeStartElementContextRef(parametersStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onParameterStart(int parameterContext) {
+
+        writeStartElementContextRef(parameterContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onParameterEnd(int parameterStartContext, Context endContext) {
+
+        writeEndElementContext(parameterStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onParametersEnd(int parametersStartContext, Context endContext) {
+
+        writeEndElementContext(parametersStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onMethodInvocationEnd(int methodInvocationStartContext, Context endContext) {
+        
+        writeEndElementContext(methodInvocationStartContext, endContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onMethodInvocationStart(Context context, MethodInvocationType type, ScopedName classTypeName,
-            Context classTypeNameContext, ReferenceType referenceType, long methodName, Context methodNameContext) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onParametersStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onParameterStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onParameterEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onParametersEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onMethodInvocationEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onArrayCreationExpressionStart(Context context, ScopedName typeName, ReferenceType referenceType,
+    public final void onArrayCreationExpressionStart(int arrayCreationExpressionStartContext, ScopedName typeName, ReferenceType referenceType,
             int numDims) {
+        
+        writeStartElementContextRef(arrayCreationExpressionStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onDimExpressionStart(Context context) {
+    public final void onDimExpressionStart(int dimExpressionStartContext) {
+
+        writeStartElementContextRef(dimExpressionStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onDimExpressionEnd(int dimExpressionStartContext, Context endContext) {
+
+        writeEndElementContext(dimExpressionStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onArrayCreationExpressionEnd(int arrayCreationExpressionStartContext, Context endContext) {
+
+        writeEndElementContext(arrayCreationExpressionStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onClassExpression(int leafContext, long className, int numArrayDims) {
+
+        writeLeafElementContextRef(leafContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onLambdaExpressionStart(int lambdaExpressionStartContext) {
+        
+        writeStartElementContextRef(lambdaExpressionStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onDimExpressionEnd(Context context) {
+    public final void onSingleLambdaParameter(int leafContext, long varName) {
+
+        writeLeafElementContextRef(leafContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onFormalLambdaParameterListStart(int formalLambdaParameterListStartContext) {
+        
+        writeStartElementContextRef(formalLambdaParameterListStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onArrayCreationExpressionEnd(Context context) {
+    public final void onFormalLambdaParameterListEnd(int formalLambdaParameterListStartContext, Context endContext) {
+
+        writeEndElementContext(formalLambdaParameterListStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onInferredLambdaParameterList(int context, List<String> varNames, int varNamesContext) {
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onClassExpression(Context context, long className, int numArrayDims) {
+    public final void onLambdaBodyStart(int lambdaBodyStartContext) {
+
+        writeStartElementContextRef(lambdaBodyStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onLambdaBodyEnd(int lambdaBodyStartContext, Context endContext) {
+
+        writeEndElementContext(lambdaBodyStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onLambdaExpressionEnd(int lambdaExpressionStartContext, Context endContext) {
+        
+        writeEndElementContext(lambdaExpressionStartContext, endContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onLambdaExpressionStart(Context context) {
+    public final void onMutabilityVariableModifier(int leafContext, ASTMutability mutability) {
+        
+        writeLeafElementContextRef(leafContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onSingleLambdaParameter(Context context, long varName, Context varNameContext) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onFormalLambdaParameterListStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onFormalLambdaParameterListEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onInferredLambdaParameterList(Context context, List<String> varNames, Context varNamesContext) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onLambdaBodyStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onLambdaBodyEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onLambdaExpressionEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onMutabilityVariableModifier(Context context, ASTMutability mutability) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onVariableDeclarationStatementStart(Context context) {
+    public final void onVariableDeclarationStatementStart(int variableDeclarationStatementStartContext) {
+        
+        writeStartElementContextRef(variableDeclarationStatementStartContext);
 
         AST.encodeVariableDeclarationStatementStart(astBuffer);
     }
 
     @Override
-    public final void onVariableDeclarationStatementEnd(Context context) {
+    public final void onVariableDeclarationStatementEnd(int variableDeclarationStatementStartContext, Context endContext) {
 
+        writeEndElementContext(variableDeclarationStatementStartContext, endContext);
+        
         AST.encodeVariableDeclarationStatementEnd(astBuffer);
     }
 
     @Override
-    public final void onVariableDeclaratorStart(Context context) {
+    public final void onVariableDeclaratorStart(int variableDeclaratorStartContext) {
 
+        writeStartElementContextRef(variableDeclaratorStartContext);
+        
         AST.encodeVariableDeclaratorStart(astBuffer);
     }
 
     @Override
-    public final void onVariableDeclaratorEnd(Context context) {
+    public final void onVariableDeclaratorEnd(int variableDeclaratorStartContext, Context endContext) {
+        
+        writeEndElementContext(variableDeclaratorStartContext, endContext);
 
         AST.encodeVariableDeclaratorEnd(astBuffer);
     }
 
     @Override
-    public void onNonScopedTypeReference(Context context, long name, ReferenceType referenceType) {
+    public void onNonScopedTypeReference(int leafContext, long name, ReferenceType referenceType) {
+        
+        writeLeafElementContextRef(leafContext);
 
         switch (referenceType) {
         case SCALAR:
@@ -975,230 +1185,316 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public void onScopedTypeReferenceStart(Context context, ReferenceType referenceType) {
+    public void onScopedTypeReferenceStart(int scopedTypeReferenceStartContext, ReferenceType referenceType) {
 
-        AST.encodeScopedTypeReferenceStart(astBuffer, context);
+        writeStartElementContextRef(scopedTypeReferenceStartContext);
+        
+        AST.encodeScopedTypeReferenceStart(astBuffer);
     }
 
     @Override
-    public void onScopedTypeReferencePart(Context context, long part) {
+    public void onScopedTypeReferencePart(int leafContext, long part) {
 
-        AST.encodeScopedTypeReferencePart(astBuffer, context, part);
+        writeLeafElementContextRef(leafContext);
+        
+        AST.encodeScopedTypeReferencePart(astBuffer, part);
     }
 
     @Override
-    public void onScopedTypeReferenceEnd(Context context) {
+    public void onScopedTypeReferenceEnd(int scopedTypeReferenceStartContext, Context endContext) {
 
-        AST.encodeScopedTypeReferenceEnd(astBuffer, context);
+        writeEndElementContext(scopedTypeReferenceStartContext, endContext);
+        
+        AST.encodeScopedTypeReferenceEnd(astBuffer);
     }
 
     @Override
-    public final void onExpressionStatementStart(Context context) {
+    public final void onExpressionStatementStart(int expressionStatementStartContext) {
+
+        writeStartElementContextRef(expressionStatementStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onExpressionStatementEnd(int expressionStatementStartContext, Context endContext) {
+
+        writeEndElementContext(expressionStatementStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onForStatementStart(int forStatementStartContext, long keyword, int keywordContext) {
+        
+        verifyNotSameContext(forStatementStartContext, keywordContext);
+        
+        writeStartElementContextRef(forStatementStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onExpressionStatementEnd(Context context) {
+    public final void onForInitStart(int forInitStartContext) {
+
+        writeStartElementContextRef(forInitStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onForInitEnd(int forInitStartContext, Context endContext) {
+        
+        writeEndElementContext(forInitStartContext, endContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onForStatementStart(Context context, long keyword, Context keywordContext) {
+    public final void onForUpdateStart(int forUpdateStartContext) {
+
+        writeStartElementContextRef(forUpdateStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onForUpdateEnd(int forUpdateStartContext, Context endContext) {
+
+        writeEndElementContext(forUpdateStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onForStatementEnd(int forStatementStartContext, Context endContext) {
+        
+        writeEndElementContext(forStatementStartContext, endContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onForInitStart(Context context) {
+    public final void onIteratorForStatementStart(int iteratorForStatementStartContext) {
+
+        writeStartElementContextRef(iteratorForStatementStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void onIteratorForTestStart(int iteratorForTestStartContext) {
+
+        writeStartElementContextRef(iteratorForTestStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onIteratorForTestEnd(int iteratorForTestStartContext, Context endContext) {
+
+        writeEndElementContext(iteratorForTestStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onIteratorForStatementEnd(int iteratorForStatementStartContext, Context endContext) {
+
+        writeEndElementContext(iteratorForStatementStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onWhileStatementStart(int whileStatementStartContext) {
+        
+        writeStartElementContextRef(whileStatementStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onForInitEnd(Context context) {
+    public final void onWhileStatementEnd(int whieStatementStartContext, Context endContext) {
 
+        writeEndElementContext(whieStatementStartContext, endContext);
+        
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onForUpdateStart(Context context) {
+    public final void onDoWhileStatementStart(int doWhileStatementStartContext) {
 
+        writeStartElementContextRef(doWhileStatementStartContext);
+        
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onForUpdateEnd(Context context) {
+    public final void onDoWhileStatementEnd(int doWhileStatemetStartContext, Context endContext) {
 
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onForStatementEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onIteratorForStatementStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onIteratorForTestEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onIteratorForStatementEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onWhileStatementStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onWhileStatementEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onDoWhileStatementStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onDoWhileStatementEnd(Context context) {
-
+        writeEndElementContext(doWhileStatemetStartContext, endContext);
+        
         throw new UnsupportedOperationException();
    }
 
     @Override
-    public final void onTryWithResourcesStatementStart(Context context) {
+    public final void onTryWithResourcesStatementStart(int tryWithResourcesStatementStartContext) {
+
+        writeStartElementContextRef(tryWithResourcesStatementStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onTryWithResourcesSpecificationStart(int tryWithResourcesSpecificationStartContext) {
+        
+        writeStartElementContextRef(tryWithResourcesSpecificationStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onTryWithResourcesSpecificationStart(Context context) {
+    public final void onResourceStart(int resourceStartContext) {
+        
+        writeStartElementContextRef(resourceStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onResourceStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onVariableName(Context context, long name, int numDims) {
+    public final void onVariableName(int leafContext, long name, int numDims) {
+        
+        writeLeafElementContextRef(leafContext);
 
         AST.encodeVariableName(astBuffer, name, numDims);
     }
 
     @Override
-    public final void onResourceEnd(Context context) {
+    public final void onResourceEnd(int resourceStartContext, Context endContext) {
+        
+        writeEndElementContext(resourceStartContext, endContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onTryWithResourcesSpecificationEnd(Context context) {
+    public final void onTryWithResourcesSpecificationEnd(int tryWithResourcesSpecificationStartContext, Context endContext) {
+
+        writeEndElementContext(tryWithResourcesSpecificationStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onTryStatementStart(int tryStatementStartContext) {
+
+        writeStartElementContextRef(tryStatementStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onTryBlockEnd(int tryStartContext, Context endContext) {
+        
+        writeEndElementContext(tryStartContext, endContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onTryStatementStart(Context context) {
+    public final void onCatchStart(int catchStartContext) {
+        
+        writeStartElementContextRef(catchStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onTryBlockEnd(Context context) {
+    public final void onCatchEnd(int catchStartContext, Context endContext) {
+
+        writeEndElementContext(catchStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onFinallyStart(int finallyStartContext) {
+
+        writeStartElementContextRef(finallyStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onFinallyEnd(int finallyEndContext, Context endContext) {
+
+        writeEndElementContext(finallyEndContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onTryStatementEnd(int tryStatementStartContext, Context endContext) {
+
+        writeEndElementContext(tryStatementStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onTryWithResourcesEnd(int tryWithResourcesStartContext, Context endContext) {
+
+        writeEndElementContext(tryWithResourcesStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onReturnStatementStart(int returnStatementStartContext) {
+
+        writeStartElementContextRef(returnStatementStartContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onReturnStatementEnd(int returnStatementStartContext, Context endContext) {
+
+        writeEndElementContext(returnStatementStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onThrowStatementStart(int throwStatementStartContext) {
+        
+        writeStartElementContextRef(throwStatementStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onCatchStart(Context context) {
+    public final void onThrowStatementEnd(int throwStatementStartContext, Context endContext) {
+
+        writeEndElementContext(throwStatementStartContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onAnnotationStart(int annotationStartContext) {
+        
+        writeStartElementContextRef(annotationStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onCatchEnd(Context context) {
+    public final void onAnnotationEnd(int annotationStartContext, Context endContext) {
 
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onFinallyStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onFinallyEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onTryStatementEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onTryWithResourcesEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onReturnStatementStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onReturnStatementEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onThrowStatementStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onThrowStatementEnd(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onAnnotationStart(Context context) {
-
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final void onAnnotationEnd(Context context) {
-
+        writeEndElementContext(annotationStartContext, endContext);
+        
         throw new UnsupportedOperationException();
     }
 }

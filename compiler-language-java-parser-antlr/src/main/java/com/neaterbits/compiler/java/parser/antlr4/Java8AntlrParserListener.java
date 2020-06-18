@@ -1662,7 +1662,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterSwitchStatement(SwitchStatementContext ctx) {
-		delegate.onSwitchStatementStart(context(ctx), ctx.keyword.getText(), context(ctx.keyword));
+		delegate.onSwitchStatementStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 	
 	@Override
@@ -1692,7 +1692,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterConstantExpressionSwitchLabel(ConstantExpressionSwitchLabelContext ctx) {
-		delegate.onConstantSwitchLabelStart(context(ctx), ctx.keyword.getText(), context(ctx.keyword));
+		delegate.onConstantSwitchLabelStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 
 	@Override
@@ -1704,13 +1704,14 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void enterEnumConstantNameSwitchLabel(EnumConstantNameSwitchLabelContext ctx) {
 		delegate.onEnumSwitchLabel(
 				context(ctx),
-				ctx.keyword.getText(), context(ctx.keyword),
-				ctx.enumConstantName().getText(), context(ctx.enumConstantName()));
+				stringRef(ctx.keyword), context(ctx.keyword),
+				stringRef(ctx.enumConstantName()),
+				context(ctx.enumConstantName()));
 	}
 
 	@Override
 	public void exitDefaultSwitchLabel(DefaultSwitchLabelContext ctx) {
-		delegate.onDefaultSwitchLabel(context(ctx), ctx.keyword.getText(), context(ctx.keyword));
+		delegate.onDefaultSwitchLabel(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 
 	@Override
@@ -1726,11 +1727,19 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void exitBreakStatement(BreakStatementContext ctx) {
 		
-		final String breakLabel = ctx.Identifier() != null
-				? ctx.Identifier().getText()
-				: null;
+	    final Context breakContext;
+		final long breakLabel;
+		
+		if (ctx.Identifier() != null) {
+		    breakContext = context(ctx.Identifier());
+		    breakLabel = stringRef(ctx.Identifier());
+		}
+		else {
+		    breakContext = null;
+		    breakLabel = StringRef.STRING_NONE;
+		}
 
-		delegate.onBreakStatement(context(ctx), ctx.keyword.getText(), context(ctx.keyword), breakLabel);
+		delegate.onBreakStatement(context(ctx), stringRef(ctx.keyword), context(ctx.keyword), breakLabel, breakContext);
 	}
 
 	@Override

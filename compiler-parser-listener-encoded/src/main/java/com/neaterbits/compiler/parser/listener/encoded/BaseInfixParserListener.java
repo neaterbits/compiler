@@ -15,22 +15,29 @@ abstract class BaseInfixParserListener<COMPILATION_UNIT>
     }
 
     @Override
-    public final void onExpressionBinaryOperator(Context context, Operator operator) {
+    public final void onExpressionBinaryOperator(int leafContext, Operator operator) {
 
-        writeLeafElementContext(context);
+        writeLeafElementContextRef(leafContext);
         
         AST.encodeExpressionBinaryOperator(astBuffer, operator);
     }
 
     @Override
-    public final void onIncrementDecrementExpressionStart(Context context, Arithmetic operator, Notation notation) {
+    public final void onIncrementDecrementExpressionStart(
+            int incrementDecrementExpressionStartContext,
+            Arithmetic operator,
+            Notation notation) {
+        
+        writeStartElementContextRef(incrementDecrementExpressionStartContext);
 
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void onIncrementDecrementExpressionEnd(Context context) {
+    public final void onIncrementDecrementExpressionEnd(int incrementDecrementExpressionStartContext, Context endContext) {
 
+        writeEndElementContext(incrementDecrementExpressionStartContext, endContext);
+        
         throw new UnsupportedOperationException();
     }
 }

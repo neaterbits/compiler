@@ -3,6 +3,7 @@ package com.neaterbits.compiler.javascript.parser;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.ast.objects.parser.iterative.BaseIterativeOOParserListener;
 import com.neaterbits.compiler.javascript.ast.JavascriptProgram;
+import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
@@ -11,8 +12,12 @@ import com.neaterbits.util.io.strings.StringSource;
 public class JSParserListener extends BaseIterativeOOParserListener
 			implements ModelParserListener<JavascriptProgram> {
 
-	public JSParserListener(StringSource stringSource, ParseLogger logger, ParseTreeFactory parseTreeFactory) {
-		super(stringSource, logger, parseTreeFactory);
+	public JSParserListener(
+	        StringSource stringSource,
+	        ContextAccess contextAccess,
+	        ParseLogger logger,
+	        ParseTreeFactory parseTreeFactory) {
+		super(stringSource, contextAccess, logger, parseTreeFactory);
 	}
 
 	@Override

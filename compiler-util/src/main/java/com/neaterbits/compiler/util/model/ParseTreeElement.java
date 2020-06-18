@@ -39,6 +39,8 @@ public enum ParseTreeElement {
     METHOD_RETURN_TYPE(false),
 	METHOD_NAME(true),
 	
+	SIGNATURE_PARAMETERS(false),
+	
 	SIGNATURE_PARAMETER(false),
 	
 	PARAMETER_LIST(false, true),

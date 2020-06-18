@@ -20,361 +20,366 @@ import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 
-public interface ParserListener<COMPILATION_UNIT> {
+public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 
-	void onCompilationUnitStart(Context context);
+	void onCompilationUnitStart(int startContext);
 
-	COMPILATION_UNIT onCompilationUnitEnd(Context context);
+	COMPILATION_UNIT onCompilationUnitEnd(int startContext, Context endContext);
 	
-	void onImportStart(Context context,
-	        long importKeyword, Context importKeywordContext,
-	        long staticKeyword, Context staticKeywordContext);
+	void onImportStart(
+	        int startContext,
+	        long importKeyword, int importKeywordContext,
+	        long staticKeyword, int staticKeywordContext);
 	
-	void onImportIdentifier(Context context, long identifier);
+	void onImportIdentifier(int context, long identifier);
 	
-	void onImportEnd(Context context, boolean ondemand);
+	void onImportEnd(int startContext, Context endContext, boolean ondemand);
 	
-	void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext);
+	void onNamespaceStart(int startContext, long namespaceKeyword, int namespaceKeywordContext);
 	
-	void onNamespacePart(Context context, long part);
+	void onNamespacePart(int context, long part);
 	
-	void onNameSpaceEnd(Context context);
+	void onNameSpaceEnd(int startContext, Context endContext);
 	
-	void onClassStart(Context context, long classKeyword, Context classKeywordContext, long name,
-			Context nameContext);
+	void onClassStart(
+	        int startContext,
+	        long classKeyword, int classKeywordContext,
+	        long name, int nameContext);
 
-	void onVisibilityClassModifier(Context context, ClassVisibility visibility);
+	void onVisibilityClassModifier(int context, ClassVisibility visibility);
 	
-	void onSubclassingModifier(Context context, Subclassing subclassing);
+	void onSubclassingModifier(int context, Subclassing subclassing);
 	
-	void onStaticClassModifier(Context context);
+	void onStaticClassModifier(int context);
 
-	void onStrictfpClassModifier(Context context);
+	void onStrictfpClassModifier(int context);
 	
-	void onClassExtendsStart(Context context, long extendsKeyword, Context extendsKeywordContext);
+	void onClassExtendsStart(int startContext, long extendsKeyword, int extendsKeywordContext);
 
-	void onClassExtendsNamePart(Context context, long identifier);
+	void onClassExtendsNamePart(int context, long identifier);
 	
-	void onClassExtendsEnd(Context context);
+	void onClassExtendsEnd(int startContext, Context endContext);
 
-	void onClassImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext);
+	void onClassImplementsStart(int startContext, long implementsKeyword, int implementsKeywordContext);
 	
-	void onClassImplementsTypeStart(Context context);
+	void onClassImplementsTypeStart(int context);
 
-    void onClassImplementsNamePart(Context context, long identifier);
+    void onClassImplementsNamePart(int context, long identifier);
     
-    void onClassImplementsTypeEnd(Context context);
+    void onClassImplementsTypeEnd(int startContext, Context endContext);
     
-    void onClassImplementsEnd(Context context);
+    void onClassImplementsEnd(int startContext, Context endContext);
 	
-	void onClassEnd(Context context);
+	void onClassEnd(int startContext, Context endContext);
 
-	void onAnonymousClassStart(Context context);
+	void onAnonymousClassStart(int startContext);
 	
-	void onAnonymousClassEnd(Context context);
+	void onAnonymousClassEnd(int startContext, Context endContext);
 	
-	void onStaticInitializerStart(Context context);
+	void onStaticInitializerStart(int startContext);
 
-	void onStaticInitializerEnd(Context context);
+	void onStaticInitializerEnd(int startContext, Context endContext);
 
-	void onConstructorStart(Context context);
+	void onConstructorStart(int context);
 	
-	void onConstructorVisibilityModifier(Context context, ConstructorVisibility visibility);
+	void onConstructorVisibilityModifier(int context, ConstructorVisibility visibility);
 	
-	void onConstructorName(Context context, long constructorName);
+	void onConstructorName(int context, long constructorName);
 	
-	void onConstructorInvocationStart(Context context, ConstructorInvocation type);
+	void onConstructorInvocationStart(int startContext, ConstructorInvocation type);
 	
-	void onConstructorInvocationEnd(Context context);
+	void onConstructorInvocationEnd(int startContext, Context endContext);
 	
-	void onConstructorEnd(Context context);
+	void onConstructorEnd(int startContext, Context endContext);
 	
-	void onClassMethodStart(Context context);
+	void onClassMethodStart(int startContext);
 
-	void onMethodReturnTypeStart(Context context);
+	void onMethodReturnTypeStart(int startContext);
 	
-	void onMethodReturnTypeEnd(Context context);
+	void onMethodReturnTypeEnd(int startContext, Context endContext);
 	
-	void onMethodName(Context context, long methodName);
+	void onMethodName(int leafContext, long methodName);
 
-	void onMethodSignatureParametersStart(Context context);
+	void onMethodSignatureParametersStart(int startContext);
 
-	void onMethodSignatureParameterStart(Context context, boolean varArgs);
+	void onMethodSignatureParameterStart(int startContext, boolean varArgs);
 
-	void onMethodSignatureParameterEnd(Context context);
+	void onMethodSignatureParameterEnd(int startContext, Context endContext);
 
-	void onMethodSignatureParametersEnd(Context context);
+	void onMethodSignatureParametersEnd(int startContext, Context endContext);
 
-	void onVisibilityClassMethodModifier(Context context, ClassMethodVisibility visibility);
+	void onVisibilityClassMethodModifier(int leafContext, ClassMethodVisibility visibility);
 	
-	void onOverrideClassMethodModifier(Context context, ClassMethodOverride methodOverride);
+	void onOverrideClassMethodModifier(int leafContext, ClassMethodOverride methodOverride);
 	
-	void onStaticClassMethodModifier(Context context);
+	void onStaticClassMethodModifier(int elontext);
 	
-	void onStrictfpClassMethodModifier(Context context);
+	void onStrictfpClassMethodModifier(int leafContext);
 	
-	void onSynchronizedClassMethodModifier(Context context);
+	void onSynchronizedClassMethodModifier(int leafContext);
 	
-	void onNativeClassMethodModifier(Context context);
+	void onNativeClassMethodModifier(int leafContext);
 	
-	void onClassMethodEnd(Context context);
+	void onClassMethodEnd(int startContext, Context endContext);
 	
-	void onFieldDeclarationStart(Context context);
+	void onFieldDeclarationStart(int startContext);
 	
-	void onVisibilityFieldModifier(Context context, FieldVisibility visibility);
+	void onVisibilityFieldModifier(int leafContext, FieldVisibility visibility);
 	
-	void onStaticFieldModifier(Context context);
+	void onStaticFieldModifier(int leafContext);
 	
-	void onMutabilityFieldModifier(Context context, ASTMutability mutability);
+	void onMutabilityFieldModifier(int leafContext, ASTMutability mutability);
 	
-	void onTransientFieldModifier(Context context);
+	void onTransientFieldModifier(int leafContext);
 	
-	void onVolatileFieldModifier(Context context);
+	void onVolatileFieldModifier(int leafContext);
 	
-	void onFieldDeclarationEnd(Context context);
+	void onFieldDeclarationEnd(int startContext, Context endContext);
 	
-	void onInterfaceStart(Context context, long interfaceKeyword, Context interfaceKeywordContext,
-			long name, Context nameContext);
+	void onInterfaceStart(int startContext, long interfaceKeyword, int interfaceKeywordContext,
+			long name, int nameContext);
 	
-	void onVisibilityInterfaceModifier(Context context, InterfaceVisibility visibility);
+	void onVisibilityInterfaceModifier(int leafContext, InterfaceVisibility visibility);
 	
-	void onAbstractInterfaceModifier(Context context);
+	void onAbstractInterfaceModifier(int leafContext);
 	
-	void onStaticInterfaceModifier(Context context);
+	void onStaticInterfaceModifier(int leafContext);
 	
-	void onStrictfpInterfaceModifier(Context context);
+	void onStrictfpInterfaceModifier(int leafContext);
 
-	void onInterfaceExtends(Context context, ScopedName interfaceName);
+	void onInterfaceExtends(int context, ScopedName interfaceName);
 	
-	void onInterfaceEnd(Context context);
+	void onInterfaceEnd(int startContext, Context endContext);
 	
-	void onEnumStart(Context context, long enumKeyword, Context enumKeywordContext, long name,
-			Context nameContext);
+	void onEnumStart(int startContext, long enumKeyword, int enumKeywordContext, long name,
+			int nameContext);
 	
-	void onEnumImplements(Context context, ScopedName interfaceName);
+	void onEnumImplements(int context, ScopedName interfaceName);
 	
-	void onEnumConstantStart(Context context, long name);
+	void onEnumConstantStart(int startContext, long name);
 	
-	void onEnumConstantEnd(Context context);
+	void onEnumConstantEnd(int startContext, Context endContext);
 
-	void onEnumEnd(Context context);
+	void onEnumEnd(int startContext, Context endContext);
 
-	void onInterfaceMethodStart(Context context);
+	void onInterfaceMethodStart(int startContext);
 
-	void onVisibilityInterfaceMethodModifier(Context context, InterfaceMethodVisibility visibility);
+	void onVisibilityInterfaceMethodModifier(int leafContext, InterfaceMethodVisibility visibility);
 
-	void onAbstractInterfaceMethodModifier(Context context);
+	void onAbstractInterfaceMethodModifier(int leafContext);
 	
-	void onDefaultInterfaceMethodModifier(Context context);
+	void onDefaultInterfaceMethodModifier(int leafContext);
 
-	void onStaticInterfaceMethodModifier(Context context);
+	void onStaticInterfaceMethodModifier(int leafContext);
 	
-	void onStrictfpInterfaceMethodModifier(Context context);
+	void onStrictfpInterfaceMethodModifier(int leafContext);
 	
-	void onInterfaceMethodEnd(Context context);
+	void onInterfaceMethodEnd(int startContext, Context endContext);
 	
-	void onEnterAssignmentExpression(Context context);
+	void onEnterAssignmentExpression(int startContext);
 	
-	void onEnterAssignmentLHS(Context context);
+	void onEnterAssignmentLHS(int startContext);
 	
-	void onExitAssignmentLHS(Context context);
+	void onExitAssignmentLHS(int startContext, Context endContext);
 	
-	void onExitAssignmentExpression(Context context);
+	void onExitAssignmentExpression(int startContext, Context endContext);
 
-	void onNestedExpressionStart(Context context);
+	void onNestedExpressionStart(int startContext);
 	
-	void onNestedExpressionEnd(Context context);
+	void onNestedExpressionEnd(int startContext, Context endContext);
 	
-	void onNameReference(Context context, long name);
+	void onNameReference(int leafContext, long name);
 	
-	void onVariableReference(Context context, long name);
+	void onVariableReference(int leafContext, long name);
 	
-	void onPrimaryStart(Context context);
+	void onPrimaryStart(int startContext);
 	
-	void onArrayAccessStart(Context context);
+	void onArrayAccessStart(int startContext);
 	
-	void onArrayIndexStart(Context context);
+	void onArrayIndexStart(int startContext);
 	
-	void onArrayIndexEnd(Context context);
+	void onArrayIndexEnd(int startContext, Context endContext);
 	
-	void onArrayAccessEnd(Context context);
+	void onArrayAccessEnd(int startContext, Context endContext);
 	
-	void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName,
-			ReferenceType referenceType, long fieldName, Context fieldNameContext);
+	void onFieldAccess(int context, FieldAccessType fieldAccessType, ScopedName typeName,
+			ReferenceType referenceType, long fieldName, int fieldNameContext);
 	
-	void onCastExpressionStart(Context context);
+	void onCastExpressionStart(int startContext);
 	
-	void onCastExpressionEnd(Context context);
+	void onCastExpressionEnd(int startContext, Context endContext);
 	
-	void onThisPrimary(Context context);
+	void onThisPrimary(int leafContext);
 	
-	void onPrimaryEnd(Context context);
+	void onPrimaryEnd(int startContext, Context endContext);
 	
-	void onConditionalExpressionStart(Context context);
+	void onConditionalExpressionStart(int startContext);
 	
-	void onConditionalExpressionPart1Start(Context context);
+	void onConditionalExpressionPart1Start(int startContext);
 	
-	void onConditionalExpressionPart1End(Context context);
+	void onConditionalExpressionPart1End(int startContext, Context endContext);
 	
-	void onConditionalExpressionPart2Start(Context context);
+	void onConditionalExpressionPart2Start(int startContext);
 	
-	void onConditionalExpressionPart2End(Context context);
+	void onConditionalExpressionPart2End(int startContext, Context endContext);
 	
-	void onConditionalExpressionPart3Start(Context context);
+	void onConditionalExpressionPart3Start(int startContext);
 	
-	void onConditionalExpressionPart3End(Context context);
+	void onConditionalExpressionPart3End(int startContext, Context endContext);
 	
-	void onConditionalExpressionEnd(Context context);
+	void onConditionalExpressionEnd(int startContext, Context endContext);
 	
-	void onIntegerLiteral(Context context, long value, Base base, boolean signed, int bits);
+	void onIntegerLiteral(int leafContext, long value, Base base, boolean signed, int bits);
 	
-	void onFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits);
+	void onFloatingPointLiteral(int leafContext, BigDecimal value, Base base, int bits);
 	
-	void onBooleanLiteral(Context context, boolean value);
+	void onBooleanLiteral(int leafContext, boolean value);
 	
-	void onCharacterLiteral(Context context, char value);
+	void onCharacterLiteral(int leafContext, char value);
 	
-	void onStringLiteral(Context context, long value);
+	void onStringLiteral(int leafContext, long value);
 	
-	void onNullLiteral(Context context);
+	void onNullLiteral(int leafContext);
 	
-	void onClassInstanceCreationExpressionStart(Context context);
+	void onClassInstanceCreationExpressionStart(int startContext);
 	
-	void onClassInstanceCreationTypeAndConstructorName(Context context, ScopedName name);
+	void onClassInstanceCreationTypeAndConstructorName(int context, ScopedName name);
 	
-	void onClassInstanceCreationExpressionEnd(Context context);
+	void onClassInstanceCreationExpressionEnd(int startContext, Context endContext);
 	
 	void onMethodInvocationStart(
-			Context context,
+			int startContext,
 			MethodInvocationType type,
 			ScopedName classTypeName,
-			Context classTypeNameContext,
+			int classTypeNameContext,
 			ReferenceType referenceType,
 			long methodName,
-			Context methodNameContext);
+			int methodNameContext);
 	
-	void onParametersStart(Context context);
+	void onParametersStart(int startContext);
 
-	void onParameterStart(Context context);
+	void onParameterStart(int startContext);
 	
-	void onParameterEnd(Context context);
+	void onParameterEnd(int startContext, Context endContext);
 	
-	void onParametersEnd(Context context);
+	void onParametersEnd(int startContext, Context endContext);
 	
-	void onMethodInvocationEnd(Context context);
+	void onMethodInvocationEnd(int startContext, Context endContext);
 	
-	void onArrayCreationExpressionStart(Context context, ScopedName typeName, ReferenceType referenceType, int numDims);
+	void onArrayCreationExpressionStart(int startContext, ScopedName typeName, ReferenceType referenceType, int numDims);
 	
-	void onDimExpressionStart(Context context);
+	void onDimExpressionStart(int startContext);
 
-	void onDimExpressionEnd(Context context);
+	void onDimExpressionEnd(int startContext, Context endContext);
 
-	void onArrayCreationExpressionEnd(Context context);
+	void onArrayCreationExpressionEnd(int startContext, Context endContext);
 
-	void onClassExpression(Context context, long className, int numArrayDims);
+	void onClassExpression(int context, long className, int numArrayDims);
 	
-	void onLambdaExpressionStart(Context context);
+	void onLambdaExpressionStart(int startContext);
 	
-	void onSingleLambdaParameter(Context context, long varName, Context varNameContext);
+	void onSingleLambdaParameter(int leafContext, long varName);
 	
-	void onFormalLambdaParameterListStart(Context context);
+	void onFormalLambdaParameterListStart(int startContext);
 	
-	void onFormalLambdaParameterListEnd(Context context);
+	void onFormalLambdaParameterListEnd(int startContext, Context endContext);
 
-	void onInferredLambdaParameterList(Context context, List<String> varNames, Context varNamesContext);
+	void onInferredLambdaParameterList(int context, List<String> varNames, int varNamesContext);
 
-	void onLambdaBodyStart(Context context);	
+	void onLambdaBodyStart(int startContext);	
 	
-	void onLambdaBodyEnd(Context context);
+	void onLambdaBodyEnd(int startContext, Context endContext);
 	
-	void onLambdaExpressionEnd(Context context);
+	void onLambdaExpressionEnd(int startContext, Context endContext);
 	
-	void onMutabilityVariableModifier(Context context, ASTMutability mutability);
+	void onMutabilityVariableModifier(int leafContext, ASTMutability mutability);
 	
-	void onVariableDeclarationStatementStart(Context context);
+	void onVariableDeclarationStatementStart(int startContext);
 	
-	void onVariableDeclarationStatementEnd(Context context);
+	void onVariableDeclarationStatementEnd(int startContext, Context endContext);
 	
-	void onVariableDeclaratorStart(Context context);
+	void onVariableDeclaratorStart(int startContext);
 	
-	void onVariableDeclaratorEnd(Context context);
+	void onVariableDeclaratorEnd(int startContext, Context endContext);
 	
-	void onNonScopedTypeReference(Context context, long name, ReferenceType referenceType);
+	void onNonScopedTypeReference(int context, long name, ReferenceType referenceType);
 	
-	void onScopedTypeReferenceStart(Context context, ReferenceType referenceType);
+	void onScopedTypeReferenceStart(int startContext, ReferenceType referenceType);
 
-	void onScopedTypeReferencePart(Context context, long part);
+	void onScopedTypeReferencePart(int leafContext, long part);
 	
-	void onScopedTypeReferenceEnd(Context context);
+	void onScopedTypeReferenceEnd(int startContext, Context endContext);
 
-	void onExpressionStatementStart(Context context);
+	void onExpressionStatementStart(int startContext);
 	
-	void onExpressionStatementEnd(Context context);
+	void onExpressionStatementEnd(int startContext, Context endContext);
 	
-	void onForStatementStart(Context context, long keyword, Context keywordContext);
+	void onForStatementStart(int startContext, long keyword, int keywordContext);
 	
-	void onForInitStart(Context context);
+	void onForInitStart(int startContext);
 	
-	void onForInitEnd(Context context);
+	void onForInitEnd(int startContext, Context endContext);
 	
-	void onForUpdateStart(Context context);
+	void onForUpdateStart(int startContext);
 	
-	void onForUpdateEnd(Context context);
+	void onForUpdateEnd(int startContext, Context endContext);
 	
-	void onForStatementEnd(Context context);
+	void onForStatementEnd(int startContext, Context endContext);
 	
-	void onIteratorForStatementStart(Context context);
-	
-	void onIteratorForTestEnd(Context context);
-	
-	void onIteratorForStatementEnd(Context context);
-	
-	void onWhileStatementStart(Context context);
-	
-	void onWhileStatementEnd(Context context);
-	
-	void onDoWhileStatementStart(Context context);
-	
-	void onDoWhileStatementEnd(Context context);
-	
-	void onTryWithResourcesStatementStart(Context context);
-	
-	void onTryWithResourcesSpecificationStart(Context context);
-	
-	void onResourceStart(Context context);
-	
-	void onVariableName(Context context, long name, int numDims);
-	
-	void onResourceEnd(Context context);
-	
-	void onTryWithResourcesSpecificationEnd(Context context);
-	
-	void onTryStatementStart(Context context);
-	
-	void onTryBlockEnd(Context context);
-	
-	void onCatchStart(Context context);
-	
-	void onCatchEnd(Context context);
-	
-	void onFinallyStart(Context context);
-	
-	void onFinallyEnd(Context context);
-	
-	void onTryStatementEnd(Context context);
-	
-	void onTryWithResourcesEnd(Context context);
-	
-	void onReturnStatementStart(Context context);
-	
-	void onReturnStatementEnd(Context context);
-	
-	void onThrowStatementStart(Context context);
-	
-	void onThrowStatementEnd(Context context);
-	
-	void onAnnotationStart(Context context);
+	void onIteratorForStatementStart(int startContext);
 
-	void onAnnotationEnd(Context context);
+	void onIteratorForTestStart(int startContext);
+
+	void onIteratorForTestEnd(int startContext, Context endContext);
+	
+	void onIteratorForStatementEnd(int startContext, Context endContext);
+	
+	void onWhileStatementStart(int startContext);
+	
+	void onWhileStatementEnd(int startContext, Context endContext);
+	
+	void onDoWhileStatementStart(int startContext);
+	
+	void onDoWhileStatementEnd(int startContext, Context endContext);
+	
+	void onTryWithResourcesStatementStart(int startContext);
+	
+	void onTryWithResourcesSpecificationStart(int startContext);
+	
+	void onResourceStart(int startContext);
+	
+	void onVariableName(int leafContext, long name, int numDims);
+	
+	void onResourceEnd(int startContext, Context endContext);
+	
+	void onTryWithResourcesSpecificationEnd(int startContext, Context endContext);
+	
+	void onTryStatementStart(int startContext);
+	
+	void onTryBlockEnd(int startContext, Context endContext);
+	
+	void onCatchStart(int startContext);
+	
+	void onCatchEnd(int startContext, Context endContext);
+	
+	void onFinallyStart(int startContext);
+	
+	void onFinallyEnd(int startContext, Context endContext);
+	
+	void onTryStatementEnd(int startContext, Context endContext);
+	
+	void onTryWithResourcesEnd(int startContext, Context endContext);
+	
+	void onReturnStatementStart(int startContext);
+	
+	void onReturnStatementEnd(int startContext, Context endContext);
+	
+	void onThrowStatementStart(int startContext);
+	
+	void onThrowStatementEnd(int startContext, Context endContext);
+	
+	void onAnnotationStart(int startContext);
+
+	void onAnnotationEnd(int startContext, Context endContext);
 
 }

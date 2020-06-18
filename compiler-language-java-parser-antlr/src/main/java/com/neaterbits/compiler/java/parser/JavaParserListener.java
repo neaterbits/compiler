@@ -10,6 +10,7 @@ import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
+import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
 import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ImmutableContext;
@@ -64,17 +65,40 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 	private final JavaIterativeListener delegate;
 	private final StatementsStack statementsStack;
-	
 
 	private void printStack(String statement) {
 		logger.println("stack at " + statement + " " + statementsStack);
 	}
 	
-	public JavaParserListener(StringSource stringSource, ParseLogger logger, String file, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+	private int writeStartContext(Context context) {
+	    
+	    return delegate.writeContext(context);
+	}
+
+    private int writeLeafContext(Context context) {
+
+        return delegate.writeContext(context);
+    }
+
+    private int writeOtherContext(Context context) {
+
+        return delegate.writeContext(context);
+    }
+
+    private int writeEndContext(Context context) {
+
+        return delegate.writeContext(context);
+    }
+
+	public JavaParserListener(
+	        StringSource stringSource,
+	        ParseLogger logger,
+	        String file,
+	        @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
 		this.stringSource = stringSource;
 		this.logger = logger;
 		this.file = file;
-		this.delegate = new JavaIterativeListener(stringSource, logger, parseTreeFactory);
+		this.delegate = new JavaIterativeListener(stringSource, new ListContextAccess(), logger, parseTreeFactory);
 		this.statementsStack = new StatementsStack();
 	}
 
@@ -86,7 +110,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onPackageDeclaration(Context context, long packageKeyword, Context packageKeywordContext, long name, Context nameContext) {
 		this.packageName = stringSource.asString(name);
 		
-		delegate.onNamespaceStart(context, packageKeyword, packageKeywordContext);
+		delegate.onNamespaceStart(writeStartContext(context), packageKeyword, writeOtherContext(packageKeywordContext));
 		
 		final String [] parts = Strings.split(packageName, '.');
 		
@@ -108,85 +132,95 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		    
 		    final long partRef = OffsetLengthStringRef.encode(indexInName, partLength);
 		    
-		    delegate.onNamespacePart(partContext, partRef);
+		    delegate.onNamespacePart(writeLeafContext(partContext), partRef);
 		    
 		    indexInName += partLength;
 		}
 	}
 
 	public void onCompilationUnitStart(Context context) {
-		delegate.onCompilationUnitStart(context);
+		delegate.onCompilationUnitStart(writeStartContext(context));
 	}
 	
 	public final void onImportStart(Context context, long importKeyword, Context importKeywordContext, long staticKeyword, Context staticKeywordContext) {
-		delegate.onImportStart(context, importKeyword, importKeywordContext, staticKeyword, staticKeywordContext);
+		delegate.onImportStart(
+		        writeStartContext(context),
+		        importKeyword,
+		        writeOtherContext(importKeywordContext),
+		        staticKeyword,
+		        writeOtherContext(staticKeywordContext));
 	}
 
 	public final void onImportIdentifier(Context context, long identifier) {
-		delegate.onImportIdentifier(context, identifier);
+		delegate.onImportIdentifier(writeOtherContext(context), identifier);
 	}
 	
 	public final void onImportEnd(Context context, boolean ondemand) {
-		delegate.onImportEnd(context, ondemand);
+		delegate.onImportEnd(writeEndContext(context), context, ondemand);
 	}
 
 	public void onClassStart(Context context, long classKeyword, Context classKeywordContext, long name, Context nameContext) {
-		delegate.onClassStart(context, classKeyword, classKeywordContext, name, nameContext);
+		delegate.onClassStart(
+		        writeStartContext(context),
+		        classKeyword,
+		        writeOtherContext(classKeywordContext),
+		        name,
+		        writeOtherContext(nameContext));
 	}
 	
 	public void onVisibilityClassModifier(Context context, ClassVisibility visibility) {
-		delegate.onVisibilityClassModifier(context, visibility);
+		delegate.onVisibilityClassModifier(writeLeafContext(context), visibility);
 	}
 	
 	public void onSubclassingModifier(Context context, Subclassing subclassing) {
-		delegate.onSubclassingModifier(context, subclassing);
+		delegate.onSubclassingModifier(writeLeafContext(context), subclassing);
 	}
 	
 	public void onStaticClassModifier(Context context) {
-		delegate.onStaticClassModifier(context);
+		delegate.onStaticClassModifier(writeLeafContext(context));
 	}
 	
 	public void onStrictfpClassModifier(Context context) {
-		delegate.onStrictfpClassModifier(context);
+		delegate.onStrictfpClassModifier(writeLeafContext(context));
 	}
 	
 	public void onClassExtends(Context context, long extendsKeyword, Context extendsKeywordContext) {
-		delegate.onClassExtendsStart(context, extendsKeyword, extendsKeywordContext);
+		delegate.onClassExtendsStart(writeStartContext(context), extendsKeyword, writeOtherContext(extendsKeywordContext));
 	}
 	
 	public void onClassExtendsNamePart(Context context, long identifier) {
-	    delegate.onClassExtendsNamePart(context, identifier);
+	    delegate.onClassExtendsNamePart(writeLeafContext(context), identifier);
 	}
 	
 	public void onClassImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext) {
-		delegate.onClassImplementsStart(context, implementsKeyword, implementsKeywordContext);
+		delegate.onClassImplementsStart(writeStartContext(context), implementsKeyword, writeOtherContext(implementsKeywordContext));
 	}
 
     public void onClassImplementsNamePart(Context context, long identifier) {
-        delegate.onClassImplementsNamePart(context, identifier);
+        delegate.onClassImplementsNamePart(writeOtherContext(context), identifier);
     }
 	
 	public void onClassEnd(Context context) {
-		delegate.onClassEnd(context);
+		delegate.onClassEnd(writeEndContext(context), context);
 	}
 	
 	public void onAnonymousClassStart(Context context) {
-		delegate.onAnonymousClassStart(context);
+		delegate.onAnonymousClassStart(writeStartContext(context));
 	}
 	
 	public void onAnonymousClassEnd(Context context) {
-		delegate.onAnonymousClassEnd(context);
+		delegate.onAnonymousClassEnd(writeEndContext(context), context);
 	}
 
 	public void onStaticInitializerStart(Context context) {
 		
 		statementsStack.push();
 		
-		delegate.onStaticInitializerStart(context);
+		delegate.onStaticInitializerStart(writeStartContext(context));
 	}
 	
 	public void onStaticInitializerEnd(Context context) {
-		delegate.onStaticInitializerEnd(context);
+		delegate.onStaticInitializerEnd(writeEndContext(context), context);
 		
 		statementsStack.pop();
 	}
@@ -195,27 +229,27 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.push();
 		
-		delegate.onConstructorStart(context);
+		delegate.onConstructorStart(writeStartContext(context));
 	}
 
 	public void onConstructorVisibilityModifier(Context context, ConstructorVisibility visibility) {
-		delegate.onConstructorVisibilityModifier(context, visibility);
+		delegate.onConstructorVisibilityModifier(writeLeafContext(context), visibility);
 	}
 	
 	public void onConstructorName(Context context, long constructorName) {
-		delegate.onConstructorName(context, constructorName);
+		delegate.onConstructorName(writeLeafContext(context), constructorName);
 	}
 	
 	public void onConstructorInvocationStart(Context context, ConstructorInvocation type) {
-		delegate.onConstructorInvocationStart(context, type);
+		delegate.onConstructorInvocationStart(writeStartContext(context), type);
 	}
 	
 	public void onConstructorInvocationEnd(Context context) {
-		delegate.onConstructorInvocationEnd(context);
+		delegate.onConstructorInvocationEnd(writeEndContext(context), context);
 	}
 
 	public void onConstructorEnd(Context context) {
-		delegate.onConstructorEnd(context);
+		delegate.onConstructorEnd(writeEndContext(context), context);
 		
 		statementsStack.pop();
 	}
@@ -224,124 +258,129 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.push();
 		
-		delegate.onClassMethodStart(context);
+		delegate.onClassMethodStart(writeStartContext(context));
 	}
 	
 	public void onMethodReturnTypeStart(Context context) {
-		delegate.onMethodReturnTypeStart(context);
+		delegate.onMethodReturnTypeStart(writeStartContext(context));
 	}
 	
 	public void onMethodReturnTypeEnd(Context context) {
-		delegate.onMethodReturnTypeEnd(context);
+		delegate.onMethodReturnTypeEnd(writeEndContext(context), context);
 	}
 
 	public void onMethodName(Context context, long methodName) {
-		delegate.onMethodName(context, methodName);
+		delegate.onMethodName(writeLeafContext(context), methodName);
 	}
 
 	public void onMethodSignatureParametersStart(Context context) {
-		delegate.onMethodSignatureParametersStart(context);
+		delegate.onMethodSignatureParametersStart(writeStartContext(context));
 	}
 
 	public void onMethodSignatureParameterStart(Context context, boolean varArgs) {
-		delegate.onMethodSignatureParameterStart(context, varArgs);
+		delegate.onMethodSignatureParameterStart(writeStartContext(context), varArgs);
 	}
 
 	public void onMethodSignatureParameterEnd(Context context) {
-		delegate.onMethodSignatureParameterEnd(context);
+		delegate.onMethodSignatureParameterEnd(writeEndContext(context), context);
 	}
 
 	public void onMethodSignatureParametersEnd(Context context) {
-		delegate.onMethodSignatureParametersEnd(context);
+		delegate.onMethodSignatureParametersEnd(writeEndContext(context), context);
 	}
 
 	public void onVisibilityClassMethodModifier(Context context, ClassMethodVisibility visibility) {
-		delegate.onVisibilityClassMethodModifier(context, visibility);
+		delegate.onVisibilityClassMethodModifier(writeLeafContext(context), visibility);
 	}
 	
 	public void onOverrideClassMehodModifier(Context context, ClassMethodOverride methodOverride) {
-		delegate.onOverrideClassMethodModifier(context, methodOverride);
+		delegate.onOverrideClassMethodModifier(writeLeafContext(context), methodOverride);
 	}
 	
 	public void onStaticClassMethodModifier(Context context) {
-		delegate.onStaticClassMethodModifier(context);
+		delegate.onStaticClassMethodModifier(writeLeafContext(context));
 	}
 
 	public void onStrictfpClassMethodModifier(Context context) {
-		delegate.onStrictfpClassMethodModifier(context);
+		delegate.onStrictfpClassMethodModifier(writeLeafContext(context));
 	}
 	
 	public void onSynchronizedClassMethodModifier(Context context) {
-		delegate.onSynchronizedClassMethodModifier(context);
+		delegate.onSynchronizedClassMethodModifier(writeLeafContext(context));
 	}
 
 	public void onNativeClassMethodModifier(Context context) {
-		delegate.onNativeClassMethodModifier(context);
+		delegate.onNativeClassMethodModifier(writeLeafContext(context));
 	}
 	
 	public void onClassMethodEnd(Context context) {
-		delegate.onClassMethodEnd(context);
+		delegate.onClassMethodEnd(writeEndContext(context), context);
 		
 		statementsStack.pop();
 	}
 
 	public void onInterfaceStart(Context context, long interfaceKeyword, Context interfaceKeywordContext, long name, Context nameContext) {
-		delegate.onInterfaceStart(context, interfaceKeyword, interfaceKeywordContext, name, nameContext);
+		delegate.onInterfaceStart(
+		        writeStartContext(context),
+		        interfaceKeyword,
+		        writeOtherContext(interfaceKeywordContext),
+		        name,
+		        writeOtherContext(nameContext));
 	}
 	
 	public void onVisibilityInterfaceModifier(Context context, InterfaceVisibility visibility) {
-		delegate.onVisibilityInterfaceModifier(context, visibility);
+		delegate.onVisibilityInterfaceModifier(writeLeafContext(context), visibility);
 	}
 
 	public void onAbstractInterfaceModifier(Context context) {
-		delegate.onStaticInterfaceModifier(context);
+		delegate.onStaticInterfaceModifier(writeLeafContext(context));
 	}
 	
 	public void onStaticInterfaceModifier(Context context) {
-		delegate.onStaticInterfaceModifier(context);
+		delegate.onStaticInterfaceModifier(writeLeafContext(context));
 	}
 	
 	public void onStrictfpInterfaceModifier(Context context) {
-		delegate.onStrictfpInterfaceModifier(context);
+		delegate.onStrictfpInterfaceModifier(writeLeafContext(context));
 	}
 	
 	public void onInterfaceExtends(Context context, ScopedName interfaceName) {
-		delegate.onInterfaceExtends(context, interfaceName);
+		delegate.onInterfaceExtends(writeOtherContext(context), interfaceName);
 	}
 	
 	public void onInterfaceEnd(Context context) {
-		delegate.onInterfaceEnd(context);
+		delegate.onInterfaceEnd(writeEndContext(context), context);
 	}
 
 	public void onInterfaceMethodStart(Context context) {
 		
 		statementsStack.push();
 		
-		delegate.onInterfaceMethodStart(context);
+		delegate.onInterfaceMethodStart(writeStartContext(context));
 	}
 
 	public void onVisibilityInterfaceMethodModifier(Context context, InterfaceMethodVisibility visibility) {
-		delegate.onVisibilityInterfaceMethodModifier(context, visibility);
+		delegate.onVisibilityInterfaceMethodModifier(writeLeafContext(context), visibility);
 	}
 	
 	public void onAbstractInterfaceMethodModifier(Context context) {
-		delegate.onAbstractInterfaceMethodModifier(context);
+		delegate.onAbstractInterfaceMethodModifier(writeLeafContext(context));
 	}
 	
 	public void onDefaultInterfaceMethodModifier(Context context) {
-		delegate.onDefaultInterfaceMethodModifier(context);
+		delegate.onDefaultInterfaceMethodModifier(writeLeafContext(context));
 	}
 	
 	public void onStaticInterfaceMethodModifier(Context context) {
-		delegate.onStaticInterfaceMethodModifier(context);
+		delegate.onStaticInterfaceMethodModifier(writeLeafContext(context));
 	}
 
 	public void onStrictfpInterfaceMethodModifier(Context context) {
-		delegate.onStrictfpInterfaceMethodModifier(context);
+		delegate.onStrictfpInterfaceMethodModifier(writeLeafContext(context));
 	}
 	
 	public void onInterfaceMethodEnd(Context context) {
-		delegate.onInterfaceMethodEnd(context);
+		delegate.onInterfaceMethodEnd(writeEndContext(context), context);
 		
 		statementsStack.pop();
 	}
@@ -349,172 +388,183 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onEnumStart(Context context, long enumKeyword, Context enumKeywordContext, long name, Context nameContext) {
 		statementsStack.push();
 		
-		delegate.onEnumStart(context, enumKeyword, enumKeywordContext, name, nameContext);
+		delegate.onEnumStart(
+		        writeStartContext(context),
+		        enumKeyword,
+		        writeOtherContext(enumKeywordContext),
+		        name,
+		        writeOtherContext(nameContext));
 	}
 
 	public void onEnumImplements(Context context, ScopedName interfaceName) {
-		delegate.onEnumImplements(context, interfaceName);
+		delegate.onEnumImplements(writeOtherContext(context), interfaceName);
 	}
 	
 	public void onEnumConstantStart(Context context, long name) {
-		delegate.onEnumConstantStart(context, name);
+		delegate.onEnumConstantStart(writeStartContext(context), name);
 	}
 	
 	public void onEnumConstantEnd(Context context) {
-		delegate.onEnumConstantEnd(context);
+		delegate.onEnumConstantEnd(writeEndContext(context), context);
 	}
 	
 	public void onEnumEnd(Context context) {
 		
-		delegate.onEnumEnd(context);
+		delegate.onEnumEnd(writeEndContext(context), context);
 
 		statementsStack.pop();
 	}
 	
 	public final void onFieldDeclarationStart(Context context) {
-		delegate.onFieldDeclarationStart(context);
+		delegate.onFieldDeclarationStart(writeStartContext(context));
 	}
 
 	public void onVisibilityFieldModifier(Context context, FieldVisibility visibility) {
-		delegate.onVisibilityFieldModifier(context, visibility);
+		delegate.onVisibilityFieldModifier(writeLeafContext(context), visibility);
 	}
 	
 	public void onStaticFieldModifier(Context context) {
-		delegate.onStaticFieldModifier(context);
+		delegate.onStaticFieldModifier(writeLeafContext(context));
 	}
 	
 	public void onMutabilityFieldModifier(Context context, ASTMutability mutability) {
-		delegate.onMutabilityFieldModifier(context, mutability);
+		delegate.onMutabilityFieldModifier(writeLeafContext(context), mutability);
 	}
 	
 	public void onTransientFieldModifier(Context context) {
-		delegate.onTransientFieldModifier(context);
+		delegate.onTransientFieldModifier(writeLeafContext(context));
 	}
 	
 	public void onVolatileFieldModifier(Context context) {
-		delegate.onVolatileFieldModifier(context);
+		delegate.onVolatileFieldModifier(writeLeafContext(context));
 	}
 
 	public final void onFieldDeclarationEnd(Context context) {
-		delegate.onFieldDeclarationEnd(context);
+		delegate.onFieldDeclarationEnd(writeEndContext(context), context);
 	}
 
 	
 	public void onNestedExpressionStart(Context context) {
-		delegate.onNestedExpressionStart(context);
+		delegate.onNestedExpressionStart(writeStartContext(context));
 	}
 	
 	public void onNestedExpressionEnd(Context context) {
-		delegate.onNestedExpressionEnd(context);
+		delegate.onNestedExpressionEnd(writeEndContext(context), context);
 	}
 
 	public void onEnterAssignmentExpression(Context context) {
-		delegate.onEnterAssignmentExpression(context);
+		delegate.onEnterAssignmentExpression(writeStartContext(context));
 	}
 	
 	public void onNameReference(Context context, long name) {
-		delegate.onNameReference(context, name);
+		delegate.onNameReference(writeLeafContext(context), name);
 	}
 
 	public void onVariableReference(Context context, long name) {
-		delegate.onVariableReference(context, name);
+		delegate.onVariableReference(writeLeafContext(context), name);
 	}
 
 	public void onEnterAssignmentLHS(Context context) {
-		delegate.onEnterAssignmentLHS(context);
+		delegate.onEnterAssignmentLHS(writeStartContext(context));
 	}
 	
 	public void onExitAssignmentLHS(Context context) {
-		delegate.onExitAssignmentLHS(context);
+		delegate.onExitAssignmentLHS(writeEndContext(context), context);
 	}
 	
 	public void onExitAssignmentExpression(Context context) {
-		delegate.onExitAssignmentExpression(context);
+		delegate.onExitAssignmentExpression(writeEndContext(context), context);
 	}
 
 	public void onExpressionBinaryOperator(Context context, Operator operator) {
-		delegate.onExpressionBinaryOperator(context, operator);
+		delegate.onExpressionBinaryOperator(writeLeafContext(context), operator);
 	}
 
 	public void onIncrementDecrementExpressionStart(Context context, Arithmetic operator, Notation notation) {
-		delegate.onIncrementDecrementExpressionStart(context, operator, notation);
+		delegate.onIncrementDecrementExpressionStart(writeStartContext(context), operator, notation);
 	}
 
 	public void onIncrementDecrementExpressionEnd(Context context) {
-		delegate.onIncrementDecrementExpressionEnd(context);
+		delegate.onIncrementDecrementExpressionEnd(writeEndContext(context), context);
 	}
 	
 	// Primary
 	public void onPrimaryStart(Context context) {
-		delegate.onPrimaryStart(context);
+		delegate.onPrimaryStart(writeStartContext(context));
 	}
 
 	public void onArrayAccessStart(Context context) {
-		delegate.onArrayAccessStart(context);
+		delegate.onArrayAccessStart(writeStartContext(context));
 	}
 	
 	public void onArrayIndexStart(Context context) {
-		delegate.onArrayIndexStart(context);
+		delegate.onArrayIndexStart(writeStartContext(context));
 	}
 	
 	public void onArrayIndexEnd(Context context) {
-		delegate.onArrayIndexEnd(context);
+		delegate.onArrayIndexEnd(writeEndContext(context), context);
 	}
 	
 	public void onArrayAccessEnd(Context context) {
-		delegate.onArrayAccessEnd(context);
+		delegate.onArrayAccessEnd(writeEndContext(context), context);
 	}
 
 	public void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, ReferenceType referenceType, long fieldName, Context fieldNameContext) {
-		delegate.onFieldAccess(context, fieldAccessType, typeName, referenceType, fieldName, fieldNameContext);
+		delegate.onFieldAccess(
+		        writeOtherContext(context),
+		        fieldAccessType,
+		        typeName,
+		        referenceType,
+		        fieldName,
+		        writeOtherContext(fieldNameContext));
 	}
 
 	public void onCastExpressionStart(Context context) {
-		delegate.onCastExpressionStart(context);
+		delegate.onCastExpressionStart(writeStartContext(context));
 	}
 	
 	public void onCastExpressionEnd(Context context) {
-		delegate.onCastExpressionEnd(context);
+		delegate.onCastExpressionEnd(writeEndContext(context), context);
 	}
 
 	public void onThisPrimary(Context context) {
-		delegate.onThisPrimary(context);
+		delegate.onThisPrimary(writeLeafContext(context));
 	}
 
 	public void onPrimaryEnd(Context context) {
-		delegate.onPrimaryEnd(context);
+		delegate.onPrimaryEnd(writeEndContext(context), context);
 	}
 
 	public void onConditionalExpressionStart(Context context) {
-		delegate.onConditionalExpressionStart(context);
+		delegate.onConditionalExpressionStart(writeStartContext(context));
 	}
 	
 	public void onConditionalExpressionPart1Start(Context context) {
-		delegate.onConditionalExpressionPart1Start(context);
+		delegate.onConditionalExpressionPart1Start(writeStartContext(context));
 	}
 	
 	public void onConditionalExpressionPart1End(Context context) {
-		delegate.onConditionalExpressionPart1End(context);
+		delegate.onConditionalExpressionPart1End(writeEndContext(context), context);
 	}
 
 	public void onConditionalExpressionPart2Start(Context context) {
-		delegate.onConditionalExpressionPart2Start(context);
+		delegate.onConditionalExpressionPart2Start(writeStartContext(context));
 	}
 	
 	public void onConditionalExpressionPart2End(Context context) {
-		delegate.onConditionalExpressionPart2End(context);
+		delegate.onConditionalExpressionPart2End(writeEndContext(context), context);
 	}
 
 	public void onConditionalExpressionPart3Start(Context context) {
-		delegate.onConditionalExpressionPart3Start(context);
+		delegate.onConditionalExpressionPart3Start(writeStartContext(context));
 	}
 	
 	public void onConditionalExpressionPart3End(Context context) {
-		delegate.onConditionalExpressionPart3End(context);
+		delegate.onConditionalExpressionPart3End(writeEndContext(context), context);
 	}
 	
 	public void onConditionalExpressionEnd(Context context) {
-		delegate.onConditionalExpressionEnd(context);
+		delegate.onConditionalExpressionEnd(writeEndContext(context), context);
 	}
 	
 	// Literals
@@ -525,7 +575,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		final int bits = javaInteger.getBits();
 		
 		delegate.onIntegerLiteral(
-				context,
+				writeLeafContext(context),
 				javaInteger.getValue(),
 				javaInteger.getBase(),
 				true,
@@ -553,7 +603,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new IllegalStateException("Not a boolean literal: " + literal);
 		}
 
-		delegate.onBooleanLiteral(context, value);
+		delegate.onBooleanLiteral(writeLeafContext(context), value);
 	}
 	
 	public void onJavaCharacterLiteral(Context context, String literal) {
@@ -564,7 +614,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 		final String s = literal.substring(1, literal.length() - 1);
 		
-		delegate.onCharacterLiteral(context, s.charAt(0));
+		delegate.onCharacterLiteral(writeLeafContext(context), s.charAt(0));
 	}
 	
 	public void onJavaStringLiteral(Context context, long literal) {
@@ -575,7 +625,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new IllegalStateException("Not a String literal");
 		}
 
-		delegate.onStringLiteral(context, OffsetLengthStringRef.substring(literal, 1, length - 1));
+		delegate.onStringLiteral(writeLeafContext(context), OffsetLengthStringRef.substring(literal, 1, length - 1));
 	}
 	
 	public void onJavaNullLiteral(Context context, String literal) {
@@ -584,22 +634,22 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			throw new IllegalStateException("not value null");
 		}
 		
-		delegate.onNullLiteral(context);
+		delegate.onNullLiteral(writeLeafContext(context));
 	}
 	
 	public void onJavaClassInstanceCreationExpressionStart(Context context) {
-		delegate.onClassInstanceCreationExpressionStart(context);
+		delegate.onClassInstanceCreationExpressionStart(writeStartContext(context));
 	}
 
 	public void onJavaClassInstanceCreationConstructorName(Context context, ScopedName name) {
 
 		delegate.onClassInstanceCreationTypeAndConstructorName(
-				context,
+				writeLeafContext(context),
 				name);
 	}
 
 	public void onJavaClassInstanceCreationExpressionEnd(Context context) {
-		delegate.onClassInstanceCreationExpressionEnd(context);
+		delegate.onClassInstanceCreationExpressionEnd(writeEndContext(context), context);
 	}
 	
 	public void onMethodInvocationStart(
@@ -611,90 +661,101 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			long methodName,
 			Context methodNameContext) {
 
-		delegate.onMethodInvocationStart(context, type, classTypeName, classTypeNameContext, referenceType, methodName, methodNameContext);
+		delegate.onMethodInvocationStart(
+		        writeStartContext(context),
+		        type,
+		        classTypeName,
+		        writeOtherContext(classTypeNameContext),
+		        referenceType,
+		        methodName,
+		        writeOtherContext(methodNameContext));
 	}
 	
 	public void onMethodInvocationEnd(Context context) {
-		delegate.onMethodInvocationEnd(context);
+		delegate.onMethodInvocationEnd(writeEndContext(context), context);
 	}
 	
 	public void onParametersStart(Context context) {
-		delegate.onParametersStart(context);
+		delegate.onParametersStart(writeStartContext(context));
 	}
 	
 	public void onParameterStart(Context context) {
-		delegate.onParameterStart(context);
+		delegate.onParameterStart(writeStartContext(context));
 	}
 	
 	public void onParameterEnd(Context context) {
-		delegate.onParameterEnd(context);
+		delegate.onParameterEnd(writeEndContext(context), context);
 	}
 	
 	public void onParametersEnd(Context context) {
-		delegate.onParametersEnd(context);
+		delegate.onParametersEnd(writeEndContext(context), context);
 	}
 	
 	public void onArrayCreationExpressionStart(Context context, ScopedName typeName, ReferenceType referenceType, int numDims) {
-		delegate.onArrayCreationExpressionStart(context, typeName, referenceType, numDims);
+		delegate.onArrayCreationExpressionStart(
+		        writeStartContext(context),
+		        typeName,
+		        referenceType,
+		        numDims);
 	}
 	
 	public void onDimExpressionStart(Context context) {
-		delegate.onDimExpressionStart(context);
+		delegate.onDimExpressionStart(writeStartContext(context));
 	}
 	
 	public void onDimExpressionEnd(Context context) {
-		delegate.onDimExpressionEnd(context);
+		delegate.onDimExpressionEnd(writeEndContext(context), context);
 	}
 
 	public void onArrayCreationExpressionEnd(Context context) {
-		delegate.onArrayCreationExpressionEnd(context);
+		delegate.onArrayCreationExpressionEnd(writeEndContext(context), context);
 	}
 	
 	public void onClassExpression(Context context, long className, int numArrayDims) {
-		delegate.onClassExpression(context, className, numArrayDims);
+		delegate.onClassExpression(writeLeafContext(context), className, numArrayDims);
 	}
 	
 	
 	public void onLambdaExpressionStart(Context context) {
-		delegate.onLambdaExpressionStart(context);
+		delegate.onLambdaExpressionStart(writeStartContext(context));
 	}
 	
 	public void onSingleLambdaParameter(Context context, long varName, Context varNameContext) {
-		delegate.onSingleLambdaParameter(context, varName, varNameContext);
+		delegate.onSingleLambdaParameter(writeLeafContext(context), varName);
 	}
 	
 	public void onFormalLambdaParameterListStart(Context context) {
-		delegate.onFormalLambdaParameterListStart(context);
+		delegate.onFormalLambdaParameterListStart(writeStartContext(context));
 	}
 
 	public void onFormalLambdaParameterListEnd(Context context) {
-		delegate.onFormalLambdaParameterListEnd(context);
+		delegate.onFormalLambdaParameterListEnd(writeEndContext(context), context);
 	}
 	
 	@SuppressWarnings("unchecked")
     public void onInferredLambdaParameterList(Context context, List<String> varNames, Context varNamesContext) {
-		delegate.onInferredLambdaParameterList(context, varNames, varNamesContext);
+		delegate.onInferredLambdaParameterList(writeOtherContext(context), varNames, writeOtherContext(varNamesContext));
 	}
 	
 	public void onLambdaBodyStart(Context context) {
-		delegate.onLambdaBodyStart(context);
+		delegate.onLambdaBodyStart(writeStartContext(context));
 	}
 	
 	public void onLambdaBodyEnd(Context context) {
-		delegate.onLambdaBodyEnd(context);
+		delegate.onLambdaBodyEnd(writeEndContext(context), context);
 	}
 	
 	public void onLambdaExpressionEnd(Context context) {
-		delegate.onLambdaExpressionEnd(context);
+		delegate.onLambdaExpressionEnd(writeEndContext(context), context);
 	}
 	
 	public CompilationUnit onCompilationUnitEnd(Context context) {
 		
 		// Trigger namespace end here since namespace contains code
 		// to suppert eg. C# namespace { }, namespace { }
-		delegate.onNameSpaceEnd(context);
+		delegate.onNameSpaceEnd(writeEndContext(context), context);
 		
-		final CompilationUnit compilationUnit = (CompilationUnit)delegate.onCompilationUnitEnd(context);
+		final CompilationUnit compilationUnit = (CompilationUnit)delegate.onCompilationUnitEnd(writeEndContext(context), context);
 		
 		this.compilationUnit = compilationUnit;
 		
@@ -702,27 +763,27 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 
 	public void onMutabilityVariableModifier(Context context, ASTMutability mutability) {
-		delegate.onMutabilityVariableModifier(context, mutability);
+		delegate.onMutabilityVariableModifier(writeLeafContext(context), mutability);
 	}
 	
 	public void onVariableDeclarationStatementStart(Context context) {
-		delegate.onVariableDeclarationStatementStart(context);
+		delegate.onVariableDeclarationStatementStart(writeStartContext(context));
 	}
 	
 	public void onVariableDeclarationStatementEnd(Context context) {
-		delegate.onVariableDeclarationStatementEnd(context);
+		delegate.onVariableDeclarationStatementEnd(writeEndContext(context), context);
 	}
 	
 	public void onVariableDeclaratorStart(Context context) {
-		delegate.onVariableDeclaratorStart(context);
+		delegate.onVariableDeclaratorStart(writeStartContext(context));
 	}
 	
 	public void onVariableDeclaratorEnd(Context context) {
-		delegate.onVariableDeclaratorEnd(context);
+		delegate.onVariableDeclaratorEnd(writeEndContext(context), context);
 	}
 
 	public void onVariableName(Context context, long name, int numDims) {
-		delegate.onVariableName(context, name, numDims);
+		delegate.onVariableName(writeLeafContext(context), name, numDims);
 	}
 
 	public void onJavaPrimitiveType(Context context, JavaPrimitiveType type) {
@@ -795,12 +856,15 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
                     Function.identity());
 			
 			delegate.onElseIfStatementStart(
-					updateElseIfContext(context, elseToken, file),
+					writeStartContext(updateElseIfContext(context, elseToken, file)),
 					stringRef(merged),
-					merged);
+					writeOtherContext(merged));
 		}
 		else {
-			delegate.onIfStatementStart(context, stringRef(keywordToken), Antlr4.context(keywordToken, file));
+			delegate.onIfStatementStart(
+			        writeStartContext(context),
+			        stringRef(keywordToken),
+			        writeOtherContext(Antlr4.context(keywordToken, file)));
 		}
 
 		statementsStack.add(JavaStatement.IF_THEN, keywordToken);
@@ -820,13 +884,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		final JavaStatementHolder ifOrElseStatement = getIfOrElseStatement(0);
 		
 		if (ifOrElseStatement.getStatement() == JavaStatement.ELSE) {
-			delegate.onElseIfStatementEnd(context);
+			delegate.onElseIfStatementEnd(writeEndContext(context), context);
 		}
 		else {
-			delegate.onIfStatementInitialBlockEnd(context);
+			delegate.onIfStatementInitialBlockEnd(writeEndContext(context), context);
 		}
 
-		delegate.onEndIfStatement(context);
+		delegate.onEndIfStatement(writeEndContext(context), context);
 		statementsStack.pop();
 
 		if (logger != null) {
@@ -858,13 +922,16 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
                         Function.identity());
 			
 			delegate.onElseIfStatementStart(
-					updateElseIfContext(context, elseToken, file),
+					writeStartContext(updateElseIfContext(context, elseToken, file)),
 					stringRef(merged),
-					merged
+					writeOtherContext(merged)
 	        );
 		}
 		else {
-			delegate.onIfStatementStart(context, stringRef(ifKeyword), Antlr4.context(ifKeyword, file));
+			delegate.onIfStatementStart(
+			        writeStartContext(context),
+			        stringRef(ifKeyword),
+			        writeOtherContext(Antlr4.context(ifKeyword, file)));
 		}
 
 		statementsStack.add(JavaStatement.IF_THEN_ELSE_START, ifKeyword, elseKeyword);
@@ -901,9 +968,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			case ELSE:
 				// We are at block2 of if <block1> else <block2>
 				delegate.onElseStatementStart(
-						context,
+						writeStartContext(context),
 						stringRef(ifOrElseStatement.getKeywordToken(0)),
-						Antlr4.context(ifOrElseStatement.getKeywordToken(0), file));
+						writeOtherContext(Antlr4.context(ifOrElseStatement.getKeywordToken(0), file)));
 				break;
 				
 			default:
@@ -924,11 +991,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 				final JavaStatementHolder prevStatement = getIfOrElseStatement(1);
 				
 				if (prevStatement != null && prevStatement.getStatement() == JavaStatement.ELSE) {
-					delegate.onElseIfStatementEnd(context);
+					delegate.onElseIfStatementEnd(writeEndContext(context), context);
 				}
 				else {
 					// Initial if-statement
-					delegate.onIfStatementInitialBlockEnd(context);
+					delegate.onIfStatementInitialBlockEnd(writeEndContext(context), context);
 				}
 				
 				// We are at block1 of if <block1> else <block2>
@@ -944,9 +1011,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 				
 			case ELSE:
 				// We are at block2 of if <block1> else <block2>
-				delegate.onElseStatementEnd(context);
+				delegate.onElseStatementEnd(writeEndContext(context), context);
 				
-				delegate.onEndIfStatement(context);
+				delegate.onEndIfStatement(writeEndContext(context), context);
 				
 				statementsStack.pop();
 				break;
@@ -975,7 +1042,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			switch (statementsStack.getLastFromFrame(1).getStatement()) {
 				
 			case ENHANCED_FOR:
-				delegate.onIteratorForTestEnd(context);
+				delegate.onIteratorForTestEnd(writeEndContext(context), context);
 				break;
 				
 			case TRY_WITH_RESOURCES:
@@ -1018,7 +1085,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			case TRY_CATCH:
 			case TRY_CATCH_FINALLY:
 			case TRY_WITH_RESOURCES:
-				delegate.onTryBlockEnd(context);
+				delegate.onTryBlockEnd(writeEndContext(context), context);
 				
 				statementsStack.pop();
 				break;
@@ -1050,106 +1117,122 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.add(JavaStatement.EXPRESSION);
 		
-		delegate.onExpressionStatementStart(context);
+		delegate.onExpressionStatementStart(writeStartContext(context));
 	}
 
 	public void onJavaExpressionStatementEnd(Context context) {
-		delegate.onExpressionStatementEnd(context);
+		delegate.onExpressionStatementEnd(writeEndContext(context), context);
 	}
 
-	public void onSwitchStatementStart(Context context, String keyword, Context keywordContext) {
+	public void onSwitchStatementStart(Context context, long keyword, Context keywordContext) {
 
 		statementsStack.add(JavaStatement.SWITCH);
 
-		delegate.onSwitchStatementStart(context, keyword, keywordContext);
+		delegate.onSwitchStatementStart(writeStartContext(context), keyword, writeOtherContext(keywordContext));
 	}
 
 	public void onJavaSwitchBlockStart(Context context) {
-		delegate.onJavaSwitchBlockStart(context);
+		delegate.onJavaSwitchBlockStart(writeStartContext(context));
 	}
 	
 	public void onJavaSwitchBlockStatementGroupStart(Context context) {
-		delegate.onJavaSwitchBlockStatementGroupStart(context);
+		delegate.onJavaSwitchBlockStatementGroupStart(writeStartContext(context));
 	}
 
 	public void onSwitchLabelsStart(Context context) {
-		delegate.onSwitchLabelsStart(context);
+		delegate.onSwitchLabelsStart(writeStartContext(context));
 	}
 	
 	public void onSwitchLabelsEnd(Context context) {
-		delegate.onSwitchLabelsEnd(context);
+		delegate.onSwitchLabelsEnd(writeEndContext(context), context);
 	}
 
 	public void onJavaSwitchBlockStatementGroupEnd(Context context) {
-		delegate.onJavaSwitchBlockStatementGroupEnd(context);
+		delegate.onJavaSwitchBlockStatementGroupEnd(writeEndContext(context), context);
 	}
 
-	public void onConstantSwitchLabelStart(Context context, String keyword, Context keywordContext) {
-		delegate.onConstantSwitchLabelStart(context, keyword, keywordContext);
+	public void onConstantSwitchLabelStart(Context context, long keyword, Context keywordContext) {
+		delegate.onConstantSwitchLabelStart(
+		        writeStartContext(context),
+		        keyword,
+		        writeOtherContext(keywordContext));
 	}
 	
 	public void onConstantSwitchLabelEnd(Context context) {
-		delegate.onConstantSwitchLabelEnd(context);
+		delegate.onConstantSwitchLabelEnd(writeEndContext(context), context);
 	}
 	
-	public void onEnumSwitchLabel(Context context, String keyword, Context keywordContext, String constantName, Context constantNameContext) {
-		delegate.onEnumSwitchLabel(context, keyword, keywordContext, constantName, constantNameContext);
+	public void onEnumSwitchLabel(Context context, long keyword, Context keywordContext, long constantName, Context constantNameContext) {
+		delegate.onEnumSwitchLabel(
+		        writeOtherContext(context),
+		        keyword, writeOtherContext(keywordContext),
+		        constantName,
+		        writeOtherContext(constantNameContext));
 	}
 	
-	public void onDefaultSwitchLabel(Context context, String keyword, Context keywordContext) {
-		delegate.onDefaultSwitchLabel(context, keyword, keywordContext);
+	public void onDefaultSwitchLabel(Context context, long keyword, Context keywordContext) {
+		delegate.onDefaultSwitchLabel(writeLeafContext(context), keyword);
 	}
 	
 	public void onJavaSwitchBlockEnd(Context context) {
-		delegate.onJavaSwitchBlockEnd(context);
+		delegate.onJavaSwitchBlockEnd(writeEndContext(context), context);
 	}
 	
 	public void onSwitchStatementEnd(Context context) {
-		delegate.onSwitchStatementEnd(context);
+		delegate.onSwitchStatementEnd(writeEndContext(context), context);
 	}
 	
-	public void onBreakStatement(Context context, String keyword, Context keywordContext, String label) {
-		delegate.onBreakStatement(context, keyword, keywordContext, label);
+	public void onBreakStatement(Context context, long keyword, Context keywordContext, long label, Context labelContext) {
+		delegate.onBreakStatement(
+		        writeStartContext(context),
+		        keyword,
+		        writeOtherContext(keywordContext),
+		        label,
+		        writeOtherContext(labelContext),
+		        context);
 	}
 	
 	public void onWhileStatementStart(Context context) {
-		delegate.onWhileStatementStart(context);
+		delegate.onWhileStatementStart(writeStartContext(context));
 	}
 	
 	public void onWhileStatementEnd(Context context) {
-		delegate.onWhileStatementEnd(context);
+		delegate.onWhileStatementEnd(writeEndContext(context), context);
 	}
 	
 	public void onForStatementStart(Context context, long keyword, Context keywordContext) {
 		
 		statementsStack.add(JavaStatement.FOR);
 		
-		delegate.onForStatementStart(context, keyword, keywordContext);
+		delegate.onForStatementStart(
+		        writeStartContext(context),
+		        keyword,
+		        writeOtherContext(keywordContext));
 	}
 	
 	public void onForInitStart(Context context) {
 		
-		delegate.onForInitStart(context);
+		delegate.onForInitStart(writeStartContext(context));
 	}
 	
 	public void onForInitEnd(Context context) {
 		
-		delegate.onForInitEnd(context);
+		delegate.onForInitEnd(writeEndContext(context), context);
 	}
 	
 	public void onForUpdateStart(Context context) {
 		
-		delegate.onForUpdateStart(context);
+		delegate.onForUpdateStart(writeStartContext(context));
 	}
 	
 	public void onForUpdateEnd(Context context) {
 		
-		delegate.onForUpdateEnd(context);
+		delegate.onForUpdateEnd(writeEndContext(context), context);
 	}
 	
 	public void onForStatementEnd(Context context) {
 		
-		delegate.onForStatementEnd(context);
+		delegate.onForStatementEnd(writeEndContext(context), context);
 	}
 	
 	public void onIteratorForStatementStart(Context context) {
@@ -1158,14 +1241,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.push();
 		
-		delegate.onIteratorForStatementStart(context);
+		delegate.onIteratorForStatementStart(writeStartContext(context));
 	}
 	
 	public void onIteratorForStatementEnd(Context context) {
 		
 		statementsStack.pop();
 		
-		delegate.onIteratorForStatementEnd(context);
+		delegate.onIteratorForStatementEnd(writeEndContext(context), context);
 	}
 
 	public void onDoWhileStatementStart(Context context) {
@@ -1174,12 +1257,12 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.push();
 		
-		delegate.onDoWhileStatementStart(context);
+		delegate.onDoWhileStatementStart(writeStartContext(context));
 	}
 	
 	public void onDoWhileStatementEnd(Context context) {
 		
-		delegate.onDoWhileStatementEnd(context);
+		delegate.onDoWhileStatementEnd(writeEndContext(context), context);
 		
 		statementsStack.pop();
 	}
@@ -1192,11 +1275,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.add(JavaStatement.RETURN);
 		
-		delegate.onReturnStatementStart(context);
+		delegate.onReturnStatementStart(writeStartContext(context));
 	}
 	
 	public void onReturnStatementEnd(Context context) {
-		delegate.onReturnStatementEnd(context);
+		delegate.onReturnStatementEnd(writeEndContext(context), context);
 	}
 	
 	public void onJavaSynchronizedStatementStart(Context context) {
@@ -1208,19 +1291,19 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 	
 	public void onThrowStatementStart(Context context) {
-		delegate.onThrowStatementStart(context);
+		delegate.onThrowStatementStart(writeStartContext(context));
 	}
 	
 	public void onThrowStatementEnd(Context context) {
-		delegate.onThrowStatementEnd(context);
+		delegate.onThrowStatementEnd(writeEndContext(context), context);
 	}
 
 	public void onAnnotationStart(Context context) {
-		delegate.onAnnotationStart(context);
+		delegate.onAnnotationStart(writeStartContext(context));
 	}
 
 	public void onAnnotationEnd(Context context) {
-		delegate.onAnnotationEnd(context);
+		delegate.onAnnotationEnd(writeEndContext(context), context);
 	}
 
 	public void onTryStatementStart(Context context) {
@@ -1229,12 +1312,12 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.push();
 		
-		delegate.onTryStatementStart(context);
+		delegate.onTryStatementStart(writeStartContext(context));
 	}
 
 	public void onTryStatementEnd(Context context) {
 		
-		delegate.onTryStatementEnd(context);
+		delegate.onTryStatementEnd(writeEndContext(context), context);
 	}
 	
 	public void onJavaTryWithResourcesStart(Context context) {
@@ -1243,30 +1326,30 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 		statementsStack.push();
 
-		delegate.onTryWithResourcesStatementStart(context);
+		delegate.onTryWithResourcesStatementStart(writeStartContext(context));
 	}
 	
 	public void onJavaTryWithResourcesSpecificationStart(Context context) {
-		delegate.onTryWithResourcesSpecificationStart(context);
+		delegate.onTryWithResourcesSpecificationStart(writeStartContext(context));
 	}
 	
 	public void onJavaResourceStart(Context context) {
-		delegate.onResourceStart(context);
+		delegate.onResourceStart(writeStartContext(context));
 	}
 	
 	public void onJavaResourceEnd(Context context) {
-		delegate.onResourceEnd(context);
+		delegate.onResourceEnd(writeEndContext(context), context);
 	}
 
 	public void onJavaTryWithResourcesSpecificationEnd(Context context) {
-		delegate.onTryWithResourcesSpecificationEnd(context);
+		delegate.onTryWithResourcesSpecificationEnd(writeEndContext(context), context);
 	}
 	
 	public void onJavaTryWithResourcesEnd(Context context) {
 		
 		statementsStack.pop();
 		
-		delegate.onTryWithResourcesEnd(context);
+		delegate.onTryWithResourcesEnd(writeEndContext(context), context);
 	}
 	
 	public void onCatchStart(Context context) {
@@ -1275,14 +1358,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.push();
 		
-		delegate.onCatchStart(context);
+		delegate.onCatchStart(writeStartContext(context));
 	}
 
 	public void onCatchEnd(Context context) {
 		
 		statementsStack.pop();
 		
-		delegate.onCatchEnd(context);
+		delegate.onCatchEnd(writeEndContext(context), context);
 	}
 
 	public void onFinallyStart(Context context) {
@@ -1291,13 +1374,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 		statementsStack.push();
 
-		delegate.onFinallyStart(context);
+		delegate.onFinallyStart(writeStartContext(context));
 	}
 
 	public void onFinallyEnd(Context context) {
 
 		statementsStack.pop();
 		
-		delegate.onFinallyEnd(context);
+		delegate.onFinallyEnd(writeEndContext(context), context);
 	}
 }

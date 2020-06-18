@@ -9,6 +9,7 @@ import com.neaterbits.compiler.javascript.JavaScriptLexer;
 import com.neaterbits.compiler.javascript.JavaScriptParser;
 import com.neaterbits.compiler.javascript.ast.JavascriptProgram;
 import com.neaterbits.compiler.javascript.parser.JSParserListener;
+import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 
@@ -24,7 +25,7 @@ public class JavascriptAntlrParser extends BaseAntlrParser<
 
 	@Override
 	protected JSParserListener createListener(StringSource stringSource, ParseLogger logger, String file) {
-		return new JSParserListener(stringSource, logger, null);
+		return new JSParserListener(stringSource, new ListContextAccess(), logger, null);
 	}
 
 	@Override

@@ -289,4 +289,16 @@ final class ASTBufferImpl implements ASTBuffer {
             ref.index = index + 1 + 1;
         }
     }
+
+    @Override
+    public void appendFrom(int pos, int size) {
+        
+        checkSpace(size);
+        
+        if (pos + size > index) {
+            throw new IllegalArgumentException("reading non-initialized " + pos + "/" +  size + "/" + index);
+        }
+        
+        System.arraycopy(buffer, pos, buffer, index, size);
+    }
 }

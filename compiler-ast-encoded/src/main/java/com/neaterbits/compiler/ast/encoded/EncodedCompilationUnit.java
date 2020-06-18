@@ -9,6 +9,8 @@ import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
+import com.neaterbits.util.io.strings.StringRef;
+import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.listener.encoded.AST;
 import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead;
@@ -100,7 +102,7 @@ public final class EncodedCompilationUnit {
     private static final int INDEX_END_LINE         = 12;
     private static final int INDEX_END_POS_IN_LINE  = 16;
     private static final int INDEX_END_OFFSET       = 20;
-    private static final int INDEX_TEXT           = 24;
+    private static final int INDEX_TEXT             = 24;
     
     public Context getContextByStartElementRef(int parseTreeRef) {
         
@@ -128,7 +130,7 @@ public final class EncodedCompilationUnit {
                 contexts.getInt(index + INDEX_END_LINE),
                 contexts.getInt(index + INDEX_END_POS_IN_LINE),
                 contexts.getInt(index + INDEX_END_OFFSET),
-                getTokenStringFromIndex(index));
+                null);
         }
         else {
             context = null;
@@ -148,7 +150,9 @@ public final class EncodedCompilationUnit {
         
         final int stringRef = contexts.getInt(index + INDEX_TEXT);
         
-        return stringBuffer.getString(stringRef);
+        return stringRef != StringRef.STRING_NONE
+                ? stringBuffer.getString(stringRef)
+                : null;
     }
     
     public int getTokenOffset(int parseTreeRef) {
@@ -167,6 +171,39 @@ public final class EncodedCompilationUnit {
                 + 1;
     }
     
+    private int getStartContext(int parseTreeRef) {
+        return parseTreeRefToStartContextHash.get(parseTreeRef);
+    }
+    
+    private Context getEndContext(int startContext) {
+        
+        return getContextFromIndex(startContext);
+    }
+
+    private int getLeafContext(int parseTreeRef) {
+        return parseTreeRefToStartContextHash.get(parseTreeRef);
+    }
+    
+    public ContextAccess getContextAccess() {
+        return new ContextAccess() {
+            
+            @Override
+            public Context getContext(int index) {
+                return getContextFromIndex(index);
+            }
+            
+            @Override
+            public int writeContext(int otherContext) {
+                throw new UnsupportedOperationException();
+            }
+            
+            @Override
+            public int writeContext(Context context) {
+                throw new UnsupportedOperationException();
+            }
+        };
+    }
+
     public <COMP_UNIT> COMP_UNIT iterate(IterativeParserListener<COMP_UNIT> listener) {
      
         int parseTreeRef = 0;
@@ -199,61 +236,61 @@ public final class EncodedCompilationUnit {
         do {
             astBuffer.getParseTreeElement(parseTreeRef, ref);
             
-            final Context context;
-            
-            if (passContextToDecode) {
-                if (ref.isStart) {
-                    context = getContextByStartElementRef(parseTreeRef);
-                }
-                else {
-                    context = getContextByEndElementRef(parseTreeRef);
-                }
-            }
-            else {
-                context = null;
-            }
             
             switch (ref.element) {
             
-            case COMPILATION_UNIT:
+            case COMPILATION_UNIT: {
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    listener.onCompilationUnitStart(context);
+                    listener.onCompilationUnitStart(startContext);
                 }
                 else {
-                    compUnit = listener.onCompilationUnitEnd(context);
+                    compUnit = listener.onCompilationUnitEnd(startContext, getEndContext(startContext));
                 }
                 break;
+            }
             
-            case NAMESPACE:
+            case NAMESPACE: {
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeNamespaceStart(astBuffer, contextGetter, ref.index, listener);
+                    AST.decodeNamespaceStart(astBuffer, startContext, contextGetter, ref.index, listener);
                 }
                 else {
-                    AST.decodeNamespaceEnd(context, listener);
+                    AST.decodeNamespaceEnd(startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
                 
-                
-            case NAMESPACE_PART:
+            case NAMESPACE_PART: {
+                final int leafContext = getLeafContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeNamespacePart(astBuffer, context, ref.index, listener);
+                    AST.decodeNamespacePart(astBuffer, leafContext, ref.index, listener);
                 }
                 break;
+            }
                 
-            case IMPORT:
+            case IMPORT: {
+                final int startContext = getStartContext(parseTreeRef);
+                
                 if (ref.isStart) {
-                    AST.decodeImportStart(astBuffer, contextGetter, ref.index, listener);
+                    AST.decodeImportStart(astBuffer, startContext, contextGetter, ref.index, listener);
                 }
                 else {
-                    AST.decodeImportEnd(astBuffer, context, ref.index, listener);
+                    AST.decodeImportEnd(astBuffer, startContext, getEndContext(startContext), ref.index, listener);
                 }
                 break;
+            }
                 
-            case IMPORT_NAME_PART:
+            case IMPORT_NAME_PART: {
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
                     AST.decodeImportNamePart(
                              astBuffer,
-                            context,
+                            startContext,
                             ref.index,
                             listener);
                 }
@@ -261,220 +298,318 @@ public final class EncodedCompilationUnit {
                     throw new UnsupportedOperationException();
                 }
                 break;
+            }
                 
-            case CLASS_DEFINITION:
+            case CLASS_DEFINITION: {
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeClassStart(astBuffer, contextGetter, ref.index, listener);
+                    AST.decodeClassStart(astBuffer, startContext, contextGetter, ref.index, listener);
                 }
                 else {
-                    AST.decodeClassEnd(astBuffer, context, listener);
+                    AST.decodeClassEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
                 
-            case CLASS_MODIFIER_HOLDER:
+            case CLASS_MODIFIER_HOLDER: {
+                final int leafContext = getLeafContext(parseTreeRef);
+                
                 if (ref.isStart) {
-                    AST.decodeClassModifierHolder(astBuffer, context, ref.index, listener);
+                    AST.decodeClassModifierHolder(astBuffer, leafContext, ref.index, listener);
                 }
                 else {
                     throw new UnsupportedOperationException();
                 }
                 break;
+            }
             
-            case CLASS_EXTENDS:
+            case CLASS_EXTENDS: {
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeClassExtendsStart(astBuffer, contextGetter, ref.index, listener);
+                    AST.decodeClassExtendsStart(astBuffer, startContext, contextGetter, ref.index, listener);
                 }
                 else {
-                    AST.decodeClassExtendsEnd(astBuffer, context, listener);
+                    AST.decodeClassExtendsEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
                 
-            case CLASS_EXTENDS_NAME_PART:
+            case CLASS_EXTENDS_NAME_PART: {
+                final int leafContext = getLeafContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeClassExtendsNamePart(astBuffer, context, ref.index, listener);
+                    AST.decodeClassExtendsNamePart(astBuffer, leafContext, ref.index, listener);
                 }
                 else {
                     throw new UnsupportedOperationException();
                 }
                 break;
+            }
                 
-            case CLASS_IMPLEMENTS:
+            case CLASS_IMPLEMENTS: {
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeClassImplementsStart(astBuffer, contextGetter, ref.index, listener);
+                    AST.decodeClassImplementsStart(astBuffer, startContext, contextGetter, ref.index, listener);
                 }
                 else {
-                    AST.decodeClassImplementsEnd(astBuffer, context, listener);
+                    AST.decodeClassImplementsEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
 
-            case CLASS_IMPLEMENTS_TYPE:
+            case CLASS_IMPLEMENTS_TYPE: {
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeClassImplementsTypeStart(astBuffer, context, listener);
+                    AST.decodeClassImplementsTypeStart(astBuffer, startContext, listener);
                 }
                 else {
-                    AST.decodeClassImplementsTypeEnd(astBuffer, context, listener);
+                    AST.decodeClassImplementsTypeEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
 
-            case CLASS_IMPLEMENTS_NAME_PART:
+            case CLASS_IMPLEMENTS_NAME_PART: {
+                final int leafContext = getLeafContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeClassImplementsNamePart(astBuffer, context, ref.index, listener);
+                    AST.decodeClassImplementsNamePart(astBuffer, leafContext, ref.index, listener);
                 }
                 else {
                     throw new UnsupportedOperationException();
                 }
                 break;
+            }
 
-            case CLASS_DATA_FIELD_MEMBER:
+            case CLASS_DATA_FIELD_MEMBER: {
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeFieldDeclarationStart(astBuffer, context, listener);
+                    AST.decodeFieldDeclarationStart(astBuffer, startContext, listener);
                 }
                 else {
-                    AST.decodeFieldDeclarationEnd(astBuffer, context, listener);
+                    AST.decodeFieldDeclarationEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
                 
-            case SCALAR_TYPE_REFERENCE:
+            case SCALAR_TYPE_REFERENCE: {
+                final int leafContext = getLeafContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeScalarTypeReference(astBuffer, context, ref.index, listener);
+                    AST.decodeScalarTypeReference(astBuffer, leafContext, ref.index, listener);
                 }
                 else {
                     throw new UnsupportedOperationException();
                 }
                 break;
+            }
                 
-            case VARIABLE_DECLARATION_ELEMENT:
+            case VARIABLE_DECLARATION_ELEMENT: {
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeVariableDeclaratorStart(astBuffer, context, listener);
+                    AST.decodeVariableDeclaratorStart(astBuffer, startContext, listener);
                 }
                 else {
-                    AST.decodeVariableDeclaratorEnd(astBuffer, context, listener);
+                    AST.decodeVariableDeclaratorEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
           
-            case VAR_NAME_DECLARATION:
-                AST.decodeVariableName(astBuffer, context, ref.index, listener);
-                break;
+            case VAR_NAME_DECLARATION: {
+                final int leafContext = getLeafContext(parseTreeRef);
 
-            case RESOLVE_LATER_IDENTIFIER_TYPE_REFERENCE:
-                AST.decodeIdentifierTypeReference(astBuffer, context, ref.index, listener);
+                AST.decodeVariableName(astBuffer, leafContext, ref.index, listener);
                 break;
-                
-            case CLASS_METHOD_MEMBER:
-                if (ref.isStart) {
-                    AST.decodeClassMethodStart(astBuffer, context, listener);
-                }
-                else {
-                    AST.decodeClassMethodEnd(astBuffer, context, listener);
-                }
-                break;
-                
-            case METHOD_RETURN_TYPE:
-                if (ref.isStart) {
-                    AST.decodeMethodReturnTypeStart(astBuffer, context, listener);
-                }
-                else {
-                    AST.decodeMethodReturnTypeEnd(astBuffer, context, listener);
-                }
-                break;
-                
-            case METHOD_NAME:
-                AST.decodeMethodName(astBuffer, context, ref.index, listener);
-                break;
+            }
 
-            case SIGNATURE_PARAMETER:
+            case RESOLVE_LATER_IDENTIFIER_TYPE_REFERENCE: {
+                final int leafContext = getLeafContext(parseTreeRef);
+
+                AST.decodeIdentifierTypeReference(astBuffer, leafContext, ref.index, listener);
+                break;
+            }
+                
+            case CLASS_METHOD_MEMBER: {
+                final int startContext = getStartContext(parseTreeRef);
+                
                 if (ref.isStart) {
-                    AST.decodeSignatureParameterStart(astBuffer, context, ref.index, listener);
+                    AST.decodeClassMethodStart(astBuffer, startContext, listener);
                 }
                 else {
-                    AST.decodeSignatureParameterEnd(astBuffer, context, ref.index, listener);
+                    AST.decodeClassMethodEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
                 
-            case RESOLVE_LATER_SCOPED_TYPE_REFERENCE:
+            case METHOD_RETURN_TYPE: {
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeScopedTypeReferenceStart(astBuffer, context, ref.index, listener);
+                    AST.decodeMethodReturnTypeStart(astBuffer, startContext, listener);
                 }
                 else {
-                    AST.decodeScopedTypeReferenceEnd(astBuffer, context, ref.index, listener);
+                    AST.decodeMethodReturnTypeEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
                 
-            case RESOLVE_LATER_SCOPED_TYPE_REFERENCE_PART:
-                AST.decodeScopedTypeReferencePart(astBuffer, context, ref.index, listener);
+            case METHOD_NAME: {
+                final int leafContext = getLeafContext(parseTreeRef);
+
+                AST.decodeMethodName(astBuffer, leafContext, ref.index, listener);
                 break;
+            }
+
+            case SIGNATURE_PARAMETERS: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeSignatureParametersStart(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    AST.decodeSignatureParametersEnd(astBuffer, startContext, getEndContext(startContext), ref.index, listener);
+                }
+                break;
+            }
+
+            case SIGNATURE_PARAMETER: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeSignatureParameterStart(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    AST.decodeSignatureParameterEnd(astBuffer, startContext, getEndContext(startContext), ref.index, listener);
+                }
+                break;
+            }
+                
+            case RESOLVE_LATER_SCOPED_TYPE_REFERENCE: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeScopedTypeReferenceStart(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    AST.decodeScopedTypeReferenceEnd(astBuffer, startContext, getEndContext(startContext), ref.index, listener);
+                }
+                break;
+            }
+                
+            case RESOLVE_LATER_SCOPED_TYPE_REFERENCE_PART: {
+             
+                final int leafContext = getLeafContext(parseTreeRef);
+                
+                AST.decodeScopedTypeReferencePart(astBuffer, leafContext, ref.index, listener);
+                break;
+            }
             
-            case VARIABLE_DECLARATION_STATEMENT:
-                if (ref.isStart) {
-                    AST.decodeVariableDeclarationStatementStart(astBuffer, context, listener);
-                }
-                else {
-                    AST.decodeVariableDeclarationStatementEnd(astBuffer, context, listener);
-                }
-                break;
+            case VARIABLE_DECLARATION_STATEMENT: {
                 
-            case IF_ELSE_IF_ELSE_STATEMENT:
-                if (ref.isStart) {
-                    AST.decodeIfElseIfElseStatementStart(astBuffer, context, contextGetter, ref.index, listener);
-                }
-                else {
-                    AST.decodeIfElseIfElseStatementEnd(astBuffer, context, listener);
-                }
-                break;
+                final int startContext = getStartContext(parseTreeRef);
                 
-            case IF_CONDITION_BLOCK:
                 if (ref.isStart) {
-                    // No listener
+                    AST.decodeVariableDeclarationStatementStart(astBuffer, startContext, listener);
                 }
                 else {
-                    AST.decodeIfConditionBlockEnd(astBuffer, context, listener);
+                    AST.decodeVariableDeclarationStatementEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
+                
+            case IF_ELSE_IF_ELSE_STATEMENT: {
+                final int startContext = getStartContext(parseTreeRef);
 
-            case ELSE_IF_CONDITION_BLOCK:
                 if (ref.isStart) {
-                    AST.decodeElseIfConditionBlockStart(astBuffer, context, contextGetter, ref.index, listener);
+                    AST.decodeIfElseIfElseStatementStart(astBuffer, startContext, contextGetter, ref.index, listener);
                 }
                 else {
-                    AST.decodeElseIfConditionBlockEnd(astBuffer, context, listener);
+                    AST.decodeIfElseIfElseStatementEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
                 
-            case ELSE_BLOCK:
+            case IF_CONDITION_BLOCK: {
+
+                final int startContext = getStartContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeElseBlockStart(astBuffer, context, contextGetter, ref.index, listener);
+                    AST.decodeIfConditionBlockStart(astBuffer, startContext, listener);
                 }
                 else {
-                    AST.decodeElseBlockEnd(astBuffer, context, listener);
+                    AST.decodeIfConditionBlockEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
+            }
 
-            case SIMPLE_VARIABLE_REFERENCE:
+            case ELSE_IF_CONDITION_BLOCK: {
+             
+                final int startContext = getStartContext(parseTreeRef);
+                
                 if (ref.isStart) {
-                    AST.decodeVariableReference(astBuffer, context, ref.index, listener);
+                    AST.decodeElseIfConditionBlockStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeElseIfConditionBlockEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+                
+            case ELSE_BLOCK: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeElseBlockStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeElseBlockEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case SIMPLE_VARIABLE_REFERENCE: {
+                
+                final int leafContext = getLeafContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeVariableReference(astBuffer, leafContext, ref.index, listener);
                 }
                 else {
                     throw new IllegalStateException();
                 }
                 break;
+            }
                 
-            case EXPRESSION_BINARY_OPERATOR:
-                if (ref.isStart) {
-                    AST.decodeExpressionBinaryOperator(astBuffer, context, ref.index, listener);
-                }
-                else {
-                    throw new IllegalStateException();
-                }
-                break;
+            case EXPRESSION_BINARY_OPERATOR: {
 
-            case INTEGER_LITERAL:
+                final int leafContext = getLeafContext(parseTreeRef);
+
                 if (ref.isStart) {
-                    AST.decodeIntegerLiteral(astBuffer, context, ref.index, listener);
+                    AST.decodeExpressionBinaryOperator(astBuffer, leafContext, ref.index, listener);
                 }
                 else {
                     throw new IllegalStateException();
                 }
                 break;
+            }
+
+            case INTEGER_LITERAL: {
+
+                final int leafContext = getLeafContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeIntegerLiteral(astBuffer, leafContext, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+            }
                 
             default:
                 throw new UnsupportedOperationException("element " + ref.element);

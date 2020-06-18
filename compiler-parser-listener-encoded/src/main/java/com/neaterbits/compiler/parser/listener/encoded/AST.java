@@ -6,6 +6,7 @@ import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.operator.Arithmetic;
@@ -27,6 +28,8 @@ public class AST {
     static final int NO_STRINGREF = -1;
     static final int NO_CONTEXTREF = -1;
     
+    private static final int CONTEXT_SIZE = 28;
+    
     static int writeContext(ASTBuffer contextBuffer, Context context) {
         
         Objects.requireNonNull(context);
@@ -46,6 +49,15 @@ public class AST {
         contextBuffer.writeInt(context.getEndOffset());
         
         contextBuffer.writeInt(context.getLength());
+        
+        return writePos;
+    }
+
+    static int writeContext(ASTBuffer contextBuffer, int otherContext) {
+        
+        final int writePos = contextBuffer.getWritePos();
+        
+        contextBuffer.appendFrom(otherContext, CONTEXT_SIZE);
         
         return writePos;
     }
@@ -202,36 +214,31 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeImportStart(
             ASTBufferRead astBuffer,
+            int importStartContext,
             ContextGetter contextGetter,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        final Context elementContext;
-        final Context importKeywordContext;
-        final Context staticKeywordContext;
+        final int importKeywordContext;
+        final int staticKeywordContext;
         
         if (contextGetter != null) {
-            elementContext = contextGetter.getElementContext(index);
-            
-            importKeywordContext = astBuffer.hasContextRef(index + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
-                    : null;
+            importKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
 
-            staticKeywordContext = astBuffer.hasContextRef(index + 4 + 4 + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4 + 4 + 4))
-                    : null;
+            staticKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE + STRING_REF_SIZE);
         }
         else {
-            elementContext = null;
-            importKeywordContext = null;
-            staticKeywordContext = null;
+            importKeywordContext = ContextRef.NONE;
+            staticKeywordContext = ContextRef.NONE;
         }
         
         listener.onImportStart(
-                elementContext,
+                importStartContext,
                 astBuffer.hasStringRef(index) ? astBuffer.getInt(index) : StringRef.STRING_NONE,
                 importKeywordContext,
-                astBuffer.hasStringRef(index + 4 + 4) ? astBuffer.getInt(index + 4 + 4) : StringRef.STRING_NONE,
+                astBuffer.hasStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE)
+                    ? astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE)
+                    : StringRef.STRING_NONE,
                 staticKeywordContext);
     }
 
@@ -244,13 +251,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeImportNamePart(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onImportIdentifier(
-                context,
-                astBuffer.getStringRef(index));
+        listener.onImportIdentifier(leafContext, astBuffer.getStringRef(index));
     }
 
     static void encodeImportEnd(StringASTBuffer astBuffer, boolean onDemand) {
@@ -260,10 +265,14 @@ public class AST {
         astBuffer.writeBoolean(onDemand);
     }
     
-    public static <COMPILATION_UNIT> void decodeImportEnd(ASTBufferRead astBuffer, Context context, int index, ParserListener<COMPILATION_UNIT> listener) {
+    public static <COMPILATION_UNIT> void decodeImportEnd(
+            ASTBufferRead astBuffer,
+            int importStartContext,
+            Context endContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onImportEnd(context, astBuffer.getBoolean(index));
-
+        listener.onImportEnd(importStartContext, endContext, astBuffer.getBoolean(index));
     }
 
     static void encodeNamespaceStart(StringASTBuffer astBuffer, long namespaceKeyword, int namespaceKeywordContext) {
@@ -274,26 +283,25 @@ public class AST {
         astBuffer.writeContextRef(namespaceKeywordContext);
     }
     
-    public static <COMPILATION_UNIT> void decodeNamespaceStart(ASTBufferRead astBuffer, ContextGetter contextGetter, int index, ParserListener<COMPILATION_UNIT> listener) {
+    public static <COMPILATION_UNIT> void decodeNamespaceStart(
+            ASTBufferRead astBuffer,
+            int namespaceStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
         
-        final Context elementContext;
-        final Context namespaceKeywordContext;
+        final int namespaceKeywordContext;
         
         if (contextGetter != null) {
-            elementContext = contextGetter.getElementContext(index);
-            
-            namespaceKeywordContext = astBuffer.hasContextRef(index + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
-                    : null;
+            namespaceKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
         }
         else {
-            elementContext = null;
-            namespaceKeywordContext = null;
+            namespaceKeywordContext = ContextRef.NONE;
         }
         
         listener.onNamespaceStart(
-                elementContext,
-                astBuffer.hasStringRef(index) ? astBuffer.getInt(index) : StringRef.STRING_NONE,
+                namespaceStartContext,
+                astBuffer.hasStringRef(index) ? astBuffer.getStringRef(index) : StringRef.STRING_NONE,
                 namespaceKeywordContext);
     }
 
@@ -309,13 +317,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeNamespacePart(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onNamespacePart(
-                context,
-                astBuffer.getStringRef(index));
+        listener.onNamespacePart(leafContext, astBuffer.getStringRef(index));
     }
 
     static void encodeNamespaceEnd(StringASTBuffer astBuffer) {
@@ -323,9 +329,12 @@ public class AST {
         astBuffer.writeElementEnd(ParseTreeElement.NAMESPACE);
     }
 
-    public static <COMPILATION_UNIT> void decodeNamespaceEnd(Context context, ParserListener<COMPILATION_UNIT> listener) {
+    public static <COMPILATION_UNIT> void decodeNamespaceEnd(
+            int namespaceStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onNameSpaceEnd(context);
+        listener.onNameSpaceEnd(namespaceStartContext, endContext);
     }
 
     private static final int CLASS_START_SIZE = 2 * (STRING_REF_SIZE + CONTEXT_REF_SIZE);
@@ -343,37 +352,29 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeClassStart(
             ASTBufferRead astBuffer,
+            int classStartContext,
             ContextGetter contextGetter,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        final Context elementContext;
-        final Context classKeywordContext;
-        final Context nameContext;
+        final int classKeywordContext;
+        final int nameContext;
         
         if (contextGetter != null) {
             
-            elementContext = contextGetter.getElementContext(index);
-            
-            classKeywordContext = astBuffer.hasContextRef(index + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
-                    : null;
-                    
-            nameContext = astBuffer.hasContextRef(index + 4 + 4 + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4 + 4 + 4))
-                    : null;
+            classKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+            nameContext = astBuffer.getContextRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE + STRING_REF_SIZE);
         }
         else {
-            elementContext = null;
-            classKeywordContext = null;
-            nameContext = null;
+            classKeywordContext = ContextRef.NONE;
+            nameContext = ContextRef.NONE;
         }
 
         listener.onClassStart(
-                elementContext,
+                classStartContext,
                 astBuffer.getStringRef(index),
                 classKeywordContext,
-                astBuffer.getStringRef(index + 4 + 4),
+                astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE),
                 nameContext);
     }
 
@@ -382,9 +383,13 @@ public class AST {
         astBuffer.writeElementEnd(ParseTreeElement.CLASS_DEFINITION);
     }
 
-    public static <COMPILATION_UNIT> void decodeClassEnd(ASTBufferRead astBuffer, Context context, ParserListener<COMPILATION_UNIT> listener) {
+    public static <COMPILATION_UNIT> void decodeClassEnd(
+            ASTBufferRead astBuffer,
+            int classStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onClassEnd(context);
+        listener.onClassEnd(classStartContext, endContext);
     }
     
     private static final int CLASS_MODIFIER_SIZE = 1 + 1;
@@ -405,7 +410,7 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeClassModifierHolder(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
@@ -413,11 +418,11 @@ public class AST {
         
         switch (type) {
         case VISIBILITY:
-            listener.onVisibilityClassModifier(context, astBuffer.getEnumByte(index + 1, ClassVisibility.class));
+            listener.onVisibilityClassModifier(leafContext, astBuffer.getEnumByte(index + 1, ClassVisibility.class));
             break;
             
         case SUBCLASSING:
-            listener.onSubclassingModifier(context, astBuffer.getEnumByte(index + 1, Subclassing.class));
+            listener.onSubclassingModifier(leafContext, astBuffer.getEnumByte(index + 1, Subclassing.class));
             break;
             
          default:
@@ -436,28 +441,22 @@ public class AST {
     
     public static <COMPILATION_UNIT> void decodeClassExtendsStart(
             ASTBufferRead astBuffer,
+            int classExtendsStartContext,
             ContextGetter contextGetter,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        final Context elementContext;
-        final Context extendsKeywordContext;
+        final int extendsKeywordContext;
         
         if (contextGetter != null) {
-            
-            elementContext = contextGetter.getElementContext(index);
-            
-            extendsKeywordContext = astBuffer.hasContextRef(index + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
-                    : null;
+            extendsKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
         }
         else {
-            elementContext = null;
-            extendsKeywordContext = null;
+            extendsKeywordContext = ContextRef.NONE;
         }
 
         listener.onClassExtendsStart(
-                elementContext,
+                classExtendsStartContext,
                 astBuffer.getStringRef(index),
                 extendsKeywordContext);
     }
@@ -473,13 +472,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeClassExtendsNamePart(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onClassExtendsNamePart(
-                context,
-                astBuffer.getStringRef(index));
+        listener.onClassExtendsNamePart(leafContext, astBuffer.getStringRef(index));
     }
 
     static void encodeClassExtendsEnd(StringASTBuffer astBuffer) {
@@ -489,10 +486,11 @@ public class AST {
     
     public static <COMPILATION_UNIT> void decodeClassExtendsEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int classExtendsStartContext,
+            Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onClassExtendsEnd(context);
+        listener.onClassExtendsEnd(classExtendsStartContext, endContext);
     }
 
     private static final int CLASS_IMPLEMENTS_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
@@ -506,28 +504,22 @@ public class AST {
     
     public static <COMPILATION_UNIT> void decodeClassImplementsStart(
             ASTBufferRead astBuffer,
+            int classImplementsStartContext,
             ContextGetter contextGetter,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        final Context elementContext;
-        final Context implementsKeywordContext;
+        final int implementsKeywordContext;
         
         if (contextGetter != null) {
-            
-            elementContext = contextGetter.getElementContext(index);
-            
-            implementsKeywordContext = astBuffer.hasContextRef(index + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
-                    : null;
+            implementsKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
         }
         else {
-            elementContext = null;
-            implementsKeywordContext = null;
+            implementsKeywordContext = ContextRef.NONE;
         }
 
         listener.onClassImplementsStart(
-                elementContext,
+                classImplementsStartContext,
                 astBuffer.getStringRef(index),
                 implementsKeywordContext);
     }
@@ -555,13 +547,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeClassImplementsNamePart(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onClassImplementsNamePart(
-                context,
-                astBuffer.getStringRef(index));
+        listener.onClassImplementsNamePart(leafContext, astBuffer.getStringRef(index));
     }
 
     static void encodeClassImplementsEnd(StringASTBuffer astBuffer) {
@@ -571,26 +561,28 @@ public class AST {
     
     public static <COMPILATION_UNIT> void decodeClassImplementsEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int classImplementsStartContext,
+            Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onClassImplementsEnd(context);
+        listener.onClassImplementsEnd(classImplementsStartContext, endContext);
     }
 
     public static <COMPILATION_UNIT> void decodeClassImplementsTypeStart(
             ASTBufferRead astBuffer,
-            Context context,
+            int classImplementsTypeStartContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onClassImplementsTypeStart(context);
+        listener.onClassImplementsTypeStart(classImplementsTypeStartContext);
     }
 
     public static <COMPILATION_UNIT> void decodeClassImplementsTypeEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int classImplementsTypeStartContext,
+            Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onClassImplementsTypeEnd(context);
+        listener.onClassImplementsTypeEnd(classImplementsTypeStartContext, endContext);
     }
 
     static void encodeFieldDeclarationStart(StringASTBuffer astBuffer) {
@@ -600,10 +592,10 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeFieldDeclarationStart(
             ASTBufferRead astBuffer,
-            Context context,
+            int fieldDeclarationStartContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onFieldDeclarationStart(context);
+        listener.onFieldDeclarationStart(fieldDeclarationStartContext);
     }
 
     static void encodeFieldDeclarationEnd(StringASTBuffer astBuffer) {
@@ -613,10 +605,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeFieldDeclarationEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int fieldDeclarationStartContext,
+            Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onFieldDeclarationEnd(context);
+        listener.onFieldDeclarationEnd(fieldDeclarationStartContext, endContext);
     }
 
     private static final int SCALAR_TYPE_REFERENCE_SIZE = STRING_REF_SIZE;
@@ -630,11 +623,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeScalarTypeReference(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onNonScopedTypeReference(context, astBuffer.getStringRef(index), ReferenceType.SCALAR);
+        listener.onNonScopedTypeReference(leafContext, astBuffer.getStringRef(index), ReferenceType.SCALAR);
     }
 
     private static final int IDENTIFIER_TYPE_REFERENCE_SIZE = STRING_REF_SIZE;
@@ -648,11 +641,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeIdentifierTypeReference(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onNonScopedTypeReference(context, astBuffer.getStringRef(index), ReferenceType.REFERENCE);
+        listener.onNonScopedTypeReference(leafContext, astBuffer.getStringRef(index), ReferenceType.REFERENCE);
     }
 
     static void encodeVariableDeclaratorStart(StringASTBuffer astBuffer) {
@@ -662,10 +655,10 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeVariableDeclaratorStart(
             ASTBufferRead astBuffer,
-            Context context,
+            int variableDeclaratorStartContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onVariableDeclaratorStart(context);
+        listener.onVariableDeclaratorStart(variableDeclaratorStartContext);
     }
 
     static void encodeVariableDeclaratorEnd(StringASTBuffer astBuffer) {
@@ -675,10 +668,11 @@ public class AST {
     
     public static <COMPILATION_UNIT> void decodeVariableDeclaratorEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int variableDeclaratorStartContext,
+            Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onVariableDeclaratorEnd(context);
+        listener.onVariableDeclaratorEnd(variableDeclaratorStartContext, endContext);
     }
 
     private static final int VARIABLE_NAME_SIZE = STRING_REF_SIZE + 4;
@@ -693,17 +687,17 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeVariableName(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onVariableName(
-                context,
+                leafContext,
                 astBuffer.getStringRef(index),
                 astBuffer.getInt(index + 4));
     }
 
-    static void encodeClassMethodStart(StringASTBuffer astBuffer, Context context) {
+    static void encodeClassMethodStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.CLASS_METHOD_MEMBER);
         
@@ -711,13 +705,13 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeClassMethodStart(
             ASTBufferRead astBuffer,
-            Context context,
+            int classMethodStartContext,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onClassMethodStart(context);
+        listener.onClassMethodStart(classMethodStartContext);
     }
 
-    static void encodeMethodReturnTypeStart(StringASTBuffer astBuffer, Context context) {
+    static void encodeMethodReturnTypeStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.METHOD_RETURN_TYPE);
         
@@ -725,28 +719,29 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeMethodReturnTypeStart(
             ASTBufferRead astBuffer,
-            Context context,
+            int methodReturnTypeContext,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onMethodReturnTypeStart(context);
+        listener.onMethodReturnTypeStart(methodReturnTypeContext);
     }
 
-    static void encodeMethodReturnTypeEnd(StringASTBuffer astBuffer, Context context) {
+    static void encodeMethodReturnTypeEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.METHOD_RETURN_TYPE);
     }
 
     public static <COMPILATION_UNIT> void decodeMethodReturnTypeEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int methodReturnTypeStartContext,
+            Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onMethodReturnTypeEnd(context);
+        listener.onMethodReturnTypeEnd(methodReturnTypeStartContext, endContext);
     }
     
     private static final int METHOD_NAME_SIZE = STRING_REF_SIZE;
 
-    static void encodeMethodName(StringASTBuffer astBuffer, Context context, long methodName) {
+    static void encodeMethodName(StringASTBuffer astBuffer, long methodName) {
 
         astBuffer.writeLeafElement(ParseTreeElement.METHOD_NAME);
         
@@ -755,30 +750,59 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeMethodName(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onMethodName(context, astBuffer.getStringRef(index));
+        listener.onMethodName(leafContext, astBuffer.getStringRef(index));
     }
 
-    static void encodeClassMethodEnd(StringASTBuffer astBuffer, Context context) {
+    static void encodeClassMethodEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.CLASS_METHOD_MEMBER);
-        
     }
 
     public static <COMPILATION_UNIT> void decodeClassMethodEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int classMethodStartContext,
+            Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onClassMethodEnd(context);
+        listener.onClassMethodEnd(classMethodStartContext, endContext);
     }
-    
+
+    static void encodeSignatureParametersStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.SIGNATURE_PARAMETERS);
+    }
+
+    public static <COMPILATION_UNIT> void decodeSignatureParametersStart(
+            ASTBufferRead astBuffer,
+            int signatureParametersStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onMethodSignatureParametersStart(signatureParametersStartContext);
+    }
+
+    static void encodeSignatureParametersEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.SIGNATURE_PARAMETERS);
+    }
+
+    public static <COMPILATION_UNIT> void decodeSignatureParametersEnd(
+            ASTBufferRead astBuffer,
+            int signatureParametersStartContext,
+            Context endContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onMethodSignatureParametersEnd(signatureParametersStartContext, endContext);
+    }
+
     private static final int SIGNATURE_PARAMETER_SIZE = 1;
     
-    static void encodeSignatureParameterStart(StringASTBuffer astBuffer, Context context, boolean varArgs) {
+    static void encodeSignatureParameterStart(StringASTBuffer astBuffer, boolean varArgs) {
         
         astBuffer.writeElementStart(ParseTreeElement.SIGNATURE_PARAMETER);
         
@@ -787,44 +811,45 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeSignatureParameterStart(
             ASTBufferRead astBuffer,
-            Context context,
+            int signatureParameterStartContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onMethodSignatureParameterStart(context, astBuffer.getBoolean(index));
+        listener.onMethodSignatureParameterStart(signatureParameterStartContext, astBuffer.getBoolean(index));
     }
 
-    static void encodeSignatureParameterEnd(StringASTBuffer astBuffer, Context context) {
+    static void encodeSignatureParameterEnd(StringASTBuffer astBuffer) {
         
         astBuffer.writeElementEnd(ParseTreeElement.SIGNATURE_PARAMETER);
     }
 
     public static <COMPILATION_UNIT> void decodeSignatureParameterEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int signatureParameterStartContext,
+            Context endContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onMethodSignatureParameterEnd(context);
+        listener.onMethodSignatureParameterEnd(signatureParameterStartContext, endContext);
     }
 
-    static void encodeScopedTypeReferenceStart(StringASTBuffer astBuffer, Context context) {
+    static void encodeScopedTypeReferenceStart(StringASTBuffer astBuffer) {
         
         astBuffer.writeElementStart(ParseTreeElement.RESOLVE_LATER_SCOPED_TYPE_REFERENCE);
     }
 
     public static <COMPILATION_UNIT> void decodeScopedTypeReferenceStart(
             ASTBufferRead astBuffer,
-            Context context,
+            int scopedTypeReferenceStartContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onScopedTypeReferenceStart(context, ReferenceType.REFERENCE);
+        listener.onScopedTypeReferenceStart(scopedTypeReferenceStartContext, ReferenceType.REFERENCE);
     }
 
     private static final int SCOPED_TYPE_REFERENCE_PART_SIZE = STRING_REF_SIZE;
     
-    static void encodeScopedTypeReferencePart(StringASTBuffer astBuffer, Context context, long part) {
+    static void encodeScopedTypeReferencePart(StringASTBuffer astBuffer, long part) {
         
         astBuffer.writeLeafElement(ParseTreeElement.RESOLVE_LATER_SCOPED_TYPE_REFERENCE_PART);
         
@@ -833,25 +858,26 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeScopedTypeReferencePart(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onScopedTypeReferencePart(context, astBuffer.getStringRef(index));
+        listener.onScopedTypeReferencePart(leafContext, astBuffer.getStringRef(index));
     }
 
-    static void encodeScopedTypeReferenceEnd(StringASTBuffer astBuffer, Context context) {
+    static void encodeScopedTypeReferenceEnd(StringASTBuffer astBuffer) {
         
         astBuffer.writeElementEnd(ParseTreeElement.RESOLVE_LATER_SCOPED_TYPE_REFERENCE);
     }
 
     public static <COMPILATION_UNIT> void decodeScopedTypeReferenceEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int scopedTypeReferenceEndContext,
+            Context endContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onScopedTypeReferenceEnd(context);
+        listener.onScopedTypeReferenceEnd(scopedTypeReferenceEndContext, endContext);
     }
     
     static void encodeVariableDeclarationStatementStart(StringASTBuffer astBuffer) {
@@ -861,10 +887,10 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeVariableDeclarationStatementStart(
             ASTBufferRead astBuffer,
-            Context context,
+            int variableDeclarationStatementStartContext,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onVariableDeclarationStatementStart(context);
+        listener.onVariableDeclarationStatementStart(variableDeclarationStatementStartContext);
     }
 
     static void encodeVariableDeclarationStatementEnd(StringASTBuffer astBuffer) {
@@ -874,10 +900,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeVariableDeclarationStatementEnd(
             ASTBufferRead astBuffer,
+            int variableDeclarationStatementStartContext,
             Context context,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onVariableDeclarationStatementEnd(context);
+        listener.onVariableDeclarationStatementEnd(variableDeclarationStatementStartContext, context);
     }
     
     private static final int IF_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
@@ -892,24 +919,21 @@ public class AST {
     
     public static <COMPILATION_UNIT> void decodeIfElseIfElseStatementStart(
             ASTBufferRead astBuffer,
-            Context elementContext,
+            int ifStartContext,
             ContextGetter contextGetter,
             int index,
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
-        final Context ifKeywordContext;
+        final int ifKeywordContext;
         
         if (contextGetter != null) {
-            
-            ifKeywordContext = astBuffer.hasContextRef(index + 4)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + 4))
-                    : null;
+            ifKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
         }
         else {
-            ifKeywordContext = null;
+            ifKeywordContext = ContextRef.NONE;
         }
         
-        listener.onIfStatementStart(elementContext, astBuffer.getStringRef(index), ifKeywordContext);
+        listener.onIfStatementStart(ifStartContext, astBuffer.getStringRef(index), ifKeywordContext);
     }
 
     static void encodeIfElseIfElseStatementEnd(StringASTBuffer astBuffer) {
@@ -919,17 +943,26 @@ public class AST {
 
     public static <COMPILATION_UNIT >void decodeIfElseIfElseStatementEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int ifStatementStartContext,
+            Context endContext,
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onEndIfStatement(context);
+        listener.onEndIfStatement(ifStatementStartContext, endContext);
     }
     
     static void encodeIfConditionBlockStart(StringASTBuffer astBuffer) {
         
         astBuffer.writeElementStart(ParseTreeElement.IF_CONDITION_BLOCK);
     }
-    
+
+    public static <COMPILATION_UNIT> void decodeIfConditionBlockStart(
+            ASTBufferRead astBuffer,
+            int conditionBlockStartContext,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onIfStatementInitialBlockStart(conditionBlockStartContext);
+    }
+
     static void encodeIfConditionBlockEnd(StringASTBuffer astBuffer) {
         
         astBuffer.writeElementEnd(ParseTreeElement.IF_CONDITION_BLOCK);
@@ -937,10 +970,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeIfConditionBlockEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int conditionBlockStartContext,
+            Context endContext,
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onIfStatementInitialBlockEnd(context);
+        listener.onIfStatementInitialBlockEnd(conditionBlockStartContext, endContext);
     }
 
     private static final int ELSE_IF_CONDITION_BLOCK_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
@@ -954,25 +988,23 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeElseIfConditionBlockStart(
             ASTBufferRead astBuffer,
-            Context context,
+            int elseIfConditionBlockStartContext,
             ContextGetter contextGetter,
             int index,
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
         
-        final Context elseIfKeywordContext;
+        final int elseIfKeywordContext;
 
         if (contextGetter != null) {
             
-            elseIfKeywordContext = astBuffer.hasContextRef(index + STRING_REF_SIZE)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + STRING_REF_SIZE))
-                    : null;
+            elseIfKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
         }
         else {
-            elseIfKeywordContext = null;
+            elseIfKeywordContext = ContextRef.NONE;
         }
 
-        listener.onElseIfStatementStart(context, astBuffer.getStringRef(index), elseIfKeywordContext);
+        listener.onElseIfStatementStart(elseIfConditionBlockStartContext, astBuffer.getStringRef(index), elseIfKeywordContext);
     }
 
     static void encodeElseIfConditionBlockEnd(StringASTBuffer astBuffer) {
@@ -982,10 +1014,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeElseIfConditionBlockEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int elseIfConditionBlockStartContext,
+            Context endContext,
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onElseIfStatementEnd(context);
+        listener.onElseIfStatementEnd(elseIfConditionBlockStartContext, endContext);
     }
 
     private static final int ELSE_BLOCK_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
@@ -999,25 +1032,22 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeElseBlockStart(
             ASTBufferRead astBuffer,
-            Context context,
+            int elseStartContext,
             ContextGetter contextGetter,
             int index,
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
         
-        final Context elseKeywordContext;
+        final int elseKeywordContext;
 
         if (contextGetter != null) {
-            
-            elseKeywordContext = astBuffer.hasContextRef(index + STRING_REF_SIZE)
-                    ? contextGetter.getContextFromRef(astBuffer.getContextRef(index + STRING_REF_SIZE))
-                    : null;
+            elseKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
         }
         else {
-            elseKeywordContext = null;
+            elseKeywordContext = ContextRef.NONE;
         }
 
-        listener.onElseStatementStart(context, astBuffer.getStringRef(index), elseKeywordContext);
+        listener.onElseStatementStart(elseStartContext, astBuffer.getStringRef(index), elseKeywordContext);
     }
 
     static void encodeElseBlockEnd(StringASTBuffer astBuffer) {
@@ -1027,10 +1057,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeElseBlockEnd(
             ASTBufferRead astBuffer,
-            Context context,
+            int elseStartContext,
+            Context endContext,
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onElseStatementEnd(context);
+        listener.onElseStatementEnd(elseStartContext, endContext);
     }
 
     private static final int VARIABLE_REFERENCE_SIZE = STRING_REF_SIZE;
@@ -1044,11 +1075,11 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeVariableReference(
             ASTBufferRead astBuffer,
-            Context elementContext,
+            int leafContext,
             int index,
             IterativeParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onVariableReference(elementContext, astBuffer.getStringRef(index));
+        listener.onVariableReference(leafContext, astBuffer.getStringRef(index));
     }
 
     private static final int EXPRESSION_BINARY_OPERATOR_SIZE = 1 + 1;
@@ -1063,7 +1094,7 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeExpressionBinaryOperator(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
@@ -1092,7 +1123,7 @@ public class AST {
             throw new IllegalStateException();
         }
         
-        listener.onExpressionBinaryOperator(context, operator);
+        listener.onExpressionBinaryOperator(leafContext, operator);
     }
 
     static void encodeIntegerLiteral(StringASTBuffer astBuffer, long value, Base base, boolean signed, int bits) {
@@ -1128,7 +1159,7 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeIntegerLiteral(
             ASTBufferRead astBuffer,
-            Context context,
+            int leafContext,
             int index,
             IterativeParserListener<COMPILATION_UNIT> listener) {
         
@@ -1166,7 +1197,7 @@ public class AST {
         final int bits = astBuffer.getByte(afterValueIndex + 2); 
 
         listener.onIntegerLiteral(
-                context,
+                leafContext,
                 value,
                 base,
                 signed,

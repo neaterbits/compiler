@@ -10,6 +10,7 @@ import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaTypes;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 import com.neaterbits.util.parse.ParserException;
@@ -52,7 +53,11 @@ public class TestJavaParserWithObjectParserListener extends BaseJavaParserTest {
             };
               
             @SuppressWarnings("unchecked")
-            final IterativeParserListener<CompilationUnit> listener = new JavaIterativeListener(stringSource, logger, parseTreeFactory);
+            final IterativeParserListener<CompilationUnit> listener = new JavaIterativeListener(
+                    stringSource,
+                    new ListContextAccess(),
+                    logger,
+                    parseTreeFactory);
             
             return listener;
         });

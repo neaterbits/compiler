@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
 import com.neaterbits.compiler.parser.listener.stackbased.state.BaseStackTryCatchFinally;
 import com.neaterbits.compiler.parser.listener.stackbased.state.BaseStackVariableDeclaration;
@@ -84,6 +85,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Variable
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.ContextScopedName;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
@@ -255,6 +257,8 @@ public abstract class BaseParserListener<
 	implements ParserListener<COMPILATION_UNIT> {
 
 	final StringSource stringSource;
+	final ContextAccess contextAccess;
+	
 	private final ParseLogger logger;
 
 	final ParseTreeFactory<
@@ -408,10 +412,14 @@ public abstract class BaseParserListener<
 	}
 
 	@SuppressWarnings("unchecked")
-	protected BaseParserListener(StringSource stringSource, ParseLogger logger,
+	protected BaseParserListener(
+	        StringSource stringSource,
+	        ContextAccess contextAccess,
+	        ParseLogger logger,
 			@SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
 
 		this.stringSource = stringSource;
+		this.contextAccess = contextAccess;
 		this.logger = logger;
 		this.parseTreeFactory = parseTreeFactory;
 
@@ -458,9 +466,41 @@ public abstract class BaseParserListener<
 		}
 	}
 
-	@Override
-	public final void onCompilationUnitStart(Context context) {
+    final Context getStartContext(int index) {
 
+        return contextAccess.getContext(index);
+    }
+
+    final Context getLeafContext(int index) {
+
+        return contextAccess.getContext(index);
+    }
+
+    final Context getOtherContext(int index) {
+
+        return contextAccess.getContext(index);
+    }
+
+    final Context getEndContext(int startContext, Context endContext) {
+        
+        return contextAccess.getContext(startContext);
+    }
+
+    @Override
+    public int writeContext(Context context) {
+        return contextAccess.writeContext(context);
+    }
+
+    @Override
+    public int writeContext(int otherContext) {
+        return contextAccess.writeContext(otherContext);
+    }
+
+    @Override
+	public final void onCompilationUnitStart(int startContext) {
+
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		if (!mainStack.isEmpty()) {
@@ -473,8 +513,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final COMPILATION_UNIT onCompilationUnitEnd(Context context) {
+	public final COMPILATION_UNIT onCompilationUnitEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackCompilationUnit<COMPILATION_CODE, IMPORT> stackCompilationUnit = pop();
@@ -488,8 +530,13 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onImportStart(Context context, long importKeyword, Context importKeywordContext, long staticKeyword, Context staticKeywordContext) {
+	public final void onImportStart(
+	        int startContext,
+	        long importKeyword, int importKeywordContext,
+	        long staticKeyword, int staticKeywordContext) {
 		
+	    final Context context = getStartContext(startContext);
+	    
 	    logEnter(context);
 	    
 		Objects.requireNonNull(importKeyword);
@@ -497,14 +544,22 @@ public abstract class BaseParserListener<
 		final String importKeywordString = stringSource.asString(importKeyword);
 		final String staticKeywordString = staticKeyword != StringRef.STRING_NONE ? stringSource.asString(staticKeyword) : null;
 		
-		push(new StackImport<>(logger, importKeywordString, importKeywordContext, staticKeywordString, staticKeywordContext));
+		push(new StackImport<>(
+		        logger,
+		        importKeywordString, getOtherContext(importKeywordContext),
+		        staticKeywordString,
+		        staticKeywordContext != ContextRef.NONE
+		            ? getOtherContext(staticKeywordContext)
+                    : null));
 		
 		logExit(context);
 	}
 
 	@Override
-	public final void onImportIdentifier(Context context, long identifier) {
+	public final void onImportIdentifier(int leafContext, long identifier) {
 		
+	    final Context context = getLeafContext(leafContext);
+	    
 	    logEnter(context);
 	    
 		final StackImport<IDENTIFIER> stackImport = get();
@@ -515,7 +570,9 @@ public abstract class BaseParserListener<
 	}
 		
 	@Override
-	public final void onImportEnd(Context context, boolean ondemand) {
+	public final void onImportEnd(int startContext, Context endContext, boolean ondemand) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 		
 	    logEnter(context);
 	    
@@ -538,21 +595,25 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onNamespaceStart(Context context, long namespaceKeyword, Context namespaceKeywordContext) {
+	public final void onNamespaceStart(int startContext, long namespaceKeyword, int namespaceKeywordContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 		
 		push(new StackNamespace<>(
 		        logger,
 		        stringSource.asString(namespaceKeyword),
-		        namespaceKeywordContext));
+		        getOtherContext(namespaceKeywordContext)));
 
 		logExit(context);
 	}
 
 	@Override
-    public final void onNamespacePart(Context context, long part) {
+    public final void onNamespacePart(int leafContext, long part) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 	    logEnter(context);
 	    
 	    final StackNamespace<COMPILATION_CODE> namespace = get();
@@ -563,7 +624,9 @@ public abstract class BaseParserListener<
     }
 
     @Override
-	public final void onNameSpaceEnd(Context context) {
+	public final void onNameSpaceEnd(int startContext, Context endContext) {
+        
+        final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -584,18 +647,25 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onClassStart(Context context, long classKeyword, Context classKeywordContext, long name,
-			Context nameContext) {
+	public final void onClassStart(
+	        int startContext,
+	        long classKeyword, int classKeywordContext,
+	        long name, int nameContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
-		push(new StackNamedClass<>(logger, stringSource.asString(classKeyword), classKeywordContext, stringSource.asString(name), nameContext));
+		push(new StackNamedClass<>(
+		        logger,
+		        stringSource.asString(classKeyword), getOtherContext(classKeywordContext),
+		        stringSource.asString(name), getOtherContext(nameContext)));
 
 		logExit(context);
 	}
 
 	private void addClassModifier(Context context, ClassModifier modifier) {
-
+	    
 		logEnter(context);
 
 		final ClassModifierSetter<CLASS_MODIFIER_HOLDER> stackClass = get();
@@ -606,7 +676,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onVisibilityClassModifier(Context context, ClassVisibility visibility) {
+	public final void onVisibilityClassModifier(int leafContext, ClassVisibility visibility) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -616,7 +688,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onSubclassingModifier(Context context, Subclassing subclassing) {
+	public final void onSubclassingModifier(int leafContext, Subclassing subclassing) {
+	    
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addClassModifier(context, subclassing);
@@ -625,7 +700,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStaticClassModifier(Context context) {
+	public final void onStaticClassModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -635,8 +712,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStrictfpClassModifier(Context context) {
+	public final void onStrictfpClassModifier(int leafContext) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addClassModifier(context, new ClassStrictfp());
@@ -645,8 +724,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onClassExtendsStart(Context context, long extendsKeyword, Context extendsKeywordContext) {
+	public final void onClassExtendsStart(int startContext, long extendsKeyword, int extendsKeywordContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		final StackNamedClass<
@@ -656,7 +737,9 @@ public abstract class BaseParserListener<
 		        CLASS_MODIFIER_HOLDER,
 		        TYPE_REFERENCE> stackNamedClass = get();
 
-		stackNamedClass.setExtendsKeyword(stringSource.asString(extendsKeyword), extendsKeywordContext);
+		stackNamedClass.setExtendsKeyword(
+		        stringSource.asString(extendsKeyword),
+		        getOtherContext(extendsKeywordContext));
 
 		final StackScopedName stackScopedName = new StackScopedName(getLogger());
 
@@ -666,8 +749,10 @@ public abstract class BaseParserListener<
 	}
 	
 	@Override
-    public void onClassExtendsNamePart(Context context, long identifier) {
+    public void onClassExtendsNamePart(int leafContext, long identifier) {
         
+	    final Context context = getLeafContext(leafContext);
+	    
 	    logEnter(context);
 
 	    final StackScopedName stackScopedName = get();
@@ -679,7 +764,9 @@ public abstract class BaseParserListener<
 	
 
     @Override
-    public void onClassExtendsEnd(Context context) {
+    public void onClassExtendsEnd(int startContext, Context endContext) {
+        
+        final Context context = getEndContext(startContext, endContext);
         
         logEnter(context);
 
@@ -703,18 +790,22 @@ public abstract class BaseParserListener<
     }
 
     @Override
-	public final void onClassImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext) {
+	public final void onClassImplementsStart(int startContext, long implementsKeyword, int implementsKeywordContext) {
 
+        final Context context = getStartContext(startContext);
+        
 		logEnter(context);
 
-		push(new StackImplements(getLogger(), implementsKeyword, implementsKeywordContext));
+		push(new StackImplements(getLogger(), implementsKeyword, getOtherContext(implementsKeywordContext)));
 		
 		logExit(context);
 	}
     
     @Override
-    public void onClassImplementsTypeStart(Context context) {
+    public void onClassImplementsTypeStart(int startContext) {
 
+        final Context context = getStartContext(startContext);
+        
         logEnter(context);
 
         final StackScopedName stackScopedName = new StackScopedName(getLogger());
@@ -725,7 +816,9 @@ public abstract class BaseParserListener<
     }
 
     @Override
-    public void onClassImplementsNamePart(Context context, long identifier) {
+    public void onClassImplementsNamePart(int startContext, long identifier) {
+
+        final Context context = getStartContext(startContext);
         
         logEnter(context);
 
@@ -737,8 +830,10 @@ public abstract class BaseParserListener<
     }
     
     @Override
-    public void onClassImplementsTypeEnd(Context context) {
+    public void onClassImplementsTypeEnd(int startContext, Context endContext) {
 
+        final Context context = getEndContext(startContext, endContext);
+        
         logEnter(context);
 
         final StackScopedName stackScopedName = pop();
@@ -753,7 +848,9 @@ public abstract class BaseParserListener<
     }
 
     @Override
-    public void onClassImplementsEnd(Context context) {
+    public void onClassImplementsEnd(int startContext, Context endContext) {
+        
+        final Context context = getEndContext(startContext, endContext);
         
         logEnter(context);
 
@@ -783,8 +880,10 @@ public abstract class BaseParserListener<
     }
 
     @Override
-	public final void onClassEnd(Context context) {
+	public final void onClassEnd(int startContext, Context endContext) {
 
+        final Context context = getEndContext(startContext, endContext);
+        
 		logEnter(context);
 
 		final StackNamedClass<COMPLEX_MEMBER_DEFINITION, COMPLEX_MEMBER_DEFINITION, COMPLEX_MEMBER_DEFINITION, CLASS_MODIFIER_HOLDER, TYPE_REFERENCE> entry = pop();
@@ -812,8 +911,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onAnonymousClassStart(Context context) {
+	public final void onAnonymousClassStart(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		push(new StackAnonymousClass<>(logger));
@@ -822,8 +923,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onAnonymousClassEnd(Context context) {
+	public final void onAnonymousClassEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackAnonymousClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER> entry = pop();
@@ -839,8 +942,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStaticInitializerStart(Context context) {
+	public final void onStaticInitializerStart(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		pushVariableScope();
@@ -851,8 +956,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStaticInitializerEnd(Context context) {
+	public final void onStaticInitializerEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackStaticInitializer<STATEMENT> stackStaticInitializer = pop();
@@ -870,8 +977,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConstructorStart(Context context) {
+	public final void onConstructorStart(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		push(new StackConstructor<>(logger));
@@ -882,7 +991,7 @@ public abstract class BaseParserListener<
 	}
 
 	private void addConstructorModifier(Context context, ConstructorModifier modifier) {
-
+	    
 		logEnter(context);
 
 		final StackConstructor<STATEMENT, PARAMETER, TYPE_REFERENCE, CONSTRUCTOR_MODIFIER_HOLDER> stackConstructor = get();
@@ -893,8 +1002,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConstructorVisibilityModifier(Context context, ConstructorVisibility visibility) {
+	public final void onConstructorVisibilityModifier(int leafContext, ConstructorVisibility visibility) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addConstructorModifier(context, visibility);
@@ -903,8 +1014,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConstructorName(Context context, long constructorName) {
+	public final void onConstructorName(int leafContext, long constructorName) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		final StackConstructor<STATEMENT, PARAMETER, TYPE_REFERENCE, CONSTRUCTOR_MODIFIER_HOLDER> constructor = get();
@@ -915,8 +1028,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConstructorInvocationStart(Context context, ConstructorInvocation type) {
+	public final void onConstructorInvocationStart(int startContext, ConstructorInvocation type) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		push(new StackConstructorInvocation<>(logger, type));
@@ -925,7 +1040,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConstructorInvocationEnd(Context context) {
+	public final void onConstructorInvocationEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -943,8 +1060,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConstructorEnd(Context context) {
+	public final void onConstructorEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		popVariableScope();
@@ -963,8 +1082,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onClassMethodStart(Context context) {
+	public final void onClassMethodStart(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, CLASS_METHOD_MODIFIER_HOLDER> method
@@ -978,7 +1099,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMethodReturnTypeStart(Context context) {
+	public final void onMethodReturnTypeStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -988,8 +1111,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMethodReturnTypeEnd(Context context) {
+	public final void onMethodReturnTypeEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext); 
+	    
 		logEnter(context);
 
 		final StackReturnType<TYPE_REFERENCE> stackReturnType = pop();
@@ -1002,8 +1127,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMethodName(Context context, long methodName) {
+	public final void onMethodName(int leafContext, long methodName) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		final CallableStackEntry<STATEMENT, PARAMETER, TYPE_REFERENCE> method = get();
@@ -1014,7 +1141,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMethodSignatureParametersStart(Context context) {
+	public final void onMethodSignatureParametersStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 	    
 	    logEnter(context);
 
@@ -1022,8 +1151,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMethodSignatureParameterStart(Context context, boolean varArgs) {
+	public final void onMethodSignatureParameterStart(int startContext, boolean varArgs) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		push(new StackParameterSignature<>(logger, varArgs));
@@ -1032,8 +1163,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMethodSignatureParameterEnd(Context context) {
+	public final void onMethodSignatureParameterEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackParameterSignature<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> stackParameterSignature = pop();
@@ -1054,8 +1187,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMethodSignatureParametersEnd(Context context) {
+	public final void onMethodSignatureParametersEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 	    logEnter(context);
 	    
 	    logExit(context);
@@ -1073,8 +1208,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onVisibilityClassMethodModifier(Context context, ClassMethodVisibility visibility) {
+	public final void onVisibilityClassMethodModifier(int leafContext, ClassMethodVisibility visibility) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addClassMethodModifier(context, visibility);
@@ -1083,8 +1220,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onOverrideClassMethodModifier(Context context, ClassMethodOverride methodOverride) {
+	public final void onOverrideClassMethodModifier(int leafContext, ClassMethodOverride methodOverride) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addClassMethodModifier(context, methodOverride);
@@ -1093,7 +1232,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStaticClassMethodModifier(Context context) {
+	public final void onStaticClassMethodModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1103,7 +1244,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStrictfpClassMethodModifier(Context context) {
+	public final void onStrictfpClassMethodModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addClassMethodModifier(context, new ClassMethodStrictfp());
@@ -1112,8 +1256,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onSynchronizedClassMethodModifier(Context context) {
+	public final void onSynchronizedClassMethodModifier(int leafContext) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addClassMethodModifier(context, new ClassMethodSynchronized());
@@ -1122,7 +1268,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onNativeClassMethodModifier(Context context) {
+	public final void onNativeClassMethodModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1132,8 +1280,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onClassMethodEnd(Context context) {
+	public final void onClassMethodEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		popVariableScope();
@@ -1157,7 +1307,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onFieldDeclarationStart(Context context) {
+	public final void onFieldDeclarationStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1173,8 +1325,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onVisibilityFieldModifier(Context context, FieldVisibility visibility) {
+	public final void onVisibilityFieldModifier(int leafContext, FieldVisibility visibility) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addFieldModifier(context, visibility);
@@ -1183,8 +1337,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStaticFieldModifier(Context context) {
+	public final void onStaticFieldModifier(int leafContext) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addFieldModifier(context, new FieldStatic());
@@ -1193,8 +1349,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMutabilityFieldModifier(Context context, ASTMutability mutability) {
+	public final void onMutabilityFieldModifier(int leafContext, ASTMutability mutability) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addFieldModifier(context, mutability);
@@ -1203,8 +1361,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onTransientFieldModifier(Context context) {
+	public final void onTransientFieldModifier(int leafContext) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addFieldModifier(context, new FieldTransient());
@@ -1213,7 +1373,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onVolatileFieldModifier(Context context) {
+	public final void onVolatileFieldModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1223,9 +1385,11 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onFieldDeclarationEnd(Context context) {
+	public final void onFieldDeclarationEnd(int startContext, Context endContext) {
 
-		logEnter(context);
+	    final Context context = getEndContext(startContext, endContext);
+		
+	    logEnter(context);
 
 		final StackFieldDeclarationList<TYPE_REFERENCE, EXPRESSION, FIELD_MODIFIER_HOLDER> stackFieldDeclarationList = pop();
 
@@ -1259,12 +1423,19 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onInterfaceStart(Context context, long interfaceKeyword, Context interfaceKeywordContext,
-			long name, Context nameContext) {
+	public final void onInterfaceStart(int startContext, long interfaceKeyword, int interfaceKeywordContext,
+			long name, int nameContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
-		push(new StackInterface<>(logger, stringSource.asString(interfaceKeyword), interfaceKeywordContext, stringSource.asString(name), nameContext));
+		push(new StackInterface<>(
+		        logger,
+		        stringSource.asString(interfaceKeyword),
+		        getOtherContext(interfaceKeywordContext),
+		        stringSource.asString(name),
+		        getOtherContext(nameContext)));
 
 		logExit(context);
 	}
@@ -1281,7 +1452,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onVisibilityInterfaceModifier(Context context, InterfaceVisibility visibility) {
+	public final void onVisibilityInterfaceModifier(int leafContext, InterfaceVisibility visibility) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1291,7 +1464,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onAbstractInterfaceModifier(Context context) {
+	public final void onAbstractInterfaceModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1301,7 +1476,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStaticInterfaceModifier(Context context) {
+	public final void onStaticInterfaceModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1311,7 +1488,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStrictfpInterfaceModifier(Context context) {
+	public final void onStrictfpInterfaceModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1321,8 +1500,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onInterfaceExtends(Context context, ScopedName interfaceName) {
+	public final void onInterfaceExtends(int otherContext, ScopedName interfaceName) {
 
+	    final Context context = getOtherContext(otherContext);
+	    
 		logEnter(context);
 
 		final StackInterface<COMPLEX_MEMBER_DEFINITION, INTERFACE_MODIFIER_HOLDER, TYPE_REFERENCE, INTERFACE_METHOD_MEMBER> entry = get();
@@ -1333,8 +1514,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onInterfaceEnd(Context context) {
+	public final void onInterfaceEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackInterface<COMPLEX_MEMBER_DEFINITION, INTERFACE_MODIFIER_HOLDER, TYPE_REFERENCE, INTERFACE_METHOD_MEMBER> entry = pop();
@@ -1359,18 +1542,27 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onEnumStart(Context context, long enumKeyword, Context enumKeywordContext, long name,
-			Context nameContext) {
+	public final void onEnumStart(int startContext, long enumKeyword, int enumKeywordContext, long name,
+			int nameContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
-		push(new StackEnum<>(logger, stringSource.asString(enumKeyword), enumKeywordContext, stringSource.asString(name), nameContext));
+		push(new StackEnum<>(
+		        logger,
+		        stringSource.asString(enumKeyword),
+		        getOtherContext(enumKeywordContext),
+		        stringSource.asString(name),
+		        getOtherContext(nameContext)));
 
 		logExit(context);
 	}
 
 	@Override
-	public final void onEnumImplements(Context context, ScopedName interfaceName) {
+	public final void onEnumImplements(int otherContext, ScopedName interfaceName) {
+	    
+	    final Context context = getOtherContext(otherContext);
 
 		logEnter(context);
 
@@ -1382,8 +1574,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onEnumConstantStart(Context context, long name) {
+	public final void onEnumConstantStart(int startContext, long name) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		push(new StackEnumConstant<>(logger, stringSource.asString(name)));
@@ -1392,8 +1586,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onEnumConstantEnd(Context context) {
+	public final void onEnumConstantEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackEnumConstant<COMPLEX_MEMBER_DEFINITION, EXPRESSION> stackEnumConstant = pop();
@@ -1412,7 +1608,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onEnumEnd(Context context) {
+	public final void onEnumEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -1437,7 +1635,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onInterfaceMethodStart(Context context) {
+	public final void onInterfaceMethodStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1462,7 +1662,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onVisibilityInterfaceMethodModifier(Context context, InterfaceMethodVisibility visibility) {
+	public final void onVisibilityInterfaceMethodModifier(int leafContext, InterfaceMethodVisibility visibility) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1472,7 +1674,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onAbstractInterfaceMethodModifier(Context context) {
+	public final void onAbstractInterfaceMethodModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1482,7 +1686,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onDefaultInterfaceMethodModifier(Context context) {
+	public final void onDefaultInterfaceMethodModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1492,7 +1698,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStaticInterfaceMethodModifier(Context context) {
+	public final void onStaticInterfaceMethodModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1502,7 +1710,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStrictfpInterfaceMethodModifier(Context context) {
+	public final void onStrictfpInterfaceMethodModifier(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		addInterfaceMethodModifier(context, new InterfaceMethodStrictfp());
@@ -1511,8 +1722,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onInterfaceMethodEnd(Context context) {
+	public final void onInterfaceMethodEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		popVariableScope();
@@ -1538,8 +1751,10 @@ public abstract class BaseParserListener<
 
 	// Expressions
 	@Override
-	public final void onEnterAssignmentExpression(Context context) {
+	public final void onEnterAssignmentExpression(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		push(new StackAssignmentExpression<>(logger));
@@ -1548,7 +1763,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onEnterAssignmentLHS(Context context) {
+	public final void onEnterAssignmentLHS(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1558,8 +1775,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onExitAssignmentLHS(Context context) {
+	public final void onExitAssignmentLHS(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackAssignmentLHS<PRIMARY, VARIABLE_REFERENCE, NESTED_EXPRESSION> assignmentLHS = pop();
@@ -1574,7 +1793,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onExitAssignmentExpression(Context context) {
+	public final void onExitAssignmentExpression(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -1593,7 +1814,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onNestedExpressionStart(Context context) {
+	public final void onNestedExpressionStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1603,8 +1826,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onNestedExpressionEnd(Context context) {
+	public final void onNestedExpressionEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
@@ -1623,8 +1848,10 @@ public abstract class BaseParserListener<
 
 	// Variable or class member
 	@Override
-	public final void onNameReference(Context context, long name) {
+	public final void onNameReference(int leafContext, long name) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		final VariableReferenceSetter<VARIABLE_REFERENCE> variableReferenceSetter = get();
@@ -1636,8 +1863,10 @@ public abstract class BaseParserListener<
 
 	// Resolved as variable
 	@Override
-	public final void onVariableReference(Context context, long name) {
+	public final void onVariableReference(int leafContext, long name) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		final VariableReferenceSetter<VARIABLE_REFERENCE> variableReferenceSetter = get();
@@ -1658,7 +1887,9 @@ public abstract class BaseParserListener<
 	// Field access
 
 	@Override
-	public final void onPrimaryStart(Context context) {
+	public final void onPrimaryStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1670,7 +1901,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onArrayAccessStart(Context context) {
+	public final void onArrayAccessStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1680,7 +1913,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onArrayIndexStart(Context context) {
+	public final void onArrayIndexStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1690,8 +1925,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onArrayIndexEnd(Context context) {
+	public final void onArrayIndexEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
@@ -1704,7 +1941,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onArrayAccessEnd(Context context) {
+	public final void onArrayAccessEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -1723,8 +1962,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName,
-			ReferenceType referenceType, long fieldName, Context fieldNameContext) {
+	public final void onFieldAccess(int leafContext, FieldAccessType fieldAccessType, ScopedName typeName,
+			ReferenceType referenceType, long fieldName, int fieldNameContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1742,7 +1983,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onCastExpressionStart(Context context) {
+	public final void onCastExpressionStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1752,8 +1995,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onCastExpressionEnd(Context context) {
+	public final void onCastExpressionEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackCastExpression<EXPRESSION, VARIABLE_REFERENCE, PRIMARY, TYPE_REFERENCE> stackCastExpression = pop();
@@ -1771,8 +2016,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onThisPrimary(Context context) {
+	public final void onThisPrimary(int leafContext) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		final StackPrimaryList<PRIMARY, VARIABLE_REFERENCE, NESTED_EXPRESSION> stackPrimaryList = get();
@@ -1789,8 +2036,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onPrimaryEnd(Context context) {
+	public final void onPrimaryEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackPrimaryList<PRIMARY, VARIABLE_REFERENCE, NESTED_EXPRESSION> stackPrimary = pop();
@@ -1805,8 +2054,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConditionalExpressionStart(Context context) {
+	public final void onConditionalExpressionStart(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		push(new StackConditionalExpression<>(logger));
@@ -1815,7 +2066,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConditionalExpressionPart1Start(Context context) {
+	public final void onConditionalExpressionPart1Start(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1825,7 +2078,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConditionalExpressionPart1End(Context context) {
+	public final void onConditionalExpressionPart1End(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -1839,8 +2094,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConditionalExpressionPart2Start(Context context) {
+	public final void onConditionalExpressionPart2Start(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		push(new StackExpressionList<>(logger));
@@ -1849,7 +2106,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConditionalExpressionPart2End(Context context) {
+	public final void onConditionalExpressionPart2End(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -1863,7 +2122,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConditionalExpressionPart3Start(Context context) {
+	public final void onConditionalExpressionPart3Start(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1873,7 +2134,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConditionalExpressionPart3End(Context context) {
+	public final void onConditionalExpressionPart3End(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -1887,8 +2150,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onConditionalExpressionEnd(Context context) {
+	public final void onConditionalExpressionEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackConditionalExpression<EXPRESSION> stackConditionalExpression = pop();
@@ -1908,8 +2173,10 @@ public abstract class BaseParserListener<
 	// Literals
 
 	@Override
-	public final void onIntegerLiteral(Context context, long value, Base base, boolean signed, int bits) {
+	public final void onIntegerLiteral(int leafContext, long value, Base base, boolean signed, int bits) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		final PrimarySetter<PRIMARY> primarySetter = get();
@@ -1920,7 +2187,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits) {
+	public final void onFloatingPointLiteral(int leafContext, BigDecimal value, Base base, int bits) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1932,7 +2201,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onBooleanLiteral(Context context, boolean value) {
+	public final void onBooleanLiteral(int leafContext, boolean value) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1944,7 +2215,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onCharacterLiteral(Context context, char value) {
+	public final void onCharacterLiteral(int leafContext, char value) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1956,8 +2229,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onStringLiteral(Context context, long value) {
+	public final void onStringLiteral(int leafContext, long value) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		final PrimarySetter<PRIMARY> primarySetter = get();
@@ -1968,7 +2243,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onNullLiteral(Context context) {
+	public final void onNullLiteral(int leafContext) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -1980,7 +2257,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onClassInstanceCreationExpressionStart(Context context) {
+	public final void onClassInstanceCreationExpressionStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -1990,8 +2269,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onClassInstanceCreationTypeAndConstructorName(Context context, ScopedName name) {
+	public final void onClassInstanceCreationTypeAndConstructorName(int otherContext, ScopedName name) {
 
+	    final Context context = getOtherContext(otherContext);
+	    
 		logEnter(context);
 
 		final StackClassInstanceCreationExpression<TYPE_REFERENCE, CONSTRUCTOR_NAME, EXPRESSION, CLASS_METHOD_MEMBER> stackClassInstanceCreationExpression = get();
@@ -2003,8 +2284,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onClassInstanceCreationExpressionEnd(Context context) {
+	public final void onClassInstanceCreationExpressionEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackClassInstanceCreationExpression<TYPE_REFERENCE, CONSTRUCTOR_NAME, EXPRESSION, CLASS_METHOD_MEMBER> classInstanceCreationExpression = pop();
@@ -2026,20 +2309,25 @@ public abstract class BaseParserListener<
 
 	@Override
 	public final void onMethodInvocationStart(
-			Context context,
+			int startContext,
 			MethodInvocationType type,
 			ScopedName classTypeName,
-			Context classTypeNameContext,
+			int classTypeNameContext,
 			ReferenceType referenceType,
 			long methodName,
-			Context methodNameContext) {
+			int methodNameContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
 		TYPE_REFERENCE classType = null;
 		
 		if (classTypeName != null && referenceType == ReferenceType.NAME) {
-			classType = parseTreeFactory.createResolveLaterTypeReference(classTypeNameContext, classTypeName, referenceType);
+			classType = parseTreeFactory.createResolveLaterTypeReference(
+			        getOtherContext(classTypeNameContext),
+			        classTypeName,
+			        referenceType);
 			
 			if (variableScopesContain(classTypeName.getName())) {
 				// Likely a scoped variable, eg. variable.invokeMethod() instead
@@ -2052,14 +2340,21 @@ public abstract class BaseParserListener<
 			}
 		}
 
-		push(new StackMethodInvocation<>(logger, type, classType, stringSource.asString(methodName), methodNameContext));
+		push(new StackMethodInvocation<>(
+		        logger,
+		        type,
+		        classType,
+		        stringSource.asString(methodName),
+		        getOtherContext(methodNameContext)));
 
 		logExit(context);
 	}
 
 	@Override
-	public final void onParametersStart(Context context) {
+	public final void onParametersStart(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		push(new StackParameterList<>(logger));
@@ -2068,7 +2363,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onParameterStart(Context context) {
+	public final void onParameterStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2078,7 +2375,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onParameterEnd(Context context) {
+	public final void onParameterEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2092,7 +2391,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onParametersEnd(Context context) {
+	public final void onParametersEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2106,8 +2407,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMethodInvocationEnd(Context context) {
+	public final void onMethodInvocationEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackMethodInvocation<EXPRESSION, PRIMARY, TYPE_REFERENCE> stackMethodInvocation = pop();
@@ -2131,7 +2434,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onArrayCreationExpressionStart(Context context, ScopedName typeName, ReferenceType referenceType, int numDims) {
+	public final void onArrayCreationExpressionStart(int startContext, ScopedName typeName, ReferenceType referenceType, int numDims) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2143,7 +2448,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onDimExpressionStart(Context context) {
+	public final void onDimExpressionStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2153,8 +2460,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onDimExpressionEnd(Context context) {
+	public final void onDimExpressionEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
@@ -2167,7 +2476,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onArrayCreationExpressionEnd(Context context) {
+	public final void onArrayCreationExpressionEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2188,8 +2499,10 @@ public abstract class BaseParserListener<
 
 	// Class expressions
 	@Override
-	public final void onClassExpression(Context context, long className, int numArrayDims) {
+	public final void onClassExpression(int leafContext, long className, int numArrayDims) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		final CLASS_EXPRESSION expression = parseTreeFactory.createClassExpression(context, stringSource.asString(className), numArrayDims);
@@ -2203,7 +2516,9 @@ public abstract class BaseParserListener<
 
 	// Lambda expressions
 	@Override
-	public final void onLambdaExpressionStart(Context context) {
+	public final void onLambdaExpressionStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2215,19 +2530,23 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onSingleLambdaParameter(Context context, long varName, Context varNameContext) {
+	public final void onSingleLambdaParameter(int leafContext, long varName) {
 
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		final StackLambdaExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackLambdaExpression = get();
 
-		stackLambdaExpression.setSingleParameter(stringSource.asString(varName), varNameContext);
+		stackLambdaExpression.setSingleParameter(stringSource.asString(varName), context);
 
 		logExit(context);
 	}
 
 	@Override
-	public final void onFormalLambdaParameterListStart(Context context) {
+	public final void onFormalLambdaParameterListStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2237,7 +2556,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onFormalLambdaParameterListEnd(Context context) {
+	public final void onFormalLambdaParameterListEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2247,35 +2568,43 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onInferredLambdaParameterList(Context context, List<String> varNames, Context varNamesContext) {
+	public final void onInferredLambdaParameterList(int otherContext, List<String> varNames, int varNamesContext) {
 
+	    final Context context = getOtherContext(otherContext);
+	    
 		logEnter(context);
 
 		final StackLambdaExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackLambdaExpression = get();
 
-		stackLambdaExpression.setInferredParameterList(varNames, varNamesContext);
+		stackLambdaExpression.setInferredParameterList(varNames, getOtherContext(varNamesContext));
 
 		logExit(context);
 	}
 
 	@Override
-	public final void onLambdaBodyStart(Context context) {
+	public final void onLambdaBodyStart(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		logExit(context);
 	}
 
 	@Override
-	public final void onLambdaBodyEnd(Context context) {
+	public final void onLambdaBodyEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		logExit(context);
 	}
 
 	@Override
-	public final void onLambdaExpressionEnd(Context context) {
+	public final void onLambdaExpressionEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2315,7 +2644,9 @@ public abstract class BaseParserListener<
 	// Statements
 
 	@Override
-	public final void onMutabilityVariableModifier(Context context, ASTMutability mutability) {
+	public final void onMutabilityVariableModifier(int leafContext, ASTMutability mutability) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -2338,7 +2669,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public void onVariableDeclarationStatementStart(Context context) {
+	public void onVariableDeclarationStatementStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2348,7 +2681,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public void onVariableDeclarationStatementEnd(Context context) {
+	public void onVariableDeclarationStatementEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2384,7 +2719,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public void onVariableDeclaratorStart(Context context) {
+	public void onVariableDeclaratorStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2394,7 +2731,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public void onVariableDeclaratorEnd(Context context) {
+	public void onVariableDeclaratorEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2418,7 +2757,9 @@ public abstract class BaseParserListener<
 	}
 
     @Override
-    public final void onNonScopedTypeReference(Context context, long name, ReferenceType referenceType) {
+    public final void onNonScopedTypeReference(int leafContext, long name, ReferenceType referenceType) {
+        
+        final Context context = getLeafContext(leafContext);
 
         logEnter(context);
 
@@ -2449,7 +2790,9 @@ public abstract class BaseParserListener<
     }
 	
 	@Override
-	public final void onScopedTypeReferenceStart(Context context, ReferenceType referenceType) {
+	public final void onScopedTypeReferenceStart(int startContext, ReferenceType referenceType) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 		
@@ -2461,7 +2804,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-    public void onScopedTypeReferencePart(Context context, long part) {
+    public void onScopedTypeReferencePart(int leafContext, long part) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 	    logEnter(context);
 
@@ -2473,7 +2818,9 @@ public abstract class BaseParserListener<
     }
 
     @Override
-    public void onScopedTypeReferenceEnd(Context context) {
+    public void onScopedTypeReferenceEnd(int startContext, Context endContext) {
+        
+        final Context context = getEndContext(startContext, endContext);
 
         logEnter(context);
         
@@ -2494,8 +2841,10 @@ public abstract class BaseParserListener<
     }
 
     @Override
-	public final void onExpressionStatementStart(Context context) {
+	public final void onExpressionStatementStart(int startContext) {
 
+        final Context context = getStartContext(startContext);
+        
 		logEnter(context);
 
 		push(new StackExpressionStatement<>(logger));
@@ -2504,7 +2853,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onExpressionStatementEnd(Context context) {
+	public final void onExpressionStatementEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2520,17 +2871,21 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onForStatementStart(Context context, long keyword, Context keywordContext) {
+	public final void onForStatementStart(int startContext, long keyword, int keywordContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
-		push(new StackForStatement<>(logger, stringSource.asString(keyword), keywordContext));
+		push(new StackForStatement<>(logger, stringSource.asString(keyword), getOtherContext(keywordContext)));
 
 		logExit(context);
 	}
 
 	@Override
-	public final void onForInitStart(Context context) {
+	public final void onForInitStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2540,7 +2895,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onForInitEnd(Context context) {
+	public final void onForInitEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2569,7 +2926,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onForUpdateStart(Context context) {
+	public final void onForUpdateStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2579,7 +2938,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onForUpdateEnd(Context context) {
+	public final void onForUpdateEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2595,7 +2956,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onForStatementEnd(Context context) {
+	public final void onForStatementEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2617,7 +2980,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onIteratorForStatementStart(Context context) {
+	public final void onIteratorForStatementStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2629,8 +2994,20 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onIteratorForTestEnd(Context context) {
+    public void onIteratorForTestStart(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
+	    logEnter(context);
+	    
+	    logExit(context);
+    }
+
+    @Override
+	public final void onIteratorForTestEnd(int startContext, Context endContext) {
+
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		final StackIteratorForStatement<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE, EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackIteratorForStatement = get();
@@ -2645,8 +3022,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onIteratorForStatementEnd(Context context) {
+	public final void onIteratorForStatementEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		popVariableScope();
@@ -2671,9 +3050,11 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onWhileStatementStart(Context context) {
+	public final void onWhileStatementStart(int startContext) {
 
-		logEnter(context);
+	    final Context context = getStartContext(startContext);
+		
+	    logEnter(context);
 
 		push(new StackWhileStatement<>(logger));
 
@@ -2681,7 +3062,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onWhileStatementEnd(Context context) {
+	public final void onWhileStatementEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2700,7 +3083,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onDoWhileStatementStart(Context context) {
+	public final void onDoWhileStatementStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2710,7 +3095,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onDoWhileStatementEnd(Context context) {
+	public final void onDoWhileStatementEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2729,8 +3116,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onTryWithResourcesStatementStart(Context context) {
+	public final void onTryWithResourcesStatementStart(int startContext) {
 
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		push(new StackTryWithResourcesStatement<>(logger));
@@ -2741,7 +3130,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onTryWithResourcesSpecificationStart(Context context) {
+	public final void onTryWithResourcesSpecificationStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2751,7 +3142,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onResourceStart(Context context) {
+	public final void onResourceStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2761,7 +3154,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onVariableName(Context context, long name, int numDims) {
+	public final void onVariableName(int leafContext, long name, int numDims) {
+	    
+	    final Context context = getLeafContext(leafContext);
 
 		logEnter(context);
 
@@ -2773,7 +3168,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onResourceEnd(Context context) {
+	public final void onResourceEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2805,7 +3202,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onTryWithResourcesSpecificationEnd(Context context) {
+	public final void onTryWithResourcesSpecificationEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2822,7 +3221,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onTryStatementStart(Context context) {
+	public final void onTryStatementStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2834,7 +3235,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onTryBlockEnd(Context context) {
+	public final void onTryBlockEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2848,7 +3251,9 @@ public abstract class BaseParserListener<
 	}
 	
 	@Override
-	public final void onCatchStart(Context context) {
+	public final void onCatchStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2858,7 +3263,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onCatchEnd(Context context) {
+	public final void onCatchEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2878,7 +3285,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onFinallyStart(Context context) {
+	public final void onFinallyStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2888,7 +3297,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onFinallyEnd(Context context) {
+	public final void onFinallyEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2902,7 +3313,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onTryStatementEnd(Context context) {
+	public final void onTryStatementEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2922,7 +3335,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onTryWithResourcesEnd(Context context) {
+	public final void onTryWithResourcesEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2945,7 +3360,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onReturnStatementStart(Context context) {
+	public final void onReturnStatementStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2955,7 +3372,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onReturnStatementEnd(Context context) {
+	public final void onReturnStatementEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2973,7 +3392,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onThrowStatementStart(Context context) {
+	public final void onThrowStatementStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -2983,7 +3404,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onThrowStatementEnd(Context context) {
+	public final void onThrowStatementEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -2999,7 +3422,9 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onAnnotationStart(Context context) {
+	public final void onAnnotationStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
@@ -3009,8 +3434,10 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onAnnotationEnd(Context context) {
+	public final void onAnnotationEnd(int startContext, Context endContext) {
 
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 
 		pop();

@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.parser.listener.stackbased;
 
+import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackConstantSwitchLabel;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackElseBlock;
@@ -268,17 +269,31 @@ public abstract class BaseIterativeParserListener<
 		> 
 	implements IterativeParserListener<COMPILATION_UNIT> {
 	
-	protected BaseIterativeParserListener(StringSource stringSource, ParseLogger logger, @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
-		super(stringSource, logger, parseTreeFactory);
+	protected BaseIterativeParserListener(
+	        StringSource stringSource,
+            ContextAccess contextAccess,
+	        ParseLogger logger,
+	        @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+		super(stringSource, contextAccess, logger, parseTreeFactory);
 	}
 
 	@Override
-	public final void onIfStatementStart(Context context, long ifKeyword, Context ifKeywordContext) {
+	public final void onIfStatementStart(int startContext, long ifKeyword, int ifKeywordContext) {
 		
+	    final Context context = getStartContext(startContext);
+	    
+	    logEnter(context);
+	    
 		push(new StackIfElseIfElse<>(getLogger()));
-		push(new StackIfConditionBlock<>(getLogger(), context, stringSource.asString(ifKeyword), ifKeywordContext));
+		push(new StackIfConditionBlock<>(
+		        getLogger(),
+		        context,
+		        stringSource.asString(ifKeyword),
+		        getOtherContext(ifKeywordContext)));
 		
 		pushVariableScope();
+		
+		logExit(context);
 	}
 	
 	private void popAndAddIfConditionBlock(Context context) {
@@ -315,10 +330,22 @@ public abstract class BaseIterativeParserListener<
 	        ifElseIfElse.add(conditionBlock);
 	    }
 
-	// End of initial if-statement and block
 	@Override
-	public final void onIfStatementInitialBlockEnd(Context context) {
+    public void onIfStatementInitialBlockStart(int ifStatementInitialBlockStartContext) {
 
+        final Context context = getStartContext(ifStatementInitialBlockStartContext);
+
+        logEnter(context);
+
+        logExit(context);
+    }
+
+    // End of initial if-statement and block
+	@Override
+	public final void onIfStatementInitialBlockEnd(int startContext, Context endContext) {
+
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 		
 		popAndAddIfConditionBlock(context);
@@ -329,11 +356,17 @@ public abstract class BaseIterativeParserListener<
 	}
 
 	@Override
-	public final void onElseIfStatementStart(Context context, long elseIfKeyword, Context elseIfKeywordContext) {
+	public final void onElseIfStatementStart(int startContext, long elseIfKeyword, int elseIfKeywordContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 		
-		push(new StackElseIfConditionBlock<>(getLogger(), context, stringSource.asString(elseIfKeyword), elseIfKeywordContext));
+		push(new StackElseIfConditionBlock<>(
+		        getLogger(),
+		        context,
+		        stringSource.asString(elseIfKeyword),
+		        getOtherContext(elseIfKeywordContext)));
 		
 		pushVariableScope();
 		
@@ -341,7 +374,9 @@ public abstract class BaseIterativeParserListener<
 	}
 	
 	@Override
-	public final void onElseIfStatementEnd(Context context) {
+	public final void onElseIfStatementEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 
@@ -360,11 +395,13 @@ public abstract class BaseIterativeParserListener<
 	*/
 
 	@Override
-	public final void onElseStatementStart(Context context, long keyword, Context keywordContext) {
+	public final void onElseStatementStart(int startContext, long keyword, int keywordContext) {
 		
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 		
-		push(new StackElseBlock<>(getLogger(), stringSource.asString(keyword), keywordContext));
+		push(new StackElseBlock<>(getLogger(), stringSource.asString(keyword), getOtherContext(keywordContext)));
 		
 		pushVariableScope();
 		
@@ -372,7 +409,9 @@ public abstract class BaseIterativeParserListener<
 	}
 	
 	@Override
-	public final void onElseStatementEnd(Context context) {
+	public final void onElseStatementEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 
 		logEnter(context);
 		
@@ -393,8 +432,10 @@ public abstract class BaseIterativeParserListener<
 
 	// Called after last part of statement (ie end if in if-else if-else-end if)
 	@Override
-	public final void onEndIfStatement(Context context) {
+	public final void onEndIfStatement(int startContext, Context endContext) {
 		
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 		
 		final StackIfElseIfElse<KEYWORD, CONDITION_BLOCK, BLOCK> ifElseIfElse = pop();
@@ -413,26 +454,32 @@ public abstract class BaseIterativeParserListener<
 	}
 
 	@Override
-	public final void onSwitchStatementStart(Context context, String keyword, Context keywordContext) {
+	public final void onSwitchStatementStart(int startContext, long keyword, int keywordContext) {
+	    
+	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 		
-		push(new StackSwitchCase<>(getLogger(), keyword, keywordContext));
+		push(new StackSwitchCase<>(getLogger(), stringSource.asString(keyword), getOtherContext(keywordContext)));
 
 		logExit(context);
 	}
 
 	@Override
-	public final void onJavaSwitchBlockStart(Context context) {
+	public final void onJavaSwitchBlockStart(int startContext) {
 		
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 		
 		logExit(context);
 	}
 	
 	@Override
-	public final void onJavaSwitchBlockStatementGroupStart(Context context) {
+	public final void onJavaSwitchBlockStatementGroupStart(int startContext) {
 		
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 		
 		push(new StackSwitchCaseGroup<>(getLogger()));
@@ -441,7 +488,9 @@ public abstract class BaseIterativeParserListener<
 	}
 
 	@Override
-	public final void onSwitchLabelsStart(Context context) {
+	public final void onSwitchLabelsStart(int startContext) {
+	    
+	    final Context context = getStartContext(startContext);
 		
 		logEnter(context);
 
@@ -449,7 +498,9 @@ public abstract class BaseIterativeParserListener<
 	}
 	
 	@Override
-	public final void onSwitchLabelsEnd(Context context) {
+	public final void onSwitchLabelsEnd(int startContext, Context endContext) {
+
+	    final Context context = getEndContext(startContext, endContext);
 		
 		logEnter(context);
 
@@ -457,7 +508,9 @@ public abstract class BaseIterativeParserListener<
 	}
 
 	@Override
-	public final void onJavaSwitchBlockStatementGroupEnd(Context context) {
+	public final void onJavaSwitchBlockStatementGroupEnd(int startContext, Context endContext) {
+	    
+	    final Context context = getEndContext(startContext, endContext);
 		
 		logEnter(context);
 		
@@ -476,18 +529,22 @@ public abstract class BaseIterativeParserListener<
 	}
 
 	@Override
-	public final void onConstantSwitchLabelStart(Context context, String keyword, Context keywordContext) {
+	public final void onConstantSwitchLabelStart(int startContext, long keyword, int keywordContext) {
 		
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 		
-		push(new StackConstantSwitchLabel<>(getLogger(), keyword, keywordContext));
+		push(new StackConstantSwitchLabel<>(getLogger(), stringSource.asString(keyword), getOtherContext(keywordContext)));
 		
 		logExit(context);
 	}
 	
 	@Override
-	public final void onConstantSwitchLabelEnd(Context context) {
+	public final void onConstantSwitchLabelEnd(int startContext, Context endContext) {
 		
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 		
 		final StackConstantSwitchLabel<EXPRESSION, VARIABLE_REFERENCE, PRIMARY> stackLabel = pop();
@@ -506,18 +563,20 @@ public abstract class BaseIterativeParserListener<
 	
 	@Override
 	public final void onEnumSwitchLabel(
-			Context context,
-			String keyword, Context keywordContext,
-			String constantName, Context constantNameContext) {
+			int startContext,
+			long keyword, int keywordContext,
+			long constantName, int constantNameContext) {
 		
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 		
-		final KEYWORD k = parseTreeFactory.createKeyword(keywordContext, keyword);
+		final KEYWORD k = parseTreeFactory.createKeyword(getOtherContext(keywordContext), stringSource.asString(keyword));
 		
 		final ENUM_SWITCH_CASE_LABEL switchCaseLabel = parseTreeFactory.createEnumSwitchCaseLabel(
 				context,
 				k,
-				parseTreeFactory.createEnumConstant(constantNameContext, constantName));
+				parseTreeFactory.createEnumConstant(getOtherContext(constantNameContext), stringSource.asString(constantName)));
 		
 		final StackSwitchCaseGroup<SWITCH_CASE_LABEL, STATEMENT> stackSwitchCaseGroup = get();
 		
@@ -527,13 +586,15 @@ public abstract class BaseIterativeParserListener<
 	}
 	
 	@Override
-	public final void onDefaultSwitchLabel(Context context, String keyword, Context keywordContext) {
+	public final void onDefaultSwitchLabel(int leafContext, long keyword) {
 		
+	    final Context context = getLeafContext(leafContext);
+	    
 		logEnter(context);
 
 		final StackSwitchCaseGroup<SWITCH_CASE_LABEL, STATEMENT> stackSwitchCaseGroup = get();
 		
-		final KEYWORD k = parseTreeFactory.createKeyword(keywordContext, keyword);
+		final KEYWORD k = parseTreeFactory.createKeyword(context, stringSource.asString(keyword));
 		
 		stackSwitchCaseGroup.addLabel(parseTreeFactory.createDefaultSwitchCaseLabel(context, k));
 		
@@ -541,16 +602,20 @@ public abstract class BaseIterativeParserListener<
 	}
 	
 	@Override
-	public final void onJavaSwitchBlockEnd(Context context) {
+	public final void onJavaSwitchBlockEnd(int startContext, Context endContext) {
 		
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 		
 		logExit(context);
 	}
 	
 	@Override
-	public final void onSwitchStatementEnd(Context context) {
+	public final void onSwitchStatementEnd(int startContext, Context endContext) {
 		
+	    final Context context = getEndContext(startContext, endContext);
+	    
 		logEnter(context);
 		
 		final StackSwitchCase<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, SWITCH_CASE_GROUP> stackSwitchCase = pop();
@@ -571,13 +636,20 @@ public abstract class BaseIterativeParserListener<
 	}
 	
 	@Override
-	public final void onBreakStatement(Context context, String keyword, Context keywordContext, String label) {
+	public final void onBreakStatement(int startContext, long keyword, int keywordContext, long label, int labelContext, Context endContext) {
 		
+	    final Context context = getStartContext(startContext);
+	    
 		logEnter(context);
 
 		final StatementSetter<STATEMENT> statementSetter = get();
 		
-		statementSetter.addStatement(parseTreeFactory.createBreakStatement(context, parseTreeFactory.createKeyword(keywordContext, keyword), label));
+		final KEYWORD keywordObject = parseTreeFactory.createKeyword(getOtherContext(keywordContext), stringSource.asString(keyword));
+		
+		final STATEMENT breakStatement
+		    = parseTreeFactory.createBreakStatement(context, keywordObject, stringSource.asString(label));
+		
+		statementSetter.addStatement(breakStatement);
 		
 		logExit(context);
 	}
