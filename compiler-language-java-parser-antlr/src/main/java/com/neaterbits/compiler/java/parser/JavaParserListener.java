@@ -1187,8 +1187,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		        context);
 	}
 	
-	public void onWhileStatementStart(Context context) {
-		delegate.onWhileStatementStart(writeStartContext(context));
+	public void onWhileStatementStart(Context context, long whileKeyword, Context whileKeywordContext) {
+		delegate.onWhileStatementStart(writeStartContext(context), whileKeyword, writeOtherContext(whileKeywordContext));
 	}
 	
 	public void onWhileStatementEnd(Context context) {

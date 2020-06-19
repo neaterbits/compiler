@@ -917,6 +917,7 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             JavaToken.CHAR,
 
             JavaToken.IF,
+            JavaToken.WHILE,
 
             JavaToken.IDENTIFIER,
             
@@ -1017,7 +1018,20 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             }
         }
     }
-    
+
+    private void parseWhile(long whileKeyword, int whileKeywordContext) throws IOException, ParserException {
+        
+        final int whileStartContext = writeContext(whileKeywordContext);
+        
+        listener.onWhileStatementStart(whileStartContext, whileKeyword, whileKeywordContext);
+        
+        parseConditionInParenthesis();
+        
+        parseStatementOrBlock();
+        
+        listener.onWhileStatementEnd(whileStartContext, getLexerContext());
+    }
+
     private void parseStatementOrBlock() throws ParserException, IOException {
 
         final JavaToken optionalLBrace = lexer.lexSkipWS(JavaToken.LBRACE);
@@ -1204,10 +1218,18 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         
         case IF: {
             final int ifKeywordContext = writeCurContext();
+            
             parseIfElseIfElse(getStringRef(), ifKeywordContext);
             break;
         }
         
+        case WHILE: {
+            final int whileKeywordContext = writeCurContext(); 
+        
+            parseWhile(getStringRef(), whileKeywordContext);
+            break;
+        }
+
         case SEMI:
             // Only ';'
             break;

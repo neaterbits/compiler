@@ -1307,11 +1307,11 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onWhileStatementStart(int whileStatementStartContext) {
+    public final void onWhileStatementStart(int whileStatementStartContext, long whileKeyword, int whileKeywordContext) {
         
         writeStartElementContextRef(whileStatementStartContext);
-
-        throw new UnsupportedOperationException();
+        
+        AST.encodeWhileStatementStart(astBuffer, whileKeyword, whileKeywordContext);
     }
 
     @Override
@@ -1319,7 +1319,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeEndElementContext(whieStatementStartContext, endContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeWhileStatementEnd(astBuffer);
     }
 
     @Override

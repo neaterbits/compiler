@@ -20,6 +20,7 @@ import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
+import com.neaterbits.compiler.ast.objects.statement.WhileStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
@@ -950,6 +951,33 @@ public abstract class BaseJavaParserTest {
         assertThat(ifStatement.getElseBlock()).isNull();
     }
 
+    @Test
+    public void testWhileStatement() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a; while (a == 1) { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+
+        checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", "a");
+
+        final WhileStatement whileStatement = (WhileStatement)method.getBlock().getStatements().get(1);
+        assertThat(whileStatement.getCondition()).isNotNull();
+        
+        checkVarLiteralCondition((ExpressionList)whileStatement.getCondition(), Relational.EQUALS);
+        
+        assertThat(whileStatement.getBlock()).isNotNull();
+        assertThat(whileStatement.getBlock().getStatements().isEmpty()).isTrue();
+    }
+
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
         
         final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
@@ -1017,11 +1045,16 @@ public abstract class BaseJavaParserTest {
 
     private void checkVarLiteralCondition(ConditionBlock conditionBlock, Relational operator) {
         final ExpressionList expressionList = (ExpressionList)conditionBlock.getCondition();
+
+        checkVarLiteralCondition(expressionList, operator);
+
+        assertThat(conditionBlock.getBlock().getStatements().isEmpty()).isTrue();
+    }
+
+    private void checkVarLiteralCondition(ExpressionList expressionList, Relational operator) {
         
         assertThat(expressionList.getExpressions().size()).isEqualTo(2);
         assertThat(expressionList.getOperators().size()).isEqualTo(1);
         assertThat(expressionList.getOperators().get(0)).isEqualTo(operator);
-        
-        assertThat(conditionBlock.getBlock().getStatements().isEmpty()).isTrue();
     }
 }

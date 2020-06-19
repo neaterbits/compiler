@@ -836,11 +836,11 @@ enumConstantName
 	;
 
 whileStatement
-	:	'while' '(' expression ')' statement
+	:	keyword = 'while' '(' expression ')' statement
 	;
 
 whileStatementNoShortIf
-	:	'while' '(' expression ')' statementNoShortIf
+	:	keyword = 'while' '(' expression ')' statementNoShortIf
 	;
 
 doStatement

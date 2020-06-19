@@ -3050,7 +3050,7 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onWhileStatementStart(int startContext) {
+	public final void onWhileStatementStart(int startContext, long whileKeyword, int whileKeywordContext) {
 
 	    final Context context = getStartContext(startContext);
 		

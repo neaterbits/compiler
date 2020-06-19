@@ -236,7 +236,6 @@ public final class EncodedCompilationUnit {
         do {
             astBuffer.getParseTreeElement(parseTreeRef, ref);
             
-            
             switch (ref.element) {
             
             case COMPILATION_UNIT: {
@@ -607,6 +606,18 @@ public final class EncodedCompilationUnit {
                 }
                 else {
                     throw new IllegalStateException();
+                }
+                break;
+            }
+            
+            case WHILE_STATEMENT: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeWhileStatementStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeWhileStatementEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
             }

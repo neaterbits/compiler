@@ -1744,7 +1744,13 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterWhileStatement(WhileStatementContext ctx) {
-		delegate.onWhileStatementStart(context(ctx));
+	    
+	    final Context keywordContext = Antlr4.context(ctx, file);
+	    
+		delegate.onWhileStatementStart(
+		        context(ctx),
+		        stringRef(keywordContext),
+		        keywordContext);
 	}
 
 	@Override
@@ -1754,7 +1760,13 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterWhileStatementNoShortIf(WhileStatementNoShortIfContext ctx) {
-		delegate.onWhileStatementStart(context(ctx));
+        
+	    final Context keywordContext = Antlr4.context(ctx, file);
+
+        delegate.onWhileStatementStart(
+                context(ctx),
+                stringRef(keywordContext),
+                keywordContext);
 	}
 
 	@Override

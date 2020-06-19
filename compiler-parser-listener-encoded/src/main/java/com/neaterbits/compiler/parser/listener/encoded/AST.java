@@ -156,6 +156,10 @@ public class AST {
         case EXPRESSION_BINARY_OPERATOR:
             size = EXPRESSION_BINARY_OPERATOR_SIZE;
             break;
+            
+        case WHILE_STATEMENT:
+            size = WHILE_STATEMENT_SIZE;
+            break;
 
         default:
             size = 0; // ParseTreeElement
@@ -1216,5 +1220,52 @@ public class AST {
                 base,
                 signed,
                 bits);
+    }
+
+    private static final int WHILE_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeWhileStatementStart(StringASTBuffer astBuffer, long whileKeyword, int whileKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.WHILE_STATEMENT);
+        
+        astBuffer.writeStringRef(whileKeyword);
+        astBuffer.writeContextRef(whileKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeWhileStatementStart(
+            ASTBufferRead astBuffer,
+            int whileStatementStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int whileKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            whileKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            whileKeywordContext = ContextRef.NONE;
+        }
+
+        listener.onWhileStatementStart(
+                whileStatementStartContext,
+                astBuffer.getStringRef(index),
+                whileKeywordContext);
+    }
+
+    static void encodeWhileStatementEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.WHILE_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeWhileStatementEnd(
+            ASTBufferRead astBuffer,
+            int whileStatementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onWhileStatementEnd(whileStatementStartContext, endContext);
     }
 }

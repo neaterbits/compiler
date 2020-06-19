@@ -334,7 +334,7 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onIteratorForStatementEnd(int startContext, Context endContext);
 	
-	void onWhileStatementStart(int startContext);
+	void onWhileStatementStart(int startContext, long whileKeyword, int whileKeywordContext);
 	
 	void onWhileStatementEnd(int startContext, Context endContext);
 	
