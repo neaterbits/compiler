@@ -919,6 +919,8 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             JavaToken.IF,
 
             JavaToken.IDENTIFIER,
+            
+            JavaToken.SEMI
     };
 
     private void parseMethodBodyAndRBrace() throws IOException, ParserException {
@@ -1205,7 +1207,11 @@ final class JavaLexerParser<COMPILATION_UNIT> {
             parseIfElseIfElse(getStringRef(), ifKeywordContext);
             break;
         }
-
+        
+        case SEMI:
+            // Only ';'
+            break;
+            
         default:
             foundStatement = false;
             break;

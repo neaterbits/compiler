@@ -843,6 +843,30 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testOneLineIfStatement() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a; if (a == 1) ; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+
+        checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", "a");
+
+        final IfElseIfElseStatement ifStatement = (IfElseIfElseStatement)method.getBlock().getStatements().get(1);
+        assertThat(ifStatement.getConditions().size()).isEqualTo(1);
+
+        checkVarLiteralCondition(ifStatement.getConditions().get(0), Relational.EQUALS);
+    }
+
+    @Test
     public void testIfElseStatement() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
