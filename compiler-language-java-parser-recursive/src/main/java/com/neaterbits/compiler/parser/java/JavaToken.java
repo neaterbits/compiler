@@ -15,7 +15,6 @@ public enum JavaToken implements IToken {
     EOF(TokenType.EOF),
 
     IF("if"),
-    ELSE_IF("else if"),
     ELSE("else"),
 
     FOR("for"),

@@ -322,8 +322,8 @@ public abstract class BaseIterativeParserListener<
 	        final ELSE_IF_CONDITION_BLOCK conditionBlock = parseTreeFactory.createElseIfConditionBlock(
 	                stackConditionBlock.getUpdatedContext(),
 	                parseTreeFactory.createKeyword(
-	                        stackConditionBlock.getElseIfKeywordContext(),
-	                        stackConditionBlock.getElseIfKeyword()),
+	                        stackConditionBlock.getElseKeywordContext(),
+	                        stackConditionBlock.getElseKeyword()),
 	                makeExpression(context, stackConditionBlock),
 	                parseTreeFactory.createBlock(context, stackConditionBlock.getStatements()));
 
@@ -356,7 +356,10 @@ public abstract class BaseIterativeParserListener<
 	}
 
 	@Override
-	public final void onElseIfStatementStart(int startContext, long elseIfKeyword, int elseIfKeywordContext) {
+	public final void onElseIfStatementStart(
+	        int startContext,
+	        long elseKeyword, int elseKeywordContext,
+	        long ifKeyword, int ifKeywordContext) {
 	    
 	    final Context context = getStartContext(startContext);
 
@@ -365,8 +368,10 @@ public abstract class BaseIterativeParserListener<
 		push(new StackElseIfConditionBlock<>(
 		        getLogger(),
 		        context,
-		        stringSource.asString(elseIfKeyword),
-		        getOtherContext(elseIfKeywordContext)));
+		        stringSource.asString(elseKeyword),
+		        getOtherContext(elseKeywordContext),
+		        stringSource.asString(ifKeyword),
+                getOtherContext(ifKeywordContext)));
 		
 		pushVariableScope();
 		

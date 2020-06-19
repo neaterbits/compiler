@@ -36,13 +36,19 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
     }
 
     @Override
-    public final void onElseIfStatementStart(int elseIfStatementStartContext, long elseIfKeyword, int elseIfKeywordContext) {
+    public final void onElseIfStatementStart(
+            int elseIfStatementStartContext,
+            long elseKeyword, int elseKeywordContext,
+            long ifKeyword, int ifKeywordContext) {
         
-        verifyNotSameContext(elseIfStatementStartContext, elseIfKeywordContext);
+        verifyNotSameContext(elseIfStatementStartContext, elseKeywordContext, ifKeywordContext);
         
         writeStartElementContextRef(elseIfStatementStartContext);
         
-        AST.encodeElseIfConditionBlockStart(astBuffer, elseIfKeyword, elseIfKeywordContext);
+        AST.encodeElseIfConditionBlockStart(
+                astBuffer,
+                elseKeyword, elseKeywordContext,
+                ifKeyword, ifKeywordContext);
     }
 
     @Override

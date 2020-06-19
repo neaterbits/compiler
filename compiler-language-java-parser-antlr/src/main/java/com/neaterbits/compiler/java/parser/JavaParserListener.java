@@ -1,8 +1,6 @@
 package com.neaterbits.compiler.java.parser;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 import org.antlr.v4.runtime.Token;
 
@@ -848,17 +846,16 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 			statementsStack.pop();
 
 			final Token elseToken = ifOrElseStatement.getKeywordToken(0);
-
-			final Context merged = Context.merge(
-                    Arrays.asList(
-                            Antlr4.context(elseToken, file),
-                            Antlr4.context(keywordToken, file)),
-                    Function.identity());
+			final Context elseContext = Antlr4.context(elseToken, file);
 			
+			final Context keywordContext = Antlr4.context(keywordToken, file);
+
 			delegate.onElseIfStatementStart(
 					writeStartContext(updateElseIfContext(context, elseToken, file)),
-					stringRef(merged),
-					writeOtherContext(merged));
+					stringRef(elseToken),
+					writeOtherContext(elseContext),
+					stringRef(keywordToken),
+					writeOtherContext(keywordContext));
 		}
 		else {
 			delegate.onIfStatementStart(
@@ -915,17 +912,15 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 			final Token elseToken = ifOrElseStatement.getKeywordToken(0);
 			
-			final Context merged = Context.merge(
-                    Arrays.asList(
-                            Antlr4.context(elseToken, file),
-                            Antlr4.context(ifKeyword, file)),
-                        Function.identity());
+			final Context elseContext = Antlr4.context(elseToken, file);
+			final Context ifKeywordContext = Antlr4.context(ifKeyword, file);
 			
 			delegate.onElseIfStatementStart(
 					writeStartContext(updateElseIfContext(context, elseToken, file)),
-					stringRef(merged),
-					writeOtherContext(merged)
-	        );
+					stringRef(elseContext),
+					writeOtherContext(elseContext),
+					stringRef(ifKeywordContext),
+					writeOtherContext(ifKeywordContext));
 		}
 		else {
 			delegate.onIfStatementStart(

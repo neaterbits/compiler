@@ -977,13 +977,22 @@ public class AST {
         listener.onIfStatementInitialBlockEnd(conditionBlockStartContext, endContext);
     }
 
-    private static final int ELSE_IF_CONDITION_BLOCK_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    private static final int ELSE_IF_CONDITION_BLOCK_SIZE
+        =    STRING_REF_SIZE + CONTEXT_REF_SIZE
+           + STRING_REF_SIZE + CONTEXT_REF_SIZE;
     
-    static void encodeElseIfConditionBlockStart(StringASTBuffer astBuffer, long elseIfKeyword, int elseIfKeywordContext) {
+    static void encodeElseIfConditionBlockStart(
+            StringASTBuffer astBuffer,
+            long elseKeyword, int elseKeywordContext,
+            long ifKeyword, int ifKeywordContext) {
         
         astBuffer.writeElementStart(ParseTreeElement.ELSE_IF_CONDITION_BLOCK);
-        astBuffer.writeStringRef(elseIfKeyword);
-        astBuffer.writeContextRef(elseIfKeywordContext);
+        
+        astBuffer.writeStringRef(elseKeyword);
+        astBuffer.writeContextRef(elseKeywordContext);
+        
+        astBuffer.writeStringRef(ifKeyword);
+        astBuffer.writeContextRef(ifKeywordContext);
     }
 
     public static <COMPILATION_UNIT> void decodeElseIfConditionBlockStart(
@@ -994,17 +1003,22 @@ public class AST {
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
         
-        final int elseIfKeywordContext;
+        final int elseKeywordContext;
+        final int ifKeywordContext;
 
         if (contextGetter != null) {
-            
-            elseIfKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+            elseKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+            ifKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE + STRING_REF_SIZE);
         }
         else {
-            elseIfKeywordContext = ContextRef.NONE;
+            elseKeywordContext = ContextRef.NONE;
+            ifKeywordContext = ContextRef.NONE;
         }
 
-        listener.onElseIfStatementStart(elseIfConditionBlockStartContext, astBuffer.getStringRef(index), elseIfKeywordContext);
+        listener.onElseIfStatementStart(
+                elseIfConditionBlockStartContext,
+                astBuffer.getStringRef(index), elseKeywordContext,
+                astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE), ifKeywordContext);
     }
 
     static void encodeElseIfConditionBlockEnd(StringASTBuffer astBuffer) {

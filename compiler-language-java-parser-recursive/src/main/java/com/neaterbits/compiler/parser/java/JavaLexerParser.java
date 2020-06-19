@@ -949,11 +949,6 @@ final class JavaLexerParser<COMPILATION_UNIT> {
         } while (!done);
     }
     
-    private static JavaToken [] ELSE_IF_OR_ELSE = new JavaToken [] {
-            JavaToken.ELSE_IF,
-            JavaToken.ELSE
-    };
-    
     private void parseIfElseIfElse(long ifKeyword, int ifKeywordContext) throws IOException, ParserException {
 
         final int ifStartContext = writeContext(ifKeywordContext);
@@ -969,26 +964,55 @@ final class JavaLexerParser<COMPILATION_UNIT> {
 
         listener.onIfStatementInitialBlockEnd(ifStartContext, getLexerContext());
         
-        final JavaToken elseIfOrElseToken = lexer.lexSkipWS(ELSE_IF_OR_ELSE);
-        switch (elseIfOrElseToken) {
-        case ELSE:
-            final int elseStatementStartContext = writeCurContext();
-            final int elseKeywordContext = writeCurContext();
+        for (;;) {
+            final JavaToken elseToken = lexer.lexSkipWS(JavaToken.ELSE);
             
-            final long elseKeyword = getStringRef();
-            
-            listener.onElseStatementStart(elseStatementStartContext, elseKeyword, elseKeywordContext);
-            
-            parseStatementOrBlock();
-            
-            listener.onElseStatementEnd(elseStatementStartContext, getLexerContext());
-            
-            listener.onEndIfStatement(ifStartContext, getLexerContext());
-            break;
-            
-        default:
-            listener.onEndIfStatement(ifStartContext, getLexerContext());
-            break;
+            if (elseToken == JavaToken.ELSE) {
+    
+                final long elseKeyword = getStringRef();
+    
+                final int elseStatementStartContext = writeCurContext();
+                final int elseKeywordContext = writeCurContext();
+                
+                // Is this an else-if?
+                final JavaToken ifToken = lexer.lexSkipWS(JavaToken.IF);
+                
+                if (ifToken == JavaToken.IF) {
+                    final int elseIfStatementStartContext = elseStatementStartContext;
+
+                    final int elseIfKeywordContext = writeCurContext();
+                    final long elseIfKeyword = getStringRef();
+    
+                    listener.onElseIfStatementStart(
+                            elseIfStatementStartContext,
+                            elseKeyword, elseKeywordContext,
+                            elseIfKeyword, elseIfKeywordContext);
+                    
+                    parseConditionInParenthesis();
+                 
+                    parseStatementOrBlock();
+                    
+                    listener.onElseIfStatementEnd(elseIfStatementStartContext, getLexerContext());
+                }
+                else {
+                    // This was an 'else', not an 'else if'
+                    listener.onElseStatementStart(elseStatementStartContext, elseKeyword, elseKeywordContext);
+                    
+                    parseStatementOrBlock();
+                    
+                    listener.onElseStatementEnd(elseStatementStartContext, getLexerContext());
+                    
+                    listener.onEndIfStatement(ifStartContext, getLexerContext());
+                    
+                    break; // last statement in 'if - else if - else' so break out
+                }
+            }
+            else {
+                // No 'else' keyword
+                listener.onEndIfStatement(ifStartContext, getLexerContext());
+                
+                break; // 'last statement in 'if - else' so break out
+            }
         }
     }
     

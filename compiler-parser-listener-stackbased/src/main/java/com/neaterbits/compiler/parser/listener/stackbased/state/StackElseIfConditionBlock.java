@@ -3,7 +3,7 @@ package com.neaterbits.compiler.parser.listener.stackbased.state;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public class StackElseIfConditionBlock<
+public final class StackElseIfConditionBlock<
             EXPRESSION,
             PRIMARY extends EXPRESSION,
             VARIABLE_REFERENCE extends PRIMARY,
@@ -11,26 +11,41 @@ public class StackElseIfConditionBlock<
         
         extends StackConditionBlock<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> {
 
-    private final String elseIfKeyword;
-    private final Context elseIfKeywordContext;
+    private final String elseKeyword;
+    private final Context elseKeywordContext;
+    private final String ifKeyword;
+    private final Context ifKeywordContext;
     
     public StackElseIfConditionBlock(
             ParseLogger parseLogger,
             Context updatedContext,
-            String elseIfKeyword,
-            Context elseIfKeywordContext) {
+            String elseKeyword,
+            Context elseKeywordContext,
+            String ifKeyword,
+            Context ifKeywordContext) {
         
         super(parseLogger, updatedContext);
         
-        this.elseIfKeyword = elseIfKeyword;
-        this.elseIfKeywordContext = elseIfKeywordContext;
+        this.elseKeyword = elseKeyword;
+        this.elseKeywordContext = elseKeywordContext;
+        
+        this.ifKeyword = ifKeyword;
+        this.ifKeywordContext = ifKeywordContext;
     }
 
-    public String getElseIfKeyword() {
-        return elseIfKeyword;
+    public String getElseKeyword() {
+        return elseKeyword;
     }
 
-    public Context getElseIfKeywordContext() {
-        return elseIfKeywordContext;
+    public Context getElseKeywordContext() {
+        return elseKeywordContext;
+    }
+
+    public String getIfKeyword() {
+        return ifKeyword;
+    }
+
+    public Context getIfKeywordContext() {
+        return ifKeywordContext;
     }
 }
