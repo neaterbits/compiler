@@ -897,7 +897,35 @@ public abstract class BaseJavaParserTest {
         assertThat(ifStatement.getElseBlock()).isNotNull();
         assertThat(ifStatement.getElseBlock().getStatements().isEmpty()).isTrue();
     }
-    
+
+    @Test
+    public void testIfElseIfWithoutElseStatement() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a; if (a == 1) { } else if (a == 2) { } else  if (a == 3) { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+
+        checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", "a");
+
+        final IfElseIfElseStatement ifStatement = (IfElseIfElseStatement)method.getBlock().getStatements().get(1);
+        assertThat(ifStatement.getConditions().size()).isEqualTo(3);
+        
+        checkVarLiteralCondition(ifStatement.getConditions().get(0), Relational.EQUALS);
+        checkVarLiteralCondition(ifStatement.getConditions().get(1), Relational.EQUALS);
+        checkVarLiteralCondition(ifStatement.getConditions().get(2), Relational.EQUALS);
+        
+        assertThat(ifStatement.getElseBlock()).isNull();
+    }
+
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
         
         final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
