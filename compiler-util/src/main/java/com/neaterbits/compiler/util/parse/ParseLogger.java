@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.Strings;
 
 public final class ParseLogger {
@@ -22,13 +23,17 @@ public final class ParseLogger {
 	
 	private final PrintStream out;
 	
+	private final FullContextProvider fullContextProvider;
+	
 	private final ArrayStack<String> loggerStack;
 
-	public ParseLogger(PrintStream out) {
+	public ParseLogger(PrintStream out, FullContextProvider fullContextProvider) {
 
 		Objects.requireNonNull(out);
+		Objects.requireNonNull(fullContextProvider);
 		
 		this.out = out;
+		this.fullContextProvider = fullContextProvider;
 
 		this.antlrRules = new ArrayList<>();
 		
@@ -88,7 +93,10 @@ public final class ParseLogger {
 		final PrintStream stream = indent().append("enter " + methodName);
 		
 		if (context != null) {
-		    stream.append(' ').append(context.getText());
+		    
+		    final String text = fullContextProvider.getText(context);
+		    
+		    stream.append(' ').append(text);
 		}
 		
 		stream.println();
@@ -98,7 +106,10 @@ public final class ParseLogger {
 		final PrintStream stream = indent().append("exit " + methodName);
 		
 		if (context != null) {
-		    stream.append(' ').append(context.getText());
+
+            final String text = fullContextProvider.getText(context);
+
+            stream.append(' ').append(text);
 		}
 		
 		stream.println();

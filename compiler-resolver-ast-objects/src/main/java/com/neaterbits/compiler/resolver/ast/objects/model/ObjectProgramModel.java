@@ -34,6 +34,7 @@ import com.neaterbits.compiler.resolver.util.SourceTokenUtil;
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
@@ -74,15 +75,24 @@ public class ObjectProgramModel
     
     private static final ObjectASTAccess AST_ACCESS = new ObjectASTAccess();
 
+    private final FullContextProvider fullContextProvider;
 	private final FieldModifiers dataFieldDefaultModifiers;
-	
+
 	public ObjectProgramModel() {
-		this(Collections.emptyList(), new FieldModifiers(false, Visibility.NAMESPACE, Mutability.MUTABLE, false, false));
+	    this(null);
 	}
 
-	public ObjectProgramModel(List<TypeImport> implicitImports, FieldModifiers dataFieldDefaultModifiers) {
+	public ObjectProgramModel(FullContextProvider fullContextProvider) {
+		this(
+		        fullContextProvider,
+		        Collections.emptyList(),
+		        new FieldModifiers(false, Visibility.NAMESPACE, Mutability.MUTABLE, false, false));
+	}
+
+	public ObjectProgramModel(FullContextProvider fullContextProvider, List<TypeImport> implicitImports, FieldModifiers dataFieldDefaultModifiers) {
 		super(implicitImports);
 		
+		this.fullContextProvider = fullContextProvider;
 		this.dataFieldDefaultModifiers = dataFieldDefaultModifiers;
 	}
 
@@ -340,7 +350,10 @@ public class ObjectProgramModel
 
 	@Override
 	public String getTokenString(CompilationUnit sourceFile, int parseTreeTokenRef) {
-		return sourceFile.getElementFromParseTreeRef(parseTreeTokenRef).getContext().getText();
+		
+	    final Context context = sourceFile.getElementFromParseTreeRef(parseTreeTokenRef).getContext();
+		
+	    return fullContextProvider.getText(context);
 	}
 
 	@Override
@@ -350,7 +363,10 @@ public class ObjectProgramModel
 
 	@Override
 	public int getTokenLength(CompilationUnit sourceFile, int parseTreeTokenRef) {
-		return sourceFile.getElementFromParseTreeRef(parseTreeTokenRef).getContext().getLength();
+	    
+		final Context context = sourceFile.getElementFromParseTreeRef(parseTreeTokenRef).getContext();
+		
+		return fullContextProvider.getLength(context);
 	}
 
 	@Override
@@ -364,7 +380,10 @@ public class ObjectProgramModel
 			out.append(element.getClass().getSimpleName());
 			
 			if (element.getContext() != null) {
-				out.append(" \"").append(element.getContext().getText()).append("\"");
+			    
+			    final String text = fullContextProvider.getText(element.getContext());
+			    
+				out.append(" \"").append(text).append("\"");
 			}
 			out.println();
 		});

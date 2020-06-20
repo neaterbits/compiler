@@ -11,6 +11,7 @@ import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIter
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaTypes;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
+import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 import com.neaterbits.util.parse.ParserException;
@@ -22,7 +23,8 @@ public class TestJavaParserWithObjectParserListener extends BaseJavaParserTest {
 
         final InputStream inputStream = new ByteArrayInputStream(source.getBytes());
         
-        final ParseLogger logger = new ParseLogger(System.out);
+        final ParseLogger logger = new ParseLogger(System.out, CastFullContextProvider.INSTANCE);
+
         final ASTParseTreeFactory parseTreeFactory = new ASTParseTreeFactory(JavaTypes.getBuiltinTypes());
         
         final JavaParser<CompilationUnit> parser = new JavaParser<>(stringBuffers -> {

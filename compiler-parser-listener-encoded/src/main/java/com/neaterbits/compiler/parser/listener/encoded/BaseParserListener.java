@@ -7,6 +7,9 @@ import java.util.Map;
 
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FullContext;
+import com.neaterbits.compiler.util.FullContextProvider;
+import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.IntKeyIntValueHash;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
@@ -30,10 +33,10 @@ import com.neaterbits.util.io.strings.Tokenizer;
 
 abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<COMPILATION_UNIT> {
 
-    private final String file;
     final StringASTBuffer astBuffer;
 
     private final ASTBuffer contextBuffer;
+    private final FullContextProvider fullContextProvider;
     
     private final IntKeyIntValueHash parseTreeRefToStartContextHash;
     private final IntKeyIntValueHash parseTreeRefToEndContextHash;
@@ -41,9 +44,9 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     private final Map<TypeName, Integer> typeNameToIndex;
 
     protected abstract COMPILATION_UNIT makeCompilationUnit(
-            String file,
             ASTBufferRead astBuffer,
             ASTBufferRead contextBuffer,
+            FullContextProvider fullContextProvider,
             IntKeyIntValueHash parseTreeRefToStartContextHash,
             IntKeyIntValueHash parseTreeRefToEndContextHash,
             Map<TypeName, Integer> typeNameToIndex,
@@ -51,10 +54,22 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     
     BaseParserListener(String file, Tokenizer tokenizer) {
 
-        this.file = file;
         this.astBuffer = new StringASTBuffer(tokenizer);
 
         this.contextBuffer = new ASTBufferImpl();
+        
+        this.fullContextProvider = new FullContextProvider() {
+            
+            @Override
+            public FullContext makeFullContext(Context context) {
+                return new ImmutableContext(file, -1, -1, context.getStartOffset(), -1, -1, context.getEndOffset(), getText(context));
+            }
+
+            @Override
+            public String getText(Context context) {
+                return tokenizer.asStringFromOffset(context.getStartOffset(), context.getEndOffset());
+            }
+        };
         
         this.parseTreeRefToStartContextHash = new IntKeyIntValueHash(100);
         this.parseTreeRefToEndContextHash = new IntKeyIntValueHash(100);
@@ -125,9 +140,9 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         astBuffer.writeElementEnd(ParseTreeElement.COMPILATION_UNIT);
 
         return makeCompilationUnit(
-                file,
                 astBuffer.getASTReadBuffer(),
                 contextBuffer,
+                fullContextProvider,
                 parseTreeRefToStartContextHash,
                 parseTreeRefToEndContextHash,
                 typeNameToIndex,

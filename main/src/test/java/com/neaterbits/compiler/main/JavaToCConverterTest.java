@@ -40,7 +40,7 @@ import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass
 import com.neaterbits.compiler.resolver.passes.ResolvedTypeDependencies;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.modules.ModuleId;
@@ -173,7 +173,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		}
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				FullContext.makeTestContext(),
 				Collections.emptyList(),
 				compilationCode);
 

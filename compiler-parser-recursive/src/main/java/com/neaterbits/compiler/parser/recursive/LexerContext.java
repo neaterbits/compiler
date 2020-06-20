@@ -2,11 +2,11 @@ package com.neaterbits.compiler.parser.recursive;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
 
-final class LexerContext implements Context {
+final class LexerContext implements FullContext {
 
     private final String file;
     private final Lexer<?, ?> lexer;
@@ -40,7 +40,7 @@ final class LexerContext implements Context {
 
     @Override
     public int getStartOffset() {
-        return (int)lexer.getTokenStartPos();
+        return lexer.getTokenStartOffset();
     }
 
     @Override
@@ -55,7 +55,7 @@ final class LexerContext implements Context {
 
     @Override
     public int getEndOffset() {
-        return (int)lexer.getTokenStartPos() + lexer.getTokenLength();
+        return lexer.getTokenStartOffset() + lexer.getTokenLength();
     }
 
     @Override

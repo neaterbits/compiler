@@ -6,83 +6,56 @@ import java.util.function.Function;
 
 public interface Context {
 
-	public static Context makeTestContext() {
-		return new ImmutableContext("", 0, 0, 0, 0, 0, 0, "");
-	}
-
-	public static <T> Context merge(Collection<T> elements, Function<T, Context> getContext) {
-		
-		if (elements.size() <= 1) {
-			throw new IllegalArgumentException();
-		}
-		
-		Context lower = null;
-		Context upper = null;
-		
-		final StringBuilder sb = new StringBuilder();
-		
-		final Iterator<T> iter = elements.iterator();
-		
-		while (iter.hasNext()) {
-			final Context context = getContext.apply(iter.next());
-		
-			if (lower == null) {
-				lower = context;
-			}
-			else {
-				sb.append(' ');
-				
-				if (!lower.getFile().equals(context.getFile())) {
-					throw new IllegalArgumentException();
-				}
-			}
-			
-			upper = context;
-
-			if (context != null) {
-			    sb.append(context.getText());
-			}
-		}
-		
-		final Context result;
-		
-		if (lower != null && upper != null) {
-		    
-		    /* TODO add this back
-    		if (lower.getEndOffset() > upper.getStartOffset()) {
-    			throw new IllegalArgumentException();
-    		}
-    		*/
-    		
-    		result = new ImmutableContext(
-    				lower.getFile(),
-    				lower.getStartLine(), lower.getStartPosInLine(), lower.getStartOffset(), 
-    				upper.getEndLine(), upper.getEndPosInLine(), upper.getEndOffset(),
-    				sb.toString());
-		}
-		else {
-		    result = null;
-		}
-
-		return result;
-	}
-	
-	String getFile();
-	
-	int getStartLine();
-	
-	int getStartPosInLine();
-	
 	int getStartOffset();
-	
-	int getEndLine();
-	
-	int getEndPosInLine();
 	
 	int getEndOffset();
 	
-	int getLength();
-	
-	String getText();
+	default int getLength() {
+	    return getEndOffset() - getStartOffset() + 1;
+	}
+
+    public static <T> Context merge(Collection<T> elements, Function<T, Context> getContext) {
+        
+        if (elements.size() <= 1) {
+            throw new IllegalArgumentException();
+        }
+        
+        Context lower = null;
+        Context upper = null;
+        
+        final Iterator<T> iter = elements.iterator();
+        
+        while (iter.hasNext()) {
+            final Context context = getContext.apply(iter.next());
+        
+            if (lower == null) {
+                lower = context;
+            }
+            
+            upper = context;
+        }
+        
+        final Context result;
+        
+        if (lower != null && upper != null) {
+            
+            /* TODO add this back
+            if (lower.getEndOffset() > upper.getStartOffset()) {
+                throw new IllegalArgumentException();
+            }
+            
+            if (lower.getStartOffset() > upper.getStartOffset()) {
+                throw new IllegalArgumentException();
+            }
+            */
+            
+            result = new ContextImpl(lower.getStartOffset(), upper.getEndOffset());
+        }
+        else {
+            result = null;
+        }
+
+        return result;
+    }
 
 }

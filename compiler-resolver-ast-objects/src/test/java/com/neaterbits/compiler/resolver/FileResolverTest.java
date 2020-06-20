@@ -21,6 +21,7 @@ import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
@@ -53,7 +54,7 @@ public class FileResolverTest extends BaseResolveTest {
 		final ClassDefinition testClassDefinition = makeClassType(testClass);
 		
 		final CompilationUnit testCompilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				FullContext.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(testClassDefinition));
 		
@@ -71,7 +72,7 @@ public class FileResolverTest extends BaseResolveTest {
 				null);
 		
 		
-		final Context context = Context.makeTestContext();
+		final Context context = FullContext.makeTestContext();
 		
 		final FileSpec anotherTestFileSpec = new NameFileSpec("AnotherTestClass.java");
 		final TypeName anotherTestClass = makeTypeName("com.test.AnotherTestClass");
@@ -124,10 +125,10 @@ public class FileResolverTest extends BaseResolveTest {
 	private static ClassDefinition makeClassType(TypeName anotherTestClass) {
 		
 		return new ClassDefinition(
-						Context.makeTestContext(),
+						FullContext.makeTestContext(),
 						new ClassModifiers(Collections.emptyList()),
-						new Keyword(Context.makeTestContext(), "class"),
-						new ClassDeclarationName(Context.makeTestContext(), new ClassName(anotherTestClass.getName())),
+						new Keyword(FullContext.makeTestContext(), "class"),
+						new ClassDeclarationName(FullContext.makeTestContext(), new ClassName(anotherTestClass.getName())),
 						null,
 						null,
 						null,

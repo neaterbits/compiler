@@ -1,29 +1,26 @@
 package com.neaterbits.compiler.util;
 
-public class ImmutableContext implements Context {
+public class ImmutableContext extends ContextImpl implements FullContext {
 
 	private final String file;
 	private final int startLine;
 	private final int startPosInLine;
-	private final int startOffset;
 	private final int endLine;
 	private final int endPosInLine;
-	private final int endOffset;
 	private final String text;
 	
 	public ImmutableContext(String file, int startLine, int startPosInLine, int startOffset, int endLine, int endPos, int endOffset, String text) {
+	    super(startOffset, endOffset);
 		
 		this.file = file;
 		this.startLine = startLine;
 		this.startPosInLine = startPosInLine;
-		this.startOffset = startOffset;
 		this.endLine = endLine;
 		this.endPosInLine = endPos;
-		this.endOffset = endOffset;
 		this.text = text;
 	}
 	
-	public ImmutableContext(Context context) {
+	public ImmutableContext(ImmutableContext context) {
 	    this(
 	            context.getFile(),
 	            context.getStartLine(),
@@ -51,11 +48,6 @@ public class ImmutableContext implements Context {
 	}
 	
 	@Override
-	public int getStartOffset() {
-		return startOffset;
-	}
-
-	@Override
 	public int getEndLine() {
 		return endLine;
 	}
@@ -63,11 +55,6 @@ public class ImmutableContext implements Context {
 	@Override
 	public int getEndPosInLine() {
 		return endPosInLine;
-	}
-
-	@Override
-	public int getEndOffset() {
-		return endOffset;
 	}
 	
 	@Override

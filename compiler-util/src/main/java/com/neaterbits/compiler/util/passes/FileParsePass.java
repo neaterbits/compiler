@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.compiler.util.parse.ParsedFile;
@@ -18,15 +19,19 @@ public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
 		extends FilePass<FileParsePassInput<COMPILATION_UNIT>, PARSED_FILE> {
 
 	private final CreateParsedFile<COMPILATION_UNIT, PARSED_FILE> makeParsedFile;
+	private final FullContextProvider fullContextProvider;
 
 	public FileParsePass(
 			CreateParsedFile<COMPILATION_UNIT, PARSED_FILE> makeParsedFile,
-			Function<PARSED_FILE, FileSpec> getFileSpec) {
+			Function<PARSED_FILE, FileSpec> getFileSpec,
+			FullContextProvider fullContextProvider) {
 
 		Objects.requireNonNull(makeParsedFile);
 		Objects.requireNonNull(getFileSpec);
+		Objects.requireNonNull(fullContextProvider);
 		
 		this.makeParsedFile = makeParsedFile;
+		this.fullContextProvider = fullContextProvider;
 	}
 
 	@Override
@@ -35,7 +40,7 @@ public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
 		
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final PrintStream printStream = new PrintStream(baos);
-		final ParseLogger parseLogger = new ParseLogger(printStream);
+		final ParseLogger parseLogger = new ParseLogger(printStream, fullContextProvider);
 		
 		final List<ParseError> errors = new ArrayList<>();
 		

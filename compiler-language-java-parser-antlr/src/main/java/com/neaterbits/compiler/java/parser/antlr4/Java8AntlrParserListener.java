@@ -6,6 +6,7 @@ import com.neaterbits.compiler.java.Java8Parser.*;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.JavaPrimitiveType;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
@@ -75,7 +76,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		return Strings.indent(indent);
 	}
 	
-	private Context context(ParserRuleContext ctx) {
+	private FullContext context(ParserRuleContext ctx) {
 		return Antlr4.context(ctx, file);
 	}
 

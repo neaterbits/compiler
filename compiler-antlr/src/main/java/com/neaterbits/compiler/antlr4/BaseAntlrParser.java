@@ -22,6 +22,7 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.parse.BaseParser;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -62,6 +63,11 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 		return parse(string, true);
 	}
 	
+	private static ParseLogger makeParseLogger() {
+	    
+	    return new ParseLogger(System.out, CastFullContextProvider.INSTANCE);
+	}
+	
 	@Override
 	public final T parse(String string, boolean log) {
 		try {
@@ -69,7 +75,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 					StringSourceInputStream.fromString(string),
 					new ArrayList<>(),
 					null,
-					log ? new ParseLogger(System.out) : null);
+					log ? makeParseLogger() : null);
 		} catch (IOException ex) {
 			throw new IllegalStateException(ex);
 		}
@@ -77,7 +83,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 
 	@Override
 	public final T parse(InputStream stream, Charset charset, String file) throws IOException {
-		return parse(new StringSourceInputStream(stream, charset), new ArrayList<>(), file, new ParseLogger(System.out));
+		return parse(new StringSourceInputStream(stream, charset), new ArrayList<>(), file, makeParseLogger());
 	}
 
 	@Override

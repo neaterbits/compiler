@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.parse.ParsedFile;
@@ -32,13 +33,15 @@ public abstract class CompilerLanguage<
 	
 		buildCompilerParsePass(
 			CreateParsedFile<COMPILATION_UNIT, PARSED_FILE> makeParsedFile,
-			Function<PARSED_FILE, FileSpec> getFileSpec) {
+			Function<PARSED_FILE, FileSpec> getFileSpec,
+			FullContextProvider fullContextProvider) {
 		
 		final CompilerBuilder<FileParsePassInput<COMPILATION_UNIT>> builder = new CompilerBuilder<>();
 		
 		final FileParsePass<COMPILATION_UNIT, PARSED_FILE> parsePass = new FileParsePass<COMPILATION_UNIT, PARSED_FILE>(
 				makeParsedFile,
-				getFileSpec);
+				getFileSpec,
+				fullContextProvider);
 		
 		return builder.addPass(parsePass);
 	}

@@ -11,6 +11,8 @@ import java.util.Objects;
 import com.neaterbits.compiler.antlr4.AntlrParser;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
+import com.neaterbits.compiler.util.CastFullContextProvider;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSourceInputStream;
@@ -72,4 +74,9 @@ public final class FileTypeParser<LISTENER extends ModelParserListener<Compilati
 		
 		return listener.getResult();
 	}
+
+    @Override
+    public FullContextProvider getFullContextProvider() {
+        return CastFullContextProvider.INSTANCE;
+    }
 }

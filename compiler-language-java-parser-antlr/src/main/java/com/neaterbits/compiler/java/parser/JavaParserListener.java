@@ -11,6 +11,7 @@ import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIter
 import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
 import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
@@ -105,7 +106,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		return compilationUnit;
 	}
 
-	public void onPackageDeclaration(Context context, long packageKeyword, Context packageKeywordContext, long name, Context nameContext) {
+	public void onPackageDeclaration(Context context, long packageKeyword, Context packageKeywordContext, long name, FullContext nameContext) {
 		this.packageName = stringSource.asString(name);
 		
 		delegate.onNamespaceStart(writeStartContext(context), packageKeyword, writeOtherContext(packageKeywordContext));
@@ -118,7 +119,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		    
 		    final int partLength = part.length();
 		    
-		    final Context partContext = new ImmutableContext(
+		    final FullContext partContext = new ImmutableContext(
 		            nameContext.getFile(),
 		            nameContext.getStartLine(),
 		            indexInName + nameContext.getStartPosInLine(),
@@ -805,9 +806,9 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		// delegate.onTypeReference(context, typeName, referenceType);
 	}
 	
-	private Context updateElseIfContext(Context context, Token elseToken, String file) {
+	private Context updateElseIfContext(FullContext context, Token elseToken, String file) {
 
-		final Context elseContext = Antlr4.context(elseToken, file);
+		final FullContext elseContext = Antlr4.context(elseToken, file);
 		
 		final Context updatedContext;
 		
@@ -833,7 +834,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		return updatedContext;
 	}
 	
-	public void onJavaIfThenStatementStart(Context context, Token keywordToken) {
+	public void onJavaIfThenStatementStart(FullContext context, Token keywordToken) {
 		
 		if (logger != null) {
 			printStack("javaIfThenStatementStart");
@@ -896,7 +897,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 
 	public void onJavaIfThenElseStatementStart(
-			Context context,
+			FullContext context,
 			Token ifKeyword,
 			Token elseKeyword) {
 

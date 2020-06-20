@@ -33,7 +33,7 @@ public class TestJavaParserWithEncodeParserListener extends BaseJavaParserTest {
         
         final EncodedCompilationUnit encodedCompilationUnit = parser.parse("testfile", inputStream);
         
-        final ParseLogger logger = new ParseLogger(System.out);
+        final ParseLogger logger = new ParseLogger(System.out, encodedCompilationUnit.getFullContextProvider());
         
         final ASTParseTreeFactory parseTreeFactory = new ASTParseTreeFactory(JavaTypes.getBuiltinTypes());
         

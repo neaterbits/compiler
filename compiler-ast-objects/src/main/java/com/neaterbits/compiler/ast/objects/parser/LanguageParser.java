@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
@@ -16,4 +17,5 @@ public interface LanguageParser {
 
 	CompilationUnit parse(InputStream inputStream, Charset charset, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException;
 	
+	FullContextProvider getFullContextProvider();
 }

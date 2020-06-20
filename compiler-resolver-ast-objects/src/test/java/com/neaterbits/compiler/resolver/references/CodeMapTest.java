@@ -19,6 +19,7 @@ import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.IntValue;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
@@ -52,7 +53,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final ClassDefinition classDefinition = makeClassType(namespace, className);
 
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				FullContext.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(classDefinition));
 		
@@ -114,7 +115,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final InterfaceDefinition interfaceDefinition = makeInterfaceType(namespace, interfaceName, interfaceTokenSequenceNo);
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				FullContext.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(interfaceDefinition));
 		
@@ -167,7 +168,7 @@ public class CodeMapTest extends BaseResolveTest {
 
 		final ClassDefinition classDefinition = makeClassType(classNamespace, className);
 		final CompilationUnit classCompilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				FullContext.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(classDefinition));
 		
@@ -185,7 +186,7 @@ public class CodeMapTest extends BaseResolveTest {
 		final InterfaceDefinition interfaceDefinition = makeInterfaceType(interfaceNamespace, interfaceName, interfaceTokenSequenceNo);
 		
 		final CompilationUnit interfaceCompilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				FullContext.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(interfaceDefinition));
 		
@@ -282,7 +283,7 @@ public class CodeMapTest extends BaseResolveTest {
 				typeName.getName());
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(
-				Context.makeTestContext(),
+				FullContext.makeTestContext(),
 				Collections.emptyList(),
 				Arrays.asList(classDefinition));
 
@@ -303,8 +304,8 @@ public class CodeMapTest extends BaseResolveTest {
 	
 	private static ClassDefinition makeClassType(Collection<String> namespace, String name) {
 		
-		final Context context = Context.makeTestContext();
-		final Context nameContext = Context.makeTestContext();
+		final Context context = FullContext.makeTestContext();
+		final Context nameContext = FullContext.makeTestContext();
 		
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
@@ -321,8 +322,8 @@ public class CodeMapTest extends BaseResolveTest {
 
 	private static InterfaceDefinition makeInterfaceType(Collection<String> namespace, String name, IntValue tokenSequenceNo) {
 		
-		final Context context = Context.makeTestContext();
-		final Context nameContext = Context.makeTestContext();
+		final Context context = FullContext.makeTestContext();
+		final Context nameContext = FullContext.makeTestContext();
 		
 		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(
 				context,

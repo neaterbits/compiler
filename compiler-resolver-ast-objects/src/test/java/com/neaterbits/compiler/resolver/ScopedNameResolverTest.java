@@ -14,6 +14,7 @@ import com.neaterbits.compiler.ast.objects.Keyword;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.resolver.ast.objects.model.ObjectImportsModel;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.name.NamespaceReference;
 
@@ -63,10 +64,10 @@ public class ScopedNameResolverTest {
 		final NamespaceReference namespaceReference = new NamespaceReference(new String [] { "com", "test", "importnamespace" });
 		
 		final Import importStatement = new Import(
-				Context.makeTestContext(),
-				new Keyword(Context.makeTestContext(), "testtoken"),
+				FullContext.makeTestContext(),
+				new Keyword(FullContext.makeTestContext(), "testtoken"),
 				new ImportName(
-					Context.makeTestContext(),
+					FullContext.makeTestContext(),
 					namespaceReference,
 					new ClassOrInterfaceName("InImportedNamespace")));
 		
@@ -89,10 +90,10 @@ public class ScopedNameResolverTest {
 		final NamespaceReference namespaceReference = new NamespaceReference(new String [] { "com", "test", "importnamespace" });
 		
 		final Import importStatement = new Import(
-				Context.makeTestContext(),
-				new Keyword(Context.makeTestContext(), "import"),
+				FullContext.makeTestContext(),
+				new Keyword(FullContext.makeTestContext(), "import"),
 				new ImportName(
-						Context.makeTestContext(),
+						FullContext.makeTestContext(),
 						namespaceReference,
 						new ClassOrInterfaceName("InImportedNamespace")));
 		
@@ -109,7 +110,7 @@ public class ScopedNameResolverTest {
 
 	private static CompilationUnit makeCompilationUnit(Import ... imports) {
 
-		final Context context = Context.makeTestContext();
+		final Context context = FullContext.makeTestContext();
 		
 		final CompilationUnit compilationUnit = new CompilationUnit(context, Arrays.asList(imports), new ArrayList<>());
 		

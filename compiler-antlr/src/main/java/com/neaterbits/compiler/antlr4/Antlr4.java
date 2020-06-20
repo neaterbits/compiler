@@ -4,11 +4,12 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.ImmutableContext;
 
 public class Antlr4 {
 
-	public static Context context(ParserRuleContext antlrContext, String file) {
+	public static FullContext context(ParserRuleContext antlrContext, String file) {
 		return new ImmutableContext(file,
 				antlrContext.getStart().getLine(),
 				antlrContext.getStart().getCharPositionInLine(),
@@ -19,7 +20,7 @@ public class Antlr4 {
 				antlrContext.getText());
 	}
 
-	public static Context context(Token token, String file) {
+	public static FullContext context(Token token, String file) {
 		return new ImmutableContext(file,
 				token.getLine(),
 				token.getCharPositionInLine(),

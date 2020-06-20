@@ -37,6 +37,7 @@ import com.neaterbits.compiler.main.lib.LibPlaceholder;
 import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.modules.ModuleId;
@@ -56,7 +57,12 @@ public abstract class BaseJavaCompilerTest {
 		final File file = new File(fileName);
 		
 		try (FileInputStream inputStream = new FileInputStream(file)) {
-			compilationUnit = parser.parse(inputStream, Charset.defaultCharset(), errors, file.getName(), new ParseLogger(System.out));
+			compilationUnit = parser.parse(
+			        inputStream,
+			        Charset.defaultCharset(),
+			        errors,
+			        file.getName(),
+			        new ParseLogger(System.out, CastFullContextProvider.INSTANCE));
 		}
 
 		assertThat(errors.isEmpty()).isTrue();
@@ -124,7 +130,7 @@ public abstract class BaseJavaCompilerTest {
 				Charset.defaultCharset(),
 				getSystemModule(),
 				systemModule -> renameSystemPackages(systemModule, SYSTEM_LIB_PLACEHOLDER_CLASS.getPackage()),
-				new ParseLogger(System.out));
+				new ParseLogger(System.out, CastFullContextProvider.INSTANCE));
 		
 		assertThat(program).isNotNull();
 

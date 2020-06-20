@@ -4,12 +4,12 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ContextImpl;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.IntKeyIntValueHash;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
-import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.listener.encoded.AST;
@@ -19,11 +19,11 @@ import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead.ParseTreeEl
 
 public final class EncodedCompilationUnit {
 
-    private final String file;
     private final ASTBufferRead astBuffer;
     private final IntKeyIntValueHash parseTreeRefToStartContextHash;
     private final IntKeyIntValueHash parseTreeRefToEndContextHash;
     private final ASTBufferRead contexts;
+    private final FullContextProvider fullContextProvider;
 
     private final TypeName [] indexToTypeName;
     
@@ -32,25 +32,25 @@ public final class EncodedCompilationUnit {
     private final boolean passContextToDecode;
 
     public EncodedCompilationUnit(
-            String file,
             ASTBufferRead astBuffer,
             ASTBufferRead contextBuffer,
+            FullContextProvider fullContextProvider,
             IntKeyIntValueHash parseTreeRefToStartContextHash,
             IntKeyIntValueHash parseTreeRefToEndContextHash,
             Map<TypeName, Integer> typeNameToIndex,
             MapStringStorageBuffer stringBuffer,
             boolean passContextToDecode) {
 
-        Objects.requireNonNull(file);
         Objects.requireNonNull(astBuffer);
         Objects.requireNonNull(parseTreeRefToStartContextHash);
         Objects.requireNonNull(contextBuffer);
+        Objects.requireNonNull(fullContextProvider);
 
-        this.file = file;
         this.astBuffer = astBuffer;
         this.parseTreeRefToStartContextHash = parseTreeRefToStartContextHash;
         this.parseTreeRefToEndContextHash = parseTreeRefToEndContextHash;
         this.contexts = contextBuffer;
+        this.fullContextProvider = fullContextProvider;
         this.stringBuffer = stringBuffer;
         this.passContextToDecode = passContextToDecode;
         
@@ -76,7 +76,6 @@ public final class EncodedCompilationUnit {
         return astBuffer.getParseTreeElement(parseTreeRef);
     }
     
-    
     public String getStringFromASTBufferOffset(int astBufferOffset) {
         
         final int stringRef = astBuffer.getInt(astBufferOffset);
@@ -96,14 +95,6 @@ public final class EncodedCompilationUnit {
         return indexToTypeName[typeIndex];
     }
     
-    private static final int INDEX_START_LINE       = 0;
-    private static final int INDEX_START_POS_IN_LINE = 4;
-    private static final int INDEX_START_OFFSET     = 8;
-    private static final int INDEX_END_LINE         = 12;
-    private static final int INDEX_END_POS_IN_LINE  = 16;
-    private static final int INDEX_END_OFFSET       = 20;
-    private static final int INDEX_TEXT             = 24;
-    
     public Context getContextByStartElementRef(int parseTreeRef) {
         
         final int index = parseTreeRefToStartContextHash.get(parseTreeRef);
@@ -119,24 +110,23 @@ public final class EncodedCompilationUnit {
     }
 
     public Context getContextFromIndex(int index) {
-        final ImmutableContext context;
+        
+        final Context context;
         
         if (index >= 0) {
-            context = new ImmutableContext(
-                file,
-                contexts.getInt(index + INDEX_START_LINE),
-                contexts.getInt(index + INDEX_START_POS_IN_LINE),
-                contexts.getInt(index + INDEX_START_OFFSET),
-                contexts.getInt(index + INDEX_END_LINE),
-                contexts.getInt(index + INDEX_END_POS_IN_LINE),
-                contexts.getInt(index + INDEX_END_OFFSET),
-                null);
+            context = new ContextImpl(
+                    contexts.getInt(index + 0),
+                    contexts.getInt(index + 4));
         }
         else {
             context = null;
         }
         
         return context;
+    }
+    
+    public FullContextProvider getFullContextProvider() {
+        return fullContextProvider;
     }
     
     public String getTokenString(int parseTreeRef) {
@@ -148,27 +138,25 @@ public final class EncodedCompilationUnit {
     
     private String getTokenStringFromIndex(int index) {
         
-        final int stringRef = contexts.getInt(index + INDEX_TEXT);
-        
-        return stringRef != StringRef.STRING_NONE
-                ? stringBuffer.getString(stringRef)
-                : null;
+        return fullContextProvider.getText(getContextFromIndex(index));
     }
     
     public int getTokenOffset(int parseTreeRef) {
         
         final int index = parseTreeRefToStartContextHash.get(parseTreeRef);
 
-        return contexts.getInt(index + INDEX_START_OFFSET);
+        final Context context = getContextFromIndex(index);
+
+        return context.getStartOffset();
     }
     
     public int getTokenLength(int parseTreeRef) {
 
         final int index = parseTreeRefToStartContextHash.get(parseTreeRef);
 
-        return    contexts.getInt(index + INDEX_END_OFFSET)
-                - contexts.getInt(index + INDEX_START_OFFSET)
-                + 1;
+        final Context context = getContextFromIndex(index);
+        
+        return context.getLength();
     }
     
     private int getStartContext(int parseTreeRef) {

@@ -28,27 +28,20 @@ public class AST {
     static final int NO_STRINGREF = -1;
     static final int NO_CONTEXTREF = -1;
     
-    private static final int CONTEXT_SIZE = 28;
+    private static final int CONTEXT_SIZE = 8;
     
     static int writeContext(ASTBuffer contextBuffer, Context context) {
+        
+        if (context.getStartOffset() > 100000) {
+            throw new IllegalArgumentException();
+        }
         
         Objects.requireNonNull(context);
         
         final int writePos = contextBuffer.getWritePos();
-        
-        contextBuffer.writeInt(context.getStartLine());
-        
-        contextBuffer.writeInt(context.getStartPosInLine());
-        
+
         contextBuffer.writeInt(context.getStartOffset());
-        
-        contextBuffer.writeInt(context.getEndLine());
-        
-        contextBuffer.writeInt(context.getEndPosInLine());
-        
         contextBuffer.writeInt(context.getEndOffset());
-        
-        contextBuffer.writeInt(context.getLength());
         
         return writePos;
     }
