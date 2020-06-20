@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.Base;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.operator.Operator;
@@ -14,43 +13,33 @@ import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.recursive.BaseLexerParser;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
 
-final class JavaLexerParser<COMPILATION_UNIT> {
-    
-    private final Lexer<JavaToken, CharInput> lexer;
-    private final Tokenizer tokenizer;
+final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken> {
+
     private final IterativeParserListener<COMPILATION_UNIT> listener;
 
-    private final Context context;
-    
     JavaLexerParser(
             String file,
             Lexer<JavaToken, CharInput> lexer,
             Tokenizer tokenizer,
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
-        Objects.requireNonNull(lexer);
+        super(file, lexer, tokenizer);
+
         Objects.requireNonNull(listener);
         
-        this.lexer = lexer;
         this.listener = listener;
-        this.tokenizer = tokenizer;
-        
-        this.context = new LexerContext(file, lexer, tokenizer);
     }
 
     COMPILATION_UNIT parse() throws IOException, ParserException {
         
         return parseCompilationUnit();
-    }
-    
-    private Context getLexerContext() {
-        return context;
     }
     
     private long getStringRef() {
@@ -80,7 +69,7 @@ final class JavaLexerParser<COMPILATION_UNIT> {
     
     private int writeCurContext() {
         
-        return listener.writeContext(context);
+        return listener.writeContext(getLexerContext());
     }
 
     private int writeContext(int otherContext) {

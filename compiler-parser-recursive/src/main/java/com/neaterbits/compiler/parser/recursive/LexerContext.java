@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.parser.java;
+package com.neaterbits.compiler.parser.recursive;
 
 import java.util.Objects;
 

@@ -46,6 +46,7 @@
 		<module>compiler-language-java-parser-recursive</module>
 		<module>compiler-parser-listener-encoded</module>
 		<module>compiler-language-java-parser-listener-stackbased</module>
+		<module>compiler-parser-recursive</module>
 	</modules>
 
 	<dependencies>
