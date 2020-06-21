@@ -16,10 +16,12 @@ import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.expression.AssignmentExpression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
+import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.statement.AssignmentStatement;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
+import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
@@ -1023,6 +1025,28 @@ public abstract class BaseJavaParserTest {
         final IntegerLiteral expression = (IntegerLiteral)assignmentExpression.getExpression();
         assertThat(expression).isNotNull();
         assertThat(expression.getValue()).isEqualTo(1L);
+    }
+    
+    @Test
+    public void testSameInstanceMethodInvocation() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { callAMethod(); } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
+        final MethodInvocationExpression methodInvocation = (MethodInvocationExpression)expressionStatement.getExpression();
+        assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
+        assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
+        
     }
 
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {

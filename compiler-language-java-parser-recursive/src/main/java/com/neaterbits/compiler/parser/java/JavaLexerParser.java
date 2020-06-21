@@ -9,6 +9,7 @@ import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextImpl;
 import com.neaterbits.compiler.util.ContextRef;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.Relational;
@@ -805,7 +806,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             break;
 
         default:
-            parseParameters();
+            parseMethodSignatureParameters();
             
             final JavaToken token = lexer.lexSkipWS(PARAM_TYPE_RPAREN);
             if (token != JavaToken.RPAREN) {
@@ -864,7 +865,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             JavaToken.COMMA
     };
     
-    private void parseParameters() throws IOException, ParserException {
+    private void parseMethodSignatureParameters() throws IOException, ParserException {
         
         boolean done = false;
         
@@ -1202,7 +1203,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
     private static final JavaToken [] STATEMENT_STARTING_WITH_IDENTIFIER_TOKENS = new JavaToken [] {
             JavaToken.PERIOD, // User type for variable declaration or method invocation or field dereferencing
             JavaToken.ASSIGN, // Assignment
-            JavaToken.IDENTIFIER // eg. SomeType varName;
+            JavaToken.IDENTIFIER, // eg. SomeType varName;
+            JavaToken.LPAREN
             
     };
     
@@ -1292,6 +1294,29 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
                 break;
             }
+            
+            case LPAREN: {
+                // Method invocation
+                listener.onExpressionStatementStart(statementContext);
+                
+                final int methodInvocationContext = writeContext(statementContext);
+                
+                listener.onMethodInvocationStart(
+                        methodInvocationContext,
+                        MethodInvocationType.NO_OBJECT,
+                        null,
+                        ContextRef.NONE,
+                        null,
+                        identifier,
+                        identifierContext);
+                
+                parseMethodInvocationParameters();
+                
+                listener.onMethodInvocationEnd(methodInvocationContext, getLexerContext());
+                
+                listener.onExpressionStatementEnd(statementContext, getLexerContext());
+                break;
+            }
                 
             default:
                 throw lexer.unexpectedToken();
@@ -1323,6 +1348,22 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
 
         return foundStatement;
+    }
+    
+    private void parseMethodInvocationParameters() throws IOException {
+        
+        final int startContext = writeCurContext();
+        
+        listener.onParametersStart(startContext);
+        // See if there is an initial end of parameters
+        final JavaToken endOfParameters = lexer.lexSkipWS(JavaToken.RPAREN);
+        
+        if (endOfParameters == JavaToken.RPAREN) {
+            listener.onParametersEnd(startContext, getLexerContext());
+        }
+        else {
+            throw new UnsupportedOperationException();
+        }
     }
     
     //private static JavaToken [] VARIABLE_DECLARATION_STATEMENT_TOKENS = new JavaToken [] {

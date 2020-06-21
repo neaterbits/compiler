@@ -7,6 +7,7 @@ import com.neaterbits.compiler.parser.listener.common.ParserListener;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.operator.Arithmetic;
@@ -152,6 +153,10 @@ public class AST {
             
         case WHILE_STATEMENT:
             size = WHILE_STATEMENT_SIZE;
+            break;
+            
+        case METHOD_INVOCATION_EXPRESSION:
+            size = METHOD_INVOCATION_SIZE;
             break;
 
         default:
@@ -1341,5 +1346,106 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
         
         listener.onExitAssignmentLHS(assignmentLHSStartContext, endContext);
+    }
+
+    static void encodeExpressionStatementStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.EXPRESSION_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeExpressionStatementStart(
+            ASTBufferRead astBuffer,
+            int expressionStatementStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+
+        listener.onExpressionStatementStart(expressionStatementStartContext);
+    }
+
+    static void encodeExpressionStatementEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.EXPRESSION_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeExpressionStatementEnd(
+            ASTBufferRead astBuffer,
+            int expressionStatementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onExpressionStatementEnd(expressionStatementStartContext, endContext);
+    }
+
+    private static final int METHOD_INVOCATION_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeMethodInvocationStart(
+            StringASTBuffer astBuffer,
+            long methodName,
+            int methodNameContext) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.METHOD_INVOCATION_EXPRESSION);
+        astBuffer.writeStringRef(methodName);
+        astBuffer.writeContextRef(methodNameContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeMethodInvocationStart(
+            ASTBufferRead astBuffer,
+            int methodInvocationStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final long methodName = astBuffer.getStringRef(index);
+        final int methodNameContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+
+        listener.onMethodInvocationStart(
+                methodInvocationStartContext,
+                MethodInvocationType.NO_OBJECT,
+                null,
+                ContextRef.NONE,
+                null,
+                methodName,
+                methodNameContext);
+    }
+
+    static void encodeMethodInvocationEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.METHOD_INVOCATION_EXPRESSION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeMethodInvocationEnd(
+            ASTBufferRead astBuffer,
+            int methodInvocationStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onMethodInvocationEnd(methodInvocationStartContext, endContext);
+    }
+
+    static void encodeParametersStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.PARAMETER_LIST);
+    }
+
+    public static <COMPILATION_UNIT> void decodeParametersStart(
+            ASTBufferRead astBuffer,
+            int parametersStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+
+        listener.onParametersStart(parametersStartContext);
+    }
+
+    static void encodeParametersEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.PARAMETER_LIST);
+    }
+
+    public static <COMPILATION_UNIT> void decodeParametersEnd(
+            ASTBufferRead astBuffer,
+            int parametersStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onParametersEnd(parametersStartContext, endContext);
     }
 }

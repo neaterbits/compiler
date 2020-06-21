@@ -994,7 +994,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onMethodInvocationStart(int context, MethodInvocationType type, ScopedName classTypeName,
             int classTypeNameContext, ReferenceType referenceType, long methodName, int methodNameContext) {
 
-        throw new UnsupportedOperationException();
+        AST.encodeMethodInvocationStart(astBuffer, methodName, methodNameContext);
     }
 
     @Override
@@ -1002,7 +1002,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeStartElementContextRef(parametersStartContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeParametersStart(astBuffer);
     }
 
     @Override
@@ -1025,8 +1025,8 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onParametersEnd(int parametersStartContext, Context endContext) {
 
         writeEndElementContext(parametersStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeParametersEnd(astBuffer);
     }
 
     @Override
@@ -1034,7 +1034,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         writeEndElementContext(methodInvocationStartContext, endContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeMethodInvocationEnd(astBuffer);
     }
 
     @Override
@@ -1244,16 +1244,16 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onExpressionStatementStart(int expressionStatementStartContext) {
 
         writeStartElementContextRef(expressionStatementStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeExpressionStatementStart(astBuffer);
     }
 
     @Override
     public final void onExpressionStatementEnd(int expressionStatementStartContext, Context endContext) {
 
         writeEndElementContext(expressionStatementStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeExpressionStatementEnd(astBuffer);
     }
 
     @Override
