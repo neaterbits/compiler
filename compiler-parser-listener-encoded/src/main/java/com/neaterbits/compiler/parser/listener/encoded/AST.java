@@ -1261,4 +1261,85 @@ public class AST {
 
         listener.onWhileStatementEnd(whileStatementStartContext, endContext);
     }
+    
+    static void encodeAssignmentStatementStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.ASSIGNMENT_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeAssignmentStatementStart(
+            ASTBufferRead astBuffer,
+            int assignmentStatementStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onAssignmentStatementStart(assignmentStatementStartContext);
+    }
+
+    static void encodeAssignmentStatementEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ASSIGNMENT_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeAssignmentStatementEnd(
+            ASTBufferRead astBuffer,
+            int assignmentStatementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onAssignmentStatementEnd(assignmentStatementStartContext, endContext);
+    }
+
+    static void encodeAssignmentExpressionStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.ASSIGNMENT_EXPRESSION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeAssignmentExpressionStart(
+            ASTBufferRead astBuffer,
+            int assignmentExpressionStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onEnterAssignmentExpression(assignmentExpressionStartContext);
+    }
+
+    static void encodeAssignmentExpressionEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ASSIGNMENT_EXPRESSION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeAssignmentExpressionEnd(
+            ASTBufferRead astBuffer,
+            int assignmentStatementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onExitAssignmentExpression(assignmentStatementStartContext, endContext);
+    }
+
+    static void encodeAssignmentLHSStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.ASSIGNMENT_EXPRESSION_LHS);
+    }
+
+    public static <COMPILATION_UNIT> void decodeAssignmentLHSStart(
+            ASTBufferRead astBuffer,
+            int assignmentLHSStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onEnterAssignmentLHS(assignmentLHSStartContext);
+    }
+
+    static void encodeAssignmentLHSEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ASSIGNMENT_EXPRESSION_LHS);
+    }
+
+    public static <COMPILATION_UNIT> void decodeAssignmentLHSEnd(
+            ASTBufferRead astBuffer,
+            int assignmentLHSStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onExitAssignmentLHS(assignmentLHSStartContext, endContext);
+    }
 }

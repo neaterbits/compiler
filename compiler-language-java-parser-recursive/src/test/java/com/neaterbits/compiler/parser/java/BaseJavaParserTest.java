@@ -14,8 +14,11 @@ import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
+import com.neaterbits.compiler.ast.objects.expression.AssignmentExpression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
+import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
+import com.neaterbits.compiler.ast.objects.statement.AssignmentStatement;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
@@ -978,6 +981,50 @@ public abstract class BaseJavaParserTest {
         assertThat(whileStatement.getBlock().getStatements().isEmpty()).isTrue();
     }
 
+    @Test
+    public void testLocalVariableInitializer() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a = 1; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", "a");
+    }
+
+    @Test
+    public void testAssignmentStatement() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a; a = 1; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+
+        checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", "a");
+        
+        final AssignmentStatement assignmentStatement = (AssignmentStatement)method.getBlock().getStatements().get(1);
+        final AssignmentExpression assignmentExpression = assignmentStatement.getExpression();
+        
+        final IntegerLiteral expression = (IntegerLiteral)assignmentExpression.getExpression();
+        assertThat(expression).isNotNull();
+        assertThat(expression.getValue()).isEqualTo(1L);
+    }
+
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
         
         final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
@@ -1033,7 +1080,7 @@ public abstract class BaseJavaParserTest {
         assertThat(type.getScopedName().getName()).isEqualTo(parts.get(parts.size() - 1));
     }
 
-    private void checkScalarVariableDeclarationStatement(Statement statement, String scalarType, String varName) {
+    private VariableDeclarationStatement checkScalarVariableDeclarationStatement(Statement statement, String scalarType, String varName) {
         
         final VariableDeclarationStatement declarationStatement = (VariableDeclarationStatement)statement;
         
@@ -1041,6 +1088,8 @@ public abstract class BaseJavaParserTest {
         assertThat(declarationStatement.getModifiers().isEmpty()).isTrue();
         assertThat(declarationStatement.getDeclarations().size()).isEqualTo(1);
         assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo(varName);
+        
+        return declarationStatement;
     }
 
     private void checkVarLiteralCondition(ConditionBlock conditionBlock, Relational operator) {

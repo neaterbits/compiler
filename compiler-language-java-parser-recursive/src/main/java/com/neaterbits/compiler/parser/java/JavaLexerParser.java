@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.Base;
+import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ContextImpl;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.operator.Operator;
@@ -714,36 +716,66 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             
             JavaToken.SEMI,
             JavaToken.COMMA,
+            JavaToken.ASSIGN,
             JavaToken.LBRACKET
     };
 
     private void parseVariableDeclaratorList(int fieldContext) throws IOException, ParserException {
+        
+        parseVariableDeclaratorList(fieldContext, StringRef.STRING_NONE, ContextRef.NONE);
+    }
 
+    private void parseVariableDeclaratorList(int fieldContext, long initialVarName, int initialVarNameContext) throws IOException, ParserException {
         boolean done = false;
         
         do {
-            final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+            final long identifier;
+            final int declaratorStartContext;
             
-            if (fieldNameToken != JavaToken.IDENTIFIER) {
-                throw lexer.unexpectedToken();
+            if (initialVarName != StringRef.STRING_NONE) {
+                identifier = initialVarName;
+                declaratorStartContext = initialVarNameContext;
             }
-            
-            final long identifier = getStringRef();
-            
-            final int declaratorStartContext = writeCurContext();
+            else {
+                final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+                
+                if (fieldNameToken != JavaToken.IDENTIFIER) {
+                    throw lexer.unexpectedToken();
+                }
+
+                identifier = getStringRef();
+                declaratorStartContext = writeCurContext();
+            }
+
+            final int declaratorNameContext = writeContext(declaratorStartContext);
             
             final JavaToken afterVarNameToken = lexer.lexSkipWS(AFTER_VARIABLE_NAME);
-
+            
             switch (afterVarNameToken) {
             case COMMA:
             case SEMI:
                 listener.onVariableDeclaratorStart(declaratorStartContext);
                 
-                listener.onVariableName(declaratorStartContext, identifier, 0);
+                listener.onVariableName(declaratorStartContext, identifier, declaratorNameContext);
                 
                 listener.onVariableDeclaratorEnd(declaratorStartContext, getLexerContext());
                 
                 if (afterVarNameToken == JavaToken.SEMI) {
+                    done = true;
+                }
+                break;
+
+            case ASSIGN:
+                listener.onVariableDeclaratorStart(declaratorStartContext);
+                
+                listener.onVariableName(declaratorStartContext, identifier, declaratorNameContext);
+                
+                parseExpressionList();
+
+                listener.onVariableDeclaratorEnd(declaratorStartContext, getLexerContext());
+                
+                // Skip out if next is semicolon
+                if (lexer.lexSkipWS(JavaToken.SEMI) == JavaToken.SEMI) {
                     done = true;
                 }
                 break;
@@ -1126,7 +1158,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             JavaToken.NUMBER,
     };
             
-    
     private boolean parseExpression() throws IOException, ParserException {
         
         final JavaToken token = lexer.lexSkipWS(EXPRESSION_TOKENS);
@@ -1168,6 +1199,13 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 32);
     }
     
+    private static final JavaToken [] STATEMENT_STARTING_WITH_IDENTIFIER_TOKENS = new JavaToken [] {
+            JavaToken.PERIOD, // User type for variable declaration or method invocation or field dereferencing
+            JavaToken.ASSIGN, // Assignment
+            JavaToken.IDENTIFIER // eg. SomeType varName;
+            
+    };
+    
     private boolean parseStatement() throws ParserException, IOException {
         
         boolean foundStatement = true;
@@ -1193,15 +1231,71 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             final int identifierContext = writeCurContext();
             
             final int statementContext = writeContext(identifierContext);
-            
-            // Can be method invocation, for now parse as variable name
-            listener.onVariableDeclarationStatementStart(statementContext);
 
-            parseUserType(identifierContext);
+            final long identifier = getStringRef();
+
+            final JavaToken statementStartingWithIdentifierToken = lexer.lexSkipWS(STATEMENT_STARTING_WITH_IDENTIFIER_TOKENS);
+
+            // TODO try to remove
+            final Context afterIdentifierContext = new ContextImpl(getLexerContext());
             
-            parseVariableDeclaratorList(writeCurContext());
+            switch (statementStartingWithIdentifierToken) {
+            case PERIOD:
+                
+                // Can be method invocation, for now parse as variable name
+                listener.onVariableDeclarationStatementStart(statementContext);
+    
+                parseUserTypeAfterPeriod(identifierContext, identifier);
+                
+                parseVariableDeclaratorList(writeCurContext());
+                
+                listener.onVariableDeclarationStatementEnd(statementContext, getLexerContext());
+                break;
+                
+            case ASSIGN: {
+                // variable = value;
+                listener.onAssignmentStatementStart(statementContext);
+                
+                final int expressionContext = writeContext(statementContext);
+                
+                listener.onEnterAssignmentExpression(expressionContext);
+
+                final int lhsStartContext = writeContext(statementContext);
+                listener.onEnterAssignmentLHS(lhsStartContext);
+                
+                final int leafContext = writeContext(lhsStartContext);
+                listener.onVariableReference(leafContext, identifier);
+                
+                listener.onExitAssignmentLHS(lhsStartContext, afterIdentifierContext);
+                
+                final Context endContext = getLexerContext();
+                
+                parseExpressionList();
+                
+                listener.onExitAssignmentExpression(expressionContext, endContext);
+                
+                listener.onAssignmentStatementEnd(statementContext, endContext);
+                break;
+            }
             
-            listener.onVariableDeclarationStatementEnd(statementContext, getLexerContext());
+            case IDENTIFIER: {
+                final long varName = getStringRef();
+                final int varNameContext = writeCurContext();
+
+                listener.onVariableDeclarationStatementStart(statementContext);
+                
+                listener.onNonScopedTypeReference(identifierContext, identifier, ReferenceType.REFERENCE);
+
+                parseVariableDeclaratorList(identifierContext, varName, varNameContext);
+                
+                listener.onVariableDeclarationStatementEnd(statementContext, getLexerContext());
+
+                break;
+            }
+                
+            default:
+                throw lexer.unexpectedToken();
+            }
             break;
         }
         
@@ -1253,39 +1347,49 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
     
     private void parseUserType(int initialPartContext) throws ParserException, IOException {
         
-        final int typeStartContext = writeContext(initialPartContext);
-
         final long stringRef = getStringRef();
 
         JavaToken scopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
-        if (scopeToken == JavaToken.PERIOD) {
+        
+        parseUserType(initialPartContext, stringRef, scopeToken == JavaToken.PERIOD);
+    }
 
-            listener.onScopedTypeReferenceStart(typeStartContext, ReferenceType.REFERENCE);
-            
-            listener.onScopedTypeReferencePart(initialPartContext, stringRef);
-
-            for (;;) {
-
-                final JavaToken partToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
-                
-                if (partToken != JavaToken.IDENTIFIER) {
-                    throw lexer.unexpectedToken();
-                }
-                
-                listener.onScopedTypeReferencePart(writeCurContext(), getStringRef());
-                
-                final JavaToken endOfScopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
-                
-                if (endOfScopeToken != JavaToken.PERIOD) {
-                    break;
-                }
-            }
-
-            listener.onScopedTypeReferenceEnd(typeStartContext, getLexerContext());
+    private void parseUserType(int initialPartContext, long stringRef, boolean gotPeriodToken) throws ParserException, IOException {
+        
+        if (gotPeriodToken) {
+            parseUserTypeAfterPeriod(initialPartContext, stringRef);
         }
         else {
             listener.onNonScopedTypeReference(initialPartContext, stringRef, ReferenceType.REFERENCE);
         }
+    }
+
+    private void parseUserTypeAfterPeriod(int initialPartContext, long stringRef) throws IOException, ParserException {
+        
+        final int typeStartContext = writeContext(initialPartContext);
+
+        listener.onScopedTypeReferenceStart(typeStartContext, ReferenceType.REFERENCE);
+        
+        listener.onScopedTypeReferencePart(initialPartContext, stringRef);
+
+        for (;;) {
+
+            final JavaToken partToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+            
+            if (partToken != JavaToken.IDENTIFIER) {
+                throw lexer.unexpectedToken();
+            }
+                
+            listener.onScopedTypeReferencePart(writeCurContext(), getStringRef());
+            
+            final JavaToken endOfScopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
+            
+            if (endOfScopeToken != JavaToken.PERIOD) {
+                break;
+            }
+        }
+
+        listener.onScopedTypeReferenceEnd(typeStartContext, getLexerContext());
     }
 
     private List<ScopedNamePart> parseRestOfScopedName(int identifierContext, long identifier) throws IOException, ParserException {

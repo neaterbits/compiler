@@ -718,15 +718,15 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeStartElementContextRef(assignmentExpressionStartContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeAssignmentExpressionStart(astBuffer);
     }
 
     @Override
     public final void onEnterAssignmentLHS(int assignmentLHSStartContext) {
 
         writeStartElementContextRef(assignmentLHSStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeAssignmentLHSStart(astBuffer);
     }
 
     @Override
@@ -734,15 +734,15 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeEndElementContext(assignmentLHSStartContext, endContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeAssignmentLHSEnd(astBuffer);
     }
 
     @Override
     public final void onExitAssignmentExpression(int assignmenExpressionContext, Context endContext) {
 
         writeEndElementContext(assignmenExpressionContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeAssignmentExpressionEnd(astBuffer);
     }
 
     @Override
@@ -1221,6 +1221,23 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         writeEndElementContext(scopedTypeReferenceStartContext, endContext);
         
         AST.encodeScopedTypeReferenceEnd(astBuffer);
+    }
+
+    
+    @Override
+    public void onAssignmentStatementStart(int startContext) {
+
+        writeStartElementContextRef(startContext);
+
+        AST.encodeAssignmentStatementStart(astBuffer);
+    }
+
+    @Override
+    public void onAssignmentStatementEnd(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
+
+        AST.encodeAssignmentStatementEnd(astBuffer);
     }
 
     @Override

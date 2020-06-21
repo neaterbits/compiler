@@ -46,6 +46,7 @@ import com.neaterbits.compiler.ast.objects.expression.literal.Literal;
 import com.neaterbits.compiler.ast.objects.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
+import com.neaterbits.compiler.ast.objects.statement.AssignmentStatement;
 import com.neaterbits.compiler.ast.objects.statement.BreakStatement;
 import com.neaterbits.compiler.ast.objects.statement.CatchBlock;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
@@ -212,6 +213,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	VariableDeclarationStatement,
 	
 	ExpressionStatement,
+	AssignmentStatement,
 	
 	ForInit,
 	ForStatement,
@@ -801,6 +803,11 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
+    public AssignmentStatement createAssignmentStatement(Context context, AssignmentExpression assignmentExpression) {
+        return new AssignmentStatement(context, assignmentExpression);
+    }
+
+    @Override
 	public ForInit createForInit(Context context, InitializerVariableDeclarationElement initializer) {
 		return new ForInit(context, initializer);
 	}

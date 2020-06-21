@@ -176,6 +176,10 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onInterfaceMethodEnd(int startContext, Context endContext);
 	
+	void onAssignmentStatementStart(int startContext);
+	
+	void onAssignmentStatementEnd(int startContext, Context endContext);
+	
 	void onEnterAssignmentExpression(int startContext);
 	
 	void onEnterAssignmentLHS(int startContext);

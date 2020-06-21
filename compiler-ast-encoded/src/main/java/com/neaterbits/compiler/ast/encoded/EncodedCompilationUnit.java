@@ -609,6 +609,42 @@ public final class EncodedCompilationUnit {
                 }
                 break;
             }
+            
+            case ASSIGNMENT_STATEMENT: {
+                final int startContext = getStartContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeAssignmentStatementStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeAssignmentStatementEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+            
+            case ASSIGNMENT_EXPRESSION: {
+                final int startContext = getStartContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeAssignmentExpressionStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeAssignmentExpressionEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+            
+            case ASSIGNMENT_EXPRESSION_LHS: {
+                final int startContext = getStartContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeAssignmentLHSStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeAssignmentLHSEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
                 
             default:
                 throw new UnsupportedOperationException("element " + ref.element);

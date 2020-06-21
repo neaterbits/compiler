@@ -19,6 +19,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackArrayAccess
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackArrayCreationExpression;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackAssignmentExpression;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackAssignmentLHS;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackAssignmentStatement;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackCastExpression;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackCatchBlock;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackClass;
@@ -219,7 +220,8 @@ public abstract class BaseParserListener<
 		
 		VARIABLE_DECLARATION_STATEMENT extends STATEMENT,
 		EXPRESSION_STATEMENT extends STATEMENT,
-		
+		ASSIGNMENT_STATEMENT extends STATEMENT,
+
 		FOR_INIT,
 		FOR_EXPRESSION_LIST,
 		FOR_STATEMENT extends STATEMENT,
@@ -353,6 +355,7 @@ public abstract class BaseParserListener<
 			VARIABLE_DECLARATION_STATEMENT,
 			
 			EXPRESSION_STATEMENT,
+			ASSIGNMENT_STATEMENT,
 			
 			FOR_INIT,
 			FOR_STATEMENT,
@@ -1749,7 +1752,37 @@ public abstract class BaseParserListener<
 		logExit(context);
 	}
 
-	// Expressions
+	@Override
+    public void onAssignmentStatementStart(int startContext) {
+
+	    final Context context = getStartContext(startContext);
+	    
+	    logEnter(context);
+	    
+	    push(new StackAssignmentStatement<>(getLogger()));
+	    
+	    logExit(context);
+    }
+
+    @Override
+    public void onAssignmentStatementEnd(int startContext, Context endContext) {
+
+        final Context context = getEndContext(startContext, endContext);
+        
+        logEnter(context);
+        
+        final StackAssignmentStatement<EXPRESSION, ASSIGNMENT_EXPRESSION> stackAssignmentStatement = pop();
+        
+        final StatementSetter<STATEMENT> statementSetter = get();
+        
+        final ASSIGNMENT_EXPRESSION assignmentExpression = stackAssignmentStatement.getExpression();
+        
+        statementSetter.addStatement(parseTreeFactory.createAssignmentStatement(context, assignmentExpression));
+        
+        logExit(context);
+    }
+
+    // Expressions
 	@Override
 	public final void onEnterAssignmentExpression(int startContext) {
 

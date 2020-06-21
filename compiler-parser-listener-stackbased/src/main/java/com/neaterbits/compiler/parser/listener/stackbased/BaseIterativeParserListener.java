@@ -104,6 +104,7 @@ public abstract class BaseIterativeParserListener<
 		
 		VARIABLE_DECLARATION_STATEMENT extends STATEMENT,
 		EXPRESSION_STATEMENT extends STATEMENT,
+        ASSIGNMENT_STATEMENT extends STATEMENT,
 		
 		FOR_INIT,
 		FOR_EXPRESSION_LIST,
@@ -230,6 +231,7 @@ public abstract class BaseIterativeParserListener<
 		
 		VARIABLE_DECLARATION_STATEMENT,
 		EXPRESSION_STATEMENT,
+		ASSIGNMENT_STATEMENT,
 		
 		FOR_INIT,
 		FOR_EXPRESSION_LIST,

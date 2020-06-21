@@ -71,6 +71,7 @@ public enum JavaToken implements IToken {
     SEMI(';'),
     COLON(':'),
     ASTERISK('*'),
+    ASSIGN('='),
     
     EQUALS("=="),
     NOT_EQUALS("!="),
@@ -78,7 +79,7 @@ public enum JavaToken implements IToken {
     GT('>'),
     LTE("<="),
     GTE(">="),
-
+    
     NUMBER(CharTypeInteger.INSTANCE),
 
     IDENTIFIER(string -> {

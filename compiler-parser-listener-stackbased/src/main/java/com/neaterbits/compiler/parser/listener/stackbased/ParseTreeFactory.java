@@ -111,6 +111,8 @@ public interface ParseTreeFactory<
 
 	EXPRESSION_STATEMENT extends STATEMENT,
 	
+	ASSIGNMENT_STATEMENT extends STATEMENT,
+	
 	FOR_INIT,
 	FOR_STATEMENT extends STATEMENT,
 	
@@ -345,6 +347,8 @@ public interface ParseTreeFactory<
 			List<INITIALIZER_VARIABLE_DECLARATION_ELEMENT> elements);
 	
 	EXPRESSION_STATEMENT createExpressionStatement(Context context, EXPRESSION expression);
+	
+	ASSIGNMENT_STATEMENT createAssignmentStatement(Context context, ASSIGNMENT_EXPRESSION assignmentExpression);
 	
 	FOR_INIT createForInit(Context context, INITIALIZER_VARIABLE_DECLARATION_ELEMENT initializer);
 	FOR_INIT createForInit(Context context, List<EXPRESSION> expressionList);

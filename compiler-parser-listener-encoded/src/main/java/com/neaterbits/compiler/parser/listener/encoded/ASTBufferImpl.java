@@ -300,5 +300,7 @@ final class ASTBufferImpl implements ASTBuffer {
         }
         
         System.arraycopy(buffer, pos, buffer, index, size);
+        
+        this.index += size;
     }
 }

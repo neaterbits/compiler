@@ -10,7 +10,7 @@ public class ContextImpl implements Context {
         this.endOffset = endOffset;
     }
     
-    public ContextImpl(ContextImpl context) {
+    public ContextImpl(Context context) {
         this(context.getStartOffset(), context.getEndOffset());
     }
     

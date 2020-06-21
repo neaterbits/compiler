@@ -97,8 +97,6 @@ public abstract class BaseStatementConverter<T extends ConverterState<T>>
 	@Override
 	public Statement onAssignment(AssignmentStatement statement, T param) {
 
-		System.out.println("## onAssignmentStatement");
-		
 		return new AssignmentStatement(
 				statement.getContext(),
 				(AssignmentExpression)convertExpression(statement.getExpression(), param));
