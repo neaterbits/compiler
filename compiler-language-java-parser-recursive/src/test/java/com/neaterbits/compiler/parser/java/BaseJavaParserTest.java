@@ -1002,7 +1002,80 @@ public abstract class BaseJavaParserTest {
         assertThat(method.getBlock()).isNotNull();
         assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
 
-        checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", "a");
+        checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", "a", 1);
+    }
+
+    @Test
+    public void testLocalVariableCommaInitializer() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a, b = 0; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final VariableDeclarationStatement statement
+            = checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", 2);
+        
+        checkScalarVariableDeclaration(statement, 0, "a", null);
+        checkScalarVariableDeclaration(statement, 1, "b", 0);
+    }
+
+    @Test
+    public void testLocalVariableInitializerCommaVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a = 1, b; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final VariableDeclarationStatement statement = checkScalarVariableDeclarationStatement(
+                    method.getBlock().getStatements().get(0),
+                    "int",
+                    2);
+        
+        checkScalarVariableDeclaration(statement, 0, "a", 1);
+        checkScalarVariableDeclaration(statement, 1, "b", null);
+    }
+
+    @Test
+    public void testLocalVariableInitializerCommaVariableInitializer() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a = 1, b = 0; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final VariableDeclarationStatement statement = checkScalarVariableDeclarationStatement(
+                method.getBlock().getStatements().get(0),
+                "int",
+                2);
+        
+        checkScalarVariableDeclaration(statement, 0, "a", 1);
+        checkScalarVariableDeclaration(statement, 1, "b", 0);
     }
 
     @Test
@@ -1199,16 +1272,57 @@ public abstract class BaseJavaParserTest {
         assertThat(type.getScopedName().getName()).isEqualTo(parts.get(parts.size() - 1));
     }
 
-    private VariableDeclarationStatement checkScalarVariableDeclarationStatement(Statement statement, String scalarType, String varName) {
+    private VariableDeclarationStatement checkScalarVariableDeclarationStatement(
+            Statement statement,
+            String scalarType,
+            String varName) {
+        
+        return checkScalarVariableDeclarationStatement(statement, scalarType, varName, null);
+    }
+
+    private VariableDeclarationStatement checkScalarVariableDeclarationStatement(
+            Statement statement,
+            String scalarType,
+            String varName,
+            Integer value) {
+        
+        final VariableDeclarationStatement declarationStatement = checkScalarVariableDeclarationStatement(statement, scalarType, 1);
+        
+        checkScalarVariableDeclaration(declarationStatement, 0, varName, value);
+        
+        return declarationStatement;
+    }
+
+    private VariableDeclarationStatement checkScalarVariableDeclarationStatement(
+            Statement statement,
+            String scalarType,
+            int num) {
         
         final VariableDeclarationStatement declarationStatement = (VariableDeclarationStatement)statement;
         
         checkScalarType(declarationStatement.getTypeReference(), scalarType);
         assertThat(declarationStatement.getModifiers().isEmpty()).isTrue();
-        assertThat(declarationStatement.getDeclarations().size()).isEqualTo(1);
-        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo(varName);
+        assertThat(declarationStatement.getDeclarations().size()).isEqualTo(num);
         
         return declarationStatement;
+    }
+
+    private void checkScalarVariableDeclaration(
+            VariableDeclarationStatement declarationStatement,
+            int index,
+            String varName,
+            Integer value) {
+        
+        assertThat(declarationStatement.getDeclarations().get(index).getNameString()).isEqualTo(varName);
+        
+        if (value != null ) {
+            final IntegerLiteral integerLiteral = (IntegerLiteral)declarationStatement.getDeclarations().get(index).getInitializer();
+            
+            assertThat(integerLiteral.getValue()).isEqualTo((long)value);
+        }
+        else {
+            assertThat(declarationStatement.getDeclarations().get(index).getInitializer()).isNull();
+        }
     }
 
     private void checkVarLiteralCondition(ConditionBlock conditionBlock, Relational operator) {

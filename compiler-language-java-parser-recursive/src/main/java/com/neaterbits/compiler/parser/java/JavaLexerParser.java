@@ -721,6 +721,11 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             JavaToken.ASSIGN,
             JavaToken.LBRACKET
     };
+    
+    private static final JavaToken [] AFTER_VARIABLE_INITIALIZER = new JavaToken [] {
+            JavaToken.SEMI,
+            JavaToken.COMMA
+    };
 
     private void parseVariableDeclaratorList(int fieldContext) throws IOException, ParserException {
         
@@ -728,13 +733,16 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
     }
 
     private void parseVariableDeclaratorList(int fieldContext, long initialVarName, int initialVarNameContext) throws IOException, ParserException {
+
         boolean done = false;
+        
+        boolean initialIteration = true;
         
         do {
             final long identifier;
             final int declaratorStartContext;
             
-            if (initialVarName != StringRef.STRING_NONE) {
+            if (initialIteration && initialVarName != StringRef.STRING_NONE) {
                 identifier = initialVarName;
                 declaratorStartContext = initialVarNameContext;
             }
@@ -748,6 +756,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 identifier = getStringRef();
                 declaratorStartContext = writeCurContext();
             }
+            
+            initialIteration = false;
 
             final int declaratorNameContext = writeContext(declaratorStartContext);
             
@@ -777,8 +787,16 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 listener.onVariableDeclaratorEnd(declaratorStartContext, getLexerContext());
                 
                 // Skip out if next is semicolon
-                if (lexer.lexSkipWS(JavaToken.SEMI) == JavaToken.SEMI) {
+                switch (lexer.lexSkipWS(AFTER_VARIABLE_INITIALIZER)) {
+                case COMMA:
+                    break;
+                    
+                case SEMI:
                     done = true;
+                    break;
+                    
+                default:
+                    throw lexer.unexpectedToken();
                 }
                 break;
                 
