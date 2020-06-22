@@ -1255,6 +1255,55 @@ public abstract class BaseJavaParserTest {
         assertThat(bInitializer.getOperators().get(0)).isEqualTo(Arithmetic.PLUS);
     }
 
+    @Test
+    public void testMultipleArithmeticOperators() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a = 1 + 2 - 3 * 6 / 5 % 4; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement =
+                checkScalarVariableDeclarationStatement(
+                        method.getBlock().getStatements().get(0),
+                        "int",
+                        1);
+
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        
+        final ExpressionList bInitializer = (ExpressionList)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(bInitializer.getExpressions().size()).isEqualTo(6);
+        
+        checkExpressionListLiteral(bInitializer, 0, 1);
+        checkExpressionListLiteral(bInitializer, 1, 2);
+        checkExpressionListLiteral(bInitializer, 2, 3);
+        checkExpressionListLiteral(bInitializer, 3, 6);
+        checkExpressionListLiteral(bInitializer, 4, 5);
+        checkExpressionListLiteral(bInitializer, 5, 4);
+        
+        assertThat(bInitializer.getOperators().size()).isEqualTo(5);
+        assertThat(bInitializer.getOperators().get(0)).isEqualTo(Arithmetic.PLUS);
+        assertThat(bInitializer.getOperators().get(1)).isEqualTo(Arithmetic.MINUS);
+        assertThat(bInitializer.getOperators().get(2)).isEqualTo(Arithmetic.MULTIPLY);
+        assertThat(bInitializer.getOperators().get(3)).isEqualTo(Arithmetic.DIVIDE);
+        assertThat(bInitializer.getOperators().get(4)).isEqualTo(Arithmetic.MODULUS);
+    }
+    
+    private void checkExpressionListLiteral(ExpressionList list, int index, int value) {
+        
+        final IntegerLiteral literal = (IntegerLiteral)list.getExpressions().get(index);
+        
+        assertThat(literal.getValue()).isEqualTo(value);
+        
+    }
+
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
         
         final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
