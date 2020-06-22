@@ -11,6 +11,7 @@ import com.neaterbits.compiler.util.ContextImpl;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
@@ -1108,7 +1109,14 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             JavaToken.LT,
             JavaToken.GT,
             JavaToken.LTE,
-            JavaToken.GTE
+            JavaToken.GTE,
+            
+            JavaToken.PLUS,
+            JavaToken.MINUS,
+            JavaToken.MUL,
+            JavaToken.DIV,
+            JavaToken.MOD
+            
     };
     
     private void parseExpressionList() throws IOException, ParserException {
@@ -1158,6 +1166,26 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                     callListenerAndParseExpression(writeCurContext(), Relational.GREATER_THAN_OR_EQUALS);
                     break;
                     
+                case PLUS:
+                    callListenerAndParseExpression(writeCurContext(), Arithmetic.PLUS);
+                    break;
+                    
+                case MINUS:
+                    callListenerAndParseExpression(writeCurContext(), Arithmetic.MINUS);
+                    break;
+
+                case MUL:
+                    callListenerAndParseExpression(writeCurContext(), Arithmetic.MULTIPLY);
+                    break;
+
+                case DIV:
+                    callListenerAndParseExpression(writeCurContext(), Arithmetic.DIVIDE);
+                    break;
+
+                case MOD:
+                    callListenerAndParseExpression(writeCurContext(), Arithmetic.MODULUS);
+                    break;
+
                 default:
                     done = true;
                     break;

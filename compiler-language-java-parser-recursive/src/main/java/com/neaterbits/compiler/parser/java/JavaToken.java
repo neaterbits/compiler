@@ -80,6 +80,12 @@ public enum JavaToken implements IToken {
     LTE("<="),
     GTE(">="),
     
+    PLUS('+'),
+    MINUS('-'),
+    MUL('*'),
+    DIV('/'),
+    MOD('%'),
+    
     NUMBER(CharTypeInteger.INSTANCE),
 
     IDENTIFIER(string -> {

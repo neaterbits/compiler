@@ -35,6 +35,8 @@ import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReferen
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
+import com.neaterbits.compiler.ast.objects.variables.NameReference;
+import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
@@ -1120,7 +1122,6 @@ public abstract class BaseJavaParserTest {
         
         final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
         
-        
         final MethodInvocationExpression methodInvocation = (MethodInvocationExpression)expressionStatement.getExpression();
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
@@ -1215,6 +1216,43 @@ public abstract class BaseJavaParserTest {
         final MethodInvocationExpression anotherMethodInvocation = (MethodInvocationExpression)primaryList.getPrimaries().get(1);
         assertThat(anotherMethodInvocation.getCallable().getName()).isEqualTo("callAnotherMethod");
         assertThat(anotherMethodInvocation.getParameters().getList().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testArithmeticOperator() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a = 1, b = a + 3; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement =
+                checkScalarVariableDeclarationStatement(
+                        method.getBlock().getStatements().get(0),
+                        "int",
+                        2);
+
+        checkScalarVariableDeclaration(declarationStatement, 0, "a", 1);
+        
+        final IntegerLiteral aInitializer = (IntegerLiteral)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(aInitializer.getValue()).isEqualTo(1L);
+        
+        assertThat(declarationStatement.getDeclarations().get(1).getNameString()).isEqualTo("b");
+        final ExpressionList bInitializer = (ExpressionList)declarationStatement.getDeclarations().get(1).getInitializer();
+        assertThat(bInitializer.getExpressions().size()).isEqualTo(2);
+        final NameReference bInitializer1 = (NameReference)bInitializer.getExpressions().get(0);
+        assertThat(bInitializer1.getName()).isEqualTo("a");
+        final IntegerLiteral bInitializer2 = (IntegerLiteral)bInitializer.getExpressions().get(1);
+        assertThat(bInitializer2.getValue()).isEqualTo(3L);
+        assertThat(bInitializer.getOperators().size()).isEqualTo(1);
+        assertThat(bInitializer.getOperators().get(0)).isEqualTo(Arithmetic.PLUS);
     }
 
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
