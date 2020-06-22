@@ -1115,6 +1115,35 @@ public abstract class BaseJavaParserTest {
         assertThat(anotherMethodInvocation.getParameters().getList().isEmpty()).isTrue();
     }
 
+    @Test
+    public void testMethodInvocationWithMethodInvocationOfResult() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { callAMethod().callAnotherMethod(); } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
+        
+        final PrimaryList primaryList = (PrimaryList)expressionStatement.getExpression();
+        assertThat(primaryList.getPrimaries().size()).isEqualTo(2);
+        
+        final MethodInvocationExpression methodInvocation = (MethodInvocationExpression)primaryList.getPrimaries().get(0);
+        assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
+        assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
+        
+        final MethodInvocationExpression anotherMethodInvocation = (MethodInvocationExpression)primaryList.getPrimaries().get(1);
+        assertThat(anotherMethodInvocation.getCallable().getName()).isEqualTo("callAnotherMethod");
+        assertThat(anotherMethodInvocation.getParameters().getList().isEmpty()).isTrue();
+    }
+
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
         
         final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
