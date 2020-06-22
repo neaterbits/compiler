@@ -781,8 +781,8 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onPrimaryStart(int primaryStartContext) {
 
         writeStartElementContextRef(primaryStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodePrimariesStart(astBuffer);
     }
 
     @Override
@@ -821,7 +821,9 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onFieldAccess(int context, FieldAccessType fieldAccessType, ScopedName typeName,
             ReferenceType referenceType, long fieldName, int fieldNameContext) {
 
-        throw new UnsupportedOperationException();
+        writeLeafElementContextRef(context);
+        
+        AST.encodeFieldAccess(astBuffer, fieldName);
     }
 
     @Override
@@ -852,8 +854,8 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onPrimaryEnd(int primaryStartContext, Context endContext) {
 
         writeEndElementContext(primaryStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodePrimariesEnd(astBuffer);
     }
 
     @Override

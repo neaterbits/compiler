@@ -682,6 +682,31 @@ public final class EncodedCompilationUnit {
                 break;
             }
                 
+            case PRIMARY_LIST:  {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodePrimariesStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodePrimariesEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case FIELD_ACCESS: {
+
+                final int leafContext = getLeafContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeFieldAccess(astBuffer, leafContext, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+            }
+
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }

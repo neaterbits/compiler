@@ -16,6 +16,7 @@ import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.OperatorType;
 import com.neaterbits.compiler.util.operator.Relational;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.typedefinition.ClassModifier;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
@@ -157,6 +158,10 @@ public class AST {
             
         case METHOD_INVOCATION_EXPRESSION:
             size = METHOD_INVOCATION_SIZE;
+            break;
+            
+        case FIELD_ACCESS:
+            size = FIELD_ACCESS_SIZE;
             break;
 
         default:
@@ -1447,5 +1452,55 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onParametersEnd(parametersStartContext, endContext);
+    }
+
+    static void encodePrimariesStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.PRIMARY_LIST);
+    }
+
+    public static <COMPILATION_UNIT> void decodePrimariesStart(
+            ASTBufferRead astBuffer,
+            int primariesStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onPrimaryStart(primariesStartContext);
+    }
+
+    static void encodePrimariesEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.PRIMARY_LIST);
+    }
+
+    public static <COMPILATION_UNIT> void decodePrimariesEnd(
+            ASTBufferRead astBuffer,
+            int primariesStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onPrimaryEnd(primariesStartContext, endContext);
+    }
+    
+    private static final int FIELD_ACCESS_SIZE = STRING_REF_SIZE;
+
+    static void encodeFieldAccess(StringASTBuffer astBuffer, long fieldName) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.FIELD_ACCESS);
+        astBuffer.writeStringRef(fieldName);
+    }
+
+    public static <COMPILATION_UNIT> void decodeFieldAccess(
+            ASTBufferRead astBuffer,
+            int fieldAccessStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onFieldAccess(
+                fieldAccessStartContext,
+                FieldAccessType.FIELD,
+                null,
+                null,
+                astBuffer.getStringRef(index),
+                fieldAccessStartContext);
     }
 }

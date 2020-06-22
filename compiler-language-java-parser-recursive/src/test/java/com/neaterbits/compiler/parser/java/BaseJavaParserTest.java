@@ -16,7 +16,9 @@ import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.expression.AssignmentExpression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
+import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.statement.AssignmentStatement;
@@ -34,6 +36,7 @@ import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.util.operator.Relational;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.util.parse.ParserException;
@@ -1043,10 +1046,40 @@ public abstract class BaseJavaParserTest {
         assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
         
         final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
+        
+        
         final MethodInvocationExpression methodInvocation = (MethodInvocationExpression)expressionStatement.getExpression();
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testMethodInvocationWithFieldAccessOfResult() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { callAMethod().someField; } }";
         
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
+        
+        final PrimaryList primaryList = (PrimaryList)expressionStatement.getExpression();
+        assertThat(primaryList.getPrimaries().size()).isEqualTo(2);
+        
+        final MethodInvocationExpression methodInvocation = (MethodInvocationExpression)primaryList.getPrimaries().get(0);
+        assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
+        assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
+        
+        final FieldAccess fieldAccess = (FieldAccess)primaryList.getPrimaries().get(1);
+        assertThat(fieldAccess.getFieldAccessType()).isEqualTo(FieldAccessType.FIELD);
+        assertThat(fieldAccess.getFieldName().getName()).isEqualTo("someField");
     }
 
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {

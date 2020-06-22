@@ -13,6 +13,7 @@ import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.Relational;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
@@ -1299,6 +1300,10 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 // Method invocation
                 listener.onExpressionStatementStart(statementContext);
                 
+                final int primaryListContext = writeContext(statementContext);
+                
+                listener.onPrimaryStart(primaryListContext);
+                
                 final int methodInvocationContext = writeContext(statementContext);
                 
                 listener.onMethodInvocationStart(
@@ -1313,6 +1318,10 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 parseMethodInvocationParameters();
                 
                 listener.onMethodInvocationEnd(methodInvocationContext, getLexerContext());
+                
+                parseAnyAdditionalPrimaries();
+                
+                listener.onPrimaryEnd(primaryListContext, getLexerContext());
                 
                 listener.onExpressionStatementEnd(statementContext, getLexerContext());
                 break;
@@ -1348,6 +1357,34 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
 
         return foundStatement;
+    }
+    
+    private void parseAnyAdditionalPrimaries() throws IOException, ParserException {
+
+        for (;;) {
+            final JavaToken periodToken = lexer.lexSkipWS(JavaToken.PERIOD);
+            
+            if (periodToken != JavaToken.PERIOD) {
+                break;
+            }
+            
+            final JavaToken identifierToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+
+            if (identifierToken !=  JavaToken.IDENTIFIER) {
+                throw lexer.unexpectedToken();
+            }
+            
+            final long identifier = getStringRef();
+            final int fieldAccessContext = writeCurContext();
+            
+            listener.onFieldAccess(
+                    fieldAccessContext,
+                    FieldAccessType.FIELD,
+                    null,
+                    null,
+                    identifier,
+                    writeContext(fieldAccessContext));
+        }
     }
     
     private void parseMethodInvocationParameters() throws IOException {
