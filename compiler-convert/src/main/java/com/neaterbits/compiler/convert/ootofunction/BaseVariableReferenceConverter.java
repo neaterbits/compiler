@@ -7,7 +7,6 @@ import com.neaterbits.compiler.ast.objects.variables.ArrayAccessReference;
 import com.neaterbits.compiler.ast.objects.variables.FieldAccessReference;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
 import com.neaterbits.compiler.ast.objects.variables.PrimaryListVariableReference;
-import com.neaterbits.compiler.ast.objects.variables.SimpleVariableReference;
 import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.convert.ConverterState;
 import com.neaterbits.compiler.convert.VariableReferenceConverter;
@@ -19,14 +18,6 @@ public abstract class BaseVariableReferenceConverter<T extends ConverterState<T>
 	@Override
 	public final VariableReference onNameReference(NameReference nameReference, T param) {
 		return new NameReference(nameReference.getContext(), nameReference.getName());
-	}
-
-	@Override
-	public final VariableReference onSimpleVariableReference(SimpleVariableReference variableReference, T param) {
-
-		return new SimpleVariableReference(
-				variableReference.getContext(),
-				mapVariableDeclaration(variableReference.getDeclaration(), param));
 	}
 
 	@Override

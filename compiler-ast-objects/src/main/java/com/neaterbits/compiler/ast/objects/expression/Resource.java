@@ -9,7 +9,6 @@ import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.VarNameDeclaration;
-import com.neaterbits.compiler.ast.objects.variables.VariableDeclaration;
 import com.neaterbits.compiler.util.Context;
 
 public final class Resource extends InitializerVariableDeclarationElement {
@@ -38,10 +37,6 @@ public final class Resource extends InitializerVariableDeclarationElement {
 	public TypeReference getTypeReference() {
         return type.get();
     }
-
-    public VariableDeclaration makeVariableDeclaration() {
-		return super.makeVariableDeclaration(modifiers.get(), type.get());
-	}
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {

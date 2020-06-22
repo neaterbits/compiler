@@ -53,7 +53,6 @@ public interface ParseTreeFactory<
 	ENUM_CONSTANT_DEFINITION,
 
 	VARIABLE_MODIFIER_HOLDER,
-	VARIABLE_DECLARATION,
 	
 	BLOCK,
 	
@@ -95,7 +94,6 @@ public interface ParseTreeFactory<
 	CLASS_EXPRESSION extends PRIMARY,
 	
 	NAME_REFERENCE extends VARIABLE_REFERENCE,
-	SIMPLE_VARIABLE_REFERENCE extends VARIABLE_REFERENCE,
 	
 	INTEGER_LITERAL extends LITERAL,
 	FLOATING_POINT_LITERAL extends LITERAL,
@@ -258,8 +256,6 @@ public interface ParseTreeFactory<
 
 	ENUM_CONSTANT_DEFINITION createEnumConstantDefinition(Context context, String name, List<EXPRESSION> parameters, List<COMPLEX_MEMBER_DEFINITION> members);
 	
-	VARIABLE_DECLARATION createVariableDeclaration(Context context, List<VARIABLE_MODIFIER_HOLDER> modifiers, TYPE_REFERENCE type, String name, int numDims);
-	
 	Context getExpressionContext(EXPRESSION expression);
 
 	BLOCK createBlock(Context context, List<STATEMENT> statements);
@@ -314,8 +310,6 @@ public interface ParseTreeFactory<
 	ARRAY_ACCESS_EXPRESSION createArrayAccessExpression(Context context, PRIMARY primary, EXPRESSION expression);
 	
 	CLASS_EXPRESSION createClassExpression(Context context, String className, int numArrayDims);
-	
-	SIMPLE_VARIABLE_REFERENCE createSimpleVariableReference(Context context, VARIABLE_DECLARATION variableDeclaration);
 	
 	INTEGER_LITERAL createIntegerLiteral(Context context, long value, Base base, boolean signed, int bits);
 

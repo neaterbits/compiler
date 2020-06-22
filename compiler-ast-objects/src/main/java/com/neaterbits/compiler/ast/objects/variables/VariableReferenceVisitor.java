@@ -4,8 +4,6 @@ public interface VariableReferenceVisitor<T, R> {
 
 	R onNameReference(NameReference nameReference, T param);
 
-	R onSimpleVariableReference(SimpleVariableReference variableReference, T param);
-	
 	R onArrayAccessReference(ArrayAccessReference variableReference, T param);
 	
 	R onFieldAccessReference(FieldAccessReference fieldAccessReference, T param);

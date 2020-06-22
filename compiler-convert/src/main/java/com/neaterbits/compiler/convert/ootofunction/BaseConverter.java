@@ -16,7 +16,6 @@ import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifierHolder
 import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
-import com.neaterbits.compiler.ast.objects.variables.VariableDeclaration;
 import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.convert.ConverterState;
 import com.neaterbits.compiler.util.Context;
@@ -40,10 +39,6 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 		return state.convertType(type);
 	}
 
-	protected final VariableDeclaration mapVariableDeclaration(VariableDeclaration variableDeclaration, T state) {
-		return state.mapVariableDeclaration(variableDeclaration);
-	}
-	
 	protected Statement convertStatement(Statement statement, T state) {
 		return state.convertStatement(statement);
 	}

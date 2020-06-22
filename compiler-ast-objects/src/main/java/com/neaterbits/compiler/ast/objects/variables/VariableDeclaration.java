@@ -5,14 +5,14 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 
-public final class VariableDeclaration {
+final class VariableDeclaration {
 
 	private final VariableModifiers modifiers;
 	private final TypeReference type;
 	private final VarName name;
 	private final int numDims;
 
-	public VariableDeclaration(VariableModifiers modifiers, TypeReference type, VarName name, int numDims) {
+	VariableDeclaration(VariableModifiers modifiers, TypeReference type, VarName name, int numDims) {
 		
 		Objects.requireNonNull(modifiers);
 		Objects.requireNonNull(type);

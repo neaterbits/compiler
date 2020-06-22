@@ -118,10 +118,8 @@ import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarat
 import com.neaterbits.compiler.ast.objects.variables.ModifiersVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
 import com.neaterbits.compiler.ast.objects.variables.PrimaryListVariableReference;
-import com.neaterbits.compiler.ast.objects.variables.SimpleVariableReference;
 import com.neaterbits.compiler.ast.objects.variables.VarName;
 import com.neaterbits.compiler.ast.objects.variables.VarNameDeclaration;
-import com.neaterbits.compiler.ast.objects.variables.VariableDeclaration;
 import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.util.Base;
@@ -171,7 +169,6 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	EnumDefinition,
 	EnumConstantDefinition,
 	VariableModifierHolder,
-	VariableDeclaration,
 	Block,
 	Statement,
 	Expression,
@@ -200,7 +197,6 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	ArrayAccessExpression,
 	ClassExpression,
 	NameReference,
-	SimpleVariableReference,
 	IntegerLiteral,
 	FloatingPointLiteral,
 	BooleanLiteral,
@@ -574,17 +570,6 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public VariableDeclaration createVariableDeclaration(
-			Context context,
-			List<VariableModifierHolder> modifiers,
-			TypeReference type,
-			String name,
-			int numDims) {
-		
-		return new VariableDeclaration(new VariableModifiers(modifiers), type, new VarName(name), numDims);
-	}
-
-	@Override
 	public Parameter createParameter(Context context, TypeReference type, String name, Context nameContext, boolean varArgs) {
 		return new Parameter(nameContext, type, new ParameterName(nameContext, name), varArgs);
 	}
@@ -714,11 +699,6 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	@Override
 	public ClassExpression createClassExpression(Context context, String className, int numArrayDims) {
 		return new ClassExpression(context, new ClassOrInterfaceName(className), numArrayDims);
-	}
-
-	@Override
-	public SimpleVariableReference createSimpleVariableReference(Context context, VariableDeclaration variableDeclaration) {
-		return new SimpleVariableReference(context, variableDeclaration);
 	}
 
 	@Override

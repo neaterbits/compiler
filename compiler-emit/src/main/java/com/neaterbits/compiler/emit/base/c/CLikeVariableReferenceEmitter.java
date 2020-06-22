@@ -4,19 +4,10 @@ import com.neaterbits.compiler.ast.objects.variables.ArrayAccessReference;
 import com.neaterbits.compiler.ast.objects.variables.FieldAccessReference;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
 import com.neaterbits.compiler.ast.objects.variables.PrimaryListVariableReference;
-import com.neaterbits.compiler.ast.objects.variables.SimpleVariableReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.VariableReferenceEmitter;
 
 public abstract class CLikeVariableReferenceEmitter<T extends EmitterState> implements VariableReferenceEmitter<T> {
-
-	@Override
-	public final Void onSimpleVariableReference(SimpleVariableReference variableReference, T param) {
-		
-		param.append(variableReference.getName().getName());
-		
-		return null;
-	}
 
 	@Override
 	public final Void onArrayAccessReference(ArrayAccessReference variableReference, T param) {

@@ -10,7 +10,6 @@ import com.neaterbits.compiler.ast.objects.type.BaseType;
 import com.neaterbits.compiler.ast.objects.type.CompleteName;
 import com.neaterbits.compiler.ast.objects.type.primitive.IntType;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
-import com.neaterbits.compiler.ast.objects.variables.VariableDeclaration;
 import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.util.name.BaseTypeName;
 import com.neaterbits.compiler.util.name.DefinitionName;
@@ -49,10 +48,6 @@ public abstract class ConverterState<T extends ConverterState<T>> {
 	@SuppressWarnings("unchecked")
 	public final BaseType convertType(BaseType type) {
 		return converters.convertType(type, (T)this);
-	}
-	
-	public final VariableDeclaration mapVariableDeclaration(VariableDeclaration variableDeclaration) {
-		throw new UnsupportedOperationException();
 	}
 	
 	@SuppressWarnings("unchecked")

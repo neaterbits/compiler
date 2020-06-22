@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
 import com.neaterbits.compiler.parser.listener.stackbased.state.BaseStackTryCatchFinally;
-import com.neaterbits.compiler.parser.listener.stackbased.state.BaseStackVariableDeclaration;
 import com.neaterbits.compiler.parser.listener.stackbased.state.BaseStackVariableDeclarationList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.CallableStackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackAnnotation;
@@ -70,7 +69,6 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackWhileStatem
 import com.neaterbits.compiler.parser.listener.stackbased.state.VariableNameSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.ListStack;
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.StackEntry;
-import com.neaterbits.compiler.parser.listener.stackbased.state.base.VariablesMap;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassMethodMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ConstructorMemberSetter;
@@ -83,7 +81,6 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Statemen
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.TypeReferenceSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableReferenceSetter;
-import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
@@ -93,7 +90,6 @@ import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.operator.Operator;
-import com.neaterbits.compiler.util.parse.CompileException;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.compiler.util.statement.ASTMutability;
@@ -137,7 +133,6 @@ public abstract class BaseParserListener<
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
-		VARIABLE_DECLARATION,
 		COMPILATION_UNIT,
 		IMPORT,
 		COMPILATION_CODE,
@@ -207,7 +202,6 @@ public abstract class BaseParserListener<
 		CLASS_EXPRESSION extends PRIMARY,
 		
 		NAME_REFERENCE extends VARIABLE_REFERENCE,
-		SIMPLE_VARIABLE_REFERENCE extends VARIABLE_REFERENCE,
 		
 		INTEGER_LITERAL extends LITERAL,
 		FLOATING_POINT_LITERAL extends LITERAL,
@@ -297,7 +291,6 @@ public abstract class BaseParserListener<
 			ENUM_CONSTANT_DEFINITION,
 
 			VARIABLE_MODIFIER_HOLDER,
-			VARIABLE_DECLARATION,
 
 			BLOCK,
 			
@@ -340,7 +333,6 @@ public abstract class BaseParserListener<
 			CLASS_EXPRESSION,
 			
 			NAME_REFERENCE,
-			SIMPLE_VARIABLE_REFERENCE,
 			
 			INTEGER_LITERAL,
 			FLOATING_POINT_LITERAL,
@@ -397,23 +389,6 @@ public abstract class BaseParserListener<
 	// Stack for the main elements of a program
 	private final ListStack mainStack;
 
-	// Scope for variables
-	private final ArrayStack<VariablesMap<VARIABLE_DECLARATION>> variableScopes;
-
-	private boolean variableScopesContain(String name) {
-
-		boolean contains = false;
-
-		for (int i = variableScopes.size() - 1; i >= 0; --i) {
-			if (variableScopes.get(i).hasVariable(name)) {
-				contains = true;
-				break;
-			}
-		}
-
-		return contains;
-	}
-
 	@SuppressWarnings("unchecked")
 	protected BaseParserListener(
 	        StringSource stringSource,
@@ -427,26 +402,10 @@ public abstract class BaseParserListener<
 		this.parseTreeFactory = parseTreeFactory;
 
 		this.mainStack = new ListStack();
-
-		this.variableScopes = new ArrayStack<>();
 	}
 
 	protected final ParseLogger getLogger() {
 		return logger;
-	}
-
-	protected final VARIABLE_DECLARATION findVariableDeclaration(String name) {
-		Objects.requireNonNull(name);
-
-		for (int i = variableScopes.size() - 1; i >= 0; --i) {
-			final VARIABLE_DECLARATION variableDeclaration = variableScopes.get(i).findVariable(name);
-
-			if (variableDeclaration != null) {
-				return variableDeclaration;
-			}
-		}
-
-		return null;
 	}
 
 	private static String getMethodName() {
@@ -951,8 +910,6 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		pushVariableScope();
-
 		push(new StackStaticInitializer<>(logger));
 
 		logExit(context);
@@ -974,8 +931,6 @@ public abstract class BaseParserListener<
 
 		stackClass.add(initializer);
 
-		popVariableScope();
-
 		logExit(context);
 	}
 
@@ -987,8 +942,6 @@ public abstract class BaseParserListener<
 		logEnter(context);
 
 		push(new StackConstructor<>(logger));
-
-		pushVariableScope();
 
 		logExit(context);
 	}
@@ -1069,8 +1022,6 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		popVariableScope();
-
 		final StackConstructor<STATEMENT, PARAMETER, TYPE_REFERENCE, CONSTRUCTOR_MODIFIER_HOLDER> stackConstructor = pop();
 
 		final CONSTRUCTOR_MEMBER constructorMember = parseTreeFactory.createConstructorMember(context,
@@ -1095,8 +1046,6 @@ public abstract class BaseParserListener<
 			= new StackClassMethod<>(logger);
 
 		push(method);
-
-		pushVariableScope();
 
 		logExit(context);
 	}
@@ -1181,10 +1130,6 @@ public abstract class BaseParserListener<
 				stackParameterSignature.getNameContext(), stackParameterSignature.isVarArgs());
 
 		stackCallable.addParameter(parameter);
-
-		final VARIABLE_DECLARATION variableDeclaration = makeVariableDeclaration(context, stackParameterSignature);
-
-		variableScopes.get().add(stackParameterSignature.getName(), variableDeclaration);
 
 		logExit(context);
 	}
@@ -1288,8 +1233,6 @@ public abstract class BaseParserListener<
 	    final Context context = getEndContext(startContext, endContext);
 	    
 		logEnter(context);
-
-		popVariableScope();
 
 		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, CLASS_METHOD_MODIFIER_HOLDER> method = pop();
 
@@ -1648,8 +1591,6 @@ public abstract class BaseParserListener<
 
 		push(method);
 
-		pushVariableScope();
-
 		logExit(context);
 	}
 
@@ -1730,8 +1671,6 @@ public abstract class BaseParserListener<
 	    final Context context = getEndContext(startContext, endContext);
 	    
 		logEnter(context);
-
-		popVariableScope();
 
 		final StackInterfaceMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, INTERFACE_METHOD_MODIFIER_HOLDER> method = pop();
 
@@ -1904,15 +1843,7 @@ public abstract class BaseParserListener<
 
 		final VariableReferenceSetter<VARIABLE_REFERENCE> variableReferenceSetter = get();
 
-		final VARIABLE_DECLARATION declaration = findVariableDeclaration(stringSource.asString(name));
-
-		if (declaration == null) {
-			throw new CompileException(context, "No variable declared for name " + name);
-		}
-
-		final SIMPLE_VARIABLE_REFERENCE variableReference = parseTreeFactory.createSimpleVariableReference(context, declaration);
-
-		variableReferenceSetter.setVariableReference(variableReference);
+		variableReferenceSetter.setVariableReference(parseTreeFactory.createNameReference(context, stringSource.asString(name)));
 
 		logExit(context);
 	}
@@ -2362,15 +2293,6 @@ public abstract class BaseParserListener<
 			        classTypeName,
 			        referenceType);
 			
-			if (variableScopesContain(classTypeName.getName())) {
-				// Likely a scoped variable, eg. variable.invokeMethod() instead
-				// of Class.invokeStaticMethod()
-
-				if (type == MethodInvocationType.NAMED_CLASS_STATIC) {
-					type = MethodInvocationType.VARIABLE_REFERENCE;
-					classType = null;
-				}
-			}
 		}
 
 		push(new StackMethodInvocation<>(
@@ -2557,8 +2479,6 @@ public abstract class BaseParserListener<
 
 		push(new StackLambdaExpression<>(logger));
 
-		pushVariableScope();
-
 		logExit(context);
 	}
 
@@ -2669,8 +2589,6 @@ public abstract class BaseParserListener<
 
 		expressionSetter.addExpression(lambdaExpression);
 
-		popVariableScope();
-
 		logExit(context);
 	}
 
@@ -2733,18 +2651,6 @@ public abstract class BaseParserListener<
 				variableDeclaration.getModifiers(),
 				variableDeclaration.getTypeReference(),
 				elements);
-
-		variableDeclaration.getList().forEach(e -> {
-			
-			final VARIABLE_DECLARATION var = parseTreeFactory.createVariableDeclaration(
-					context,
-					variableDeclaration.getModifiers(),
-					variableDeclaration.getTypeReference(),
-					e.getVarName(),
-					e.getNumDims());
-			
-			variableScopes.get().add(e.getVarName(), var);
-		});
 
 		statementSetter.addStatement(statement);
 
@@ -3021,8 +2927,6 @@ public abstract class BaseParserListener<
 
 		push(new StackIteratorForStatement<>(logger));
 
-		pushVariableScope();
-
 		logExit(context);
 	}
 
@@ -3043,14 +2947,6 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackIteratorForStatement<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE, EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackIteratorForStatement = get();
-
-		// Must add variable declarations to scope so that can be found further
-		// down in parsing
-		final VARIABLE_DECLARATION variableDeclaration = makeVariableDeclaration(context, stackIteratorForStatement);
-
-		variableScopes.get().add(stackIteratorForStatement.getName(), variableDeclaration);
-
 		logExit(context);
 	}
 
@@ -3060,8 +2956,6 @@ public abstract class BaseParserListener<
 	    final Context context = getEndContext(startContext, endContext);
 	    
 		logEnter(context);
-
-		popVariableScope();
 
 		final StackIteratorForStatement<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE, EXPRESSION, VARIABLE_REFERENCE, PRIMARY, STATEMENT> stackIteratorForStatement = pop();
 
@@ -3157,8 +3051,6 @@ public abstract class BaseParserListener<
 
 		push(new StackTryWithResourcesStatement<>(logger));
 
-		pushVariableScope(); // for the variables in resources
-
 		logExit(context);
 	}
 
@@ -3217,15 +3109,6 @@ public abstract class BaseParserListener<
 				stackResource.getNameContext(),
 				stackResource.getNumDims(),
 				stackResource.getInitializer());
-
-		variableScopes.get().add(
-				stackResource.getName(),
-				parseTreeFactory.createVariableDeclaration(
-						context,
-						stackResource.getModifiers(),
-						stackResource.getTypeReference(),
-						stackResource.getName(),
-						stackResource.getNumDims()));
 
 		final StackResourceList<RESOURCE> stackResourceList = get();
 
@@ -3374,9 +3257,8 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		popVariableScope();
-
 		final StackTryWithResourcesStatement<STATEMENT, CATCH_BLOCK, RESOURCE> stackTryWithResourcesStatement = pop();
+
 
 		final TRY_WITH_RESOURCES statement = parseTreeFactory.createTryWithResourcesStatement(
 				context,
@@ -3513,27 +3395,6 @@ public abstract class BaseParserListener<
 	@SuppressWarnings("unchecked")
 	private <T extends StackEntry, R extends T> R get(Class<T> cl) {
 		return (R)mainStack.getFromTop(cl);
-	}
-
-	protected final void pushVariableScope() {
-		variableScopes.push(new VariablesMap<>());
-	}
-
-	protected final void popVariableScope() {
-		variableScopes.pop();
-	}
-
-	private final VARIABLE_DECLARATION makeVariableDeclaration(Context context,
-			BaseStackVariableDeclaration<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> stackDeclaration) {
-
-		final VARIABLE_DECLARATION variableDeclaration = parseTreeFactory.createVariableDeclaration(
-				context,
-				stackDeclaration.getModifiers(),
-				stackDeclaration.getTypeReference(),
-				stackDeclaration.getName(),
-				stackDeclaration.getNumDims());
-
-		return variableDeclaration;
 	}
 
 	private final EXPRESSION makeExpressionOrNull(Context context,

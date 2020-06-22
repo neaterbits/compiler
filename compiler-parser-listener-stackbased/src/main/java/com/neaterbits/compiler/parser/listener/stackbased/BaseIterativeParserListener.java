@@ -21,7 +21,6 @@ public abstract class BaseIterativeParserListener<
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
-		VARIABLE_DECLARATION,
 		COMPILATION_UNIT,
 		IMPORT,
 		COMPILATION_CODE,
@@ -91,7 +90,6 @@ public abstract class BaseIterativeParserListener<
 		CLASS_EXPRESSION extends PRIMARY,
 		
 		NAME_REFERENCE extends VARIABLE_REFERENCE,
-		SIMPLE_VARIABLE_REFERENCE extends VARIABLE_REFERENCE,
 		
 		INTEGER_LITERAL extends LITERAL,
 		FLOATING_POINT_LITERAL extends LITERAL,
@@ -148,7 +146,6 @@ public abstract class BaseIterativeParserListener<
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
-		VARIABLE_DECLARATION,
 		COMPILATION_UNIT,
 		IMPORT,
 		COMPILATION_CODE,
@@ -218,7 +215,6 @@ public abstract class BaseIterativeParserListener<
 		CLASS_EXPRESSION,
 		
 		NAME_REFERENCE,
-		SIMPLE_VARIABLE_REFERENCE,
 		
 		INTEGER_LITERAL,
 		FLOATING_POINT_LITERAL,
@@ -293,8 +289,6 @@ public abstract class BaseIterativeParserListener<
 		        stringSource.asString(ifKeyword),
 		        getOtherContext(ifKeywordContext)));
 		
-		pushVariableScope();
-		
 		logExit(context);
 	}
 	
@@ -352,8 +346,6 @@ public abstract class BaseIterativeParserListener<
 		
 		popAndAddIfConditionBlock(context);
 
-		popVariableScope();
-		
 		logExit(context);
 	}
 
@@ -375,8 +367,6 @@ public abstract class BaseIterativeParserListener<
 		        stringSource.asString(ifKeyword),
                 getOtherContext(ifKeywordContext)));
 		
-		pushVariableScope();
-		
 		logExit(context);
 	}
 	
@@ -388,8 +378,6 @@ public abstract class BaseIterativeParserListener<
 		logEnter(context);
 
 		popAndAddElseIfConditionBlock(context);
-		
-		popVariableScope();
 		
 		logExit(context);
 	}
@@ -410,8 +398,6 @@ public abstract class BaseIterativeParserListener<
 		
 		push(new StackElseBlock<>(getLogger(), stringSource.asString(keyword), getOtherContext(keywordContext)));
 		
-		pushVariableScope();
-		
 		logExit(context);
 	}
 	
@@ -423,8 +409,6 @@ public abstract class BaseIterativeParserListener<
 		logEnter(context);
 		
 		final StackElseBlock<STATEMENT> stackBlock = pop();
-
-		popVariableScope();
 
 		final StackIfElseIfElse<KEYWORD, CONDITION_BLOCK, BLOCK> ifElseIfElse = get();
 		
