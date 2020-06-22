@@ -996,7 +996,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onMethodInvocationStart(int context, MethodInvocationType type, ScopedName classTypeName,
             int classTypeNameContext, ReferenceType referenceType, long methodName, int methodNameContext) {
 
-        AST.encodeMethodInvocationStart(astBuffer, methodName, methodNameContext);
+        AST.encodeMethodInvocationStart(astBuffer, type, methodName, methodNameContext);
     }
 
     @Override

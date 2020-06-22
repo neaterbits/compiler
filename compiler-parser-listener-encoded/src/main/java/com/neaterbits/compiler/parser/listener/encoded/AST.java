@@ -1381,14 +1381,16 @@ public class AST {
         listener.onExpressionStatementEnd(expressionStatementStartContext, endContext);
     }
 
-    private static final int METHOD_INVOCATION_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    private static final int METHOD_INVOCATION_SIZE = 1 + STRING_REF_SIZE + CONTEXT_REF_SIZE;
     
     static void encodeMethodInvocationStart(
             StringASTBuffer astBuffer,
+            MethodInvocationType type,
             long methodName,
             int methodNameContext) {
         
         astBuffer.writeElementStart(ParseTreeElement.METHOD_INVOCATION_EXPRESSION);
+        astBuffer.writeEnumByte(type);
         astBuffer.writeStringRef(methodName);
         astBuffer.writeContextRef(methodNameContext);
     }
@@ -1399,12 +1401,13 @@ public class AST {
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        final long methodName = astBuffer.getStringRef(index);
-        final int methodNameContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        final MethodInvocationType type = astBuffer.getEnumByte(index, MethodInvocationType.class);
+        final long methodName = astBuffer.getStringRef(index + 1);
+        final int methodNameContext = astBuffer.getContextRef(index + 1 + STRING_REF_SIZE);
 
         listener.onMethodInvocationStart(
                 methodInvocationStartContext,
-                MethodInvocationType.NO_OBJECT,
+                type,
                 null,
                 ContextRef.NONE,
                 null,

@@ -1367,23 +1367,50 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             if (periodToken != JavaToken.PERIOD) {
                 break;
             }
-            
-            final JavaToken identifierToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
 
-            if (identifierToken !=  JavaToken.IDENTIFIER) {
-                throw lexer.unexpectedToken();
-            }
+            parseAnAdditionalPrimary();
+        }
+    }
+    
+    private void parseAnAdditionalPrimary() throws IOException, ParserException {
+        
+        final JavaToken identifierToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+
+        if (identifierToken !=  JavaToken.IDENTIFIER) {
+            throw lexer.unexpectedToken();
+        }
+        
+        final long identifier = getStringRef();
+        final int identifierContext = writeCurContext();
+        
+        final JavaToken nextToken = lexer.lexSkipWS(JavaToken.LPAREN);
+        
+        if (nextToken == JavaToken.LPAREN) {
+            // Method invocation
+            final int methodInvocationContext = writeContext(identifierContext);
             
-            final long identifier = getStringRef();
-            final int fieldAccessContext = writeCurContext();
+            listener.onMethodInvocationStart(
+                    methodInvocationContext,
+                    MethodInvocationType.PRIMARY,
+                    null,
+                    ContextRef.NONE,
+                    null,
+                    identifier,
+                    identifierContext);
+            
+            parseMethodInvocationParameters();
+            
+            listener.onMethodInvocationEnd(methodInvocationContext, getLexerContext());
+        }
+        else {
             
             listener.onFieldAccess(
-                    fieldAccessContext,
+                    identifierContext,
                     FieldAccessType.FIELD,
                     null,
                     null,
                     identifier,
-                    writeContext(fieldAccessContext));
+                    identifierContext);
         }
     }
     

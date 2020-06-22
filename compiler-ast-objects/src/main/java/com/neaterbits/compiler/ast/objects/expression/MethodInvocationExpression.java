@@ -33,7 +33,10 @@ public final class MethodInvocationExpression extends Call<MethodName> {
 			Objects.requireNonNull(classType);
 		}
 
-		if (classType == null && object == null && type != MethodInvocationType.NO_OBJECT && type != MethodInvocationType.SUB) {
+		if (classType == null && object == null 
+		        && type != MethodInvocationType.NO_OBJECT
+		        && type != MethodInvocationType.SUB
+		        && type != MethodInvocationType.PRIMARY) {
 			throw new IllegalArgumentException();
 		}
 		
