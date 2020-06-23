@@ -184,7 +184,7 @@ public enum ParseTreeElement {
 	INITIALIZER_VARIABLE_DECLARATION_ELEMENT(false),
 	
 	KEYWORD(true),
-	IDENTIFIER(true);
+	NAME(true);
     
     private final boolean leaf;
     private final boolean placeholder;

@@ -170,7 +170,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public void onImportIdentifier(int identifierContext, long identifier) {
+    public void onImportName(int identifierContext, long identifier) {
         
         writeLeafElementContextRef(identifierContext);
 

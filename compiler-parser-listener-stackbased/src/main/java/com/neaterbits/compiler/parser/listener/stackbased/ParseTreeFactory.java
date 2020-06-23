@@ -21,7 +21,7 @@ import com.neaterbits.compiler.util.typedefinition.VariableModifier;
 
 public interface ParseTreeFactory<
 	KEYWORD,
-	IDENTIFIER,
+	NAME,
 	TYPE_REFERENCE,
 	COMPILATION_UNIT,
 	IMPORT,
@@ -149,7 +149,7 @@ public interface ParseTreeFactory<
 
 	KEYWORD createKeyword(Context context, String name);
 
-	IDENTIFIER createIdentifier(Context context, String name);
+	NAME createName(Context context, String name);
 
     TYPE_REFERENCE createScalarTypeReference(Context context, String name);
 
@@ -157,7 +157,7 @@ public interface ParseTreeFactory<
 		
 	COMPILATION_UNIT createCompilationUnit(Context context, List<IMPORT> imports, List<COMPILATION_CODE> code);
 	
-	IMPORT createImport(Context context, KEYWORD importKeyword, KEYWORD staticKeyword, List<IDENTIFIER> identifiers, boolean ondemand);
+	IMPORT createImport(Context context, KEYWORD importKeyword, KEYWORD staticKeyword, List<NAME> identifiers, boolean ondemand);
 	
 	CLASS_MODIFIER_HOLDER createClassModifierHolder(Context context, ClassModifier classModifier);
 

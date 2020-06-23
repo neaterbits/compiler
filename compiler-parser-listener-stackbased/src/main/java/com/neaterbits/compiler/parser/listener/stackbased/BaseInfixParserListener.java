@@ -15,7 +15,7 @@ import com.neaterbits.util.io.strings.StringSource;
 public abstract class BaseInfixParserListener<
 
 		KEYWORD,
-		IDENTIFIER,
+		NAME,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
@@ -140,7 +140,7 @@ public abstract class BaseInfixParserListener<
 	extends BaseParserListener<
 
 		KEYWORD,
-		IDENTIFIER,
+		NAME,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,

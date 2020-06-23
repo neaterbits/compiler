@@ -129,7 +129,7 @@ import com.neaterbits.util.io.strings.StringRef;
 public abstract class BaseParserListener<
 
 		KEYWORD,
-		IDENTIFIER,
+		NAME,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
@@ -259,7 +259,7 @@ public abstract class BaseParserListener<
 
 	final ParseTreeFactory<
 			KEYWORD,
-			IDENTIFIER,
+			NAME,
 			TYPE_REFERENCE,
 			COMPILATION_UNIT,
 			IMPORT,
@@ -518,15 +518,15 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onImportIdentifier(int leafContext, long identifier) {
+	public final void onImportName(int leafContext, long identifier) {
 		
 	    final Context context = getLeafContext(leafContext);
 	    
 	    logEnter(context);
 	    
-		final StackImport<IDENTIFIER> stackImport = get();
+		final StackImport<NAME> stackImport = get();
 		
-		stackImport.addIdentifier(parseTreeFactory.createIdentifier(context, stringSource.asString(identifier)));
+		stackImport.addIdentifier(parseTreeFactory.createName(context, stringSource.asString(identifier)));
 		
 		logExit(context);
 	}
@@ -538,7 +538,7 @@ public abstract class BaseParserListener<
 		
 	    logEnter(context);
 	    
-		final StackImport<IDENTIFIER> stackImport = pop();
+		final StackImport<NAME> stackImport = pop();
 		
 		final StackCompilationUnit<COMPILATION_CODE, IMPORT> stackCompilationUnit = get(StackCompilationUnit.class);
 

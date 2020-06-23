@@ -9,7 +9,7 @@ import com.neaterbits.util.io.strings.StringSource;
 public abstract class BaseIterativeOOParserListener<
 
 		KEYWORD,
-		IDENTIFIER,
+		NAME,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,
@@ -133,7 +133,7 @@ public abstract class BaseIterativeOOParserListener<
 	extends BaseIterativeParserListener<
 
 		KEYWORD,
-		IDENTIFIER,
+		NAME,
 		TYPE_REFERENCE,
 		INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
 		VARIABLE_MODIFIER_HOLDER,

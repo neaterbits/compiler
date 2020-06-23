@@ -31,7 +31,7 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	        long importKeyword, int importKeywordContext,
 	        long staticKeyword, int staticKeywordContext);
 	
-	void onImportIdentifier(int context, long identifier);
+	void onImportName(int context, long name);
 	
 	void onImportEnd(int startContext, Context endContext, boolean ondemand);
 	

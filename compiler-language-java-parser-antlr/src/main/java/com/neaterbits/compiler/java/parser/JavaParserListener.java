@@ -151,7 +151,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 
 	public final void onImportIdentifier(Context context, long identifier) {
-		delegate.onImportIdentifier(writeOtherContext(context), identifier);
+		delegate.onImportName(writeOtherContext(context), identifier);
 	}
 	
 	public final void onImportEnd(Context context, boolean ondemand) {

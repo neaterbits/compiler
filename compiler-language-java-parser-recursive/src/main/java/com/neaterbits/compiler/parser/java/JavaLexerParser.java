@@ -291,7 +291,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             final int importIdentifierContext = writeCurContext();
             
             // Initial token of package name
-            listener.onImportIdentifier(importIdentifierContext, getStringRef());
+            listener.onImportName(importIdentifierContext, getStringRef());
         }
 
         boolean parseIdentifier = staticOrIdentifiertoken != JavaToken.IDENTIFIER;
@@ -322,7 +322,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
                 final int anotherImportIdentifierContext = writeCurContext();
                 
-                listener.onImportIdentifier(anotherImportIdentifierContext, getStringRef());
+                listener.onImportName(anotherImportIdentifierContext, getStringRef());
             }
             else {
                 parseIdentifier = true;

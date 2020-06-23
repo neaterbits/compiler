@@ -143,7 +143,7 @@ import com.neaterbits.compiler.util.typedefinition.VariableModifier;
 
 public class ASTParseTreeFactory implements ParseTreeFactory<
 	Keyword,
-	Identifier,
+	Name,
 	TypeReference,
 	CompilationUnit,
 	Import,
@@ -256,7 +256,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 		return new CompilationUnit(context, imports, code);
 	}
 	
-	private static String [] getIdentifierArray(List<Identifier> identifiers, int length) {
+	private static String [] getIdentifierArray(List<Name> identifiers, int length) {
 		
 		if (length <= 0) {
 			throw new IllegalArgumentException();
@@ -271,7 +271,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 		return parts;
 	}
 	
-	private static NamespaceReference getNamespaceReference(List<Identifier> identifiers, int length) {
+	private static NamespaceReference getNamespaceReference(List<Name> identifiers, int length) {
 		
 		return new NamespaceReference(getIdentifierArray(identifiers, length));
 	}
@@ -281,7 +281,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 			Context context,
 			Keyword importKeyword,
 			Keyword staticKeyword,
-			List<Identifier> identifiers,
+			List<Name> identifiers,
 			boolean ondemand) {
 	    
 		final ImportName importName;
@@ -314,7 +314,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				final NamespaceReference namespaceOrTypeName = getNamespaceReference(identifiers, identifiers.size() - 2);
 				final String classOrInterfaceName = identifiers.get(identifiers.size() - 2).getText();
 
-				final Identifier methodName = identifiers.get(identifiers.size() - 1);
+				final Name methodName = identifiers.get(identifiers.size() - 1);
 
 				importName = new ImportName(
 						context,
@@ -343,8 +343,8 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public Identifier createIdentifier(Context context, String name) {
-		return new Identifier(context, name);
+	public Name createName(Context context, String name) {
+		return new Name(context, name);
 	}
 
 	@Override

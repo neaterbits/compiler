@@ -262,7 +262,7 @@ public class AST {
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onImportIdentifier(leafContext, astBuffer.getStringRef(index));
+        listener.onImportName(leafContext, astBuffer.getStringRef(index));
     }
 
     static void encodeImportEnd(StringASTBuffer astBuffer, boolean onDemand) {

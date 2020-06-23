@@ -5,11 +5,11 @@ import java.util.Objects;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 
-public final class Identifier extends BaseASTElement {
+public final class Name extends BaseASTElement {
 
 	private final String text;
 	
-	public Identifier(Context context, String text) {
+	public Name(Context context, String text) {
 		super(context);
 		
 		Objects.requireNonNull(text);
@@ -32,7 +32,7 @@ public final class Identifier extends BaseASTElement {
 	
 	@Override
 	public ParseTreeElement getParseTreeElement() {
-		return ParseTreeElement.IDENTIFIER;
+		return ParseTreeElement.NAME;
 	}
 
 	@Override
