@@ -39,4 +39,9 @@ public final class Name extends BaseASTElement {
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 	}
+
+    @Override
+    public String toString() {
+        return "Name [text=" + text + "]";
+    }
 }

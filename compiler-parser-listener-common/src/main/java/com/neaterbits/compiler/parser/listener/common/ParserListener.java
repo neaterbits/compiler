@@ -9,6 +9,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
@@ -254,9 +255,7 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	void onMethodInvocationStart(
 			int startContext,
 			MethodInvocationType type,
-			ScopedName classTypeName,
-			int classTypeNameContext,
-			ReferenceType referenceType,
+			Names names,
 			long methodName,
 			int methodNameContext);
 	
@@ -268,7 +267,7 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onParametersEnd(int startContext, Context endContext);
 	
-	void onMethodInvocationEnd(int startContext, Context endContext);
+	void onMethodInvocationEnd(int startContext, boolean resolved, Context endContext);
 	
 	void onArrayCreationExpressionStart(int startContext, ScopedName typeName, ReferenceType referenceType, int numDims);
 	

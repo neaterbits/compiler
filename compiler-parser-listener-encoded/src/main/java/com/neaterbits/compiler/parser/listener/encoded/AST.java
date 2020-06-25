@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.parser.listener.encoded;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
@@ -10,6 +12,7 @@ import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Bitwise;
 import com.neaterbits.compiler.util.operator.Logical;
@@ -17,6 +20,7 @@ import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.OperatorType;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.compiler.util.parse.NamePart;
 import com.neaterbits.compiler.util.typedefinition.ClassModifier;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
@@ -154,6 +158,10 @@ public class AST {
             
         case WHILE_STATEMENT:
             size = WHILE_STATEMENT_SIZE;
+            break;
+            
+        case UNRESOLVED_METHOD_INVOCATION_EXPRESSION:
+            size = UNRESOLVED_METHOD_INVOCATION_SIZE + (astBuffer.getByte(index + 1) * (STRING_REF_SIZE + CONTEXT_REF_SIZE));
             break;
             
         case METHOD_INVOCATION_EXPRESSION:
@@ -1381,6 +1389,99 @@ public class AST {
         listener.onExpressionStatementEnd(expressionStatementStartContext, endContext);
     }
 
+    private static final int UNRESOLVED_METHOD_INVOCATION_SIZE = 1 + 1 + STRING_REF_SIZE + CONTEXT_REF_SIZE;
+
+    static void encodeUnresolvedMethodInvocationStart(
+            StringASTBuffer astBuffer,
+            MethodInvocationType type,
+            Names names,
+            long methodName,
+            int methodNameContext) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION);
+        astBuffer.writeEnumByte(type);
+        
+        if (names.count() > Byte.MAX_VALUE) {
+            throw new IllegalArgumentException();
+        }
+        
+        astBuffer.writeByte((byte)names.count());
+        for (int i = 0; i < names.count(); ++ i) {
+            astBuffer.writeStringRef(names.getStringAt(i));
+            astBuffer.writeContextRef(names.getContextAt(i));
+        }
+        
+        astBuffer.writeStringRef(methodName);
+        astBuffer.writeContextRef(methodNameContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeUnresolvedMethodInvocationStart(
+            ASTBufferRead astBuffer,
+            int methodInvocationStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final MethodInvocationType type = astBuffer.getEnumByte(index, MethodInvocationType.class);
+        final int numNames = astBuffer.getByte(index + 1);
+        
+        int idx = index + 2;
+        
+        final List<NamePart> list = new ArrayList<>(numNames);
+
+        final Names names = new Names() {
+            
+            @Override
+            public long getStringAt(int index) {
+                return list.get(index).getPart();
+            }
+            
+            @Override
+            public int getContextAt(int index) {
+                return list.get(index).getContext();
+            }
+            
+            @Override
+            public int count() {
+                return list.size();
+            }
+        };
+        
+        for (int i = 0; i < numNames; ++ i) {
+            
+            final NamePart namePart = new NamePart(
+                    astBuffer.getContextRef(idx + STRING_REF_SIZE),
+                    astBuffer.getStringRef(idx));
+            
+            list.add(namePart);
+            
+            idx += STRING_REF_SIZE + CONTEXT_REF_SIZE;
+        }
+        
+        final long methodName = astBuffer.getStringRef(idx);
+        final int methodNameContext = astBuffer.getContextRef(idx + STRING_REF_SIZE);
+
+        listener.onMethodInvocationStart(
+                methodInvocationStartContext,
+                type,
+                names,
+                methodName,
+                methodNameContext);
+    }
+
+    static void encodeUnresolvedMethodInvocationEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeUnresolvedMethodInvocationEnd(
+            ASTBufferRead astBuffer,
+            int methodInvocationStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onMethodInvocationEnd(methodInvocationStartContext, false, endContext);
+    }
+
     private static final int METHOD_INVOCATION_SIZE = 1 + STRING_REF_SIZE + CONTEXT_REF_SIZE;
     
     static void encodeMethodInvocationStart(
@@ -1409,8 +1510,6 @@ public class AST {
                 methodInvocationStartContext,
                 type,
                 null,
-                ContextRef.NONE,
-                null,
                 methodName,
                 methodNameContext);
     }
@@ -1426,7 +1525,7 @@ public class AST {
             Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onMethodInvocationEnd(methodInvocationStartContext, endContext);
+        listener.onMethodInvocationEnd(methodInvocationStartContext, true, endContext);
     }
 
     static void encodeParametersStart(StringASTBuffer astBuffer) {

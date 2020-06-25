@@ -19,6 +19,7 @@ import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
+import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.statement.AssignmentStatement;
@@ -36,6 +37,7 @@ import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
@@ -1294,6 +1296,42 @@ public abstract class BaseJavaParserTest {
         assertThat(bInitializer.getOperators().get(2)).isEqualTo(Arithmetic.MULTIPLY);
         assertThat(bInitializer.getOperators().get(3)).isEqualTo(Arithmetic.DIVIDE);
         assertThat(bInitializer.getOperators().get(4)).isEqualTo(Arithmetic.MODULUS);
+    }
+
+    @Test
+    public void testClassStaticOrStaticVarMethodCall() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { SomeClass.callAMethod(); } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
+        
+        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)expressionStatement.getExpression();
+        
+        // Class or static var, does not now which until has resolved classes and variables
+        
+        // System.out.println("## names " + methodInvocation.getNameList().getNames());
+        
+        assertThat(methodInvocation.getNameList().getNames().size()).isEqualTo(2);
+
+        /*
+        assertThat(methodInvocation.getNameList().getNames().get(0)).isEqualTo("SomeClass");
+        assertThat(methodInvocation.getNameList().getNames().get(1)).isEqualTo("callAMethod");
+        */
+
+        assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
+        assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
+
+        assertThat(methodInvocation.getInvocationType()).isEqualTo(MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR);
     }
     
     private void checkExpressionListLiteral(ExpressionList list, int index, int value) {

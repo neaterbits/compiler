@@ -46,7 +46,7 @@ public class CrossReferenceTest extends BaseCompilerTest {
 		
 		final int variableDeclarationOffset = source.indexOf("integerVariable");
 
-		final JavaProgramModel programModel = new JavaProgramModel(null);
+		final JavaProgramModel programModel = new JavaProgramModel();
 		
 		final CompilationUnit compilationUnit = compiledAndMapped.getCompilationUnit(spec);
 		

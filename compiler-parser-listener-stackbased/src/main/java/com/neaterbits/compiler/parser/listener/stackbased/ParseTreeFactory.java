@@ -22,6 +22,7 @@ import com.neaterbits.compiler.util.typedefinition.VariableModifier;
 public interface ParseTreeFactory<
 	KEYWORD,
 	NAME,
+	NAME_LIST,
 	TYPE_REFERENCE,
 	COMPILATION_UNIT,
 	IMPORT,
@@ -88,6 +89,7 @@ public interface ParseTreeFactory<
 	FIELD_ACCESS extends PRIMARY,
 	THIS_PRIMARY extends PRIMARY,
 	CLASS_INSTANCE_CREATION_EXPRESSION extends PRIMARY,
+	UNRESOLVED_METHOD_INVOCATION_EXPRESSION extends PRIMARY,
 	METHOD_INVOCATION_EXPRESSION extends PRIMARY,
 	ARRAY_CREATION_EXPRESSION extends PRIMARY,
 	ARRAY_ACCESS_EXPRESSION extends PRIMARY,
@@ -150,6 +152,8 @@ public interface ParseTreeFactory<
 	KEYWORD createKeyword(Context context, String name);
 
 	NAME createName(Context context, String name);
+	
+	NAME_LIST createNameList(Context context, List<NAME> names);
 
     TYPE_REFERENCE createScalarTypeReference(Context context, String name);
 
@@ -295,6 +299,14 @@ public interface ParseTreeFactory<
 			CONSTRUCTOR_NAME name,
 			List<EXPRESSION> parameters,
 			List<CLASS_METHOD_MEMBER> anonymousClassMethods);
+
+   UNRESOLVED_METHOD_INVOCATION_EXPRESSION createUnresolvedMethodInvocationExpression(
+            Context context,
+            MethodInvocationType type,
+            NAME_LIST nameList,
+            String methodName,
+            Context methodNameContext,
+            List<EXPRESSION> parameters);
 
 	METHOD_INVOCATION_EXPRESSION createMethodInvocationExpression(
 			Context context,

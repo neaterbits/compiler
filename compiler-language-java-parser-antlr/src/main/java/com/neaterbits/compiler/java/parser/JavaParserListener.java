@@ -18,6 +18,7 @@ import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Notation;
 import com.neaterbits.compiler.util.operator.Operator;
@@ -654,8 +655,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onMethodInvocationStart(
 			Context context,
 			MethodInvocationType type,
-			ScopedName classTypeName,
-			Context classTypeNameContext,
+			Names names,
 			ReferenceType referenceType,
 			long methodName,
 			Context methodNameContext) {
@@ -663,15 +663,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onMethodInvocationStart(
 		        writeStartContext(context),
 		        type,
-		        classTypeName,
-		        writeOtherContext(classTypeNameContext),
-		        referenceType,
+		        names,
 		        methodName,
 		        writeOtherContext(methodNameContext));
 	}
 	
 	public void onMethodInvocationEnd(Context context) {
-		delegate.onMethodInvocationEnd(writeEndContext(context), context);
+		delegate.onMethodInvocationEnd(writeEndContext(context), false, context);
 	}
 	
 	public void onParametersStart(Context context) {
@@ -1102,7 +1100,6 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onJavaAssertStatementStart(Context context) {
 		
 		statementsStack.add(JavaStatement.ASSERT);
-		
 	}
 
 	public void onJavaAssertStatementEnd(Context context) {

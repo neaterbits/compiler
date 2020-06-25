@@ -33,6 +33,7 @@ import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.Resource;
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
+import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostDecrementExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostIncrementExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreDecrementExpression;
@@ -144,6 +145,7 @@ import com.neaterbits.compiler.util.typedefinition.VariableModifier;
 public class ASTParseTreeFactory implements ParseTreeFactory<
 	Keyword,
 	Name,
+	NameList,
 	TypeReference,
 	CompilationUnit,
 	Import,
@@ -192,6 +194,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	FieldAccess,
 	ThisPrimary,
 	ClassInstanceCreationExpression,
+	UnresolvedMethodInvocationExpression,
 	MethodInvocationExpression,
 	ArrayCreationExpression,
 	ArrayAccessExpression,
@@ -348,6 +351,12 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
+    public NameList createNameList(Context context, List<Name> names) {
+
+	    return new NameList(context, names);
+    }
+
+    @Override
     public TypeReference createScalarTypeReference(Context context, String name) {
         return new ScalarTypeReference(context, new TypeName(null, null, name));
     }
@@ -672,7 +681,21 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 		return new ClassInstanceCreationExpression(context, type, name, new ParameterList(parameters), anonymousClassMethods);
 	}
 
+	
 	@Override
+    public UnresolvedMethodInvocationExpression createUnresolvedMethodInvocationExpression(Context context,
+            MethodInvocationType type, NameList nameList, String methodName, Context methodNameContext,
+            List<Expression> parameters) {
+
+	    return new UnresolvedMethodInvocationExpression(
+	            methodNameContext,
+	            type,
+	            nameList,
+	            new MethodName(methodNameContext, methodName),
+                new ParameterList(parameters));
+    }
+
+    @Override
 	public MethodInvocationExpression createMethodInvocationExpression(Context context, MethodInvocationType type,
 			TypeReference classType, Expression object, String methodName, Context methodNameContext,
 			List<Expression> parameters) {

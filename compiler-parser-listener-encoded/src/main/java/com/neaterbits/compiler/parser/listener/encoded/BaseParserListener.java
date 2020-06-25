@@ -17,6 +17,7 @@ import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
@@ -993,10 +994,19 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onMethodInvocationStart(int context, MethodInvocationType type, ScopedName classTypeName,
-            int classTypeNameContext, ReferenceType referenceType, long methodName, int methodNameContext) {
+    public final void onMethodInvocationStart(
+            int context,
+            MethodInvocationType type,
+            Names names,
+            long methodName,
+            int methodNameContext) {
 
-        AST.encodeMethodInvocationStart(astBuffer, type, methodName, methodNameContext);
+        if (names != null) {
+            AST.encodeUnresolvedMethodInvocationStart(astBuffer, type, names, methodName, methodNameContext);
+        }
+        else {
+            AST.encodeMethodInvocationStart(astBuffer, type, methodName, methodNameContext);
+        }
     }
 
     @Override
@@ -1032,11 +1042,16 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onMethodInvocationEnd(int methodInvocationStartContext, Context endContext) {
+    public final void onMethodInvocationEnd(int methodInvocationStartContext, boolean resolved, Context endContext) {
         
         writeEndElementContext(methodInvocationStartContext, endContext);
 
-        AST.encodeMethodInvocationEnd(astBuffer);
+        if (resolved) {
+            AST.encodeMethodInvocationEnd(astBuffer);
+        }
+        else {
+            AST.encodeUnresolvedMethodInvocationEnd(astBuffer);
+        }
     }
 
     @Override
