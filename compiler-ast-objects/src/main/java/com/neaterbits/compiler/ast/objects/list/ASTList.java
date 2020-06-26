@@ -25,9 +25,10 @@ public abstract class ASTList<T extends ASTNode> extends ASTNodeHolder implement
 	    final Iterator<T> iter = iterator();
 	    
 	    int i = 0;
+	    
 	    while (iter.hasNext() && i < index) {
 	        iter.next();
-	        
+	     
 	        ++ i;
 	    }
 	    
