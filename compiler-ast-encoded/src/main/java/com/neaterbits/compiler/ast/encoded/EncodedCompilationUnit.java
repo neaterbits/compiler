@@ -689,11 +689,23 @@ public final class EncodedCompilationUnit {
                     AST.decodeParametersStart(astBuffer, startContext, listener);
                 }
                 else {
-                    AST.decodeParametersEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                    AST.decodeParametersEnd(startContext, getEndContext(startContext), listener);
                 }
                 break;
             }
-                
+
+            case PARAMETER:  {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeParameterStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeParameterEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             case PRIMARY_LIST:  {
                 final int startContext = getStartContext(parseTreeRef);
 

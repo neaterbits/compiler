@@ -1548,12 +1548,38 @@ public class AST {
     }
 
     public static <COMPILATION_UNIT> void decodeParametersEnd(
-            ASTBufferRead astBuffer,
-            int parametersStartContext,
+            int parameterStartContext,
             Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onParametersEnd(parametersStartContext, endContext);
+        listener.onParametersEnd(parameterStartContext, endContext);
+    }
+
+    static void encodeParameterStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.PARAMETER);
+    }
+
+    public static <COMPILATION_UNIT> void decodeParameterStart(
+            ASTBufferRead astBuffer,
+            int parameterStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+
+        listener.onParameterStart(parameterStartContext);
+    }
+
+    static void encodeParameterEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.PARAMETER);
+    }
+
+    public static <COMPILATION_UNIT> void decodeParameterEnd(
+            int parameterStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onParameterEnd(parameterStartContext, endContext);
     }
 
     static void encodePrimariesStart(StringASTBuffer astBuffer) {

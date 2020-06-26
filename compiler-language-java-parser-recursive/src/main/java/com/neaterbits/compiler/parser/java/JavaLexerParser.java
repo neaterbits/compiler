@@ -1549,7 +1549,14 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
     }
     
-    private void parseMethodInvocationParameters() throws IOException {
+    private static JavaToken [] AFTER_PARAMETER_TOKEN = new JavaToken [] {
+      
+            JavaToken.COMMA,
+            JavaToken.RPAREN
+            
+    };
+    
+    private void parseMethodInvocationParameters() throws IOException, ParserException {
         
         final int startContext = writeCurContext();
         
@@ -1561,7 +1568,29 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             listener.onParametersEnd(startContext, getLexerContext());
         }
         else {
-            throw new UnsupportedOperationException();
+            for (;;) {
+                
+                final int paramContext = writeCurContext();
+                
+                listener.onParameterStart(paramContext);
+                
+                parseExpressionList();
+                
+                listener.onParameterEnd(paramContext, getLexerContext());
+
+                final JavaToken paramToken = lexer.lexSkipWS(AFTER_PARAMETER_TOKEN);
+                
+                if (paramToken == JavaToken.RPAREN) {
+                    listener.onParametersEnd(startContext, getLexerContext());
+                    break;
+                }
+                else if (paramToken == JavaToken.COMMA) {
+                    // Continue with next
+                }
+                else {
+                    throw lexer.unexpectedToken();
+                }
+            }
         }
     }
     

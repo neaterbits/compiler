@@ -1022,15 +1022,15 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeStartElementContextRef(parameterContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeParameterStart(astBuffer);
     }
 
     @Override
     public final void onParameterEnd(int parameterStartContext, Context endContext) {
 
         writeEndElementContext(parameterStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeParameterEnd(astBuffer);
     }
 
     @Override

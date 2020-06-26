@@ -1130,6 +1130,39 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testMethodParameters() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { callAMethod(a, b + 3); } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
+        
+        final MethodInvocationExpression methodInvocation = (MethodInvocationExpression)expressionStatement.getExpression();
+        assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
+        assertThat(methodInvocation.getParameters().getList().size()).isEqualTo(2);
+        
+        final NameReference reference = (NameReference)methodInvocation.getParameters().getList().get(0);
+        assertThat(reference.getName()).isEqualTo("a");
+
+        final ExpressionList expressionList = (ExpressionList)methodInvocation.getParameters().getList().get(1);
+        
+        assertThat(expressionList.getExpressions().size()).isEqualTo(2);
+        final NameReference bRef = (NameReference)expressionList.getExpressions().get(0);
+        assertThat(bRef.getName()).isEqualTo("b");
+        final IntegerLiteral literal = (IntegerLiteral)expressionList.getExpressions().get(1);
+        assertThat(literal.getValue()).isEqualTo(3);
+    }
+
+    @Test
     public void testMethodInvocationWithFieldAccessOfResult() throws IOException, ParserException {
      
         final String source = "package com.test;\n"
