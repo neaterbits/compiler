@@ -349,11 +349,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         });
     }
     
-    private static final JavaToken [] INITIAL_ANNOTATION_ELEMENT_TOKENS = new JavaToken [] {
-            JavaToken.IDENTIFIER,
-            JavaToken.AT
-    };
-
     private void parseAnyAnnotationElements() throws IOException, ParserException {
 
         if (lexer.lexSkipWS(JavaToken.LPAREN) == JavaToken.LPAREN) {
@@ -361,9 +356,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             // Is this @Annotation(identifier = value) or @Annotation(STATIC_CONSTANT)
             // or @Annotation(LITERAL)
             
-            final JavaToken token = lexer.lexSkipWS(INITIAL_ANNOTATION_ELEMENT_TOKENS);
-            
-            if (token == JavaToken.IDENTIFIER) {
+            if (lexer.lexSkipWS(JavaToken.IDENTIFIER) == JavaToken.IDENTIFIER) {
          
                 final int identifierContext = writeCurContext();
                 final int elementStartContext = writeContext(identifierContext);
@@ -374,12 +367,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
                 if (lexer.lexSkipWS(JavaToken.ASSIGN) == JavaToken.ASSIGN) {
 
-                    listener.onAnnotationElementStart(elementStartContext, stringRef, identifierContext);
-                    
                     // @Annotation(identifier = value)
-                    parseExpressionOrAnnotation();
-                    
-                    listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
+                    parseExpressionOrAnnotationOrList(elementStartContext, stringRef, identifierContext);
                     
                     parsePerhapsMultipleElementValues();
                 }
@@ -391,28 +380,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                     listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
                 }
             }
-            else if (token == JavaToken.AT) {
-                
-                // @TheAnnotation(@OtherAnnotation)
-                
-                final int startContext = writeCurContext();
-                
-                listener.onAnnotationElementStart(startContext, StringRef.STRING_NONE, ContextRef.NONE);
-                
-                parseAnnotation(writeCurContext());
-                
-                listener.onAnnotationElementEnd(startContext, getLexerContext());
-                
-            }
             else {
-                final int elementStartContext = writeCurContext();
-
-                // Not an identifier so probably a literal eg. @TheAnnotation("a literal")
-                listener.onAnnotationElementStart(elementStartContext, StringRef.STRING_NONE, ContextRef.NONE);
-
-                parseExpression();
-                
-                listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
+                parseExpressionOrAnnotationOrList(writeCurContext(), StringRef.STRING_NONE, ContextRef.NONE);
             }
             
             if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
@@ -445,22 +414,70 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 throw lexer.unexpectedToken();
             }
 
-            listener.onAnnotationElementStart(otherElementStartContext, otherIdentifierRef, otherIdentifierContext);
-
-            parseExpressionOrAnnotation();
-            
-            listener.onAnnotationElementEnd(otherElementStartContext, getLexerContext());
+            parseExpressionOrAnnotationOrList(otherElementStartContext, otherIdentifierRef, otherIdentifierContext);
         }
     }
+
+    private static final JavaToken [] EXPRESSION_OR_ANNOTATION_OR_LIST_TOKENS = new JavaToken [] {
+            JavaToken.AT,
+            JavaToken.LBRACE
+    };
     
-    private void parseExpressionOrAnnotation() throws IOException, ParserException {
+    private static final JavaToken [] AFTER_ANNOTATION_ELEMENT_LIST_TOKENS = new JavaToken [] {
+            JavaToken.COMMA,
+            JavaToken.RBRACE
+    };
+
+    private void parseExpressionOrAnnotationOrList(
+            int startContext,
+            long identifier,
+            int identifierContext) throws IOException, ParserException {
+
+        final JavaToken token = lexer.lexSkipWS(EXPRESSION_OR_ANNOTATION_OR_LIST_TOKENS);
         
-        if (lexer.lexSkipWS(JavaToken.AT) == JavaToken.AT) {
+        listener.onAnnotationElementStart(startContext, identifier, identifierContext);
+
+        if (token == JavaToken.AT) {
+            
+            // @TheAnnotation(@OtherAnnotation)
+            
             parseAnnotation(writeCurContext());
+        }
+        else if (token == JavaToken.LBRACE) {
+            
+            for (;;) {
+
+                final int listStartContext = writeCurContext();
+                
+                listener.onAnnotationElementStart(listStartContext, StringRef.STRING_NONE, ContextRef.NONE);
+                
+                if (lexer.lexSkipWS(JavaToken.AT) == JavaToken.AT) {
+                    parseAnnotation(startContext);
+                }
+                else {
+                    parseExpression();
+                }
+                
+                listener.onAnnotationElementEnd(listStartContext, getLexerContext());
+                
+                final JavaToken listToken = lexer.lexSkipWS(AFTER_ANNOTATION_ELEMENT_LIST_TOKENS);
+                
+                if (listToken == JavaToken.COMMA) {
+                    // Continue to iterate
+                }
+                else if (listToken == JavaToken.RBRACE) {
+                    break;
+                }
+                else {
+                    throw lexer.unexpectedToken();
+                }
+            }
         }
         else {
             parseExpression();
         }
+        
+        listener.onAnnotationElementEnd(startContext, getLexerContext());
     }
     
     private void parseClass(
