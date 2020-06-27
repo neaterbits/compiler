@@ -52,7 +52,7 @@ public final class AnnotationElement extends BaseASTElement {
     }
 
     public Expression getExpression() {
-        return expression.get();
+        return expression != null ? expression.get() : null;
     }
 
     public Annotation getAnnotation() {

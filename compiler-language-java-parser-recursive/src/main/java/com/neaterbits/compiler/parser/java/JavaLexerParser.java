@@ -349,6 +349,11 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         });
     }
     
+    private static final JavaToken [] INITIAL_ANNOTATION_ELEMENT_TOKENS = new JavaToken [] {
+            JavaToken.IDENTIFIER,
+            JavaToken.AT
+    };
+
     private void parseAnyAnnotationElements() throws IOException, ParserException {
 
         if (lexer.lexSkipWS(JavaToken.LPAREN) == JavaToken.LPAREN) {
@@ -356,7 +361,9 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             // Is this @Annotation(identifier = value) or @Annotation(STATIC_CONSTANT)
             // or @Annotation(LITERAL)
             
-            if (lexer.lexSkipWS(JavaToken.IDENTIFIER) == JavaToken.IDENTIFIER) {
+            final JavaToken token = lexer.lexSkipWS(INITIAL_ANNOTATION_ELEMENT_TOKENS);
+            
+            if (token == JavaToken.IDENTIFIER) {
          
                 final int identifierContext = writeCurContext();
                 final int elementStartContext = writeContext(identifierContext);
@@ -374,34 +381,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                     
                     listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
                     
-                    // List of more element values?
-                    for (;;) {
-                        
-                        if (lexer.lexSkipWS(JavaToken.COMMA) != JavaToken.COMMA) {
-                            break;
-                        }
-                        
-                        final JavaToken otherIdentifier = lexer.lexSkipWS(JavaToken.IDENTIFIER);
-                        
-                        if (otherIdentifier != JavaToken.IDENTIFIER) {
-                            throw lexer.unexpectedToken();
-                        }
-                        
-                        final int otherIdentifierContext = writeCurContext();
-                        final int otherElementStartContext = writeContext(otherIdentifierContext);
-                        
-                        final long otherIdentifierRef = getStringRef();
-                        
-                        if (lexer.lexSkipWS(JavaToken.ASSIGN) != JavaToken.ASSIGN) {
-                            throw lexer.unexpectedToken();
-                        }
-
-                        listener.onAnnotationElementStart(otherElementStartContext, otherIdentifierRef, otherIdentifierContext);
-
-                        parseExpression();
-                        
-                        listener.onAnnotationElementEnd(otherElementStartContext, getLexerContext());
-                    }
+                    parsePerhapsMultipleElementValues();
                 }
                 else {
                     listener.onAnnotationElementStart(elementStartContext, StringRef.STRING_NONE, ContextRef.NONE);
@@ -410,6 +390,19 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
                     listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
                 }
+            }
+            else if (token == JavaToken.AT) {
+                
+                // @TheAnnotation(@OtherAnnotation)
+                
+                final int startContext = writeCurContext();
+                
+                listener.onAnnotationElementStart(startContext, StringRef.STRING_NONE, ContextRef.NONE);
+                
+                parseAnnotation(writeCurContext());
+                
+                listener.onAnnotationElementEnd(startContext, getLexerContext());
+                
             }
             else {
                 final int elementStartContext = writeCurContext();
@@ -425,6 +418,38 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
                 throw lexer.unexpectedToken();
             }
+        }
+    }
+    
+    private void parsePerhapsMultipleElementValues() throws IOException, ParserException {
+
+        // List of more element values?
+        for (;;) {
+            
+            if (lexer.lexSkipWS(JavaToken.COMMA) != JavaToken.COMMA) {
+                break;
+            }
+            
+            final JavaToken otherIdentifier = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+            
+            if (otherIdentifier != JavaToken.IDENTIFIER) {
+                throw lexer.unexpectedToken();
+            }
+            
+            final int otherIdentifierContext = writeCurContext();
+            final int otherElementStartContext = writeContext(otherIdentifierContext);
+            
+            final long otherIdentifierRef = getStringRef();
+            
+            if (lexer.lexSkipWS(JavaToken.ASSIGN) != JavaToken.ASSIGN) {
+                throw lexer.unexpectedToken();
+            }
+
+            listener.onAnnotationElementStart(otherElementStartContext, otherIdentifierRef, otherIdentifierContext);
+
+            parseExpression();
+            
+            listener.onAnnotationElementEnd(otherElementStartContext, getLexerContext());
         }
     }
     
@@ -1735,18 +1760,22 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             long identifier,
             ProcessNameParts processNameParts) throws IOException, ParserException {
         
-        addScratchNamePart(identifierContext, identifier);
+        final int scratchIndex = startScratchNamePart();
+
+        addScratchNamePart(identifierContext, identifier, scratchIndex);
         
-        parseNames(processNameParts);
+        parseNames(scratchIndex, processNameParts);
     }
 
     private void parseNameListUntilOtherToken(ProcessNameParts processNameParts) throws IOException, ParserException {
         
-        parseNames(processNameParts);
+        final int scratchIndex = startScratchNamePart();
+
+        parseNames(scratchIndex, processNameParts);
     }
 
-    private void parseNames(ProcessNameParts processNameParts) throws IOException, ParserException {
-
+    private void parseNames(int scratchIndex, ProcessNameParts processNameParts) throws IOException, ParserException {
+        
         for (;;) {
 
             final JavaToken partToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
@@ -1755,7 +1784,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 throw lexer.unexpectedToken();
             }
             
-            addScratchNamePart(writeCurContext(), getStringRef());
+            addScratchNamePart(writeCurContext(), getStringRef(), scratchIndex);
             
             final JavaToken endOfScopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
             
@@ -1765,6 +1794,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
         
         // reach non-namepart so process now
-        scratchNameParts(processNameParts);
+        scratchNameParts(scratchIndex, processNameParts);
     }
 }

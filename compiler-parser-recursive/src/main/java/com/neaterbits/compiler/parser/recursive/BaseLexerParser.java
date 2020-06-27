@@ -21,8 +21,8 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
 
     private final LexerContext context;
 
-    private final NamesImpl names;
-    
+    private final List<NamesImpl> namesScratch;
+    private int namesScratchInUse; 
     
     private static class NamesImpl implements Names {
         
@@ -50,7 +50,6 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         public int count() {
             return namePartElements;
         }
-        
     }
     
     public BaseLexerParser(String file, Lexer<TOKEN, CharInput> lexer, Tokenizer tokenizer) {
@@ -62,14 +61,30 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         this.tokenizer = tokenizer;
         this.context = new LexerContext(file, lexer, tokenizer);
         
-        this.names = new NamesImpl();
+        this.namesScratch = new ArrayList<>();
     }
 
     protected final Context getLexerContext() {
         return context;
     }
-    
-    protected final void addScratchNamePart(int context, long name) {
+
+    protected final int startScratchNamePart() {
+
+        if (namesScratchInUse == namesScratch.size()) {
+            
+            namesScratch.add(new NamesImpl());
+        }
+
+        final int index = namesScratchInUse;
+        
+        ++ namesScratchInUse;
+        
+        return index;
+    }
+
+    protected final void addScratchNamePart(int context, long name, int index) {
+        
+        final NamesImpl names = namesScratch.get(index);
         
         if (names.namePartElements == names.namePartList.size()) {
             
@@ -90,10 +105,21 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         void processParts(Names names) throws IOException, ParserException;
     }
 
-    protected final void scratchNameParts(ProcessNameParts process) throws IOException, ParserException {
+    protected final void scratchNameParts(int index, ProcessNameParts process) throws IOException, ParserException {
+        
+        if (namesScratchInUse < 1) {
+            throw new IllegalStateException();
+        }
+        
+        if (index != namesScratchInUse - 1) {
+            throw new IllegalArgumentException();
+        }
+        
+        final NamesImpl names = namesScratch.get(index);
         
         process.processParts(names);
         
-        this.names.namePartElements = 0;
+        names.namePartElements = 0;
+        -- namesScratchInUse;
     }
 }

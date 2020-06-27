@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.StackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationElementSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableReferenceSetter;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -20,7 +21,8 @@ public final class StackAnnotationElement<
         implements 
                 PrimarySetter<PRIMARY>,
                 VariableReferenceSetter<VARIABLE_REFERENCE>,
-                AnnotationElementSetter<ANNOTATION_ELEMENT> {
+                AnnotationElementSetter<ANNOTATION_ELEMENT>,
+                AnnotationSetter<ANNOTATION> {
 
     private final NAME name;
     
@@ -56,6 +58,18 @@ public final class StackAnnotationElement<
         }
         
         this.expression = variableReference;
+    }
+
+    @Override
+    public void addAnnotation(ANNOTATION annotation) {
+        
+        Objects.requireNonNull(annotation);
+        
+        if (this.annotation != null) {
+            throw new IllegalStateException();
+        }
+        
+        this.annotation = annotation;
     }
 
     @Override
