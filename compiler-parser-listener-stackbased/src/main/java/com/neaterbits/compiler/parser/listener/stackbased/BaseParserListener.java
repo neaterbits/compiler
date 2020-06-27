@@ -64,6 +64,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackThrowStatem
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTryBlock;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTryCatchFinallyStatement;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTryWithResourcesStatement;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackTypeDefinition;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackUnresolvedMethodInvocation;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackVariableDeclaration;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackVariableDeclarationList;
@@ -141,10 +142,11 @@ public abstract class BaseParserListener<
 		IMPORT,
 		COMPILATION_CODE,
 		NAMESPACE,
+		TYPE_DEFINITION,
 		COMPLEX_MEMBER_DEFINITION,
 		STATIC_INITIALIZER extends COMPLEX_MEMBER_DEFINITION,
 		CLASS_MODIFIER_HOLDER,
-		CLASS_DEFINITION,
+		CLASS_DEFINITION extends TYPE_DEFINITION,
 		CONSTRUCTOR_MEMBER extends COMPLEX_MEMBER_DEFINITION,
 		CONSTRUCTOR_MODIFIER_HOLDER,
 		CONSTRUCTOR_NAME,
@@ -158,12 +160,12 @@ public abstract class BaseParserListener<
 		FIELD_MODIFIER_HOLDER,
 		
 		INTERFACE_MODIFIER_HOLDER,
-		INTERFACE_DEFINITION,
+		INTERFACE_DEFINITION extends TYPE_DEFINITION,
 		
 		INTERFACE_METHOD_MEMBER extends COMPLEX_MEMBER_DEFINITION,
 		INTERFACE_METHOD_MODIFIER_HOLDER,
 		
-		ENUM_DEFINITION,
+		ENUM_DEFINITION extends TYPE_DEFINITION,
 		ENUM_CONSTANT_DEFINITION,
 		
 		BLOCK,
@@ -616,6 +618,34 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
+    public void onTypeDefinitionStart(int startContext) {
+
+        final Context context = getStartContext(startContext);
+        
+        logEnter(context);
+
+        push(new StackTypeDefinition<>(getLogger()));
+        
+        logExit(context);
+    }
+
+    @Override
+    public void onTypeDefinitionEnd(int startContext, Context endContext) {
+
+        final Context context = getStartContext(startContext);
+        
+        logEnter(context);
+        
+        final StackTypeDefinition<TYPE_DEFINITION, CLASS_MODIFIER_HOLDER> stackType = pop();
+        
+        for (TYPE_DEFINITION stackEntry : stackType.getList()) {
+            mainStack.addElement(stackEntry);
+        }
+
+        logExit(context);
+    }
+
+    @Override
 	public final void onClassStart(
 	        int startContext,
 	        long classKeyword, int classKeywordContext,
@@ -1317,7 +1347,7 @@ public abstract class BaseParserListener<
 	public final void onTransientFieldModifier(int leafContext) {
 
 	    final Context context = getLeafContext(leafContext);
-	    
+	        
 		logEnter(context);
 
 		addFieldModifier(context, new FieldTransient());

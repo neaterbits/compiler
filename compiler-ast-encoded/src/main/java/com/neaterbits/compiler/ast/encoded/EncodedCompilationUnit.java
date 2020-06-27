@@ -286,7 +286,19 @@ public final class EncodedCompilationUnit {
                 }
                 break;
             }
-                
+
+            case TYPE_DEFINITION: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeTypeDefinitionStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeTypeDefinitionEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             case CLASS_DEFINITION: {
                 final int startContext = getStartContext(parseTreeRef);
 

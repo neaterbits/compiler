@@ -18,6 +18,8 @@ public enum ParseTreeElement {
 	IMPORT(false),
 	IMPORT_NAME_PART(true),
 	
+	TYPE_DEFINITION(false),
+	
 	CLASS_DEFINITION(false, false),
 	CLASS_MODIFIERS(true, true),
 	CLASS_MODIFIER_HOLDER(true),

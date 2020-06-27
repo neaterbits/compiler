@@ -352,6 +352,32 @@ public class AST {
         listener.onNameSpaceEnd(namespaceStartContext, endContext);
     }
 
+    static void encodeTypeDefinitionStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.TYPE_DEFINITION);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeTypeDefinitionStart(
+            ASTBufferRead astBuffer,
+            int typeDefinitionStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onTypeDefinitionStart(typeDefinitionStartContext);
+    }
+
+    static void encodeTypeDefinitionEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.TYPE_DEFINITION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeTypeDefinitionEnd(
+            int typeDefinitionStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onTypeDefinitionEnd(typeDefinitionStartContext, endContext);
+    }
+
     private static final int CLASS_START_SIZE = 2 * (STRING_REF_SIZE + CONTEXT_REF_SIZE);
 
     static void encodeClassStart(StringASTBuffer astBuffer, long classKeyword, int classKeywordContext, long name, int nameContext) {

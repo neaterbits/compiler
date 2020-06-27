@@ -137,6 +137,17 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
         done = false;
         
+        final int typeStartContext;
+        
+        if (token != JavaToken.EOF) {
+            typeStartContext = writeContext(compilationUnitStartContext);
+            
+            listener.onTypeDefinitionStart(typeStartContext);
+        }
+        else {
+            typeStartContext = ContextRef.NONE;
+        }
+        
         do {
             // token might be set from while scanning for imports
             switch (token) {
@@ -203,6 +214,11 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
         } while(!done);
 
+        if (token != JavaToken.EOF) {
+            listener.onTypeDefinitionEnd(typeStartContext, getLexerContext());
+        }
+
+        
         return listener.onCompilationUnitEnd(compilationUnitStartContext, getLexerContext());
     }
     
