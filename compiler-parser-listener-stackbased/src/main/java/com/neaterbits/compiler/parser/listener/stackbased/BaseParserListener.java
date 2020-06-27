@@ -889,10 +889,12 @@ public abstract class BaseParserListener<
 
 		final List<COMPLEX_MEMBER_DEFINITION> classCode = entry.getList();
 
-		// final ClassModifiers classModifiers = new
-		// ClassModifiers(entry.getModifiers());
+		// Must get modifiers from type
+		final StackTypeDefinition<TYPE_DEFINITION, CLASS_MODIFIER_HOLDER> stackType = get();
 
-		final CLASS_DEFINITION classDefinition = parseTreeFactory.createClassDefinition(context, entry.getModifiers(),
+		final CLASS_DEFINITION classDefinition = parseTreeFactory.createClassDefinition(
+		        context,
+		        stackType.getModifiers(),
 				entry.getClassKeyword() != null
 						? parseTreeFactory.createKeyword(entry.getClassKeywordContext(), entry.getClassKeyword())
 						: null,

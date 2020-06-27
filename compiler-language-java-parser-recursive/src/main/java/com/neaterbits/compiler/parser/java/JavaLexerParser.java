@@ -101,14 +101,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         // Either import or class
         boolean done = false;
         
-        long modifierClassVisibilityKeyword = StringRef.STRING_NONE;
-        ClassVisibility classVisibility = null;
-        int modifierClassVisibilityKeywordContext = ContextRef.NONE;
-        
-        long modifierSubclassingKeyword = StringRef.STRING_NONE;
-        Subclassing subclassing = null;
-        int modifierSubclassingKeywordContext = ContextRef.NONE;
-        
         do {
             token = lexer.lexSkipWS(IMPORT_OR_TYPE_OR_EOF);
             
@@ -153,45 +145,22 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             switch (token) {
             
             case PUBLIC:
-                classVisibility = ClassVisibility.PUBLIC;
-                modifierClassVisibilityKeyword = getStringRef();
-                modifierClassVisibilityKeywordContext = writeCurContext();
+                listener.onVisibilityClassModifier(writeCurContext(), ClassVisibility.PUBLIC);
                 break;
                 
             case ABSTRACT:
-                if (modifierSubclassingKeyword != StringRef.STRING_NONE) {
-                    throw lexer.unexpectedToken();
-                }
-                
-                subclassing = Subclassing.ABSTRACT;
-                modifierSubclassingKeyword = getStringRef();
-                modifierSubclassingKeywordContext = writeCurContext();
+                listener.onSubclassingModifier(writeCurContext(), Subclassing.ABSTRACT);
                 break;
                 
             case FINAL:
-                if (modifierSubclassingKeyword != StringRef.STRING_NONE) {
-                    throw lexer.unexpectedToken();
-                }
-                
-                subclassing = Subclassing.FINAL;
-                modifierSubclassingKeyword = getStringRef();
-                modifierSubclassingKeywordContext = writeCurContext();
+                listener.onSubclassingModifier(writeCurContext(), Subclassing.FINAL);
                 break;
                 
             case CLASS:
                 final int classStartContext = writeCurContext();
                 final int classKeywordContext = writeCurContext();
                 
-                parseClass(
-                        classStartContext,
-                        getStringRef(),
-                        classKeywordContext,
-                        modifierClassVisibilityKeyword,
-                        classVisibility,
-                        modifierClassVisibilityKeywordContext,
-                        modifierSubclassingKeyword,
-                        subclassing,
-                        modifierSubclassingKeywordContext);
+                parseClass(classStartContext, getStringRef(), classKeywordContext);
 
                 if (lexer.lexSkipWS(JavaToken.EOF) != JavaToken.EOF) {
                     throw lexer.unexpectedToken();
@@ -364,13 +333,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
     private void parseClass(
             int classStartContext,
             long classKeyword,
-            int classKeywordContext,
-            long modifierClassVisibilityKeyword,
-            ClassVisibility classVisibility,
-            int modifierClassVisibilityKeywordContext,
-            long modifierSubclassingKeyword,
-            Subclassing subclassing,
-            int modifierSubclassingKeywordContext) throws IOException, ParserException {
+            int classKeywordContext) throws IOException, ParserException {
         
         final JavaToken classNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
         if (classNameToken != JavaToken.IDENTIFIER) {
@@ -383,14 +346,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         // Initial context of class is either class visibility or subclassing or class keyword
         listener.onClassStart(classStartContext, classKeyword, classKeywordContext, className, classNameContext);
         
-        if (modifierClassVisibilityKeyword != StringRef.STRING_NONE) {
-            listener.onVisibilityClassModifier(modifierClassVisibilityKeywordContext, classVisibility);
-        }
-        
-        if (modifierSubclassingKeyword != StringRef.STRING_NONE) {
-            listener.onSubclassingModifier(modifierSubclassingKeywordContext, subclassing);
-        }
-
         parseClassGenericsOrExtendsOrImplementsOrBody();
         
         listener.onClassEnd(classStartContext, getLexerContext());
