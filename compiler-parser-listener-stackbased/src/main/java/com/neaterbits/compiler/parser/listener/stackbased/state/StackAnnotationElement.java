@@ -7,14 +7,24 @@ import java.util.Objects;
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.StackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationElementSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableReferenceSetter;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public final class StackAnnotationElement<NAME, PRIMARY, ANNOTATION, ANNOTATION_ELEMENT> extends StackEntry
-            implements PrimarySetter<PRIMARY>, AnnotationElementSetter<ANNOTATION_ELEMENT> {
+public final class StackAnnotationElement<
+            NAME,
+            EXPRESSION,
+            PRIMARY extends EXPRESSION,
+            VARIABLE_REFERENCE extends EXPRESSION,
+            ANNOTATION,
+            ANNOTATION_ELEMENT> extends StackEntry
+        implements 
+                PrimarySetter<PRIMARY>,
+                VariableReferenceSetter<VARIABLE_REFERENCE>,
+                AnnotationElementSetter<ANNOTATION_ELEMENT> {
 
     private final NAME name;
     
-    private PRIMARY expression;
+    private EXPRESSION expression;
     private ANNOTATION annotation;
     private List<ANNOTATION_ELEMENT> elements;
     
@@ -25,15 +35,27 @@ public final class StackAnnotationElement<NAME, PRIMARY, ANNOTATION, ANNOTATION_
     }
 
     @Override
-    public void addPrimary(PRIMARY expression) {
+    public void addPrimary(PRIMARY primary) {
         
-        Objects.requireNonNull(expression);
+        Objects.requireNonNull(primary);
         
         if (this.expression != null) {
             throw new IllegalStateException();
         }
         
-        this.expression = expression;
+        this.expression = primary;
+    }
+
+    @Override
+    public void setVariableReference(VARIABLE_REFERENCE variableReference) {
+
+        Objects.requireNonNull(variableReference);
+        
+        if (this.expression != null) {
+            throw new IllegalStateException();
+        }
+        
+        this.expression = variableReference;
     }
 
     @Override
@@ -52,7 +74,7 @@ public final class StackAnnotationElement<NAME, PRIMARY, ANNOTATION, ANNOTATION_
         return name;
     }
 
-    public PRIMARY getExpression() {
+    public EXPRESSION getExpression() {
         return expression;
     }
 

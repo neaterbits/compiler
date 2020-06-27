@@ -3496,7 +3496,13 @@ public abstract class BaseParserListener<
 
         logEnter(context);
         
-        final StackAnnotationElement<NAME, EXPRESSION, ANNOTATION, ANNOTATION_ELEMENT> stackAnnotationElement = pop();
+        final StackAnnotationElement<
+                NAME,
+                EXPRESSION,
+                PRIMARY,
+                VARIABLE_REFERENCE,
+                ANNOTATION,
+                ANNOTATION_ELEMENT> stackAnnotationElement = pop();
         
         final ANNOTATION_ELEMENT annotationElement;
         

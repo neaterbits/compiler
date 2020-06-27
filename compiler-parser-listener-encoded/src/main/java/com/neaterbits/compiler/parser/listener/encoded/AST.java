@@ -179,6 +179,10 @@ public class AST {
         case ANNOTATION_ELEMENT:
             size = ANNOTATION_ELEMENT_SIZE;
             break;
+            
+        case NAME_REFERENCE:
+            size = NAME_REFERENCE_SIZE;
+            break;
 
         default:
             size = 0; // ParseTreeElement
@@ -1754,5 +1758,29 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onAnnotationElementEnd(annotationElementStartContext, endContext);
+    }
+
+    private static final int NAME_REFERENCE_SIZE = STRING_REF_SIZE;
+    
+    static void encodeNameReference(StringASTBuffer astBuffer, long name, int nameContext) {
+        
+        astBuffer.writeLeafElement(ParseTreeElement.NAME_REFERENCE);
+        
+        if (name == StringRef.STRING_NONE) {
+            throw new IllegalArgumentException();
+        }
+            
+        astBuffer.writeStringRef(name);
+    }
+
+    public static <COMPILATION_UNIT> void decodeNameReference(
+            ASTBufferRead astBuffer,
+            int nameReferenceStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onNameReference(
+                nameReferenceStartContext,
+                astBuffer.getStringRef(index));
     }
 }

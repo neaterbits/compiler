@@ -767,6 +767,19 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case NAME_REFERENCE: {
+
+                final int leafContext = getLeafContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeNameReference(astBuffer, leafContext, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+            }
+
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }
