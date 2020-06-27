@@ -13,6 +13,8 @@ import com.neaterbits.compiler.ast.objects.CompilationCode;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.Namespace;
+import com.neaterbits.compiler.ast.objects.annotation.Annotation;
+import com.neaterbits.compiler.ast.objects.annotation.AnnotationElement;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.expression.AssignmentExpression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
@@ -493,6 +495,41 @@ public abstract class BaseJavaParserTest {
         assertThat(classDefinition.getModifiers().getAnnotations().get(0).getScopedName().getScope()).isNull();
         assertThat(classDefinition.getModifiers().getAnnotations().get(0).getScopedName().getName()).isEqualTo("TheAnnotation");
         assertThat(classDefinition.getModifiers().getAnnotations().get(0).getElements().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseLiteralAnnotation() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "@TheAnnotation(123) class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().getAnnotations().size()).isEqualTo(1);
+        
+        final Annotation annotation = classDefinition.getModifiers().getAnnotations().get(0);
+        assertThat(annotation.getScopedName().getScope()).isNull();
+        assertThat(annotation.getScopedName().getName()).isEqualTo("TheAnnotation");
+        assertThat(annotation.getElements().size()).isEqualTo(1);
+        
+        final AnnotationElement annotationElement = annotation.getElements().get(0);
+        
+        assertThat(annotationElement.getName()).isNull();
+        assertThat(annotationElement.getAnnotation()).isNull();
+        assertThat(annotationElement.getValueList()).isNull();
+
+        final IntegerLiteral integerLiteral = (IntegerLiteral)annotationElement.getExpression();
+        assertThat(integerLiteral.getValue()).isEqualTo(123);
         
         assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
         assertThat(classDefinition.getExtendsClasses()).isEmpty();

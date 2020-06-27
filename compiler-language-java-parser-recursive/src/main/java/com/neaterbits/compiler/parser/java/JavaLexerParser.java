@@ -392,6 +392,10 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 
                 listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
             }
+            
+            if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
+                throw lexer.unexpectedToken();
+            }
         }
     }
     

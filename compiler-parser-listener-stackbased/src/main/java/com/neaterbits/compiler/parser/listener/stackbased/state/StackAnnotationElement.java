@@ -6,15 +6,15 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.StackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationElementSetter;
-import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ExpressionSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public final class StackAnnotationElement<NAME, EXPRESSION, ANNOTATION, ANNOTATION_ELEMENT> extends StackEntry
-            implements ExpressionSetter<EXPRESSION>, AnnotationElementSetter<ANNOTATION_ELEMENT> {
+public final class StackAnnotationElement<NAME, PRIMARY, ANNOTATION, ANNOTATION_ELEMENT> extends StackEntry
+            implements PrimarySetter<PRIMARY>, AnnotationElementSetter<ANNOTATION_ELEMENT> {
 
     private final NAME name;
     
-    private EXPRESSION expression;
+    private PRIMARY expression;
     private ANNOTATION annotation;
     private List<ANNOTATION_ELEMENT> elements;
     
@@ -25,7 +25,7 @@ public final class StackAnnotationElement<NAME, EXPRESSION, ANNOTATION, ANNOTATI
     }
 
     @Override
-    public void addExpression(EXPRESSION expression) {
+    public void addPrimary(PRIMARY expression) {
         
         Objects.requireNonNull(expression);
         
@@ -52,7 +52,7 @@ public final class StackAnnotationElement<NAME, EXPRESSION, ANNOTATION, ANNOTATI
         return name;
     }
 
-    public EXPRESSION getExpression() {
+    public PRIMARY getExpression() {
         return expression;
     }
 

@@ -3480,7 +3480,9 @@ public abstract class BaseParserListener<
 
         logEnter(context);
         
-        final NAME annotationName = parseTreeFactory.createName(getLeafContext(nameContext), stringSource.asString(name));
+        final NAME annotationName = name != StringRef.STRING_NONE 
+                ? parseTreeFactory.createName(getLeafContext(nameContext), stringSource.asString(name))
+                : null;
         
         push(new StackAnnotationElement<>(getLogger(), annotationName));
 

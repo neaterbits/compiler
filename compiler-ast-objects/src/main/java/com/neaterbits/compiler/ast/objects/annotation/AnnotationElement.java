@@ -22,7 +22,7 @@ public final class AnnotationElement extends BaseASTElement {
     public AnnotationElement(Context context, Name name, Expression expression) {
         super(context);
         
-        this.name = makeSingle(name);
+        this.name = name != null ? makeSingle(name) : null;
         this.expression = makeSingle(expression);
         this.annotation = null;
         this.valueList = null;
@@ -31,7 +31,7 @@ public final class AnnotationElement extends BaseASTElement {
     public AnnotationElement(Context context, Name name, Annotation annotation) {
         super(context);
         
-        this.name = makeSingle(name);
+        this.name = name != null ? makeSingle(name) : null;
         this.expression = null;
         this.annotation = makeSingle(annotation);
         this.valueList = null;
@@ -41,14 +41,14 @@ public final class AnnotationElement extends BaseASTElement {
         
         super(context);
         
-        this.name = makeSingle(name);
+        this.name = name != null ? makeSingle(name) : null;
         this.expression = null;
         this.annotation = null;
         this.valueList = makeList(valueList);
     }
 
     public String getName() {
-        return name.get().getText();
+        return name != null ? name.get().getText() : null;
     }
 
     public Expression getExpression() {

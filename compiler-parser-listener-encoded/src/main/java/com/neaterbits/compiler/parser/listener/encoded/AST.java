@@ -176,6 +176,10 @@ public class AST {
             size = namesSize(astBuffer.getByte(index));
             break;
 
+        case ANNOTATION_ELEMENT:
+            size = ANNOTATION_ELEMENT_SIZE;
+            break;
+
         default:
             size = 0; // ParseTreeElement
             break;
@@ -1709,5 +1713,46 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onAnnotationEnd(annotationStartContext, endContext);
+    }
+
+    private static final int ANNOTATION_ELEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeAnnotationElementStart(StringASTBuffer astBuffer, long name, int nameContext) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.ANNOTATION_ELEMENT);
+        
+        if (name != StringRef.STRING_NONE) {
+            astBuffer.writeStringRef(name);
+            astBuffer.writeContextRef(nameContext);
+        }
+        else {
+            astBuffer.writeNoStringRef();
+            astBuffer.writeNoContextRef();
+        }
+    }
+
+    public static <COMPILATION_UNIT> void decodeAnnotationElementStart(
+            ASTBufferRead astBuffer,
+            int annotationElementStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onAnnotationElementStart(
+                annotationElementStartContext,
+                astBuffer.hasContextRef(index) ? astBuffer.getStringRef(index) : StringRef.STRING_NONE,
+                astBuffer.getContextRef(index + STRING_REF_SIZE));
+    }
+
+    static void encodeAnnotationElementEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ANNOTATION_ELEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeAnnotationElementEnd(
+            int annotationElementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onAnnotationElementEnd(annotationElementStartContext, endContext);
     }
 }
