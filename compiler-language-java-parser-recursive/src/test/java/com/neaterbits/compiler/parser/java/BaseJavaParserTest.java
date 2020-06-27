@@ -644,6 +644,50 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testParseNameValuesAnnotation() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "@TheAnnotation(name=123, otherName=456) class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().getAnnotations().size()).isEqualTo(1);
+        
+        final Annotation annotation = classDefinition.getModifiers().getAnnotations().get(0);
+        assertThat(annotation.getScopedName().getScope()).isNull();
+        assertThat(annotation.getScopedName().getName()).isEqualTo("TheAnnotation");
+        assertThat(annotation.getElements().size()).isEqualTo(2);
+        
+        final AnnotationElement annotationElement1 = annotation.getElements().get(0);
+        
+        assertThat(annotationElement1.getName()).isEqualTo("name");
+        assertThat(annotationElement1.getAnnotation()).isNull();
+        assertThat(annotationElement1.getValueList()).isNull();
+
+        final IntegerLiteral integerLiteral1 = (IntegerLiteral)annotationElement1.getExpression();
+        assertThat(integerLiteral1.getValue()).isEqualTo(123);
+
+        final AnnotationElement annotationElement2 = annotation.getElements().get(1);
+        
+        assertThat(annotationElement2.getName()).isEqualTo("otherName");
+        assertThat(annotationElement2.getAnnotation()).isNull();
+        assertThat(annotationElement2.getValueList()).isNull();
+
+        final IntegerLiteral integerLiteral2 = (IntegerLiteral)annotationElement2.getExpression();
+        assertThat(integerLiteral2.getValue()).isEqualTo(456);
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
     public void testParseScalarClassMemberVariable() throws IOException, ParserException {
         
         final String source = "package com.test;\n"

@@ -357,7 +357,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             // or @Annotation(LITERAL)
             
             if (lexer.lexSkipWS(JavaToken.IDENTIFIER) == JavaToken.IDENTIFIER) {
-                
+         
                 final int identifierContext = writeCurContext();
                 final int elementStartContext = writeContext(identifierContext);
                         
@@ -373,6 +373,35 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                     parseExpression();
                     
                     listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
+                    
+                    // List of more element values?
+                    for (;;) {
+                        
+                        if (lexer.lexSkipWS(JavaToken.COMMA) != JavaToken.COMMA) {
+                            break;
+                        }
+                        
+                        final JavaToken otherIdentifier = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+                        
+                        if (otherIdentifier != JavaToken.IDENTIFIER) {
+                            throw lexer.unexpectedToken();
+                        }
+                        
+                        final int otherIdentifierContext = writeCurContext();
+                        final int otherElementStartContext = writeContext(otherIdentifierContext);
+                        
+                        final long otherIdentifierRef = getStringRef();
+                        
+                        if (lexer.lexSkipWS(JavaToken.ASSIGN) != JavaToken.ASSIGN) {
+                            throw lexer.unexpectedToken();
+                        }
+
+                        listener.onAnnotationElementStart(otherElementStartContext, otherIdentifierRef, otherIdentifierContext);
+
+                        parseExpression();
+                        
+                        listener.onAnnotationElementEnd(otherElementStartContext, getLexerContext());
+                    }
                 }
                 else {
                     listener.onAnnotationElementStart(elementStartContext, StringRef.STRING_NONE, ContextRef.NONE);
