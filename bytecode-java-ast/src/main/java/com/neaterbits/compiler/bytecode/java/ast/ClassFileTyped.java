@@ -84,7 +84,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 		
 			final List<ClassModifierHolder> modifiersList = new ArrayList<>();
 			
-			final ClassModifiers modifiers = new ClassModifiers(modifiersList);
+			final ClassModifiers modifiers = new ClassModifiers(null, modifiersList);
 			
 			final CompleteName completeName = getCompleteName(getThisClass(), ClassName::new);
 			

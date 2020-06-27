@@ -1548,10 +1548,26 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onAnnotationStart(int annotationStartContext) {
+    public final void onAnnotationStart(int annotationStartContext, Names typeName) {
         
         writeStartElementContextRef(annotationStartContext);
 
+        AST.encodeAnnotationStart(astBuffer, typeName);
+    }
+
+    @Override
+    public final void onAnnotationElementStart(int startContext, long name, int nameContext) {
+
+        writeStartElementContextRef(startContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onAnnotationElementEnd(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
+        
         throw new UnsupportedOperationException();
     }
 
@@ -1559,7 +1575,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onAnnotationEnd(int annotationStartContext, Context endContext) {
 
         writeEndElementContext(annotationStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeAnnotationEnd(astBuffer);
     }
 }

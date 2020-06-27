@@ -4,16 +4,15 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
-import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public final class StackUnresolvedMethodInvocation<EXPRESSION, PRIMARY extends EXPRESSION>
+public final class StackUnresolvedMethodInvocation<EXPRESSION, PRIMARY extends EXPRESSION, NAME_LIST>
         extends CallStackEntry<EXPRESSION> {
 
     private final MethodInvocationType type;
-    private final Names names;
+    private final NAME_LIST names;
 
-    public StackUnresolvedMethodInvocation(ParseLogger parseLogger, MethodInvocationType type, Names names,
+    public StackUnresolvedMethodInvocation(ParseLogger parseLogger, MethodInvocationType type, NAME_LIST names,
             String methodName, Context methodNameContext) {
         super(parseLogger);
 
@@ -31,7 +30,7 @@ public final class StackUnresolvedMethodInvocation<EXPRESSION, PRIMARY extends E
         return type;
     }
 
-    public Names getNames() {
+    public NAME_LIST getNames() {
         return names;
     }
 }

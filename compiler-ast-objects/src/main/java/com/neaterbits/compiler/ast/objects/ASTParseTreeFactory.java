@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.ast.objects.annotation.Annotation;
+import com.neaterbits.compiler.ast.objects.annotation.AnnotationElement;
 import com.neaterbits.compiler.ast.objects.block.Block;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Constructor;
@@ -153,6 +155,8 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	Namespace,
 	ComplexMemberDefinition,
 	StaticInitializer,
+	Annotation,
+	AnnotationElement,
 	ClassModifierHolder,
 	ClassDefinition,
 	ConstructorMember,
@@ -384,14 +388,14 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public ClassDefinition createClassDefinition(Context context, List<ClassModifierHolder> modifiers,
+	public ClassDefinition createClassDefinition(Context context, List<Annotation> annotations, List<ClassModifierHolder> modifiers,
 			Keyword classKeyword, String name, Context nameContext, Keyword extendsKeyword,
 			List<TypeReference> extendsClasses, List<TypeReference> implementsInterfaces,
 			List<ComplexMemberDefinition> members) {
 
 		return new ClassDefinition(
 				context,
-				new ClassModifiers(modifiers),
+				new ClassModifiers(annotations, modifiers),
 				classKeyword,
 				new ClassDeclarationName(nameContext, new ClassName(name)),
 				extendsKeyword,
@@ -443,6 +447,26 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
+    public AnnotationElement createAnnotationElementFromExpression(Context context, Name name, Expression value) {
+        return new AnnotationElement(context, name, value);
+    }
+
+    @Override
+    public AnnotationElement createAnnotationElementFromAnnotation(Context context, Name name, Annotation annotation) {
+        return new AnnotationElement(context, name, annotation);
+    }
+
+    @Override
+    public AnnotationElement createAnnotationElementFromElements(Context context, Name name, List<AnnotationElement> elements) {
+        return new AnnotationElement(context, name, elements);
+    }
+
+    @Override
+    public Annotation createAnnotation(Context context, ScopedName typeName, List<AnnotationElement> elements) {
+        return new Annotation(context, typeName, elements);
+    }
+
+    @Override
 	public ConstructorModifierHolder createConstructorModifierHolder(Context context, ConstructorModifier modifier) {
 		return new ConstructorModifierHolder(context, modifier);
 	}
@@ -546,14 +570,14 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
 
 	@Override
-	public EnumDefinition createEnumDefinition(Context context, List<ClassModifierHolder> modifiers,
+	public EnumDefinition createEnumDefinition(Context context, List<Annotation> annotations, List<ClassModifierHolder> modifiers,
 			Keyword enumKeyword, String name, Context nameContext, Keyword implementsKeyword,
 			List<TypeReference> implementsInterfaces, List<EnumConstantDefinition> enumConstants,
 			List<ComplexMemberDefinition> members) {
 
 		final EnumDefinition enumDefinition = new EnumDefinition(
 				context,
-				new ClassModifiers(modifiers),
+				new ClassModifiers(annotations, modifiers),
 				enumKeyword,
 				new ClassDeclarationName(nameContext, new ClassName(name)),
 				implementsInterfaces, enumConstants, members);

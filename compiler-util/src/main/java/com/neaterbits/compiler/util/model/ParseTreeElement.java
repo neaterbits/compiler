@@ -19,6 +19,9 @@ public enum ParseTreeElement {
 	IMPORT_NAME_PART(true),
 	
 	TYPE_DEFINITION(false),
+
+	ANNOTATION(false),
+	ANNOTATION_ELEMENT(false),
 	
 	CLASS_DEFINITION(false, false),
 	CLASS_MODIFIERS(true, true),

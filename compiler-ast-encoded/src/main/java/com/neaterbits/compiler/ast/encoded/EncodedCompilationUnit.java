@@ -743,6 +743,18 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case ANNOTATION:  {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeAnnotationStart(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    AST.decodeAnnotationEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }

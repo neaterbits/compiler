@@ -477,6 +477,30 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testParseMarkerAnnotation() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "@TheAnnotation class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().getAnnotations().size()).isEqualTo(1);
+        assertThat(classDefinition.getModifiers().getAnnotations().get(0).getScopedName().getScope()).isNull();
+        assertThat(classDefinition.getModifiers().getAnnotations().get(0).getScopedName().getName()).isEqualTo("TheAnnotation");
+        assertThat(classDefinition.getModifiers().getAnnotations().get(0).getElements().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
     public void testParseScalarClassMemberVariable() throws IOException, ParserException {
         
         final String source = "package com.test;\n"

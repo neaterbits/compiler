@@ -126,7 +126,7 @@ public class FileResolverTest extends BaseResolveTest {
 		
 		return new ClassDefinition(
 						FullContext.makeTestContext(),
-						new ClassModifiers(Collections.emptyList()),
+						new ClassModifiers(null, Collections.emptyList()),
 						new Keyword(FullContext.makeTestContext(), "class"),
 						new ClassDeclarationName(FullContext.makeTestContext(), new ClassName(anotherTestClass.getName())),
 						null,

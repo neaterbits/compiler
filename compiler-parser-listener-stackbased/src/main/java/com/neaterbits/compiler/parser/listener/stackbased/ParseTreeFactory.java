@@ -30,6 +30,8 @@ public interface ParseTreeFactory<
 	NAMESPACE,
 	COMPLEX_MEMBER_DEFINITION,
 	STATIC_INITIALIZER,
+	ANNOTATION,
+	ANNOTATION_ELEMENT,
 	CLASS_MODIFIER_HOLDER,
 	CLASS_DEFINITION,
 	CONSTRUCTOR_MEMBER,
@@ -174,6 +176,7 @@ public interface ParseTreeFactory<
 	
 	CLASS_DEFINITION createClassDefinition(
 			Context context,
+			List<ANNOTATION> annotations,
 			List<CLASS_MODIFIER_HOLDER> modifiers,
 			KEYWORD classKeyword,
 			String name,
@@ -185,7 +188,15 @@ public interface ParseTreeFactory<
 	
 	STATIC_INITIALIZER createStaticInitializer(Context context, List<STATEMENT> statements);
 
-	CONSTRUCTOR_MEMBER createConstructorMember(
+    ANNOTATION_ELEMENT createAnnotationElementFromExpression(Context context, NAME name, EXPRESSION value);
+
+    ANNOTATION_ELEMENT createAnnotationElementFromAnnotation(Context context, NAME name, ANNOTATION annotation);
+    
+    ANNOTATION_ELEMENT createAnnotationElementFromElements(Context context, NAME name, List<ANNOTATION_ELEMENT> elements);
+    
+    ANNOTATION createAnnotation(Context context, ScopedName typeName, List<ANNOTATION_ELEMENT> elements);
+
+    CONSTRUCTOR_MEMBER createConstructorMember(
 			Context context,
 			List<CONSTRUCTOR_MODIFIER_HOLDER> modifiers,
 			String name,
@@ -249,6 +260,7 @@ public interface ParseTreeFactory<
 	
 	ENUM_DEFINITION createEnumDefinition(
 			Context context,
+			List<ANNOTATION> annotations,
 			List<CLASS_MODIFIER_HOLDER> modifiers,
 			KEYWORD enumKeyword,
 			String name,

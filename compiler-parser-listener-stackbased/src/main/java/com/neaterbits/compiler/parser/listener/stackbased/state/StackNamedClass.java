@@ -16,7 +16,7 @@ public final class StackNamedClass<
 		TYPE_REFERENCE>
 
 	extends StackClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER>
-	implements ClassModifierSetter<CLASS_MODIFIER_HOLDER> {
+    implements ClassModifierSetter<CLASS_MODIFIER_HOLDER> {
 
 	private final String classKeyword;
 	private final Context classKeywordContext;
@@ -50,7 +50,7 @@ public final class StackNamedClass<
 		this.implementedInterfaces = new ArrayList<>();
 	}
 	
-	@Override
+    @Override
 	public void addClassModifier(CLASS_MODIFIER_HOLDER modifier) {
 		Objects.requireNonNull(modifiers);
 
@@ -73,7 +73,7 @@ public final class StackNamedClass<
 		return nameContext;
 	}
 
-	public List<CLASS_MODIFIER_HOLDER> getModifiers() {
+    public List<CLASS_MODIFIER_HOLDER> getModifiers() {
 		return modifiers;
 	}
 

@@ -1292,7 +1292,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 
 	public void onAnnotationStart(Context context) {
-		delegate.onAnnotationStart(writeStartContext(context));
+		delegate.onAnnotationStart(writeStartContext(context), null);
 	}
 
 	public void onAnnotationEnd(Context context) {

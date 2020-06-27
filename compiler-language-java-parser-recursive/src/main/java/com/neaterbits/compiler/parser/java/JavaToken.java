@@ -73,6 +73,8 @@ public enum JavaToken implements IToken {
     ASTERISK('*'),
     ASSIGN('='),
     
+    AT('@'),
+    
     EQUALS("=="),
     NOT_EQUALS("!="),
     LT('<'),

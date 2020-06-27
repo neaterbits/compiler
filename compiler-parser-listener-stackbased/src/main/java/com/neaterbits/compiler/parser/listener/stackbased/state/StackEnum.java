@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.ListStackEntry;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassMethodMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ConstructorMemberSetter;
@@ -14,6 +15,7 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 public final class StackEnum<
 			COMPLEX_MEMBER_DEFINITION,
 			TYPE_REFERENCE,
+			ANNOTATION,
 			CLASS_MODIFIER_HOLDER,
 			CONSTRUCTOR_MEMBER extends COMPLEX_MEMBER_DEFINITION,
 			CLASS_METHOD_MEMBER extends COMPLEX_MEMBER_DEFINITION,
@@ -24,12 +26,14 @@ public final class StackEnum<
 	implements
 			ClassModifierSetter<CLASS_MODIFIER_HOLDER>,
 			ConstructorMemberSetter<CONSTRUCTOR_MEMBER>,
-			ClassMethodMemberSetter<CLASS_METHOD_MEMBER> {
+			ClassMethodMemberSetter<CLASS_METHOD_MEMBER>,
+			AnnotationSetter<ANNOTATION> {
 
 	private final String enumKeyword;
 	private final Context enumKeywordContext;
 	private final String name;
 	private final Context nameContext;
+	private final List<ANNOTATION> annotations;
 	private final List<CLASS_MODIFIER_HOLDER> modifiers;
 	private final List<TYPE_REFERENCE> implementedInterfaces;
 	private final List<ENUM_CONSTANT_DEFINITION> constants;
@@ -46,6 +50,7 @@ public final class StackEnum<
 		this.enumKeywordContext = enumKeywordContext;
 		this.name = name;
 		this.nameContext = nameContext;
+		this.annotations = new ArrayList<>();
 		this.modifiers = new ArrayList<>();
 		this.implementedInterfaces = new ArrayList<>();
 		this.constants = new ArrayList<>();
@@ -67,11 +72,23 @@ public final class StackEnum<
 		return nameContext;
 	}
 
-	public List<CLASS_MODIFIER_HOLDER> getModifiers() {
+	public List<ANNOTATION> getAnnotations() {
+        return annotations;
+    }
+
+    public List<CLASS_MODIFIER_HOLDER> getModifiers() {
 		return modifiers;
 	}
 	
 	@Override
+    public void addAnnotation(ANNOTATION annotation) {
+
+	    Objects.requireNonNull(annotation);
+	    
+	    annotations.add(annotation);
+    }
+
+    @Override
 	public void addClassModifier(CLASS_MODIFIER_HOLDER modifier) {
 
 		Objects.requireNonNull(modifier);

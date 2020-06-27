@@ -14,6 +14,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.BaseStackVariabl
 import com.neaterbits.compiler.parser.listener.stackbased.state.CallStackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.CallableStackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackAnnotation;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackAnnotationElement;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackAnonymousClass;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackArrayAccess;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackArrayCreationExpression;
@@ -72,6 +73,8 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackWhileStatem
 import com.neaterbits.compiler.parser.listener.stackbased.state.VariableNameSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.ListStack;
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.StackEntry;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationElementSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassMethodMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ConstructorMemberSetter;
@@ -145,6 +148,8 @@ public abstract class BaseParserListener<
 		TYPE_DEFINITION,
 		COMPLEX_MEMBER_DEFINITION,
 		STATIC_INITIALIZER extends COMPLEX_MEMBER_DEFINITION,
+	    ANNOTATION,
+	    ANNOTATION_ELEMENT,
 		CLASS_MODIFIER_HOLDER,
 		CLASS_DEFINITION extends TYPE_DEFINITION,
 		CONSTRUCTOR_MEMBER extends COMPLEX_MEMBER_DEFINITION,
@@ -275,6 +280,8 @@ public abstract class BaseParserListener<
 			NAMESPACE,
 			COMPLEX_MEMBER_DEFINITION,
 			STATIC_INITIALIZER,
+		    ANNOTATION,
+		    ANNOTATION_ELEMENT,
 			CLASS_MODIFIER_HOLDER,
 			CLASS_DEFINITION,
 			CONSTRUCTOR_MEMBER,
@@ -636,7 +643,7 @@ public abstract class BaseParserListener<
         
         logEnter(context);
         
-        final StackTypeDefinition<TYPE_DEFINITION, CLASS_MODIFIER_HOLDER> stackType = pop();
+        final StackTypeDefinition<TYPE_DEFINITION, ANNOTATION, CLASS_MODIFIER_HOLDER> stackType = pop();
         
         for (TYPE_DEFINITION stackEntry : stackType.getList()) {
             mainStack.addElement(stackEntry);
@@ -885,15 +892,21 @@ public abstract class BaseParserListener<
         
 		logEnter(context);
 
-		final StackNamedClass<COMPLEX_MEMBER_DEFINITION, COMPLEX_MEMBER_DEFINITION, COMPLEX_MEMBER_DEFINITION, CLASS_MODIFIER_HOLDER, TYPE_REFERENCE> entry = pop();
+		final StackNamedClass<
+		    COMPLEX_MEMBER_DEFINITION,
+		    COMPLEX_MEMBER_DEFINITION,
+		    COMPLEX_MEMBER_DEFINITION,
+		    CLASS_MODIFIER_HOLDER,
+		    TYPE_REFERENCE> entry = pop();
 
 		final List<COMPLEX_MEMBER_DEFINITION> classCode = entry.getList();
 
 		// Must get modifiers from type
-		final StackTypeDefinition<TYPE_DEFINITION, CLASS_MODIFIER_HOLDER> stackType = get();
+		final StackTypeDefinition<TYPE_DEFINITION, ANNOTATION, CLASS_MODIFIER_HOLDER> stackType = get();
 
 		final CLASS_DEFINITION classDefinition = parseTreeFactory.createClassDefinition(
 		        context,
+		        stackType.getAnnotations(),
 		        stackType.getModifiers(),
 				entry.getClassKeyword() != null
 						? parseTreeFactory.createKeyword(entry.getClassKeywordContext(), entry.getClassKeyword())
@@ -934,7 +947,7 @@ public abstract class BaseParserListener<
 
 		final List<COMPLEX_MEMBER_DEFINITION> classCode = entry.getList();
 
-		final CLASS_DEFINITION classDefinition = parseTreeFactory.createClassDefinition(context, null, null, null, null,
+		final CLASS_DEFINITION classDefinition = parseTreeFactory.createClassDefinition(context, null, null, null, null, null,
 				null, null, null, classCode);
 
 		mainStack.addElement(classDefinition);
@@ -1551,7 +1564,14 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackEnum<COMPLEX_MEMBER_DEFINITION, TYPE_REFERENCE, CLASS_MODIFIER_HOLDER, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER, ENUM_CONSTANT_DEFINITION> stackEnum = get();
+		final StackEnum<
+		        COMPLEX_MEMBER_DEFINITION,
+		        TYPE_REFERENCE,
+		        ANNOTATION,
+		        CLASS_MODIFIER_HOLDER,
+		        CONSTRUCTOR_MEMBER,
+		        CLASS_METHOD_MEMBER,
+		        ENUM_CONSTANT_DEFINITION> stackEnum = get();
 
 		stackEnum.addImplementedInterface(parseTreeFactory.createResolveLaterTypeReference(context, interfaceName, ReferenceType.NAME));
 
@@ -1585,7 +1605,14 @@ public abstract class BaseParserListener<
 				stackEnumConstant.getParameters(),
 				stackEnumConstant.getList());
 
-		final StackEnum<COMPLEX_MEMBER_DEFINITION, TYPE_REFERENCE, CLASS_MODIFIER_HOLDER, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER, ENUM_CONSTANT_DEFINITION> stackEnum = get();
+		final StackEnum<
+		        COMPLEX_MEMBER_DEFINITION,
+		        TYPE_REFERENCE,
+		        ANNOTATION,
+		        CLASS_MODIFIER_HOLDER,
+		        CONSTRUCTOR_MEMBER,
+		        CLASS_METHOD_MEMBER,
+		        ENUM_CONSTANT_DEFINITION> stackEnum = get();
 
 		stackEnum.addConstant(enumConstant);
 
@@ -1599,11 +1626,18 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackEnum<COMPLEX_MEMBER_DEFINITION, TYPE_REFERENCE, CLASS_MODIFIER_HOLDER, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER, ENUM_CONSTANT_DEFINITION>
-			stackEnum = pop();
+		final StackEnum<
+		        COMPLEX_MEMBER_DEFINITION,
+		        TYPE_REFERENCE,
+		        ANNOTATION,
+		        CLASS_MODIFIER_HOLDER,
+		        CONSTRUCTOR_MEMBER,
+		        CLASS_METHOD_MEMBER,
+		        ENUM_CONSTANT_DEFINITION> stackEnum = pop();
 
 		final ENUM_DEFINITION enumDefinition = parseTreeFactory.createEnumDefinition(
 				context,
+				stackEnum.getAnnotations(),
 				stackEnum.getModifiers(),
 				stackEnum.getEnumKeyword() != null
 				? parseTreeFactory.createKeyword(stackEnum.getEnumKeywordContext(), stackEnum.getEnumKeyword()) : null,
@@ -2028,7 +2062,12 @@ public abstract class BaseParserListener<
 		final StackPrimaryList<PRIMARY, VARIABLE_REFERENCE, NESTED_EXPRESSION> stackPrimaryList = get();
 
 		@SuppressWarnings("unchecked")
-		final StackNamedClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER, CLASS_MODIFIER_HOLDER, TYPE_REFERENCE> stackClass = mainStack.getFromTop(StackNamedClass.class);
+		final StackNamedClass<
+		        COMPLEX_MEMBER_DEFINITION,
+		        CONSTRUCTOR_MEMBER,
+		        CLASS_METHOD_MEMBER,
+		        CLASS_MODIFIER_HOLDER,
+		        TYPE_REFERENCE> stackClass = mainStack.getFromTop(StackNamedClass.class);
 
 		final TYPE_REFERENCE typeReference = parseTreeFactory.createResolveLaterTypeReference(context,
 				new ScopedName(null, stackClass.getName()), ReferenceType.NAME);
@@ -2339,7 +2378,7 @@ public abstract class BaseParserListener<
 		    methodInvocation = new StackUnresolvedMethodInvocation<>(
 		            logger,
 		            type,
-		            names,
+		            makeNameList(context, names),
 		            methodNameString,
 		            methodNameContext);
 		}
@@ -2434,24 +2473,14 @@ public abstract class BaseParserListener<
 		}
 		else {
 
-            final StackUnresolvedMethodInvocation<EXPRESSION, PRIMARY> stackMethodInvocation = pop();
+            final StackUnresolvedMethodInvocation<EXPRESSION, PRIMARY, NAME_LIST> stackMethodInvocation = pop();
 
-            final Names names = stackMethodInvocation.getNames();
-            
-            final List<NAME> nameList = new ArrayList<>(names.count());
-            
-            for (int i = 0; i < names.count(); ++ i) {
-                
-                final String name = stringSource.asString(names.getStringAt(i));
-                final Context nameContext = getOtherContext(names.getContextAt(i));
-                
-                nameList.add(parseTreeFactory.createName(nameContext, name));
-            }
+            final NAME_LIST nameList = stackMethodInvocation.getNames();
             
             final UNRESOLVED_METHOD_INVOCATION_EXPRESSION methodInvocation = parseTreeFactory.createUnresolvedMethodInvocationExpression(
                     context,
                     stackMethodInvocation.getType(),
-                    parseTreeFactory.createNameList(context, nameList),
+                    nameList,
                     stackMethodInvocation.getName(),
                     stackMethodInvocation.getNameContext(),
                     stackMethodInvocation.getParameters() != null
@@ -2465,6 +2494,23 @@ public abstract class BaseParserListener<
 		
 
 		logExit(context);
+	}
+	
+	private NAME_LIST makeNameList(Context context, Names names) {
+	    
+	    final int count = names.count();
+	    
+        final List<NAME> nameList = new ArrayList<>(count);
+        
+        for (int i = 0; i < count; ++ i) {
+            
+            final String name = stringSource.asString(names.getStringAt(i));
+            final Context nameContext = getOtherContext(names.getContextAt(i));
+            
+            nameList.add(parseTreeFactory.createName(nameContext, name));
+        }
+
+        return parseTreeFactory.createNameList(context, nameList);
 	}
 
 	@Override
@@ -3416,28 +3462,123 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onAnnotationStart(int startContext) {
+	public final void onAnnotationStart(int startContext, Names names) {
 	    
 	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 
-		push(new StackAnnotation<>(logger));
+		push(new StackAnnotation<>(logger, makeScopedName(names)));
 
 		logExit(context);
 	}
 
 	@Override
+    public void onAnnotationElementStart(int startContext, long name, int nameContext) {
+
+        final Context context = getStartContext(startContext);
+
+        logEnter(context);
+        
+        final NAME annotationName = parseTreeFactory.createName(getLeafContext(nameContext), stringSource.asString(name));
+        
+        push(new StackAnnotationElement<>(getLogger(), annotationName));
+
+        logExit(context);
+    }
+
+    @Override
+    public void onAnnotationElementEnd(int startContext, Context endContext) {
+
+        final Context context = getStartContext(startContext);
+
+        logEnter(context);
+        
+        final StackAnnotationElement<NAME, EXPRESSION, ANNOTATION, ANNOTATION_ELEMENT> stackAnnotationElement = pop();
+        
+        final ANNOTATION_ELEMENT annotationElement;
+        
+        if (stackAnnotationElement.getExpression() != null) {
+            
+            annotationElement = parseTreeFactory.createAnnotationElementFromExpression(
+                    context,
+                    stackAnnotationElement.getName(),
+                    stackAnnotationElement.getExpression());
+        }
+        else if (stackAnnotationElement.getAnnotation() != null) {
+            
+            annotationElement = parseTreeFactory.createAnnotationElementFromAnnotation(
+                    context,
+                    stackAnnotationElement.getName(),
+                    stackAnnotationElement.getAnnotation());
+        }
+        else if (stackAnnotationElement.getElements() != null) {
+            
+            annotationElement = parseTreeFactory.createAnnotationElementFromElements(
+                    context,
+                    stackAnnotationElement.getName(),
+                    stackAnnotationElement.getElements());
+
+        }
+        else {
+            throw new IllegalStateException();
+        }
+        
+        final AnnotationElementSetter<ANNOTATION_ELEMENT> setter = get();
+        
+        setter.addAnnotationElement(annotationElement);
+
+        logExit(context);
+    }
+
+    @Override
 	public final void onAnnotationEnd(int startContext, Context endContext) {
 
 	    final Context context = getEndContext(startContext, endContext);
 	    
 		logEnter(context);
 
-		pop();
+		final StackAnnotation<ANNOTATION_ELEMENT> stackAnnotation = pop();
+		
+		final ANNOTATION annotation = parseTreeFactory.createAnnotation(
+		        getStartContext(startContext),
+		        stackAnnotation.getScopedName(),
+		        stackAnnotation.getList());
+		
+		final AnnotationSetter<ANNOTATION> setter = get();
+		
+		setter.addAnnotation(annotation);
 
 		logExit(context);
 	}
+    
+    private ScopedName makeScopedName(Names names) {
+        
+        final int len = names.count();
+        
+        final ScopedName scopedName;
+        
+        if (len == 0) {
+            throw new IllegalArgumentException();
+        }
+        else if (len == 1) {
+            scopedName = ScopedName.makeScopedName(stringSource.asString(names.getStringAt(0)));
+        }
+        else {
+            
+            final String [] parts = new String[len - 1];
+            
+            for (int i = 0; i < parts.length; ++ i) {
+                
+                parts[i] = stringSource.asString(names.getStringAt(i));
+            }
+            
+            scopedName = ScopedName.makeScopedName(parts, stringSource.asString(names.getStringAt(len - 1)));
+        }
+        
+        return scopedName;
+    }
+    
 
 	// Stack methods
 

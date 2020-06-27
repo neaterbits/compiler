@@ -45,6 +45,14 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	void onTypeDefinitionStart(int startContext);
 	
 	void onTypeDefinitionEnd(int startContext, Context endContext);
+
+	void onAnnotationStart(int startContext, Names typeName);
+	
+	void onAnnotationElementStart(int startContext, long name, int nameContext);
+	
+	void onAnnotationElementEnd(int startContext, Context endContext);
+	
+	void onAnnotationEnd(int startContext, Context endContext);
 	
 	void onClassStart(
 	        int startContext,
@@ -384,9 +392,5 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	void onThrowStatementStart(int startContext);
 	
 	void onThrowStatementEnd(int startContext, Context endContext);
-	
-	void onAnnotationStart(int startContext);
-
-	void onAnnotationEnd(int startContext, Context endContext);
 
 }

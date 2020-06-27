@@ -309,7 +309,7 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		final ClassDefinition classDefinition = new ClassDefinition(
 				context,
-				new ClassModifiers(Collections.emptyList()),
+				new ClassModifiers(null, Collections.emptyList()),
 				null,
 				new ClassDeclarationName(nameContext, new ClassName(name)),
 				null,

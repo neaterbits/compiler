@@ -161,7 +161,7 @@ public class AST {
             break;
             
         case UNRESOLVED_METHOD_INVOCATION_EXPRESSION:
-            size = UNRESOLVED_METHOD_INVOCATION_SIZE + (astBuffer.getByte(index + 1) * (STRING_REF_SIZE + CONTEXT_REF_SIZE));
+            size = 1 + namesSize(astBuffer.getByte(index + 1)) + STRING_REF_SIZE + CONTEXT_REF_SIZE;
             break;
             
         case METHOD_INVOCATION_EXPRESSION:
@@ -170,6 +170,10 @@ public class AST {
             
         case FIELD_ACCESS:
             size = FIELD_ACCESS_SIZE;
+            break;
+            
+        case ANNOTATION:
+            size = namesSize(astBuffer.getByte(index));
             break;
 
         default:
@@ -1415,8 +1419,6 @@ public class AST {
         listener.onExpressionStatementEnd(expressionStatementStartContext, endContext);
     }
 
-    private static final int UNRESOLVED_METHOD_INVOCATION_SIZE = 1 + 1 + STRING_REF_SIZE + CONTEXT_REF_SIZE;
-
     static void encodeUnresolvedMethodInvocationStart(
             StringASTBuffer astBuffer,
             MethodInvocationType type,
@@ -1427,18 +1429,24 @@ public class AST {
         astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION);
         astBuffer.writeEnumByte(type);
         
+        encodeNames(astBuffer, names);
+        
+        astBuffer.writeStringRef(methodName);
+        astBuffer.writeContextRef(methodNameContext);
+    }
+    
+    private static void encodeNames(StringASTBuffer astBuffer, Names names) {
+        
         if (names.count() > Byte.MAX_VALUE) {
             throw new IllegalArgumentException();
         }
         
         astBuffer.writeByte((byte)names.count());
+        
         for (int i = 0; i < names.count(); ++ i) {
             astBuffer.writeStringRef(names.getStringAt(i));
             astBuffer.writeContextRef(names.getContextAt(i));
         }
-        
-        astBuffer.writeStringRef(methodName);
-        astBuffer.writeContextRef(methodNameContext);
     }
 
     public static <COMPILATION_UNIT> void decodeUnresolvedMethodInvocationStart(
@@ -1448,9 +1456,31 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         final MethodInvocationType type = astBuffer.getEnumByte(index, MethodInvocationType.class);
-        final int numNames = astBuffer.getByte(index + 1);
         
-        int idx = index + 2;
+        final Names names = decodeNames(astBuffer, index + 1);
+
+        final int idx = index + 1 + namesSize(names.count());
+        
+        final long methodName = astBuffer.getStringRef(idx);
+        final int methodNameContext = astBuffer.getContextRef(idx + STRING_REF_SIZE);
+
+        listener.onMethodInvocationStart(
+                methodInvocationStartContext,
+                type,
+                names,
+                methodName,
+                methodNameContext);
+    }
+    
+    private static int namesSize(int count) {
+        return 1 + (count * (STRING_REF_SIZE + CONTEXT_REF_SIZE));
+    }
+    
+    private static Names decodeNames(ASTBufferRead astBuffer, int index) {
+        
+        int idx = index;
+
+        final int numNames = astBuffer.getByte(idx ++);
         
         final List<NamePart> list = new ArrayList<>(numNames);
 
@@ -1482,16 +1512,8 @@ public class AST {
             
             idx += STRING_REF_SIZE + CONTEXT_REF_SIZE;
         }
-        
-        final long methodName = astBuffer.getStringRef(idx);
-        final int methodNameContext = astBuffer.getContextRef(idx + STRING_REF_SIZE);
-
-        listener.onMethodInvocationStart(
-                methodInvocationStartContext,
-                type,
-                names,
-                methodName,
-                methodNameContext);
+    
+        return names;
     }
 
     static void encodeUnresolvedMethodInvocationEnd(StringASTBuffer astBuffer) {
@@ -1656,5 +1678,36 @@ public class AST {
                 null,
                 astBuffer.getStringRef(index),
                 fieldAccessStartContext);
+    }
+
+    static void encodeAnnotationStart(StringASTBuffer astBuffer, Names names) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.ANNOTATION);
+        
+        encodeNames(astBuffer, names);
+    }
+
+    public static <COMPILATION_UNIT> void decodeAnnotationStart(
+            ASTBufferRead astBuffer,
+            int annotationStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final Names names = decodeNames(astBuffer, index);
+
+        listener.onAnnotationStart(annotationStartContext, names);
+    }
+
+    static void encodeAnnotationEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ANNOTATION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeAnnotationEnd(
+            int annotationStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onAnnotationEnd(annotationStartContext, endContext);
     }
 }

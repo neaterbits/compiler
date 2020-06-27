@@ -53,6 +53,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
     private static JavaToken [] IMPORT_OR_TYPE_OR_EOF = new JavaToken [] {
             JavaToken.IMPORT,
             
+            JavaToken.AT,
             JavaToken.PUBLIC,
             JavaToken.FINAL,
             JavaToken.ABSTRACT,
@@ -63,6 +64,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
     private static JavaToken [] TYPE_OR_EOF = new JavaToken [] {
 
+            JavaToken.AT,
             JavaToken.PUBLIC,
             JavaToken.FINAL,
             JavaToken.ABSTRACT,
@@ -113,6 +115,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 break;
             }
                 
+            case AT:
             case PUBLIC:
             case ABSTRACT:
             case FINAL:
@@ -143,6 +146,10 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         do {
             // token might be set from while scanning for imports
             switch (token) {
+            
+            case AT:
+                parseAnnotation(writeCurContext());
+                break;
             
             case PUBLIC:
                 listener.onVisibilityClassModifier(writeCurContext(), ClassVisibility.PUBLIC);
@@ -328,6 +335,64 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
         
         listener.onImportEnd(importStartContext, getLexerContext(), ondemand);
+    }
+    
+    private void parseAnnotation(int startContext) throws IOException, ParserException {
+        
+        parseNameListUntilOtherToken(names -> {
+
+            listener.onAnnotationStart(startContext, names);
+        
+            parseAnyAnnotationElements();
+            
+            listener.onAnnotationEnd(startContext, getLexerContext());
+        });
+    }
+    
+    private void parseAnyAnnotationElements() throws IOException, ParserException {
+
+        if (lexer.lexSkipWS(JavaToken.LPAREN) == JavaToken.LPAREN) {
+            
+            // Is this @Annotation(identifier = value) or @Annotation(STATIC_CONSTANT)
+            // or @Annotation(LITERAL)
+            
+            if (lexer.lexSkipWS(JavaToken.IDENTIFIER) == JavaToken.IDENTIFIER) {
+                
+                final int identifierContext = writeCurContext();
+                final int elementStartContext = writeContext(identifierContext);
+                        
+                // @Annotation(identifier = value) or @Annotation(STATIC_CONSTANT)
+
+                final long stringRef = getStringRef();
+
+                if (lexer.lexSkipWS(JavaToken.ASSIGN) == JavaToken.ASSIGN) {
+
+                    listener.onAnnotationElementStart(elementStartContext, stringRef, identifierContext);
+                    
+                    // @Annotation(identifier = value)
+                    parseExpression();
+                    
+                    listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
+                }
+                else {
+                    listener.onAnnotationElementStart(elementStartContext, StringRef.STRING_NONE, ContextRef.NONE);
+                    
+                    listener.onVariableReference(identifierContext, stringRef);
+
+                    listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
+                }
+            }
+            else {
+                final int elementStartContext = writeCurContext();
+
+                // Not an identifier so probably a literal eg. @TheAnnotation("a literal")
+                listener.onAnnotationElementStart(elementStartContext, StringRef.STRING_NONE, ContextRef.NONE);
+
+                parseExpression();
+                
+                listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
+            }
+        }
     }
     
     private void parseClass(
@@ -1638,6 +1703,16 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             ProcessNameParts processNameParts) throws IOException, ParserException {
         
         addScratchNamePart(identifierContext, identifier);
+        
+        parseNames(processNameParts);
+    }
+
+    private void parseNameListUntilOtherToken(ProcessNameParts processNameParts) throws IOException, ParserException {
+        
+        parseNames(processNameParts);
+    }
+
+    private void parseNames(ProcessNameParts processNameParts) throws IOException, ParserException {
 
         for (;;) {
 
