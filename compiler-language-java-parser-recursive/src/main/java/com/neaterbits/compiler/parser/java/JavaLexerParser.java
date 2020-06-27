@@ -377,7 +377,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                     listener.onAnnotationElementStart(elementStartContext, stringRef, identifierContext);
                     
                     // @Annotation(identifier = value)
-                    parseExpression();
+                    parseExpressionOrAnnotation();
                     
                     listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
                     
@@ -447,9 +447,19 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
             listener.onAnnotationElementStart(otherElementStartContext, otherIdentifierRef, otherIdentifierContext);
 
-            parseExpression();
+            parseExpressionOrAnnotation();
             
             listener.onAnnotationElementEnd(otherElementStartContext, getLexerContext());
+        }
+    }
+    
+    private void parseExpressionOrAnnotation() throws IOException, ParserException {
+        
+        if (lexer.lexSkipWS(JavaToken.AT) == JavaToken.AT) {
+            parseAnnotation(writeCurContext());
+        }
+        else {
+            parseExpression();
         }
     }
     

@@ -688,6 +688,48 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testParseNameAnnotationValuesAnnotation() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "@TheAnnotation(name=@ValueAnnotation, otherName=@OtherValueAnnotation) class TestClass { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().getAnnotations().size()).isEqualTo(1);
+        
+        final Annotation annotation = classDefinition.getModifiers().getAnnotations().get(0);
+        assertThat(annotation.getScopedName().getScope()).isNull();
+        assertThat(annotation.getScopedName().getName()).isEqualTo("TheAnnotation");
+        assertThat(annotation.getElements().size()).isEqualTo(2);
+        
+        final AnnotationElement annotationElement1 = annotation.getElements().get(0);
+        
+        assertThat(annotationElement1.getExpression()).isNull();
+        assertThat(annotationElement1.getName()).isEqualTo("name");
+        assertThat(annotationElement1.getAnnotation().getScopedName().getScope()).isNull();
+        assertThat(annotationElement1.getAnnotation().getScopedName().getName()).isEqualTo("ValueAnnotation");
+        assertThat(annotationElement1.getValueList()).isNull();
+
+        final AnnotationElement annotationElement2 = annotation.getElements().get(1);
+
+        assertThat(annotationElement2.getExpression()).isNull();
+        assertThat(annotationElement2.getName()).isEqualTo("otherName");
+        assertThat(annotationElement2.getAnnotation().getScopedName().getScope()).isNull();
+        assertThat(annotationElement2.getAnnotation().getScopedName().getName()).isEqualTo("OtherValueAnnotation");
+        assertThat(annotationElement2.getValueList()).isNull();
+
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
     public void testParseAnnotationWithAnnotation() throws IOException, ParserException {
         
         final String source = "package com.test;\n"

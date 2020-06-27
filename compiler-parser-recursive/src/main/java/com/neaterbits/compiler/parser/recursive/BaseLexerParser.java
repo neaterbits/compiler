@@ -28,6 +28,7 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         
         private final List<NamePart> namePartList;
         private int namePartElements;
+        private boolean inUse;
         
         NamesImpl() {
             // Allocate 100 elements, should always be enough or will cause
@@ -70,12 +71,38 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
 
     protected final int startScratchNamePart() {
 
+        final int index;
+        
         if (namesScratchInUse == namesScratch.size()) {
             
-            namesScratch.add(new NamesImpl());
+            final NamesImpl names = new NamesImpl();
+            names.inUse = true;
+            
+            namesScratch.add(names);
+            index = namesScratchInUse;
         }
-
-        final int index = namesScratchInUse;
+        else {
+            int found = -1;
+            
+            for (int i = 0; i < namesScratch.size(); ++ i) {
+                final NamesImpl names = namesScratch.get(i);
+                if (!names.inUse) {
+                    found = i;
+                    names.inUse = true;
+                    break;
+                }
+            }
+            
+            if (found == -1) {
+                throw new IllegalStateException();
+            }
+            
+            index = found;
+        }
+        
+        if (namesScratch.get(index).namePartElements > 0) {
+            throw new IllegalStateException();
+        }
         
         ++ namesScratchInUse;
         
@@ -86,17 +113,21 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         
         final NamesImpl names = namesScratch.get(index);
         
+        if (!names.inUse) {
+            throw new IllegalStateException();
+        }
+        
         if (names.namePartElements == names.namePartList.size()) {
             
             final NamePart namePart = new NamePart(context, name);
 
             names.namePartList.add(namePart);
-            ++ names.namePartElements;
         }
         else {
-            names.namePartList.get(names.namePartElements ++).init(context, name);
-            ++ names.namePartElements;
+            names.namePartList.get(names.namePartElements).init(context, name);
         }
+
+        ++ names.namePartElements;
     }
     
     @FunctionalInterface
@@ -116,10 +147,14 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         }
         
         final NamesImpl names = namesScratch.get(index);
-        
-        process.processParts(names);
-        
-        names.namePartElements = 0;
-        -- namesScratchInUse;
+
+        try {
+            process.processParts(names);
+        }
+        finally {
+            names.namePartElements = 0;
+            names.inUse = false;
+            -- namesScratchInUse;
+        }
     }
 }
