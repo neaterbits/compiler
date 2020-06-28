@@ -3,8 +3,14 @@ package com.neaterbits.compiler.parser.recursive;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.NamePart;
 
-final class NamesImpl extends ScratchEntity<NamePart, Names> implements Names {
+final class NamesImpl
+        extends ScratchEntity<NamePart, Names, NamesList>
+        implements Names, NamesList {
     
+    NamesImpl(ScratchBuf<NamePart, Names, NamesList, ?> buf) {
+        super(buf);
+    }
+
     @Override
     public long getStringAt(int index) {
         return get(index).getPart();
@@ -25,7 +31,13 @@ final class NamesImpl extends ScratchEntity<NamePart, Names> implements Names {
         return this;
     }
 
-    void add(int context, long name) {
+    @Override
+    NamesList getList() {
+        return this;
+    }
+
+    @Override
+    public void add(int context, long name) {
         
         super.add(() -> new NamePart(context, name), part -> part.init(context, name));
     }

@@ -19,6 +19,8 @@ import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.recursive.BaseLexerParser;
+import com.neaterbits.compiler.parser.recursive.NamesList;
+import com.neaterbits.compiler.parser.recursive.ProcessParts;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
@@ -1988,23 +1990,23 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
     private void parseNameListUntilOtherToken(
             int identifierContext,
             long identifier,
-            ProcessNameParts processNameParts) throws IOException, ParserException {
+            ProcessParts<Names> processNameParts) throws IOException, ParserException {
         
-        final int scratchIndex = startScratchNameParts();
+        final NamesList scratch = startScratchNameParts();
 
-        addScratchNamePart(identifierContext, identifier, scratchIndex);
+        scratch.add(identifierContext, identifier);
         
-        parseNames(scratchIndex, processNameParts);
+        parseNames(scratch, processNameParts);
     }
 
-    private void parseNameListUntilOtherToken(ProcessNameParts processNameParts) throws IOException, ParserException {
+    private void parseNameListUntilOtherToken(ProcessParts<Names> processNameParts) throws IOException, ParserException {
         
-        final int scratchIndex = startScratchNameParts();
+        final NamesList scratch = startScratchNameParts();
 
-        parseNames(scratchIndex, processNameParts);
+        parseNames(scratch, processNameParts);
     }
 
-    private void parseNames(int scratchIndex, ProcessNameParts processNameParts) throws IOException, ParserException {
+    private void parseNames(NamesList scratch, ProcessParts<Names> processNameParts) throws IOException, ParserException {
         
         for (;;) {
 
@@ -2014,7 +2016,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 throw lexer.unexpectedToken();
             }
             
-            addScratchNamePart(writeCurContext(), getStringRef(), scratchIndex);
+            scratch.add(writeCurContext(), getStringRef());
             
             final JavaToken endOfScopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
             
@@ -2024,6 +2026,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
         
         // reach non-namepart so process now
-        completeScratchNameParts(scratchIndex, processNameParts);
+        scratch.complete(processNameParts);
     }
 }
