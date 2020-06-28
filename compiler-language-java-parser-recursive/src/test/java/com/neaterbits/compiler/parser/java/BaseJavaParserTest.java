@@ -35,7 +35,7 @@ import com.neaterbits.compiler.ast.objects.statement.WhileStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
-import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
@@ -507,7 +507,6 @@ public abstract class BaseJavaParserTest {
         assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
         assertThat(classDefinition.getMembers()).isEmpty();
     }
-
 
     @Test
     public void testParseNamedGenericWithBoundClass() throws IOException, ParserException {
@@ -1843,7 +1842,7 @@ public abstract class BaseJavaParserTest {
 
     private static void checkIdentifierType(TypeReference typeReference, String typeName) {
 
-        final ResolveLaterTypeReference type = (ResolveLaterTypeReference)typeReference;
+        final UnresolvedTypeReference type = (UnresolvedTypeReference)typeReference;
         
         assertThat(type.getScopedName().getScope()).isNull();
         assertThat(type.getScopedName().getName()).isEqualTo(typeName);
@@ -1853,7 +1852,7 @@ public abstract class BaseJavaParserTest {
 
         final List<String> parts = Arrays.asList(names);
         
-        final ResolveLaterTypeReference type = (ResolveLaterTypeReference)typeReference;
+        final UnresolvedTypeReference type = (UnresolvedTypeReference)typeReference;
         
         assertThat(type.getScopedName().getScope()).isEqualTo(parts.subList(0, parts.size() - 1));
         assertThat(type.getScopedName().getName()).isEqualTo(parts.get(parts.size() - 1));

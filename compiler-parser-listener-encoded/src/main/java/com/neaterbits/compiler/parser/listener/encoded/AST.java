@@ -116,7 +116,7 @@ public class AST {
             size = VARIABLE_NAME_SIZE;
             break;
             
-        case RESOLVE_LATER_IDENTIFIER_TYPE_REFERENCE:
+        case UNRESOLVED_IDENTIFIER_TYPE_REFERENCE:
             size = IDENTIFIER_TYPE_REFERENCE_SIZE;
             break;
 
@@ -128,7 +128,7 @@ public class AST {
             size = SIGNATURE_PARAMETER_SIZE;
             break;
             
-        case RESOLVE_LATER_SCOPED_TYPE_REFERENCE_PART:
+        case UNRESOLVED_SCOPED_TYPE_REFERENCE_PART:
             size = SCOPED_TYPE_REFERENCE_PART_SIZE;
             break;
             
@@ -696,7 +696,7 @@ public class AST {
     
     static void encodeIdentifierTypeReference(StringASTBuffer astBuffer, long typeName) {
         
-        astBuffer.writeElementStart(ParseTreeElement.RESOLVE_LATER_IDENTIFIER_TYPE_REFERENCE);
+        astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_IDENTIFIER_TYPE_REFERENCE);
 
         astBuffer.writeStringRef(typeName);
     }
@@ -897,7 +897,7 @@ public class AST {
 
     static void encodeScopedTypeReferenceStart(StringASTBuffer astBuffer) {
         
-        astBuffer.writeElementStart(ParseTreeElement.RESOLVE_LATER_SCOPED_TYPE_REFERENCE);
+        astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE);
     }
 
     public static <COMPILATION_UNIT> void decodeScopedTypeReferenceStart(
@@ -913,7 +913,7 @@ public class AST {
     
     static void encodeScopedTypeReferencePart(StringASTBuffer astBuffer, long part) {
         
-        astBuffer.writeLeafElement(ParseTreeElement.RESOLVE_LATER_SCOPED_TYPE_REFERENCE_PART);
+        astBuffer.writeLeafElement(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE_PART);
         
         astBuffer.writeStringRef(part);
     }
@@ -929,7 +929,7 @@ public class AST {
 
     static void encodeScopedTypeReferenceEnd(StringASTBuffer astBuffer) {
         
-        astBuffer.writeElementEnd(ParseTreeElement.RESOLVE_LATER_SCOPED_TYPE_REFERENCE);
+        astBuffer.writeElementEnd(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE);
     }
 
     public static <COMPILATION_UNIT> void decodeScopedTypeReferenceEnd(

@@ -7,7 +7,7 @@ import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.BuiltinTypeReference;
-import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.resolver.util.SourceTokenUtil.ASTAccess;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
@@ -44,7 +44,7 @@ public final class ObjectASTAccess implements ASTAccess<BaseASTElement, Compilat
     @Override
     public ScopedName getResolveLaterReference(BaseASTElement element, CompilationUnit compilationUnit) {
         
-        final ResolveLaterTypeReference typeReference = (ResolveLaterTypeReference)element;
+        final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)element;
 
         return typeReference.getScopedName();
     }

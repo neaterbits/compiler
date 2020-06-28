@@ -28,7 +28,7 @@ import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceModifierHolder;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceModifiers;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceName;
-import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.VarNameDeclaration;
@@ -88,7 +88,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 			
 			final CompleteName completeName = getCompleteName(getThisClass(), ClassName::new);
 			
-			final ResolveLaterTypeReference superclassTypeReference = getTypeReference(context, getSuperClassIndex(), ClassName::new);
+			final UnresolvedTypeReference superclassTypeReference = getTypeReference(context, getSuperClassIndex(), ClassName::new);
 			
 			final List<TypeReference> extendsClasses = Arrays.asList(superclassTypeReference);
 			
@@ -134,10 +134,10 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 				Arrays.asList(initializer));
 	}
 
-	private ResolveLaterTypeReference getTypeReference(Context context, int typeName, Function<String, BaseTypeName> createTypeName) {
+	private UnresolvedTypeReference getTypeReference(Context context, int typeName, Function<String, BaseTypeName> createTypeName) {
 		final CompleteName className = getCompleteName(getSuperClassIndex(), createTypeName);
 		
-		final ResolveLaterTypeReference typeReference = new ResolveLaterTypeReference(context, className.toScopedName(), ReferenceType.NAME);
+		final UnresolvedTypeReference typeReference = new UnresolvedTypeReference(context, className.toScopedName(), ReferenceType.NAME);
 
 		return typeReference;
 	}
@@ -194,7 +194,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 	
 		for (int interfaceIndex : this.getInterfaces()) {
 			
-			final TypeReference typeReference = new ResolveLaterTypeReference(
+			final TypeReference typeReference = new UnresolvedTypeReference(
 					context,
 					getCompleteName(interfaceIndex, InterfaceName::new).toScopedName(),
 					ReferenceType.NAME);

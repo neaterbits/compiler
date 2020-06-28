@@ -24,7 +24,7 @@ import com.neaterbits.compiler.ast.objects.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldModifierHolder;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.LibraryTypeReference;
-import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
@@ -398,7 +398,7 @@ public class ObjectProgramModel
 		case METHOD_INVOCATION_EXPRESSION:
 			
 			final MethodInvocationExpression methodInvocationExpression = (MethodInvocationExpression)compilationUnit.getElementFromParseTreeRef(elementParseTreeRef);
-			final ResolveLaterTypeReference resolveLaterTypeReference = (ResolveLaterTypeReference)methodInvocationExpression.getClassType();
+			final UnresolvedTypeReference resolveLaterTypeReference = (UnresolvedTypeReference)methodInvocationExpression.getClassType();
 			
 			final ScopedName toResolve = resolveLaterTypeReference.getScopedName();
 			
@@ -415,7 +415,7 @@ public class ObjectProgramModel
 		
 		final BaseASTElement element = compilationUnit.getElementFromParseTreeRef(typeReferenceParseTreeRef);
 		
-		if (!(element instanceof ResolveLaterTypeReference)) {
+		if (!(element instanceof UnresolvedTypeReference)) {
 			throw new IllegalStateException();
 		}
 		
@@ -427,7 +427,7 @@ public class ObjectProgramModel
 
 		final BaseASTElement element = compilationUnit.getElementFromParseTreeRef(typeReferenceParseTreeRef);
 
-		if (!(element instanceof ResolveLaterTypeReference)) {
+		if (!(element instanceof UnresolvedTypeReference)) {
 			throw new IllegalStateException();
 		}
 
@@ -439,7 +439,7 @@ public class ObjectProgramModel
 
 		final BaseASTElement element = compilationUnit.getElementFromParseTreeRef(typeReferenceParseTreeRef);
 
-		if (!(element instanceof ResolveLaterTypeReference)) {
+		if (!(element instanceof UnresolvedTypeReference)) {
 			throw new IllegalStateException();
 		}
 		

@@ -117,7 +117,7 @@ import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceModifiers;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceName;
 import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifierHolder;
 import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifiers;
-import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.ArrayAccessReference;
@@ -375,8 +375,8 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
     }
 
     @Override
-	public TypeReference createResolveLaterTypeReference(Context context, ScopedName name, ReferenceType type) {
-		return new ResolveLaterTypeReference(context, name, type);
+	public TypeReference createUnresolvedTypeReference(Context context, ScopedName name, ReferenceType type) {
+		return new UnresolvedTypeReference(context, name, type);
 	}
 
 	@Override

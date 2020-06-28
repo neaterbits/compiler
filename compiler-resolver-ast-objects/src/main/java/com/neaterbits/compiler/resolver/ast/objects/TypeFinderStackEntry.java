@@ -13,7 +13,7 @@ import com.neaterbits.compiler.util.name.DefinitionName;
 import com.neaterbits.compiler.util.name.NamespaceReference;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
-import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
 final class TypeFinderStackEntry {
@@ -80,7 +80,7 @@ final class TypeFinderStackEntry {
 		this.nestedTypes.add(nestedType);
 	}
 	
-	void addExtendsFrom(CompilationUnit compilationUnit, ScopedName extendsFrom, TypeVariant typeVariant, ResolveLaterTypeReference element) {
+	void addExtendsFrom(CompilationUnit compilationUnit, ScopedName extendsFrom, TypeVariant typeVariant, UnresolvedTypeReference element) {
 
 		Objects.requireNonNull(extendsFrom);
 		
@@ -97,7 +97,7 @@ final class TypeFinderStackEntry {
 			CompilationUnit compilationUnit,
 			ScopedName scopedName,
 			ReferenceLocation type,
-			ResolveLaterTypeReference element,
+			UnresolvedTypeReference element,
 			UpdateOnResolve updateOnResolve,
 			BaseASTElement updateOnResolveElement) {
 

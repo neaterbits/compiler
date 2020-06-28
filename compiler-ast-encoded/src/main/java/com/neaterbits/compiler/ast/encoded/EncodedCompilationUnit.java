@@ -426,7 +426,7 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
-            case RESOLVE_LATER_IDENTIFIER_TYPE_REFERENCE: {
+            case UNRESOLVED_IDENTIFIER_TYPE_REFERENCE: {
                 final int leafContext = getLeafContext(parseTreeRef);
 
                 AST.decodeIdentifierTypeReference(astBuffer, leafContext, ref.index, listener);
@@ -488,7 +488,7 @@ public final class EncodedCompilationUnit {
                 break;
             }
                 
-            case RESOLVE_LATER_SCOPED_TYPE_REFERENCE: {
+            case UNRESOLVED_SCOPED_TYPE_REFERENCE: {
                 final int startContext = getStartContext(parseTreeRef);
 
                 if (ref.isStart) {
@@ -500,7 +500,7 @@ public final class EncodedCompilationUnit {
                 break;
             }
                 
-            case RESOLVE_LATER_SCOPED_TYPE_REFERENCE_PART: {
+            case UNRESOLVED_SCOPED_TYPE_REFERENCE_PART: {
              
                 final int leafContext = getLeafContext(parseTreeRef);
                 

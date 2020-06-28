@@ -164,7 +164,7 @@ public interface ParseTreeFactory<
 
     TYPE_REFERENCE createScalarTypeReference(Context context, String name);
 
-	TYPE_REFERENCE createResolveLaterTypeReference(Context context, ScopedName name, ReferenceType type);
+	TYPE_REFERENCE createUnresolvedTypeReference(Context context, ScopedName name, ReferenceType type);
 		
 	COMPILATION_UNIT createCompilationUnit(Context context, List<IMPORT> imports, List<COMPILATION_CODE> code);
 	

@@ -5,7 +5,7 @@ import com.neaterbits.compiler.ast.objects.type.PointerType;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.FunctionPointerTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.PointerTypeReference;
-import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeDefTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
@@ -52,7 +52,7 @@ public abstract class BaseTypeReferenceConverter<T extends ConverterState<T>>
 	}
 
 	@Override
-	public TypeReference onResolveLaterTypeReference(ResolveLaterTypeReference typeReference, T param) {
+	public TypeReference onResolveLaterTypeReference(UnresolvedTypeReference typeReference, T param) {
 		throw new UnsupportedOperationException();
 	}
 

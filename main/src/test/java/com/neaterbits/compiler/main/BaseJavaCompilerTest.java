@@ -26,7 +26,7 @@ import com.neaterbits.compiler.ast.objects.parser.ProgramParser;
 import com.neaterbits.compiler.ast.objects.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
-import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ProgramEmitter;
@@ -143,15 +143,15 @@ public abstract class BaseJavaCompilerTest {
 		final String [] scopeToRename = Strings.split(basePackage.getName(), '.');
 
 		systemModule.iterateNodeFirst(e -> {
-			if (e instanceof ResolveLaterTypeReference) {
-				final ResolveLaterTypeReference typeReference = (ResolveLaterTypeReference)e;
+			if (e instanceof UnresolvedTypeReference) {
+				final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)e;
 				
 				if (typeReference.getScopedName().scopeStartsWith(scopeToRename)) {
 			
 					final ScopedName renamedScope = typeReference.getScopedName().removeFromScope(scopeToRename);
 					
 					typeReference.replaceWith(
-							new ResolveLaterTypeReference(
+							new UnresolvedTypeReference(
 									typeReference.getContext(),
 									renamedScope,
 									typeReference.getReferenceType(),

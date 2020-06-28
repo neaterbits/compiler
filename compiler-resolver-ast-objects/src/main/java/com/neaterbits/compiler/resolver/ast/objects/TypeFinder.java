@@ -22,7 +22,7 @@ import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceMethod;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceName;
 import com.neaterbits.compiler.ast.objects.typereference.BuiltinTypeReference;
-import com.neaterbits.compiler.ast.objects.typereference.ResolveLaterTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.codemap.TypeVariant;
@@ -105,8 +105,8 @@ class TypeFinder {
 								throw new IllegalStateException("Expected only scalar types to be resolved");
 							}
 						}
-						else if (e instanceof ResolveLaterTypeReference) {
-							final ResolveLaterTypeReference typeReference = (ResolveLaterTypeReference)e;
+						else if (e instanceof UnresolvedTypeReference) {
+							final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)e;
 
 							final ScopedName name = typeReference.getScopedName();
 							
