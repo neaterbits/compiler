@@ -804,6 +804,18 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case TYPE_BOUND:  {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeTypeBoundStart(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    AST.decodeTypeBoundEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }

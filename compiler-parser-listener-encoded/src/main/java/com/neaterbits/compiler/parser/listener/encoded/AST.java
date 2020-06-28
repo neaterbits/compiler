@@ -24,6 +24,7 @@ import com.neaterbits.compiler.util.parse.NamePart;
 import com.neaterbits.compiler.util.typedefinition.ClassModifier;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
+import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.util.io.strings.StringRef;
 
 public class AST {
@@ -186,6 +187,10 @@ public class AST {
 
         case NAMED_GENERIC_TYPE:
             size = NAMED_TYPE_ARGUMENT_SIZE;
+            break;
+            
+        case TYPE_BOUND:
+            size = 1 + namesSize(astBuffer.getByte(index + 1));
             break;
             
         default:
@@ -1847,5 +1852,42 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onGenericNamedTypeEnd(namedTypeArgumentStartContext, endContext);
+    }
+
+    static void encodeTypeBoundStart(
+            StringASTBuffer astBuffer,
+            TypeBoundType type,
+            Names names) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.TYPE_BOUND);
+        astBuffer.writeEnumByte(type);
+        
+        encodeNames(astBuffer, names);
+    }
+
+    public static <COMPILATION_UNIT> void decodeTypeBoundStart(
+            ASTBufferRead astBuffer,
+            int typeBoundStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final TypeBoundType type = astBuffer.getEnumByte(index, TypeBoundType.class);
+        
+        final Names names = decodeNames(astBuffer, index + 1);
+
+        listener.onTypeBoundStart(typeBoundStartContext, type, names);
+    }
+
+    static void encodeTypeBoundEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.TYPE_BOUND);
+    }
+
+    public static <COMPILATION_UNIT> void decodeTypeBoundEnd(
+            int typeBoundStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onTypeBoundEnd(typeBoundStartContext, endContext);
     }
 }

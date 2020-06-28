@@ -27,7 +27,7 @@ public enum ParseTreeElement {
 	
 	NAMED_GENERIC_TYPE(false),
     WILDCARD_GENERIC_TYPE(false),
-	TYPE_BOUND(true),
+	TYPE_BOUND(false),
 	
 	CLASS_DEFINITION(false, false),
 	CLASS_MODIFIERS(true, true),

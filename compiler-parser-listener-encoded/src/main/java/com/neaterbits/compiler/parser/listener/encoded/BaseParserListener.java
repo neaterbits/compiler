@@ -310,16 +310,16 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onTypeBoundStart(int startContext, TypeBoundType type, Names names) {
         
         writeStartElementContextRef(startContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeTypeBoundStart(astBuffer, type, names);
     }
 
     @Override
     public final void onTypeBoundEnd(int startContext, Context endContext) {
         
         writeEndElementContext(startContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeTypeBoundEnd(astBuffer);
     }
 
     @Override

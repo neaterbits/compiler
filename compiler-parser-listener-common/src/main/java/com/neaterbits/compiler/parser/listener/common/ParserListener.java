@@ -77,11 +77,11 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	void onGenericWildcardTypeStart(int startContext);
 
     void onGenericWildcardTypeEnd(int startContext, Context endContext);
-    
-    void onTypeBoundStart(int startContext, TypeBoundType type, Names names);
+
+    void onTypeBoundStart(int context, TypeBoundType type, Names names);
     
     void onTypeBoundEnd(int startContext, Context endContext);
-
+    
 	void onGenericClassDefinitionTypeListEnd(int startContext, Context endContext);
 
 	void onClassExtendsStart(int startContext, long extendsKeyword, int extendsKeywordContext);

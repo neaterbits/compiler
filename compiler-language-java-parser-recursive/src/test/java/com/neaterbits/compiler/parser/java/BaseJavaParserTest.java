@@ -46,6 +46,7 @@ import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
+import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.util.parse.ParserException;
 
 public abstract class BaseJavaParserTest {
@@ -507,6 +508,37 @@ public abstract class BaseJavaParserTest {
         assertThat(classDefinition.getMembers()).isEmpty();
     }
 
+
+    @Test
+    public void testParseNamedGenericWithBoundClass() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass<TYPE extends BaseClass> { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        
+        assertThat(classDefinition.getGenericTypes().size()).isEqualTo(1);
+        
+        final NamedTypeArgument namedTypeArgument = (NamedTypeArgument)classDefinition.getGenericTypes().get(0);
+        assertThat(namedTypeArgument.getNameString()).isEqualTo("TYPE");
+        assertThat(namedTypeArgument.getTypeBounds().size()).isEqualTo(1);
+        assertThat(namedTypeArgument.getTypeBounds().get(0).getType()).isEqualTo(TypeBoundType.EXTENDS);
+        assertThat(namedTypeArgument.getTypeBounds().get(0).getScopedName().getScope()).isNull();
+        assertThat(namedTypeArgument.getTypeBounds().get(0).getScopedName().getName()).isEqualTo("BaseClass");
+        
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
 
     @Test
     public void testParseMarkerAnnotation() throws IOException, ParserException {
