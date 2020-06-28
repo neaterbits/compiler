@@ -1272,6 +1272,34 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testMethodOneGenericIdentifierLocalVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { SomeType<OtherType> a; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final VariableDeclarationStatement statement = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+        final UnresolvedTypeReference type = checkIdentifierType(statement.getTypeReference(), "SomeType");
+        
+        assertThat(type.getGenericTypeParameters().size()).isEqualTo(1);
+        checkIdentifierType(type.getGenericTypeParameters().get(0), "OtherType");
+        
+        assertThat(statement.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(statement.getDeclarations().size()).isEqualTo(1);
+        assertThat(statement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+    }
+
+    @Test
     public void testMethodOneScopedLocalVariable() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
@@ -1877,12 +1905,14 @@ public abstract class BaseJavaParserTest {
         assertThat(type.getTypeName().getName()).isEqualTo(typeName);
     }
 
-    private static void checkIdentifierType(TypeReference typeReference, String typeName) {
+    private static UnresolvedTypeReference checkIdentifierType(TypeReference typeReference, String typeName) {
 
         final UnresolvedTypeReference type = (UnresolvedTypeReference)typeReference;
         
         assertThat(type.getScopedName().getScope()).isNull();
         assertThat(type.getScopedName().getName()).isEqualTo(typeName);
+        
+        return type;
     }
 
     private static void checkScopedType(TypeReference typeReference, String ...names) {

@@ -988,30 +988,35 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
     private void tryParseGenericTypeParameters() throws IOException, ParserException {
         
         if (lexer.lexSkipWS(JavaToken.LT) == JavaToken.LT) {
-            
+
             final int startContext = writeCurContext();
             
-            listener.onGenericTypeParametersStart(startContext);
-
-            for (;;) {
-
-                parseTypeReference();
-                
-                final JavaToken afterTypeArgument = lexer.lexSkipWS(AFTER_TYPE_ARGUMENT_TOKENS);
-                
-                if (afterTypeArgument == JavaToken.COMMA) {
-                    // Continue on next type
-                }
-                else if (afterTypeArgument == JavaToken.GT) {
-                    break;
-                }
-                else {
-                    throw lexer.unexpectedToken();
-                }
-            }
-
-            listener.onGenericTypeParametersEnd(startContext, getLexerContext());
+            parseGenericTypeParameters(startContext);
         }
+    }
+    
+    private void parseGenericTypeParameters(int startContext) throws IOException, ParserException {
+        
+        listener.onGenericTypeParametersStart(startContext);
+
+        for (;;) {
+
+            parseTypeReference();
+            
+            final JavaToken afterTypeArgument = lexer.lexSkipWS(AFTER_TYPE_ARGUMENT_TOKENS);
+            
+            if (afterTypeArgument == JavaToken.COMMA) {
+                // Continue on next type
+            }
+            else if (afterTypeArgument == JavaToken.GT) {
+                break;
+            }
+            else {
+                throw lexer.unexpectedToken();
+            }
+        }
+
+        listener.onGenericTypeParametersEnd(startContext, getLexerContext());
     }
     
     private void onMethodInvocationPrimaryList(
@@ -1579,7 +1584,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             JavaToken.PERIOD, // User type for variable declaration or method invocation or field dereferencing
             JavaToken.ASSIGN, // Assignment
             JavaToken.IDENTIFIER, // eg. SomeType varName;
-            JavaToken.LPAREN
+            JavaToken.LPAREN,
+            JavaToken.LT // generic type
     };
     
     
@@ -1694,7 +1700,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 parseVariableDeclaratorList(varName, varNameContext);
                 
                 listener.onVariableDeclarationStatementEnd(statementContext, getLexerContext());
-
                 break;
             }
             
@@ -1712,6 +1717,20 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 listener.onExpressionStatementEnd(statementContext, getLexerContext());
                 break;
             }
+            
+            case LT:
+                listener.onVariableDeclarationStatementStart(statementContext);
+                
+                listener.onNonScopedTypeReferenceStart(identifierContext, identifier, ReferenceType.REFERENCE);
+
+                parseGenericTypeParameters(writeCurContext());
+
+                listener.onNonScopedTypeReferenceEnd(identifierContext, getLexerContext());
+
+                parseVariableDeclaratorList();
+                
+                listener.onVariableDeclarationStatementEnd(statementContext, getLexerContext());
+                break;
                 
             default:
                 throw lexer.unexpectedToken();
