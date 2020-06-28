@@ -1990,7 +1990,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             long identifier,
             ProcessNameParts processNameParts) throws IOException, ParserException {
         
-        final int scratchIndex = startScratchNamePart();
+        final int scratchIndex = startScratchNameParts();
 
         addScratchNamePart(identifierContext, identifier, scratchIndex);
         
@@ -1999,7 +1999,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
     private void parseNameListUntilOtherToken(ProcessNameParts processNameParts) throws IOException, ParserException {
         
-        final int scratchIndex = startScratchNamePart();
+        final int scratchIndex = startScratchNameParts();
 
         parseNames(scratchIndex, processNameParts);
     }
@@ -2024,6 +2024,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
         
         // reach non-namepart so process now
-        scratchNameParts(scratchIndex, processNameParts);
+        completeScratchNameParts(scratchIndex, processNameParts);
     }
 }
