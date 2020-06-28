@@ -7,7 +7,6 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.name.Names;
-import com.neaterbits.compiler.util.parse.NamePart;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.IToken;
@@ -23,35 +22,6 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
 
     private final List<NamesImpl> namesScratch;
     private int namesScratchInUse; 
-    
-    private static class NamesImpl implements Names {
-        
-        private final List<NamePart> namePartList;
-        private int namePartElements;
-        private boolean inUse;
-        
-        NamesImpl() {
-            // Allocate 100 elements, should always be enough or will cause
-            // exception
-            this.namePartList = new ArrayList<>(100);
-            this.namePartElements = 0;
-        }
-        
-        @Override
-        public long getStringAt(int index) {
-            return namePartList.get(index).getPart();
-        }
-
-        @Override
-        public int getContextAt(int index) {
-            return namePartList.get(index).getContext();
-        }
-
-        @Override
-        public int count() {
-            return namePartElements;
-        }
-    }
     
     public BaseLexerParser(String file, Lexer<TOKEN, CharInput> lexer, Tokenizer tokenizer) {
         
@@ -75,8 +45,7 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         
         if (namesScratchInUse == namesScratch.size()) {
             
-            final NamesImpl names = new NamesImpl();
-            names.inUse = true;
+            final NamesImpl names = new NamesImpl(true);
             
             namesScratch.add(names);
             index = namesScratchInUse;
@@ -86,9 +55,9 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
             
             for (int i = 0; i < namesScratch.size(); ++ i) {
                 final NamesImpl names = namesScratch.get(i);
-                if (!names.inUse) {
+                if (!names.isInUse()) {
                     found = i;
-                    names.inUse = true;
+                    names.setInUse(true);
                     break;
                 }
             }
@@ -100,7 +69,7 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
             index = found;
         }
         
-        if (namesScratch.get(index).namePartElements > 0) {
+        if (namesScratch.get(index).count() > 0) {
             throw new IllegalStateException();
         }
         
@@ -113,21 +82,11 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         
         final NamesImpl names = namesScratch.get(index);
         
-        if (!names.inUse) {
+        if (!names.isInUse()) {
             throw new IllegalStateException();
         }
         
-        if (names.namePartElements == names.namePartList.size()) {
-            
-            final NamePart namePart = new NamePart(context, name);
-
-            names.namePartList.add(namePart);
-        }
-        else {
-            names.namePartList.get(names.namePartElements).init(context, name);
-        }
-
-        ++ names.namePartElements;
+        names.add(context, name);
     }
     
     @FunctionalInterface
@@ -152,8 +111,8 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
             process.processParts(names);
         }
         finally {
-            names.namePartElements = 0;
-            names.inUse = false;
+            names.clear();
+            
             -- namesScratchInUse;
         }
     }
