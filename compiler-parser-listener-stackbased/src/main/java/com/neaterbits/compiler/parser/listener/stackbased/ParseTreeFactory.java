@@ -17,6 +17,7 @@ import com.neaterbits.compiler.util.typedefinition.ConstructorModifier;
 import com.neaterbits.compiler.util.typedefinition.FieldModifier;
 import com.neaterbits.compiler.util.typedefinition.InterfaceMethodModifier;
 import com.neaterbits.compiler.util.typedefinition.InterfaceModifier;
+import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.util.typedefinition.VariableModifier;
 
 public interface ParseTreeFactory<
@@ -33,6 +34,10 @@ public interface ParseTreeFactory<
 	ANNOTATION,
 	ANNOTATION_ELEMENT,
 	CLASS_MODIFIER_HOLDER,
+	GENERIC_TYPE,
+    NAMED_GENERIC_TYPE extends GENERIC_TYPE,
+    WILDCARD_GENERIC_TYPE extends GENERIC_TYPE,
+    TYPE_BOUND,
 	CLASS_DEFINITION,
 	CONSTRUCTOR_MEMBER,
 	CONSTRUCTOR_MODIFIER_HOLDER,
@@ -174,6 +179,12 @@ public interface ParseTreeFactory<
 			Context nameContext,
 			List<COMPILATION_CODE> codeLines);
 	
+	NAMED_GENERIC_TYPE createNamedTypeArgument(Context context, NAME name, List<TYPE_BOUND> bounds);
+
+	WILDCARD_GENERIC_TYPE createWildcardTypeArgument(Context context, List<TYPE_BOUND> bounds);
+	
+	TYPE_BOUND createTypeBound(Context context, TypeBoundType type, ScopedName name);
+	
 	CLASS_DEFINITION createClassDefinition(
 			Context context,
 			List<ANNOTATION> annotations,
@@ -181,6 +192,7 @@ public interface ParseTreeFactory<
 			KEYWORD classKeyword,
 			String name,
 			Context nameContext,
+			List<GENERIC_TYPE> genericTypes,
 			KEYWORD extendsKeyword,
 			List<TYPE_REFERENCE> extendsClasses,
 			List<TYPE_REFERENCE> implementsInterfaces,

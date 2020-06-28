@@ -16,6 +16,7 @@ import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
+import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.recursive.BaseLexerParser;
 import com.neaterbits.util.io.strings.CharInput;
@@ -513,6 +514,110 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         final JavaToken afterClassName = lexer.lexSkipWS(AFTER_CLASSNAME);
         
         switch (afterClassName) {
+        
+        case LT:
+            parseGenericTypeArguments();
+            
+            parseExtendsOrImplementsOrBody();
+            break;
+        
+        case EXTENDS:
+            parseExtends();
+            
+            parseImplementsOrBody();
+            break;
+            
+        case IMPLEMENTS:
+            parseImplements();
+            
+            parseClassBody();
+            break;
+            
+        case LBRACE:
+            parseClassBody();
+            break;
+            
+        default:
+            throw lexer.unexpectedToken();
+        }
+    }
+    
+    private static final JavaToken [] GENERIC_TYPE_TOKENS = new JavaToken [] {
+            JavaToken.IDENTIFIER,
+            JavaToken.QUESTION_MARK
+    };
+    
+    private static final JavaToken [] AFTER_TYPE_ARGUMENT_TOKENS = new JavaToken [] {
+            JavaToken.COMMA,
+            JavaToken.GT
+    };
+    
+    private void parseGenericTypeArguments() throws IOException, ParserException {
+        
+        final int startContext = writeCurContext();
+        
+        listener.onGenericClassDefinitionTypeListStart(startContext);
+        
+        for (;;) {
+            
+            final JavaToken typeArgumentToken = lexer.lexSkipWS(GENERIC_TYPE_TOKENS);
+            
+            if (typeArgumentToken == JavaToken.IDENTIFIER) {
+    
+                final int nameContext = writeCurContext();
+                final int namedTypeStartContext = writeContext(nameContext);
+                
+                listener.onGenericNamedTypeStart(namedTypeStartContext, getStringRef(), nameContext);
+                
+                if (lexer.lexSkipWS(JavaToken.EXTENDS) == JavaToken.EXTENDS) {
+                    parseTypeBound(writeCurContext(), TypeBoundType.EXTENDS);
+                }
+                
+                listener.onGenericNamedTypeEnd(namedTypeStartContext, getLexerContext());
+            }
+            else {
+                throw lexer.unexpectedToken();
+            }
+            
+            final JavaToken afterTypeArgument = lexer.lexSkipWS(AFTER_TYPE_ARGUMENT_TOKENS);
+            
+            if (afterTypeArgument == JavaToken.COMMA) {
+                // Continue on next type
+            }
+            else if (afterTypeArgument == JavaToken.GT) {
+                break;
+            }
+            else {
+                throw lexer.unexpectedToken();
+            }
+        }
+        
+        listener.onGenericClassDefinitionTypeListEnd(startContext, getLexerContext());
+    }
+    
+    private void parseTypeBound(int startContext, TypeBoundType type) throws IOException, ParserException {
+        
+        parseNameListUntilOtherToken(names -> {
+        
+            listener.onTypeBoundStart(startContext, type, names);
+            
+            listener.onTypeBoundEnd(startContext, getLexerContext());
+        });
+        
+    }
+
+    private static final JavaToken [] EXTENDS_OR_IMPLEMENTS_OR_BODY = new JavaToken [] {
+            JavaToken.EXTENDS,
+            JavaToken.IMPLEMENTS,
+            JavaToken.LBRACE
+    };
+
+    private void parseExtendsOrImplementsOrBody() throws IOException, ParserException {
+        
+        final JavaToken afterClassName = lexer.lexSkipWS(EXTENDS_OR_IMPLEMENTS_OR_BODY);
+        
+        switch (afterClassName) {
+        
         case EXTENDS:
             parseExtends();
             

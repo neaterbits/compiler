@@ -23,6 +23,12 @@ public enum ParseTreeElement {
 	ANNOTATION(false),
 	ANNOTATION_ELEMENT(false),
 	
+	TYPE_ARGUMENT_LIST(false),
+	
+	NAMED_GENERIC_TYPE(false),
+    WILDCARD_GENERIC_TYPE(false),
+	TYPE_BOUND(true),
+	
 	CLASS_DEFINITION(false, false),
 	CLASS_MODIFIERS(true, true),
 	CLASS_MODIFIER_HOLDER(true),

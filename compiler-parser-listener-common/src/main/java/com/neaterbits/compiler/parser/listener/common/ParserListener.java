@@ -20,6 +20,7 @@ import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
+import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 
 public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 
@@ -67,6 +68,22 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 
 	void onStrictfpClassModifier(int context);
 	
+	void onGenericClassDefinitionTypeListStart(int startContext);
+
+	void onGenericNamedTypeStart(int startContext, long name, int nameContext);
+
+	void onGenericNamedTypeEnd(int startContext, Context endContext);
+
+	void onGenericWildcardTypeStart(int startContext);
+
+    void onGenericWildcardTypeEnd(int startContext, Context endContext);
+    
+    void onTypeBoundStart(int startContext, TypeBoundType type, Names names);
+    
+    void onTypeBoundEnd(int startContext, Context endContext);
+
+	void onGenericClassDefinitionTypeListEnd(int startContext, Context endContext);
+
 	void onClassExtendsStart(int startContext, long extendsKeyword, int extendsKeywordContext);
 
 	void onClassExtendsNamePart(int context, long identifier);

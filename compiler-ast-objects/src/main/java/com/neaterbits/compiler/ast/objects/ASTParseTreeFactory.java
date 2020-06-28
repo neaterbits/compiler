@@ -49,6 +49,10 @@ import com.neaterbits.compiler.ast.objects.expression.literal.Literal;
 import com.neaterbits.compiler.ast.objects.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
+import com.neaterbits.compiler.ast.objects.generics.NamedTypeArgument;
+import com.neaterbits.compiler.ast.objects.generics.TypeArgument;
+import com.neaterbits.compiler.ast.objects.generics.TypeBound;
+import com.neaterbits.compiler.ast.objects.generics.WildcardTypeArgument;
 import com.neaterbits.compiler.ast.objects.statement.AssignmentStatement;
 import com.neaterbits.compiler.ast.objects.statement.BreakStatement;
 import com.neaterbits.compiler.ast.objects.statement.CatchBlock;
@@ -142,6 +146,7 @@ import com.neaterbits.compiler.util.typedefinition.ConstructorModifier;
 import com.neaterbits.compiler.util.typedefinition.FieldModifier;
 import com.neaterbits.compiler.util.typedefinition.InterfaceMethodModifier;
 import com.neaterbits.compiler.util.typedefinition.InterfaceModifier;
+import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.util.typedefinition.VariableModifier;
 
 public class ASTParseTreeFactory implements ParseTreeFactory<
@@ -158,6 +163,10 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	Annotation,
 	AnnotationElement,
 	ClassModifierHolder,
+	TypeArgument,
+	NamedTypeArgument,
+	WildcardTypeArgument,
+	TypeBound,
 	ClassDefinition,
 	ConstructorMember,
 	ConstructorModifierHolder,
@@ -388,9 +397,29 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
+    public NamedTypeArgument createNamedTypeArgument(Context context, Name name, List<TypeBound> bounds) {
+
+	    return new NamedTypeArgument(context, name, bounds);
+    }
+
+    @Override
+    public WildcardTypeArgument createWildcardTypeArgument(Context context, List<TypeBound> bounds) {
+
+        return new WildcardTypeArgument(context, bounds);
+    }
+
+    @Override
+    public TypeBound createTypeBound(Context context, TypeBoundType type, ScopedName name) {
+
+        return new TypeBound(context, type, name);
+    }
+
+    @Override
 	public ClassDefinition createClassDefinition(Context context, List<Annotation> annotations, List<ClassModifierHolder> modifiers,
-			Keyword classKeyword, String name, Context nameContext, Keyword extendsKeyword,
-			List<TypeReference> extendsClasses, List<TypeReference> implementsInterfaces,
+			Keyword classKeyword, String name, Context nameContext,
+			List<TypeArgument> genericTypes,
+			Keyword extendsKeyword, List<TypeReference> extendsClasses,
+			List<TypeReference> implementsInterfaces,
 			List<ComplexMemberDefinition> members) {
 
 		return new ClassDefinition(
@@ -398,6 +427,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				new ClassModifiers(annotations, modifiers),
 				classKeyword,
 				new ClassDeclarationName(nameContext, new ClassName(name)),
+				genericTypes,
 				extendsKeyword,
 				extendsClasses,
 				implementsInterfaces,

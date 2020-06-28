@@ -13,6 +13,7 @@ public final class StackNamedClass<
 		CONSTRUCTOR_MEMBER extends COMPLEX_MEMBER_DEFINITION,
 		CLASS_METHOD_MEMBER extends COMPLEX_MEMBER_DEFINITION,
 		CLASS_MODIFIER_HOLDER,
+        GENERIC_TYPE,
 		TYPE_REFERENCE>
 
 	extends StackClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER>
@@ -23,7 +24,9 @@ public final class StackNamedClass<
 	private final String name;
 	private final Context nameContext;
 	private final List<CLASS_MODIFIER_HOLDER> modifiers;
-	
+
+	private List<GENERIC_TYPE> genericTypes;
+
 	private String extendsKeyword;
 	private Context extendsKeywordContext;
 	
@@ -84,8 +87,16 @@ public final class StackNamedClass<
 	public List<TYPE_REFERENCE> getImplementedInterfaces() {
 		return implementedInterfaces;
 	}
+	
+	public List<GENERIC_TYPE> getGenericTypes() {
+        return genericTypes;
+    }
 
-	public void setExtendsKeyword(String extendsKeyword, Context extendsKeywordContext) {
+    public void setGenericTypes(List<GENERIC_TYPE> genericTypes) {
+        this.genericTypes = genericTypes;
+    }
+
+    public void setExtendsKeyword(String extendsKeyword, Context extendsKeywordContext) {
 		
 		Objects.requireNonNull(extendsKeyword);
 		Objects.requireNonNull(extendsKeywordContext);

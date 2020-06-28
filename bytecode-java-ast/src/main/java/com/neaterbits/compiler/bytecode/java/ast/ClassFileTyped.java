@@ -98,6 +98,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 					null,
 					new ClassDeclarationName(context, (ClassName)completeName.getName()),
 					null,
+					null,
 					extendsClasses,
 					new ArrayList<TypeReference>(),
 					getMembers(context));

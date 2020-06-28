@@ -6,6 +6,7 @@ import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.objects.Keyword;
+import com.neaterbits.compiler.ast.objects.generics.TypeArgument;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
@@ -14,20 +15,28 @@ import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ClassDefinition extends BaseClassDefinition {
 	
+    private final ASTList<TypeArgument> genericTypes;
 	private final ASTSingle<Keyword> extendsKeyword;
 	private final ASTList<TypeReference> extendsClasses;
 	
 	public ClassDefinition(Context context, ClassModifiers modifiers, Keyword classKeyword, ClassDeclarationName name,
+	        List<TypeArgument> genericTypes,
 			Keyword extendsKeyword, List<TypeReference> extendsClasses,
 			List<TypeReference> implementsInterfaces,
 			List<ComplexMemberDefinition> members) {
 		super(context, modifiers, classKeyword, name, implementsInterfaces, members);
 		
+		this.genericTypes = genericTypes != null ? makeList(genericTypes) : null;
+		
 		this.extendsKeyword = extendsKeyword != null ? makeSingle(extendsKeyword) : null;
 		this.extendsClasses = extendsClasses != null ? makeList(extendsClasses) : null;
 	}
 
-	public Keyword getExtendsKeyword() {
+	public ASTList<TypeArgument> getGenericTypes() {
+        return genericTypes;
+    }
+
+    public Keyword getExtendsKeyword() {
 		return extendsKeyword.get();
 	}
 

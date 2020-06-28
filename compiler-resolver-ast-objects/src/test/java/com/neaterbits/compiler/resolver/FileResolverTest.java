@@ -132,6 +132,7 @@ public class FileResolverTest extends BaseResolveTest {
 						null,
 						null,
 						null,
+						null,
 						Collections.emptyList());
 	}
 	

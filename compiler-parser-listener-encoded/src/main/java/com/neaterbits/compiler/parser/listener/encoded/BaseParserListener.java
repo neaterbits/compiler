@@ -29,6 +29,7 @@ import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
+import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.util.io.strings.Tokenizer;
 
@@ -263,6 +264,70 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onStrictfpClassModifier(int context) {
 
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onGenericClassDefinitionTypeListStart(int startContext) {
+        
+        writeStartElementContextRef(startContext);
+
+        AST.encodeTypeArgumentListStart(astBuffer);
+    }
+
+    @Override
+    public final void onGenericNamedTypeStart(int startContext, long name, int nameContext) {
+        
+        writeStartElementContextRef(startContext);
+        
+        AST.encodeNamedTypeArgumentStart(astBuffer, name, nameContext);
+    }
+
+    @Override
+    public final void onGenericNamedTypeEnd(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
+
+        AST.encodeNamedTypeArgumentEnd(astBuffer);
+    }
+
+    @Override
+    public final void onGenericWildcardTypeStart(int startContext) {
+        
+        writeStartElementContextRef(startContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onGenericWildcardTypeEnd(int startContext, Context endContext) {
+        
+        writeEndElementContext(startContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onTypeBoundStart(int startContext, TypeBoundType type, Names names) {
+        
+        writeStartElementContextRef(startContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onTypeBoundEnd(int startContext, Context endContext) {
+        
+        writeEndElementContext(startContext, endContext);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void onGenericClassDefinitionTypeListEnd(int startContext, Context endContext) {
+        
+        writeEndElementContext(startContext, endContext);
+
+        AST.encodeTypeArgumentListEnd(astBuffer);
     }
 
     @Override

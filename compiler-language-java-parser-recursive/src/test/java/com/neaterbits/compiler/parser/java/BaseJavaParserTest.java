@@ -23,6 +23,7 @@ import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
+import com.neaterbits.compiler.ast.objects.generics.NamedTypeArgument;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.statement.AssignmentStatement;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
@@ -477,6 +478,35 @@ public abstract class BaseJavaParserTest {
         
         assertThat(classDefinition.getMembers()).isEmpty();
     }
+
+    @Test
+    public void testParseNamedGenericClass() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass<TYPE> { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        
+        assertThat(classDefinition.getGenericTypes().size()).isEqualTo(1);
+        
+        final NamedTypeArgument namedTypeArgument = (NamedTypeArgument)classDefinition.getGenericTypes().get(0);
+        assertThat(namedTypeArgument.getNameString()).isEqualTo("TYPE");
+        assertThat(namedTypeArgument.getTypeBounds().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getExtendsClasses()).isEmpty();
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
 
     @Test
     public void testParseMarkerAnnotation() throws IOException, ParserException {

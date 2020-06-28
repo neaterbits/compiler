@@ -780,6 +780,30 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case TYPE_ARGUMENT_LIST:  {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeTypeArgumentListStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeTypeArgumentListEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case NAMED_GENERIC_TYPE:  {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeNamedTypeArgumentStart(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    AST.decodeNamedTypeArgumentEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             default:
                 throw new UnsupportedOperationException("element " + ref.element);
             }

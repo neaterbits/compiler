@@ -184,6 +184,10 @@ public class AST {
             size = NAME_REFERENCE_SIZE;
             break;
 
+        case NAMED_GENERIC_TYPE:
+            size = NAMED_TYPE_ARGUMENT_SIZE;
+            break;
+            
         default:
             size = 0; // ParseTreeElement
             break;
@@ -1782,5 +1786,66 @@ public class AST {
         listener.onNameReference(
                 nameReferenceStartContext,
                 astBuffer.getStringRef(index));
+    }
+
+    static void encodeTypeArgumentListStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.TYPE_ARGUMENT_LIST);
+    }
+
+    public static <COMPILATION_UNIT> void decodeTypeArgumentListStart(
+            ASTBufferRead astBuffer,
+            int typeArgumentListStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onGenericClassDefinitionTypeListStart(typeArgumentListStartContext);
+    }
+
+    static void encodeTypeArgumentListEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.TYPE_ARGUMENT_LIST);
+    }
+
+    public static <COMPILATION_UNIT> void decodeTypeArgumentListEnd(
+            int typeArgumentListStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onGenericClassDefinitionTypeListEnd(typeArgumentListStartContext, endContext);
+    }
+
+    private static final int NAMED_TYPE_ARGUMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeNamedTypeArgumentStart(StringASTBuffer astBuffer, long name, int nameContext) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.NAMED_GENERIC_TYPE);
+        astBuffer.writeStringRef(name);
+        astBuffer.writeContextRef(nameContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeNamedTypeArgumentStart(
+            ASTBufferRead astBuffer,
+            int namedTypeArgumentStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+
+        listener.onGenericNamedTypeStart(
+                namedTypeArgumentStartContext,
+                astBuffer.getStringRef(index),
+                astBuffer.getContextRef(index + STRING_REF_SIZE));
+    }
+
+    static void encodeNamedTypeArgumentEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.NAMED_GENERIC_TYPE);
+    }
+
+    public static <COMPILATION_UNIT> void decodeNamedTypeArgumentEnd(
+            int namedTypeArgumentStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onGenericNamedTypeEnd(namedTypeArgumentStartContext, endContext);
     }
 }

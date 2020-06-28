@@ -48,6 +48,8 @@ public enum JavaToken implements IToken {
     IMPLEMENTS("implements"),
     EXTENDS("extends"),
 
+    SUPER("super"),
+    
     FINAL("final"),
     ABSTRACT("abstract"),
     
@@ -74,6 +76,7 @@ public enum JavaToken implements IToken {
     ASSIGN('='),
     
     AT('@'),
+    QUESTION_MARK('?'),
     
     EQUALS("=="),
     NOT_EQUALS("!="),

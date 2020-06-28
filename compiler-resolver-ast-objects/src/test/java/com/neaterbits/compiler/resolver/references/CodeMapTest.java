@@ -315,6 +315,7 @@ public class CodeMapTest extends BaseResolveTest {
 				null,
 				null,
 				null,
+				null,
 				Collections.emptyList());
 
 		return classDefinition;
