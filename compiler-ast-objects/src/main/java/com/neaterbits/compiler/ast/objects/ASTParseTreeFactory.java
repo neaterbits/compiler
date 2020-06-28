@@ -373,11 +373,13 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
     public TypeReference createScalarTypeReference(Context context, String name) {
         return new ScalarTypeReference(context, new TypeName(null, null, name));
     }
-
+    
     @Override
-	public TypeReference createUnresolvedTypeReference(Context context, ScopedName name, ReferenceType type) {
-		return new UnresolvedTypeReference(context, name, type);
-	}
+    public TypeReference createUnresolvedTypeReference(Context context, ScopedName name,
+            Collection<TypeReference> genericTypeParameters, ReferenceType type) {
+
+        return new UnresolvedTypeReference(context, name, genericTypeParameters, type);
+    }
 
 	@Override
 	public Namespace createNamespace(Context context, Keyword namespaceKeyword,
@@ -409,9 +411,9 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
     }
 
     @Override
-    public TypeBound createTypeBound(Context context, TypeBoundType type, ScopedName name) {
+    public TypeBound createTypeBound(Context context, TypeBoundType type, TypeReference typeReference) {
 
-        return new TypeBound(context, type, name);
+        return new TypeBound(context, type, typeReference);
     }
 
     @Override

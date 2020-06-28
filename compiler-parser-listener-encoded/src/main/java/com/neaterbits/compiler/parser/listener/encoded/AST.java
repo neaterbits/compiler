@@ -190,7 +190,7 @@ public class AST {
             break;
             
         case TYPE_BOUND:
-            size = 1 + namesSize(astBuffer.getByte(index + 1));
+            size = TYPE_BOUND_SIZE;
             break;
             
         default:
@@ -689,25 +689,38 @@ public class AST {
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onNonScopedTypeReference(leafContext, astBuffer.getStringRef(index), ReferenceType.SCALAR);
+        listener.onLeafTypeReference(leafContext, astBuffer.getStringRef(index), ReferenceType.SCALAR);
     }
 
     private static final int IDENTIFIER_TYPE_REFERENCE_SIZE = STRING_REF_SIZE;
     
-    static void encodeIdentifierTypeReference(StringASTBuffer astBuffer, long typeName) {
+    static void encodeIdentifierTypeReferenceStart(StringASTBuffer astBuffer, long typeName) {
         
         astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_IDENTIFIER_TYPE_REFERENCE);
 
         astBuffer.writeStringRef(typeName);
     }
 
-    public static <COMPILATION_UNIT> void decodeIdentifierTypeReference(
+    public static <COMPILATION_UNIT> void decodeIdentifierTypeReferenceStart(
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onNonScopedTypeReference(leafContext, astBuffer.getStringRef(index), ReferenceType.REFERENCE);
+        listener.onNonScopedTypeReferenceStart(leafContext, astBuffer.getStringRef(index), ReferenceType.REFERENCE);
+    }
+
+    static void encodeIdentifierTypeReferenceEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.UNRESOLVED_IDENTIFIER_TYPE_REFERENCE);
+    }
+
+    public static <COMPILATION_UNIT> void decodeIdentifierTypeReferenceEnd(
+            int leafContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onNonScopedTypeReferenceEnd(leafContext, endContext);
     }
 
     static void encodeVariableDeclaratorStart(StringASTBuffer astBuffer) {
@@ -1854,15 +1867,12 @@ public class AST {
         listener.onGenericNamedTypeEnd(namedTypeArgumentStartContext, endContext);
     }
 
-    static void encodeTypeBoundStart(
-            StringASTBuffer astBuffer,
-            TypeBoundType type,
-            Names names) {
+    private static final int TYPE_BOUND_SIZE = 1;
+
+    static void encodeTypeBoundStart(StringASTBuffer astBuffer, TypeBoundType type) {
         
         astBuffer.writeElementStart(ParseTreeElement.TYPE_BOUND);
         astBuffer.writeEnumByte(type);
-        
-        encodeNames(astBuffer, names);
     }
 
     public static <COMPILATION_UNIT> void decodeTypeBoundStart(
@@ -1872,10 +1882,8 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         final TypeBoundType type = astBuffer.getEnumByte(index, TypeBoundType.class);
-        
-        final Names names = decodeNames(astBuffer, index + 1);
 
-        listener.onTypeBoundStart(typeBoundStartContext, type, names);
+        listener.onTypeBoundStart(typeBoundStartContext, type);
     }
 
     static void encodeTypeBoundEnd(StringASTBuffer astBuffer) {
@@ -1889,5 +1897,32 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onTypeBoundEnd(typeBoundStartContext, endContext);
+    }
+
+    static void encodeGenericTypeParametersStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.GENERIC_TYPE_PARAMETERS);
+    }
+
+    public static <COMPILATION_UNIT> void decodeGenericTypeParametersStart(
+            ASTBufferRead astBuffer,
+            int parameterStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+
+        listener.onGenericTypeParametersStart(parameterStartContext);
+    }
+
+    static void encodeGenericTypeParametersEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.GENERIC_TYPE_PARAMETERS);
+    }
+
+    public static <COMPILATION_UNIT> void decodeGenericTypeParametersEnd(
+            int parameterStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onGenericTypeParametersEnd(parameterStartContext, endContext);
     }
 }

@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.parser.listener.stackbased;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
 import com.neaterbits.compiler.util.Base;
@@ -164,7 +165,11 @@ public interface ParseTreeFactory<
 
     TYPE_REFERENCE createScalarTypeReference(Context context, String name);
 
-	TYPE_REFERENCE createUnresolvedTypeReference(Context context, ScopedName name, ReferenceType type);
+	TYPE_REFERENCE createUnresolvedTypeReference(
+	        Context context,
+	        ScopedName name,
+	        Collection<TYPE_REFERENCE> genericTypeParameters,
+	        ReferenceType type);
 		
 	COMPILATION_UNIT createCompilationUnit(Context context, List<IMPORT> imports, List<COMPILATION_CODE> code);
 	
@@ -183,7 +188,7 @@ public interface ParseTreeFactory<
 
 	WILDCARD_GENERIC_TYPE createWildcardTypeArgument(Context context, List<TYPE_BOUND> bounds);
 	
-	TYPE_BOUND createTypeBound(Context context, TypeBoundType type, ScopedName name);
+	TYPE_BOUND createTypeBound(Context context, TypeBoundType type, TYPE_REFERENCE typeReference);
 	
 	CLASS_DEFINITION createClassDefinition(
 			Context context,

@@ -137,7 +137,11 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 	private UnresolvedTypeReference getTypeReference(Context context, int typeName, Function<String, BaseTypeName> createTypeName) {
 		final CompleteName className = getCompleteName(getSuperClassIndex(), createTypeName);
 		
-		final UnresolvedTypeReference typeReference = new UnresolvedTypeReference(context, className.toScopedName(), ReferenceType.NAME);
+		final UnresolvedTypeReference typeReference = new UnresolvedTypeReference(
+		        context,
+		        className.toScopedName(),
+		        null,
+		        ReferenceType.NAME);
 
 		return typeReference;
 	}
@@ -197,6 +201,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 			final TypeReference typeReference = new UnresolvedTypeReference(
 					context,
 					getCompleteName(interfaceIndex, InterfaceName::new).toScopedName(),
+					null,
 					ReferenceType.NAME);
 			
 			interfaces.add(typeReference);

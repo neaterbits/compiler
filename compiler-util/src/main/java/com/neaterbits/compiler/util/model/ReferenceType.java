@@ -1,25 +1,32 @@
 package com.neaterbits.compiler.util.model;
 
 public enum ReferenceType {
-	NAME(false, false),
-	SCALAR(false, false),
-	VALUE(false, false),
-	POINTER(true, false),
-	REFERENCE(false, true),
-	POINTER_REFERENCE(true, true);
+	NAME(false, false, true),
+	SCALAR(false, false, true),
+	VALUE(false, false, false),
+	POINTER(true, false, true),
+	REFERENCE(false, true, false),
+	POINTER_REFERENCE(true, true, false);
 	
-	private ReferenceType(boolean hasPointers, boolean hasReference) {
+	private ReferenceType(boolean hasPointers, boolean hasReference, boolean isLeaf) {
 		this.hasPointers = hasPointers;
 		this.hasReference = hasReference;
+		this.isLeaf = isLeaf;
 	}
 
 	private final boolean hasPointers;
 	private final boolean hasReference;
+	private final boolean isLeaf;
 	
 	public boolean hasPointers() {
 		return hasPointers;
 	}
+	
 	public boolean hasReference() {
 		return hasReference;
 	}
+	
+    public boolean isLeaf() {
+        return isLeaf;
+    }
 }

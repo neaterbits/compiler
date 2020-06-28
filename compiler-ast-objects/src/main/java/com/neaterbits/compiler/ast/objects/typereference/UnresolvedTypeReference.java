@@ -1,5 +1,8 @@
 package com.neaterbits.compiler.ast.objects.typereference;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.ASTIterator;
@@ -13,14 +16,15 @@ import com.neaterbits.compiler.util.model.ReferenceType;
 public final class UnresolvedTypeReference extends TypeReference {
 
 	private final ScopedName scopedName;
+	private final List<TypeReference> genericTypeParameters;
 	private final ReferenceType referenceType;
 	private final int numPointers;
 
-	public UnresolvedTypeReference(Context context, ScopedName scopedName, ReferenceType referenceType) {
-		this(context, scopedName, referenceType, 0);
+	public UnresolvedTypeReference(Context context, ScopedName scopedName, Collection<TypeReference> genericTypeParameters, ReferenceType referenceType) {
+		this(context, scopedName, genericTypeParameters, referenceType, 0);
 	}
 
-	public UnresolvedTypeReference(Context context, ScopedName scopedName, ReferenceType referenceType, int numPointers) {
+	public UnresolvedTypeReference(Context context, ScopedName scopedName, Collection<TypeReference> genericTypeParameters, ReferenceType referenceType, int numPointers) {
 		super(context);
 
 		Objects.requireNonNull(scopedName);
@@ -38,6 +42,9 @@ public final class UnresolvedTypeReference extends TypeReference {
 		}
 		
 		this.scopedName = scopedName;
+		this.genericTypeParameters = genericTypeParameters != null
+		        ? new ArrayList<>(genericTypeParameters)
+		        : null;
 		this.referenceType = referenceType;
 		this.numPointers = numPointers;
 	}
@@ -46,7 +53,11 @@ public final class UnresolvedTypeReference extends TypeReference {
 		return scopedName;
 	}
 	
-	public ReferenceType getReferenceType() {
+	public List<TypeReference> getGenericTypeParameters() {
+        return genericTypeParameters;
+    }
+
+    public ReferenceType getReferenceType() {
 		return referenceType;
 	}
 

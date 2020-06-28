@@ -427,9 +427,14 @@ public final class EncodedCompilationUnit {
             }
 
             case UNRESOLVED_IDENTIFIER_TYPE_REFERENCE: {
-                final int leafContext = getLeafContext(parseTreeRef);
-
-                AST.decodeIdentifierTypeReference(astBuffer, leafContext, ref.index, listener);
+                final int startContext = getStartContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeIdentifierTypeReferenceStart(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    AST.decodeIdentifierTypeReferenceEnd(startContext, getEndContext(startContext), listener);
+                }
                 break;
             }
                 
@@ -812,6 +817,18 @@ public final class EncodedCompilationUnit {
                 }
                 else {
                     AST.decodeTypeBoundEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case GENERIC_TYPE_PARAMETERS:  {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeGenericTypeParametersStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeGenericTypeParametersEnd(startContext, getEndContext(startContext), listener);
                 }
                 break;
             }

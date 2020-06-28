@@ -5,32 +5,33 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
+import com.neaterbits.compiler.ast.objects.list.ASTSingle;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 
 public final class TypeBound extends BaseASTElement {
 
     private final TypeBoundType type;
-    private final ScopedName scopedName;
+    private final ASTSingle<TypeReference> typeReference;
     
-    public TypeBound(Context context, TypeBoundType type, ScopedName scopedName) {
+    public TypeBound(Context context, TypeBoundType type, TypeReference typeReference) {
         super(context);
     
         Objects.requireNonNull(type);
-        Objects.requireNonNull(scopedName);
+        Objects.requireNonNull(typeReference);
         
         this.type = type;
-        this.scopedName = scopedName;
+        this.typeReference = makeSingle(typeReference);
     }
 
     public TypeBoundType getType() {
         return type;
     }
-    
-    public ScopedName getScopedName() {
-        return scopedName;
+
+    public TypeReference getTypeReference() {
+        return typeReference.get();
     }
 
     @Override
@@ -42,5 +43,6 @@ public final class TypeBound extends BaseASTElement {
     @Override
     protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
         
+        doIterate(typeReference, recurseMode, iterator);
     }
 }

@@ -154,6 +154,7 @@ public abstract class BaseJavaCompilerTest {
 							new UnresolvedTypeReference(
 									typeReference.getContext(),
 									renamedScope,
+                                    typeReference.getGenericTypeParameters(),
 									typeReference.getReferenceType(),
 									typeReference.getNumPointers()));
 					

@@ -78,7 +78,7 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 
     void onGenericWildcardTypeEnd(int startContext, Context endContext);
 
-    void onTypeBoundStart(int context, TypeBoundType type, Names names);
+    void onTypeBoundStart(int context, TypeBoundType type);
     
     void onTypeBoundEnd(int startContext, Context endContext);
     
@@ -333,14 +333,22 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	void onVariableDeclaratorStart(int startContext);
 	
 	void onVariableDeclaratorEnd(int startContext, Context endContext);
-	
-	void onNonScopedTypeReference(int context, long name, ReferenceType referenceType);
-	
+
+	void onLeafTypeReference(int context, long name, ReferenceType referenceType);
+
+	void onNonScopedTypeReferenceStart(int context, long name, ReferenceType referenceType);
+
+	void onNonScopedTypeReferenceEnd(int context, Context endContext);
+
 	void onScopedTypeReferenceStart(int startContext, ReferenceType referenceType);
 
 	void onScopedTypeReferencePart(int leafContext, long part);
 	
 	void onScopedTypeReferenceEnd(int startContext, Context endContext);
+
+	void onGenericTypeParametersStart(int startContext);
+
+	void onGenericTypeParametersEnd(int startContext, Context endContext);
 
 	void onExpressionStatementStart(int startContext);
 	

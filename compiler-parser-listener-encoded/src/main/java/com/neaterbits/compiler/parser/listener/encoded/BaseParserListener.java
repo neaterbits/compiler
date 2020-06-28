@@ -307,11 +307,11 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onTypeBoundStart(int startContext, TypeBoundType type, Names names) {
+    public final void onTypeBoundStart(int startContext, TypeBoundType type) {
         
         writeStartElementContextRef(startContext);
 
-        AST.encodeTypeBoundStart(astBuffer, type, names);
+        AST.encodeTypeBoundStart(astBuffer, type);
     }
 
     @Override
@@ -1279,7 +1279,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public void onNonScopedTypeReference(int leafContext, long name, ReferenceType referenceType) {
+    public void onLeafTypeReference(int leafContext, long name, ReferenceType referenceType) {
         
         writeLeafElementContextRef(leafContext);
 
@@ -1288,13 +1288,33 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
             AST.encodeScalarTypeReference(astBuffer, name);
             break;
             
+        default:
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    @Override
+    public void onNonScopedTypeReferenceStart(int leafContext, long name, ReferenceType referenceType) {
+        
+        writeStartElementContextRef(leafContext);
+
+        switch (referenceType) {
+            
         case REFERENCE:
-            AST.encodeIdentifierTypeReference(astBuffer, name);
+            AST.encodeIdentifierTypeReferenceStart(astBuffer, name);
             break;
             
         default:
             throw new UnsupportedOperationException();
         }
+    }
+
+    @Override
+    public void onNonScopedTypeReferenceEnd(int context, Context endContext) {
+
+        writeEndElementContext(context, endContext);
+        
+        AST.encodeIdentifierTypeReferenceEnd(astBuffer);
     }
 
     @Override
@@ -1322,6 +1342,22 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     
+    @Override
+    public void onGenericTypeParametersStart(int startContext) {
+
+        writeStartElementContextRef(startContext);
+
+        AST.encodeGenericTypeParametersStart(astBuffer);
+    }
+
+    @Override
+    public void onGenericTypeParametersEnd(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
+
+        AST.encodeGenericTypeParametersEnd(astBuffer);
+    }
+
     @Override
     public void onAssignmentStatementStart(int startContext) {
 

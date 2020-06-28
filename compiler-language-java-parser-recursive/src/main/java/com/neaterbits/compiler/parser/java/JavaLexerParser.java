@@ -596,14 +596,35 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
     }
     
     private void parseTypeBound(int startContext, TypeBoundType type) throws IOException, ParserException {
+
+        listener.onTypeBoundStart(startContext, type);
+
+        parseTypeReference();
+
+        listener.onTypeBoundEnd(startContext, getLexerContext());
+    }
+    
+    private void parseTypeReference() throws IOException, ParserException {
         
-        parseNameListUntilOtherToken(names -> {
+        if (lexer.lexSkipWS(JavaToken.IDENTIFIER) != JavaToken.IDENTIFIER) {
+            throw lexer.unexpectedToken();
+        }
         
-            listener.onTypeBoundStart(startContext, type, names);
-            
-            listener.onTypeBoundEnd(startContext, getLexerContext());
-        });
+        final int identifierContext = writeCurContext();
+        final long identifier = getStringRef();
         
+        final ReferenceType referenceType = ReferenceType.REFERENCE;
+        
+        if (lexer.lexSkipWS(JavaToken.PERIOD) == JavaToken.PERIOD) {
+            parseNameListUntilOtherToken(identifierContext, identifier, names -> {
+    
+                onType(ContextRef.NONE, StringRef.STRING_NONE, names, referenceType);
+                
+            });
+        }
+        else {
+            onType(identifierContext, identifier, null, referenceType);
+        }
     }
 
     private static final JavaToken [] EXTENDS_OR_IMPLEMENTS_OR_BODY = new JavaToken [] {
@@ -924,8 +945,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             int typeNameContext,
             long typeName,
             Names scopedTypeName,
-            ReferenceType referenceType) {
-        
+            ReferenceType referenceType) throws IOException, ParserException {
         
         if (scopedTypeName != null) {
             final int startContext = writeContext(scopedTypeName.getContextAt(0));
@@ -938,14 +958,59 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 
                 listener.onScopedTypeReferencePart(context, part);
             }
-            
+
+            // Generic type?
+            tryParseGenericTypeParameters();
+
             listener.onScopedTypeReferenceEnd(startContext, getLexerContext());
         }
         else if (typeName != StringRef.STRING_NONE) {
-            listener.onNonScopedTypeReference(typeNameContext, typeName, referenceType);
+            
+            if (referenceType.isLeaf()) {
+                listener.onLeafTypeReference(typeNameContext, typeName, referenceType);
+            }
+            else {
+                listener.onNonScopedTypeReferenceStart(typeNameContext, typeName, referenceType);
+            }
+
+            // Generic type?
+            tryParseGenericTypeParameters();
+            
+            if (!referenceType.isLeaf()) {
+                listener.onNonScopedTypeReferenceEnd(typeNameContext, getLexerContext());
+            }
         }
         else {
             throw new IllegalStateException();
+        }
+    }
+    
+    private void tryParseGenericTypeParameters() throws IOException, ParserException {
+        
+        if (lexer.lexSkipWS(JavaToken.LT) == JavaToken.LT) {
+            
+            final int startContext = writeCurContext();
+            
+            listener.onGenericTypeParametersStart(startContext);
+
+            for (;;) {
+
+                parseTypeReference();
+                
+                final JavaToken afterTypeArgument = lexer.lexSkipWS(AFTER_TYPE_ARGUMENT_TOKENS);
+                
+                if (afterTypeArgument == JavaToken.COMMA) {
+                    // Continue on next type
+                }
+                else if (afterTypeArgument == JavaToken.GT) {
+                    break;
+                }
+                else {
+                    throw lexer.unexpectedToken();
+                }
+            }
+
+            listener.onGenericTypeParametersEnd(startContext, getLexerContext());
         }
     }
     
@@ -1129,7 +1194,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         case FLOAT:
         case DOUBLE:
         case CHAR:
-            listener.onNonScopedTypeReference(writeCurContext(), getStringRef(), ReferenceType.SCALAR);
+            listener.onLeafTypeReference(writeCurContext(), getStringRef(), ReferenceType.SCALAR);
             break;
             
         case IDENTIFIER:
@@ -1520,8 +1585,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
     
     private static final JavaToken [] AFTER_NAMELIST_TOKENS = new JavaToken[] {
 
-            JavaToken.ASSIGN, // Assignment
-            JavaToken.IDENTIFIER, // eg. SomeType varName;
+            JavaToken.IDENTIFIER, // eg. com.test.SomeType varName;
             JavaToken.LPAREN
             
     };
@@ -1623,7 +1687,9 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
                 listener.onVariableDeclarationStatementStart(statementContext);
                 
-                listener.onNonScopedTypeReference(identifierContext, identifier, ReferenceType.REFERENCE);
+                listener.onNonScopedTypeReferenceStart(identifierContext, identifier, ReferenceType.REFERENCE);
+                
+                listener.onNonScopedTypeReferenceEnd(identifierContext, getLexerContext());
 
                 parseVariableDeclaratorList(varName, varNameContext);
                 
@@ -1710,8 +1776,10 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             // some.scope.Type variableDeclaration
             listener.onVariableDeclarationStatementStart(context);
             
+            System.out.println("## call onType");
             onType(ContextRef.NONE, StringRef.STRING_NONE, names, ReferenceType.REFERENCE);
 
+            System.out.println("## after onType");
             parseVariableDeclaratorList(getStringRef(), writeCurContext());
             
             listener.onVariableDeclarationStatementEnd(context, getLexerContext());
@@ -1833,7 +1901,14 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         
         listener.onVariableDeclarationStatementStart(statementStartContext);
         
-        listener.onNonScopedTypeReference(typeContext, typeName, referenceType);
+        if (referenceType.isLeaf()) {
+            listener.onLeafTypeReference(typeContext, typeName, referenceType);
+        }
+        else {
+            listener.onNonScopedTypeReferenceStart(typeContext, typeName, referenceType);
+            
+            listener.onNonScopedTypeReferenceEnd(typeContext, getLexerContext());
+        }
 
         parseVariableDeclaratorList();
         
@@ -1855,7 +1930,11 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             parseUserTypeAfterPeriod(initialPartContext, stringRef);
         }
         else {
-            listener.onNonScopedTypeReference(initialPartContext, stringRef, ReferenceType.REFERENCE);
+            final int startContext = writeContext(initialPartContext);
+
+            listener.onNonScopedTypeReferenceStart(startContext, stringRef, ReferenceType.REFERENCE);
+            
+            listener.onNonScopedTypeReferenceEnd(startContext, getLexerContext());
         }
     }
 
