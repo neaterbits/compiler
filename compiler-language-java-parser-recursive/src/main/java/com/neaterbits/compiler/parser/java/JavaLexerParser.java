@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.ContextImpl;
 import com.neaterbits.compiler.util.ContextRef;
+import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
@@ -1629,7 +1629,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             final JavaToken statementStartingWithIdentifierToken = lexer.lexSkipWS(STATEMENT_STARTING_WITH_IDENTIFIER_TOKENS);
 
             // TODO try to remove
-            final Context afterIdentifierContext = new ContextImpl(getLexerContext());
+            final Context afterIdentifierContext = new ImmutableContext(getLexerContext());
             
             switch (statementStartingWithIdentifierToken) {
             case PERIOD:

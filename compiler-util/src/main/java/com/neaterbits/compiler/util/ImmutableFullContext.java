@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.util;
 
-public class ImmutableFullContext extends ContextImpl implements FullContext {
+public class ImmutableFullContext extends ImmutableContext implements FullContext {
 
 	private final String file;
 	private final int startLine;

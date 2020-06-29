@@ -49,7 +49,7 @@ public interface Context {
             }
             */
             
-            result = new ContextImpl(lower.getStartOffset(), upper.getEndOffset());
+            result = new ImmutableContext(lower.getStartOffset(), upper.getEndOffset());
         }
         else {
             result = null;

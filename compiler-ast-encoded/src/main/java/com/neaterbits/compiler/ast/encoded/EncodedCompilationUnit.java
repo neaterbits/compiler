@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.ContextImpl;
+import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.IntKeyIntValueHash;
 import com.neaterbits.compiler.util.TypeName;
@@ -114,7 +114,7 @@ public final class EncodedCompilationUnit {
         final Context context;
         
         if (index >= 0) {
-            context = new ContextImpl(
+            context = new ImmutableContext(
                     contexts.getInt(index + 0),
                     contexts.getInt(index + 4));
         }

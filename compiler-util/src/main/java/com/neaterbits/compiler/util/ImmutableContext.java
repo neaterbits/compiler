@@ -1,16 +1,16 @@
 package com.neaterbits.compiler.util;
 
-public class ContextImpl implements Context {
+public class ImmutableContext implements Context {
 
     private final int startOffset;
     private final int endOffset;
     
-    public ContextImpl(int startOffset, int endOffset) {
+    public ImmutableContext(int startOffset, int endOffset) {
         this.startOffset = startOffset;
         this.endOffset = endOffset;
     }
     
-    public ContextImpl(Context context) {
+    public ImmutableContext(Context context) {
         this(context.getStartOffset(), context.getEndOffset());
     }
     
