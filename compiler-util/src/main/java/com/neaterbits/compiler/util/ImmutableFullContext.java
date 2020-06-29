@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.util;
 
-public class ImmutableContext extends ContextImpl implements FullContext {
+public class ImmutableFullContext extends ContextImpl implements FullContext {
 
 	private final String file;
 	private final int startLine;
@@ -9,7 +9,7 @@ public class ImmutableContext extends ContextImpl implements FullContext {
 	private final int endPosInLine;
 	private final String text;
 	
-	public ImmutableContext(String file, int startLine, int startPosInLine, int startOffset, int endLine, int endPos, int endOffset, String text) {
+	public ImmutableFullContext(String file, int startLine, int startPosInLine, int startOffset, int endLine, int endPos, int endOffset, String text) {
 	    super(startOffset, endOffset);
 		
 		this.file = file;
@@ -20,7 +20,7 @@ public class ImmutableContext extends ContextImpl implements FullContext {
 		this.text = text;
 	}
 	
-	public ImmutableContext(ImmutableContext context) {
+	public ImmutableFullContext(ImmutableFullContext context) {
 	    this(
 	            context.getFile(),
 	            context.getStartLine(),

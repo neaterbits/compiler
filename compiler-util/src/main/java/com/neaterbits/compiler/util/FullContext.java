@@ -7,7 +7,7 @@ import java.util.function.Function;
 public interface FullContext extends Context {
 
     public static Context makeTestContext() {
-        return new ImmutableContext("", 0, 0, 0, 0, 0, 0, "");
+        return new ImmutableFullContext("", 0, 0, 0, 0, 0, 0, "");
     }
 
     public static <T> FullContext merge(Collection<T> elements, Function<T, FullContext> getContext) {
@@ -54,7 +54,7 @@ public interface FullContext extends Context {
             }
             */
             
-            result = new ImmutableContext(
+            result = new ImmutableFullContext(
                     lower.getFile(),
                     lower.getStartLine(), lower.getStartPosInLine(), lower.getStartOffset(), 
                     upper.getEndLine(), upper.getEndPosInLine(), upper.getEndOffset(),

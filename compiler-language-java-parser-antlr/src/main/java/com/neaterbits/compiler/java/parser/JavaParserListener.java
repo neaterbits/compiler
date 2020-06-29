@@ -12,7 +12,7 @@ import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
 import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FullContext;
-import com.neaterbits.compiler.util.ImmutableContext;
+import com.neaterbits.compiler.util.ImmutableFullContext;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
@@ -120,7 +120,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		    
 		    final int partLength = part.length();
 		    
-		    final FullContext partContext = new ImmutableContext(
+		    final FullContext partContext = new ImmutableFullContext(
 		            nameContext.getFile(),
 		            nameContext.getStartLine(),
 		            indexInName + nameContext.getStartPosInLine(),
@@ -811,7 +811,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		final Context updatedContext;
 		
 		if (elseContext.getStartOffset() < context.getStartOffset()) {
-			updatedContext = new ImmutableContext(
+			updatedContext = new ImmutableFullContext(
 					context.getFile(),
 					elseContext.getStartLine(),
 					elseContext.getStartPosInLine(),

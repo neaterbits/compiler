@@ -9,7 +9,7 @@ import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.FullContextProvider;
-import com.neaterbits.compiler.util.ImmutableContext;
+import com.neaterbits.compiler.util.ImmutableFullContext;
 import com.neaterbits.compiler.util.IntKeyIntValueHash;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
@@ -64,7 +64,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
             
             @Override
             public FullContext makeFullContext(Context context) {
-                return new ImmutableContext(file, -1, -1, context.getStartOffset(), -1, -1, context.getEndOffset(), getText(context));
+                return new ImmutableFullContext(file, -1, -1, context.getStartOffset(), -1, -1, context.getEndOffset(), getText(context));
             }
 
             @Override
