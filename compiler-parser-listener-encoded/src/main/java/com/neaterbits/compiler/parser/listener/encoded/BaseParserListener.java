@@ -1351,6 +1351,14 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
+    public void onGenericTypeParameter(int context, long name) {
+
+        writeLeafElementContextRef(context);
+        
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void onGenericTypeParametersEnd(int startContext, Context endContext) {
 
         writeEndElementContext(startContext, endContext);

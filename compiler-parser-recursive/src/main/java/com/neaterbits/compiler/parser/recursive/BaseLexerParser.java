@@ -18,6 +18,7 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
     private final LexerContext context;
 
     private final ScratchBuf<NamePart, Names, NamesList, NamesImpl> scratchNames;
+    private final ScratchBuf<TypeArgumentImpl, TypeArguments, TypeArgumentsList, TypeArgumentsImpl> scratchTypeArguments;
     
     public BaseLexerParser(String file, Lexer<TOKEN, CharInput> lexer, Tokenizer tokenizer) {
         
@@ -29,6 +30,7 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         this.context = new LexerContext(file, lexer, tokenizer);
 
         this.scratchNames = new ScratchBuf<>(NamesImpl::new);
+        this.scratchTypeArguments = new ScratchBuf<>(TypeArgumentsImpl::new);
     }
 
     protected final Context getLexerContext() {
@@ -38,5 +40,10 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
     protected final NamesList startScratchNameParts() {
         
         return scratchNames.startScratchParts();
+    }
+
+    protected final TypeArgumentsList startScratchTypeArguments() {
+        
+        return scratchTypeArguments.startScratchParts();
     }
 }

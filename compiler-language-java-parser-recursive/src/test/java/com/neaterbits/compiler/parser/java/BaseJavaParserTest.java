@@ -982,6 +982,28 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testParseGenericTypeArgumentClassMemberVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { SomeType<TYPE> memberVariable; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
+    
+        assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
+        
+        final UnresolvedTypeReference type = checkIdentifierType(member.getType(), "SomeType");
+        
+        checkIdentifierType(type.getGenericTypeParameters().get(0), "TYPE");
+    }
+
+    @Test
     public void testParseCommaSeparatedClassMemberVariables() throws IOException, ParserException {
         
         final String source = "package com.test;\n"

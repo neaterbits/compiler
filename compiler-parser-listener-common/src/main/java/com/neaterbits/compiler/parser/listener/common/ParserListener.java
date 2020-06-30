@@ -347,6 +347,8 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	void onScopedTypeReferenceEnd(int startContext, Context endContext);
 
 	void onGenericTypeParametersStart(int startContext);
+	
+	void onGenericTypeParameter(int context, long name);
 
 	void onGenericTypeParametersEnd(int startContext, Context endContext);
 

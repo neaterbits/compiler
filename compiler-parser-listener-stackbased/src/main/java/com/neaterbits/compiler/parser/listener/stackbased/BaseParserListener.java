@@ -3135,6 +3135,12 @@ public abstract class BaseParserListener<
     }
 
     @Override
+    public void onGenericTypeParameter(int context, long name) {
+
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void onGenericTypeParametersEnd(int startContext, Context endContext) {
 
         final Context context = getEndContext(startContext, endContext);

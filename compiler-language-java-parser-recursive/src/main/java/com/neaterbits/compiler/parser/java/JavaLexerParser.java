@@ -21,6 +21,9 @@ import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.recursive.BaseLexerParser;
 import com.neaterbits.compiler.parser.recursive.NamesList;
 import com.neaterbits.compiler.parser.recursive.ProcessParts;
+import com.neaterbits.compiler.parser.recursive.TypeArgument;
+import com.neaterbits.compiler.parser.recursive.TypeArguments;
+import com.neaterbits.compiler.parser.recursive.TypeArgumentsList;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
@@ -620,12 +623,22 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         if (lexer.lexSkipWS(JavaToken.PERIOD) == JavaToken.PERIOD) {
             parseNameListUntilOtherToken(identifierContext, identifier, names -> {
     
-                onType(ContextRef.NONE, StringRef.STRING_NONE, names, referenceType);
+                // call listener with the.namespace.SomeClass from names
+                final int startContext = callScopedTypeReferenceListenersStartAndPart(names, referenceType);
                 
+                // add any generics
+                tryParseGenericTypeParameters();
+                
+                
+                callScopedTypeReferenceListenersEnd(startContext, getLexerContext());
             });
         }
         else {
-            onType(identifierContext, identifier, null, referenceType);
+            callNonScopedTypeReferenceListenersStart(identifierContext, identifier, null, referenceType);
+
+            tryParseGenericTypeParameters();
+            
+            callNonScopedTypeReferenceListenersEnd(identifierContext, getLexerContext(), referenceType);
         }
     }
 
@@ -842,7 +855,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
     private void parseRestOfTypeAndFieldScalar(int typeNameContext, long typeName) throws IOException, ParserException {
         
-        parseRestOfMember(typeNameContext, typeName, null, ReferenceType.SCALAR);
+        parseRestOfMember(typeNameContext, typeName, null, null, ReferenceType.SCALAR);
     }
 
     private void parseRestOfTypeAndFieldScopedType(int typeNameContext, long typeName) throws IOException, ParserException {
@@ -851,12 +864,16 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         
         if (periodToken == JavaToken.PERIOD) {
             parseNameListUntilOtherToken(typeNameContext, typeName, names -> {
-
-                parseRestOfMember(typeNameContext, typeName, names, ReferenceType.REFERENCE);
+                
+                final TypeArgumentsList typeArguments = tryParseGenericTypeParametersToScratchList();
+                
+                parseRestOfMember(typeNameContext, typeName, names, typeArguments, ReferenceType.REFERENCE);
             });
         }
         else {
-            parseRestOfMember(typeNameContext, typeName, null, ReferenceType.REFERENCE);
+            final TypeArgumentsList typeArguments = tryParseGenericTypeParametersToScratchList();
+
+            parseRestOfMember(typeNameContext, typeName, null, typeArguments, ReferenceType.REFERENCE);
         }
     }
     
@@ -864,6 +881,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             int typeNameContext,
             long typeName,
             Names names,
+            TypeArgumentsList typeArguments,
             ReferenceType referenceType) throws ParserException, IOException {
 
         // Next should be the name of the field or member
@@ -886,7 +904,13 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             // This is a field with a single variable name, like 'int a;'
             listener.onFieldDeclarationStart(fieldDeclarationStartContext);
             
-            onType(fieldDeclarationStartContext, typeName, names, referenceType);
+            if (typeArguments != null) {
+                typeArguments.complete(genericTypes ->
+                    onType(fieldDeclarationStartContext, typeName, names, genericTypes, referenceType, null));
+            }
+            else {
+                onType(fieldDeclarationStartContext, typeName, names, null, referenceType, null);
+            }
             
             final int variableDeclaratorStartContext = writeCurContext();
 
@@ -904,7 +928,13 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             // This is a field with multiple variable names, like 'int a, b, c;'
             listener.onFieldDeclarationStart(fieldDeclarationStartContext);
             
-            onType(fieldDeclarationStartContext, typeName, names, referenceType);
+            if (typeArguments != null) {
+                typeArguments.complete(genericTypes ->
+                    onType(fieldDeclarationStartContext, typeName, names, genericTypes, referenceType, null));
+            }
+            else {
+                onType(fieldDeclarationStartContext, typeName, names, null, referenceType, null);
+            }
 
             // Initial variable name
             final int variableDeclaratorStartContext = writeCurContext();
@@ -928,7 +958,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             
             listener.onMethodReturnTypeStart(methodReturnTypeStartContext);
             
-            onType(typeNameContext, typeName, names, referenceType);
+            onType(typeNameContext, typeName, names, null, referenceType, null);
             
             listener.onMethodReturnTypeEnd(methodReturnTypeStartContext, getLexerContext());
             
@@ -943,50 +973,167 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
     }
     
+    private int callScopedTypeReferenceListenersStartAndPart(Names scopedTypeName, ReferenceType referenceType) {
+
+        final int startContext = writeContext(scopedTypeName.getContextAt(0));
+        
+        listener.onScopedTypeReferenceStart(startContext, referenceType);
+        
+        for (int i = 0; i < scopedTypeName.count(); ++ i) {
+
+            final int context = scopedTypeName.getContextAt(i);
+            final long part = scopedTypeName.getStringAt(i);
+            
+            listener.onScopedTypeReferencePart(context, part);
+        }
+        
+        return startContext;
+    }
+
+    private void callScopedTypeReferenceListenersEnd(int startContext, Context endContext) {
+        
+        listener.onScopedTypeReferenceEnd(startContext, endContext);
+    }
+
+    private void callNonScopedTypeReferenceListenersStart(int typeNameContext, long typeName, TypeArguments typeArguments, ReferenceType referenceType) {
+
+        if (referenceType.isLeaf()) {
+            
+            if (typeArguments != null) {
+                throw new IllegalStateException();
+            }
+            
+            listener.onLeafTypeReference(typeNameContext, typeName, referenceType);
+        }
+        else {
+            listener.onNonScopedTypeReferenceStart(typeNameContext, typeName, referenceType);
+        }
+    }
+
+    private void callNonScopedTypeReferenceListenersEnd(int typeNameContext, Context endContext, ReferenceType referenceType) {
+
+        if (!referenceType.isLeaf()) {
+            listener.onNonScopedTypeReferenceEnd(typeNameContext, endContext);
+        }
+    }
+
     private void onType(
             int typeNameContext,
             long typeName,
             Names scopedTypeName,
-            ReferenceType referenceType) throws IOException, ParserException {
+            TypeArguments typeArguments,
+            ReferenceType referenceType,
+            Context endContext) throws IOException, ParserException {
         
         if (scopedTypeName != null) {
-            final int startContext = writeContext(scopedTypeName.getContextAt(0));
-            listener.onScopedTypeReferenceStart(startContext, referenceType);
             
-            for (int i = 0; i < scopedTypeName.count(); ++ i) {
-
-                final int context = scopedTypeName.getContextAt(i);
-                final long part = scopedTypeName.getStringAt(i);
-                
-                listener.onScopedTypeReferencePart(context, part);
-            }
+            final int startContext = callScopedTypeReferenceListenersStartAndPart(scopedTypeName, referenceType);
 
             // Generic type?
-            tryParseGenericTypeParameters();
+            if (typeArguments != null) {
+                onTypeArguments(typeArguments);
+            }
 
-            listener.onScopedTypeReferenceEnd(startContext, getLexerContext());
+            callScopedTypeReferenceListenersEnd(startContext, endContext);
         }
         else if (typeName != StringRef.STRING_NONE) {
-            
-            if (referenceType.isLeaf()) {
-                listener.onLeafTypeReference(typeNameContext, typeName, referenceType);
-            }
-            else {
-                listener.onNonScopedTypeReferenceStart(typeNameContext, typeName, referenceType);
-            }
+
+            callNonScopedTypeReferenceListenersStart(typeNameContext, typeName, typeArguments, referenceType);
 
             // Generic type?
-            tryParseGenericTypeParameters();
-            
-            if (!referenceType.isLeaf()) {
-                listener.onNonScopedTypeReferenceEnd(typeNameContext, getLexerContext());
+            if (typeArguments != null) {
+                onTypeArguments(typeArguments);
             }
+
+            callNonScopedTypeReferenceListenersEnd(typeNameContext, endContext, referenceType);
         }
         else {
             throw new IllegalStateException();
         }
     }
-    
+
+    private void onTypeArguments(TypeArguments typeArguments) throws IOException, ParserException {
+        
+        Objects.requireNonNull(typeArguments);
+        
+        listener.onGenericTypeParametersStart(typeArguments.getStartContext());
+        
+        for (int i = 0; i < typeArguments.count(); ++ i) {
+            
+            final TypeArgument typeArgument = typeArguments.getTypeArgument(i);
+
+            if (typeArgument.isGenericTypeName()) {
+                
+                listener.onGenericTypeParameter(
+                        typeArgument.getGenericTypeNameContext(),
+                        typeArgument.getGenericTypeName());
+            }
+            else {
+                typeArgument.getConcreteTypeNames().complete(names -> {
+                    
+                    if (typeArgument.getConcreteTypeGenerics() != null) {
+                        typeArgument.getConcreteTypeGenerics().complete(genericTypes -> {
+                            
+                            onType(
+                                ContextRef.NONE,
+                                StringRef.STRING_NONE,
+                                names,
+                                genericTypes,
+                                ReferenceType.REFERENCE,
+                                typeArgument.getConcreteEndContext());
+                        });
+                    
+                    }
+                    else {
+                        onType(
+                                ContextRef.NONE,
+                                StringRef.STRING_NONE,
+                                names,
+                                null,
+                                ReferenceType.REFERENCE,
+                                typeArgument.getConcreteEndContext());
+                    }
+                });
+                
+            }
+        }
+        
+        listener.onGenericTypeParametersEnd(typeArguments.getStartContext(), typeArguments.getEndContext());
+    }
+
+    private TypeArgumentsList tryParseGenericTypeParametersToScratchList() throws IOException, ParserException {
+        
+        final TypeArgumentsList typeArgumentsList;
+        
+        if (lexer.lexSkipWS(JavaToken.LT) == JavaToken.LT) {
+
+            typeArgumentsList = startScratchTypeArguments();
+
+            final int startContext = writeCurContext();
+            
+            final ParseFunction parseTypeReference = () -> {
+                
+                // Parse the type to names list
+                final NamesList namesList = startScratchNameParts();
+                
+                parseNames(namesList);
+
+                final TypeArgumentsList genericTypes = tryParseGenericTypeParametersToScratchList();
+                
+                typeArgumentsList.addConcreteType(namesList, genericTypes, getLexerContext());
+            };
+            
+            parseGenericTypeParameters(startContext, parseTypeReference);
+            
+            typeArgumentsList.setContexts(startContext, getLexerContext());
+        }
+        else {
+            typeArgumentsList = null;
+        }
+
+        return typeArgumentsList;
+    }
+
     private void tryParseGenericTypeParameters() throws IOException, ParserException {
         
         if (lexer.lexSkipWS(JavaToken.LT) == JavaToken.LT) {
@@ -1001,9 +1148,22 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         
         listener.onGenericTypeParametersStart(startContext);
 
+        parseGenericTypeParameters(startContext, this::parseTypeReference);
+        
+        listener.onGenericTypeParametersEnd(startContext, getLexerContext());
+    }
+    
+    @FunctionalInterface
+    interface ParseFunction {
+        
+        void parse() throws IOException, ParserException;
+    }
+
+    private void parseGenericTypeParameters(int startContext, ParseFunction parseTypeReference) throws IOException, ParserException {
+        
         for (;;) {
 
-            parseTypeReference();
+            parseTypeReference.parse();
             
             final JavaToken afterTypeArgument = lexer.lexSkipWS(AFTER_TYPE_ARGUMENT_TOKENS);
             
@@ -1017,10 +1177,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 throw lexer.unexpectedToken();
             }
         }
-
-        listener.onGenericTypeParametersEnd(startContext, getLexerContext());
     }
-    
+
     private void onMethodInvocationPrimaryList(
             int context,
             long identifier,
@@ -1797,10 +1955,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             // some.scope.Type variableDeclaration
             listener.onVariableDeclarationStatementStart(context);
             
-            System.out.println("## call onType");
-            onType(ContextRef.NONE, StringRef.STRING_NONE, names, ReferenceType.REFERENCE);
+            onType(ContextRef.NONE, StringRef.STRING_NONE, names, null, ReferenceType.REFERENCE, getLexerContext());
 
-            System.out.println("## after onType");
             parseVariableDeclaratorList(getStringRef(), writeCurContext());
             
             listener.onVariableDeclarationStatementEnd(context, getLexerContext());
@@ -2008,6 +2164,14 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
 
     private void parseNames(NamesList scratch, ProcessParts<Names> processNameParts) throws IOException, ParserException {
         
+        parseNames(scratch);
+        
+        // reach non-namepart so process now
+        scratch.complete(processNameParts);
+    }
+    
+    private void parseNames(NamesList scratch) throws IOException, ParserException {
+        
         for (;;) {
 
             final JavaToken partToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
@@ -2024,8 +2188,5 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 break;
             }
         }
-        
-        // reach non-namepart so process now
-        scratch.complete(processNameParts);
     }
 }
