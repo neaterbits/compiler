@@ -10,8 +10,10 @@ import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
+import com.neaterbits.compiler.util.model.Mutability;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Bitwise;
@@ -21,8 +23,11 @@ import com.neaterbits.compiler.util.operator.OperatorType;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.NamePart;
+import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.compiler.util.typedefinition.ClassModifier;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.util.typedefinition.FieldModifier;
+import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.util.io.strings.StringRef;
@@ -192,7 +197,11 @@ public class AST {
         case TYPE_BOUND:
             size = TYPE_BOUND_SIZE;
             break;
-            
+
+        case FIELD_MODIFIER_HOLDER:
+            size = FIELD_MODIFIER_SIZE;
+            break;
+
         default:
             size = 0; // ParseTreeElement
             break;
@@ -1924,5 +1933,47 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onGenericTypeParametersEnd(parameterStartContext, endContext);
+    }
+
+    private static final int FIELD_MODIFIER_SIZE = 1 + 1;
+
+    static void encodeVisibilityFieldModifier(StringASTBuffer astBuffer, FieldVisibility fieldVisibility) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(FieldModifier.Type.VISIBILITY);
+        astBuffer.writeEnumByte(fieldVisibility.getVisibility());
+    }
+
+    static void encodeMutabilityModifier(StringASTBuffer astBuffer, ASTMutability mutability) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(FieldModifier.Type.MUTABILITY);
+        astBuffer.writeEnumByte(mutability.getMutability());
+    }
+
+    public static <COMPILATION_UNIT> void decodeFieldModifierHolder(
+            ASTBufferRead astBuffer,
+            int leafContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        final FieldModifier.Type type = astBuffer.getEnumByte(index, FieldModifier.Type.class);
+        
+        switch (type) {
+        case VISIBILITY:
+            listener.onVisibilityFieldModifier(
+                    leafContext,
+                    new FieldVisibility(astBuffer.getEnumByte(index + 1, Visibility.class)));
+            break;
+            
+        case MUTABILITY:
+            listener.onMutabilityFieldModifier(
+                    leafContext,
+                    new ASTMutability(astBuffer.getEnumByte(index + 1, Mutability.class)));
+            break;
+            
+         default:
+             throw new UnsupportedOperationException();
+        }
     }
 }

@@ -600,7 +600,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeLeafElementContextRef(leafContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeVisibilityFieldModifier(astBuffer, visibility);
     }
 
     @Override
@@ -616,7 +616,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeLeafElementContextRef(leafContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeMutabilityModifier(astBuffer, mutability);
     }
 
     @Override

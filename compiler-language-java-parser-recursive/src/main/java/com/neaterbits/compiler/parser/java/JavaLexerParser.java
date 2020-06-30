@@ -19,6 +19,7 @@ import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.recursive.BaseLexerParser;
+import com.neaterbits.compiler.parser.recursive.CachedKeywordsList;
 import com.neaterbits.compiler.parser.recursive.NamesList;
 import com.neaterbits.compiler.parser.recursive.ProcessParts;
 import com.neaterbits.compiler.parser.recursive.TypeArgumentsList;
@@ -199,7 +200,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         if (token != JavaToken.EOF) {
             listener.onTypeDefinitionEnd(typeStartContext, getLexerContext());
         }
-
         
         return listener.onCompilationUnitEnd(compilationUnitStartContext, getLexerContext());
     }
@@ -813,6 +813,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
     
     private void parseMember() throws IOException, ParserException {
 
+        final CachedKeywordsList<JavaToken> modifiers = parseAnyMemberModifiers();
+        
         final JavaToken initialToken = lexer.lexSkipWS(MEMBER_START_TOKENS);
         
         switch (initialToken) {
@@ -825,7 +827,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         case FLOAT:
         case DOUBLE:
         case CHAR: {
-            parseRestOfTypeAndFieldScalar(writeCurContext(), getStringRef());
+            parseRestOfTypeAndFieldScalar(modifiers, writeCurContext(), getStringRef());
             break;
         }
         
@@ -833,7 +835,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             // Probably a type, is it a scoped type?
             final long typeName = lexer.getStringRef();
             
-            parseRestOfTypeAndFieldScopedType(writeCurContext(), typeName);
+            parseRestOfTypeAndFieldScopedType(modifiers, writeCurContext(), typeName);
             break;
         
         case NONE:
@@ -845,6 +847,42 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
     }
     
+    private static final JavaToken [] MEMBER_MODIFIER_TOKENS = new JavaToken [] {
+      
+            JavaToken.PUBLIC,
+            JavaToken.PRIVATE,
+            JavaToken.FINAL,
+            
+    };
+    
+    private CachedKeywordsList<JavaToken> parseAnyMemberModifiers() throws IOException, ParserException {
+        
+        boolean done = false;
+        
+        final CachedKeywordsList<JavaToken> cachedModifiers = startScratchKeywords();
+        
+        do {
+            final JavaToken memberModifierToken = lexer.lexSkipWS(MEMBER_MODIFIER_TOKENS);
+
+            switch (memberModifierToken) {
+            case PUBLIC:
+            case PRIVATE:
+            case FINAL:
+                cachedModifiers.addScratchKeyword(memberModifierToken, writeCurContext(), getStringRef());
+                break;
+
+            case NONE:
+                done = true;
+                break;
+
+            default:
+                throw lexer.unexpectedToken();
+            }
+        } while (!done);
+        
+        return cachedModifiers;
+    }
+    
     private static final JavaToken [] AFTER_FIELD_NAME = new JavaToken [] {
             
             JavaToken.SEMI,
@@ -853,12 +891,15 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             JavaToken.LPAREN
     };
 
-    private void parseRestOfTypeAndFieldScalar(int typeNameContext, long typeName) throws IOException, ParserException {
+    private void parseRestOfTypeAndFieldScalar(CachedKeywordsList<JavaToken> modifiers, int typeNameContext, long typeName) throws IOException, ParserException {
         
-        parseRestOfMember(typeNameContext, typeName, null, null, ReferenceType.SCALAR);
+        parseRestOfMember(modifiers, typeNameContext, typeName, null, null, ReferenceType.SCALAR);
     }
 
-    private void parseRestOfTypeAndFieldScopedType(int typeNameContext, long typeName) throws IOException, ParserException {
+    private void parseRestOfTypeAndFieldScopedType(
+            CachedKeywordsList<JavaToken> modifiers,
+            int typeNameContext,
+            long typeName) throws IOException, ParserException {
         
         final JavaToken periodToken = lexer.lexSkipWS(JavaToken.PERIOD);
         
@@ -867,17 +908,18 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
                 
                 final TypeArgumentsList typeArguments = tryParseGenericTypeParametersToScratchList();
                 
-                parseRestOfMember(typeNameContext, typeName, names, typeArguments, ReferenceType.REFERENCE);
+                parseRestOfMember(modifiers, typeNameContext, typeName, names, typeArguments, ReferenceType.REFERENCE);
             });
         }
         else {
             final TypeArgumentsList typeArguments = tryParseGenericTypeParametersToScratchList();
 
-            parseRestOfMember(typeNameContext, typeName, null, typeArguments, ReferenceType.REFERENCE);
+            parseRestOfMember(modifiers, typeNameContext, typeName, null, typeArguments, ReferenceType.REFERENCE);
         }
     }
     
     private void parseRestOfMember(
+            CachedKeywordsList<JavaToken> modifiers,
             int typeNameContext,
             long typeName,
             Names names,
@@ -903,6 +945,12 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         case SEMI: {
             // This is a field with a single variable name, like 'int a;'
             listener.onFieldDeclarationStart(fieldDeclarationStartContext);
+            
+            if (modifiers != null) {
+                modifiers.complete(keywords -> {
+                    listenerHelper.callFieldMemberModifiers(keywords);
+                });
+            }
             
             if (typeArguments != null) {
                 typeArguments.complete(genericTypes ->

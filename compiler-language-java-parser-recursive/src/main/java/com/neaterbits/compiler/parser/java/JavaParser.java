@@ -12,7 +12,7 @@ import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
 import com.test.util.io.buffers.StringBuffers;
 
-public final class JavaParser<COMPILATION_UNIT> {
+public class JavaParser<COMPILATION_UNIT> {
     
     private final Function<StringBuffers, IterativeParserListener<COMPILATION_UNIT>> createListener;
     
@@ -23,7 +23,7 @@ public final class JavaParser<COMPILATION_UNIT> {
         this.createListener = createListener;
     }
     
-    public COMPILATION_UNIT parse(String file, InputStream inputStream) throws IOException, ParserException {
+    public final COMPILATION_UNIT parse(String file, InputStream inputStream) throws IOException, ParserException {
 
         Objects.requireNonNull(inputStream);
         

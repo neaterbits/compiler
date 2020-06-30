@@ -10,6 +10,11 @@ import com.neaterbits.compiler.util.typedefinition.VariableModifierVisitor;
 
 public class ASTMutability implements VariableModifier, FieldModifier {
 
+    public static final ASTMutability MUTABLE = new ASTMutability(Mutability.MUTABLE);
+    public static final ASTMutability VALUE_OR_REF_IMMUTABLE = new ASTMutability(Mutability.VALUE_OR_REF_IMMUTABLE);
+    public static final ASTMutability VALUE_OR_OBJECT_IMMUTABLE = new ASTMutability(Mutability.VALUE_OR_OBJECT_IMMUTABLE);
+    public static final ASTMutability VALUE_OR_OBJECT_OR_REF_IMMUTABLE = new ASTMutability(Mutability.VALUE_OR_OBJECT_OR_REF_IMMUTABLE);
+
 	private final Mutability mutability;
 	
 	public ASTMutability(Mutability mutability) {

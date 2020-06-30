@@ -832,6 +832,17 @@ public final class EncodedCompilationUnit {
                 }
                 break;
             }
+            
+            case FIELD_MODIFIER_HOLDER:
+                if (ref.isStart) {
+                    final int leafContext = getStartContext(parseTreeRef);
+
+                    AST.decodeFieldModifierHolder(astBuffer, leafContext, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
 
             default:
                 throw new UnsupportedOperationException("element " + ref.element);

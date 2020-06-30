@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
+import com.neaterbits.compiler.parser.recursive.CachedKeyword;
+import com.neaterbits.compiler.parser.recursive.CachedKeywords;
 import com.neaterbits.compiler.parser.recursive.TypeArgument;
 import com.neaterbits.compiler.parser.recursive.TypeArguments;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
+import com.neaterbits.compiler.util.statement.ASTMutability;
+import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.parse.ParserException;
 
@@ -165,4 +169,25 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
         }
     }
 
+    void callFieldMemberModifiers(CachedKeywords<JavaToken> keywords) throws ParserException {
+
+        for (int i = 0; i < keywords.count(); ++ i) {
+            
+            final CachedKeyword<JavaToken> keyword = keywords.getKeyword(i);
+            
+            switch (keyword.getToken()) {
+            
+            case PRIVATE:
+                listener.onVisibilityFieldModifier(keyword.getContext(), FieldVisibility.PRIVATE);
+                break;
+
+            case FINAL:
+                listener.onMutabilityFieldModifier(keyword.getContext(), ASTMutability.VALUE_OR_REF_IMMUTABLE);
+                break;
+
+            default:
+                throw new ParserException("Unexpected token " + keyword.getToken());
+            }
+        }
+    }
 }

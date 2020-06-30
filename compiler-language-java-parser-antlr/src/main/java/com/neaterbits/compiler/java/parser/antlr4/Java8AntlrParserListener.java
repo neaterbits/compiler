@@ -11,9 +11,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
-import com.neaterbits.compiler.util.model.Mutability;
 import com.neaterbits.compiler.util.model.ReferenceType;
-import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Bitwise;
@@ -499,12 +497,12 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitPublicFieldModifier(PublicFieldModifierContext ctx) {
-		delegate.onVisibilityFieldModifier(context(ctx), new FieldVisibility(Visibility.PUBLIC));
+		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.PUBLIC);
 	}
 
 	@Override
 	public void exitPrivateFieldModifier(PrivateFieldModifierContext ctx) {
-		delegate.onVisibilityFieldModifier(context(ctx), new FieldVisibility(Visibility.PRIVATE));
+		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.PRIVATE);
 	}
 
 	@Override
@@ -514,7 +512,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void exitFinalFieldModifier(FinalFieldModifierContext ctx) {
-		delegate.onMutabilityFieldModifier(context(ctx), new ASTMutability(Mutability.VALUE_OR_REF_IMMUTABLE));
+		delegate.onMutabilityFieldModifier(context(ctx), ASTMutability.VALUE_OR_REF_IMMUTABLE);
 	}
 	
 	@Override
@@ -1564,7 +1562,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitFinalVariableModifier(FinalVariableModifierContext ctx) {
-		delegate.onMutabilityVariableModifier(context(ctx), new ASTMutability(Mutability.VALUE_OR_REF_IMMUTABLE));
+		delegate.onMutabilityVariableModifier(context(ctx), ASTMutability.VALUE_OR_REF_IMMUTABLE);
 	}
 
 	@Override

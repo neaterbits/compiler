@@ -41,10 +41,14 @@ import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
+import com.neaterbits.compiler.util.model.Mutability;
+import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.util.parse.ParserException;
@@ -955,6 +959,31 @@ public abstract class BaseJavaParserTest {
         final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
         
         final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
+    
+        assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
+        
+        checkScalarType(member.getType(), "int");
+    }
+
+    @Test
+    public void testParseModiferScalarClassMemberVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { private final int memberVariable; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
+        
+        assertThat(member.getModifiers().getModifier(FieldVisibility.class).getVisibility())
+                    .isEqualTo(Visibility.PRIVATE);
+        assertThat(member.getModifiers().getModifier(ASTMutability.class).getMutability())
+                    .isEqualTo(Mutability.VALUE_OR_REF_IMMUTABLE);
     
         assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
         
