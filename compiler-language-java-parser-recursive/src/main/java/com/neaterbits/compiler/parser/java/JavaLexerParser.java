@@ -1,27 +1,18 @@
 package com.neaterbits.compiler.parser.java;
 
 import java.io.IOException;
-import java.util.Objects;
 
-import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
-import com.neaterbits.compiler.util.operator.Arithmetic;
-import com.neaterbits.compiler.util.operator.Operator;
-import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
-import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
-import com.neaterbits.compiler.parser.recursive.BaseLexerParser;
 import com.neaterbits.compiler.parser.recursive.CachedKeywordsList;
-import com.neaterbits.compiler.parser.recursive.NamesList;
-import com.neaterbits.compiler.parser.recursive.ProcessParts;
 import com.neaterbits.compiler.parser.recursive.TypeArgumentsList;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.StringRef;
@@ -29,32 +20,20 @@ import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
 
-final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken> {
+final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPILATION_UNIT> {
 
-    private final IterativeParserListener<COMPILATION_UNIT> listener;
-    private final JavaListenerHelper<COMPILATION_UNIT> listenerHelper;
-    
     JavaLexerParser(
             String file,
             Lexer<JavaToken, CharInput> lexer,
             Tokenizer tokenizer,
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
-        super(file, lexer, tokenizer);
-
-        Objects.requireNonNull(listener);
-        
-        this.listener = listener;
-        this.listenerHelper = new JavaListenerHelper<>(listener, this::writeContext);
+        super(file, lexer, tokenizer, listener);
     }
 
     COMPILATION_UNIT parse() throws IOException, ParserException {
         
         return parseCompilationUnit();
-    }
-    
-    private long getStringRef() {
-        return lexer.getStringRef(0, 0);
     }
     
     private static JavaToken [] IMPORT_OR_TYPE_OR_EOF = new JavaToken [] {
@@ -79,16 +58,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
             JavaToken.CLASS,
             JavaToken.EOF
     };
-    
-    private int writeCurContext() {
-        
-        return listener.writeContext(getLexerContext());
-    }
-
-    private int writeContext(int otherContext) {
-        
-        return listener.writeContext(otherContext);
-    }
     
     private COMPILATION_UNIT parseCompilationUnit() throws IOException, ParserException {
 
@@ -343,148 +312,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         listener.onImportEnd(importStartContext, getLexerContext(), ondemand);
     }
     
-    private void parseAnnotation(int startContext) throws IOException, ParserException {
-        
-        parseNameListUntilOtherToken(names -> {
-
-            listener.onAnnotationStart(startContext, names);
-        
-            parseAnyAnnotationElements();
-            
-            listener.onAnnotationEnd(startContext, getLexerContext());
-        });
-    }
-    
-    private void parseAnyAnnotationElements() throws IOException, ParserException {
-
-        if (lexer.lexSkipWS(JavaToken.LPAREN) == JavaToken.LPAREN) {
-            
-            // Is this @Annotation(identifier = value) or @Annotation(STATIC_CONSTANT)
-            // or @Annotation(LITERAL)
-            
-            if (lexer.lexSkipWS(JavaToken.IDENTIFIER) == JavaToken.IDENTIFIER) {
-         
-                final int identifierContext = writeCurContext();
-                final int elementStartContext = writeContext(identifierContext);
-                        
-                // @Annotation(identifier = value) or @Annotation(STATIC_CONSTANT)
-
-                final long stringRef = getStringRef();
-
-                if (lexer.lexSkipWS(JavaToken.ASSIGN) == JavaToken.ASSIGN) {
-
-                    // @Annotation(identifier = value)
-                    parseExpressionOrAnnotationOrList(elementStartContext, stringRef, identifierContext);
-                    
-                    parsePerhapsMultipleElementValues();
-                }
-                else {
-                    listener.onAnnotationElementStart(elementStartContext, StringRef.STRING_NONE, ContextRef.NONE);
-                    
-                    listener.onVariableReference(identifierContext, stringRef);
-
-                    listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
-                }
-            }
-            else {
-                parseExpressionOrAnnotationOrList(writeCurContext(), StringRef.STRING_NONE, ContextRef.NONE);
-            }
-            
-            if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
-                throw lexer.unexpectedToken();
-            }
-        }
-    }
-    
-    private void parsePerhapsMultipleElementValues() throws IOException, ParserException {
-
-        // List of more element values?
-        for (;;) {
-            
-            if (lexer.lexSkipWS(JavaToken.COMMA) != JavaToken.COMMA) {
-                break;
-            }
-            
-            final JavaToken otherIdentifier = lexer.lexSkipWS(JavaToken.IDENTIFIER);
-            
-            if (otherIdentifier != JavaToken.IDENTIFIER) {
-                throw lexer.unexpectedToken();
-            }
-            
-            final int otherIdentifierContext = writeCurContext();
-            final int otherElementStartContext = writeContext(otherIdentifierContext);
-            
-            final long otherIdentifierRef = getStringRef();
-            
-            if (lexer.lexSkipWS(JavaToken.ASSIGN) != JavaToken.ASSIGN) {
-                throw lexer.unexpectedToken();
-            }
-
-            parseExpressionOrAnnotationOrList(otherElementStartContext, otherIdentifierRef, otherIdentifierContext);
-        }
-    }
-
-    private static final JavaToken [] EXPRESSION_OR_ANNOTATION_OR_LIST_TOKENS = new JavaToken [] {
-            JavaToken.AT,
-            JavaToken.LBRACE
-    };
-    
-    private static final JavaToken [] AFTER_ANNOTATION_ELEMENT_LIST_TOKENS = new JavaToken [] {
-            JavaToken.COMMA,
-            JavaToken.RBRACE
-    };
-
-    private void parseExpressionOrAnnotationOrList(
-            int startContext,
-            long identifier,
-            int identifierContext) throws IOException, ParserException {
-
-        final JavaToken token = lexer.lexSkipWS(EXPRESSION_OR_ANNOTATION_OR_LIST_TOKENS);
-        
-        listener.onAnnotationElementStart(startContext, identifier, identifierContext);
-
-        if (token == JavaToken.AT) {
-            
-            // @TheAnnotation(@OtherAnnotation)
-            
-            parseAnnotation(writeCurContext());
-        }
-        else if (token == JavaToken.LBRACE) {
-            
-            for (;;) {
-
-                final int listStartContext = writeCurContext();
-                
-                listener.onAnnotationElementStart(listStartContext, StringRef.STRING_NONE, ContextRef.NONE);
-                
-                if (lexer.lexSkipWS(JavaToken.AT) == JavaToken.AT) {
-                    parseAnnotation(startContext);
-                }
-                else {
-                    parseExpression();
-                }
-                
-                listener.onAnnotationElementEnd(listStartContext, getLexerContext());
-                
-                final JavaToken listToken = lexer.lexSkipWS(AFTER_ANNOTATION_ELEMENT_LIST_TOKENS);
-                
-                if (listToken == JavaToken.COMMA) {
-                    // Continue to iterate
-                }
-                else if (listToken == JavaToken.RBRACE) {
-                    break;
-                }
-                else {
-                    throw lexer.unexpectedToken();
-                }
-            }
-        }
-        else {
-            parseExpression();
-        }
-        
-        listener.onAnnotationElementEnd(startContext, getLexerContext());
-    }
     
     private void parseClass(
             int classStartContext,
@@ -547,100 +374,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
     }
     
-    private static final JavaToken [] GENERIC_TYPE_TOKENS = new JavaToken [] {
-            JavaToken.IDENTIFIER,
-            JavaToken.QUESTION_MARK
-    };
-    
-    private static final JavaToken [] AFTER_TYPE_ARGUMENT_TOKENS = new JavaToken [] {
-            JavaToken.COMMA,
-            JavaToken.GT
-    };
-    
-    private void parseGenericTypeArguments() throws IOException, ParserException {
-        
-        final int startContext = writeCurContext();
-        
-        listener.onGenericClassDefinitionTypeListStart(startContext);
-        
-        for (;;) {
-            
-            final JavaToken typeArgumentToken = lexer.lexSkipWS(GENERIC_TYPE_TOKENS);
-            
-            if (typeArgumentToken == JavaToken.IDENTIFIER) {
-    
-                final int nameContext = writeCurContext();
-                final int namedTypeStartContext = writeContext(nameContext);
-                
-                listener.onGenericNamedTypeStart(namedTypeStartContext, getStringRef(), nameContext);
-                
-                if (lexer.lexSkipWS(JavaToken.EXTENDS) == JavaToken.EXTENDS) {
-                    parseTypeBound(writeCurContext(), TypeBoundType.EXTENDS);
-                }
-                
-                listener.onGenericNamedTypeEnd(namedTypeStartContext, getLexerContext());
-            }
-            else {
-                throw lexer.unexpectedToken();
-            }
-            
-            final JavaToken afterTypeArgument = lexer.lexSkipWS(AFTER_TYPE_ARGUMENT_TOKENS);
-            
-            if (afterTypeArgument == JavaToken.COMMA) {
-                // Continue on next type
-            }
-            else if (afterTypeArgument == JavaToken.GT) {
-                break;
-            }
-            else {
-                throw lexer.unexpectedToken();
-            }
-        }
-        
-        listener.onGenericClassDefinitionTypeListEnd(startContext, getLexerContext());
-    }
-    
-    private void parseTypeBound(int startContext, TypeBoundType type) throws IOException, ParserException {
-
-        listener.onTypeBoundStart(startContext, type);
-
-        parseTypeReference();
-
-        listener.onTypeBoundEnd(startContext, getLexerContext());
-    }
-    
-    private void parseTypeReference() throws IOException, ParserException {
-        
-        if (lexer.lexSkipWS(JavaToken.IDENTIFIER) != JavaToken.IDENTIFIER) {
-            throw lexer.unexpectedToken();
-        }
-        
-        final int identifierContext = writeCurContext();
-        final long identifier = getStringRef();
-        
-        final ReferenceType referenceType = ReferenceType.REFERENCE;
-        
-        if (lexer.lexSkipWS(JavaToken.PERIOD) == JavaToken.PERIOD) {
-            parseNameListUntilOtherToken(identifierContext, identifier, names -> {
-    
-                // call listener with the.namespace.SomeClass from names
-                final int startContext = listenerHelper.callScopedTypeReferenceListenersStartAndPart(names, referenceType);
-                
-                // add any generics
-                tryParseGenericTypeParameters();
-                
-                
-                listenerHelper.callScopedTypeReferenceListenersEnd(startContext, getLexerContext());
-            });
-        }
-        else {
-            listenerHelper.callNonScopedTypeReferenceListenersStart(identifierContext, identifier, null, referenceType);
-
-            tryParseGenericTypeParameters();
-            
-            listenerHelper.callNonScopedTypeReferenceListenersEnd(identifierContext, getLexerContext(), referenceType);
-        }
-    }
 
     private static final JavaToken [] EXTENDS_OR_IMPLEMENTS_OR_BODY = new JavaToken [] {
             JavaToken.EXTENDS,
@@ -1021,84 +754,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
     }
     
-
-    private TypeArgumentsList tryParseGenericTypeParametersToScratchList() throws IOException, ParserException {
-        
-        final TypeArgumentsList typeArgumentsList;
-        
-        if (lexer.lexSkipWS(JavaToken.LT) == JavaToken.LT) {
-
-            typeArgumentsList = startScratchTypeArguments();
-
-            final int startContext = writeCurContext();
-            
-            final ParseFunction parseTypeReference = () -> {
-                
-                // Parse the type to names list
-                final NamesList namesList = startScratchNameParts();
-                
-                parseNames(namesList);
-
-                final TypeArgumentsList genericTypes = tryParseGenericTypeParametersToScratchList();
-                
-                typeArgumentsList.addConcreteType(namesList, genericTypes, getLexerContext());
-            };
-            
-            parseGenericTypeParameters(startContext, parseTypeReference);
-            
-            typeArgumentsList.setContexts(startContext, getLexerContext());
-        }
-        else {
-            typeArgumentsList = null;
-        }
-
-        return typeArgumentsList;
-    }
-
-    private void tryParseGenericTypeParameters() throws IOException, ParserException {
-        
-        if (lexer.lexSkipWS(JavaToken.LT) == JavaToken.LT) {
-
-            final int startContext = writeCurContext();
-            
-            parseGenericTypeParameters(startContext);
-        }
-    }
-    
-    private void parseGenericTypeParameters(int startContext) throws IOException, ParserException {
-        
-        listener.onGenericTypeParametersStart(startContext);
-
-        parseGenericTypeParameters(startContext, this::parseTypeReference);
-        
-        listener.onGenericTypeParametersEnd(startContext, getLexerContext());
-    }
-    
-    @FunctionalInterface
-    interface ParseFunction {
-        
-        void parse() throws IOException, ParserException;
-    }
-
-    private void parseGenericTypeParameters(int startContext, ParseFunction parseTypeReference) throws IOException, ParserException {
-        
-        for (;;) {
-
-            parseTypeReference.parse();
-            
-            final JavaToken afterTypeArgument = lexer.lexSkipWS(AFTER_TYPE_ARGUMENT_TOKENS);
-            
-            if (afterTypeArgument == JavaToken.COMMA) {
-                // Continue on next type
-            }
-            else if (afterTypeArgument == JavaToken.GT) {
-                break;
-            }
-            else {
-                throw lexer.unexpectedToken();
-            }
-        }
-    }
 
     private void onMethodInvocationPrimaryList(
             int context,
@@ -1517,150 +1172,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
     }
     
-    private static final JavaToken [] OPERATOR_TOKENS = new JavaToken [] {
-            JavaToken.EQUALS,
-            JavaToken.NOT_EQUALS,
-            JavaToken.LT,
-            JavaToken.GT,
-            JavaToken.LTE,
-            JavaToken.GTE,
-            
-            JavaToken.PLUS,
-            JavaToken.MINUS,
-            JavaToken.MUL,
-            JavaToken.DIV,
-            JavaToken.MOD
-            
-    };
-    
-    private void parseExpressionList() throws IOException, ParserException {
-
-        boolean done = false;
-        boolean initial = false;
-        
-        do {
-            final boolean expressionFound = parseExpression();
-            
-            if (!expressionFound) {
-                if (initial) {
-                    throw lexer.unexpectedToken();
-                }
-                else {
-                    done = true;
-                }
-            }
-            else {
-                
-                initial = false;
-                
-                final JavaToken operatorToken = lexer.lexSkipWS(OPERATOR_TOKENS);
-                
-                switch (operatorToken) {
-                case EQUALS:
-                    callListenerAndParseExpression(writeCurContext(), Relational.EQUALS);
-                    break;
-                    
-                case NOT_EQUALS:
-                    callListenerAndParseExpression(writeCurContext(), Relational.NOT_EQUALS);
-                    break;
-                    
-                case LT:
-                    callListenerAndParseExpression(writeCurContext(), Relational.LESS_THAN);
-                    break;
-                    
-                case GT:
-                    callListenerAndParseExpression(writeCurContext(), Relational.GREATER_THAN);
-                    break;
-    
-                case LTE:
-                    callListenerAndParseExpression(writeCurContext(), Relational.LESS_THAN_OR_EQUALS);
-                    break;
-                    
-                case GTE:
-                    callListenerAndParseExpression(writeCurContext(), Relational.GREATER_THAN_OR_EQUALS);
-                    break;
-                    
-                case PLUS:
-                    callListenerAndParseExpression(writeCurContext(), Arithmetic.PLUS);
-                    break;
-                    
-                case MINUS:
-                    callListenerAndParseExpression(writeCurContext(), Arithmetic.MINUS);
-                    break;
-
-                case MUL:
-                    callListenerAndParseExpression(writeCurContext(), Arithmetic.MULTIPLY);
-                    break;
-
-                case DIV:
-                    callListenerAndParseExpression(writeCurContext(), Arithmetic.DIVIDE);
-                    break;
-
-                case MOD:
-                    callListenerAndParseExpression(writeCurContext(), Arithmetic.MODULUS);
-                    break;
-
-                default:
-                    done = true;
-                    break;
-                }
-            }
-        } while (!done);
-    }
-    
-    private void callListenerAndParseExpression(int context, Operator operator) throws IOException, ParserException {
-        
-        listener.onExpressionBinaryOperator(context, operator);
-        
-    }
-
-    private static final JavaToken [] EXPRESSION_TOKENS = new JavaToken [] {
-            
-            JavaToken.IDENTIFIER,
-            JavaToken.NUMBER,
-    };
-            
-    private boolean parseExpression() throws IOException, ParserException {
-        
-        final JavaToken token = lexer.lexSkipWS(EXPRESSION_TOKENS);
-        
-        boolean expressionFound = true;
-        
-        switch (token) {
-        case IDENTIFIER:
-            // Variable or 'this' or method call
-            parseVariableReferenceExpression(writeCurContext(), getStringRef());
-            break;
-
-        case NUMBER:
-            parseNumericLiteral(writeCurContext(), getStringRef());
-            break;
-
-        default:
-            expressionFound = false;
-            break;
-        }
-        
-        return expressionFound;
-    }
-    
-    private void parseVariableReferenceExpression(int context, long stringRef) {
-        
-        // For now just say this is a variable
-        listener.onVariableReference(context, stringRef);
-        
-    }
-    
-    private void parseNumericLiteral(int context, long stringRef) {
-
-        listener.onIntegerLiteral(
-                context,
-                tokenizer.asInt(stringRef),
-                Base.DECIMAL,
-                true,
-                32);
-    }
-    
     private static final JavaToken [] STATEMENT_STARTING_WITH_IDENTIFIER_TOKENS = new JavaToken [] {
             JavaToken.PERIOD, // User type for variable declaration or method invocation or field dereferencing
             JavaToken.ASSIGN, // Assignment
@@ -2062,52 +1573,5 @@ final class JavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken>
         }
 
         listener.onScopedTypeReferenceEnd(typeStartContext, getLexerContext());
-    }
-
-    private void parseNameListUntilOtherToken(
-            int identifierContext,
-            long identifier,
-            ProcessParts<Names> processNameParts) throws IOException, ParserException {
-        
-        final NamesList scratch = startScratchNameParts();
-
-        scratch.add(identifierContext, identifier);
-        
-        parseNames(scratch, processNameParts);
-    }
-
-    private void parseNameListUntilOtherToken(ProcessParts<Names> processNameParts) throws IOException, ParserException {
-        
-        final NamesList scratch = startScratchNameParts();
-
-        parseNames(scratch, processNameParts);
-    }
-
-    private void parseNames(NamesList scratch, ProcessParts<Names> processNameParts) throws IOException, ParserException {
-        
-        parseNames(scratch);
-        
-        // reach non-namepart so process now
-        scratch.complete(processNameParts);
-    }
-    
-    private void parseNames(NamesList scratch) throws IOException, ParserException {
-        
-        for (;;) {
-
-            final JavaToken partToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
-            
-            if (partToken != JavaToken.IDENTIFIER) {
-                throw lexer.unexpectedToken();
-            }
-            
-            scratch.add(writeCurContext(), getStringRef());
-            
-            final JavaToken endOfScopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
-            
-            if (endOfScopeToken != JavaToken.PERIOD) {
-                break;
-            }
-        }
     }
 }
