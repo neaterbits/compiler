@@ -1234,7 +1234,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
         
         boolean foundStatement = true;
         
-        final JavaToken statementToken = lexer.lexSkipWS(STATEMENT_TOKENS);
+        final JavaToken statementToken = lexer.lexSkipWSAndComment(STATEMENT_TOKENS);
         
         switch (statementToken) {
         case BYTE:
