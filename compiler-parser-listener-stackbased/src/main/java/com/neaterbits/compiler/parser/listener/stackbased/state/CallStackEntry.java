@@ -37,6 +37,7 @@ public abstract class CallStackEntry<EXPRESSION> extends StackEntry implements P
 		}
 
 		this.name = name;
+		this.nameContext = nameContext;
 	}
 
 	public final List<EXPRESSION> getParameters() {
