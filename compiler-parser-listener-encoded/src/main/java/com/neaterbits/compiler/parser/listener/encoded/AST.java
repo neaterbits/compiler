@@ -1510,27 +1510,33 @@ public class AST {
             StringASTBuffer astBuffer,
             MethodInvocationType type,
             Names names,
+            int namesCount,
             long methodName,
             int methodNameContext) {
         
         astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION);
         astBuffer.writeEnumByte(type);
         
-        encodeNames(astBuffer, names);
+        encodeNames(astBuffer, names, namesCount);
         
         astBuffer.writeStringRef(methodName);
         astBuffer.writeContextRef(methodNameContext);
     }
     
     private static void encodeNames(StringASTBuffer astBuffer, Names names) {
+    
+        encodeNames(astBuffer, names, names.count());
+    }
+    
+    private static void encodeNames(StringASTBuffer astBuffer, Names names, int namesCount) {
         
-        if (names.count() > Byte.MAX_VALUE) {
+        if (namesCount > Byte.MAX_VALUE) {
             throw new IllegalArgumentException();
         }
         
-        astBuffer.writeByte((byte)names.count());
+        astBuffer.writeByte((byte)namesCount);
         
-        for (int i = 0; i < names.count(); ++ i) {
+        for (int i = 0; i < namesCount; ++ i) {
             astBuffer.writeStringRef(names.getStringAt(i));
             astBuffer.writeContextRef(names.getContextAt(i));
         }
@@ -1555,6 +1561,7 @@ public class AST {
                 methodInvocationStartContext,
                 type,
                 names,
+                names.count(),
                 methodName,
                 methodNameContext);
     }
@@ -1645,6 +1652,7 @@ public class AST {
                 methodInvocationStartContext,
                 type,
                 null,
+                0,
                 methodName,
                 methodNameContext);
     }

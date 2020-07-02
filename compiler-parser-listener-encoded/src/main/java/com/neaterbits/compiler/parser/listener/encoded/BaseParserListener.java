@@ -1085,11 +1085,12 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
             int context,
             MethodInvocationType type,
             Names names,
+            int namesCount,
             long methodName,
             int methodNameContext) {
 
         if (names != null) {
-            AST.encodeUnresolvedMethodInvocationStart(astBuffer, type, names, methodName, methodNameContext);
+            AST.encodeUnresolvedMethodInvocationStart(astBuffer, type, names, namesCount, methodName, methodNameContext);
         }
         else {
             AST.encodeMethodInvocationStart(astBuffer, type, methodName, methodNameContext);

@@ -1698,6 +1698,30 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testUnresolvedMethodInvocation() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { SomeClass.callAMethod(); } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
+        
+        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)expressionStatement.getExpression();
+        assertThat(methodInvocation.getNameList().getNames().size()).isEqualTo(1);
+        assertThat(methodInvocation.getNameList().getNames().get(0).getText()).isEqualTo("SomeClass");
+        assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
+        assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
+    }
+
+    @Test
     public void testMethodParameters() throws IOException, ParserException {
      
         final String source = "package com.test;\n"
@@ -1922,12 +1946,8 @@ public abstract class BaseJavaParserTest {
         
         // System.out.println("## names " + methodInvocation.getNameList().getNames());
         
-        assertThat(methodInvocation.getNameList().getNames().size()).isEqualTo(2);
-
-        /*
-        assertThat(methodInvocation.getNameList().getNames().get(0)).isEqualTo("SomeClass");
-        assertThat(methodInvocation.getNameList().getNames().get(1)).isEqualTo("callAMethod");
-        */
+        assertThat(methodInvocation.getNameList().getNames().size()).isEqualTo(1);
+        assertThat(methodInvocation.getNameList().getNames().get(0).getText()).isEqualTo("SomeClass");
 
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();

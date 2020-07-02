@@ -29,6 +29,7 @@ public abstract class CallStackEntry<EXPRESSION> extends StackEntry implements P
 
 	public final void setName(String name, Context nameContext) {
 		
+	    Objects.requireNonNull(nameContext);
 		Objects.requireNonNull(name);
 		
 		if (this.name != null) {

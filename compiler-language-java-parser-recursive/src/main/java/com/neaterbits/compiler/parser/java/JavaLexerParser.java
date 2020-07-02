@@ -818,6 +818,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
                 methodInvocationContext,
                 methodInvocationType,
                 names,
+                names != null ? names.count() - 1 : 0,
                 names != null ? names.getStringAt(names.count() - 1) : identifier,
                 names != null ? names.getContextAt(names.count() - 1) : identifierContext);
         
@@ -1475,6 +1476,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
                     methodInvocationContext,
                     MethodInvocationType.PRIMARY,
                     null,
+                    0,
                     identifier,
                     identifierContext);
             

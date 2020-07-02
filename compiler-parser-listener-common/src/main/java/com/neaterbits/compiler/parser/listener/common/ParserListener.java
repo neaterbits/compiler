@@ -285,6 +285,7 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 			int startContext,
 			MethodInvocationType type,
 			Names names,
+			int numNameParts,
 			long methodName,
 			int methodNameContext);
 	

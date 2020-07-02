@@ -664,6 +664,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		        writeStartContext(context),
 		        type,
 		        names,
+		        names.count(),
 		        methodName,
 		        writeOtherContext(methodNameContext));
 	}

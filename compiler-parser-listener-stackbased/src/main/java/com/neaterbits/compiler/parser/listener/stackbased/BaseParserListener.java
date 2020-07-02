@@ -2535,6 +2535,7 @@ public abstract class BaseParserListener<
 			int startContext,
 			MethodInvocationType type,
 			Names names,
+			int namesCount,
 			long methodName,
 			int methodNameContextRef) {
 	    
@@ -2551,7 +2552,7 @@ public abstract class BaseParserListener<
 		    methodInvocation = new StackMethodInvocation<>(
 	                logger,
 	                type,
-	                names,
+	                null,
 	                methodNameString,
 	                methodNameContext);
 		}
@@ -2559,7 +2560,7 @@ public abstract class BaseParserListener<
 		    methodInvocation = new StackUnresolvedMethodInvocation<>(
 		            logger,
 		            type,
-		            makeNameList(context, names),
+		            makeNameList(context, names, namesCount),
 		            methodNameString,
 		            methodNameContext);
 		}
@@ -2677,13 +2678,11 @@ public abstract class BaseParserListener<
 		logExit(context);
 	}
 	
-	private NAME_LIST makeNameList(Context context, Names names) {
+	private NAME_LIST makeNameList(Context context, Names names, int namesCount) {
 	    
-	    final int count = names.count();
-	    
-        final List<NAME> nameList = new ArrayList<>(count);
+        final List<NAME> nameList = new ArrayList<>(namesCount);
         
-        for (int i = 0; i < count; ++ i) {
+        for (int i = 0; i < namesCount; ++ i) {
             
             final String name = stringSource.asString(names.getStringAt(i));
             final Context nameContext = getOtherContext(names.getContextAt(i));
