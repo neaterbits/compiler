@@ -437,7 +437,31 @@ public final class EncodedCompilationUnit {
                 }
                 break;
             }
+
+            case CONSTRUCTOR_MEMBER: {
+                final int startContext = getStartContext(parseTreeRef);
                 
+                if (ref.isStart) {
+                    AST.decodeConstructorStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeConstructorEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+            
+            case CONSTRUCTOR_NAME: {
+                
+                final int leafContext = getStartContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeConstructorName(astBuffer, leafContext, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+            }
+
             case CLASS_METHOD_MEMBER: {
                 final int startContext = getStartContext(parseTreeRef);
                 

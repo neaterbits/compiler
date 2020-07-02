@@ -1,6 +1,9 @@
 package com.neaterbits.compiler.util.model;
 
 public enum ReferenceType {
+    
+    NONE(false, false, true),
+    
 	NAME(false, false, true),
 	SCALAR(false, false, true),
 	VALUE(false, false, false),

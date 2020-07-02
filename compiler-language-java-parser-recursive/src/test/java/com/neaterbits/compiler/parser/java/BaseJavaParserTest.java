@@ -16,6 +16,7 @@ import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.annotation.Annotation;
 import com.neaterbits.compiler.ast.objects.annotation.AnnotationElement;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
+import com.neaterbits.compiler.ast.objects.block.Constructor;
 import com.neaterbits.compiler.ast.objects.expression.AssignmentExpression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
@@ -35,6 +36,7 @@ import com.neaterbits.compiler.ast.objects.statement.WhileStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
+import com.neaterbits.compiler.ast.objects.typedefinition.ConstructorMember;
 import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
@@ -1055,6 +1057,28 @@ public abstract class BaseJavaParserTest {
         assertThat(initializers.get(1).getNameString()).isEqualTo("b");
         
         assertThat(initializers.get(2).getNameString()).isEqualTo("c");
+    }
+
+    @Test
+    public void testConstructor() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { TestClass() { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ConstructorMember member = (ConstructorMember)classDefinition.getMembers().get(0);
+        
+        final Constructor constructor = member.getConstructor();
+        
+        assertThat(constructor.getNameString()).isEqualTo("TestClass");
+        
+        assertThat(constructor.getParameters().isEmpty()).isTrue();
     }
 
     @Test

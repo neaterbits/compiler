@@ -329,7 +329,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
         // Initial context of class is either class visibility or subclassing or class keyword
         listener.onClassStart(classStartContext, classKeyword, classKeywordContext, className, classNameContext);
         
-        parseClassGenericsOrExtendsOrImplementsOrBody();
+        parseClassGenericsOrExtendsOrImplementsOrBody(className);
         
         listener.onClassEnd(classStartContext, getLexerContext());
     }
@@ -341,7 +341,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
             JavaToken.LBRACE
     };
 
-    private void parseClassGenericsOrExtendsOrImplementsOrBody() throws IOException, ParserException {
+    private void parseClassGenericsOrExtendsOrImplementsOrBody(long implementingClassName) throws IOException, ParserException {
         
         final JavaToken afterClassName = lexer.lexSkipWS(AFTER_CLASSNAME);
         
@@ -350,23 +350,23 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
         case LT:
             parseGenericTypeArguments();
             
-            parseExtendsOrImplementsOrBody();
+            parseExtendsOrImplementsOrBody(implementingClassName);
             break;
         
         case EXTENDS:
             parseExtends();
             
-            parseImplementsOrBody();
+            parseImplementsOrBody(implementingClassName);
             break;
             
         case IMPLEMENTS:
             parseImplements();
             
-            parseClassBody();
+            parseClassBody(implementingClassName);
             break;
             
         case LBRACE:
-            parseClassBody();
+            parseClassBody(implementingClassName);
             break;
             
         default:
@@ -381,7 +381,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
             JavaToken.LBRACE
     };
 
-    private void parseExtendsOrImplementsOrBody() throws IOException, ParserException {
+    private void parseExtendsOrImplementsOrBody(long implementingClassName) throws IOException, ParserException {
         
         final JavaToken afterClassName = lexer.lexSkipWS(EXTENDS_OR_IMPLEMENTS_OR_BODY);
         
@@ -390,17 +390,17 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
         case EXTENDS:
             parseExtends();
             
-            parseImplementsOrBody();
+            parseImplementsOrBody(implementingClassName);
             break;
             
         case IMPLEMENTS:
             parseImplements();
             
-            parseClassBody();
+            parseClassBody(implementingClassName);
             break;
             
         case LBRACE:
-            parseClassBody();
+            parseClassBody(implementingClassName);
             break;
             
         default:
@@ -413,7 +413,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
             JavaToken.LBRACE
     };
 
-    private void parseImplementsOrBody() throws IOException, ParserException {
+    private void parseImplementsOrBody(long implementingClassName) throws IOException, ParserException {
         
         final JavaToken afterExtends = lexer.lexSkipWS(AFTER_EXTENDS);
         
@@ -422,11 +422,11 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
         case IMPLEMENTS:
             parseImplements();
             
-            parseClassBody();
+            parseClassBody(implementingClassName);
             break;
             
         case LBRACE:
-            parseClassBody();
+            parseClassBody(implementingClassName);
             break;
             
         default:
@@ -515,11 +515,11 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
         }
     }
     
-    private void parseClassBody() throws IOException, ParserException {
+    private void parseClassBody(long implementingClassName) throws IOException, ParserException {
         
         do {
             
-            parseMember();
+            parseMember(implementingClassName);
             
         } while (lexer.lexSkipWS(JavaToken.RBRACE) != JavaToken.RBRACE);
     }
@@ -544,7 +544,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
             JavaToken.IDENTIFIER // type
     };
     
-    private void parseMember() throws IOException, ParserException {
+    private void parseMember(long implementingClassName) throws IOException, ParserException {
 
         final CachedKeywordsList<JavaToken> modifiers = parseAnyMemberModifiers();
         
@@ -568,7 +568,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
             // Probably a type, is it a scoped type?
             final long typeName = lexer.getStringRef();
             
-            parseRestOfTypeAndFieldScopedType(modifiers, writeCurContext(), typeName);
+            parseRestOfTypeAndFieldScopedType(modifiers, implementingClassName, writeCurContext(), typeName);
             break;
         
         case NONE:
@@ -626,11 +626,12 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
 
     private void parseRestOfTypeAndFieldScalar(CachedKeywordsList<JavaToken> modifiers, int typeNameContext, long typeName) throws IOException, ParserException {
         
-        parseRestOfMember(modifiers, typeNameContext, typeName, null, null, ReferenceType.SCALAR);
+        parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeNameContext, typeName, null, null, ReferenceType.SCALAR);
     }
 
     private void parseRestOfTypeAndFieldScopedType(
             CachedKeywordsList<JavaToken> modifiers,
+            long implementingClassName,
             int typeNameContext,
             long typeName) throws IOException, ParserException {
         
@@ -641,17 +642,48 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
                 
                 final TypeArgumentsList typeArguments = tryParseGenericTypeParametersToScratchList();
                 
-                parseRestOfMember(modifiers, typeNameContext, typeName, names, typeArguments, ReferenceType.REFERENCE);
+                parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeNameContext, typeName, names, typeArguments, ReferenceType.REFERENCE);
             });
         }
         else {
             final TypeArgumentsList typeArguments = tryParseGenericTypeParametersToScratchList();
 
-            parseRestOfMember(modifiers, typeNameContext, typeName, null, typeArguments, ReferenceType.REFERENCE);
+            // Is this a constructor method?
+            if (lexer.lexSkipWS(JavaToken.LPAREN) == JavaToken.LPAREN) {
+                
+                // This is a constructor so no type declaration, or one forgot to add
+                // the type declaration
+                // Compare the names to the class name
+                if (tokenizer.equals(implementingClassName, typeName)) {
+                    // typeName is same as implementing class name so this is really a constructor
+                    final int startContext = writeContext(typeNameContext);
+                    
+                    listener.onConstructorStart(startContext);
+                    
+                    listener.onConstructorName(typeNameContext, typeName);
+
+                    parseParametersAndMethod(writeCurContext());
+                    
+                    listener.onConstructorEnd(startContext, getLexerContext());
+                }
+                else {
+                    // Not the same so try to just parse as a method but without return type since missing
+                    parseMethod(
+                            ContextRef.NONE,
+                            StringRef.STRING_NONE,
+                            null,
+                            ReferenceType.NONE,
+                            typeNameContext,
+                            typeName);
+                }
+            }
+            else {
+                parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeNameContext, typeName, null, typeArguments, ReferenceType.REFERENCE);
+            }
         }
     }
     
-    private void parseRestOfMember(
+    private void parseRestOfMemberAfterInitialTypeDeclaration(
             CachedKeywordsList<JavaToken> modifiers,
             int typeNameContext,
             long typeName,
@@ -731,27 +763,41 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
         }
          
         case LPAREN: {
-            final int classMethodStartContext = writeContext(typeNameContext);
-            final int methodReturnTypeStartContext = writeContext(typeNameContext);
-            final int methodParametersStartContext = writeContext(typeNameContext);
-            
-            listener.onClassMethodStart(classMethodStartContext);
-            
-            listener.onMethodReturnTypeStart(methodReturnTypeStartContext);
-            
-            listenerHelper.onType(typeNameContext, typeName, names, null, referenceType, null);
-            
-            listener.onMethodReturnTypeEnd(methodReturnTypeStartContext, getLexerContext());
-            
-            listener.onMethodName(identifierContext, identifier);
-
-            parseParametersAndMethod(classMethodStartContext, methodParametersStartContext);
+            parseMethod(typeNameContext, typeName, names, referenceType, identifierContext, identifier);
             break;
         }
             
         default:
             throw lexer.unexpectedToken();
         }
+    }
+    
+    private void parseMethod(
+            int typeNameContext,
+            long typeName,
+            Names names,
+            ReferenceType referenceType,
+            int identifierContext,
+            long identifier) throws IOException, ParserException {
+
+        final int classMethodStartContext = writeContext(typeNameContext);
+        final int methodReturnTypeStartContext = writeContext(typeNameContext);
+        final int methodParametersStartContext = writeContext(typeNameContext);
+        
+        listener.onClassMethodStart(classMethodStartContext);
+        
+        listener.onMethodReturnTypeStart(methodReturnTypeStartContext);
+        
+        listenerHelper.onType(typeNameContext, typeName, names, null, referenceType, null);
+        
+        listener.onMethodReturnTypeEnd(methodReturnTypeStartContext, getLexerContext());
+        
+        listener.onMethodName(identifierContext, identifier);
+
+        parseParametersAndMethod(methodParametersStartContext);
+
+        listener.onClassMethodEnd(classMethodStartContext, getLexerContext());
+
     }
     
 
@@ -880,7 +926,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
             JavaToken.RPAREN
     };
 
-    private void parseParametersAndMethod(int methodStartContext, int methodParametersStartContext) throws IOException, ParserException {
+    private void parseParametersAndMethod(int methodParametersStartContext) throws IOException, ParserException {
 
         listener.onMethodSignatureParametersStart(methodParametersStartContext);
         
@@ -891,7 +937,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
         case RPAREN:
             listener.onMethodSignatureParametersEnd(methodParametersStartContext, getLexerContext());
             
-            parseMethodBodyOrSemicolon(methodParametersStartContext);
+            parseMethodBodyOrSemicolon();
             break;
 
         default:
@@ -902,11 +948,9 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
                 throw lexer.unexpectedToken();
             }
             
-            parseMethodBodyOrSemicolon(methodStartContext);
+            parseMethodBodyOrSemicolon();
             break;
         }
-        
-        listener.onMethodSignatureParametersEnd(methodParametersStartContext, getLexerContext());
     }
 
     private static final JavaToken [] PARAM_TYPE = {
@@ -999,7 +1043,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
             JavaToken.SEMI
     }; 
     
-    private void parseMethodBodyOrSemicolon(int methodStartContext) throws ParserException, IOException {
+    private void parseMethodBodyOrSemicolon() throws ParserException, IOException {
         
         final JavaToken token = lexer.lexSkipWS(BODY_OR_SEMI_COLON);
         
@@ -1007,8 +1051,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaTypesLexerParser<COMPI
 
         case LBRACE:
             parseMethodBodyAndRBrace();
-            
-            listener.onClassMethodEnd(methodStartContext, getLexerContext());
             break;
             
         default:

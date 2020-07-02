@@ -125,6 +125,10 @@ public class AST {
             size = IDENTIFIER_TYPE_REFERENCE_SIZE;
             break;
 
+        case CONSTRUCTOR_NAME:
+            size = CONSTRUCTOR_NAME_SIZE;
+            break;
+            
         case METHOD_NAME:
             size = METHOD_NAME_SIZE;
             break;
@@ -779,6 +783,50 @@ public class AST {
                 leafContext,
                 astBuffer.getStringRef(index),
                 astBuffer.getInt(index + 4));
+    }
+
+    static void encodeConstructorStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.CONSTRUCTOR_MEMBER);
+    }
+
+    public static <COMPILATION_UNIT> void decodeConstructorStart(
+            ASTBufferRead astBuffer,
+            int constructorStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onConstructorStart(constructorStartContext);
+    }
+
+    private static final int CONSTRUCTOR_NAME_SIZE = STRING_REF_SIZE;
+
+    static void encodeConstructorName(StringASTBuffer astBuffer, long constructorName) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.METHOD_NAME);
+        
+        astBuffer.writeStringRef(constructorName);
+    }
+
+    public static <COMPILATION_UNIT> void decodeConstructorName(
+            ASTBufferRead astBuffer,
+            int leafContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onConstructorName(leafContext, astBuffer.getStringRef(index));
+    }
+
+    static void encodeConstructorEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.CONSTRUCTOR_MEMBER);
+    }
+
+    public static <COMPILATION_UNIT> void decodeConstructorEnd(
+            int constructorStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onConstructorEnd(constructorStartContext, endContext);
     }
 
     static void encodeClassMethodStart(StringASTBuffer astBuffer) {

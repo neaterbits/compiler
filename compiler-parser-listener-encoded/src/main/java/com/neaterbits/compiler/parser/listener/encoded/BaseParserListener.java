@@ -434,7 +434,9 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onConstructorStart(int constructorStartContext) {
 
-        throw new UnsupportedOperationException();
+        writeStartElementContextRef(constructorStartContext);
+        
+        AST.encodeConstructorStart(astBuffer);
     }
 
     @Override
@@ -446,7 +448,9 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onConstructorName(int context, long constructorName) {
 
-        throw new UnsupportedOperationException();
+        writeLeafElementContextRef(context);
+        
+        AST.encodeConstructorName(astBuffer, constructorName);
     }
 
     @Override
@@ -464,7 +468,9 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     @Override
     public final void onConstructorEnd(int constructorStartContext, Context endContext) {
 
-        throw new UnsupportedOperationException();
+        writeEndElementContext(constructorStartContext, endContext);
+
+        AST.encodeConstructorEnd(astBuffer);
     }
 
     @Override
