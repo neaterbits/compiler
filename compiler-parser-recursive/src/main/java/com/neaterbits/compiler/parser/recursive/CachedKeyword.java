@@ -10,10 +10,10 @@ public final class CachedKeyword<TOKEN extends IToken> {
     private int context;
     private long stringRef;
     
-    public CachedKeyword(TOKEN token, int context, long stringRef) {
-        init(token, context, stringRef);
+    CachedKeyword() {
+
     }
-    
+
     public void init(TOKEN token, int context, long stringRef) {
 
         Objects.requireNonNull(token);

@@ -3,8 +3,6 @@ package com.neaterbits.compiler.parser.recursive;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import com.neaterbits.util.parse.ParserException;
 
@@ -26,6 +24,8 @@ public abstract class ScratchEntity<PART, TO_PROCESS, LIST> implements ScratchLi
         this.partList = new ArrayList<>(100);
         this.numPartElements = 0;
     }
+    
+    abstract PART createPart();
     
     abstract TO_PROCESS getToProcess();
     
@@ -69,17 +69,23 @@ public abstract class ScratchEntity<PART, TO_PROCESS, LIST> implements ScratchLi
         }
     }
 
-    final void add(Supplier<PART> create, Consumer<PART> init) {
+    final PART getOrCreate() {
+        
+        final PART part;
         
         if (numPartElements == partList.size()) {
             
-            partList.add(create.get());
+            part = createPart();
+            
+            partList.add(part);
         }
         else {
-            init.accept(partList.get(numPartElements));
+            part = partList.get(numPartElements);
         }
 
         ++ numPartElements;
+        
+        return part;
     }
     
     final int getCount() {

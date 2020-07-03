@@ -37,8 +37,13 @@ final class NamesImpl
     }
 
     @Override
+    NamePart createPart() {
+        return new NamePart();
+    }
+
+    @Override
     public void add(int context, long name) {
-        
-        super.add(() -> new NamePart(context, name), part -> part.init(context, name));
+
+        getOrCreate().init(context, name);
     }
 }

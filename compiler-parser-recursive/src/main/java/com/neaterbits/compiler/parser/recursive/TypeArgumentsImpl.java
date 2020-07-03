@@ -16,15 +16,20 @@ final class TypeArgumentsImpl
     }
 
     @Override
+    TypeArgumentImpl createPart() {
+        return new TypeArgumentImpl();
+    }
+
+    @Override
     public void addGenericType(int context, long name) {
 
-        add(() -> new TypeArgumentImpl(context, name), part -> part.init(context, name));
+        getOrCreate().init(context, name);
     }
 
     @Override
     public void addConcreteType(NamesList names, TypeArgumentsList typeArguments, Context endContext) {
 
-        add(() -> new TypeArgumentImpl(names, typeArguments, endContext), part -> part.init(names, typeArguments, endContext));
+        getOrCreate().init(names, typeArguments, endContext);
     }
 
     @Override

@@ -19,9 +19,8 @@ final class TypeArgumentImpl implements TypeArgument {
     
     private MutableContext concreteEndContext;
 
-    TypeArgumentImpl(int genericTypeNameContext, long genericTypeName) {
-        
-        init(genericTypeNameContext, genericTypeName);
+    TypeArgumentImpl() {
+
     }
         
     void init(int genericTypeNameContext, long genericTypeName) {
@@ -57,6 +56,11 @@ final class TypeArgumentImpl implements TypeArgument {
         
         this.concreteTypeNames = concreteTypeNames;
         this.concreteTypeGenerics = concreteTypeGenerics;
+        
+        if (this.concreteEndContext == null) {
+            this.concreteEndContext = new MutableContext();
+        }
+
         this.concreteEndContext.init(concreteEndContext);
     }
 

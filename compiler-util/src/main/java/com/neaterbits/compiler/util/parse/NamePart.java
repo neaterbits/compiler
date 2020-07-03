@@ -5,11 +5,14 @@ public final class NamePart {
     private int context;
     private long part;
     
+    public NamePart() {
+        
+    }
+
     public NamePart(int context, long part) {
         init(context, part);
     }
     
-    // TODO make immutable?
     public void init(int context, long part) {
         this.context = context;
         this.part = part;

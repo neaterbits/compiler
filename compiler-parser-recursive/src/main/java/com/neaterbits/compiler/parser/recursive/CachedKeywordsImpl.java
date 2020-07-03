@@ -31,10 +31,15 @@ final class CachedKeywordsImpl<TOKEN extends IToken>
     }
 
     @Override
+    CachedKeyword<TOKEN> createPart() {
+        
+        return new CachedKeyword<>();
+    }
+
+    @Override
     public void addScratchKeyword(TOKEN token, int context, long stringRef) {
         
-        add(() -> new CachedKeyword<>(token, context, stringRef),
-            part -> part.init(token, context, stringRef));
+        getOrCreate().init(token, context, stringRef);
     }
 
     @Override
