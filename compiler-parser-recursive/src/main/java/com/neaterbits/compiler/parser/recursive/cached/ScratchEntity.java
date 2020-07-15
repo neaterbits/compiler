@@ -92,7 +92,7 @@ public abstract class ScratchEntity<PART, TO_PROCESS, LIST> implements ScratchLi
         return numPartElements;
     }
     
-    private void clear() {
+    final void clear() {
         this.numPartElements = 0;
         this.inUse = false;
     }

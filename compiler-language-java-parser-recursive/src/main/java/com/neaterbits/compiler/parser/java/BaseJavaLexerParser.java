@@ -23,7 +23,13 @@ abstract class BaseJavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<Jav
             Lexer<JavaToken, CharInput> lexer,
             Tokenizer tokenizer,
             IterativeParserListener<COMPILATION_UNIT> listener) {
-        super(file, lexer, tokenizer);
+
+        super(
+                file,
+                lexer,
+                tokenizer,
+                listener::writeContext,
+                JavaLanguageOperatorPrecedence.INSTANCE);
 
         Objects.requireNonNull(listener);
         
@@ -90,5 +96,12 @@ abstract class BaseJavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<Jav
                 break;
             }
         }
+    }
+    
+    final void applyAndClearExpressionCache() {
+        
+        expressionCache.apply(listener);
+        
+        expressionCache.clear();
     }
 }

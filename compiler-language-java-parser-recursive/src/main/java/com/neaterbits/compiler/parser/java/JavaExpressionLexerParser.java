@@ -22,6 +22,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             Tokenizer tokenizer,
             IterativeParserListener<COMPILATION_UNIT> listener) {
         super(file, lexer, tokenizer, listener);
+        
     }
 
     private static final JavaToken [] OPERATOR_TOKENS = new JavaToken [] {
@@ -37,7 +38,6 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             JavaToken.MUL,
             JavaToken.DIV,
             JavaToken.MOD
-            
     };
     
     final void parseExpressionList() throws IOException, ParserException {
@@ -59,68 +59,10 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             else {
                 
                 initial = false;
-                
-                final JavaToken operatorToken = lexer.lexSkipWS(OPERATOR_TOKENS);
-                
-                switch (operatorToken) {
-                case EQUALS:
-                    callListenerAndParseExpression(writeCurContext(), Relational.EQUALS);
-                    break;
-                    
-                case NOT_EQUALS:
-                    callListenerAndParseExpression(writeCurContext(), Relational.NOT_EQUALS);
-                    break;
-                    
-                case LT:
-                    callListenerAndParseExpression(writeCurContext(), Relational.LESS_THAN);
-                    break;
-                    
-                case GT:
-                    callListenerAndParseExpression(writeCurContext(), Relational.GREATER_THAN);
-                    break;
-    
-                case LTE:
-                    callListenerAndParseExpression(writeCurContext(), Relational.LESS_THAN_OR_EQUALS);
-                    break;
-                    
-                case GTE:
-                    callListenerAndParseExpression(writeCurContext(), Relational.GREATER_THAN_OR_EQUALS);
-                    break;
-                    
-                case PLUS:
-                    callListenerAndParseExpression(writeCurContext(), Arithmetic.PLUS);
-                    break;
-                    
-                case MINUS:
-                    callListenerAndParseExpression(writeCurContext(), Arithmetic.MINUS);
-                    break;
-
-                case MUL:
-                    callListenerAndParseExpression(writeCurContext(), Arithmetic.MULTIPLY);
-                    break;
-
-                case DIV:
-                    callListenerAndParseExpression(writeCurContext(), Arithmetic.DIVIDE);
-                    break;
-
-                case MOD:
-                    callListenerAndParseExpression(writeCurContext(), Arithmetic.MODULUS);
-                    break;
-
-                default:
-                    done = true;
-                    break;
-                }
             }
         } while (!done);
     }
     
-    private void callListenerAndParseExpression(int context, Operator operator) throws IOException, ParserException {
-        
-        listener.onExpressionBinaryOperator(context, operator);
-        
-    }
-
     private static final JavaToken [] EXPRESSION_TOKENS = new JavaToken [] {
             
             JavaToken.IDENTIFIER,
@@ -128,29 +70,126 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
     };
             
     final boolean parseExpression() throws IOException, ParserException {
-        
-        final JavaToken token = lexer.lexSkipWS(EXPRESSION_TOKENS);
-        
-        boolean expressionFound = true;
-        
-        switch (token) {
-        case IDENTIFIER:
-            // Variable or 'this' or method call
-            parseVariableReferenceExpression(writeCurContext(), getStringRef());
-            break;
 
-        case NUMBER:
-            parseNumericLiteral(writeCurContext(), getStringRef());
-            break;
-
-        default:
-            expressionFound = false;
-            break;
+        final boolean expressionFound = parseExpressionToCache();
+        
+        if (expressionFound) {
+            applyAndClearExpressionCache();
         }
         
         return expressionFound;
     }
     
+    private boolean parseExpressionToCache() throws IOException, ParserException {
+        
+        final boolean expressionFound = parsePrimary();
+        
+        if (expressionFound) {
+         
+            for (;;) {
+
+                if (parseOperatorToCache()) {
+                    
+                    if (!parsePrimary()) {
+                        throw new ParserException("Missing primary");
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+            
+        return expressionFound;
+    }
+
+    private boolean parsePrimary() throws IOException, ParserException {
+        
+        final JavaToken token = lexer.lexSkipWS(EXPRESSION_TOKENS);
+        
+        switch (token) {
+        case IDENTIFIER:
+            // Variable or 'this' or method call
+            expressionCache.addName(writeCurContext(), getStringRef());
+            break;
+
+        case NUMBER:
+            expressionCache.addIntegerLiteral(
+                    writeCurContext(),
+                    tokenizer.asInt(getStringRef()),
+                    Base.DECIMAL,
+                    true,
+                    32);
+            break;
+            
+        case NONE:
+            break;
+            
+        default:
+            throw lexer.unexpectedToken();
+        }
+
+        return token != JavaToken.NONE;
+    }
+        
+    
+    private boolean parseOperatorToCache() throws IOException, ParserException {
+        
+        final JavaToken operatorToken = lexer.lexSkipWS(OPERATOR_TOKENS);
+        
+        switch (operatorToken) {
+        case EQUALS:
+            callListenerAndParseExpression(writeCurContext(), Relational.EQUALS);
+            break;
+            
+        case NOT_EQUALS:
+            callListenerAndParseExpression(writeCurContext(), Relational.NOT_EQUALS);
+            break;
+            
+        case LT:
+            callListenerAndParseExpression(writeCurContext(), Relational.LESS_THAN);
+            break;
+            
+        case GT:
+            callListenerAndParseExpression(writeCurContext(), Relational.GREATER_THAN);
+            break;
+
+        case LTE:
+            callListenerAndParseExpression(writeCurContext(), Relational.LESS_THAN_OR_EQUALS);
+            break;
+            
+        case GTE:
+            callListenerAndParseExpression(writeCurContext(), Relational.GREATER_THAN_OR_EQUALS);
+            break;
+            
+        case PLUS:
+            callListenerAndParseExpression(writeCurContext(), Arithmetic.PLUS);
+            break;
+            
+        case MINUS:
+            callListenerAndParseExpression(writeCurContext(), Arithmetic.MINUS);
+            break;
+
+        case MUL:
+            callListenerAndParseExpression(writeCurContext(), Arithmetic.MULTIPLY);
+            break;
+
+        case DIV:
+            callListenerAndParseExpression(writeCurContext(), Arithmetic.DIVIDE);
+            break;
+
+        case MOD:
+            callListenerAndParseExpression(writeCurContext(), Arithmetic.MODULUS);
+            break;
+
+        default:
+            break;
+        }
+
+        return operatorToken != JavaToken.NONE;
+    }
+
+    /*
     private void parseVariableReferenceExpression(int context, long stringRef) {
         
         // For now just say this is a variable
@@ -167,6 +206,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
                 true,
                 32);
     }
+    */
 
     final void parseConditionInParenthesis() throws IOException, ParserException {
         
@@ -282,5 +322,10 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
                 }
             }
         }
+    }
+
+    private void callListenerAndParseExpression(int context, Operator operator) throws IOException, ParserException {
+
+        expressionCache.addOperator(context, operator);
     }
 }

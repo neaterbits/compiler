@@ -65,4 +65,13 @@ public final class ScratchBuf<PART, TO_PROCESS, LIST, IMPL extends ScratchEntity
         
         -- scratchInUse;
     }
+    
+    public void clear() {
+        
+        for (int i = 0; i < scratchInUse; ++ i) {
+            scratch.get(i).clear();
+        }
+        
+        this.scratchInUse = 0;
+    }
 }

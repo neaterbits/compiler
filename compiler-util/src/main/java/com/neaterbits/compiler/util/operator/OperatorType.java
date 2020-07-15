@@ -5,5 +5,6 @@ public enum OperatorType {
     ARITHMETIC,
     RELATIONAL,
     BITWISE,
-    LOGICAL
+    LOGICAL,
+    SCOPE;
 }

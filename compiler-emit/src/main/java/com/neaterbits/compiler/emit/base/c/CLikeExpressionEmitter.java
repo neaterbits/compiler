@@ -18,6 +18,7 @@ import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.OperatorVisitor;
 import com.neaterbits.compiler.util.operator.Relational;
+import com.neaterbits.compiler.util.operator.Scope;
 
 public abstract class CLikeExpressionEmitter<T extends EmitterState> extends BaseInfixExpressionEmitter<T> {
 
@@ -152,6 +153,11 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 		public String onLogical(Logical logical, Void param) {
 			return getCLogicalOperator(logical);
 		}
+
+        @Override
+        public String onScope(Scope scope, Void param) {
+            throw new UnsupportedOperationException();
+        }
 	};
 	
 	@Override

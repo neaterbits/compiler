@@ -3,6 +3,9 @@ package com.neaterbits.compiler.parser.recursive;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.recursive.cached.ScratchBuf;
+import com.neaterbits.compiler.parser.recursive.cached.expressions.ContextWriter;
+import com.neaterbits.compiler.parser.recursive.cached.expressions.ExpressionCache;
+import com.neaterbits.compiler.parser.recursive.cached.expressions.LanguageOperatorPrecedence;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeyword;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywords;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywordsImpl;
@@ -27,6 +30,8 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
     protected final Tokenizer tokenizer;
 
     private final LexerContext context;
+    
+    protected final ExpressionCache expressionCache;
 
     private final ScratchBuf<NamePart, Names, NamesList, NamesImpl> scratchNames;
     private final ScratchBuf<TypeArgumentImpl, TypeArguments, TypeArgumentsList, TypeArgumentsImpl> scratchTypeArguments;
@@ -37,7 +42,12 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         CachedKeywordsImpl<TOKEN>>
             scratchKeywords;
     
-    public BaseLexerParser(String file, Lexer<TOKEN, CharInput> lexer, Tokenizer tokenizer) {
+    public BaseLexerParser(
+            String file,
+            Lexer<TOKEN, CharInput> lexer,
+            Tokenizer tokenizer,
+            ContextWriter contextWriter,
+            LanguageOperatorPrecedence languageOperatorPrecedence) {
         
         Objects.requireNonNull(lexer);
         Objects.requireNonNull(tokenizer);
@@ -45,6 +55,8 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         this.lexer = lexer;
         this.tokenizer = tokenizer;
         this.context = new LexerContext(file, lexer, tokenizer);
+        
+        this.expressionCache = new ExpressionCache(contextWriter, languageOperatorPrecedence);
 
         this.scratchNames = new ScratchBuf<>(NamesImpl::new);
         this.scratchTypeArguments = new ScratchBuf<>(TypeArgumentsImpl::new);
