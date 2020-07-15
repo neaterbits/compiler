@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.util.Strings;
-
 public class StringsTest {
 
 	@Test

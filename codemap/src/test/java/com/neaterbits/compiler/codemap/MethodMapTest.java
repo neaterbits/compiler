@@ -2,10 +2,6 @@ package com.neaterbits.compiler.codemap;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.codemap.Encode;
-import com.neaterbits.compiler.codemap.MethodMap;
-import com.neaterbits.compiler.codemap.MethodMapCache;
-import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.util.model.MethodVariant;
 
 import static org.assertj.core.api.Assertions.assertThat;

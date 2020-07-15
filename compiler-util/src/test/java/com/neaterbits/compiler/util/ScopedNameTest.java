@@ -4,8 +4,6 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.util.ScopedName;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ScopedNameTest {

@@ -10,10 +10,6 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.neaterbits.compiler.resolver.FilesResolver;
-import com.neaterbits.compiler.resolver.ReferenceLocation;
-import com.neaterbits.compiler.resolver.ResolveFilesResult;
-import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.ast.objects.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;

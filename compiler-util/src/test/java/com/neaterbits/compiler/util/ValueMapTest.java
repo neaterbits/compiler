@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.fail;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.util.ValueMap;
-
 public class ValueMapTest {
 
 	// @Test

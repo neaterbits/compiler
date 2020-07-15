@@ -2,7 +2,6 @@ package com.neaterbits.compiler.util;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.util.Hash;
 import com.neaterbits.compiler.util.Hash.GetCompareValue;
 
 import static org.assertj.core.api.Assertions.assertThat;

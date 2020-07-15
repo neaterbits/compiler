@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.resolver.ReferenceLocation;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;

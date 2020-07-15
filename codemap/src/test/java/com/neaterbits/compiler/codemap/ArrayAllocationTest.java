@@ -7,8 +7,6 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.codemap.ArrayAllocation;
-
 public class ArrayAllocationTest {
 
 	@Test
