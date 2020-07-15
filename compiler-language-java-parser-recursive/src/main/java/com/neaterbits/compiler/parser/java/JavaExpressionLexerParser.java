@@ -4,9 +4,11 @@ import java.io.IOException;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.util.Base;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.Relational;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
@@ -164,5 +166,121 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
                 Base.DECIMAL,
                 true,
                 32);
+    }
+
+    final void parseConditionInParenthesis() throws IOException, ParserException {
+        
+        final JavaToken lparen = lexer.lexSkipWS(JavaToken.LPAREN);
+        
+        if (lparen != JavaToken.LPAREN) {
+            throw lexer.unexpectedToken();
+        }
+        
+        parseExpressionList();
+
+        final JavaToken rparen = lexer.lexSkipWS(JavaToken.RPAREN);
+        
+        if (rparen != JavaToken.RPAREN) {
+            throw lexer.unexpectedToken();
+        }
+    }
+
+    final void parseAnyAdditionalPrimaries() throws IOException, ParserException {
+
+        for (;;) {
+            final JavaToken periodToken = lexer.lexSkipWS(JavaToken.PERIOD);
+            
+            if (periodToken != JavaToken.PERIOD) {
+                break;
+            }
+
+            parseAnAdditionalPrimary();
+        }
+    }
+    
+    private void parseAnAdditionalPrimary() throws IOException, ParserException {
+        
+        final JavaToken identifierToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+
+        if (identifierToken !=  JavaToken.IDENTIFIER) {
+            throw lexer.unexpectedToken();
+        }
+        
+        final long identifier = getStringRef();
+        final int identifierContext = writeCurContext();
+        
+        final JavaToken nextToken = lexer.lexSkipWS(JavaToken.LPAREN);
+        
+        if (nextToken == JavaToken.LPAREN) {
+            // Method invocation
+            final int methodInvocationContext = writeContext(identifierContext);
+            
+            listener.onMethodInvocationStart(
+                    methodInvocationContext,
+                    MethodInvocationType.PRIMARY,
+                    null,
+                    0,
+                    identifier,
+                    identifierContext);
+            
+            parseMethodInvocationParameters();
+            
+            listener.onMethodInvocationEnd(methodInvocationContext, true, getLexerContext());
+        }
+        else {
+            
+            listener.onFieldAccess(
+                    identifierContext,
+                    FieldAccessType.FIELD,
+                    null,
+                    null,
+                    identifier,
+                    identifierContext);
+        }
+    }
+    
+    private static JavaToken [] AFTER_PARAMETER_TOKEN = new JavaToken [] {
+      
+            JavaToken.COMMA,
+            JavaToken.RPAREN
+            
+    };
+    
+    final void parseMethodInvocationParameters() throws IOException, ParserException {
+        
+        final int startContext = writeCurContext();
+        
+        listener.onParametersStart(startContext);
+        // See if there is an initial end of parameters
+        final JavaToken endOfParameters = lexer.lexSkipWS(JavaToken.RPAREN);
+        
+        if (endOfParameters == JavaToken.RPAREN) {
+            listener.onParametersEnd(startContext, getLexerContext());
+        }
+        else {
+            for (;;) {
+                
+                final int paramContext = writeCurContext();
+                
+                listener.onParameterStart(paramContext);
+                
+                parseExpressionList();
+                
+                listener.onParameterEnd(paramContext, getLexerContext());
+
+                final JavaToken paramToken = lexer.lexSkipWS(AFTER_PARAMETER_TOKEN);
+                
+                if (paramToken == JavaToken.RPAREN) {
+                    listener.onParametersEnd(startContext, getLexerContext());
+                    break;
+                }
+                else if (paramToken == JavaToken.COMMA) {
+                    // Continue with next
+                }
+                else {
+                    throw lexer.unexpectedToken();
+                }
+            }
+        }
     }
 }
