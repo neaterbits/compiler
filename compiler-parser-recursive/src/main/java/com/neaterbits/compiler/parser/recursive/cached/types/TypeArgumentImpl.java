@@ -1,13 +1,14 @@
-package com.neaterbits.compiler.parser.recursive;
+package com.neaterbits.compiler.parser.recursive.cached.types;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.MutableContext;
 import com.neaterbits.util.io.strings.StringRef;
 
-final class TypeArgumentImpl implements TypeArgument {
+public final class TypeArgumentImpl implements TypeArgument {
 
     private long genericTypeName;
     private int genericTypeNameContext;

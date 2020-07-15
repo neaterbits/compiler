@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.parser.recursive;
+package com.neaterbits.compiler.parser.recursive.cached;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public abstract class ScratchEntity<PART, TO_PROCESS, LIST> implements ScratchLi
 
     private int index;
 
-    ScratchEntity(ScratchBuf<PART, TO_PROCESS, LIST, ?> buf) {
+    protected ScratchEntity(ScratchBuf<PART, TO_PROCESS, LIST, ?> buf) {
         
         this.buf = buf;
         
@@ -25,11 +25,11 @@ public abstract class ScratchEntity<PART, TO_PROCESS, LIST> implements ScratchLi
         this.numPartElements = 0;
     }
     
-    abstract PART createPart();
+    protected abstract PART createPart();
     
-    abstract TO_PROCESS getToProcess();
+    protected abstract TO_PROCESS getToProcess();
     
-    abstract LIST getList();
+    protected abstract LIST getList();
 
     int getIndex() {
         return index;
@@ -47,7 +47,7 @@ public abstract class ScratchEntity<PART, TO_PROCESS, LIST> implements ScratchLi
         this.inUse = inUse;
     }
     
-    final PART get(int index) {
+    protected final PART get(int index) {
         return partList.get(index);
     }
     
@@ -69,7 +69,7 @@ public abstract class ScratchEntity<PART, TO_PROCESS, LIST> implements ScratchLi
         }
     }
 
-    final PART getOrCreate() {
+    protected final PART getOrCreate() {
         
         final PART part;
         
@@ -88,7 +88,7 @@ public abstract class ScratchEntity<PART, TO_PROCESS, LIST> implements ScratchLi
         return part;
     }
     
-    final int getCount() {
+    protected final int getCount() {
         return numPartElements;
     }
     

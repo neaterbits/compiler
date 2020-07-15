@@ -1,17 +1,17 @@
-package com.neaterbits.compiler.parser.recursive;
+package com.neaterbits.compiler.parser.recursive.cached;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-final class ScratchBuf<PART, TO_PROCESS, LIST, IMPL extends ScratchEntity<PART, TO_PROCESS, LIST>> {
+public final class ScratchBuf<PART, TO_PROCESS, LIST, IMPL extends ScratchEntity<PART, TO_PROCESS, LIST>> {
 
     private final Function<ScratchBuf<PART, TO_PROCESS, LIST, ?>, IMPL> createEntity;
     private final List<IMPL> scratch;
     private int scratchInUse;
 
-    ScratchBuf(Function<ScratchBuf<PART, TO_PROCESS, LIST, ?>, IMPL> createEntity) {
+    public ScratchBuf(Function<ScratchBuf<PART, TO_PROCESS, LIST, ?>, IMPL> createEntity) {
         
         Objects.requireNonNull(createEntity);
 
@@ -19,7 +19,7 @@ final class ScratchBuf<PART, TO_PROCESS, LIST, IMPL extends ScratchEntity<PART, 
         this.scratch = new ArrayList<>();
     }
 
-    LIST startScratchParts() {
+    public final LIST startScratchParts() {
 
         final int index;
         

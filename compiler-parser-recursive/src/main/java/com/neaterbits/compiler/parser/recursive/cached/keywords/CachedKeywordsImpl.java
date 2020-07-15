@@ -1,8 +1,10 @@
-package com.neaterbits.compiler.parser.recursive;
+package com.neaterbits.compiler.parser.recursive.cached.keywords;
 
+import com.neaterbits.compiler.parser.recursive.cached.ScratchBuf;
+import com.neaterbits.compiler.parser.recursive.cached.ScratchEntity;
 import com.neaterbits.util.parse.IToken;
 
-final class CachedKeywordsImpl<TOKEN extends IToken>
+public final class CachedKeywordsImpl<TOKEN extends IToken>
     extends ScratchEntity<
                 CachedKeyword<TOKEN>,
                 CachedKeywords<TOKEN>,
@@ -21,17 +23,17 @@ final class CachedKeywordsImpl<TOKEN extends IToken>
     }
 
     @Override
-    CachedKeywords<TOKEN> getToProcess() {
+    protected CachedKeywords<TOKEN> getToProcess() {
         return this;
     }
 
     @Override
-    CachedKeywordsList<TOKEN> getList() {
+    protected CachedKeywordsList<TOKEN> getList() {
         return this;
     }
 
     @Override
-    CachedKeyword<TOKEN> createPart() {
+    protected CachedKeyword<TOKEN> createPart() {
         
         return new CachedKeyword<>();
     }

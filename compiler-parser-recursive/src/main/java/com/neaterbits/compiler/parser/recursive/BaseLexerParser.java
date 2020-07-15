@@ -2,6 +2,17 @@ package com.neaterbits.compiler.parser.recursive;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.parser.recursive.cached.ScratchBuf;
+import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeyword;
+import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywords;
+import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywordsImpl;
+import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywordsList;
+import com.neaterbits.compiler.parser.recursive.cached.names.NamesImpl;
+import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
+import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentImpl;
+import com.neaterbits.compiler.parser.recursive.cached.types.TypeArguments;
+import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsImpl;
+import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.NamePart;

@@ -1,22 +1,25 @@
-package com.neaterbits.compiler.parser.recursive;
+package com.neaterbits.compiler.parser.recursive.cached.types;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.parser.recursive.cached.ScratchBuf;
+import com.neaterbits.compiler.parser.recursive.cached.ScratchEntity;
+import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
 import com.neaterbits.compiler.util.Context;
 
-final class TypeArgumentsImpl
+public final class TypeArgumentsImpl
     extends ScratchEntity<TypeArgumentImpl, TypeArguments, TypeArgumentsList> 
     implements TypeArguments, TypeArgumentsList {
 
     private int startContext;
     private Context endContext;
     
-    TypeArgumentsImpl(ScratchBuf<TypeArgumentImpl, TypeArguments, TypeArgumentsList, ?> buf) {
+    public TypeArgumentsImpl(ScratchBuf<TypeArgumentImpl, TypeArguments, TypeArgumentsList, ?> buf) {
         super(buf);
     }
 
     @Override
-    TypeArgumentImpl createPart() {
+    protected TypeArgumentImpl createPart() {
         return new TypeArgumentImpl();
     }
 
@@ -64,13 +67,13 @@ final class TypeArgumentsImpl
     }
 
     @Override
-    TypeArguments getToProcess() {
+    protected TypeArguments getToProcess() {
 
         return this;
     }
 
     @Override
-    TypeArgumentsList getList() {
+    protected TypeArgumentsList getList() {
         return this;
     }
 }

@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
-import com.neaterbits.compiler.parser.recursive.CachedKeyword;
-import com.neaterbits.compiler.parser.recursive.CachedKeywords;
-import com.neaterbits.compiler.parser.recursive.TypeArgument;
-import com.neaterbits.compiler.parser.recursive.TypeArguments;
+import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeyword;
+import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywords;
+import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgument;
+import com.neaterbits.compiler.parser.recursive.cached.types.TypeArguments;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;

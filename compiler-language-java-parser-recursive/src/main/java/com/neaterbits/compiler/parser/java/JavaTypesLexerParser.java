@@ -3,8 +3,8 @@ package com.neaterbits.compiler.parser.java;
 import java.io.IOException;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
-import com.neaterbits.compiler.parser.recursive.NamesList;
-import com.neaterbits.compiler.parser.recursive.TypeArgumentsList;
+import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
+import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.util.io.strings.CharInput;

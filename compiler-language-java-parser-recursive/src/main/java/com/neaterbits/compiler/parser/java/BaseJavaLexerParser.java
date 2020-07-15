@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.recursive.BaseLexerParser;
-import com.neaterbits.compiler.parser.recursive.NamesList;
-import com.neaterbits.compiler.parser.recursive.ProcessParts;
+import com.neaterbits.compiler.parser.recursive.cached.ProcessParts;
+import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;

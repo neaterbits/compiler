@@ -1,13 +1,15 @@
-package com.neaterbits.compiler.parser.recursive;
+package com.neaterbits.compiler.parser.recursive.cached.names;
 
+import com.neaterbits.compiler.parser.recursive.cached.ScratchBuf;
+import com.neaterbits.compiler.parser.recursive.cached.ScratchEntity;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.NamePart;
 
-final class NamesImpl
+public final class NamesImpl
         extends ScratchEntity<NamePart, Names, NamesList>
         implements Names, NamesList {
     
-    NamesImpl(ScratchBuf<NamePart, Names, NamesList, ?> buf) {
+    public NamesImpl(ScratchBuf<NamePart, Names, NamesList, ?> buf) {
         super(buf);
     }
 
@@ -27,17 +29,17 @@ final class NamesImpl
     }
     
     @Override
-    Names getToProcess() {
+    protected Names getToProcess() {
         return this;
     }
 
     @Override
-    NamesList getList() {
+    protected NamesList getList() {
         return this;
     }
 
     @Override
-    NamePart createPart() {
+    protected NamePart createPart() {
         return new NamePart();
     }
 
