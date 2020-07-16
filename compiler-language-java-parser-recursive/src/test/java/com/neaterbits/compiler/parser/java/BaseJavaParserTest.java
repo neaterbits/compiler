@@ -17,16 +17,14 @@ import com.neaterbits.compiler.ast.objects.annotation.Annotation;
 import com.neaterbits.compiler.ast.objects.annotation.AnnotationElement;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Constructor;
-import com.neaterbits.compiler.ast.objects.expression.AssignmentExpression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
-import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
+import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
 import com.neaterbits.compiler.ast.objects.generics.NamedTypeArgument;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
-import com.neaterbits.compiler.ast.objects.statement.AssignmentStatement;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
@@ -1667,10 +1665,11 @@ public abstract class BaseJavaParserTest {
 
         checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", "a");
         
-        final AssignmentStatement assignmentStatement = (AssignmentStatement)method.getBlock().getStatements().get(1);
-        final AssignmentExpression assignmentExpression = assignmentStatement.getExpression();
+        final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(1);
+        final ExpressionList expressionList = (ExpressionList)expressionStatement.getExpression();
         
-        final IntegerLiteral expression = (IntegerLiteral)assignmentExpression.getExpression();
+        final IntegerLiteral expression = (IntegerLiteral)expressionList.getExpressions().get(1);
+
         assertThat(expression).isNotNull();
         assertThat(expression.getValue()).isEqualTo(1L);
     }
@@ -1714,9 +1713,13 @@ public abstract class BaseJavaParserTest {
         
         final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
         
-        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)expressionStatement.getExpression();
-        assertThat(methodInvocation.getNameList().getNames().size()).isEqualTo(1);
-        assertThat(methodInvocation.getNameList().getNames().get(0).getText()).isEqualTo("SomeClass");
+        final PrimaryList primaryList = (PrimaryList)expressionStatement.getExpression();
+
+        final NamePrimary namePrimary = (NamePrimary)primaryList.getPrimaries().get(0);
+        assertThat(namePrimary.getName()).isEqualTo("SomeClass");
+
+        final MethodInvocationExpression methodInvocation = (MethodInvocationExpression)primaryList.getPrimaries().get(1);
+        
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
     }
@@ -1939,20 +1942,23 @@ public abstract class BaseJavaParserTest {
         assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
         
         final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
+
+        final PrimaryList primaryList = (PrimaryList)expressionStatement.getExpression();
+
+        final NamePrimary namePrimary = (NamePrimary)primaryList.getPrimaries().get(0);
         
-        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)expressionStatement.getExpression();
+        assertThat(namePrimary.getName()).isEqualTo("SomeClass");
+
+        final MethodInvocationExpression methodInvocation = (MethodInvocationExpression)primaryList.getPrimaries().get(1);
         
         // Class or static var, does not now which until has resolved classes and variables
         
         // System.out.println("## names " + methodInvocation.getNameList().getNames());
-        
-        assertThat(methodInvocation.getNameList().getNames().size()).isEqualTo(1);
-        assertThat(methodInvocation.getNameList().getNames().get(0).getText()).isEqualTo("SomeClass");
 
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
 
-        assertThat(methodInvocation.getInvocationType()).isEqualTo(MethodInvocationType.NAMED_CLASS_STATIC_OR_STATIC_VAR);
+        assertThat(methodInvocation.getInvocationType()).isEqualTo(MethodInvocationType.UNRESOLVED);
     }
     
     private void checkExpressionListLiteral(ExpressionList list, int index, int value) {

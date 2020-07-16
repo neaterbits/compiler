@@ -92,12 +92,13 @@ public interface ParseTreeFactory<
 	LAMBDA_EXPRESSION_PARAMETERS,
 	
 	PRIMARY_LIST extends PRIMARY,
+	
+	NAME_PRIMARY extends PRIMARY,
 
 	NESTED_EXPRESSION extends EXPRESSION,
 	FIELD_ACCESS extends PRIMARY,
 	THIS_PRIMARY extends PRIMARY,
 	CLASS_INSTANCE_CREATION_EXPRESSION extends PRIMARY,
-	UNRESOLVED_METHOD_INVOCATION_EXPRESSION extends PRIMARY,
 	METHOD_INVOCATION_EXPRESSION extends PRIMARY,
 	ARRAY_CREATION_EXPRESSION extends PRIMARY,
 	ARRAY_ACCESS_EXPRESSION extends PRIMARY,
@@ -316,7 +317,9 @@ public interface ParseTreeFactory<
 	
 	NAME_REFERENCE createNameReference(Context context, String name);
 	
-	PRIMARY_LIST createPrimaryList(Context context, List<PRIMARY> list);
+    PRIMARY_LIST createPrimaryList(Context context, List<PRIMARY> list);
+
+    NAME_PRIMARY createNamePrimary(Context context, String name);
 
 	FIELD_ACCESS createFieldAccess(Context context, FieldAccessType type, TYPE_REFERENCE classType, String fieldName);
 	
@@ -328,14 +331,6 @@ public interface ParseTreeFactory<
 			CONSTRUCTOR_NAME name,
 			List<EXPRESSION> parameters,
 			List<CLASS_METHOD_MEMBER> anonymousClassMethods);
-
-   UNRESOLVED_METHOD_INVOCATION_EXPRESSION createUnresolvedMethodInvocationExpression(
-            Context context,
-            MethodInvocationType type,
-            NAME_LIST nameList,
-            String methodName,
-            Context methodNameContext,
-            List<EXPRESSION> parameters);
 
 	METHOD_INVOCATION_EXPRESSION createMethodInvocationExpression(
 			Context context,

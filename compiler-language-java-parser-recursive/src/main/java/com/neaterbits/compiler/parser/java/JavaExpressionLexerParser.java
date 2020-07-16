@@ -4,11 +4,12 @@ import java.io.IOException;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.util.Base;
-import com.neaterbits.compiler.util.method.MethodInvocationType;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.Assignment;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.Relational;
-import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.compiler.util.operator.Scope;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
@@ -21,10 +22,20 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             Lexer<JavaToken, CharInput> lexer,
             Tokenizer tokenizer,
             IterativeParserListener<COMPILATION_UNIT> listener) {
-        super(file, lexer, tokenizer, listener);
         
+        super(file, lexer, tokenizer, listener);
     }
 
+    private static final JavaToken [] AFTER_NAME_OPERATOR_TOKENS = new JavaToken [] {
+            JavaToken.PERIOD,
+
+            JavaToken.ASSIGN,
+            
+            JavaToken.LPAREN
+    };
+    
+    private static final JavaToken [] EXPRESSION_STATEMENT_OPERATOR_TOKENS = AFTER_NAME_OPERATOR_TOKENS;
+    
     private static final JavaToken [] OPERATOR_TOKENS = new JavaToken [] {
             JavaToken.EQUALS,
             JavaToken.NOT_EQUALS,
@@ -37,7 +48,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             JavaToken.MINUS,
             JavaToken.MUL,
             JavaToken.DIV,
-            JavaToken.MOD
+            JavaToken.MOD,
     };
     
     final void parseExpressionList() throws IOException, ParserException {
@@ -79,23 +90,42 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         
         return expressionFound;
     }
-    
-    private boolean parseExpressionToCache() throws IOException, ParserException {
+
+    boolean parseExpressionStatementToCache() throws IOException, ParserException {
         
+        return parseExpressionToCache(EXPRESSION_STATEMENT_OPERATOR_TOKENS);
+    }
+
+    boolean parseExpressionToCache() throws IOException, ParserException {
+        
+        return parseExpressionToCache(OPERATOR_TOKENS);
+    }
+
+    private boolean parseExpressionToCache(JavaToken [] operatorTokens) throws IOException, ParserException {
+
         final boolean expressionFound = parsePrimary();
         
         if (expressionFound) {
          
             for (;;) {
 
-                if (parseOperatorToCache()) {
-                    
+                final OperatorStatus status = parseOperatorToCache(operatorTokens);
+                
+                if (status == OperatorStatus.NOT_FOUND) {
+                    break;
+                }
+                else if (status == OperatorStatus.REQUIRES_PRIMARY) {
                     if (!parsePrimary()) {
-                        throw new ParserException("Missing primary");
+                        if (status == OperatorStatus.REQUIRES_PRIMARY) {
+                            throw new ParserException("Missing primary");
+                        }
                     }
                 }
+                else if (status == OperatorStatus.OPTIONAL_OPERATOR) {
+                    // Continue
+                }
                 else {
-                    break;
+                    throw new UnsupportedOperationException();
                 }
             }
         }
@@ -131,82 +161,94 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
 
         return token != JavaToken.NONE;
     }
-        
     
-    private boolean parseOperatorToCache() throws IOException, ParserException {
+    enum OperatorStatus {
+        REQUIRES_PRIMARY,
+        OPTIONAL_OPERATOR,
+        NOT_FOUND
+    }
+    
+    private OperatorStatus parseOperatorToCache(JavaToken [] operatorTokens) throws IOException, ParserException {
         
-        final JavaToken operatorToken = lexer.lexSkipWS(OPERATOR_TOKENS);
+        final JavaToken operatorToken = lexer.lexSkipWS(operatorTokens);
+        
+        OperatorStatus status = operatorToken != JavaToken.NONE
+                ? OperatorStatus.REQUIRES_PRIMARY
+                : OperatorStatus.NOT_FOUND;
         
         switch (operatorToken) {
         case EQUALS:
-            callListenerAndParseExpression(writeCurContext(), Relational.EQUALS);
+            addOperator(writeCurContext(), Relational.EQUALS);
             break;
             
         case NOT_EQUALS:
-            callListenerAndParseExpression(writeCurContext(), Relational.NOT_EQUALS);
+            addOperator(writeCurContext(), Relational.NOT_EQUALS);
             break;
             
         case LT:
-            callListenerAndParseExpression(writeCurContext(), Relational.LESS_THAN);
+            addOperator(writeCurContext(), Relational.LESS_THAN);
             break;
             
         case GT:
-            callListenerAndParseExpression(writeCurContext(), Relational.GREATER_THAN);
+            addOperator(writeCurContext(), Relational.GREATER_THAN);
             break;
 
         case LTE:
-            callListenerAndParseExpression(writeCurContext(), Relational.LESS_THAN_OR_EQUALS);
+            addOperator(writeCurContext(), Relational.LESS_THAN_OR_EQUALS);
             break;
             
         case GTE:
-            callListenerAndParseExpression(writeCurContext(), Relational.GREATER_THAN_OR_EQUALS);
+            addOperator(writeCurContext(), Relational.GREATER_THAN_OR_EQUALS);
             break;
             
         case PLUS:
-            callListenerAndParseExpression(writeCurContext(), Arithmetic.PLUS);
+            addOperator(writeCurContext(), Arithmetic.PLUS);
             break;
             
         case MINUS:
-            callListenerAndParseExpression(writeCurContext(), Arithmetic.MINUS);
+            addOperator(writeCurContext(), Arithmetic.MINUS);
             break;
 
         case MUL:
-            callListenerAndParseExpression(writeCurContext(), Arithmetic.MULTIPLY);
+            addOperator(writeCurContext(), Arithmetic.MULTIPLY);
             break;
 
         case DIV:
-            callListenerAndParseExpression(writeCurContext(), Arithmetic.DIVIDE);
+            addOperator(writeCurContext(), Arithmetic.DIVIDE);
             break;
 
         case MOD:
-            callListenerAndParseExpression(writeCurContext(), Arithmetic.MODULUS);
+            addOperator(writeCurContext(), Arithmetic.MODULUS);
+            break;
+            
+        case PERIOD:
+            addOperator(writeCurContext(), Scope.NAMES_SEPARATOR);
+            break;
+            
+        case ASSIGN:
+            addOperator(writeCurContext(), Assignment.ASSIGN);
+            break;
+            
+        case LPAREN:
+            if (expressionCache.getTypeOfLast() != ParseTreeElement.NAME) {
+                throw new ParserException("Expected name");
+            }
+            
+            expressionCache.addMethodInvocationStart(writeCurContext());
+            
+            parseMethodInvocationParametersToCache();
+            
+            expressionCache.addMethodInvocationEnd();
+            
+            status = OperatorStatus.OPTIONAL_OPERATOR;
             break;
 
         default:
             break;
         }
 
-        return operatorToken != JavaToken.NONE;
+        return status;
     }
-
-    /*
-    private void parseVariableReferenceExpression(int context, long stringRef) {
-        
-        // For now just say this is a variable
-        listener.onVariableReference(context, stringRef);
-        
-    }
-    
-    private void parseNumericLiteral(int context, long stringRef) {
-
-        listener.onIntegerLiteral(
-                context,
-                tokenizer.asInt(stringRef),
-                Base.DECIMAL,
-                true,
-                32);
-    }
-    */
 
     final void parseConditionInParenthesis() throws IOException, ParserException {
         
@@ -224,60 +266,6 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             throw lexer.unexpectedToken();
         }
     }
-
-    final void parseAnyAdditionalPrimaries() throws IOException, ParserException {
-
-        for (;;) {
-            final JavaToken periodToken = lexer.lexSkipWS(JavaToken.PERIOD);
-            
-            if (periodToken != JavaToken.PERIOD) {
-                break;
-            }
-
-            parseAnAdditionalPrimary();
-        }
-    }
-    
-    private void parseAnAdditionalPrimary() throws IOException, ParserException {
-        
-        final JavaToken identifierToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
-
-        if (identifierToken !=  JavaToken.IDENTIFIER) {
-            throw lexer.unexpectedToken();
-        }
-        
-        final long identifier = getStringRef();
-        final int identifierContext = writeCurContext();
-        
-        final JavaToken nextToken = lexer.lexSkipWS(JavaToken.LPAREN);
-        
-        if (nextToken == JavaToken.LPAREN) {
-            // Method invocation
-            final int methodInvocationContext = writeContext(identifierContext);
-            
-            listener.onMethodInvocationStart(
-                    methodInvocationContext,
-                    MethodInvocationType.PRIMARY,
-                    null,
-                    0,
-                    identifier,
-                    identifierContext);
-            
-            parseMethodInvocationParameters();
-            
-            listener.onMethodInvocationEnd(methodInvocationContext, true, getLexerContext());
-        }
-        else {
-            
-            listener.onFieldAccess(
-                    identifierContext,
-                    FieldAccessType.FIELD,
-                    null,
-                    null,
-                    identifier,
-                    identifierContext);
-        }
-    }
     
     private static JavaToken [] AFTER_PARAMETER_TOKEN = new JavaToken [] {
       
@@ -286,32 +274,30 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             
     };
     
-    final void parseMethodInvocationParameters() throws IOException, ParserException {
+    final void parseMethodInvocationParametersToCache() throws IOException, ParserException {
         
         final int startContext = writeCurContext();
         
-        listener.onParametersStart(startContext);
+        expressionCache.addParametersStart(startContext);
+        
         // See if there is an initial end of parameters
         final JavaToken endOfParameters = lexer.lexSkipWS(JavaToken.RPAREN);
         
-        if (endOfParameters == JavaToken.RPAREN) {
-            listener.onParametersEnd(startContext, getLexerContext());
-        }
-        else {
+        if (endOfParameters != JavaToken.RPAREN) {
             for (;;) {
                 
-                final int paramContext = writeCurContext();
-                
-                listener.onParameterStart(paramContext);
-                
-                parseExpressionList();
-                
-                listener.onParameterEnd(paramContext, getLexerContext());
+                // final int parameterStartContext = writeCurContext();
 
+                expressionCache.addParameterStart();
+
+                parseExpressionToCache();
+                
+                expressionCache.addParameterEnd();
+                
                 final JavaToken paramToken = lexer.lexSkipWS(AFTER_PARAMETER_TOKEN);
                 
                 if (paramToken == JavaToken.RPAREN) {
-                    listener.onParametersEnd(startContext, getLexerContext());
+                    expressionCache.addParametersEnd(startContext);
                     break;
                 }
                 else if (paramToken == JavaToken.COMMA) {
@@ -324,7 +310,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         }
     }
 
-    private void callListenerAndParseExpression(int context, Operator operator) throws IOException, ParserException {
+    private void addOperator(int context, Operator operator) throws IOException, ParserException {
 
         expressionCache.addOperator(context, operator);
     }

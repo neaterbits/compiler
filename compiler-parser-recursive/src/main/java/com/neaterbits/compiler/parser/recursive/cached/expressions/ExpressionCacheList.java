@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.Base;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Operator;
 
-final class ExpressionCacheList {
+final class ExpressionCacheList implements Names {
     
     private final List<CachedPrimary> primaries;
     private final List<CachedOperator> operators;
@@ -16,7 +18,6 @@ final class ExpressionCacheList {
     private OperatorsAllocator operatorsAllocator;
     
     ExpressionCacheList() {
-
         this.primaries = new ArrayList<>();
         this.operators = new ArrayList<>();
     }
@@ -104,6 +105,20 @@ final class ExpressionCacheList {
         addPrimary().initIntegerLiteral(context, value, base, signed, bits);
     }
     
+    void replaceLastWithMethodInvocation(int context, ParametersList parametersSubList) {
+        
+        final CachedPrimary last = getLast();
+        if (last.getType() != ParseTreeElement.NAME) {
+            throw new IllegalStateException();
+        }
+        
+        last.initMethodInvocation(
+                context,
+                last.getName(),
+                last.getContext(),
+                parametersSubList);
+    }
+    
     void addOperator(int context, Operator operator, int precedence) {
         
         final CachedOperator cachedOperator = operatorsAllocator.getOrCreateOperator();
@@ -111,6 +126,21 @@ final class ExpressionCacheList {
         operators.add(cachedOperator);
         
         cachedOperator.init(context, operator, precedence);
+    }
+
+    @Override
+    public long getStringAt(int index) {
+        return primaries.get(index).getName();
+    }
+
+    @Override
+    public int getContextAt(int index) {
+        return primaries.get(index).getContext();
+    }
+
+    @Override
+    public int count() {
+        return primaries.size();
     }
 
     @Override

@@ -86,6 +86,8 @@ public abstract class BaseInfixParserListener<
 		
 		PRIMARY_LIST extends PRIMARY,
 		
+		NAME_PRIMARY extends PRIMARY,
+		
 		NESTED_EXPRESSION extends PRIMARY,
 		FIELD_ACCESS extends PRIMARY,
 		THIS_PRIMARY extends PRIMARY,
@@ -219,6 +221,8 @@ public abstract class BaseInfixParserListener<
 		LAMBDA_EXPRESSION_PARAMETERS,
 	
 		PRIMARY_LIST,
+		
+		NAME_PRIMARY,
 		
 		NESTED_EXPRESSION,
 		FIELD_ACCESS,

@@ -34,6 +34,7 @@ public final class MethodInvocationExpression extends Call<MethodName> {
 		}
 
 		if (classType == null && object == null 
+                && type != MethodInvocationType.UNRESOLVED
 		        && type != MethodInvocationType.NO_OBJECT
 		        && type != MethodInvocationType.SUB
 		        && type != MethodInvocationType.PRIMARY) {

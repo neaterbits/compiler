@@ -663,14 +663,12 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onMethodInvocationStart(
 		        writeStartContext(context),
 		        type,
-		        names,
-		        names.count(),
 		        methodName,
 		        writeOtherContext(methodNameContext));
 	}
 	
 	public void onMethodInvocationEnd(Context context) {
-		delegate.onMethodInvocationEnd(writeEndContext(context), false, context);
+		delegate.onMethodInvocationEnd(writeEndContext(context), context);
 	}
 	
 	public void onParametersStart(Context context) {

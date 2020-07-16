@@ -2,10 +2,12 @@ package com.neaterbits.compiler.parser.java;
 
 import com.neaterbits.compiler.parser.recursive.cached.expressions.LanguageOperatorPrecedence;
 import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.Assignment;
 import com.neaterbits.compiler.util.operator.Bitwise;
 import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.Relational;
+import com.neaterbits.compiler.util.operator.Scope;
 
 public final class JavaLanguageOperatorPrecedence implements LanguageOperatorPrecedence {
 
@@ -103,6 +105,28 @@ public final class JavaLanguageOperatorPrecedence implements LanguageOperatorPre
                 precedence = 9;
                 break;
 
+            default:
+                throw new UnsupportedOperationException();
+            }
+            break;
+            
+        case SCOPE:
+            switch ((Scope)operator) {
+            case NAMES_SEPARATOR:
+                precedence = 16;
+                break;
+
+            default:
+                throw new UnsupportedOperationException();
+            }
+            break;
+            
+        case ASSIGNMENT:
+            switch ((Assignment)operator) {
+            case ASSIGN:
+                precedence = 1;
+                break;
+                
             default:
                 throw new UnsupportedOperationException();
             }

@@ -101,7 +101,11 @@ abstract class BaseJavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<Jav
     final void applyAndClearExpressionCache() {
         
         expressionCache.apply(listener);
-        
+
+        clearExpressionCache();
+    }
+    
+    final void clearExpressionCache() {
         expressionCache.clear();
     }
 }

@@ -17,6 +17,10 @@ final class CachedPrimary {
     private boolean signed;
     private int bits;
     
+    private long methodName;
+    private int methodNameContext;
+    private ParametersList parametersList;
+    
     private ExpressionCacheList subList;
 
     private void init(ParseTreeElement type, int context) {
@@ -43,12 +47,24 @@ final class CachedPrimary {
         this.signed = signed;
         this.bits = bits;
     }
+    
+    void initMethodInvocation(int context, long methodName, int methodNameContext, ParametersList parametersList) {
+        
+        init(ParseTreeElement.METHOD_INVOCATION_EXPRESSION, context);
+        
+        this.methodName = methodName;
+        this.parametersList = parametersList;
+    }
+
+    void addParameter(ExpressionCacheList parameter) {
+        parametersList.addParameter(parameter);
+    }
 
     void initSubList(int context, ExpressionCacheList subList) {
-        
-        init(ParseTreeElement.PRIMARY_LIST, context);
-        
+
         Objects.requireNonNull(subList);
+
+        init(ParseTreeElement.PRIMARY_LIST, context);
         
         this.subList = subList;
     }
@@ -79,6 +95,18 @@ final class CachedPrimary {
 
     public int getBits() {
         return bits;
+    }
+
+    public long getMethodName() {
+        return methodName;
+    }
+    
+    public int getMethodNameContext() {
+        return methodNameContext;
+    }
+
+    public ParametersList getParametersList() {
+        return parametersList;
     }
 
     public ExpressionCacheList getSubList() {

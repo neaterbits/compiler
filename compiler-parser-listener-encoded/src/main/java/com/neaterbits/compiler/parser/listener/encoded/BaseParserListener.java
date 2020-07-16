@@ -874,6 +874,14 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
+    public void onNamePrimary(int leafContext, long name) {
+        
+        writeLeafElementContextRef(leafContext);
+
+        AST.encodeNamePrimary(astBuffer, name, leafContext);
+    }
+
+    @Override
     public final void onArrayAccessStart(int arrayAccessStartContext) {
 
         writeStartElementContextRef(arrayAccessStartContext);
@@ -1084,17 +1092,10 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onMethodInvocationStart(
             int context,
             MethodInvocationType type,
-            Names names,
-            int namesCount,
             long methodName,
             int methodNameContext) {
 
-        if (names != null) {
-            AST.encodeUnresolvedMethodInvocationStart(astBuffer, type, names, namesCount, methodName, methodNameContext);
-        }
-        else {
-            AST.encodeMethodInvocationStart(astBuffer, type, methodName, methodNameContext);
-        }
+        AST.encodeMethodInvocationStart(astBuffer, type, methodName, methodNameContext);
     }
 
     @Override
@@ -1130,16 +1131,11 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onMethodInvocationEnd(int methodInvocationStartContext, boolean resolved, Context endContext) {
+    public final void onMethodInvocationEnd(int methodInvocationStartContext, Context endContext) {
         
         writeEndElementContext(methodInvocationStartContext, endContext);
 
-        if (resolved) {
-            AST.encodeMethodInvocationEnd(astBuffer);
-        }
-        else {
-            AST.encodeUnresolvedMethodInvocationEnd(astBuffer);
-        }
+        AST.encodeMethodInvocationEnd(astBuffer);
     }
 
     @Override
@@ -1331,13 +1327,30 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         AST.encodeScopedTypeReferenceStart(astBuffer);
     }
+    
+    @Override
+    public void onScopedTypeReferenceNameStart(int startContext) {
+
+        writeStartElementContextRef(startContext);
+        
+        AST.encodeScopedTypeReferenceNameStart(astBuffer);
+    }
 
     @Override
-    public void onScopedTypeReferencePart(int leafContext, long part) {
+    public void onScopedTypeReferenceNamePart(int leafContext, long part) {
 
         writeLeafElementContextRef(leafContext);
         
         AST.encodeScopedTypeReferencePart(astBuffer, part);
+    }
+
+    
+    @Override
+    public void onScopedTypeReferenceNameEnd(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
+        
+        AST.encodeScopedTypeReferenceNameEnd(astBuffer);
     }
 
     @Override
@@ -1347,7 +1360,6 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         AST.encodeScopedTypeReferenceEnd(astBuffer);
     }
-
     
     @Override
     public void onGenericTypeParametersStart(int startContext) {

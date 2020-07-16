@@ -73,7 +73,6 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackGenericType
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackGenericTypeParameters;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTypeDefinition;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTypeReference;
-import com.neaterbits.compiler.parser.listener.stackbased.state.StackUnresolvedMethodInvocation;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackVariableDeclaration;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackVariableDeclarationList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackWhileStatement;
@@ -216,6 +215,7 @@ public abstract class BaseParserListener<
 
 		PRIMARY_LIST extends PRIMARY,
 		
+		NAME_PRIMARY extends PRIMARY,
 		NESTED_EXPRESSION extends PRIMARY,
 		FIELD_ACCESS extends PRIMARY,
 		THIS_PRIMARY extends PRIMARY,
@@ -354,12 +354,13 @@ public abstract class BaseParserListener<
 			LAMBDA_EXPRESSION_PARAMETERS,
 			
 			PRIMARY_LIST,
+			
+			NAME_PRIMARY,
 
 			NESTED_EXPRESSION,
 			FIELD_ACCESS,
 			THIS_PRIMARY,
 			CLASS_INSTANCE_CREATION_EXPRESSION,
-			UNRESOLVED_METHOD_INVOCATION_EXPRESSION,
 			METHOD_INVOCATION_EXPRESSION,
 			ARRAY_CREATION_EXPRESSION,
 			ARRAY_ACCESS_EXPRESSION,
@@ -2108,6 +2109,22 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
+    public void onNamePrimary(int leafContext, long name) {
+
+        final Context context = getLeafContext(leafContext);
+
+        logEnter(context);
+
+	    final NAME_PRIMARY namePrimary = parseTreeFactory.createNamePrimary(context, stringSource.asString(name));
+
+	    final PrimarySetter<PRIMARY> primarySetter = get();
+	    
+	    primarySetter.addPrimary(namePrimary);
+	    
+        logExit(context);
+    }
+
+    @Override
 	public final void onArrayAccessStart(int startContext) {
 	    
 	    final Context context = getStartContext(startContext);
@@ -2534,8 +2551,6 @@ public abstract class BaseParserListener<
 	public final void onMethodInvocationStart(
 			int startContext,
 			MethodInvocationType type,
-			Names names,
-			int namesCount,
 			long methodName,
 			int methodNameContextRef) {
 	    
@@ -2548,23 +2563,12 @@ public abstract class BaseParserListener<
 		final String methodNameString = stringSource.asString(methodName);
 		final Context methodNameContext = getOtherContext(methodNameContextRef);
 		
-		if (names == null) {
-		    methodInvocation = new StackMethodInvocation<>(
-	                logger,
-	                type,
-	                null,
-	                methodNameString,
-	                methodNameContext);
-		}
-		else {
-		    methodInvocation = new StackUnresolvedMethodInvocation<>(
-		            logger,
-		            type,
-		            makeNameList(context, names, namesCount),
-		            methodNameString,
-		            methodNameContext);
-		}
-		
+	    methodInvocation = new StackMethodInvocation<>(
+                logger,
+                type,
+                null,
+                methodNameString,
+                methodNameContext);
 
 		push(methodInvocation);
 
@@ -2628,71 +2632,32 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onMethodInvocationEnd(int startContext, boolean resolved, Context endContext) {
+	public final void onMethodInvocationEnd(int startContext, Context endContext) {
 
 	    final Context context = getEndContext(startContext, endContext);
 	    
 		logEnter(context);
 
-		if (resolved) {
-		    
-	        final StackMethodInvocation<EXPRESSION, PRIMARY, TYPE_REFERENCE> stackMethodInvocation = pop(); 
+        final StackMethodInvocation<EXPRESSION, PRIMARY, TYPE_REFERENCE> stackMethodInvocation = pop(); 
 
-	        final METHOD_INVOCATION_EXPRESSION methodInvocation = parseTreeFactory.createMethodInvocationExpression(
-	                context,
-	                stackMethodInvocation.getType(),
-	                stackMethodInvocation.getClassType(),
-	                stackMethodInvocation.getObject(),
-	                stackMethodInvocation.getName(),
-	                stackMethodInvocation.getNameContext(),
-	                stackMethodInvocation.getParameters() != null
-	                        ? stackMethodInvocation.getParameters()
-	                        : Collections.emptyList());
+        final METHOD_INVOCATION_EXPRESSION methodInvocation = parseTreeFactory.createMethodInvocationExpression(
+                context,
+                stackMethodInvocation.getType(),
+                stackMethodInvocation.getClassType(),
+                stackMethodInvocation.getObject(),
+                stackMethodInvocation.getName(),
+                stackMethodInvocation.getNameContext(),
+                stackMethodInvocation.getParameters() != null
+                        ? stackMethodInvocation.getParameters()
+                        : Collections.emptyList());
 
-	        final PrimarySetter<PRIMARY> primarySetter = get();
+        final PrimarySetter<PRIMARY> primarySetter = get();
 
-	        primarySetter.addPrimary(methodInvocation);
-		}
-		else {
-
-            final StackUnresolvedMethodInvocation<EXPRESSION, PRIMARY, NAME_LIST> stackMethodInvocation = pop();
-
-            final NAME_LIST nameList = stackMethodInvocation.getNames();
-            
-            final UNRESOLVED_METHOD_INVOCATION_EXPRESSION methodInvocation = parseTreeFactory.createUnresolvedMethodInvocationExpression(
-                    context,
-                    stackMethodInvocation.getType(),
-                    nameList,
-                    stackMethodInvocation.getName(),
-                    stackMethodInvocation.getNameContext(),
-                    stackMethodInvocation.getParameters() != null
-                            ? stackMethodInvocation.getParameters()
-                            : Collections.emptyList());
-
-            final PrimarySetter<PRIMARY> primarySetter = get();
-
-            primarySetter.addPrimary(methodInvocation);
-		}
-		
+        primarySetter.addPrimary(methodInvocation);
 
 		logExit(context);
 	}
 	
-	private NAME_LIST makeNameList(Context context, Names names, int namesCount) {
-	    
-        final List<NAME> nameList = new ArrayList<>(namesCount);
-        
-        for (int i = 0; i < namesCount; ++ i) {
-            
-            final String name = stringSource.asString(names.getStringAt(i));
-            final Context nameContext = getOtherContext(names.getContextAt(i));
-            
-            nameList.add(parseTreeFactory.createName(nameContext, name));
-        }
-
-        return parseTreeFactory.createNameList(context, nameList);
-	}
-
 	@Override
 	public final void onArrayCreationExpressionStart(int startContext, ScopedName typeName, ReferenceType referenceType, int numDims) {
 	    
@@ -3077,14 +3042,24 @@ public abstract class BaseParserListener<
 		logEnter(context);
 		
 		push(new StackScopedTypeReference<>(getLogger(), referenceType));
-		
-		push(new StackScopedName(getLogger()));
 
 		logExit(context);
 	}
 
 	@Override
-    public void onScopedTypeReferencePart(int leafContext, long part) {
+    public void onScopedTypeReferenceNameStart(int startContext) {
+
+	    final Context context = getStartContext(startContext);
+
+        logEnter(context);
+
+        push(new StackScopedName(getLogger()));
+
+        logExit(context);
+    }
+
+    @Override
+    public void onScopedTypeReferenceNamePart(int leafContext, long part) {
 	    
 	    final Context context = getLeafContext(leafContext);
 
@@ -3098,13 +3073,27 @@ public abstract class BaseParserListener<
     }
 
     @Override
+    public void onScopedTypeReferenceNameEnd(int startContext, Context endContext) {
+
+        final Context context = getStartContext(startContext);
+
+        logEnter(context);
+
+        final StackScopedName stackScopedName = pop();
+        
+        final StackScopedTypeReference<TYPE_REFERENCE> stackScopedTypeReference = get();
+        
+        stackScopedTypeReference.setScopedName(stackScopedName.getScopedName());
+
+        logExit(context);
+    }
+
+    @Override
     public void onScopedTypeReferenceEnd(int startContext, Context endContext) {
         
         final Context context = getEndContext(startContext, endContext);
 
         logEnter(context);
-        
-        final StackScopedName stackScopedName = pop();
         
         final StackScopedTypeReference<TYPE_REFERENCE> stackScopedTypeReference = pop();
         
@@ -3112,7 +3101,7 @@ public abstract class BaseParserListener<
 
         final TYPE_REFERENCE typeReference = parseTreeFactory.createUnresolvedTypeReference(
                             context,
-                            stackScopedName.getScopedName(),
+                            stackScopedTypeReference.getScopedName(),
                             stackScopedTypeReference.getGenericTypeParameters(),
                             stackScopedTypeReference.getReferenceType());
         

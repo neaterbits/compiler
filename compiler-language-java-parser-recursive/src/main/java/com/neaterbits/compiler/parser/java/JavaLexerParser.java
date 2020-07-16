@@ -715,10 +715,10 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             
             if (typeArguments != null) {
                 typeArguments.complete(genericTypes ->
-                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, genericTypes, referenceType, null));
+                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, genericTypes, referenceType, null));
             }
             else {
-                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, referenceType, null);
+                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, null, referenceType, null);
             }
             
             final int variableDeclaratorStartContext = writeCurContext();
@@ -739,10 +739,10 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             
             if (typeArguments != null) {
                 typeArguments.complete(genericTypes ->
-                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, genericTypes, referenceType, null));
+                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, genericTypes, referenceType, null));
             }
             else {
-                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, referenceType, null);
+                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, null, referenceType, null);
             }
 
             // Initial variable name
@@ -784,7 +784,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
         
         listener.onMethodReturnTypeStart(methodReturnTypeStartContext);
         
-        listenerHelper.onType(typeNameContext, typeName, names, null, referenceType, null);
+        listenerHelper.onType(typeNameContext, typeName, names, null, null, referenceType, null);
         
         listener.onMethodReturnTypeEnd(methodReturnTypeStartContext, getLexerContext());
         

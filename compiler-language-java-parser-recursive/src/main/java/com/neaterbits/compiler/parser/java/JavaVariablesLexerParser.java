@@ -53,7 +53,11 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
 
         listener.onScopedTypeReferenceStart(typeStartContext, ReferenceType.REFERENCE);
         
-        listener.onScopedTypeReferencePart(initialPartContext, stringRef);
+        final int namesStartContext = writeContext(typeStartContext);
+        
+        listener.onScopedTypeReferenceNameStart(namesStartContext);
+        
+        listener.onScopedTypeReferenceNamePart(initialPartContext, stringRef);
 
         for (;;) {
 
@@ -63,7 +67,7 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
                 throw lexer.unexpectedToken();
             }
                 
-            listener.onScopedTypeReferencePart(writeCurContext(), getStringRef());
+            listener.onScopedTypeReferenceNamePart(writeCurContext(), getStringRef());
             
             final JavaToken endOfScopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
             
@@ -71,6 +75,8 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
                 break;
             }
         }
+        
+        listener.onScopedTypeReferenceNameEnd(namesStartContext, getLexerContext());
 
         listener.onScopedTypeReferenceEnd(typeStartContext, getLexerContext());
     }

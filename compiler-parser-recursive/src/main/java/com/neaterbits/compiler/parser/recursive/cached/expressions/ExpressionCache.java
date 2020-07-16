@@ -5,9 +5,12 @@ import java.util.Objects;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.recursive.cached.ScratchBuf;
 import com.neaterbits.compiler.util.Base;
+import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.OperatorType;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 
 public final class ExpressionCache {
 
@@ -43,9 +46,13 @@ public final class ExpressionCache {
         push();
     }
     
-    private void push() {
+    private ExpressionCacheList push() {
         
-        push(getOrCreateCacheList());
+        final ExpressionCacheList subList = getOrCreateCacheList();
+        
+        push(subList);
+        
+        return subList;
     }
 
     private void push(ExpressionCacheList subList) {
@@ -53,6 +60,10 @@ public final class ExpressionCache {
         Objects.requireNonNull(subList);
         
         stack[++ lastIndex] = subList;
+    }
+    
+    private void pop() {
+        -- lastIndex;
     }
     
     private ExpressionCacheList getOrCreateCacheList() {
@@ -66,6 +77,11 @@ public final class ExpressionCache {
         return expressionCacheList;
     }
     
+    private ParametersList getOrCreateParametersList(int parametersContext) {
+        
+        return new ParametersList(parametersContext);
+    }
+    
     private ExpressionCacheList get() {
         return stack[lastIndex];
     }
@@ -77,6 +93,106 @@ public final class ExpressionCache {
     public void addIntegerLiteral(int context, long value, Base base, boolean signed, int bits) {
 
         get().addIntegerLiteral(context, value, base, signed, bits);
+    }
+    
+    public ParseTreeElement getTypeOfLast() {
+        return get().getLast().getType();
+    }
+    
+    public void addMethodInvocationStart(int parametersContext) {
+
+        final ExpressionCacheList list = get();
+        
+        // Last should be name
+        final CachedPrimary last = list.getLast();
+        if (last.getType() != ParseTreeElement.NAME) {
+            throw new IllegalArgumentException();
+        }
+        
+        final int numOperators = list.operatorsCount();
+        
+        // Should be all names leading up to this or just one name at the end
+        if (numOperators == 0) {
+
+            // Should be only name
+            addMethodInvocationFromName(list, parametersContext);
+        }
+        else {
+            // Could be eg. literal + method()
+            // only names like or Class.staticMethod() 
+
+            if (list.getCachedOperator(0).getOperator().getOperatorType() == OperatorType.SCOPE) {
+                // Solely names
+                addMethodInvocationFromName(list, parametersContext);
+            }
+            else {
+                // Only last node is a name
+                if (list.getLast().getType() != ParseTreeElement.NAME) {
+                    throw new IllegalStateException();
+                }
+                
+                throw new UnsupportedOperationException();
+            }
+        }
+    }
+    
+    private static boolean isScopedFieldType(ParseTreeElement type) {
+        
+        return type == ParseTreeElement.NAME || type == ParseTreeElement.METHOD_INVOCATION_EXPRESSION;
+    }
+    
+    private void addMethodInvocationFromName(
+            ExpressionCacheList list,
+            int parametersContext) {
+
+        final CachedPrimary primary = list.getCachedPrimary(0);
+        
+        if (!isScopedFieldType(primary.getType())) {
+            throw new IllegalStateException("Not a name type " + primary.getType());
+        }
+
+        final ParametersList parametersList = getOrCreateParametersList(parametersContext);
+        
+        list.replaceLastWithMethodInvocation(
+                contextWriter.writeContext(primary.getContext()),
+                parametersList);
+    }
+    
+    public void addParametersStart(int startContext) {
+        
+    }
+    
+    private CachedPrimary getMethodInvocation() {
+        
+        final CachedPrimary methodInvocation = get().getLast();
+        
+        if (methodInvocation.getType() != ParseTreeElement.METHOD_INVOCATION_EXPRESSION) {
+            throw new IllegalStateException();
+        }
+        
+        return methodInvocation;
+    }
+
+    public void addParameterStart() {
+        
+        final CachedPrimary methodInvocationPrimary = getMethodInvocation();
+        
+        final ExpressionCacheList list = push();
+        
+        methodInvocationPrimary.addParameter(list);
+    }
+    
+    public void addParameterEnd() {
+        
+        pop();
+    }
+
+    public void addParametersEnd(int startContext) {
+        
+    }
+    
+    public void addMethodInvocationEnd() {
+        
     }
     
     public void addOperator(int context, Operator operator) {
@@ -125,8 +241,6 @@ public final class ExpressionCache {
     
     public <COMPILATION_UNIT> void apply(IterativeParserListener<COMPILATION_UNIT> listener) {
         
-        System.out.println("apply " + stack[0]);
-        
         apply(stack[0], listener);
     }
     
@@ -143,17 +257,50 @@ public final class ExpressionCache {
 
         final int numOperators = cacheList.operatorsCount();
         
-        final CachedPrimary initialPrimary = cacheList.getCachedPrimary(0);
-        
         if (
-                   initialPrimary.getType() == ParseTreeElement.NAME
-                && numOperators > 0
+                   numOperators > 0
                 && cacheList.getCachedOperator(0).getOperator().getOperatorType() == OperatorType.SCOPE) {
             
-            // Should be all names
+            final int startContext = contextWriter.writeContext(cacheList.getContextAt(0));
             
-            // for now
-            throw new UnsupportedOperationException();
+            listener.onPrimaryStart(startContext);
+
+            boolean atObject = false;
+            
+            for (int i = 0; i <= numOperators; ++ i) {
+
+                final CachedPrimary primary = cacheList.getCachedPrimary(i);
+                
+                if (!isScopedFieldType(primary.getType())) {
+                    throw new IllegalStateException();
+                }
+                
+                if (primary.getType() == ParseTreeElement.NAME) {
+                    
+                    if (atObject) {
+                        listener.onFieldAccess(
+                                primary.getContext(),
+                                FieldAccessType.FIELD,
+                                null,
+                                null,
+                                primary.getName(),
+                                contextWriter.writeContext(primary.getContext()));
+                    }
+                    else {
+                        listener.onNamePrimary(primary.getContext(), primary.getName());
+                    }
+                }
+                else {
+                    applyPrimaryToListener(primary, listener);
+                    
+                    if (primary.getType() == ParseTreeElement.METHOD_INVOCATION_EXPRESSION) {
+                        // Anything after this is field access
+                        atObject = true;
+                    }
+                }
+            }
+
+            listener.onPrimaryEnd(startContext, null);
         }
         else {
         
@@ -165,6 +312,8 @@ public final class ExpressionCache {
                 
                 if (i < numOperators) {
                     final CachedOperator cachedOperator = cacheList.getCachedOperator(i);
+                    
+                    System.out.println("## add operator " + cachedOperator.getOperator());
 
                     listener.onExpressionBinaryOperator(cachedOperator.getContext(), cachedOperator.getOperator());
                 }
@@ -194,9 +343,78 @@ public final class ExpressionCache {
         case NAME:
             listener.onNameReference(primary.getContext(), primary.getName());
             break;
+            
+        case METHOD_INVOCATION_EXPRESSION:
+            
+            listener.onMethodInvocationStart(
+                    primary.getContext(),
+                    MethodInvocationType.UNRESOLVED,
+                    primary.getMethodName(),
+                    primary.getMethodNameContext());
+            
+            final ParametersList parametersList = primary.getParametersList();
+            
+            if (parametersList != null) {
+                
+                final int parametersCount = parametersList.count();
+                
+                if (parametersCount != 0) {
+                    
+                    listener.onParametersStart(parametersList.getContext());
+                    
+                    for (int i = 0; i < parametersCount; ++ i) {
+                        
+                        final ExpressionCacheList list = parametersList.getParameter(i);
+                        
+                        final int paramStartContext = contextWriter.writeContext(list.getCachedPrimary(0).getContext());
+                        
+                        listener.onParameterStart(paramStartContext);
+                        
+                        apply(list, listener);
+                        
+                        listener.onParameterEnd(paramStartContext, null);
+                    }
+        
+                    listener.onParametersEnd(parametersList.getContext(), null);
+                }
+            }
+    
+            listener.onMethodInvocationEnd(primary.getContext(), null);
+            break;
         
         default:
             throw new UnsupportedOperationException("Unknown primary type " + primary.getType());
         }
+    }
+
+    public boolean areAllTopLevelNames() {
+        
+        boolean allTopLevelNames;
+
+        if (lastIndex != 0) {
+            allTopLevelNames = false;
+        }
+        else {
+            allTopLevelNames = true;
+            
+            final ExpressionCacheList list = stack[0];
+            
+            final int numPrimaries = list.primariesCount();
+            
+            for (int i = 0; i < numPrimaries; ++ i) {
+                
+                if (list.getCachedPrimary(i).getType() != ParseTreeElement.NAME) {
+                    allTopLevelNames = false;
+                    break;
+                }
+            }
+        }
+        
+        return allTopLevelNames;
+    }
+
+    public Names getTopLevelNames() {
+        
+        return stack[0];
     }
 }

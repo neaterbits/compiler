@@ -16,6 +16,7 @@ import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.Assignment;
 import com.neaterbits.compiler.util.operator.Bitwise;
 import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
@@ -137,7 +138,7 @@ public class AST {
             size = SIGNATURE_PARAMETER_SIZE;
             break;
             
-        case UNRESOLVED_SCOPED_TYPE_REFERENCE_PART:
+        case UNRESOLVED_SCOPED_TYPE_REFERENCE_NAME_PART:
             size = SCOPED_TYPE_REFERENCE_PART_SIZE;
             break;
             
@@ -170,10 +171,6 @@ public class AST {
             size = WHILE_STATEMENT_SIZE;
             break;
             
-        case UNRESOLVED_METHOD_INVOCATION_EXPRESSION:
-            size = 1 + namesSize(astBuffer.getByte(index + 1)) + STRING_REF_SIZE + CONTEXT_REF_SIZE;
-            break;
-            
         case METHOD_INVOCATION_EXPRESSION:
             size = METHOD_INVOCATION_SIZE;
             break;
@@ -192,6 +189,10 @@ public class AST {
             
         case NAME_REFERENCE:
             size = NAME_REFERENCE_SIZE;
+            break;
+
+        case NAME_PRIMARY:
+            size = NAME_PRIMARY_SIZE;
             break;
 
         case NAMED_GENERIC_TYPE:
@@ -979,11 +980,25 @@ public class AST {
         listener.onScopedTypeReferenceStart(scopedTypeReferenceStartContext, ReferenceType.REFERENCE);
     }
 
+    static void encodeScopedTypeReferenceNameStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE_NAME);
+    }
+
+    public static <COMPILATION_UNIT> void decodeScopedTypeReferenceNameStart(
+            ASTBufferRead astBuffer,
+            int scopedTypeReferenceNameStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onScopedTypeReferenceNameStart(scopedTypeReferenceNameStartContext);
+    }
+
     private static final int SCOPED_TYPE_REFERENCE_PART_SIZE = STRING_REF_SIZE;
+
     
     static void encodeScopedTypeReferencePart(StringASTBuffer astBuffer, long part) {
         
-        astBuffer.writeLeafElement(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE_PART);
+        astBuffer.writeLeafElement(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE_NAME_PART);
         
         astBuffer.writeStringRef(part);
     }
@@ -994,7 +1009,22 @@ public class AST {
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onScopedTypeReferencePart(leafContext, astBuffer.getStringRef(index));
+        listener.onScopedTypeReferenceNamePart(leafContext, astBuffer.getStringRef(index));
+    }
+
+    static void encodeScopedTypeReferenceNameEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE_NAME);
+    }
+
+    public static <COMPILATION_UNIT> void decodeScopedTypeReferenceNameEnd(
+            ASTBufferRead astBuffer,
+            int scopedTypeReferenceNameEndContext,
+            Context endContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onScopedTypeReferenceNameEnd(scopedTypeReferenceNameEndContext, endContext);
     }
 
     static void encodeScopedTypeReferenceEnd(StringASTBuffer astBuffer) {
@@ -1264,7 +1294,11 @@ public class AST {
         case LOGICAL:
             operator = astBuffer.getEnumByte(index + 1, Logical.class);
             break;
-        
+            
+        case ASSIGNMENT:
+            operator = astBuffer.getEnumByte(index + 1, Assignment.class);
+            break;
+            
         default:
             throw new IllegalStateException();
         }
@@ -1506,23 +1540,6 @@ public class AST {
         listener.onExpressionStatementEnd(expressionStatementStartContext, endContext);
     }
 
-    static void encodeUnresolvedMethodInvocationStart(
-            StringASTBuffer astBuffer,
-            MethodInvocationType type,
-            Names names,
-            int namesCount,
-            long methodName,
-            int methodNameContext) {
-        
-        astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION);
-        astBuffer.writeEnumByte(type);
-        
-        encodeNames(astBuffer, names, namesCount);
-        
-        astBuffer.writeStringRef(methodName);
-        astBuffer.writeContextRef(methodNameContext);
-    }
-    
     private static void encodeNames(StringASTBuffer astBuffer, Names names) {
     
         encodeNames(astBuffer, names, names.count());
@@ -1560,8 +1577,6 @@ public class AST {
         listener.onMethodInvocationStart(
                 methodInvocationStartContext,
                 type,
-                names,
-                names.count(),
                 methodName,
                 methodNameContext);
     }
@@ -1610,20 +1625,6 @@ public class AST {
         return names;
     }
 
-    static void encodeUnresolvedMethodInvocationEnd(StringASTBuffer astBuffer) {
-        
-        astBuffer.writeElementEnd(ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION);
-    }
-
-    public static <COMPILATION_UNIT> void decodeUnresolvedMethodInvocationEnd(
-            ASTBufferRead astBuffer,
-            int methodInvocationStartContext,
-            Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
-
-        listener.onMethodInvocationEnd(methodInvocationStartContext, false, endContext);
-    }
-
     private static final int METHOD_INVOCATION_SIZE = 1 + STRING_REF_SIZE + CONTEXT_REF_SIZE;
     
     static void encodeMethodInvocationStart(
@@ -1651,8 +1652,6 @@ public class AST {
         listener.onMethodInvocationStart(
                 methodInvocationStartContext,
                 type,
-                null,
-                0,
                 methodName,
                 methodNameContext);
     }
@@ -1668,7 +1667,7 @@ public class AST {
             Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onMethodInvocationEnd(methodInvocationStartContext, true, endContext);
+        listener.onMethodInvocationEnd(methodInvocationStartContext, endContext);
     }
 
     static void encodeParametersStart(StringASTBuffer astBuffer) {
@@ -1845,6 +1844,30 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onAnnotationElementEnd(annotationElementStartContext, endContext);
+    }
+
+    private static final int NAME_PRIMARY_SIZE = STRING_REF_SIZE;
+    
+    static void encodeNamePrimary(StringASTBuffer astBuffer, long name, int nameContext) {
+        
+        astBuffer.writeLeafElement(ParseTreeElement.NAME_PRIMARY);
+        
+        if (name == StringRef.STRING_NONE) {
+            throw new IllegalArgumentException();
+        }
+            
+        astBuffer.writeStringRef(name);
+    }
+
+    public static <COMPILATION_UNIT> void decodeNamePrimary(
+            ASTBufferRead astBuffer,
+            int namePrimaryStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onNamePrimary(
+                namePrimaryStartContext,
+                astBuffer.getStringRef(index));
     }
 
     private static final int NAME_REFERENCE_SIZE = STRING_REF_SIZE;

@@ -20,6 +20,7 @@ import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
+import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
@@ -66,6 +67,11 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 	}
 
 	@Override
+    public Expression onNamePrimary(NamePrimary primary, T param) {
+	    throw new UnsupportedOperationException();
+	}
+
+    @Override
 	public final Expression onPrimaryList(PrimaryList primaryList, T param) {
 		
 		final List<Primary> convertedList = new ArrayList<>(primaryList.getPrimaries().size());

@@ -528,8 +528,20 @@ public final class EncodedCompilationUnit {
                 }
                 break;
             }
+            
+            case UNRESOLVED_SCOPED_TYPE_REFERENCE_NAME: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeScopedTypeReferenceNameStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeScopedTypeReferenceNameEnd(astBuffer, startContext, getEndContext(startContext), ref.index, listener);
+                }
+                break;
+            }
                 
-            case UNRESOLVED_SCOPED_TYPE_REFERENCE_PART: {
+            case UNRESOLVED_SCOPED_TYPE_REFERENCE_NAME_PART: {
              
                 final int leafContext = getLeafContext(parseTreeRef);
                 
@@ -699,18 +711,6 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
-            case UNRESOLVED_METHOD_INVOCATION_EXPRESSION: {
-                final int startContext = getStartContext(parseTreeRef);
-
-                if (ref.isStart) {
-                    AST.decodeUnresolvedMethodInvocationStart(astBuffer, startContext, ref.index, listener);
-                }
-                else {
-                    AST.decodeUnresolvedMethodInvocationEnd(astBuffer, startContext, getEndContext(startContext), listener);
-                }
-                break;
-            }
-
             case METHOD_INVOCATION_EXPRESSION: {
                 final int startContext = getStartContext(parseTreeRef);
 
@@ -755,6 +755,19 @@ public final class EncodedCompilationUnit {
                 }
                 else {
                     AST.decodePrimariesEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case NAME_PRIMARY: {
+
+                final int leafContext = getLeafContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeNamePrimary(astBuffer, leafContext, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
                 }
                 break;
             }

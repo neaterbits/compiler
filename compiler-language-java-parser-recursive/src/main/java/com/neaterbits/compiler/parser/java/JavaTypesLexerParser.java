@@ -100,11 +100,10 @@ abstract class JavaTypesLexerParser<COMPILATION_UNIT> extends JavaAnnotationLexe
             parseNameListUntilOtherToken(identifierContext, identifier, names -> {
     
                 // call listener with the.namespace.SomeClass from names
-                final int startContext = listenerHelper.callScopedTypeReferenceListenersStartAndPart(names, referenceType);
+                final int startContext = listenerHelper.callScopedTypeReferenceListenersStartAndPart(names, referenceType, null);
                 
                 // add any generics
                 tryParseGenericTypeParameters();
-                
                 
                 listenerHelper.callScopedTypeReferenceListenersEnd(startContext, getLexerContext());
             });
@@ -151,7 +150,7 @@ abstract class JavaTypesLexerParser<COMPILATION_UNIT> extends JavaAnnotationLexe
         return typeArgumentsList;
     }
 
-    private void tryParseGenericTypeParameters() throws IOException, ParserException {
+    final void tryParseGenericTypeParameters() throws IOException, ParserException {
         
         if (lexer.lexSkipWS(JavaToken.LT) == JavaToken.LT) {
 

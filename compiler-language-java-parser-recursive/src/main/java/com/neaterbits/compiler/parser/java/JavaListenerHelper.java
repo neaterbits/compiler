@@ -45,13 +45,14 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             int typeNameContext,
             long typeName,
             Names scopedTypeName,
+            Context namesEndContext,
             TypeArguments typeArguments,
             ReferenceType referenceType,
             Context endContext) throws IOException, ParserException {
         
         if (scopedTypeName != null) {
             
-            final int startContext = callScopedTypeReferenceListenersStartAndPart(scopedTypeName, referenceType);
+            final int startContext = callScopedTypeReferenceListenersStartAndPart(scopedTypeName, referenceType, namesEndContext);
 
             // Generic type?
             if (typeArguments != null) {
@@ -102,6 +103,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
                                 ContextRef.NONE,
                                 StringRef.STRING_NONE,
                                 names,
+                                null,
                                 genericTypes,
                                 ReferenceType.REFERENCE,
                                 typeArgument.getConcreteEndContext());
@@ -114,6 +116,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
                                 StringRef.STRING_NONE,
                                 names,
                                 null,
+                                null,
                                 ReferenceType.REFERENCE,
                                 typeArgument.getConcreteEndContext());
                     }
@@ -125,20 +128,26 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
         listener.onGenericTypeParametersEnd(typeArguments.getStartContext(), typeArguments.getEndContext());
     }
 
-    int callScopedTypeReferenceListenersStartAndPart(Names scopedTypeName, ReferenceType referenceType) {
+    int callScopedTypeReferenceListenersStartAndPart(Names scopedTypeName, ReferenceType referenceType, Context endContext) {
 
         final int startContext = writeContext(scopedTypeName.getContextAt(0));
         
         listener.onScopedTypeReferenceStart(startContext, referenceType);
+        
+        final int namesStartContext = writeContext(startContext);
+        
+        listener.onScopedTypeReferenceNameStart(startContext);
         
         for (int i = 0; i < scopedTypeName.count(); ++ i) {
 
             final int context = scopedTypeName.getContextAt(i);
             final long part = scopedTypeName.getStringAt(i);
             
-            listener.onScopedTypeReferencePart(context, part);
+            listener.onScopedTypeReferenceNamePart(context, part);
         }
-        
+
+        listener.onScopedTypeReferenceNameEnd(namesStartContext, endContext);
+
         return startContext;
     }
 

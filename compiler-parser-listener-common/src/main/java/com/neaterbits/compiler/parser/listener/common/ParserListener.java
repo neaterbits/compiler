@@ -228,6 +228,8 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onPrimaryStart(int startContext);
 	
+	void onNamePrimary(int leafContext, long name);
+	
 	void onArrayAccessStart(int startContext);
 	
 	void onArrayIndexStart(int startContext);
@@ -284,8 +286,6 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	void onMethodInvocationStart(
 			int startContext,
 			MethodInvocationType type,
-			Names names,
-			int numNameParts,
 			long methodName,
 			int methodNameContext);
 	
@@ -297,7 +297,7 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onParametersEnd(int startContext, Context endContext);
 	
-	void onMethodInvocationEnd(int startContext, boolean resolved, Context endContext);
+	void onMethodInvocationEnd(int startContext, Context endContext);
 	
 	void onArrayCreationExpressionStart(int startContext, ScopedName typeName, ReferenceType referenceType, int numDims);
 	
@@ -343,15 +343,19 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 
 	void onScopedTypeReferenceStart(int startContext, ReferenceType referenceType);
 
-	void onScopedTypeReferencePart(int leafContext, long part);
-	
-	void onScopedTypeReferenceEnd(int startContext, Context endContext);
+	void onScopedTypeReferenceNameStart(int startContext);
+
+	void onScopedTypeReferenceNamePart(int leafContext, long part);
+
+	void onScopedTypeReferenceNameEnd(int startContext, Context endContext);
 
 	void onGenericTypeParametersStart(int startContext);
 	
 	void onGenericTypeParameter(int context, long name);
 
 	void onGenericTypeParametersEnd(int startContext, Context endContext);
+
+	void onScopedTypeReferenceEnd(int startContext, Context endContext);
 
 	void onExpressionStatementStart(int startContext);
 	
