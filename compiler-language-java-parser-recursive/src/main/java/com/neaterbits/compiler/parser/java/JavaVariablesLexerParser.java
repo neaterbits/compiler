@@ -43,6 +43,8 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
 
             listener.onNonScopedTypeReferenceStart(startContext, stringRef, ReferenceType.REFERENCE);
             
+            tryParseGenericTypeParameters();
+            
             listener.onNonScopedTypeReferenceEnd(startContext, getLexerContext());
         }
     }
@@ -77,7 +79,7 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
         }
         
         listener.onScopedTypeReferenceNameEnd(namesStartContext, getLexerContext());
-
+        
         listener.onScopedTypeReferenceEnd(typeStartContext, getLexerContext());
     }
 

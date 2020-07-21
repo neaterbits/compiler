@@ -1260,6 +1260,35 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testMethodWithGenericParameter() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { int someMethod(List<String> a) { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        
+        checkScalarType(method.getReturnType(), "int");
+        
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        
+        assertThat(method.getParameters().size()).isEqualTo(1);
+        
+        final UnresolvedTypeReference type = checkIdentifierType(method.getParameters().get(0).getType(), "List");
+        
+        assertThat(type.getGenericTypeParameters().size()).isEqualTo(1);
+        checkIdentifierType(type.getGenericTypeParameters().get(0), "String");
+    }
+
+    @Test
     public void testMethodWithMultipleParameters() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
