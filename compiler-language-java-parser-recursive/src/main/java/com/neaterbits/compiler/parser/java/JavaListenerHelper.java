@@ -213,6 +213,10 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             case PRIVATE:
                 listener.onVisibilityClassMethodModifier(keyword.getContext(), ClassMethodVisibility.PRIVATE);
                 break;
+                
+            case PUBLIC:
+                listener.onVisibilityClassMethodModifier(keyword.getContext(), ClassMethodVisibility.PUBLIC);
+                break;
 
             case STATIC:
                 listener.onStaticClassMethodModifier(keyword.getContext());
