@@ -582,6 +582,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             JavaToken.PRIVATE,
             JavaToken.FINAL,
             
+            JavaToken.STATIC
     };
     
     private CachedKeywordsList<JavaToken> parseAnyMemberModifiers() throws IOException, ParserException {
@@ -597,6 +598,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             case PUBLIC:
             case PRIVATE:
             case FINAL:
+            case STATIC:
                 cachedModifiers.addScratchKeyword(memberModifierToken, writeCurContext(), getStringRef());
                 break;
 
@@ -665,6 +667,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                 else {
                     // Not the same so try to just parse as a method but without return type since missing
                     parseMethod(
+                            modifiers,
                             ContextRef.NONE,
                             StringRef.STRING_NONE,
                             null,
@@ -759,7 +762,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
         }
          
         case LPAREN: {
-            parseMethod(typeNameContext, typeName, names, referenceType, identifierContext, identifier);
+            parseMethod(modifiers, typeNameContext, typeName, names, referenceType, identifierContext, identifier);
             break;
         }
             
@@ -769,6 +772,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
     }
     
     private void parseMethod(
+            CachedKeywordsList<JavaToken> modifiers,
             int typeNameContext,
             long typeName,
             Names names,
@@ -781,6 +785,12 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
         final int methodParametersStartContext = writeContext(typeNameContext);
         
         listener.onClassMethodStart(classMethodStartContext);
+        
+        if (modifiers != null) {
+            modifiers.complete(keywords -> {
+                listenerHelper.callClassMethodMemberModifiers(keywords);
+            });
+        }
         
         listener.onMethodReturnTypeStart(methodReturnTypeStartContext);
         

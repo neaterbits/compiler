@@ -48,6 +48,7 @@ import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.statement.ASTMutability;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodStatic;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
@@ -1103,6 +1104,33 @@ public abstract class BaseJavaParserTest {
         
         assertThat(method.getParameters().isEmpty()).isTrue();
     }
+
+    @Test
+    public void testStaticMethod() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { static void someMethod() { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        assertThat(member.getModifiers().count()).isEqualTo(1);
+        assertThat(member.getModifiers().getModifier(ClassMethodStatic.class)).isNotNull();
+        
+        final ClassMethod method = member.getMethod();
+        
+        checkScalarType(method.getReturnType(), "void");
+        
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        assertThat(method.getParameters().isEmpty()).isTrue();
+    }
+
 
     @Test
     public void testMethodWithReferenceReturnType() throws IOException, ParserException {

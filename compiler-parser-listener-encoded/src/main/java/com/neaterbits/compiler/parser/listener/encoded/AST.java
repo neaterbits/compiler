@@ -25,6 +25,8 @@ import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.NamePart;
 import com.neaterbits.compiler.util.statement.ASTMutability;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodModifier;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.ClassModifier;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.FieldModifier;
@@ -128,6 +130,10 @@ public class AST {
 
         case CONSTRUCTOR_NAME:
             size = CONSTRUCTOR_NAME_SIZE;
+            break;
+            
+        case CLASS_METHOD_MODIFIER_HOLDER:
+            size = 1 + classMethodModifierDataSize(astBuffer.getEnumByte(index, ClassMethodModifier.Type.class));
             break;
             
         case METHOD_NAME:
@@ -833,7 +839,6 @@ public class AST {
     static void encodeClassMethodStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.CLASS_METHOD_MEMBER);
-        
     }
 
     public static <COMPILATION_UNIT> void decodeClassMethodStart(
@@ -843,6 +848,52 @@ public class AST {
         
         listener.onClassMethodStart(classMethodStartContext);
     }
+
+    
+    private static int classMethodModifierDataSize(ClassMethodModifier.Type type) {
+        
+        final int result;
+        
+        switch (type) {
+        case STATIC:
+            result = 0;
+            break;
+            
+        default:
+            throw new UnsupportedOperationException();
+        }
+
+        return result;
+    }
+    
+    static void encodeStaticClassMethodModifier(StringASTBuffer astBuffer) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.CLASS_METHOD_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(ClassMethodModifier.Type.STATIC);
+    }
+
+    public static <COMPILATION_UNIT> void decodeClassMethodModifierHolder(
+            ASTBufferRead astBuffer,
+            int leafContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        final ClassMethodModifier.Type type = astBuffer.getEnumByte(index, ClassMethodModifier.Type.class);
+        
+        switch (type) {
+        case VISIBILITY:
+            listener.onVisibilityClassMethodModifier(leafContext, astBuffer.getEnumByte(index + 1, ClassMethodVisibility.class));
+            break;
+            
+        case STATIC:
+            listener.onStaticClassMethodModifier(leafContext);
+            break;
+            
+         default:
+             throw new UnsupportedOperationException();
+        }
+    }
+    
 
     static void encodeMethodReturnTypeStart(StringASTBuffer astBuffer) {
 

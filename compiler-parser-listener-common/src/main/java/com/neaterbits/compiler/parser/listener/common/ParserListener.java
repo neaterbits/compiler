@@ -142,7 +142,7 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onOverrideClassMethodModifier(int leafContext, ClassMethodOverride methodOverride);
 	
-	void onStaticClassMethodModifier(int elontext);
+	void onStaticClassMethodModifier(int leafContext);
 	
 	void onStrictfpClassMethodModifier(int leafContext);
 	

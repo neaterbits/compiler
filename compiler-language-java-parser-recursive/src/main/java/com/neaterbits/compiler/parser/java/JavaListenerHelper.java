@@ -13,6 +13,7 @@ import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.statement.ASTMutability;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.parse.ParserException;
@@ -199,4 +200,27 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             }
         }
     }
+
+    void callClassMethodMemberModifiers(CachedKeywords<JavaToken> keywords) throws ParserException {
+
+        for (int i = 0; i < keywords.count(); ++ i) {
+            
+            final CachedKeyword<JavaToken> keyword = keywords.getKeyword(i);
+            
+            switch (keyword.getToken()) {
+            
+            case PRIVATE:
+                listener.onVisibilityClassMethodModifier(keyword.getContext(), ClassMethodVisibility.PRIVATE);
+                break;
+
+            case STATIC:
+                listener.onStaticClassMethodModifier(keyword.getContext());
+                break;
+                
+            default:
+                throw new ParserException("Unexpected token " + keyword.getToken());
+            }
+        }
+    }
 }
+

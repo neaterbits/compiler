@@ -485,7 +485,18 @@ public final class EncodedCompilationUnit {
                 }
                 break;
             }
-                
+
+            case CLASS_METHOD_MODIFIER_HOLDER:
+                if (ref.isStart) {
+                    final int leafContext = getStartContext(parseTreeRef);
+
+                    AST.decodeClassMethodModifierHolder(astBuffer, leafContext, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+
             case METHOD_NAME: {
                 final int leafContext = getLeafContext(parseTreeRef);
 
