@@ -1723,6 +1723,33 @@ public class AST {
 
         listener.onParameterEnd(parameterStartContext, endContext);
     }
+    
+    static void encodeNestedExpressionStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.NESTED_EXPRESSION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeNestedExpressionStart(
+            ASTBufferRead astBuffer,
+            int nestedExpressionStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+
+        listener.onNestedExpressionStart(nestedExpressionStartContext);
+    }
+
+    static void encodeNestedExpressionEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.NESTED_EXPRESSION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeNestedExpressionEnd(
+            int nestedExpressionStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onNestedExpressionEnd(nestedExpressionStartContext, endContext);
+    }
 
     static void encodePrimariesStart(StringASTBuffer astBuffer) {
         

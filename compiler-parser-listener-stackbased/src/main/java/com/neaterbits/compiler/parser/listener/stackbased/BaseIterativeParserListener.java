@@ -316,7 +316,7 @@ public abstract class BaseIterativeParserListener<
 	
 	private void popAndAddIfConditionBlock(Context context) {
 		
-		final StackIfConditionBlock<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackConditionBlock = pop();
+		final StackIfConditionBlock<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackConditionBlock = pop();
 		
 		final StackIfElseIfElse<KEYWORD, CONDITION_BLOCK, STATEMENT> ifElseIfElse = get();
 		
@@ -333,7 +333,7 @@ public abstract class BaseIterativeParserListener<
 
 	   private void popAndAddElseIfConditionBlock(Context context) {
 	        
-	        final StackElseIfConditionBlock<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackConditionBlock = pop();
+	        final StackElseIfConditionBlock<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackConditionBlock = pop();
 	        
 	        final StackIfElseIfElse<KEYWORD, CONDITION_BLOCK, STATEMENT> ifElseIfElse = get();
 	        
@@ -534,7 +534,7 @@ public abstract class BaseIterativeParserListener<
 				stackSwitchCaseGroup.getLabels(),
 				parseTreeFactory.createBlock(context, stackSwitchCaseGroup.getStatements()));
 
-		final StackSwitchCase<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, SWITCH_CASE_GROUP> stackSwitchCase = get();
+		final StackSwitchCase<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, SWITCH_CASE_GROUP> stackSwitchCase = get();
 		
 		stackSwitchCase.addGroup(switchCaseGroup);
 		
@@ -631,7 +631,7 @@ public abstract class BaseIterativeParserListener<
 	    
 		logEnter(context);
 		
-		final StackSwitchCase<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, SWITCH_CASE_GROUP> stackSwitchCase = pop();
+		final StackSwitchCase<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, SWITCH_CASE_GROUP> stackSwitchCase = pop();
 		
 		final KEYWORD k = parseTreeFactory.createKeyword(stackSwitchCase.getKeywordContext(), stackSwitchCase.getKeyword());
 		

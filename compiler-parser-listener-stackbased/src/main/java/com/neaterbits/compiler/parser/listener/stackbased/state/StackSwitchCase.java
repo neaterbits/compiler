@@ -7,8 +7,8 @@ import java.util.Objects;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public final class StackSwitchCase<EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY, SWITCH_CASE_GROUP>
-	extends StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> {
+public final class StackSwitchCase<EXPRESSION,NESTED_EXPRESSION extends EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY, SWITCH_CASE_GROUP>
+	extends StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> {
 
 	private final List<SWITCH_CASE_GROUP> groups;
 	private final String keyword;

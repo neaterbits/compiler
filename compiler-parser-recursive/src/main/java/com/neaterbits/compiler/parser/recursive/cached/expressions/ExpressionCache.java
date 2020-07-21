@@ -217,7 +217,22 @@ public final class ExpressionCache {
                 list.addOperator(context, operator, precedence);
             }
             else if (precedence < listOperatorPrecedence) {
-                throw new UnsupportedOperationException();
+                // Has to move current onto sublist.
+                
+                final ExpressionCacheList curList = get();
+                
+                final ExpressionCacheList opList = getOrCreateCacheList();
+                
+                opList.addOperator(context, operator, precedence);
+
+                opList.addSubList(curList.getContextAt(0), curList);
+
+                if (lastIndex > 0) {
+                    // Replace
+                    stack[lastIndex - 1].replaceLastWithSubList(context, operator, listOperatorPrecedence, opList, contextWriter);
+                }
+                
+                stack[lastIndex] = opList;
             }
             else {
                 // precedence > listOperatorPrecedence
@@ -337,7 +352,12 @@ public final class ExpressionCache {
             break;
          
         case PRIMARY_LIST:
+            
+            listener.onNestedExpressionStart(primary.getContext());
+
             apply(primary.getSubList(), listener);
+
+            listener.onNestedExpressionEnd(primary.getContext(), null);
             break;
             
         case NAME:

@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.ListStackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ExpressionSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NestedExpressionSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableReferenceSetter;
 import com.neaterbits.compiler.util.Context;
@@ -13,10 +14,11 @@ import com.neaterbits.compiler.util.operator.Arity;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public class StackExpressionList<EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY>
+public class StackExpressionList<EXPRESSION, NESTED_EXPRESSION extends EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY>
 		extends ListStackEntry<EXPRESSION>
 		implements
 				ExpressionSetter<EXPRESSION>,
+				NestedExpressionSetter<NESTED_EXPRESSION>,
 				VariableReferenceSetter<VARIABLE_REFERENCE>,
 				PrimarySetter<PRIMARY> {
 
@@ -41,6 +43,12 @@ public class StackExpressionList<EXPRESSION, PRIMARY extends EXPRESSION, VARIABL
 	}
 
 	@Override
+    public void addNestedExpression(NESTED_EXPRESSION expression) {
+
+	    addExpression(expression);
+    }
+
+    @Override
 	public final void setVariableReference(VARIABLE_REFERENCE variableReference) {
 		addExpression(variableReference);
 	}

@@ -20,6 +20,7 @@ import com.neaterbits.compiler.ast.objects.block.Constructor;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
@@ -1908,22 +1909,77 @@ public abstract class BaseJavaParserTest {
 
         assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
         
-        final ExpressionList bInitializer = (ExpressionList)declarationStatement.getDeclarations().get(0).getInitializer();
-        assertThat(bInitializer.getExpressions().size()).isEqualTo(6);
+        final ExpressionList topLevelInitializer = (ExpressionList)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(topLevelInitializer.getExpressions().size()).isEqualTo(3);
         
-        checkExpressionListLiteral(bInitializer, 0, 1);
-        checkExpressionListLiteral(bInitializer, 1, 2);
-        checkExpressionListLiteral(bInitializer, 2, 3);
-        checkExpressionListLiteral(bInitializer, 3, 6);
-        checkExpressionListLiteral(bInitializer, 4, 5);
-        checkExpressionListLiteral(bInitializer, 5, 4);
+        checkExpressionListLiteral(topLevelInitializer, 0, 1);
+        checkExpressionListLiteral(topLevelInitializer, 1, 2);
         
-        assertThat(bInitializer.getOperators().size()).isEqualTo(5);
-        assertThat(bInitializer.getOperators().get(0)).isEqualTo(Arithmetic.PLUS);
-        assertThat(bInitializer.getOperators().get(1)).isEqualTo(Arithmetic.MINUS);
-        assertThat(bInitializer.getOperators().get(2)).isEqualTo(Arithmetic.MULTIPLY);
-        assertThat(bInitializer.getOperators().get(3)).isEqualTo(Arithmetic.DIVIDE);
-        assertThat(bInitializer.getOperators().get(4)).isEqualTo(Arithmetic.MODULUS);
+        final NestedExpression nestedExpression = (NestedExpression)topLevelInitializer.getExpressions().get(2);
+        final ExpressionList subInitializer = (ExpressionList)nestedExpression.getExpression();
+        
+        assertThat(subInitializer.getExpressions().size()).isEqualTo(4);
+        checkExpressionListLiteral(subInitializer, 0, 3);
+        checkExpressionListLiteral(subInitializer, 1, 6);
+        checkExpressionListLiteral(subInitializer, 2, 5);
+        checkExpressionListLiteral(subInitializer, 3, 4);
+        
+        assertThat(topLevelInitializer.getOperators().size()).isEqualTo(2);
+        assertThat(topLevelInitializer.getOperators().get(0)).isEqualTo(Arithmetic.PLUS);
+        assertThat(topLevelInitializer.getOperators().get(1)).isEqualTo(Arithmetic.MINUS);
+        
+        assertThat(subInitializer.getOperators().size()).isEqualTo(3);
+        assertThat(subInitializer.getOperators().get(0)).isEqualTo(Arithmetic.MULTIPLY);
+        assertThat(subInitializer.getOperators().get(1)).isEqualTo(Arithmetic.DIVIDE);
+        assertThat(subInitializer.getOperators().get(2)).isEqualTo(Arithmetic.MODULUS);
+    }
+
+    @Test
+    public void testArithmeticOperatorsWithLowerPrecedenceLast() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int a = 6 / 5 % 4 * 1 + 2 - 3; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement =
+                checkScalarVariableDeclarationStatement(
+                        method.getBlock().getStatements().get(0),
+                        "int",
+                        1);
+
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        
+        final ExpressionList topLevelInitializer = (ExpressionList)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(topLevelInitializer.getExpressions().size()).isEqualTo(3);
+
+        final NestedExpression nestedExpression = (NestedExpression)topLevelInitializer.getExpressions().get(0);
+        final ExpressionList subInitializer = (ExpressionList)nestedExpression.getExpression();
+        
+        assertThat(subInitializer.getExpressions().size()).isEqualTo(4);
+        checkExpressionListLiteral(subInitializer, 0, 6);
+        checkExpressionListLiteral(subInitializer, 1, 5);
+        checkExpressionListLiteral(subInitializer, 2, 4);
+        checkExpressionListLiteral(subInitializer, 3, 1);
+
+        checkExpressionListLiteral(topLevelInitializer, 1, 2);
+        checkExpressionListLiteral(topLevelInitializer, 2, 3);
+        
+        assertThat(subInitializer.getOperators().size()).isEqualTo(3);
+        assertThat(subInitializer.getOperators().get(0)).isEqualTo(Arithmetic.DIVIDE);
+        assertThat(subInitializer.getOperators().get(1)).isEqualTo(Arithmetic.MODULUS);
+        assertThat(subInitializer.getOperators().get(2)).isEqualTo(Arithmetic.MULTIPLY);
+        
+        assertThat(topLevelInitializer.getOperators().size()).isEqualTo(2);
+        assertThat(topLevelInitializer.getOperators().get(0)).isEqualTo(Arithmetic.PLUS);
+        assertThat(topLevelInitializer.getOperators().get(1)).isEqualTo(Arithmetic.MINUS);
     }
 
     @Test

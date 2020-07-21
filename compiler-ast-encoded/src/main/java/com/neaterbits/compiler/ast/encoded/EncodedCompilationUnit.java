@@ -747,6 +747,18 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case NESTED_EXPRESSION:  {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeNestedExpressionStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeNestedExpressionEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             case PRIMARY_LIST:  {
                 final int startContext = getStartContext(parseTreeRef);
 

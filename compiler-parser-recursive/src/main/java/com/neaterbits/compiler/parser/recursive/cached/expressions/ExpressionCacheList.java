@@ -105,6 +105,11 @@ final class ExpressionCacheList implements Names {
         addPrimary().initIntegerLiteral(context, value, base, signed, bits);
     }
     
+    void addSubList(int context, ExpressionCacheList subList) {
+
+        addPrimary().initSubList(context, subList);
+    }
+    
     void replaceLastWithMethodInvocation(int context, ParametersList parametersSubList) {
         
         final CachedPrimary last = getLast();

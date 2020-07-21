@@ -13,6 +13,7 @@ import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreIncre
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseInfixExpressionEmitter;
 import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.Assignment;
 import com.neaterbits.compiler.util.operator.Bitwise;
 import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
@@ -156,6 +157,11 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 
         @Override
         public String onScope(Scope scope, Void param) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String onAssignment(Assignment assignment, Void param) {
             throw new UnsupportedOperationException();
         }
 	};

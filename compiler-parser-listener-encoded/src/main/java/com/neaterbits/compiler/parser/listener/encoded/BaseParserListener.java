@@ -837,16 +837,16 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onNestedExpressionStart(int nestedExpressionStartContext) {
 
         writeStartElementContextRef(nestedExpressionStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeNestedExpressionStart(astBuffer);
     }
 
     @Override
     public final void onNestedExpressionEnd(int nestedExpressionStartContext, Context endContext) {
 
         writeEndElementContext(nestedExpressionStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeNestedExpressionEnd(astBuffer);
     }
 
     @Override

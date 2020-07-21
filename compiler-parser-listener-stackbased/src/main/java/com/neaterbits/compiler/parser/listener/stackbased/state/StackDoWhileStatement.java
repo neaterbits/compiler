@@ -7,8 +7,8 @@ import java.util.Objects;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.StatementSetter;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public final class StackDoWhileStatement<EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY, STATEMENT>
-		extends StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE>
+public final class StackDoWhileStatement<EXPRESSION, NESTED_EXPRESSION extends EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY, STATEMENT>
+		extends StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE>
 		implements StatementSetter<STATEMENT> {
 
 	private final List<STATEMENT> statements;

@@ -11,13 +11,14 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 public class StackForStatement<
 
 		EXPRESSION,
+		NESTED_EXPRESSION extends EXPRESSION,
 		PRIMARY extends EXPRESSION,
 		VARIABLE_REFERENCE extends PRIMARY,
 		STATEMENT,
 		FOR_INIT>
 
 
-	extends StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE>
+	extends StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE>
 	implements StatementSetter<STATEMENT> {
 
 	private final String keyword;

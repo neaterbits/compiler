@@ -302,7 +302,7 @@ public abstract class BaseInfixParserListener<
 
 		logEnter(context);
 		
-		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> expressionList = get();
+		final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> expressionList = get();
 		
 		expressionList.addOperator(operator);
 		

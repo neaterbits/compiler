@@ -1213,7 +1213,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackConstructorInvocation<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackConstructorInvocation = pop();
+		final StackConstructorInvocation<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackConstructorInvocation = pop();
 
 		final CONSTRUCTOR_INVOCATION_STATEMENT statement = parseTreeFactory.createConstructorInvocationStatement(
 				context, stackConstructorInvocation.getType(), makeExpression(context, stackConstructorInvocation),
@@ -2015,7 +2015,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
+		final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
 
 		final StackAssignmentExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackAssignmentExpression = pop();
 
@@ -2048,7 +2048,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
+		final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
 
 		final NESTED_EXPRESSION nestedExpression = parseTreeFactory.createNestedExpression(context,
 				makeExpression(context, stackExpressionList));
@@ -2155,7 +2155,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
+		final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
 
 		final StackArrayAccess<EXPRESSION, EXPRESSION, PRIMARY> stackArrayAccess = get();
 
@@ -2317,7 +2317,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
+		final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
 
 		final StackConditionalExpression<EXPRESSION> stackConditionalExpression = get();
 
@@ -2345,7 +2345,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
+		final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
 
 		final StackConditionalExpression<EXPRESSION> stackConditionalExpression = get();
 
@@ -2373,7 +2373,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
+		final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
 
 		final StackConditionalExpression<EXPRESSION> stackConditionalExpression = get();
 
@@ -2606,7 +2606,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackParameter<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackParameter = pop();
+		final StackParameter<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackParameter = pop();
 
 		final StackParameterList<EXPRESSION> stackParameterList = get();
 
@@ -2695,7 +2695,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
+		final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList = pop();
 
 		final StackArrayCreationExpression<TYPE_REFERENCE, EXPRESSION> stackArrayCreationExpression = get();
 
@@ -2763,7 +2763,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackLambdaExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackLambdaExpression = get();
+		final StackLambdaExpression<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackLambdaExpression = get();
 
 		stackLambdaExpression.setSingleParameter(stringSource.asString(varName), context);
 
@@ -2801,7 +2801,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackLambdaExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackLambdaExpression = get();
+		final StackLambdaExpression<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackLambdaExpression = get();
 
 		stackLambdaExpression.setInferredParameterList(varNames, getOtherContext(varNamesContext));
 
@@ -2835,7 +2835,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackLambdaExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackLambdaExpression = pop();
+		final StackLambdaExpression<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackLambdaExpression = pop();
 
 		final LAMBDA_EXPRESSION_PARAMETERS parameters;
 
@@ -2950,7 +2950,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackVariableDeclaration<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackDeclaration = pop();
+		final StackVariableDeclaration<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackDeclaration = pop();
 
 		final EXPRESSION initializer = makeExpressionOrNull(context, stackDeclaration);
 
@@ -3163,7 +3163,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackExpressionStatement<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> statement = pop();
+		final StackExpressionStatement<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> statement = pop();
 
 		final EXPRESSION_STATEMENT expressionStatement = parseTreeFactory.createExpressionStatement(context, makeExpression(context, statement));
 
@@ -3221,7 +3221,7 @@ public abstract class BaseParserListener<
 		}
 
 		if (forInit != null) {
-			final StackForStatement<EXPRESSION, EXPRESSION, VARIABLE_REFERENCE, STATEMENT, FOR_INIT> forStatement = get();
+			final StackForStatement<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT, FOR_INIT> forStatement = get();
 
 			forStatement.setForInit(forInit);
 		}
@@ -3251,7 +3251,7 @@ public abstract class BaseParserListener<
 		final StackForUpdate<EXPRESSION> stackForUpdate = pop();
 
 		if (!stackForUpdate.getList().isEmpty()) {
-			final StackForStatement<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT, FOR_INIT> stackForStatement = get();
+			final StackForStatement<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT, FOR_INIT> stackForStatement = get();
 
 			stackForStatement.setForUpdate(stackForUpdate.getList());
 		}
@@ -3266,7 +3266,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackForStatement<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT, FOR_INIT> stackForStatement = pop();
+		final StackForStatement<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT, FOR_INIT> stackForStatement = pop();
 
 		final FOR_STATEMENT statement = parseTreeFactory.createForStatement(
 				context,
@@ -3360,7 +3360,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackWhileStatement<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackWhileStatement = pop();
+		final StackWhileStatement<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackWhileStatement = pop();
 
 		final WHILE_STATEMENT whileStatement = parseTreeFactory.createWhileStatement(
 				context,
@@ -3393,7 +3393,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackDoWhileStatement<EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackDoWhileStatement = pop();
+		final StackDoWhileStatement<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE, STATEMENT> stackDoWhileStatement = pop();
 
 		final DO_WHILE_STATEMENT doWhileStatement = parseTreeFactory.createDoWhileStatement(
 				context,
@@ -3658,7 +3658,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpression = pop();
+		final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpression = pop();
 
 		final EXPRESSION expression = makeExpressionOrNull(context, stackExpression);
 
@@ -3866,7 +3866,7 @@ public abstract class BaseParserListener<
 	}
 
 	private final EXPRESSION makeExpressionOrNull(Context context,
-			StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList) {
+			StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList) {
 		return makeExpressionOrNull(context, stackExpressionList.getOperators(context), stackExpressionList.getList());
 	}
 
@@ -3876,7 +3876,7 @@ public abstract class BaseParserListener<
 	}
 
 	final EXPRESSION makeExpression(Context context,
-			StackExpressionList<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList) {
+			StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList) {
 		return makeExpression(context, stackExpressionList.getOperators(context), stackExpressionList.getList());
 	}
 
