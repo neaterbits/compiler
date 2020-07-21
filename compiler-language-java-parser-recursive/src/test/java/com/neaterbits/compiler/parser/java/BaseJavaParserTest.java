@@ -48,6 +48,7 @@ import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.statement.ASTMutability;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodStatic;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
@@ -1151,6 +1152,34 @@ public abstract class BaseJavaParserTest {
         
         final ClassMethodVisibility methodVisibility = member.getModifiers().getModifier(ClassMethodVisibility.class);
         assertThat(methodVisibility).isEqualTo(ClassMethodVisibility.PRIVATE);
+        
+        final ClassMethod method = member.getMethod();
+        
+        checkScalarType(method.getReturnType(), "void");
+        
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        assertThat(method.getParameters().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testFinalMethod() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { final void someMethod() { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        assertThat(member.getModifiers().count()).isEqualTo(1);
+        
+        final ClassMethodOverride methodOverride = member.getModifiers().getModifier(ClassMethodOverride.class);
+        assertThat(methodOverride).isEqualTo(ClassMethodOverride.FINAL);
         
         final ClassMethod method = member.getMethod();
         

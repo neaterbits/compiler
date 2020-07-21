@@ -26,6 +26,7 @@ import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.NamePart;
 import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodModifier;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.ClassModifier;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
@@ -856,6 +857,7 @@ public class AST {
         
         switch (type) {
         case VISIBILITY:
+        case OVERRIDE:
             result = 1;
             break;
         
@@ -883,6 +885,13 @@ public class AST {
         astBuffer.writeEnumByte(ClassMethodModifier.Type.STATIC);
     }
 
+    static void encodeOverrideClassMethodModifier(StringASTBuffer astBuffer, ClassMethodOverride classMethodOverride) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.CLASS_METHOD_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(ClassMethodModifier.Type.OVERRIDE);
+        astBuffer.writeEnumByte(classMethodOverride);
+    }
+
     public static <COMPILATION_UNIT> void decodeClassMethodModifierHolder(
             ASTBufferRead astBuffer,
             int leafContext,
@@ -898,6 +907,10 @@ public class AST {
             
         case STATIC:
             listener.onStaticClassMethodModifier(leafContext);
+            break;
+            
+        case OVERRIDE:
+            listener.onOverrideClassMethodModifier(leafContext, astBuffer.getEnumByte(index + 1, ClassMethodOverride.class));
             break;
             
          default:

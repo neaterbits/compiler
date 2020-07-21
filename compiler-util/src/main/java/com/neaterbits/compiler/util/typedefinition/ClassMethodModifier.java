@@ -4,7 +4,8 @@ public interface ClassMethodModifier {
 
     public enum Type {
         VISIBILITY,
-        STATIC
+        STATIC,
+        OVERRIDE
     }
     
 	<T, R> R visit(ClassMethodModifierVisitor<T, R> visitor, T param);

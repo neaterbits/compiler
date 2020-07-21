@@ -13,6 +13,7 @@ import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.statement.ASTMutability;
+import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.util.io.strings.StringRef;
@@ -216,7 +217,11 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             case STATIC:
                 listener.onStaticClassMethodModifier(keyword.getContext());
                 break;
-                
+
+            case FINAL:
+                listener.onOverrideClassMethodModifier(keyword.getContext(), ClassMethodOverride.FINAL);
+                break;
+
             default:
                 throw new ParserException("Unexpected token " + keyword.getToken());
             }
