@@ -855,6 +855,10 @@ public class AST {
         final int result;
         
         switch (type) {
+        case VISIBILITY:
+            result = 1;
+            break;
+        
         case STATIC:
             result = 0;
             break;
@@ -866,6 +870,13 @@ public class AST {
         return result;
     }
     
+    static void encodeVisibilityClassMethodModifier(StringASTBuffer astBuffer, ClassMethodVisibility classMethodVisibility) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.CLASS_METHOD_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(ClassMethodModifier.Type.VISIBILITY);
+        astBuffer.writeEnumByte(classMethodVisibility);
+    }
+
     static void encodeStaticClassMethodModifier(StringASTBuffer astBuffer) {
 
         astBuffer.writeLeafElement(ParseTreeElement.CLASS_METHOD_MODIFIER_HOLDER);
