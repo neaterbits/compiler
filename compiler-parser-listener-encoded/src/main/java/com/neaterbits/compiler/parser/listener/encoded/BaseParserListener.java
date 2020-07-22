@@ -1039,7 +1039,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeLeafElementContextRef(leafContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeBooleanLiteral(astBuffer, value);
     }
 
     @Override

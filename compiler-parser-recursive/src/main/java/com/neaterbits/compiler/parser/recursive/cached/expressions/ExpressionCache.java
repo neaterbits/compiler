@@ -8,6 +8,7 @@ import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.name.Names;
+import com.neaterbits.compiler.util.operator.Arity;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.OperatorType;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
@@ -63,6 +64,11 @@ public final class ExpressionCache {
     }
     
     private void pop() {
+        
+        if (lastIndex < 0) {
+            throw new IllegalStateException();
+        }
+
         -- lastIndex;
     }
     
@@ -85,6 +91,11 @@ public final class ExpressionCache {
     private ExpressionCacheList get() {
         return stack[lastIndex];
     }
+    
+    private boolean atRoot() {
+        
+        return lastIndex == 0;
+    }
 
     public void addName(int context, long name) {
         get().addName(context, name);
@@ -93,6 +104,11 @@ public final class ExpressionCache {
     public void addIntegerLiteral(int context, long value, Base base, boolean signed, int bits) {
 
         get().addIntegerLiteral(context, value, base, signed, bits);
+    }
+
+    public void addBooleanLiteral(int context, boolean value) {
+        
+        get().addBooleanLiteral(context, value);
     }
     
     public ParseTreeElement getTypeOfLast() {
@@ -197,6 +213,119 @@ public final class ExpressionCache {
     
     public void addOperator(int context, Operator operator) {
         
+        if (operator.getArity() == Arity.UNARY) {
+            addUnaryOperator(context, operator);
+        }
+        else if (operator.getArity() == Arity.BINARY) {
+            addBinaryOperator(context, operator);
+        }
+        else {
+            throw new UnsupportedOperationException();
+        }
+    }
+    
+    private void addUnaryOperator(int context, Operator operator) {
+
+        final ExpressionCacheList list = get();
+        
+        if (list.operatorsCount() == 0) {
+            switch (list.primariesCount()) {
+            case 0: {
+                // prefix
+                final int precedence = languageOperatorPrecedence.getPrecedence(operator);
+    
+                list.addOperator(context, operator, precedence);
+                break;
+            }
+
+            case 1: {
+                // postfix
+                final int precedence = languageOperatorPrecedence.getPrecedence(operator);
+                
+                list.addOperator(context, operator, precedence);
+                break;
+            }
+                
+            default:
+                throw new IllegalStateException();
+            }
+        }
+        else {
+            switch (list.getArity()) {
+            case UNARY:
+                addUnaryOperatorToUnary(list, context, operator);
+                break;
+                
+            case BINARY:
+                addUnaryOperatorToList(list, context, operator);
+                break;
+         
+            default:
+                throw new UnsupportedOperationException();
+            }
+        }
+    }
+    
+    private void addUnaryOperatorToUnary(ExpressionCacheList list, int context, Operator operator) {
+
+        if (list.primariesCount() != 0) {
+            throw new IllegalStateException();
+        }
+        
+        final int precedence = languageOperatorPrecedence.getPrecedence(operator);
+
+        final int listOperatorPrecedence = list.getOperatorPrecedence();
+        
+        if (precedence != listOperatorPrecedence) {
+            throw new UnsupportedOperationException();
+        }
+
+        final ExpressionCacheList sub = push();
+        
+        list.addSubList(context, sub);
+        
+        sub.addOperator(context, operator, precedence);
+    }
+
+    private void addUnaryOperatorToList(ExpressionCacheList list, int context, Operator operator) {
+
+        if (list.primariesCount() == 1 && list.operatorsCount() == 0) {
+            
+            // Unary operator should be before?
+            throw new IllegalStateException();
+        }
+        else if (list.primariesCount() == list.operatorsCount() || list.primariesCount() == list.operatorsCount() + 1) {
+
+            final int precedence = languageOperatorPrecedence.getPrecedence(operator);
+            
+            final ExpressionCacheList cacheList = getOrCreateCacheList();
+            
+            final int listOperatorPrecedence = list.getOperatorPrecedence();
+
+            cacheList.addOperator(context, operator, precedence);
+            
+            if (precedence <= listOperatorPrecedence) {
+                
+                pop();
+                
+                get().addSubList(contextWriter.writeContext(context), cacheList);
+                
+                push(cacheList);
+            }
+            else {
+                
+                get().addSubList(contextWriter.writeContext(context), cacheList);
+                
+                push(cacheList);
+            }
+        }
+        else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private void addBinaryOperator(int context, Operator operator) {
+        
         final int precedence = languageOperatorPrecedence.getPrecedence(operator);
 
         final ExpressionCacheList list = get();
@@ -206,10 +335,50 @@ public final class ExpressionCache {
             throw new IllegalStateException();
             
         case 1:
-            list.addOperator(context, operator, precedence);
+            if (list.operatorsCount() > 0 && list.getArity() == Arity.UNARY) {
+                // Cannot add to unary directly
+                if (precedence < list.getOperatorPrecedence()) {
+
+                    if (atRoot()) {
+                        
+                        // Unary is at root so must move to sublist
+                        pop();
+                        
+                        final ExpressionCacheList root = push();
+                        
+                        root.addSubList(
+                                contextWriter.writeContext(list.getContextAt(0)),
+                                list);
+                        
+                        root.addOperator(context, operator, precedence);
+                    }
+                    else {
+                        pop(); // pop unary
+                        
+                        // add to current list above
+                        addBinaryOperator(context, operator);
+                    }
+                }
+                else {
+                    // Move to sublist
+                    final ExpressionCacheList subList = getOrCreateCacheList();
+                    
+                    get().replaceLastWithSubList(context, operator, precedence, subList, contextWriter);
+
+                    push(subList);
+                }
+            }
+            else {
+                list.addOperator(context, operator, precedence);
+            }
             break;
             
         default:
+            
+            if (list.getArity() == Arity.UNARY) {
+                throw new IllegalStateException();
+            }
+            
             final int listOperatorPrecedence = list.getOperatorPrecedence();
 
             // Find precedence
@@ -269,6 +438,51 @@ public final class ExpressionCache {
     }
 
     private <COMPILATION_UNIT> void apply(ExpressionCacheList cacheList, IterativeParserListener<COMPILATION_UNIT> listener) {
+        
+        if (cacheList.operatorsCount() > 0) {
+            
+            final Arity arity = cacheList.getArity();
+            
+            switch (arity) {
+            
+            case UNARY:
+                applyUnaryOperatorsList(cacheList, listener);
+                break;
+            
+            case BINARY:
+                applyBinaryOperatorsList(cacheList, listener);
+                break;
+                
+            default:
+                throw new UnsupportedOperationException();
+                
+            }
+        }
+        else {
+            applyPrimaryToListener(cacheList.getCachedPrimary(0), listener);
+        }
+    }
+    
+    private <COMPILATION_UNIT> void applyUnaryOperatorsList(ExpressionCacheList cacheList, IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        if (cacheList.operatorsCount() != 1) {
+            throw new IllegalStateException();
+        }
+        
+        if (cacheList.primariesCount() != 1) {
+            throw new IllegalStateException();
+        }
+        
+        final int startContext = cacheList.getContextAt(0);
+        
+        listener.onUnaryExpressionStart(startContext, cacheList.getCachedOperator(0).getOperator());
+        
+        applyPrimaryToListener(cacheList.getCachedPrimary(0), listener);
+        
+        listener.onUnaryExpressionEnd(startContext, null);
+    }
+
+    private <COMPILATION_UNIT> void applyBinaryOperatorsList(ExpressionCacheList cacheList, IterativeParserListener<COMPILATION_UNIT> listener) {
 
         final int numOperators = cacheList.operatorsCount();
         
@@ -328,8 +542,6 @@ public final class ExpressionCache {
                 if (i < numOperators) {
                     final CachedOperator cachedOperator = cacheList.getCachedOperator(i);
                     
-                    System.out.println("## add operator " + cachedOperator.getOperator());
-
                     listener.onExpressionBinaryOperator(cachedOperator.getContext(), cachedOperator.getOperator());
                 }
             }
@@ -350,21 +562,40 @@ public final class ExpressionCache {
                     primary.isSigned(),
                     primary.getBits());
             break;
-         
-        case PRIMARY_LIST:
             
-            listener.onNestedExpressionStart(primary.getContext());
-
-            apply(primary.getSubList(), listener);
-
-            listener.onNestedExpressionEnd(primary.getContext(), null);
+        case BOOLEAN_LITERAL:
+            listener.onBooleanLiteral(primary.getContext(), primary.getBooleanLiteralValue());
             break;
+         
+        case PRIMARY_LIST: {
+            
+            final ExpressionCacheList list = primary.getSubList();
+            
+            switch (list.getArity()) {
+            
+            case UNARY:
+                applyUnaryOperatorsList(list, listener);
+                break;
+                
+            case BINARY:
+                listener.onNestedExpressionStart(primary.getContext());
+    
+                applyBinaryOperatorsList(list, listener);
+    
+                listener.onNestedExpressionEnd(primary.getContext(), null);
+                break;
+                
+            default:
+                throw new UnsupportedOperationException();
+            }
+            break;
+        }
             
         case NAME:
             listener.onNameReference(primary.getContext(), primary.getName());
             break;
             
-        case METHOD_INVOCATION_EXPRESSION:
+        case METHOD_INVOCATION_EXPRESSION: {
             
             listener.onMethodInvocationStart(
                     primary.getContext(),
@@ -401,6 +632,7 @@ public final class ExpressionCache {
     
             listener.onMethodInvocationEnd(primary.getContext(), null);
             break;
+        }
         
         default:
             throw new UnsupportedOperationException("Unknown primary type " + primary.getType());

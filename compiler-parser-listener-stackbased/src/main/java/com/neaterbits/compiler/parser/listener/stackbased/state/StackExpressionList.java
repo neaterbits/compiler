@@ -9,7 +9,6 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Expressi
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NestedExpressionSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableReferenceSetter;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.operator.Arity;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -59,16 +58,17 @@ public class StackExpressionList<EXPRESSION, NESTED_EXPRESSION extends EXPRESSIO
 	}
 
 	public final void addOperator(Operator operator) {
-		Objects.requireNonNull(operator);
+
+	    Objects.requireNonNull(operator);
 		
-		if (operator.getArity() != Arity.BINARY) {
-			throw new IllegalArgumentException("Expected binary arity: " + operator);
+		if (operator.getArity() != Arity.UNARY && operator.getArity() != Arity.BINARY) {
+			throw new IllegalArgumentException("Expected unary or binary arity: " + operator);
 		}
 
 		operators.add(operator);
 	}
 
-	public final List<Operator> getOperators(Context context) {
+	public final List<Operator> getOperators() {
 		return operators;
 	}
 }

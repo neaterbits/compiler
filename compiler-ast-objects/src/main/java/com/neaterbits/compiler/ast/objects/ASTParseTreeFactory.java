@@ -26,6 +26,7 @@ import com.neaterbits.compiler.ast.objects.expression.ConditionalExpression;
 import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
+import com.neaterbits.compiler.ast.objects.expression.GenericUnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.LambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.LambdaExpressionParameters;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
@@ -35,6 +36,7 @@ import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.Resource;
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
+import com.neaterbits.compiler.ast.objects.expression.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostDecrementExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostIncrementExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreDecrementExpression;
@@ -135,6 +137,7 @@ import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.ClassName;
 import com.neaterbits.compiler.util.name.NamespaceReference;
@@ -194,6 +197,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	AssignmentExpression,
 	CastExpression,
 	ConditionalExpression,
+	UnaryExpression,
 	PreIncrementExpression,
 	PostIncrementExpression,
 	PreDecrementExpression,
@@ -670,6 +674,11 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
+    public UnaryExpression createUnaryExpression(Context context, Operator operator, ParseTreeElement parseTreeElement, Expression expression) {
+	    return new GenericUnaryExpression(context, operator, parseTreeElement, expression);
+    }
+
+    @Override
 	public PreIncrementExpression createPreIncrementExpression(Context context, Expression expression) {
 		return new PreIncrementExpression(context, expression);
 	}

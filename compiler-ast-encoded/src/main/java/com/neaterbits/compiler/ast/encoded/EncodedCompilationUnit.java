@@ -662,6 +662,19 @@ public final class EncodedCompilationUnit {
                 break;
             }
             
+            case BOOLEAN_LITERAL: {
+
+                final int leafContext = getLeafContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeBooleanLiteral(astBuffer, leafContext, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+            }
+
             case WHILE_STATEMENT: {
                 final int startContext = getStartContext(parseTreeRef);
 
@@ -769,8 +782,21 @@ public final class EncodedCompilationUnit {
                 }
                 break;
             }
+            
+            case UNARY_EXPRESSION: {
+                final int startContext = getStartContext(parseTreeRef);
 
-            case PRIMARY_LIST:  {
+                if (ref.isStart) {
+                    AST.decodeUnaryExpressionStart(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    AST.decodeUnaryExpressionEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+
+            case PRIMARY_LIST: {
                 final int startContext = getStartContext(parseTreeRef);
 
                 if (ref.isStart) {

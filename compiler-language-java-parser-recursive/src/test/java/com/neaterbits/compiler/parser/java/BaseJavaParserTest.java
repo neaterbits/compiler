@@ -22,6 +22,8 @@ import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
+import com.neaterbits.compiler.ast.objects.expression.UnaryExpression;
+import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
 import com.neaterbits.compiler.ast.objects.generics.NamedTypeArgument;
@@ -45,6 +47,8 @@ import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.Mutability;
 import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.IncrementDecrement;
+import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.statement.ASTMutability;
@@ -1709,8 +1713,8 @@ public abstract class BaseJavaParserTest {
         final VariableDeclarationStatement statement
             = checkScalarVariableDeclarationStatement(method.getBlock().getStatements().get(0), "int", 2);
         
-        checkScalarVariableDeclaration(statement, 0, "a", null);
-        checkScalarVariableDeclaration(statement, 1, "b", 0);
+        checkIntScalarVariableDeclaration(statement, 0, "a", null);
+        checkIntScalarVariableDeclaration(statement, 1, "b", 0);
     }
 
     @Test
@@ -1734,8 +1738,8 @@ public abstract class BaseJavaParserTest {
                     "int",
                     2);
         
-        checkScalarVariableDeclaration(statement, 0, "a", 1);
-        checkScalarVariableDeclaration(statement, 1, "b", null);
+        checkIntScalarVariableDeclaration(statement, 0, "a", 1);
+        checkIntScalarVariableDeclaration(statement, 1, "b", null);
     }
 
     @Test
@@ -1759,8 +1763,8 @@ public abstract class BaseJavaParserTest {
                 "int",
                 2);
         
-        checkScalarVariableDeclaration(statement, 0, "a", 1);
-        checkScalarVariableDeclaration(statement, 1, "b", 0);
+        checkIntScalarVariableDeclaration(statement, 0, "a", 1);
+        checkIntScalarVariableDeclaration(statement, 1, "b", 0);
     }
 
     @Test
@@ -1984,7 +1988,7 @@ public abstract class BaseJavaParserTest {
                         "int",
                         2);
 
-        checkScalarVariableDeclaration(declarationStatement, 0, "a", 1);
+        checkIntScalarVariableDeclaration(declarationStatement, 0, "a", 1);
         
         final IntegerLiteral aInitializer = (IntegerLiteral)declarationStatement.getDeclarations().get(0).getInitializer();
         assertThat(aInitializer.getValue()).isEqualTo(1L);
@@ -2095,6 +2099,178 @@ public abstract class BaseJavaParserTest {
         assertThat(topLevelInitializer.getOperators().get(0)).isEqualTo(Arithmetic.PLUS);
         assertThat(topLevelInitializer.getOperators().get(1)).isEqualTo(Arithmetic.MINUS);
     }
+
+    @Test
+    public void testUnaryOperator() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { boolean value = !false; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement =
+                checkScalarVariableDeclarationStatement(
+                        method.getBlock().getStatements().get(0),
+                        "boolean",
+                        1);
+
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("value");
+
+        final UnaryExpression unaryExpression = (UnaryExpression)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(unaryExpression).isNotNull();
+        assertThat(unaryExpression.getOperator()).isEqualTo(Logical.NOT);
+
+        final BooleanLiteral booleanLiteral = (BooleanLiteral)unaryExpression.getExpression();
+        assertThat(booleanLiteral.getValue()).isFalse();
+        
+    }
+
+    @Test
+    public void testUnaryOperatorPrecedence() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { boolean value = !false && true; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement =
+                checkScalarVariableDeclarationStatement(
+                        method.getBlock().getStatements().get(0),
+                        "boolean",
+                        1);
+
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("value");
+        
+        final ExpressionList expressionList = (ExpressionList)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(expressionList.getExpressions().size()).isEqualTo(2);
+        assertThat(expressionList.getOperators().size()).isEqualTo(1);
+
+        final UnaryExpression unaryExpression = (UnaryExpression)expressionList.getExpressions().get(0);
+        assertThat(unaryExpression).isNotNull();
+        assertThat(unaryExpression.getOperator()).isEqualTo(Logical.NOT);
+
+        final BooleanLiteral notBooleanLiteral = (BooleanLiteral)unaryExpression.getExpression();
+        assertThat(notBooleanLiteral.getValue()).isFalse();
+        
+        assertThat(expressionList.getOperators().get(0)).isEqualTo(Logical.AND);
+        
+        final BooleanLiteral andBooleanLiteral = (BooleanLiteral)expressionList.getExpressions().get(1);
+        assertThat(andBooleanLiteral.getValue()).isTrue();
+    }
+
+    @Test
+    public void testUnaryOperatorAndUnaryOperator() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { boolean value = !!true; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement =
+                checkScalarVariableDeclarationStatement(
+                        method.getBlock().getStatements().get(0),
+                        "boolean",
+                        1);
+
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("value");
+
+        final UnaryExpression unaryExpression = (UnaryExpression)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(unaryExpression).isNotNull();
+        assertThat(unaryExpression.getOperator()).isEqualTo(Logical.NOT);
+
+        final UnaryExpression otherUnaryExpression = (UnaryExpression)unaryExpression.getExpression();
+        assertThat(otherUnaryExpression).isNotNull();
+        assertThat(otherUnaryExpression.getOperator()).isEqualTo(Logical.NOT);
+
+        final BooleanLiteral booleanLiteral = (BooleanLiteral)otherUnaryExpression.getExpression();
+        assertThat(booleanLiteral.getValue()).isTrue();
+        
+    }
+    
+
+    @Test
+    public void testPostfixUnaryOperator() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { boolean value = var ++; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement =
+                checkScalarVariableDeclarationStatement(
+                        method.getBlock().getStatements().get(0),
+                        "boolean",
+                        1);
+
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("value");
+
+        final UnaryExpression unaryExpression = (UnaryExpression)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(unaryExpression).isNotNull();
+        assertThat(unaryExpression.getOperator()).isEqualTo(IncrementDecrement.POST_INCREMENT);
+
+        final NameReference nameReference = (NameReference)unaryExpression.getExpression();
+        assertThat(nameReference.getName()).isEqualTo("var");
+    }
+
+    @Test
+    public void testPrefixUnaryOperator() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { boolean value = ++ var; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement =
+                checkScalarVariableDeclarationStatement(
+                        method.getBlock().getStatements().get(0),
+                        "boolean",
+                        1);
+
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("value");
+
+        final UnaryExpression unaryExpression = (UnaryExpression)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(unaryExpression).isNotNull();
+        assertThat(unaryExpression.getOperator()).isEqualTo(IncrementDecrement.PRE_INCREMENT);
+
+        final NameReference nameReference = (NameReference)unaryExpression.getExpression();
+        assertThat(nameReference.getName()).isEqualTo("var");
+    }
+
 
     @Test
     public void testClassStaticOrStaticVarMethodCall() throws IOException, ParserException {
@@ -2212,7 +2388,7 @@ public abstract class BaseJavaParserTest {
         
         final VariableDeclarationStatement declarationStatement = checkScalarVariableDeclarationStatement(statement, scalarType, 1);
         
-        checkScalarVariableDeclaration(declarationStatement, 0, varName, value);
+        checkIntScalarVariableDeclaration(declarationStatement, 0, varName, value);
         
         return declarationStatement;
     }
@@ -2231,7 +2407,7 @@ public abstract class BaseJavaParserTest {
         return declarationStatement;
     }
 
-    private void checkScalarVariableDeclaration(
+    private void checkIntScalarVariableDeclaration(
             VariableDeclarationStatement declarationStatement,
             int index,
             String varName,
@@ -2248,7 +2424,7 @@ public abstract class BaseJavaParserTest {
             assertThat(declarationStatement.getDeclarations().get(index).getInitializer()).isNull();
         }
     }
-
+    
     private void checkVarLiteralCondition(ConditionBlock conditionBlock, Relational operator) {
         final ExpressionList expressionList = (ExpressionList)conditionBlock.getCondition();
 

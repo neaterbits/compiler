@@ -4,6 +4,7 @@ import com.neaterbits.compiler.parser.recursive.cached.expressions.LanguageOpera
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Assignment;
 import com.neaterbits.compiler.util.operator.Bitwise;
+import com.neaterbits.compiler.util.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.Relational;
@@ -40,6 +41,25 @@ public final class JavaLanguageOperatorPrecedence implements LanguageOperatorPre
             case INCREMENT:
             case DECREMENT:
                 throw new UnsupportedOperationException();
+                
+            default:
+                throw new UnsupportedOperationException();
+            }
+            break;
+            
+        case INCREMENT_DECREMENT:
+            
+            switch ((IncrementDecrement)operator) {
+            
+            case PRE_INCREMENT:
+            case PRE_DECREMENT:
+                precedence = 14;
+                break;
+                
+            case POST_INCREMENT:
+            case POST_DECREMENT:
+                precedence = 15;
+                break;
                 
             default:
                 throw new UnsupportedOperationException();

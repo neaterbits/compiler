@@ -7,9 +7,12 @@ import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Assignment;
+import com.neaterbits.compiler.util.operator.IncrementDecrement;
+import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.operator.Scope;
+import com.neaterbits.util.ArrayUtils;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
@@ -37,6 +40,10 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
     private static final JavaToken [] EXPRESSION_STATEMENT_OPERATOR_TOKENS = AFTER_NAME_OPERATOR_TOKENS;
     
     private static final JavaToken [] OPERATOR_TOKENS = new JavaToken [] {
+            
+            JavaToken.INCREMENT,
+            JavaToken.DECREMENT,
+            
             JavaToken.EQUALS,
             JavaToken.NOT_EQUALS,
             JavaToken.LT,
@@ -49,6 +56,9 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             JavaToken.MUL,
             JavaToken.DIV,
             JavaToken.MOD,
+            
+            JavaToken.LOGICAL_AND,
+            JavaToken.LOGICAL_OR
     };
     
     final void parseExpressionList() throws IOException, ParserException {
@@ -76,8 +86,10 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
     
     private static final JavaToken [] EXPRESSION_TOKENS = new JavaToken [] {
             
+            JavaToken.TRUE,
+            JavaToken.FALSE,
             JavaToken.IDENTIFIER,
-            JavaToken.NUMBER,
+            JavaToken.NUMBER
     };
             
     final boolean parseExpression() throws IOException, ParserException {
@@ -101,31 +113,43 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         return parseExpressionToCache(OPERATOR_TOKENS);
     }
 
-    private boolean parseExpressionToCache(JavaToken [] operatorTokens) throws IOException, ParserException {
+    private boolean parseExpressionToCache(JavaToken [] postfixUnaryOrBinaryOperatorTokens) throws IOException, ParserException {
 
-        final boolean expressionFound = parsePrimary();
+        OperatorStatus primaryOrUnaryStatus = parsePrimaryOrUnaryOperator();
+        
+        final boolean expressionFound = primaryOrUnaryStatus != OperatorStatus.NOT_FOUND;
         
         if (expressionFound) {
          
             for (;;) {
-
-                final OperatorStatus status = parseOperatorToCache(operatorTokens);
                 
-                if (status == OperatorStatus.NOT_FOUND) {
-                    break;
+                if (primaryOrUnaryStatus == OperatorStatus.REQUIRES_PRIMARY) {
+                    
+                    primaryOrUnaryStatus = parsePrimaryOrUnaryOperator();
                 }
-                else if (status == OperatorStatus.REQUIRES_PRIMARY) {
-                    if (!parsePrimary()) {
-                        if (status == OperatorStatus.REQUIRES_PRIMARY) {
-                            throw new ParserException("Missing primary");
+                else if (primaryOrUnaryStatus == OperatorStatus.OPTIONAL_OPERATOR) {
+                    
+                    final OperatorStatus operatorStatus = parseOperatorToCache(postfixUnaryOrBinaryOperatorTokens);
+                    
+                    if (operatorStatus == OperatorStatus.NOT_FOUND) {
+                        break;
+                    }
+                    else if (operatorStatus == OperatorStatus.REQUIRES_PRIMARY) {
+                        primaryOrUnaryStatus = parsePrimaryOrUnaryOperator();
+                        
+                        if (primaryOrUnaryStatus == OperatorStatus.NOT_FOUND) {
+                            
+                            if (operatorStatus == OperatorStatus.REQUIRES_PRIMARY) {
+                                throw new ParserException("Missing primary");
+                            }
                         }
                     }
-                }
-                else if (status == OperatorStatus.OPTIONAL_OPERATOR) {
-                    // Continue
-                }
-                else {
-                    throw new UnsupportedOperationException();
+                    else if (operatorStatus == OperatorStatus.OPTIONAL_OPERATOR) {
+                        // Continue
+                    }
+                    else {
+                        throw new UnsupportedOperationException();
+                    }
                 }
             }
         }
@@ -133,14 +157,32 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         return expressionFound;
     }
 
-    private boolean parsePrimary() throws IOException, ParserException {
+    private static final JavaToken [] EXPRESSION_OR_UNARY_OPERATOR_TOKENS = ArrayUtils.merge(
+            EXPRESSION_TOKENS,
+            new JavaToken [] {
+                    JavaToken.EXCLAMATION,
+                    
+                    JavaToken.INCREMENT,
+                    JavaToken.DECREMENT
+            });
+
+    private OperatorStatus parsePrimaryOrUnaryOperator() throws IOException, ParserException {
         
-        final JavaToken token = lexer.lexSkipWS(EXPRESSION_TOKENS);
+        return parsePrimaryOrUnaryOperator(EXPRESSION_OR_UNARY_OPERATOR_TOKENS);
+    }
+
+    private OperatorStatus parsePrimaryOrUnaryOperator(JavaToken [] tokens) throws IOException, ParserException {
+
+        final JavaToken token = lexer.lexSkipWS(tokens);
+        
+        final OperatorStatus status;
         
         switch (token) {
         case IDENTIFIER:
             // Variable or 'this' or method call
             expressionCache.addName(writeCurContext(), getStringRef());
+            
+            status = OperatorStatus.OPTIONAL_OPERATOR;
             break;
 
         case NUMBER:
@@ -150,16 +192,49 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
                     Base.DECIMAL,
                     true,
                     32);
+
+            status = OperatorStatus.OPTIONAL_OPERATOR;
             break;
             
+        case TRUE:
+            expressionCache.addBooleanLiteral(writeCurContext(), true);
+
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+            
+        case FALSE:
+            expressionCache.addBooleanLiteral(writeCurContext(), false);
+
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+            
+        case EXCLAMATION:
+            expressionCache.addOperator(writeCurContext(), Logical.NOT);
+
+            status = OperatorStatus.REQUIRES_PRIMARY;
+            break;
+            
+        case INCREMENT:
+            expressionCache.addOperator(writeCurContext(), IncrementDecrement.PRE_INCREMENT);
+
+            status = OperatorStatus.REQUIRES_PRIMARY;
+            break;
+
+        case DECREMENT:
+            expressionCache.addOperator(writeCurContext(), IncrementDecrement.PRE_DECREMENT);
+
+            status = OperatorStatus.REQUIRES_PRIMARY;
+            break;
+
         case NONE:
+            status = OperatorStatus.NOT_FOUND;
             break;
             
         default:
             throw lexer.unexpectedToken();
         }
 
-        return token != JavaToken.NONE;
+        return status;
     }
     
     enum OperatorStatus {
@@ -177,6 +252,19 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
                 : OperatorStatus.NOT_FOUND;
         
         switch (operatorToken) {
+        
+        case INCREMENT:
+            addOperator(writeCurContext(), IncrementDecrement.POST_INCREMENT);
+            
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+            
+        case DECREMENT:
+            addOperator(writeCurContext(), IncrementDecrement.POST_DECREMENT);
+            
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+        
         case EQUALS:
             addOperator(writeCurContext(), Relational.EQUALS);
             break;
@@ -199,6 +287,14 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             
         case GTE:
             addOperator(writeCurContext(), Relational.GREATER_THAN_OR_EQUALS);
+            break;
+            
+        case LOGICAL_AND:
+            addOperator(writeCurContext(), Logical.AND);
+            break;
+            
+        case LOGICAL_OR:
+            addOperator(writeCurContext(), Logical.OR);
             break;
             
         case PLUS:

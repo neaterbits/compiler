@@ -4,6 +4,8 @@ public interface OperatorVisitor<T, R> {
 
 	R onArithmetic(Arithmetic arithmetic, T param);
 	
+	R onIncrementDecrement(IncrementDecrement incrementDecrement, T param);
+	
 	R onBitwise(Bitwise bitwise, T param);
 	
 	R onRelational(Relational relational, T param);

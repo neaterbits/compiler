@@ -19,8 +19,7 @@ import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
-import com.neaterbits.compiler.util.operator.Arithmetic;
-import com.neaterbits.compiler.util.operator.Notation;
+import com.neaterbits.compiler.util.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -480,8 +479,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onExpressionBinaryOperator(writeLeafContext(context), operator);
 	}
 
-	public void onIncrementDecrementExpressionStart(Context context, Arithmetic operator, Notation notation) {
-		delegate.onIncrementDecrementExpressionStart(writeStartContext(context), operator, notation);
+	public void onIncrementDecrementExpressionStart(Context context, IncrementDecrement operator) {
+		delegate.onIncrementDecrementExpressionStart(writeStartContext(context), operator);
 	}
 
 	public void onIncrementDecrementExpressionEnd(Context context) {

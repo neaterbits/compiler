@@ -15,8 +15,8 @@ import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Bitwise;
+import com.neaterbits.compiler.util.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.operator.Logical;
-import com.neaterbits.compiler.util.operator.Notation;
 import com.neaterbits.compiler.util.operator.Relational;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -734,7 +734,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterPreIncrementExpression(PreIncrementExpressionContext ctx) {
-		delegate.onIncrementDecrementExpressionStart(context(ctx), Arithmetic.INCREMENT, Notation.PREFIX);
+		delegate.onIncrementDecrementExpressionStart(context(ctx), IncrementDecrement.PRE_INCREMENT);
 	}
 
 	@Override
@@ -744,7 +744,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterPreDecrementExpression(PreDecrementExpressionContext ctx) {
-		delegate.onIncrementDecrementExpressionStart(context(ctx), Arithmetic.DECREMENT, Notation.PREFIX);
+		delegate.onIncrementDecrementExpressionStart(context(ctx), IncrementDecrement.PRE_DECREMENT);
 	}
 
 	@Override
@@ -754,7 +754,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterPostIncrementExpression(PostIncrementExpressionContext ctx) {
-		delegate.onIncrementDecrementExpressionStart(context(ctx), Arithmetic.INCREMENT, Notation.POSTFIX);
+		delegate.onIncrementDecrementExpressionStart(context(ctx), IncrementDecrement.POST_INCREMENT);
 	}
 
 	@Override
@@ -764,7 +764,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterPostDecrementExpression(PostDecrementExpressionContext ctx) {
-		delegate.onIncrementDecrementExpressionStart(context(ctx), Arithmetic.DECREMENT, Notation.POSTFIX);
+		delegate.onIncrementDecrementExpressionStart(context(ctx), IncrementDecrement.POST_DECREMENT);
 	}
 
 	@Override

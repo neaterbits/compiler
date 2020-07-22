@@ -35,6 +35,9 @@ public enum JavaToken implements IToken {
     INTERFACE("interface"),
     PACKAGE("package"),
     
+    TRUE("true"),
+    FALSE("false"),
+    
     VOID("void"),
     
     BYTE("byte"),
@@ -44,6 +47,7 @@ public enum JavaToken implements IToken {
     FLOAT("float"),
     DOUBLE("double"),
     CHAR("char"),
+    BOOLEAN("boolean"),
 
     IMPLEMENTS("implements"),
     EXTENDS("extends"),
@@ -75,6 +79,8 @@ public enum JavaToken implements IToken {
     ASTERISK('*'),
     ASSIGN('='),
     
+    EXCLAMATION('!'),
+    
     AT('@'),
     QUESTION_MARK('?'),
     
@@ -84,6 +90,12 @@ public enum JavaToken implements IToken {
     GT('>'),
     LTE("<="),
     GTE(">="),
+    
+    LOGICAL_AND("&&"),
+    LOGICAL_OR("||"),
+    
+    INCREMENT("++"),
+    DECREMENT("--"),
     
     PLUS('+'),
     MINUS('-'),

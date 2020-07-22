@@ -15,6 +15,7 @@ import com.neaterbits.compiler.emit.base.BaseInfixExpressionEmitter;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Assignment;
 import com.neaterbits.compiler.util.operator.Bitwise;
+import com.neaterbits.compiler.util.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.OperatorVisitor;
@@ -151,6 +152,11 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 		}
 
 		@Override
+        public String onIncrementDecrement(IncrementDecrement incrementDecrement, Void param) {
+		    throw new UnsupportedOperationException();
+		}
+
+        @Override
 		public String onLogical(Logical logical, Void param) {
 			return getCLogicalOperator(logical);
 		}

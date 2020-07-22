@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.name.Names;
+import com.neaterbits.compiler.util.operator.Arity;
 import com.neaterbits.compiler.util.operator.Operator;
 
 final class ExpressionCacheList implements Names {
@@ -77,6 +78,10 @@ final class ExpressionCacheList implements Names {
         return operators.get(0).getPrecedence();
     }
     
+    Arity getArity() {
+        return operators.get(0).getOperator().getArity();
+    }
+    
     void init(PrimariesAllocator primariesList, OperatorsAllocator operatorsList) {
         
         Objects.requireNonNull(primariesList);
@@ -103,6 +108,11 @@ final class ExpressionCacheList implements Names {
     void addIntegerLiteral(int context, long value, Base base, boolean signed, int bits) {
         
         addPrimary().initIntegerLiteral(context, value, base, signed, bits);
+    }
+    
+    void addBooleanLiteral(int context, boolean value) {
+        
+        addPrimary().initBooleanLiteral(context, value);
     }
     
     void addSubList(int context, ExpressionCacheList subList) {

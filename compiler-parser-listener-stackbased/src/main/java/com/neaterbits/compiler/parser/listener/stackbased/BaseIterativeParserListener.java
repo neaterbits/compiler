@@ -75,6 +75,8 @@ public abstract class BaseIterativeParserListener<
 		
 		CONDITIONAL_EXPRESSION extends EXPRESSION,
 		
+		UNARY_EXPRESSION extends EXPRESSION,
+		
 		PRE_INCREMENT_EXPRESSION extends EXPRESSION,
 		POST_INCREMENT_EXPRESSION extends EXPRESSION,
 		
@@ -210,6 +212,8 @@ public abstract class BaseIterativeParserListener<
 		CAST_EXPRESSION,
 		
 		CONDITIONAL_EXPRESSION,
+		
+		UNARY_EXPRESSION,
 	
 		PRE_INCREMENT_EXPRESSION,
 		POST_INCREMENT_EXPRESSION,

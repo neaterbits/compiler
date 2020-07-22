@@ -17,6 +17,8 @@ final class CachedPrimary {
     private boolean signed;
     private int bits;
     
+    private boolean booleanLiteralValue;
+    
     private long methodName;
     private int methodNameContext;
     private ParametersList parametersList;
@@ -46,6 +48,13 @@ final class CachedPrimary {
         this.base = base;
         this.signed = signed;
         this.bits = bits;
+    }
+    
+    void initBooleanLiteral(int context, boolean value) {
+        
+        init(ParseTreeElement.BOOLEAN_LITERAL, context);
+        
+        this.booleanLiteralValue = value;
     }
     
     void initMethodInvocation(int context, long methodName, int methodNameContext, ParametersList parametersList) {
@@ -97,6 +106,10 @@ final class CachedPrimary {
         return bits;
     }
 
+    public boolean getBooleanLiteralValue() {
+        return booleanLiteralValue;
+    }
+
     public long getMethodName() {
         return methodName;
     }
@@ -115,7 +128,7 @@ final class CachedPrimary {
 
     @Override
     public String toString() {
-        return "CachedPrimary [type=" + type + ", integerLiteralValue=" + integerLiteralValue + "]";
+        return "CachedPrimary [type=" + type + ", integerLiteralValue=" + integerLiteralValue + ", name=" + name + "]";
     }
 }
 

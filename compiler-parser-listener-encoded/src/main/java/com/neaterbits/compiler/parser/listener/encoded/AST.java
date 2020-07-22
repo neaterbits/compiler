@@ -18,6 +18,7 @@ import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Assignment;
 import com.neaterbits.compiler.util.operator.Bitwise;
+import com.neaterbits.compiler.util.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.OperatorType;
@@ -170,6 +171,14 @@ public class AST {
             size = 1 + astBuffer.getByte(index) + 1 + 1 + 1;
             break;
             
+        case BOOLEAN_LITERAL:
+            size = BOOLEAN_LITERAL_SIZE;
+            break;
+
+        case UNARY_EXPRESSION:
+            size = UNARY_EXPRESSION_SIZE;
+            break;
+
         case EXPRESSION_BINARY_OPERATOR:
             size = EXPRESSION_BINARY_OPERATOR_SIZE;
             break;
@@ -1333,6 +1342,57 @@ public class AST {
         listener.onVariableReference(leafContext, astBuffer.getStringRef(index));
     }
 
+    private static final int UNARY_EXPRESSION_SIZE = 1 + 1;
+    
+    static void encodeUnaryExpressionStart(StringASTBuffer astBuffer, Operator operator) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.UNARY_EXPRESSION);
+        
+        astBuffer.writeEnumByte(operator.getOperatorType());
+        astBuffer.writeEnumByte(operator.getEnumValue());
+    }
+
+    public static <COMPILATION_UNIT> void decodeUnaryExpressionStart(
+            ASTBufferRead astBuffer,
+            int startContext,
+            int index,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        final OperatorType operatorType = astBuffer.getEnumByte(index, OperatorType.class);
+        
+        final Operator operator;
+        
+        switch (operatorType) {
+            
+        case LOGICAL:
+            operator = astBuffer.getEnumByte(index + 1, Logical.class);
+            break;
+            
+        case INCREMENT_DECREMENT:
+            operator = astBuffer.getEnumByte(index + 1, IncrementDecrement.class);
+            break;
+            
+        default:
+            throw new IllegalStateException();
+        }
+        
+        listener.onUnaryExpressionStart(startContext, operator);
+    }
+
+    static void encodeUnaryExpressionEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.UNARY_EXPRESSION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeUnaryExpressionEnd(
+            ASTBufferRead astBuffer,
+            int startContext,
+            Context endContext,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onUnaryExpressionEnd(startContext, endContext);
+    }
+
     private static final int EXPRESSION_BINARY_OPERATOR_SIZE = 1 + 1;
     
     static void encodeExpressionBinaryOperator(StringASTBuffer astBuffer, Operator operator) {
@@ -1458,6 +1518,27 @@ public class AST {
                 signed,
                 bits);
     }
+    
+    private static final int BOOLEAN_LITERAL_SIZE = 1;
+    
+    static void encodeBooleanLiteral(StringASTBuffer astBuffer, boolean value) {
+        
+        astBuffer.writeLeafElement(ParseTreeElement.BOOLEAN_LITERAL);
+        
+        astBuffer.writeByte((byte)(value ? 1 : 0));
+    }
+
+    public static <COMPILATION_UNIT> void decodeBooleanLiteral(
+            ASTBufferRead astBuffer,
+            int leafContext,
+            int index,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+        
+        final byte b = astBuffer.getByte(index);
+        
+        listener.onBooleanLiteral(leafContext, b != 0);
+    }
+
 
     private static final int WHILE_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
     

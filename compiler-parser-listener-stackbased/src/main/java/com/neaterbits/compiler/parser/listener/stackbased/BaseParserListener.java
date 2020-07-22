@@ -201,6 +201,8 @@ public abstract class BaseParserListener<
 		CAST_EXPRESSION extends EXPRESSION,
 		
 		CONDITIONAL_EXPRESSION extends EXPRESSION,
+		
+		UNARY_EXPRESSION extends EXPRESSION,
 
 		PRE_INCREMENT_EXPRESSION extends EXPRESSION,
 		POST_INCREMENT_EXPRESSION extends EXPRESSION,
@@ -341,6 +343,8 @@ public abstract class BaseParserListener<
 			CAST_EXPRESSION,
 			
 			CONDITIONAL_EXPRESSION,
+			
+			UNARY_EXPRESSION,
 			
 			PRE_INCREMENT_EXPRESSION,
 			POST_INCREMENT_EXPRESSION,
@@ -3867,7 +3871,7 @@ public abstract class BaseParserListener<
 
 	private final EXPRESSION makeExpressionOrNull(Context context,
 			StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList) {
-		return makeExpressionOrNull(context, stackExpressionList.getOperators(context), stackExpressionList.getList());
+		return makeExpressionOrNull(context, stackExpressionList.getOperators(), stackExpressionList.getList());
 	}
 
 	private final EXPRESSION makeExpressionOrNull(Context context, List<Operator> operators,
@@ -3877,7 +3881,7 @@ public abstract class BaseParserListener<
 
 	final EXPRESSION makeExpression(Context context,
 			StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackExpressionList) {
-		return makeExpression(context, stackExpressionList.getOperators(context), stackExpressionList.getList());
+		return makeExpression(context, stackExpressionList.getOperators(), stackExpressionList.getList());
 	}
 
 	private final EXPRESSION makeExpression(Context context, List<Operator> operators, List<EXPRESSION> expressions) {

@@ -5,6 +5,8 @@ import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.objects.expression.UnaryExpression;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.operator.IncrementDecrement;
+import com.neaterbits.compiler.util.operator.Operator;
 
 public final class PreDecrementExpression extends UnaryExpression {
 
@@ -13,6 +15,11 @@ public final class PreDecrementExpression extends UnaryExpression {
 	}
 
 	@Override
+    public Operator getOperator() {
+        return IncrementDecrement.PRE_DECREMENT;
+    }
+
+    @Override
 	public ParseTreeElement getParseTreeElement() {
 		return ParseTreeElement.PRE_DECREMENT_EXPRESSION;
 	}

@@ -34,6 +34,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             JavaToken.FLOAT,
             JavaToken.DOUBLE,
             JavaToken.CHAR,
+            JavaToken.BOOLEAN,
 
             JavaToken.IF,
             JavaToken.WHILE,
@@ -54,7 +55,8 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         case LONG:
         case FLOAT:
         case DOUBLE:
-        case CHAR: {
+        case CHAR:
+        case BOOLEAN: {
             final int typeNameContext = writeCurContext();
             final long typeName = getStringRef();
             
@@ -102,10 +104,10 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         else if (expressionCache.areAllTopLevelNames()) {
             // Only names like com.test.SomeClass.staticVariable
             final Names names = expressionCache.getTopLevelNames();
-            
-            parseVariableDeclarationStatement(startContext, names);
-            
+
             clearExpressionCache();
+
+            parseVariableDeclarationStatement(startContext, names);
             
             foundStatement = true;
         }

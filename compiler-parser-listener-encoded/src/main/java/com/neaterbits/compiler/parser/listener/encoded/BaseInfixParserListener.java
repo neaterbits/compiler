@@ -1,8 +1,7 @@
 package com.neaterbits.compiler.parser.listener.encoded;
 
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.operator.Arithmetic;
-import com.neaterbits.compiler.util.operator.Notation;
+import com.neaterbits.compiler.util.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.parser.listener.common.InfixParserListener;
 import com.neaterbits.util.io.strings.Tokenizer;
@@ -12,6 +11,24 @@ abstract class BaseInfixParserListener<COMPILATION_UNIT>
 
     BaseInfixParserListener(String file, Tokenizer tokenizer) {
         super(file, tokenizer);
+    }
+
+    
+    @Override
+    public void onUnaryExpressionStart(int startContext, Operator operator) {
+
+        writeStartElementContextRef(startContext);
+        
+        AST.encodeUnaryExpressionStart(astBuffer, operator);
+    }
+
+
+    @Override
+    public void onUnaryExpressionEnd(int startContext, Context endContext) {
+        
+        writeEndElementContext(startContext, endContext);
+        
+        AST.encodeUnaryExpressionEnd(astBuffer);
     }
 
     @Override
@@ -25,8 +42,7 @@ abstract class BaseInfixParserListener<COMPILATION_UNIT>
     @Override
     public final void onIncrementDecrementExpressionStart(
             int incrementDecrementExpressionStartContext,
-            Arithmetic operator,
-            Notation notation) {
+            IncrementDecrement operator) {
         
         writeStartElementContextRef(incrementDecrementExpressionStartContext);
 

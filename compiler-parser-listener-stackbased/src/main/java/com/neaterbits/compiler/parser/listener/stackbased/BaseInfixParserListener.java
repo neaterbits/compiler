@@ -6,8 +6,8 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackExpressionL
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackIncrementDecrementExpression;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ExpressionSetter;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.operator.Arithmetic;
-import com.neaterbits.compiler.util.operator.Notation;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.util.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
@@ -72,6 +72,8 @@ public abstract class BaseInfixParserListener<
 		CAST_EXPRESSION extends EXPRESSION,
 		
 		CONDITIONAL_EXPRESSION extends EXPRESSION,
+		
+		UNARY_EXPRESSION extends EXPRESSION,
 		
 		PRE_INCREMENT_EXPRESSION extends EXPRESSION,
 		POST_INCREMENT_EXPRESSION extends EXPRESSION,
@@ -208,6 +210,8 @@ public abstract class BaseInfixParserListener<
 		CAST_EXPRESSION,
 		
 		CONDITIONAL_EXPRESSION,
+		
+		UNARY_EXPRESSION,
 	
 		PRE_INCREMENT_EXPRESSION,
 		POST_INCREMENT_EXPRESSION,
@@ -295,7 +299,52 @@ public abstract class BaseInfixParserListener<
 		super(stringSource, contextAccess, logger, parseTreeFactory);
 	}
 
+	
 	@Override
+    public void onUnaryExpressionStart(int leafContext, Operator operator) {
+	    
+        final Context context = getStartContext(leafContext);
+
+        logEnter(context);
+        
+        final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> expressionList
+            = new StackExpressionList<>(getLogger());
+        
+        push(expressionList);
+        
+        expressionList.addOperator(operator);
+        
+        logExit(context);
+    }
+
+
+    @Override
+    public void onUnaryExpressionEnd(int startContext, Context endContext) {
+
+        final Context context = getStartContext(startContext);
+
+        logEnter(context);
+
+        final StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE> expressionList = pop();
+
+        if (expressionList.getList().size() != 1) {
+            throw new IllegalStateException();
+        }
+        
+        final UNARY_EXPRESSION expression = parseTreeFactory.createUnaryExpression(
+                context,
+                expressionList.getOperators().get(0),
+                ParseTreeElement.UNARY_EXPRESSION,
+                expressionList.getList().get(0));
+        
+        final ExpressionSetter<EXPRESSION> expressionSetter = get();
+        
+        expressionSetter.addExpression(expression);
+        
+        logExit(context);
+    }
+
+    @Override
 	public final void onExpressionBinaryOperator(int leafContext, Operator operator) {
 		
 	    final Context context = getLeafContext(leafContext);
@@ -310,13 +359,13 @@ public abstract class BaseInfixParserListener<
 	}
 	
 	@Override
-	public final void onIncrementDecrementExpressionStart(int startContext, Arithmetic operator, Notation notation) {
+	public final void onIncrementDecrementExpressionStart(int startContext, IncrementDecrement operator) {
 
 	    final Context context = getStartContext(startContext);
 
 		logEnter(context);
 		
-		push(new StackIncrementDecrementExpression<>(getLogger(), operator, notation));
+		push(new StackIncrementDecrementExpression<>(getLogger(), operator));
 		
 		logExit(context);
 	}
@@ -331,36 +380,22 @@ public abstract class BaseInfixParserListener<
 		final EXPRESSION expression;
 		
 		switch (stackIncrementDecrementExpression.getOperator()) {
-		case INCREMENT:
-			switch (stackIncrementDecrementExpression.getNotation()) {
-			case POSTFIX:
-				expression = parseTreeFactory.createPostIncrementExpression(context, stackIncrementDecrementExpression.getExpression());
-				break;
+		case POST_INCREMENT:
+			expression = parseTreeFactory.createPostIncrementExpression(context, stackIncrementDecrementExpression.getExpression());
+			break;
 				
-			case PREFIX:
-				expression = parseTreeFactory.createPreIncrementExpression(context, stackIncrementDecrementExpression.getExpression());
-				break;
-				
-			default:
-				throw new UnsupportedOperationException("Unknown notation " + stackIncrementDecrementExpression.getNotation());
-			}
+		case PRE_INCREMENT:
+			expression = parseTreeFactory.createPreIncrementExpression(context, stackIncrementDecrementExpression.getExpression());
 			break;
 			
-		case DECREMENT:
-			switch (stackIncrementDecrementExpression.getNotation()) {
-			case POSTFIX:
-				expression = parseTreeFactory.createPostDecrementExpression(context, stackIncrementDecrementExpression.getExpression());
-				break;
-				
-			case PREFIX:
-				expression = parseTreeFactory.createPreDecrementExpression(context, stackIncrementDecrementExpression.getExpression());
-				break;
-				
-			default:
-				throw new UnsupportedOperationException("Unknown notation " + stackIncrementDecrementExpression.getNotation());
-			}
+		case POST_DECREMENT:
+			expression = parseTreeFactory.createPostDecrementExpression(context, stackIncrementDecrementExpression.getExpression());
 			break;
-		
+				
+		case PRE_DECREMENT:
+			expression = parseTreeFactory.createPreDecrementExpression(context, stackIncrementDecrementExpression.getExpression());
+			break;
+				
 		default:
 			throw new UnsupportedOperationException("Unknown operator " + stackIncrementDecrementExpression.getOperator());
 		}

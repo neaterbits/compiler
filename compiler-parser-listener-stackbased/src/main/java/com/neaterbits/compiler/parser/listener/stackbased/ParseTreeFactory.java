@@ -9,6 +9,7 @@ import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
+import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
@@ -79,6 +80,8 @@ public interface ParseTreeFactory<
 	CAST_EXPRESSION extends EXPRESSION,
 
 	CONDITIONAL_EXPRESSION extends EXPRESSION,
+	
+	UNARY_EXPRESSION extends EXPRESSION,
 	
 	PRE_INCREMENT_EXPRESSION extends EXPRESSION,
 	POST_INCREMENT_EXPRESSION extends EXPRESSION,
@@ -304,6 +307,8 @@ public interface ParseTreeFactory<
 	
 	CONDITIONAL_EXPRESSION createConditionalExpression(Context context, EXPRESSION part1, EXPRESSION part2, EXPRESSION part3);
 
+	UNARY_EXPRESSION createUnaryExpression(Context context, Operator operator, ParseTreeElement parseTreeElement, EXPRESSION expression);
+	
 	PRE_INCREMENT_EXPRESSION createPreIncrementExpression(Context context, EXPRESSION expression);
 	POST_INCREMENT_EXPRESSION createPostIncrementExpression(Context context, EXPRESSION expression);
 	PRE_DECREMENT_EXPRESSION createPreDecrementExpression(Context context, EXPRESSION expression);
