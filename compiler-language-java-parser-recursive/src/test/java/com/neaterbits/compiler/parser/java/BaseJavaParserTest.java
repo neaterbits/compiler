@@ -1844,6 +1844,36 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testConditionObjectMethodInvocation() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { boolean value = object.callAMethod(); } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+        
+        final PrimaryList primaryList = (PrimaryList)declarationStatement.getDeclarations().get(0).getInitializer();
+
+        assertThat(primaryList.getPrimaries().size()).isEqualTo(2);
+        
+        final NamePrimary namePrimary = (NamePrimary)primaryList.getPrimaries().get(0);
+        assertThat(namePrimary.getName()).isEqualTo("object");
+
+        final MethodInvocationExpression methodInvocation = (MethodInvocationExpression)primaryList.getPrimaries().get(1);
+        
+        assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
+        assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
+    }
+
+    @Test
     public void testMethodParameters() throws IOException, ParserException {
      
         final String source = "package com.test;\n"

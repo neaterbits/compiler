@@ -58,9 +58,11 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             JavaToken.MOD,
             
             JavaToken.LOGICAL_AND,
-            JavaToken.LOGICAL_OR
+            JavaToken.LOGICAL_OR,
     };
-    
+
+    private static final JavaToken [] IN_EXPRESSION_OPERATOR_TOKENS = ArrayUtils.merge(OPERATOR_TOKENS, AFTER_NAME_OPERATOR_TOKENS);
+
     final void parseExpressionList() throws IOException, ParserException {
 
         boolean done = false;
@@ -110,7 +112,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
 
     boolean parseExpressionToCache() throws IOException, ParserException {
         
-        return parseExpressionToCache(OPERATOR_TOKENS);
+        return parseExpressionToCache(IN_EXPRESSION_OPERATOR_TOKENS);
     }
 
     private boolean parseExpressionToCache(JavaToken [] postfixUnaryOrBinaryOperatorTokens) throws IOException, ParserException {
