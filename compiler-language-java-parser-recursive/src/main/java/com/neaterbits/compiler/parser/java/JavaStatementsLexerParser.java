@@ -38,6 +38,8 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
 
             JavaToken.IF,
             JavaToken.WHILE,
+            
+            JavaToken.THROW,
 
             JavaToken.SEMI
     };
@@ -75,6 +77,14 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             final int whileKeywordContext = writeCurContext(); 
         
             parseWhile(getStringRef(), whileKeywordContext);
+            break;
+        }
+        
+        case THROW: {
+            
+            final int throwKeywordContext = writeCurContext();
+            
+            parseThrow(getStringRef(), throwKeywordContext);
             break;
         }
 
@@ -249,6 +259,17 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         parseStatementOrBlock();
         
         listener.onWhileStatementEnd(whileStartContext, getLexerContext());
+    }
+
+    private void parseThrow(long throwKeyword, int throwKeywordContext) throws IOException, ParserException {
+        
+        final int throwStartContext = writeContext(throwKeywordContext);
+        
+        listener.onThrowStatementStart(throwStartContext, throwKeyword, throwKeywordContext);
+
+        parseExpression();
+        
+        listener.onThrowStatementEnd(throwStartContext, getLexerContext());
     }
 
     private void parseStatementOrBlock() throws ParserException, IOException {

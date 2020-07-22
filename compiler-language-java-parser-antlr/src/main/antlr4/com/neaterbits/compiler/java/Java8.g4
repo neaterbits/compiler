@@ -899,7 +899,7 @@ returnStatement
 	;
 
 throwStatement
-	:	'throw' expression ';'
+	:	keyword = 'throw' expression ';'
 	;
 
 synchronizedStatement

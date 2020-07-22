@@ -27,6 +27,8 @@ public enum JavaToken implements IToken {
 
     BREAK("break"),
     CONTINUE("continue"),
+    
+    THROW("throw"),
 
     IMPORT("import"),
     

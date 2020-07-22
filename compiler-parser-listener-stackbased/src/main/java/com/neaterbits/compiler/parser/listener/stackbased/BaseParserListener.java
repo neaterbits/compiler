@@ -3676,7 +3676,7 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onThrowStatementStart(int startContext) {
+	public final void onThrowStatementStart(int startContext, long keyword, int keywordContext) {
 	    
 	    final Context context = getStartContext(startContext);
 

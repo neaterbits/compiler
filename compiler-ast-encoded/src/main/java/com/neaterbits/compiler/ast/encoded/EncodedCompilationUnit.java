@@ -686,6 +686,18 @@ public final class EncodedCompilationUnit {
                 }
                 break;
             }
+
+            case THROW_STATEMENT: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeThrowStatementStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeThrowStatementEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
             
             case ASSIGNMENT_STATEMENT: {
                 final int startContext = getStartContext(parseTreeRef);

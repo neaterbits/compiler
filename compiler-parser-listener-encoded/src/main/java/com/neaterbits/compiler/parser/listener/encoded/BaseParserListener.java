@@ -1660,19 +1660,19 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onThrowStatementStart(int throwStatementStartContext) {
+    public final void onThrowStatementStart(int throwStatementStartContext, long throwKeyword, int throwKeywordContext) {
         
         writeStartElementContextRef(throwStatementStartContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeThrowStatementStart(astBuffer, throwKeyword, throwKeywordContext);
     }
 
     @Override
     public final void onThrowStatementEnd(int throwStatementStartContext, Context endContext) {
 
         writeEndElementContext(throwStatementStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeThrowStatementEnd(astBuffer);
     }
 
     @Override

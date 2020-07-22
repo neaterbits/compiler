@@ -1931,7 +1931,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterThrowStatement(ThrowStatementContext ctx) {
-		delegate.onThrowStatementStart(context(ctx));
+		delegate.onThrowStatementStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 
 	@Override

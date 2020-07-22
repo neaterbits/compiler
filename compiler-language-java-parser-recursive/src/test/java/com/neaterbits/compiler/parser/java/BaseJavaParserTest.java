@@ -32,6 +32,7 @@ import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
+import com.neaterbits.compiler.ast.objects.statement.ThrowStatement;
 import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.ast.objects.statement.WhileStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
@@ -2336,7 +2337,28 @@ public abstract class BaseJavaParserTest {
 
         assertThat(methodInvocation.getInvocationType()).isEqualTo(MethodInvocationType.UNRESOLVED);
     }
-    
+
+    @Test
+    public void testThrowStatement() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { throw exception; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ThrowStatement throwStatement = (ThrowStatement)method.getBlock().getStatements().get(0);
+        
+        final NameReference nameReference = (NameReference)throwStatement.getExpression();
+        assertThat(nameReference.getName()).isEqualTo("exception");
+    }
+
     private void checkExpressionListLiteral(ExpressionList list, int index, int value) {
         
         final IntegerLiteral literal = (IntegerLiteral)list.getExpressions().get(index);

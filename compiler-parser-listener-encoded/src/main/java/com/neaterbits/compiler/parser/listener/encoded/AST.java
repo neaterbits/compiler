@@ -187,6 +187,10 @@ public class AST {
             size = WHILE_STATEMENT_SIZE;
             break;
             
+        case THROW_STATEMENT:
+            size = THROW_STATEMENT_SIZE;
+            break;
+
         case METHOD_INVOCATION_EXPRESSION:
             size = METHOD_INVOCATION_SIZE;
             break;
@@ -1586,7 +1590,54 @@ public class AST {
 
         listener.onWhileStatementEnd(whileStatementStartContext, endContext);
     }
+
+    private static final int THROW_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
     
+    static void encodeThrowStatementStart(StringASTBuffer astBuffer, long throwKeyword, int throwKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.THROW_STATEMENT);
+        
+        astBuffer.writeStringRef(throwKeyword);
+        astBuffer.writeContextRef(throwKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeThrowStatementStart(
+            ASTBufferRead astBuffer,
+            int throwStatementStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int throwKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            throwKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            throwKeywordContext = ContextRef.NONE;
+        }
+
+        listener.onThrowStatementStart(
+                throwStatementStartContext,
+                astBuffer.getStringRef(index),
+                throwKeywordContext);
+    }
+
+    static void encodeThrowStatementEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.THROW_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeThrowStatementEnd(
+            ASTBufferRead astBuffer,
+            int throwStatementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onThrowStatementEnd(throwStatementStartContext, endContext);
+    }
+
     static void encodeAssignmentStatementStart(StringASTBuffer astBuffer) {
         
         astBuffer.writeElementStart(ParseTreeElement.ASSIGNMENT_STATEMENT);
