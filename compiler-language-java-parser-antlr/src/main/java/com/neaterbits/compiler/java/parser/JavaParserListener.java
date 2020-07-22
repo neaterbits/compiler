@@ -11,6 +11,7 @@ import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIter
 import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
 import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ContextNamePart;
 import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.ImmutableFullContext;
 import com.neaterbits.compiler.util.ScopedName;
@@ -640,12 +641,42 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onClassInstanceCreationExpressionStart(writeStartContext(context));
 	}
 
-	public void onJavaClassInstanceCreationConstructorName(Context context, ScopedName name) {
+	public void onJavaClassInstanceCreationConstructorName(Context context, long name) {
 
-		delegate.onClassInstanceCreationTypeAndConstructorName(
-				writeLeafContext(context),
-				name);
+		delegate.onClassInstanceCreationTypeAndConstructorName(writeLeafContext(context), name);
 	}
+
+	private Names makeNames(List<ContextNamePart> parts) {
+	    
+	    final int [] contexts = new int[parts.size()];
+	    
+	    for (int i = 0; i < parts.size(); ++ i) {
+	        contexts[i] = writeOtherContext(parts.get(i).getContext());
+	    }
+	    
+	    return new Names() {
+            
+            @Override
+            public long getStringAt(int index) {
+                return parts.get(index).getName();
+            }
+            
+            @Override
+            public int getContextAt(int index) {
+                return contexts[index];
+            }
+            
+            @Override
+            public int count() {
+                return parts.size();
+            }
+        };
+	}
+	
+	public void onJavaClassInstanceCreationConstructorName(Context context, List<ContextNamePart> parts) {
+
+        delegate.onClassInstanceCreationTypeAndConstructorName(writeLeafContext(context), makeNames(parts));
+    }
 
 	public void onJavaClassInstanceCreationExpressionEnd(Context context) {
 		delegate.onClassInstanceCreationExpressionEnd(writeEndContext(context), context);

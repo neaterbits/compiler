@@ -279,8 +279,10 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onClassInstanceCreationExpressionStart(int startContext);
 	
-	void onClassInstanceCreationTypeAndConstructorName(int context, ScopedName name);
-	
+	void onClassInstanceCreationTypeAndConstructorName(int context, Names names);
+
+	void onClassInstanceCreationTypeAndConstructorName(int context, long name);
+
 	void onClassInstanceCreationExpressionEnd(int startContext, Context endContext);
 	
 	void onMethodInvocationStart(

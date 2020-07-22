@@ -17,6 +17,7 @@ import com.neaterbits.compiler.ast.objects.annotation.Annotation;
 import com.neaterbits.compiler.ast.objects.annotation.AnnotationElement;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Constructor;
+import com.neaterbits.compiler.ast.objects.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
@@ -2357,6 +2358,36 @@ public abstract class BaseJavaParserTest {
         
         final NameReference nameReference = (NameReference)throwStatement.getExpression();
         assertThat(nameReference.getName()).isEqualTo("exception");
+    }
+
+    @Test
+    public void testNewOperator() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { SomeClass var = new SomeClass(); } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement =
+                        (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+        
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("var");
+
+        final ClassInstanceCreationExpression creationExpression
+            = (ClassInstanceCreationExpression)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(creationExpression).isNotNull();
+        
+        final UnresolvedTypeReference type = (UnresolvedTypeReference)creationExpression.getTypeReference();
+
+        assertThat(type.getScopedName().getScope()).isNull();
+        assertThat(type.getScopedName().getName()).isEqualTo("SomeClass");
     }
 
     private void checkExpressionListLiteral(ExpressionList list, int index, int value) {

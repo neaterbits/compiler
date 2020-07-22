@@ -6,6 +6,7 @@ import com.neaterbits.compiler.java.Java8Parser.*;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.JavaPrimitiveType;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ContextNamePart;
 import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
@@ -764,7 +765,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterPostDecrementExpression(PostDecrementExpressionContext ctx) {
-		delegate.onIncrementDecrementExpressionStart(context(ctx), IncrementDecrement.POST_DECREMENT);
 	}
 
 	@Override
@@ -799,7 +799,14 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void enterClassInstanceCreationExpressionSimple(ClassInstanceCreationExpressionSimpleContext ctx) {
 		
-		delegate.onJavaClassInstanceCreationConstructorName(context(ctx), new ScopedName(null, ctx.Identifier().getText()));
+		delegate.onJavaClassInstanceCreationConstructorName(
+		        context(ctx),
+		        stringRef(ctx.Identifier()));
+	}
+	
+	private ContextNamePart makeNamePart(TerminalNode node) {
+	    
+	    return new ContextNamePart(context(node), stringRef(node));
 	}
 
 	@Override
@@ -808,16 +815,18 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		delegate.onJavaClassInstanceCreationConstructorName(
 				context(ctx),
-				makeScopedName(
 					ctx.Identifier().stream()
-					.map(identifier -> identifier.getText())
-					.collect(Collectors.toList())));
+					.map(this::makeNamePart)
+					.collect(Collectors.toList()));
 	}
 
 	@Override
 	public void enterClassInstanceCreationExpressionWithExpressionName(
 			ClassInstanceCreationExpressionWithExpressionNameContext ctx) {
-		delegate.onJavaClassInstanceCreationConstructorName(context(ctx), new ScopedName(null, ctx.Identifier().getText()));
+	    
+		delegate.onJavaClassInstanceCreationConstructorName(
+		        context(ctx),
+		        stringRef(ctx.Identifier()));
 	}
 
 	@Override
@@ -1500,34 +1509,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 			scopedName = new ScopedName(scope, name);
 		}
 		
-		return scopedName;
-	}
-	
-	private static ScopedName makeScopedName(List<String> names) {
-		
-		final ScopedName scopedName;
-		
-		switch (names.size()) {
-		case 0:
-			throw new IllegalArgumentException("No names given");
-
-		case 1:
-			scopedName = new ScopedName(null, names.get(0));
-			break;
-			
-		default:
-			final String name = names.get(names.size() - 1);
-			
-			final List<String> scope = names.subList(0, names.size());
-			
-			if (scope.size() == names.size()) {
-				throw new IllegalStateException();
-			}
-			
-			scopedName = new ScopedName(scope, name);
-			break;
-		}
-
 		return scopedName;
 	}
 	

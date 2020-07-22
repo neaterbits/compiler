@@ -1070,12 +1070,20 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onClassInstanceCreationExpressionStart(int classInstanceCreationExpressionStartContext) {
 
         writeStartElementContextRef(classInstanceCreationExpressionStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeClassInstanceCreationExpressionStart(astBuffer);
     }
 
     @Override
-    public final void onClassInstanceCreationTypeAndConstructorName(int context, ScopedName name) {
+    public final void onClassInstanceCreationTypeAndConstructorName(int context, long name) {
+
+        writeStartElementContextRef(context);
+
+        AST.encodeClassInstanceCreationTypeAndConstructorName(astBuffer, name, context);
+    }
+
+    @Override
+    public final void onClassInstanceCreationTypeAndConstructorName(int context, Names names) {
 
         throw new UnsupportedOperationException();
     }
@@ -1084,8 +1092,8 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onClassInstanceCreationExpressionEnd(int classInstanceCreationExpressionStartContext, Context endContext) {
 
         writeEndElementContext(classInstanceCreationExpressionStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeClassInstanceCreationExpressionEnd(astBuffer);
     }
 
     @Override

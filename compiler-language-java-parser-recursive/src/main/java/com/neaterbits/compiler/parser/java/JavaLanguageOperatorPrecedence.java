@@ -5,6 +5,7 @@ import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Assignment;
 import com.neaterbits.compiler.util.operator.Bitwise;
 import com.neaterbits.compiler.util.operator.IncrementDecrement;
+import com.neaterbits.compiler.util.operator.Instantiation;
 import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.Relational;
@@ -125,6 +126,18 @@ public final class JavaLanguageOperatorPrecedence implements LanguageOperatorPre
                 precedence = 9;
                 break;
 
+            default:
+                throw new UnsupportedOperationException();
+            }
+            break;
+            
+        case INSTANTIATION:
+            
+            switch ((Instantiation)operator) {
+            case NEW:
+                precedence = 13;
+                break;
+                
             default:
                 throw new UnsupportedOperationException();
             }

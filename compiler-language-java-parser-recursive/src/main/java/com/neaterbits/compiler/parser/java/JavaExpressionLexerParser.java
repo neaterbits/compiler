@@ -8,6 +8,7 @@ import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.operator.Arithmetic;
 import com.neaterbits.compiler.util.operator.Assignment;
 import com.neaterbits.compiler.util.operator.IncrementDecrement;
+import com.neaterbits.compiler.util.operator.Instantiation;
 import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.Relational;
@@ -160,13 +161,16 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
     }
 
     private static final JavaToken [] EXPRESSION_OR_UNARY_OPERATOR_TOKENS = ArrayUtils.merge(
-            EXPRESSION_TOKENS,
             new JavaToken [] {
                     JavaToken.EXCLAMATION,
                     
                     JavaToken.INCREMENT,
-                    JavaToken.DECREMENT
-            });
+                    JavaToken.DECREMENT,
+                    
+                    JavaToken.NEW
+            },
+            EXPRESSION_TOKENS
+);
 
     private OperatorStatus parsePrimaryOrUnaryOperator() throws IOException, ParserException {
         
@@ -225,6 +229,12 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case DECREMENT:
             expressionCache.addOperator(writeCurContext(), IncrementDecrement.PRE_DECREMENT);
 
+            status = OperatorStatus.REQUIRES_PRIMARY;
+            break;
+            
+        case NEW:
+            expressionCache.addOperator(writeCurContext(), Instantiation.NEW);
+            
             status = OperatorStatus.REQUIRES_PRIMARY;
             break;
 

@@ -12,6 +12,8 @@ public interface OperatorVisitor<T, R> {
 	
 	R onLogical(Logical logical, T param);
 	
+	R onInstantiation(Instantiation instantiation, T param);
+	
 	R onScope(Scope scope, T param);
 	
 	R onAssignment(Assignment assignment, T param);

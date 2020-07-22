@@ -226,6 +226,10 @@ public class AST {
         case FIELD_MODIFIER_HOLDER:
             size = FIELD_MODIFIER_SIZE;
             break;
+            
+        case CLASS_INSTANCE_CREATION_EXPRESSION_NAME:
+            size = namesSize(astBuffer.getByte(index));
+            break;
 
         default:
             size = 0; // ParseTreeElement
@@ -1747,6 +1751,14 @@ public class AST {
         listener.onExpressionStatementEnd(expressionStatementStartContext, endContext);
     }
 
+    private static void encodeNames(StringASTBuffer astBuffer, long name, int nameContext) {
+        
+        astBuffer.writeByte((byte)1);
+        
+        astBuffer.writeStringRef(name);
+        astBuffer.writeContextRef(nameContext);
+    }
+
     private static void encodeNames(StringASTBuffer astBuffer, Names names) {
     
         encodeNames(astBuffer, names, names.count());
@@ -2288,5 +2300,47 @@ public class AST {
          default:
              throw new UnsupportedOperationException();
         }
+    }
+    
+    static void encodeClassInstanceCreationExpressionStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.CLASS_INSTANCE_CREATION_EXPRESSION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeClassInstanceCreationExpressionStart(
+            int startContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onClassInstanceCreationExpressionStart(startContext);
+    }
+
+    
+    static void encodeClassInstanceCreationTypeAndConstructorName(StringASTBuffer astBuffer, long name, int nameContext) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.CLASS_INSTANCE_CREATION_EXPRESSION_NAME);
+        
+        encodeNames(astBuffer, name, nameContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeClassInstanceCreationTypeAndConstructorName(
+            ASTBufferRead astBuffer,
+            int startContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onClassInstanceCreationTypeAndConstructorName(startContext, decodeNames(astBuffer, index));
+    }
+
+    static void encodeClassInstanceCreationExpressionEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.CLASS_INSTANCE_CREATION_EXPRESSION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeClassInstanceCreationExpressionEnd(
+            int startContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onClassInstanceCreationExpressionEnd(startContext, endContext);
     }
 }

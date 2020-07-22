@@ -747,6 +747,34 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case CLASS_INSTANCE_CREATION_EXPRESSION: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeClassInstanceCreationExpressionStart(startContext, listener);
+                }
+                else {
+                    AST.decodeClassInstanceCreationExpressionEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case CLASS_INSTANCE_CREATION_EXPRESSION_NAME: {
+                final int leafContext = getLeafContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeClassInstanceCreationTypeAndConstructorName(
+                            astBuffer,
+                            leafContext,
+                            ref.index,
+                            listener);
+                }
+                else {
+                    throw new UnsupportedOperationException();
+                }
+                break;
+            }
+
             case METHOD_INVOCATION_EXPRESSION: {
                 final int startContext = getStartContext(parseTreeRef);
 

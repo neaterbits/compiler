@@ -9,6 +9,7 @@ import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Arity;
+import com.neaterbits.compiler.util.operator.Instantiation;
 import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.operator.OperatorType;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
@@ -143,11 +144,11 @@ public final class ExpressionCache {
             }
             else {
                 // Only last node is a name
-                if (list.getLast().getType() != ParseTreeElement.NAME) {
+                if (last.getType() != ParseTreeElement.NAME) {
                     throw new IllegalStateException();
                 }
                 
-                throw new UnsupportedOperationException();
+                addMethodInvocationFromName(list, parametersContext);
             }
         }
     }
@@ -473,13 +474,34 @@ public final class ExpressionCache {
             throw new IllegalStateException();
         }
         
-        final int startContext = cacheList.getContextAt(0);
+        if (cacheList.getCachedOperator(0).getOperator() == Instantiation.NEW) {
+            
+            final CachedPrimary methodInvocation = cacheList.getCachedPrimary(0);
+            
+            if (methodInvocation.getType() != ParseTreeElement.METHOD_INVOCATION_EXPRESSION) {
+                throw new IllegalStateException();
+            }
+            
+            final int startContext = methodInvocation.getContext();
+            
+            listener.onClassInstanceCreationExpressionStart(startContext);
+            
+            listener.onClassInstanceCreationTypeAndConstructorName(
+                    methodInvocation.getMethodNameContext(),
+                    methodInvocation.getMethodName());
         
-        listener.onUnaryExpressionStart(startContext, cacheList.getCachedOperator(0).getOperator());
+            listener.onClassInstanceCreationExpressionEnd(startContext, null);
+        }
+        else {
         
-        applyPrimaryToListener(cacheList.getCachedPrimary(0), listener);
-        
-        listener.onUnaryExpressionEnd(startContext, null);
+            final int startContext = cacheList.getContextAt(0);
+            
+            listener.onUnaryExpressionStart(startContext, cacheList.getCachedOperator(0).getOperator());
+            
+            applyPrimaryToListener(cacheList.getCachedPrimary(0), listener);
+            
+            listener.onUnaryExpressionEnd(startContext, null);
+        }
     }
 
     private <COMPILATION_UNIT> void applyBinaryOperatorsList(ExpressionCacheList cacheList, IterativeParserListener<COMPILATION_UNIT> listener) {

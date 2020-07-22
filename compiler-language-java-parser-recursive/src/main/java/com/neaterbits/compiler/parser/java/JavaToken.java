@@ -104,7 +104,9 @@ public enum JavaToken implements IToken {
     MUL('*'),
     DIV('/'),
     MOD('%'),
-    
+
+    NEW("new"),
+
     NUMBER(CharTypeInteger.INSTANCE),
 
     IDENTIFIER(string -> {

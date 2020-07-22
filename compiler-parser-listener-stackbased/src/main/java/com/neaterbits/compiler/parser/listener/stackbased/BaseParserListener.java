@@ -2505,10 +2505,7 @@ public abstract class BaseParserListener<
 		logExit(context);
 	}
 
-	@Override
-	public final void onClassInstanceCreationTypeAndConstructorName(int otherContext, ScopedName name) {
-
-	    final Context context = getOtherContext(otherContext);
+	private void processClassInstanceCreationTypeAndConstructorName(Context context, ScopedName name) {
 	    
 		logEnter(context);
 
@@ -2528,6 +2525,24 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
+    public final void onClassInstanceCreationTypeAndConstructorName(int otherContext, Names names) {
+
+	    final Context context = getOtherContext(otherContext);
+
+	    processClassInstanceCreationTypeAndConstructorName(context, makeScopedName(names));
+	}
+	
+	@Override
+    public final void onClassInstanceCreationTypeAndConstructorName(int leafContext, long name) {
+
+	    final Context context = getLeafContext(leafContext);
+        
+	    processClassInstanceCreationTypeAndConstructorName(
+	            context,
+	            ScopedName.makeScopedName(stringSource.asString(name)));
+    }
+
+    @Override
 	public final void onClassInstanceCreationExpressionEnd(int startContext, Context endContext) {
 
 	    final Context context = getEndContext(startContext, endContext);
