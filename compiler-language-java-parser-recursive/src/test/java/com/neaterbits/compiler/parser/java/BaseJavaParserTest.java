@@ -27,6 +27,7 @@ import com.neaterbits.compiler.ast.objects.expression.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
+import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.objects.generics.NamedTypeArgument;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
@@ -2388,6 +2389,31 @@ public abstract class BaseJavaParserTest {
 
         assertThat(type.getScopedName().getScope()).isNull();
         assertThat(type.getScopedName().getName()).isEqualTo("SomeClass");
+    }
+
+    @Test
+    public void testStringLiteral() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { String value = \"theLiteral\"; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement
+            = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("value");
+
+        final StringLiteral stringLiteral = (StringLiteral)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(stringLiteral).isNotNull();
+        assertThat(stringLiteral.getValue()).isEqualTo("theLiteral");
     }
 
     private void checkExpressionListLiteral(ExpressionList list, int index, int value) {

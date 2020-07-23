@@ -170,7 +170,11 @@ public class AST {
             // Size of literal storage in bytes stored as initial byte
             size = 1 + astBuffer.getByte(index) + 1 + 1 + 1;
             break;
-            
+
+        case STRING_LITERAL:
+            size = STRING_LITERAL_SIZE;
+            break;
+
         case BOOLEAN_LITERAL:
             size = BOOLEAN_LITERAL_SIZE;
             break;
@@ -1526,7 +1530,25 @@ public class AST {
                 signed,
                 bits);
     }
+
+    private static final int STRING_LITERAL_SIZE = STRING_REF_SIZE;
     
+    static void encodeStringLiteral(StringASTBuffer astBuffer, long value) {
+        
+        astBuffer.writeLeafElement(ParseTreeElement.STRING_LITERAL);
+        
+        astBuffer.writeStringRef(value);
+    }
+
+    public static <COMPILATION_UNIT> void decodeStringLiteral(
+            ASTBufferRead astBuffer,
+            int leafContext,
+            int index,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onStringLiteral(leafContext, astBuffer.getStringRef(index));
+    }
+
     private static final int BOOLEAN_LITERAL_SIZE = 1;
     
     static void encodeBooleanLiteral(StringASTBuffer astBuffer, boolean value) {

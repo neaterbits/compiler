@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.util.io.strings.StringRef;
 
 final class CachedPrimary {
 
@@ -16,6 +17,8 @@ final class CachedPrimary {
     private Base base;
     private boolean signed;
     private int bits;
+    
+    private long stringLiteralValue;
     
     private boolean booleanLiteralValue;
     
@@ -49,7 +52,18 @@ final class CachedPrimary {
         this.signed = signed;
         this.bits = bits;
     }
-    
+
+    void initStringLiteral(int context, long value) {
+     
+        if (value == StringRef.STRING_NONE) {
+            throw new IllegalArgumentException();
+        }
+        
+        init(ParseTreeElement.STRING_LITERAL, context);
+        
+        this.stringLiteralValue = value;
+    }
+
     void initBooleanLiteral(int context, boolean value) {
         
         init(ParseTreeElement.BOOLEAN_LITERAL, context);
@@ -104,6 +118,10 @@ final class CachedPrimary {
 
     public int getBits() {
         return bits;
+    }
+
+    public long getStringLiteralValue() {
+        return stringLiteralValue;
     }
 
     public boolean getBooleanLiteralValue() {

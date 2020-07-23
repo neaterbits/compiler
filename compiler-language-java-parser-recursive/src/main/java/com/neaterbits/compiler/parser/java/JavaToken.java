@@ -65,6 +65,8 @@ public enum JavaToken implements IToken {
     PROTECTED("protected"),
     PRIVATE("private"),
 
+    STRING_LITERAL('"', '"'),
+    
     LBRACE('{'),
     RBRACE('}'),
 
@@ -73,7 +75,7 @@ public enum JavaToken implements IToken {
 
     LPAREN('('),
     RPAREN(')'),
-
+    
     PERIOD('.'),
     COMMA(','),
     SEMI(';'),
@@ -165,6 +167,16 @@ public enum JavaToken implements IToken {
         this.character = character;
         this.charType = null;
         this.toCharacter = 0;
+        this.literal = null;
+        this.toLiteral = null;
+        this.custom = null;
+    }
+
+    private JavaToken(char fromCharacter, char toCharacter) {
+        this.tokenType = TokenType.FROM_CHAR_TO_CHAR;
+        this.character = fromCharacter;
+        this.charType = null;
+        this.toCharacter = toCharacter;
         this.literal = null;
         this.toLiteral = null;
         this.custom = null;

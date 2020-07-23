@@ -107,6 +107,11 @@ public final class ExpressionCache {
         get().addIntegerLiteral(context, value, base, signed, bits);
     }
 
+    public void addStringLiteral(int context, long value) {
+
+        get().addStringLiteral(context, value);
+    }
+
     public void addBooleanLiteral(int context, boolean value) {
         
         get().addBooleanLiteral(context, value);
@@ -584,7 +589,11 @@ public final class ExpressionCache {
                     primary.isSigned(),
                     primary.getBits());
             break;
-            
+
+        case STRING_LITERAL:
+            listener.onStringLiteral(primary.getContext(), primary.getStringLiteralValue());
+            break;
+
         case BOOLEAN_LITERAL:
             listener.onBooleanLiteral(primary.getContext(), primary.getBooleanLiteralValue());
             break;
