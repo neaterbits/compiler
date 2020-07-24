@@ -732,25 +732,12 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                     // This is a field with a single variable name, like 'int a;'
                     listener.onFieldDeclarationStart(fieldDeclarationStartContext);
                     
-                    if (modifiers != null) {
-                        modifiers.complete(keywords -> {
-                            listenerHelper.callFieldMemberModifiers(keywords);
-                        });
-                    }
-                    
-                    if (typeArguments != null) {
-                        typeArguments.complete(genericTypes -> listenerHelper.onType(typeName, genericTypes, typeEndContext));
-                    }
-                    else {
-                        listenerHelper.onType(typeName, null, typeEndContext);
-                    }
-                    
-                    final int variableDeclaratorStartContext = writeContext(identifierContext);
-                    
-                    listenerHelper.onVariableDeclarator(
-                            variableDeclaratorStartContext,
-                            identifier,
-                            identifierContext,
+                    listenerHelper.onVariableDeclaration(
+                            modifiers,
+                            typeName,
+                            typeEndContext,
+                            typeArguments,
+                            identifier, identifierContext,
                             variableDeclaratorEndContext);
                     
                     listener.onFieldDeclarationEnd(fieldDeclarationStartContext, getLexerContext());
@@ -761,25 +748,17 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                     // This is a field with multiple variable names, like 'int a, b, c;'
                     listener.onFieldDeclarationStart(fieldDeclarationStartContext);
                     
-                    if (typeArguments != null) {
-                        typeArguments.complete(genericTypes -> listenerHelper.onType(typeName, genericTypes, getLexerContext()));
-                    }
-                    else {
-                        listenerHelper.onType(typeName, null, getLexerContext());
-                    }
-        
-                    // Initial variable name
-                    final int variableDeclaratorStartContext = writeContext(identifierContext);
-        
-                    listenerHelper.onVariableDeclarator(
-                            variableDeclaratorStartContext,
-                            identifier,
-                            identifierContext,
+                    listenerHelper.onVariableDeclaration(
+                            modifiers,
+                            typeName,
+                            typeEndContext,
+                            typeArguments,
+                            identifier, identifierContext,
                             variableDeclaratorEndContext);
         
                     parseVariableDeclaratorList();
                     
-                    listener.onFieldDeclarationEnd(variableDeclaratorStartContext, getLexerContext());
+                    listener.onFieldDeclarationEnd(fieldDeclarationStartContext, getLexerContext());
                     break;
                 }
                  

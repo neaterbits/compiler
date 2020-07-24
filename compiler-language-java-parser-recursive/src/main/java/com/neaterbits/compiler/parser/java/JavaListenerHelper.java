@@ -9,8 +9,10 @@ import com.neaterbits.compiler.parser.listener.common.ParserListener;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ContextWriter;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeyword;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywords;
+import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywordsList;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgument;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArguments;
+import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
@@ -39,6 +41,37 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
     private int writeContext(int context) {
 
         return contextWriter.writeContext(context);
+    }
+    
+    void onVariableDeclaration(
+            CachedKeywordsList<JavaToken> modifiers,
+            TypeScratchInfo typeName,
+            Context typeEndContext,
+            TypeArgumentsList typeArguments,
+            long identifier,
+            int identifierContext,
+            Context variableDeclaratorEndContext) throws IOException, ParserException {
+        
+        if (modifiers != null) {
+            modifiers.complete(keywords -> {
+                callFieldMemberModifiers(keywords);
+            });
+        }
+        
+        if (typeArguments != null) {
+            typeArguments.complete(genericTypes -> onType(typeName, genericTypes, typeEndContext));
+        }
+        else {
+            onType(typeName, null, typeEndContext);
+        }
+        
+        final int variableDeclaratorStartContext = writeContext(identifierContext);
+        
+        onVariableDeclarator(
+                variableDeclaratorStartContext,
+                identifier,
+                identifierContext,
+                variableDeclaratorEndContext);
     }
 
     void onType(TypeScratchInfo typeName, TypeArguments typeArguments, Context endContext) throws IOException, ParserException {
