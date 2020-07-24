@@ -116,6 +116,7 @@ public interface ParseTreeFactory<
 	STRING_LITERAL extends LITERAL,
 	NULL_LITERAL extends LITERAL,
 	
+	PARAMETER_MODIFIER_HOLDER,
 	PARAMETER,
 	
 	INITIALIZER_VARIABLE_DECLARATION_ELEMENT,
@@ -369,7 +370,14 @@ public interface ParseTreeFactory<
 
 	NULL_LITERAL createNullLiteral(Context context);
 	
-	PARAMETER createParameter(Context context, TYPE_REFERENCE type, String name, Context nameContext, boolean varArgs);
+	PARAMETER createParameter(
+	        Context context,
+            List<ANNOTATION> annotations,
+            List<PARAMETER_MODIFIER_HOLDER> modifiers,
+	        TYPE_REFERENCE type,
+	        String name,
+	        Context nameContext,
+	        boolean varArgs);
 
 	VARIABLE_MODIFIER_HOLDER createVariableModifierHolder(Context context, VariableModifier modifier);
 

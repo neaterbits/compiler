@@ -237,6 +237,8 @@ public abstract class BaseParserListener<
 		STRING_LITERAL extends LITERAL,
 		NULL_LITERAL extends LITERAL,
 		
+		PARAMETER_MODIFIER_HOLDER,
+		
 		PARAMETER,
 		
 		VARIABLE_DECLARATION_STATEMENT extends STATEMENT,
@@ -378,6 +380,8 @@ public abstract class BaseParserListener<
 			CHARACTER_LITERAL,
 			STRING_LITERAL,
 			NULL_LITERAL,
+			
+			PARAMETER_MODIFIER_HOLDER,
 			
 			PARAMETER,
 			
@@ -1337,11 +1341,12 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackParameterSignature<ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> stackParameterSignature = pop();
+		final StackParameterSignature<ANNOTATION, PARAMETER_MODIFIER_HOLDER, TYPE_REFERENCE> stackParameterSignature = pop();
 
 		final CallableStackEntry<STATEMENT, PARAMETER, TYPE_REFERENCE> stackCallable = get();
 
 		final PARAMETER parameter = parseTreeFactory.createParameter(context,
+		        stackParameterSignature.getAnnotations(), stackParameterSignature.getModifiers(),
 				stackParameterSignature.getTypeReference(), stackParameterSignature.getName(),
 				stackParameterSignature.getNameContext(), stackParameterSignature.isVarArgs());
 

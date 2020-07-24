@@ -10,7 +10,7 @@ import com.neaterbits.compiler.util.Context;
 public abstract class BaseModifierHolder<MODIFIER> extends BaseASTElement {
 	private final MODIFIER delegate;
 
-	BaseModifierHolder(Context context, MODIFIER delegate) {
+	protected BaseModifierHolder(Context context, MODIFIER delegate) {
 		super(context);
 
 		Objects.requireNonNull(delegate);

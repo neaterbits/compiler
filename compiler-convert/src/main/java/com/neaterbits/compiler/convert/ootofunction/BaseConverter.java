@@ -115,6 +115,7 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 		for (Parameter parameter : parameters) {
 			result.add(new Parameter(
 					parameter.getContext(),
+					null,
 					convertType.apply(parameter.getType()),
 					parameter.getName(),
 					parameter.isVarArgs()));

@@ -5,13 +5,18 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.StackEntry;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.TypeReferenceSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableModifierSetter;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public abstract class BaseStackVariableDeclaration<ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> extends StackEntry
-	implements VariableModifierSetter<VARIABLE_MODIFIER_HOLDER>, TypeReferenceSetter<TYPE_REFERENCE>, VariableNameSetter {
+	implements
+	    VariableModifierSetter<VARIABLE_MODIFIER_HOLDER>,
+	    TypeReferenceSetter<TYPE_REFERENCE>,
+	    VariableNameSetter,
+	    AnnotationSetter<ANNOTATION> {
 	    
     private final List<ANNOTATION> annotations;
 	private final List<VARIABLE_MODIFIER_HOLDER> modifiers;
@@ -29,6 +34,14 @@ public abstract class BaseStackVariableDeclaration<ANNOTATION, VARIABLE_MODIFIER
 	
 	public final List<ANNOTATION> getAnnotations() {
         return annotations;
+    }
+
+    @Override
+    public void addAnnotation(ANNOTATION annotation) {
+
+        Objects.requireNonNull(annotation);
+        
+        annotations.add(annotation);
     }
 
     @Override

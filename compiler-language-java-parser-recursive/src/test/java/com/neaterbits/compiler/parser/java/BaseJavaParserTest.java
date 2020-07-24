@@ -2494,6 +2494,26 @@ public abstract class BaseJavaParserTest {
         assertThat(method.getBlock().getStatements().size()).isEqualTo(0);
     }
 
+    @Test
+    public void testMethodParameterAnnotation() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod(@AnAnnotation int parameter) { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod", 1);
+        
+        assertThat(method.getParameters().get(0).getModifiers().getAnnotations().size()).isEqualTo(1);
+        assertThat(method.getParameters().get(0).getModifiers().getAnnotations().get(0).getScopedName().getScope()).isNull();
+        assertThat(method.getParameters().get(0).getModifiers().getAnnotations().get(0).getScopedName().getName()).isEqualTo("AnAnnotation");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(0);
+    }
+
     private void checkExpressionListLiteral(ExpressionList list, int index, int value) {
         
         final IntegerLiteral literal = (IntegerLiteral)list.getExpressions().get(index);
@@ -2514,17 +2534,26 @@ public abstract class BaseJavaParserTest {
         
         return classDefinition;
     }
-    
+
     private ClassMethod checkBasicMethod(CompilationUnit compilationUnit, String className, String methodName) {
+        
+        return checkBasicMethod(compilationUnit, className, methodName, 0);
+    }
+
+    private ClassMethod checkBasicMethod(CompilationUnit compilationUnit, String className, String methodName, int numParams) {
         
         final ClassDefinition classDefinition = checkBasicClass(compilationUnit, className);
         
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
      
-        return checkBasicMethod(member, methodName);
+        return checkBasicMethod(member, methodName, numParams);
     }
 
     private ClassMethod checkBasicMethod(ClassMethodMember member, String methodName) {
+        return checkBasicMethod(member, methodName, 0);
+    }
+        
+    private ClassMethod checkBasicMethod(ClassMethodMember member, String methodName, int numParams) {
         
         final ClassMethod method = member.getMethod();
         final ScalarTypeReference returnType = (ScalarTypeReference)method.getReturnType();
@@ -2532,7 +2561,7 @@ public abstract class BaseJavaParserTest {
         assertThat(returnType.getTypeName().getName()).isEqualTo("void");
         assertThat(method.getNameString()).isEqualTo(methodName);
         
-        assertThat(method.getParameters().isEmpty()).isTrue();
+        assertThat(method.getParameters().size()).isEqualTo(numParams);
         
         return method;
     }

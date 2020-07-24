@@ -13,11 +13,12 @@ import com.neaterbits.compiler.util.name.Name;
 
 public final class Parameter extends BaseASTElement {
 
+    private final ASTSingle<ParameterModifiers> modifiers;
 	private final ASTSingle<TypeReference> type;
 	private final ASTSingle<ParameterName> name;
 	private final boolean varArgs;
 
-	public Parameter(Context context, TypeReference type, ParameterName name, boolean varArgs) {
+	public Parameter(Context context, ParameterModifiers modifiers, TypeReference type, ParameterName name, boolean varArgs) {
 		super(context);
 
 		Objects.requireNonNull(type);
@@ -25,12 +26,17 @@ public final class Parameter extends BaseASTElement {
 		
 		Name.check(name.getName());
 
+		this.modifiers = makeSingle(modifiers);
 		this.type = makeSingle(type);
 		this.name = makeSingle(name);
 		this.varArgs = varArgs;
 	}
 	
-	public TypeReference getType() {
+	public ParameterModifiers getModifiers() {
+        return modifiers.get();
+    }
+
+    public TypeReference getType() {
 		return type.get();
 	}
 	

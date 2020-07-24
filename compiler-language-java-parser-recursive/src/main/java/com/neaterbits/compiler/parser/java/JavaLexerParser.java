@@ -926,6 +926,34 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
         }
     }
 
+    private static final JavaToken [] PARAMETER_MODIFIER_TOKENS = new JavaToken [] {
+            
+            JavaToken.AT
+    };
+    
+    private void parseAnyParameterModifiersOrAnnotations() throws IOException, ParserException {
+        
+        boolean done = false;
+        
+        do {
+            final JavaToken parameterModifierToken = lexer.lexSkipWS(PARAMETER_MODIFIER_TOKENS);
+
+            switch (parameterModifierToken) {
+            
+            case AT:
+                parseAnnotation(writeCurContext());
+                break;
+            
+            case NONE:
+                done = true;
+                break;
+
+            default:
+                throw lexer.unexpectedToken();
+            }
+        } while (!done);
+    }
+
     private static final JavaToken [] PARAM_TYPE = {
             
             JavaToken.BYTE,
@@ -979,6 +1007,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             final int curParameterStartContext = writeCurContext();
 
             listener.onMethodSignatureParameterStart(curParameterStartContext, false);
+
+            parseAnyParameterModifiersOrAnnotations();
 
             parseParameterType();
             

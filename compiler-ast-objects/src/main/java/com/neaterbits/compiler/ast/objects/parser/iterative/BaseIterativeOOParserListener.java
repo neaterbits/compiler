@@ -103,6 +103,8 @@ public abstract class BaseIterativeOOParserListener<
 		STRING_LITERAL extends LITERAL,
 		NULL_LITERAL extends LITERAL,
 		
+		PARAMETER_MODIFIER_HOLDER,
+		
 		PARAMETER,
 		
 		VARIABLE_DECLARATION_STATEMENT extends STATEMENT,
@@ -239,6 +241,8 @@ public abstract class BaseIterativeOOParserListener<
 		CHARACTER_LITERAL,
 		STRING_LITERAL,
 		NULL_LITERAL,
+		
+		PARAMETER_MODIFIER_HOLDER,
 		
 		PARAMETER,
 		

@@ -14,6 +14,8 @@ import com.neaterbits.compiler.ast.objects.block.Constructor;
 import com.neaterbits.compiler.ast.objects.block.ConstructorInvocationStatement;
 import com.neaterbits.compiler.ast.objects.block.MethodName;
 import com.neaterbits.compiler.ast.objects.block.Parameter;
+import com.neaterbits.compiler.ast.objects.block.ParameterModifierHolder;
+import com.neaterbits.compiler.ast.objects.block.ParameterModifiers;
 import com.neaterbits.compiler.ast.objects.block.ParameterName;
 import com.neaterbits.compiler.ast.objects.block.StaticInitializer;
 import com.neaterbits.compiler.ast.objects.expression.ArrayAccessExpression;
@@ -223,6 +225,8 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	CharacterLiteral,
 	StringLiteral,
 	NullLiteral,
+	
+	ParameterModifierHolder,
 	Parameter,
 	
 	InitializerVariableDeclarationElement,
@@ -640,8 +644,19 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public Parameter createParameter(Context context, TypeReference type, String name, Context nameContext, boolean varArgs) {
-		return new Parameter(nameContext, type, new ParameterName(nameContext, name), varArgs);
+	public Parameter createParameter(
+	        Context context,
+	        List<Annotation> annotations, List<ParameterModifierHolder> modifiers,
+	        TypeReference type,
+	        String name, Context nameContext,
+	        boolean varArgs) {
+	    
+		return new Parameter(
+		        nameContext,
+		        new ParameterModifiers(annotations, modifiers),
+		        type,
+		        new ParameterName(nameContext, name),
+		        varArgs);
 	}
 
 	@Override

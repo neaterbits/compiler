@@ -111,6 +111,8 @@ public abstract class BaseIterativeParserListener<
 		STRING_LITERAL extends LITERAL,
 		NULL_LITERAL extends LITERAL,
 		
+		PARAMETER_MODIFIER_HOLDER,
+		
 		PARAMETER,
 		
 		VARIABLE_DECLARATION_STATEMENT extends STATEMENT,
@@ -248,6 +250,8 @@ public abstract class BaseIterativeParserListener<
 		CHARACTER_LITERAL,
 		STRING_LITERAL,
 		NULL_LITERAL,
+		
+		PARAMETER_MODIFIER_HOLDER,
 		
 		PARAMETER,
 		
