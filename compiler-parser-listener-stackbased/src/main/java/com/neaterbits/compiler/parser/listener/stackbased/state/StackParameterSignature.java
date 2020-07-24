@@ -8,15 +8,19 @@ public final class StackParameterSignature<ANNOTATION, VARIABLE_MODIFIER_HOLDER,
 	extends BaseStackVariableDeclaration<ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE>
 	implements TypeReferenceSetter<TYPE_REFERENCE>, AnnotationSetter<ANNOTATION> {
 
-	private final boolean varArgs;
+	private boolean varargs;
 	
-	public StackParameterSignature(ParseLogger parseLogger, boolean varArgs) {
+	public StackParameterSignature(ParseLogger parseLogger, boolean varargs) {
 		super(parseLogger);
 
-		this.varArgs = varArgs;
+		this.varargs = varargs;
+	}
+	
+	public void setVarargs() {
+	    this.varargs = true;
 	}
 
-	public boolean isVarArgs() {
-		return varArgs;
+	public boolean isVarargs() {
+		return varargs;
 	}
 }

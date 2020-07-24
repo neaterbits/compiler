@@ -134,6 +134,8 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 
 	void onMethodSignatureParameterStart(int startContext, boolean varArgs);
 
+	void onMethodSignatureParameterVarargs(int leafContext);
+
 	void onMethodSignatureParameterEnd(int startContext, Context endContext);
 
 	void onMethodSignatureParametersEnd(int startContext, Context endContext);

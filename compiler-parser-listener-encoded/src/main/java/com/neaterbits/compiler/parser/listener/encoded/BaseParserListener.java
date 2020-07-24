@@ -522,6 +522,14 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
+    public final void onMethodSignatureParameterVarargs(int leafContext) {
+
+        writeLeafElementContextRef(leafContext);
+
+        AST.encodeSignatureParameterVarargs(astBuffer);
+    }
+
+    @Override
     public final void onMethodSignatureParameterEnd(int methodSignatureParameterStartContext, Context endContext) {
         
         writeEndElementContext(methodSignatureParameterStartContext, endContext);

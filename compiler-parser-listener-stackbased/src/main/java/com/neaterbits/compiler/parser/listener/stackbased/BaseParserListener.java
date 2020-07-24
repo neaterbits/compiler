@@ -1335,6 +1335,20 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
+    public void onMethodSignatureParameterVarargs(int leafContext) {
+
+	    final Context context = getLeafContext(leafContext);
+        
+        logEnter(context);
+	    
+	    final StackParameterSignature<ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> stackParameterSignature = get();
+
+	    stackParameterSignature.setVarargs();
+	    
+        logExit(context);
+    }
+
+    @Override
 	public final void onMethodSignatureParameterEnd(int startContext, Context endContext) {
 
 	    final Context context = getEndContext(startContext, endContext);
@@ -1348,7 +1362,7 @@ public abstract class BaseParserListener<
 		final PARAMETER parameter = parseTreeFactory.createParameter(context,
 		        stackParameterSignature.getAnnotations(), stackParameterSignature.getModifiers(),
 				stackParameterSignature.getTypeReference(), stackParameterSignature.getName(),
-				stackParameterSignature.getNameContext(), stackParameterSignature.isVarArgs());
+				stackParameterSignature.getNameContext(), stackParameterSignature.isVarargs());
 
 		stackCallable.addParameter(parameter);
 

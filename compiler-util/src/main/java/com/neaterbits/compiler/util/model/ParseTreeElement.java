@@ -59,10 +59,12 @@ public enum ParseTreeElement {
 	SIGNATURE_PARAMETERS(false),
 	
 	SIGNATURE_PARAMETER(false),
+
+	SIGNATURE_PARAMETER_VARARGS(true),
 	
 	PARAMETER_MODIFIERS(true, true),
     PARAMETER_MODIFIER_HOLDER(true),
-
+    
 	PARAMETER_LIST(false, true),
 	PARAMETER(false),
 	PARAMETER_NAME(true),

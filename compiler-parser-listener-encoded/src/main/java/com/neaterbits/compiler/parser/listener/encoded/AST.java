@@ -1051,6 +1051,19 @@ public class AST {
         listener.onMethodSignatureParameterStart(signatureParameterStartContext, astBuffer.getBoolean(index));
     }
 
+    static void encodeSignatureParameterVarargs(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeLeafElement(ParseTreeElement.SIGNATURE_PARAMETER_VARARGS);
+    }
+
+    public static <COMPILATION_UNIT> void decodeSignatureParameterVarargs(
+            ASTBufferRead astBuffer,
+            int signatureParameterVarargsContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onMethodSignatureParameterVarargs(signatureParameterVarargsContext);
+    }
+
     static void encodeSignatureParameterEnd(StringASTBuffer astBuffer) {
         
         astBuffer.writeElementEnd(ParseTreeElement.SIGNATURE_PARAMETER);

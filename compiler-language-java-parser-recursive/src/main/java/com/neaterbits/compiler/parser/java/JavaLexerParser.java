@@ -893,8 +893,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
 
     }
     
-
-
     private static final JavaToken [] PARAM_TYPE_RPAREN = {
             JavaToken.RPAREN
     };
@@ -926,120 +924,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
         }
     }
 
-    private static final JavaToken [] PARAMETER_MODIFIER_TOKENS = new JavaToken [] {
-            
-            JavaToken.AT
-    };
-    
-    private void parseAnyParameterModifiersOrAnnotations() throws IOException, ParserException {
-        
-        boolean done = false;
-        
-        do {
-            final JavaToken parameterModifierToken = lexer.lexSkipWS(PARAMETER_MODIFIER_TOKENS);
-
-            switch (parameterModifierToken) {
-            
-            case AT:
-                parseAnnotation(writeCurContext());
-                break;
-            
-            case NONE:
-                done = true;
-                break;
-
-            default:
-                throw lexer.unexpectedToken();
-            }
-        } while (!done);
-    }
-
-    private static final JavaToken [] PARAM_TYPE = {
-            
-            JavaToken.BYTE,
-            JavaToken.SHORT,
-            JavaToken.INT,
-            JavaToken.LONG,
-            JavaToken.FLOAT,
-            JavaToken.DOUBLE,
-            JavaToken.CHAR,
-            
-            JavaToken.IDENTIFIER
-    };
-
-    private void parseParameterType() throws IOException, ParserException {
-
-        final JavaToken typeToken = lexer.lexSkipWS(PARAM_TYPE);
-        
-        switch (typeToken) {
-            
-        case BYTE:
-        case SHORT:
-        case INT:
-        case LONG:
-        case FLOAT:
-        case DOUBLE:
-        case CHAR:
-            listener.onLeafTypeReference(writeCurContext(), getStringRef(), ReferenceType.SCALAR);
-            break;
-            
-        case IDENTIFIER:
-            final int initialIdentifierContext = writeCurContext();
-
-            parseUserType(initialIdentifierContext);
-            break;
-            
-        default:
-            throw lexer.unexpectedToken();
-        }
-    }
-    
-    private static final JavaToken [] PARAMETER_TOKENS = new JavaToken [] {
-            JavaToken.IDENTIFIER,
-            JavaToken.COMMA
-    };
-    
-    private void parseMethodSignatureParameters() throws IOException, ParserException {
-        
-        boolean done = false;
-        
-        do {
-            final int curParameterStartContext = writeCurContext();
-
-            listener.onMethodSignatureParameterStart(curParameterStartContext, false);
-
-            parseAnyParameterModifiersOrAnnotations();
-
-            parseParameterType();
-            
-            final JavaToken parameterNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
-            
-            final long parameterName = lexer.getStringRef();
-
-            if (parameterNameToken != JavaToken.IDENTIFIER) {
-                throw lexer.unexpectedToken();
-            }
-
-            listener.onVariableName(curParameterStartContext, parameterName, 0);
-
-            final JavaToken afterParameterName = lexer.lexSkipWS(PARAMETER_TOKENS);
-            
-            switch (afterParameterName) {
-            case COMMA:
-                listener.onMethodSignatureParameterEnd(curParameterStartContext, getLexerContext());
-                // Next parameter
-                break;
-
-            default:
-                listener.onMethodSignatureParameterEnd(curParameterStartContext, getLexerContext());
-                done = true;
-                break;
-            }
-
-        } while(!done);
-        
-    }
-    
     private static final JavaToken [] BODY_OR_SEMI_COLON = new JavaToken [] {
             
             JavaToken.LBRACE,

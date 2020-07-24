@@ -1322,6 +1322,96 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testMethodWithScalarVarargsParameter() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { int someMethod(byte ... data) { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        
+        checkScalarType(method.getReturnType(), "int");
+        
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        
+        assertThat(method.getParameters().size()).isEqualTo(1);
+        
+        checkScalarType(method.getParameters().get(0).getType(), "byte");
+        assertThat(method.getParameters().get(0).getNameString()).isEqualTo("data");
+        assertThat(method.getParameters().get(0).isVarArgs()).isTrue();
+    }
+
+    @Test
+    public void testMethodWithUserVarargsParameter() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { int someMethod(SomeClass ... data) { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        
+        checkScalarType(method.getReturnType(), "int");
+        
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        
+        assertThat(method.getParameters().size()).isEqualTo(1);
+        
+        final UnresolvedTypeReference type = (UnresolvedTypeReference)method.getParameters().get(0).getType();
+        assertThat(type.getScopedName().getScope()).isNull();
+        assertThat(type.getScopedName().getName()).isEqualTo("SomeClass");
+        
+        assertThat(method.getParameters().get(0).getNameString()).isEqualTo("data");
+        assertThat(method.getParameters().get(0).isVarArgs()).isTrue();
+    }
+
+    @Test
+    public void testMethodWithScopedUserVarargsParameter() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { int someMethod(com.test.SomeClass ... data) { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        
+        checkScalarType(method.getReturnType(), "int");
+        
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        
+        assertThat(method.getParameters().size()).isEqualTo(1);
+        
+        final UnresolvedTypeReference type = (UnresolvedTypeReference)method.getParameters().get(0).getType();
+        assertThat(type.getScopedName().getScope()).isEqualTo(Arrays.asList("com", "test"));
+        assertThat(type.getScopedName().getName()).isEqualTo("SomeClass");
+        
+        assertThat(method.getParameters().get(0).getNameString()).isEqualTo("data");
+        assertThat(method.getParameters().get(0).isVarArgs()).isTrue();
+    }
+
+    @Test
     public void testMethodWithMultipleParameters() throws IOException, ParserException {
         
         final String source = "package com.test;\n"

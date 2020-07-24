@@ -64,6 +64,8 @@ public enum JavaToken implements IToken {
     PUBLIC("public"),
     PROTECTED("protected"),
     PRIVATE("private"),
+    
+    VARARGS("..."),
 
     STRING_LITERAL('"', '"'),
     

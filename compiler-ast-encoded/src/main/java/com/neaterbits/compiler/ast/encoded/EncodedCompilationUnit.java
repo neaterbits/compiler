@@ -527,7 +527,19 @@ public final class EncodedCompilationUnit {
                 }
                 break;
             }
-                
+
+            case SIGNATURE_PARAMETER_VARARGS: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeSignatureParameterVarargs(astBuffer, startContext, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+            }
+
             case UNRESOLVED_SCOPED_TYPE_REFERENCE: {
                 final int startContext = getStartContext(parseTreeRef);
 

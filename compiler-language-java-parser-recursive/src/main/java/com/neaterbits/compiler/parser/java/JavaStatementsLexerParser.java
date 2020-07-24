@@ -14,7 +14,7 @@ import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
 
 public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
-    extends JavaVariablesLexerParser<COMPILATION_UNIT> {
+    extends JavaParametersLexerParser<COMPILATION_UNIT> {
 
     private final TypeScratchInfo typeScratchInfo;
 

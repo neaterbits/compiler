@@ -5,7 +5,6 @@ import java.io.IOException;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
-import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
@@ -22,66 +21,6 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
             IterativeParserListener<COMPILATION_UNIT> listener) {
         
         super(file, lexer, tokenizer, listener);
-    }
-
-    
-    final void parseUserType(int initialPartContext) throws ParserException, IOException {
-        
-        final long stringRef = getStringRef();
-
-        JavaToken scopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
-        
-        parseUserType(initialPartContext, stringRef, scopeToken == JavaToken.PERIOD);
-    }
-
-    private void parseUserType(int initialPartContext, long stringRef, boolean gotPeriodToken) throws ParserException, IOException {
-        
-        if (gotPeriodToken) {
-            parseUserTypeAfterPeriod(initialPartContext, stringRef);
-        }
-        else {
-            final int startContext = writeContext(initialPartContext);
-
-            listener.onNonScopedTypeReferenceStart(startContext, stringRef, ReferenceType.REFERENCE);
-            
-            tryParseGenericTypeParameters();
-            
-            listener.onNonScopedTypeReferenceEnd(startContext, getLexerContext());
-        }
-    }
-
-    private void parseUserTypeAfterPeriod(int initialPartContext, long stringRef) throws IOException, ParserException {
-        
-        final int typeStartContext = writeContext(initialPartContext);
-
-        listener.onScopedTypeReferenceStart(typeStartContext, ReferenceType.REFERENCE);
-        
-        final int namesStartContext = writeContext(typeStartContext);
-        
-        listener.onScopedTypeReferenceNameStart(namesStartContext);
-        
-        listener.onScopedTypeReferenceNamePart(initialPartContext, stringRef);
-
-        for (;;) {
-
-            final JavaToken partToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
-            
-            if (partToken != JavaToken.IDENTIFIER) {
-                throw lexer.unexpectedToken();
-            }
-                
-            listener.onScopedTypeReferenceNamePart(writeCurContext(), getStringRef());
-            
-            final JavaToken endOfScopeToken = lexer.lexSkipWS(JavaToken.PERIOD);
-            
-            if (endOfScopeToken != JavaToken.PERIOD) {
-                break;
-            }
-        }
-        
-        listener.onScopedTypeReferenceNameEnd(namesStartContext, getLexerContext());
-        
-        listener.onScopedTypeReferenceEnd(typeStartContext, getLexerContext());
     }
 
     private static final JavaToken [] AFTER_VARIABLE_NAME = new JavaToken [] {
