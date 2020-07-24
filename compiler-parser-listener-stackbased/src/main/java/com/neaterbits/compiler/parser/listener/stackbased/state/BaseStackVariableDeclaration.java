@@ -10,8 +10,10 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Variable
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public abstract class BaseStackVariableDeclaration<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> extends StackEntry
+public abstract class BaseStackVariableDeclaration<ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> extends StackEntry
 	implements VariableModifierSetter<VARIABLE_MODIFIER_HOLDER>, TypeReferenceSetter<TYPE_REFERENCE>, VariableNameSetter {
+	    
+    private final List<ANNOTATION> annotations;
 	private final List<VARIABLE_MODIFIER_HOLDER> modifiers;
 	private TYPE_REFERENCE typeReference;
 	private String name;
@@ -21,10 +23,15 @@ public abstract class BaseStackVariableDeclaration<VARIABLE_MODIFIER_HOLDER, TYP
 	BaseStackVariableDeclaration(ParseLogger parseLogger) {
 		super(parseLogger);
 	
+		this.annotations = new ArrayList<>();
 		this.modifiers = new ArrayList<>();
 	}
 	
-	@Override
+	public final List<ANNOTATION> getAnnotations() {
+        return annotations;
+    }
+
+    @Override
 	public final void addModifier(VARIABLE_MODIFIER_HOLDER modifier) {
 		Objects.requireNonNull(modifier);
 		

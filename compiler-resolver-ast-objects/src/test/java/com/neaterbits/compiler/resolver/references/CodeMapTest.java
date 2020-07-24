@@ -328,7 +328,7 @@ public class CodeMapTest extends BaseResolveTest {
 		
 		final InterfaceDefinition interfaceDefinition = new InterfaceDefinition(
 				context,
-				new InterfaceModifiers(Collections.emptyList()),
+				new InterfaceModifiers(null, Collections.emptyList()),
 				null,
 				new InterfaceDeclarationName(nameContext, new InterfaceName(name)),
 				null,

@@ -219,6 +219,7 @@ public interface ParseTreeFactory<
 
     CONSTRUCTOR_MEMBER createConstructorMember(
 			Context context,
+			List<ANNOTATION> annotations,
 			List<CONSTRUCTOR_MODIFIER_HOLDER> modifiers,
 			String name,
 			Context nameContext,
@@ -237,6 +238,7 @@ public interface ParseTreeFactory<
 
 	CLASS_METHOD_MEMBER createClassMethodMember(
 			Context context,
+			List<ANNOTATION> annotations,
 			List<CLASS_METHOD_MODIFIER_HOLDER> modifiers,
 			TYPE_REFERENCE returnType,
 			String name,
@@ -248,6 +250,7 @@ public interface ParseTreeFactory<
 
 	FIELD_MEMBER createClassFieldMember(
 			Context context,
+			List<ANNOTATION> annotations,
 			List<FIELD_MODIFIER_HOLDER> modifiers,
 			TYPE_REFERENCE type,
 			List<INITIALIZER_VARIABLE_DECLARATION_ELEMENT> initializers);
@@ -258,6 +261,7 @@ public interface ParseTreeFactory<
 	
 	INTERFACE_DEFINITION createInterfaceDefinition(
 			Context context,
+			List<ANNOTATION> annotations,
 			List<INTERFACE_MODIFIER_HOLDER> modifiers,
 			KEYWORD interfaceKeyword,
 			String name,
@@ -268,6 +272,7 @@ public interface ParseTreeFactory<
 
 	INTERFACE_METHOD_MEMBER createInterfaceMethodMember(
 			Context context,
+			List<ANNOTATION> annotations,
 			List<INTERFACE_METHOD_MODIFIER_HOLDER> modifiers,
 			TYPE_REFERENCE returnType,
 			String name,
@@ -377,6 +382,7 @@ public interface ParseTreeFactory<
 	
 	VARIABLE_DECLARATION_STATEMENT createVariableDeclarationStatement(
 			Context context,
+			List<ANNOTATION> annotations,
 			List<VARIABLE_MODIFIER_HOLDER> modifiers,
 			TYPE_REFERENCE typeReference,
 			List<INITIALIZER_VARIABLE_DECLARATION_ELEMENT> elements);
@@ -397,6 +403,7 @@ public interface ParseTreeFactory<
 
 	ITERATOR_FOR_STATEMENT createIteratorForStatement(
 			Context context,
+			List<ANNOTATION> annotations,
 			List<VARIABLE_MODIFIER_HOLDER> modifiers,
 			TYPE_REFERENCE type,
 			String varName,
@@ -411,6 +418,7 @@ public interface ParseTreeFactory<
 
 	RESOURCE createResource(
 			Context context,
+			List<ANNOTATION> annotations,
 			List<VARIABLE_MODIFIER_HOLDER> modifiers,
 			TYPE_REFERENCE type,
 			String varName,

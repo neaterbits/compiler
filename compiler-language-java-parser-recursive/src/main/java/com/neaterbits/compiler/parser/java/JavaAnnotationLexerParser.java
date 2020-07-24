@@ -26,7 +26,7 @@ abstract class JavaAnnotationLexerParser<COMPILATION_UNIT> extends JavaExpressio
         super(file, lexer, tokenizer, listener);
     }
     
-    private static <COMPILATION_UNIT> void apply(CachedAnnotationsList annotationsList, IterativeParserListener<COMPILATION_UNIT> listener) throws IOException, ParserException {
+    static <COMPILATION_UNIT> void apply(CachedAnnotationsList annotationsList, IterativeParserListener<COMPILATION_UNIT> listener) throws IOException, ParserException {
         
         annotationsList.complete(annotations -> {
             

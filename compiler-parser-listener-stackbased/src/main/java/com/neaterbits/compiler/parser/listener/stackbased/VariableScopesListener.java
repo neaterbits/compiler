@@ -9,7 +9,7 @@ import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
 
 @Deprecated // moved out of parser listener
-final class VariableScopesListener<VARIABLE_DECLARATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> {
+final class VariableScopesListener<VARIABLE_DECLARATION, ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> {
     
     interface CreateDeclaration<VD, VMH, TR> {
         
@@ -79,7 +79,7 @@ final class VariableScopesListener<VARIABLE_DECLARATION, VARIABLE_MODIFIER_HOLDE
 
     @SuppressWarnings("unused")
     private final VARIABLE_DECLARATION makeVariableDeclaration(Context context,
-            BaseStackVariableDeclaration<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> stackDeclaration) {
+            BaseStackVariableDeclaration<ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> stackDeclaration) {
 
         final VARIABLE_DECLARATION variableDeclaration = createDeclaration.createVariableDeclaration(
                 context,

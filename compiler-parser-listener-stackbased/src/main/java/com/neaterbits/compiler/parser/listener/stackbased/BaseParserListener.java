@@ -1165,7 +1165,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackConstructor<STATEMENT, PARAMETER, TYPE_REFERENCE, CONSTRUCTOR_MODIFIER_HOLDER> stackConstructor = get();
+		final StackConstructor<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CONSTRUCTOR_MODIFIER_HOLDER> stackConstructor = get();
 
 		stackConstructor.addModifier(parseTreeFactory.createConstructorModifierHolder(context, modifier));
 
@@ -1191,7 +1191,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackConstructor<STATEMENT, PARAMETER, TYPE_REFERENCE, CONSTRUCTOR_MODIFIER_HOLDER> constructor = get();
+		final StackConstructor<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CONSTRUCTOR_MODIFIER_HOLDER> constructor = get();
 
 		constructor.setName(stringSource.asString(constructorName), context);
 
@@ -1237,10 +1237,11 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackConstructor<STATEMENT, PARAMETER, TYPE_REFERENCE, CONSTRUCTOR_MODIFIER_HOLDER> stackConstructor = pop();
+		final StackConstructor<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CONSTRUCTOR_MODIFIER_HOLDER> stackConstructor = pop();
 
 		final CONSTRUCTOR_MEMBER constructorMember = parseTreeFactory.createConstructorMember(context,
-				stackConstructor.getModifiers(), stackConstructor.getName(), stackConstructor.getNameContext(),
+		        stackConstructor.getAnnotations(), stackConstructor.getModifiers(),
+		        stackConstructor.getName(), stackConstructor.getNameContext(),
 				stackConstructor.getParameters(), stackConstructor.getList());
 
 		final ConstructorMemberSetter<CONSTRUCTOR_MEMBER> constructorMemberSetter = get();
@@ -1257,7 +1258,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, CLASS_METHOD_MODIFIER_HOLDER> method
+		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CLASS_METHOD_MODIFIER_HOLDER> method
 			= new StackClassMethod<>(logger);
 
 		push(method);
@@ -1336,7 +1337,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackParameterSignature<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> stackParameterSignature = pop();
+		final StackParameterSignature<ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> stackParameterSignature = pop();
 
 		final CallableStackEntry<STATEMENT, PARAMETER, TYPE_REFERENCE> stackCallable = get();
 
@@ -1363,7 +1364,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, CLASS_METHOD_MODIFIER_HOLDER> stackMethod = get();
+		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CLASS_METHOD_MODIFIER_HOLDER> stackMethod = get();
 
 		stackMethod.addModifier(parseTreeFactory.createClassMethodModifierHolder(context, modifier));
 
@@ -1449,12 +1450,13 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, CLASS_METHOD_MODIFIER_HOLDER> method = pop();
+		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CLASS_METHOD_MODIFIER_HOLDER> method = pop();
 
 		final ClassMethodMemberSetter<CLASS_METHOD_MEMBER> methodMemberSetter = get();
 		
 		final CLASS_METHOD_MEMBER methodMember = parseTreeFactory.createClassMethodMember(
 				context,
+				method.getAnnotations(),
 				method.getModifiers(),
 				method.getReturnType(),
 				method.getName(),
@@ -1480,7 +1482,7 @@ public abstract class BaseParserListener<
 	}
 
 	private void addFieldModifier(Context context, FieldModifier modifier) {
-		final StackFieldDeclarationList<TYPE_REFERENCE, EXPRESSION, FIELD_MODIFIER_HOLDER> stackFieldDeclarationList = get();
+		final StackFieldDeclarationList<TYPE_REFERENCE, EXPRESSION, ANNOTATION, FIELD_MODIFIER_HOLDER> stackFieldDeclarationList = get();
 
 		stackFieldDeclarationList.addFieldModifier(parseTreeFactory.createFieldModifierHolder(context, modifier));
 	}
@@ -1552,7 +1554,7 @@ public abstract class BaseParserListener<
 		
 	    logEnter(context);
 
-		final StackFieldDeclarationList<TYPE_REFERENCE, EXPRESSION, FIELD_MODIFIER_HOLDER> stackFieldDeclarationList = pop();
+		final StackFieldDeclarationList<TYPE_REFERENCE, EXPRESSION, ANNOTATION, FIELD_MODIFIER_HOLDER> stackFieldDeclarationList = pop();
 
 		final StackClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER> stackClass = get();
 
@@ -1573,6 +1575,7 @@ public abstract class BaseParserListener<
 
         final CLASS_FIELD_MEMBER dataFieldMember = parseTreeFactory.createClassFieldMember(
                 context,
+                stackFieldDeclarationList.getAnnotations(),
                 stackFieldDeclarationList.getModifiers(),
                 stackFieldDeclarationList.getTypeReference(),
                 initializers
@@ -1605,7 +1608,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackInterface<COMPLEX_MEMBER_DEFINITION, INTERFACE_MODIFIER_HOLDER, TYPE_REFERENCE, INTERFACE_METHOD_MEMBER> stackInterface = get();
+		final StackInterface<COMPLEX_MEMBER_DEFINITION, ANNOTATION, INTERFACE_MODIFIER_HOLDER, TYPE_REFERENCE, INTERFACE_METHOD_MEMBER> stackInterface = get();
 
 		stackInterface.addModifier(parseTreeFactory.createInterfaceModifierHolder(context, modifier));
 
@@ -1667,7 +1670,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackInterface<COMPLEX_MEMBER_DEFINITION, INTERFACE_MODIFIER_HOLDER, TYPE_REFERENCE, INTERFACE_METHOD_MEMBER> entry = get();
+		final StackInterface<COMPLEX_MEMBER_DEFINITION, ANNOTATION, INTERFACE_MODIFIER_HOLDER, TYPE_REFERENCE, INTERFACE_METHOD_MEMBER> entry = get();
 
 		final TYPE_REFERENCE typeReference = parseTreeFactory.createUnresolvedTypeReference(
 		        context,
@@ -1687,12 +1690,13 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackInterface<COMPLEX_MEMBER_DEFINITION, INTERFACE_MODIFIER_HOLDER, TYPE_REFERENCE, INTERFACE_METHOD_MEMBER> entry = pop();
+		final StackInterface<COMPLEX_MEMBER_DEFINITION, ANNOTATION, INTERFACE_MODIFIER_HOLDER, TYPE_REFERENCE, INTERFACE_METHOD_MEMBER> entry = pop();
 
 		final List<COMPLEX_MEMBER_DEFINITION> interfaceCode = entry.getList();
 
 		final INTERFACE_DEFINITION classDefinition = parseTreeFactory.createInterfaceDefinition(
 				context,
+				entry.getAnnotations(),
 				entry.getModifiers(),
 				entry.getInterfaceKeyword() != null
 					? parseTreeFactory.createKeyword(entry.getInterfaceKeywordContext(), entry.getInterfaceKeyword())
@@ -1835,7 +1839,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackInterfaceMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, INTERFACE_METHOD_MODIFIER_HOLDER> method = new StackInterfaceMethod<>(logger);
+		final StackInterfaceMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, INTERFACE_METHOD_MODIFIER_HOLDER> method = new StackInterfaceMethod<>(logger);
 
 		push(method);
 
@@ -1846,7 +1850,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackInterfaceMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, INTERFACE_METHOD_MODIFIER_HOLDER> stackMethod = get();
+		final StackInterfaceMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, INTERFACE_METHOD_MODIFIER_HOLDER> stackMethod = get();
 
 		stackMethod.addModifier(parseTreeFactory.createInterfaceMethodModifierHolder(context, modifier));
 
@@ -1920,13 +1924,14 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackInterfaceMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, INTERFACE_METHOD_MODIFIER_HOLDER> method = pop();
+		final StackInterfaceMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, INTERFACE_METHOD_MODIFIER_HOLDER> method = pop();
 
 		final InterfaceMethodMemberSetter<INTERFACE_METHOD_MEMBER> methodMemberSetter = get();
 		
 
 		final INTERFACE_METHOD_MEMBER methodMember = parseTreeFactory.createInterfaceMethodMember(
 				context,
+				method.getAnnotations(),
 				method.getModifiers(),
 				method.getReturnType(),
 				method.getName(),
@@ -2931,7 +2936,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackVariableDeclarationList<TYPE_REFERENCE, EXPRESSION, VARIABLE_MODIFIER_HOLDER> variableDeclaration = pop();
+		final StackVariableDeclarationList<TYPE_REFERENCE, EXPRESSION, ANNOTATION, VARIABLE_MODIFIER_HOLDER> variableDeclaration = pop();
 
 		final StatementSetter<STATEMENT> statementSetter = get();
 
@@ -2941,6 +2946,7 @@ public abstract class BaseParserListener<
 		
 		final VARIABLE_DECLARATION_STATEMENT statement = parseTreeFactory.createVariableDeclarationStatement(
 				context,
+				variableDeclaration.getAnnotations(),
 				variableDeclaration.getModifiers(),
 				variableDeclaration.getTypeReference(),
 				elements);
@@ -3341,10 +3347,11 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackIteratorForStatement<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE, EXPRESSION, VARIABLE_REFERENCE, PRIMARY, STATEMENT> stackIteratorForStatement = pop();
+		final StackIteratorForStatement<ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE, EXPRESSION, VARIABLE_REFERENCE, PRIMARY, STATEMENT> stackIteratorForStatement = pop();
 
 		final ITERATOR_FOR_STATEMENT statement = parseTreeFactory.createIteratorForStatement(
 				context,
+				stackIteratorForStatement.getAnnotations(),
 				stackIteratorForStatement.getModifiers(),
 				stackIteratorForStatement.getTypeReference(),
 				stackIteratorForStatement.getName(),
@@ -3483,10 +3490,11 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackResource<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE, EXPRESSION, PRIMARY> stackResource = pop();
+		final StackResource<ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE, EXPRESSION, PRIMARY> stackResource = pop();
 
 		final RESOURCE resource = parseTreeFactory.createResource(
 				context,
+				stackResource.getAnnotations(),
 				stackResource.getModifiers(),
 				stackResource.getTypeReference(),
 				stackResource.getName(),

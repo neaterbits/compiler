@@ -8,6 +8,7 @@ import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsList;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywordsList;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
 import com.neaterbits.util.io.strings.CharInput;
@@ -19,6 +20,10 @@ import com.neaterbits.util.parse.ParserException;
 final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<COMPILATION_UNIT> {
 
     private final TypeScratchInfo typeScratchInfo;
+    
+    // For returning multiple values without allocation
+    private CachedKeywordsList<JavaToken> cachedModifiers;
+    private CachedAnnotationsList cachedAnnotations;
     
     JavaLexerParser(
             String file,
@@ -550,7 +555,13 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
     
     private boolean parseMember(long implementingClassName) throws IOException, ParserException {
 
-        final CachedKeywordsList<JavaToken> modifiers = parseAnyMemberModifiers();
+        parseAnyMemberModifiersOrAnnotations();
+        
+        final CachedKeywordsList<JavaToken> modifiers = cachedModifiers;
+        this.cachedModifiers = null;
+        
+        final CachedAnnotationsList annotations = cachedAnnotations;
+        this.cachedAnnotations = null;
         
         final JavaToken initialToken = lexer.lexSkipWS(MEMBER_START_TOKENS);
         
@@ -569,7 +580,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             final Context afterTypeContext = initScratchContext();
             
             try {
-                parseRestOfTypeAndFieldScalar(modifiers, writeCurContext(), getStringRef(), afterTypeContext);
+                parseRestOfTypeAndFieldScalar(modifiers, annotations, writeCurContext(), getStringRef(), afterTypeContext);
             }
             finally {
                 freeScratchContext(afterTypeContext);
@@ -581,7 +592,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             // Probably a type, is it a scoped type?
             final long typeName = lexer.getStringRef();
             
-            parseRestOfTypeAndFieldScopedType(modifiers, implementingClassName, writeCurContext(), typeName);
+            parseRestOfTypeAndFieldScopedType(modifiers, annotations, implementingClassName, writeCurContext(), typeName);
             break;
         
         case NONE:
@@ -607,16 +618,21 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             JavaToken.STATIC
     };
     
-    private CachedKeywordsList<JavaToken> parseAnyMemberModifiers() throws IOException, ParserException {
+    private void parseAnyMemberModifiersOrAnnotations() throws IOException, ParserException {
         
         boolean done = false;
         
-        final CachedKeywordsList<JavaToken> cachedModifiers = startScratchKeywords();
+        this.cachedModifiers = startScratchKeywords();
+        this.cachedAnnotations = startScratchAnnotations();
         
         do {
             final JavaToken memberModifierToken = lexer.lexSkipWS(MEMBER_MODIFIER_TOKENS);
 
             switch (memberModifierToken) {
+            
+            case AT:
+                parseAnnotation(cachedAnnotations, writeCurContext());
+                break;
             
             case PUBLIC:
             case PRIVATE:
@@ -633,8 +649,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                 throw lexer.unexpectedToken();
             }
         } while (!done);
-        
-        return cachedModifiers;
     }
     
     private static final JavaToken [] AFTER_FIELD_NAME = new JavaToken [] {
@@ -647,17 +661,19 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
 
     private void parseRestOfTypeAndFieldScalar(
             CachedKeywordsList<JavaToken> modifiers,
+            CachedAnnotationsList annotations,
             int typeNameContext,
             long typeName,
             Context afterTypeContext) throws IOException, ParserException {
         
         typeScratchInfo.initNonScoped(typeName, typeNameContext, afterTypeContext, ReferenceType.SCALAR);
         
-        parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeScratchInfo, null);
+        parseRestOfMemberAfterInitialTypeDeclaration(modifiers, annotations, typeScratchInfo, null);
     }
 
     private void parseRestOfTypeAndFieldScopedType(
             CachedKeywordsList<JavaToken> modifiers,
+            CachedAnnotationsList annotations,
             long implementingClassName,
             int typeNameContext,
             long typeName) throws IOException, ParserException {
@@ -672,7 +688,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
 
                 typeScratchInfo.initScoped(names, getLexerContext(), ReferenceType.REFERENCE);
 
-                parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeScratchInfo, typeArguments);
+                parseRestOfMemberAfterInitialTypeDeclaration(modifiers, annotations, typeScratchInfo, typeArguments);
             });
         }
         else {
@@ -700,19 +716,20 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                     // Not the same so try to just parse as a method but without return type since missing
                     typeScratchInfo.initNoType();
                     
-                    parseMethod(modifiers, typeScratchInfo, getLexerContext(), typeNameContext, typeName);
+                    parseMethod(modifiers, annotations, typeScratchInfo, getLexerContext(), typeNameContext, typeName);
                 }
             }
             else {
                 typeScratchInfo.initNonScoped(typeName, typeNameContext, getLexerContext(), ReferenceType.REFERENCE);
                 
-                parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeScratchInfo, typeArguments);
+                parseRestOfMemberAfterInitialTypeDeclaration(modifiers, annotations, typeScratchInfo, typeArguments);
             }
         }
     }
     
     private void parseRestOfMemberAfterInitialTypeDeclaration(
             CachedKeywordsList<JavaToken> modifiers,
+            CachedAnnotationsList annotations,
             TypeScratchInfo typeName,
             TypeArgumentsList typeArguments) throws ParserException, IOException {
         
@@ -746,6 +763,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                     
                     listenerHelper.onMemberVariableDeclaration(
                             modifiers,
+                            annotations,
                             typeName,
                             typeEndContext,
                             typeArguments,
@@ -762,6 +780,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                     
                     listenerHelper.onMemberVariableDeclaration(
                             modifiers,
+                            annotations,
                             typeName,
                             typeEndContext,
                             typeArguments,
@@ -775,7 +794,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                 }
                  
                 case LPAREN: {
-                    parseMethod(modifiers, typeName, typeEndContext, identifierContext, identifier);
+                    parseMethod(modifiers, annotations, typeName, typeEndContext, identifierContext, identifier);
                     break;
                 }
                     
@@ -794,6 +813,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
     
     private void parseMethod(
             CachedKeywordsList<JavaToken> modifiers,
+            CachedAnnotationsList annotations,
             TypeScratchInfo typeInfo,
             Context typeEndContext,
             int identifierContext,
@@ -811,6 +831,10 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             modifiers.complete(keywords -> {
                 listenerHelper.callClassMethodMemberModifiers(keywords);
             });
+        }
+        
+        if (annotations != null) {
+            apply(annotations, listener);
         }
         
         listener.onMethodReturnTypeStart(methodReturnTypeStartContext);

@@ -58,7 +58,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 		if ((getAccessFlags() & AccessFlags.ACC_INTERFACE) != 0) {
 			final List<InterfaceModifierHolder> modifierList = new ArrayList<>();
 			
-			final InterfaceModifiers modifiers = new InterfaceModifiers(modifierList);
+			final InterfaceModifiers modifiers = new InterfaceModifiers(null, modifierList);
 
 			final CompleteName completeName = getCompleteName(getThisClass(), InterfaceName::new);
 
@@ -115,7 +115,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 	private ClassDataFieldMember getField(Context context, Field field) {
 		
 		final List<FieldModifierHolder> modifierList = new ArrayList<>();
-		final FieldModifiers modifiers = new FieldModifiers(modifierList);
+		final FieldModifiers modifiers = new FieldModifiers(null, modifierList);
 		
 		final String descriptor = getUTF8(field.getDescriptorIndex());
 		
@@ -164,7 +164,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 	private ClassMethodMember getMethod(Context context, Method method) {
 		
 		final List<ClassMethodModifierHolder> modifierList = new ArrayList<>();
-		final ClassMethodModifiers modifiers = new ClassMethodModifiers(modifierList);
+		final ClassMethodModifiers modifiers = new ClassMethodModifiers(null, modifierList);
 		
 
 		final List<TypeReference> paramTypes = new ArrayList<>();

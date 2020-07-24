@@ -6,19 +6,26 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.BasePlaceholderASTElement;
+import com.neaterbits.compiler.ast.objects.annotation.Annotation;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 
 public abstract class BaseModifiers<MODIFIER, MODIFIER_HOLDER extends BaseModifierHolder<MODIFIER>>
 			extends BasePlaceholderASTElement {
 
+    private final ASTList<Annotation> annotations;
 	private final ASTList<MODIFIER_HOLDER> modifiers;
 
-	protected BaseModifiers(List<MODIFIER_HOLDER> modifiers) {
+	protected BaseModifiers(List<Annotation> annotations, List<MODIFIER_HOLDER> modifiers) {
 
 		Objects.requireNonNull(modifiers);
 		
+        this.annotations = annotations != null ? makeList(annotations) : null;
 		this.modifiers = makeList(modifiers);
 	}
+	
+    public final ASTList<Annotation> getAnnotations() {
+        return annotations;
+    }
 	
 	public final ASTList<MODIFIER_HOLDER> getModifiers() {
 		return modifiers;

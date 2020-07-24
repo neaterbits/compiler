@@ -6,8 +6,8 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Expressi
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public final class StackResource<MODIFIER_HOLDER, TYPE_REFERENCE, EXPRESSION, PRIMARY extends EXPRESSION>
-	extends BaseStackVariableDeclaration<MODIFIER_HOLDER, TYPE_REFERENCE>
+public final class StackResource<ANNOTATION, MODIFIER_HOLDER, TYPE_REFERENCE, EXPRESSION, PRIMARY extends EXPRESSION>
+	extends BaseStackVariableDeclaration<ANNOTATION, MODIFIER_HOLDER, TYPE_REFERENCE>
 		implements ExpressionSetter<EXPRESSION>, PrimarySetter<PRIMARY> {
 
 	private EXPRESSION initializer;

@@ -11,6 +11,7 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class StackInterface<
 		COMPLEX_MEMBER_DEFINITION,
+		ANNOTATION,
 		INTERFACE_MODIFIER_HOLDER,
 		TYPE_REFERENCE,
 		INTERFACE_METHOD_MEMBER extends COMPLEX_MEMBER_DEFINITION>
@@ -22,6 +23,7 @@ public final class StackInterface<
 	private final Context interfaceKeywordContext;
 	private final String name;
 	private final Context nameContext;
+	private final List<ANNOTATION> annotations;
 	private final List<INTERFACE_MODIFIER_HOLDER> modifiers;
 	private final List<TYPE_REFERENCE> extendedInterfaces;
 	
@@ -37,6 +39,7 @@ public final class StackInterface<
 		this.interfaceKeywordContext = interfaceKeywordContext;
 		this.name = name;
 		this.nameContext = nameContext;
+		this.annotations = new ArrayList<>();
 		this.modifiers = new ArrayList<>();
 		this.extendedInterfaces = new ArrayList<>();
 	}
@@ -57,7 +60,11 @@ public final class StackInterface<
 		return nameContext;
 	}
 
-	public List<INTERFACE_MODIFIER_HOLDER> getModifiers() {
+	public List<ANNOTATION> getAnnotations() {
+        return annotations;
+    }
+
+    public List<INTERFACE_MODIFIER_HOLDER> getModifiers() {
 		return modifiers;
 	}
 

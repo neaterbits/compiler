@@ -12,13 +12,14 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Variable
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class StackIteratorForStatement<
+            ANNOTATION,
 			VARIABLE_MODIFIER_HOLDER,
 			TYPE_REFERENCE,
 			EXPRESSION,
 			PRIMARY extends EXPRESSION,
 			VARIABLE_REFERENCE extends EXPRESSION,
 			STATEMENT>
-		extends BaseStackVariableDeclaration<VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE>
+		extends BaseStackVariableDeclaration<ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE>
 		implements ExpressionSetter<EXPRESSION>, PrimarySetter<PRIMARY>, VariableReferenceSetter<VARIABLE_REFERENCE>, StatementSetter<STATEMENT> {
 
 	private EXPRESSION expression;

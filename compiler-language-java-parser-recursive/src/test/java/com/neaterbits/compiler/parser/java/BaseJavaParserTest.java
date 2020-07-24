@@ -2446,6 +2446,29 @@ public abstract class BaseJavaParserTest {
         assertThat(nameReference.getName()).isEqualTo("list");
     }
 
+    @Test
+    public void testMethodAnnotation() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { @AnAnnotation void someMethod() { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        assertThat(member.getModifiers().getAnnotations().size()).isEqualTo(1);
+        assertThat(member.getModifiers().getAnnotations().get(0).getScopedName().getScope()).isNull();
+        assertThat(member.getModifiers().getAnnotations().get(0).getScopedName().getName()).isEqualTo("AnAnnotation");
+
+        final ClassMethod method = checkBasicMethod(member, "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(0);
+    }
+
     private void checkExpressionListLiteral(ExpressionList list, int index, int value) {
         
         final IntegerLiteral literal = (IntegerLiteral)list.getExpressions().get(index);
@@ -2472,6 +2495,11 @@ public abstract class BaseJavaParserTest {
         final ClassDefinition classDefinition = checkBasicClass(compilationUnit, className);
         
         final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+     
+        return checkBasicMethod(member, methodName);
+    }
+
+    private ClassMethod checkBasicMethod(ClassMethodMember member, String methodName) {
         
         final ClassMethod method = member.getMethod();
         final ScalarTypeReference returnType = (ScalarTypeReference)method.getReturnType();

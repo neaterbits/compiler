@@ -460,7 +460,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public ConstructorMember createConstructorMember(Context context, List<ConstructorModifierHolder> modifiers,
+	public ConstructorMember createConstructorMember(Context context, List<Annotation> annotations, List<ConstructorModifierHolder> modifiers,
 			String name, Context nameContext, List<Parameter> parameters, List<Statement> statements) {
 
 		final Constructor constructor = new Constructor(
@@ -471,7 +471,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 		
 		final ConstructorMember constructorMember = new ConstructorMember(
 				context,
-				new ConstructorModifiers(modifiers),
+				new ConstructorModifiers(annotations, modifiers),
 				constructor);
 		
 		return constructorMember;
@@ -513,7 +513,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public ClassMethodMember createClassMethodMember(Context context, List<ClassMethodModifierHolder> modifiers,
+	public ClassMethodMember createClassMethodMember(Context context, List<Annotation> annotations, List<ClassMethodModifierHolder> modifiers,
 			TypeReference returnType, String name, Context nameContext, List<Parameter> parameters,
 			List<Statement> block) {
 
@@ -527,7 +527,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
 		final ClassMethodMember methodMember = new ClassMethodMember(
 				context,
-				new ClassMethodModifiers(modifiers),
+				new ClassMethodModifiers(annotations, modifiers),
 				classMethod);
 
 		return methodMember;
@@ -540,12 +540,12 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public ClassDataFieldMember createClassFieldMember(Context context, List<FieldModifierHolder> modifiers,
+	public ClassDataFieldMember createClassFieldMember(Context context, List<Annotation> annotations, List<FieldModifierHolder> modifiers,
 			TypeReference type, List<InitializerVariableDeclarationElement> initializers) {
 		
 		return new ClassDataFieldMember(
 				context,
-				new FieldModifiers(modifiers),
+				new FieldModifiers(annotations, modifiers),
 				type,
 				initializers);
 	}
@@ -561,11 +561,11 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public InterfaceDefinition createInterfaceDefinition(Context context, List<InterfaceModifierHolder> modifiers,
+	public InterfaceDefinition createInterfaceDefinition(Context context, List<Annotation> annotations, List<InterfaceModifierHolder> modifiers,
 			Keyword interfaceKeyword, String name, Context nameContext, Keyword extendsKeyword,
 			List<TypeReference> extendsInterfaces, List<ComplexMemberDefinition> members) {
 		
-		final InterfaceModifiers interfaceModifiers = new InterfaceModifiers(modifiers);
+		final InterfaceModifiers interfaceModifiers = new InterfaceModifiers(annotations, modifiers);
 
 		final InterfaceDefinition classDefinition = new InterfaceDefinition(
 				context,
@@ -581,6 +581,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	@Override
 	public InterfaceMethodMember createInterfaceMethodMember(
 			Context context,
+			List<Annotation> annotations,
 			List<InterfaceMethodModifierHolder> modifiers,
 			TypeReference returnType,
 			String name,
@@ -591,7 +592,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 		final InterfaceMethod method = new InterfaceMethod(context, returnType, name, nameContext, parameters);
 
 		final InterfaceMethodMember methodMember = new InterfaceMethodMember(context,
-				new InterfaceMethodModifiers(modifiers), method);
+				new InterfaceMethodModifiers(annotations, modifiers), method);
 
 		return methodMember;
 	}
@@ -851,9 +852,10 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
 	@Override
 	public VariableDeclarationStatement createVariableDeclarationStatement(Context context,
-			List<VariableModifierHolder> modifiers, TypeReference typeReference,
+			List<Annotation> annotations, List<VariableModifierHolder> modifiers,
+			TypeReference typeReference,
 			List<InitializerVariableDeclarationElement> elements) {
-		return new VariableDeclarationStatement(context, new VariableModifiers(modifiers), typeReference, elements);
+		return new VariableDeclarationStatement(context, new VariableModifiers(annotations, modifiers), typeReference, elements);
 	}
 
 	@Override
@@ -883,7 +885,9 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public IteratorForStatement createIteratorForStatement(Context context, List<VariableModifierHolder> modifiers,
+	public IteratorForStatement createIteratorForStatement(
+	        Context context,
+	        List<Annotation> annotations, List<VariableModifierHolder> modifiers,
 			TypeReference type, String varName, Context varNameContext, int numDims, Expression expression,
 			List<Statement> statements) {
 
@@ -891,7 +895,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				varNameContext,
 				new ModifiersVariableDeclarationElement(
 						context,
-						new VariableModifiers(modifiers),
+						new VariableModifiers(annotations, modifiers),
 						type,
 						new VarNameDeclaration(varNameContext, varName),
 						numDims),
@@ -910,11 +914,11 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public Resource createResource(Context context, List<VariableModifierHolder> modifiers, TypeReference type,
+	public Resource createResource(Context context, List<Annotation> annotations, List<VariableModifierHolder> modifiers, TypeReference type,
 			String varName, Context varNameContext, int numDims, Expression initializer) {
 	    
 		return new Resource(
-				new VariableModifiers(modifiers),
+				new VariableModifiers(annotations, modifiers),
                 type,
 				new InitializerVariableDeclarationElement(
 						context,

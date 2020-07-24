@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import com.neaterbits.compiler.parser.java.JavaTypesLexerParser.ParseFunction;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsList;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ContextWriter;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeyword;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywords;
@@ -52,6 +53,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
 
     void onMemberVariableDeclaration(
             CachedKeywordsList<JavaToken> modifiers,
+            CachedAnnotationsList annotations,
             TypeScratchInfo typeName,
             Context typeEndContext,
             TypeArgumentsList typeArguments,
@@ -59,7 +61,16 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             int identifierContext,
             Context variableDeclaratorEndContext) throws IOException, ParserException {
         
-        onDeclaration(modifiers, this::callFieldMemberModifiers, typeName, typeEndContext, typeArguments, identifier, identifierContext, variableDeclaratorEndContext);
+        onDeclaration(
+                modifiers,
+                annotations,
+                this::callFieldMemberModifiers,
+                typeName,
+                typeEndContext,
+                typeArguments,
+                identifier,
+                identifierContext,
+                variableDeclaratorEndContext);
     }
 
     void onLocalVariableDeclaration(
@@ -70,7 +81,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             int identifierContext,
             Context variableDeclaratorEndContext) throws IOException, ParserException {
         
-        onDeclaration(null, null, typeName, typeEndContext, typeArguments, identifier, identifierContext, variableDeclaratorEndContext);
+        onDeclaration(null, null, null, typeName, typeEndContext, typeArguments, identifier, identifierContext, variableDeclaratorEndContext);
     }
 
     void onTypeAndOptionalArgumentsList(TypeScratchInfo typeName, TypeArgumentsList typeArguments, Context typeEndContext) throws IOException, ParserException {
@@ -85,6 +96,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
     
     private void onDeclaration(
             CachedKeywordsList<JavaToken> modifiers,
+            CachedAnnotationsList annotations,
             ModifiersProcessor<JavaToken> outputModifiers,
             TypeScratchInfo typeName,
             Context typeEndContext,
