@@ -2,6 +2,7 @@ package com.neaterbits.compiler.parser.java;
 
 import java.io.IOException;
 
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
@@ -700,7 +701,9 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
         final int identifierContext = writeCurContext();
         final long identifier = getStringRef();
         
-        final int fieldDeclarationStartContext = writeCurContext();
+        final Context variableDeclaratorEndContext = initScratchContext();
+        
+        final int fieldDeclarationStartContext = writeContext(typeNameContext);
         
         // Next should be start of method, semicolon after type, array indicator or comma separated variables
         final JavaToken afterFieldToken = lexer.lexSkipWS(AFTER_FIELD_NAME);
@@ -724,13 +727,13 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                 listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, null, referenceType, null);
             }
             
-            final int variableDeclaratorStartContext = writeCurContext();
-
-            listener.onVariableDeclaratorStart(variableDeclaratorStartContext);
+            final int variableDeclaratorStartContext = writeContext(identifierContext);
             
-            listener.onVariableName(identifierContext, identifier, 0);
-            
-            listener.onVariableDeclaratorEnd(variableDeclaratorStartContext, getLexerContext());
+            listenerHelper.onVariableDeclarator(
+                    variableDeclaratorStartContext,
+                    identifier,
+                    identifierContext,
+                    variableDeclaratorEndContext);
             
             listener.onFieldDeclarationEnd(fieldDeclarationStartContext, getLexerContext());
             break;
@@ -749,11 +752,13 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             }
 
             // Initial variable name
-            final int variableDeclaratorStartContext = writeCurContext();
+            final int variableDeclaratorStartContext = writeContext(identifierContext);
 
-            listener.onVariableDeclaratorStart(variableDeclaratorStartContext);
-            listener.onVariableName(fieldDeclarationStartContext, identifier, 0);
-            listener.onVariableDeclaratorEnd(fieldDeclarationStartContext, getLexerContext());
+            listenerHelper.onVariableDeclarator(
+                    variableDeclaratorStartContext,
+                    identifier,
+                    identifierContext,
+                    variableDeclaratorEndContext);
 
             parseVariableDeclaratorList();
             

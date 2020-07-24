@@ -3,6 +3,7 @@ package com.neaterbits.compiler.parser.java;
 import java.io.IOException;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.util.io.strings.CharInput;
@@ -13,7 +14,7 @@ import com.neaterbits.util.parse.ParserException;
 
 public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
     extends JavaTypesLexerParser<COMPILATION_UNIT> {
-
+        
     protected JavaVariablesLexerParser(
             String file,
             Lexer<JavaToken, CharInput> lexer,
@@ -98,48 +99,32 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
 
     final void parseVariableDeclaratorList() throws IOException, ParserException {
         
-        parseVariableDeclaratorList(StringRef.STRING_NONE, ContextRef.NONE);
-    }
-
-    final void parseVariableDeclaratorList(long initialVarName, int initialVarNameContext) throws IOException, ParserException {
-
         boolean done = false;
         
-        boolean initialIteration = true;
-        
         do {
-            final long identifier;
-            final int declaratorStartContext;
+            final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
             
-            if (initialIteration && initialVarName != StringRef.STRING_NONE) {
-                identifier = initialVarName;
-                declaratorStartContext = initialVarNameContext;
+            if (fieldNameToken != JavaToken.IDENTIFIER) {
+                throw lexer.unexpectedToken();
             }
-            else {
-                final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
-                
-                if (fieldNameToken != JavaToken.IDENTIFIER) {
-                    throw lexer.unexpectedToken();
-                }
 
-                identifier = getStringRef();
-                declaratorStartContext = writeCurContext();
-            }
+            final long identifier = getStringRef();
+            final int identifierContext = writeCurContext();
             
-            initialIteration = false;
-
-            final int declaratorNameContext = writeContext(declaratorStartContext);
+            final Context variableDeclaratorEndContext = initScratchContext();
             
             final JavaToken afterVarNameToken = lexer.lexSkipWS(AFTER_VARIABLE_NAME);
             
             switch (afterVarNameToken) {
             case COMMA:
             case SEMI:
-                listener.onVariableDeclaratorStart(declaratorStartContext);
-                
-                listener.onVariableName(declaratorStartContext, identifier, declaratorNameContext);
-                
-                listener.onVariableDeclaratorEnd(declaratorStartContext, getLexerContext());
+                final int variableDeclaratorStartContext = writeContext(identifierContext);
+
+                listenerHelper.onVariableDeclarator(
+                        variableDeclaratorStartContext,
+                        identifier,
+                        identifierContext,
+                        variableDeclaratorEndContext);
                 
                 if (afterVarNameToken == JavaToken.SEMI) {
                     done = true;
@@ -147,31 +132,102 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
                 break;
 
             case ASSIGN:
-                listener.onVariableDeclaratorStart(declaratorStartContext);
-                
-                listener.onVariableName(declaratorStartContext, identifier, declaratorNameContext);
-                
-                parseExpressionList();
-
-                listener.onVariableDeclaratorEnd(declaratorStartContext, getLexerContext());
-                
-                // Skip out if next is semicolon
-                switch (lexer.lexSkipWS(AFTER_VARIABLE_INITIALIZER)) {
-                case COMMA:
-                    break;
-                    
-                case SEMI:
-                    done = true;
-                    break;
-                    
-                default:
-                    throw lexer.unexpectedToken();
-                }
+                done = parseVariableInitializer(identifier, identifierContext);
                 break;
                 
             default:
                 throw lexer.unexpectedToken();
             }
         } while (!done);
+    }
+
+    final void parseVariableDeclaratorList(
+            long initialVarName,
+            int initialVarNameContext,
+            Context initialVariableDeclaratorEndContext) throws IOException, ParserException {
+
+        if (initialVarName == StringRef.STRING_NONE) {
+            throw new IllegalArgumentException();
+        }
+        
+        if (initialVarNameContext == ContextRef.NONE) {
+            throw new IllegalArgumentException();
+        }
+        
+        boolean done = false;
+        
+        long identifier = initialVarName;
+        int identifierContext = initialVarNameContext;
+        Context variableDeclaratorEndContext = initialVariableDeclaratorEndContext;
+
+        do {
+            final JavaToken afterVarNameToken = lexer.lexSkipWS(AFTER_VARIABLE_NAME);
+            
+            switch (afterVarNameToken) {
+            case COMMA:
+            case SEMI:
+                final int variableDeclaratorStartContext = writeContext(identifierContext);
+
+                listenerHelper.onVariableDeclarator(
+                        variableDeclaratorStartContext,
+                        identifier,
+                        identifierContext,
+                        variableDeclaratorEndContext);
+                
+                if (afterVarNameToken == JavaToken.SEMI) {
+                    done = true;
+                }
+                break;
+
+            case ASSIGN:
+                done = parseVariableInitializer(identifier, identifierContext);
+                break;
+                
+            default:
+                throw lexer.unexpectedToken();
+            }
+            
+            if (!done) {
+                final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+                
+                if (fieldNameToken != JavaToken.IDENTIFIER) {
+                    throw lexer.unexpectedToken();
+                }
+
+                identifier = getStringRef();
+                identifierContext = writeCurContext();
+                variableDeclaratorEndContext = initScratchContext();
+            }
+        } while (!done);
+    }
+    
+    private boolean parseVariableInitializer(long identifier, int identifierContext) throws IOException, ParserException {
+        
+        final boolean done;
+        
+        final int variableDeclaratorStartContext = writeContext(identifierContext);
+        
+        listenerHelper.onVariableDeclarator(
+                variableDeclaratorStartContext,
+                identifier,
+                identifierContext,
+                this::parseExpressionList,
+                this::getLexerContext);
+        
+        // Skip out if next is semicolon
+        switch (lexer.lexSkipWS(AFTER_VARIABLE_INITIALIZER)) {
+        case COMMA:
+            done = false;
+            break;
+            
+        case SEMI:
+            done = true;
+            break;
+            
+        default:
+            throw lexer.unexpectedToken();
+        }
+        
+        return done;
     }
 }

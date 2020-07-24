@@ -17,6 +17,7 @@ import com.neaterbits.compiler.parser.recursive.cached.types.TypeArguments;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsImpl;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.MutableContext;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.NamePart;
 import com.neaterbits.util.io.strings.CharInput;
@@ -32,6 +33,8 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
     private final LexerContext context;
     
     protected final ExpressionCache expressionCache;
+
+    private final MutableContext scratchContext;
 
     private final ScratchBuf<NamePart, Names, NamesList, NamesImpl> scratchNames;
     private final ScratchBuf<TypeArgumentImpl, TypeArguments, TypeArgumentsList, TypeArgumentsImpl> scratchTypeArguments;
@@ -57,6 +60,8 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         this.context = new LexerContext(file, lexer, tokenizer);
         
         this.expressionCache = new ExpressionCache(contextWriter, languageOperatorPrecedence);
+        
+        this.scratchContext = new MutableContext();
 
         this.scratchNames = new ScratchBuf<>(NamesImpl::new);
         this.scratchTypeArguments = new ScratchBuf<>(TypeArgumentsImpl::new);
@@ -65,6 +70,13 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
 
     protected final Context getLexerContext() {
         return context;
+    }
+
+    protected final Context initScratchContext() {
+        
+        scratchContext.init(this.context);
+        
+        return scratchContext;
     }
 
     protected final NamesList startScratchNameParts() {

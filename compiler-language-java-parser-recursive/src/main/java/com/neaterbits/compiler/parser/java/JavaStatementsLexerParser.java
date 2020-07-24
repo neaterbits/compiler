@@ -3,11 +3,9 @@ package com.neaterbits.compiler.parser.java;
 import java.io.IOException;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
-import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.util.io.strings.CharInput;
-import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
@@ -149,7 +147,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
 
         listenerHelper.callScopedTypeReferenceListenersEnd(typeReferenceStartContext, getLexerContext());
 
-        parseVariableDeclaratorList(StringRef.STRING_NONE, ContextRef.NONE);
+        parseVariableDeclaratorList();
         
         listener.onVariableDeclarationStatementEnd(statementContext, getLexerContext());
     }

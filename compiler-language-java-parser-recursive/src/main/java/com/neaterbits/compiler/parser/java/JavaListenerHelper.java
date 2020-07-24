@@ -2,8 +2,11 @@ package com.neaterbits.compiler.parser.java;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.function.Supplier;
 
+import com.neaterbits.compiler.parser.java.JavaTypesLexerParser.ParseFunction;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
+import com.neaterbits.compiler.parser.recursive.cached.expressions.ContextWriter;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeyword;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywords;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgument;
@@ -21,26 +24,21 @@ import com.neaterbits.util.parse.ParserException;
 
 final class JavaListenerHelper<COMPILATION_UNIT> {
     
-    @FunctionalInterface
-    interface WriteContext {
-        int write(int context);
-    }
-    
     private final ParserListener<COMPILATION_UNIT> listener;
-    private final WriteContext writeContext;
+    private final ContextWriter contextWriter;
     
-    JavaListenerHelper(ParserListener<COMPILATION_UNIT> listener, WriteContext writeContext) {
+    JavaListenerHelper(ParserListener<COMPILATION_UNIT> listener, ContextWriter contextWriter) {
         
         Objects.requireNonNull(listener);
-        Objects.requireNonNull(writeContext);
+        Objects.requireNonNull(contextWriter);
         
         this.listener = listener;
-        this.writeContext = writeContext;
+        this.contextWriter = contextWriter;
     }
 
     private int writeContext(int context) {
 
-        return writeContext.write(context);
+        return contextWriter.writeContext(context);
     }
 
     void onType(
@@ -128,6 +126,33 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
         }
         
         listener.onGenericTypeParametersEnd(typeArguments.getStartContext(), typeArguments.getEndContext());
+    }
+    
+    void onVariableDeclarator(
+            int variableDeclaratorStartContext,
+            long varName,
+            int varNameContext,
+            Context variableDeclaratorEndContext) {
+
+        // Does not call Supplier based method version below in order to save an allocation for closure
+        listener.onVariableDeclaratorStart(variableDeclaratorStartContext);
+        listener.onVariableName(varNameContext, varName, 0);
+        listener.onVariableDeclaratorEnd(variableDeclaratorStartContext, variableDeclaratorEndContext);
+    }
+
+    void onVariableDeclarator(
+            int variableDeclaratorStartContext,
+            long varName,
+            int varNameContext,
+            ParseFunction parseInitializer,
+            Supplier<Context> variableDeclaratorEndContext) throws IOException, ParserException {
+        
+        listener.onVariableDeclaratorStart(variableDeclaratorStartContext);
+        listener.onVariableName(varNameContext, varName, 0);
+        
+        parseInitializer.parse();
+        
+        listener.onVariableDeclaratorEnd(variableDeclaratorStartContext, variableDeclaratorEndContext.get());
     }
 
     int callScopedTypeReferenceListenersStartAndPart(Names scopedTypeName, ReferenceType referenceType, Context endContext) {
