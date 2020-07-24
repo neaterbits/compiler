@@ -34,7 +34,8 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
     
     protected final ExpressionCache expressionCache;
 
-    private final MutableContext scratchContext;
+    private final MutableContext [] scratchContexts;
+    private final boolean [] scratchContextInUse;
 
     private final ScratchBuf<NamePart, Names, NamesList, NamesImpl> scratchNames;
     private final ScratchBuf<TypeArgumentImpl, TypeArguments, TypeArgumentsList, TypeArgumentsImpl> scratchTypeArguments;
@@ -61,7 +62,15 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         
         this.expressionCache = new ExpressionCache(contextWriter, languageOperatorPrecedence);
         
-        this.scratchContext = new MutableContext();
+        final int numScratchContexts = 10;
+        
+        this.scratchContexts = new MutableContext[numScratchContexts];
+        
+        for (int i = 0; i < numScratchContexts; ++ i) {
+            scratchContexts[i] = new MutableContext();
+        }
+        
+        this.scratchContextInUse = new boolean[numScratchContexts];
 
         this.scratchNames = new ScratchBuf<>(NamesImpl::new);
         this.scratchTypeArguments = new ScratchBuf<>(TypeArgumentsImpl::new);
@@ -73,10 +82,42 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
     }
 
     protected final Context initScratchContext() {
+
+        MutableContext context = null;
         
-        scratchContext.init(this.context);
+        for (int i = 0; i < scratchContextInUse.length; ++ i) {
+            if (!scratchContextInUse[i]) {
+                scratchContextInUse[i] = true;
+            
+                context = scratchContexts[i];
+                break;
+            }
+        }
+
+        context.init(this.context);
         
-        return scratchContext;
+        return context;
+    }
+    
+    protected final void freeScratchContext(Context context) {
+        
+        Objects.requireNonNull(context);
+
+        boolean found = false;
+        
+        for (int i = 0; i < scratchContexts.length; ++ i) {
+            
+            if (context == scratchContexts[i]) {
+                scratchContextInUse[i] = false;
+
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            throw new IllegalStateException();
+        }
     }
 
     protected final NamesList startScratchNameParts() {

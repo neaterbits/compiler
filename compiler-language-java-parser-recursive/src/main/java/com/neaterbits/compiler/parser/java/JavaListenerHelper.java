@@ -41,7 +41,33 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
         return contextWriter.writeContext(context);
     }
 
-    void onType(
+    void onType(TypeScratchInfo typeName, TypeArguments typeArguments, Context endContext) throws IOException, ParserException {
+        
+        Objects.requireNonNull(endContext);
+        
+        if (typeName.isScoped()) {
+            onType(
+                    ContextRef.NONE,
+                    StringRef.STRING_NONE,
+                    typeName.getScoped(),
+                    typeName.getAfterTypeContext(),
+                    typeArguments,
+                    typeName.getReferenceType(),
+                    endContext);
+        }
+        else {
+            onType(
+                    typeName.getNonScopedContext(),
+                    typeName.getNonScopedName(),
+                    null,
+                    typeName.getAfterTypeContext(),
+                    typeArguments,
+                    typeName.getReferenceType(),
+                    endContext);
+        }
+    }
+
+    private void onType(
             int typeNameContext,
             long typeName,
             Names scopedTypeName,

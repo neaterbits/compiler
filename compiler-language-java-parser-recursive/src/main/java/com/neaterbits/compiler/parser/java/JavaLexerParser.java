@@ -5,7 +5,6 @@ import java.io.IOException;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
-import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
@@ -19,6 +18,8 @@ import com.neaterbits.util.parse.ParserException;
 
 final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<COMPILATION_UNIT> {
 
+    private final TypeScratchInfo typeScratchInfo;
+    
     JavaLexerParser(
             String file,
             Lexer<JavaToken, CharInput> lexer,
@@ -26,6 +27,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             IterativeParserListener<COMPILATION_UNIT> listener) {
 
         super(file, lexer, tokenizer, listener);
+        
+        this.typeScratchInfo = new TypeScratchInfo();
     }
 
     COMPILATION_UNIT parse() throws IOException, ParserException {
@@ -557,7 +560,14 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
         case FLOAT:
         case DOUBLE:
         case CHAR: {
-            parseRestOfTypeAndFieldScalar(modifiers, writeCurContext(), getStringRef());
+            final Context afterTypeContext = initScratchContext();
+            
+            try {
+                parseRestOfTypeAndFieldScalar(modifiers, writeCurContext(), getStringRef(), afterTypeContext);
+            }
+            finally {
+                freeScratchContext(afterTypeContext);
+            }
             break;
         }
         
@@ -623,9 +633,15 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             JavaToken.LPAREN
     };
 
-    private void parseRestOfTypeAndFieldScalar(CachedKeywordsList<JavaToken> modifiers, int typeNameContext, long typeName) throws IOException, ParserException {
+    private void parseRestOfTypeAndFieldScalar(
+            CachedKeywordsList<JavaToken> modifiers,
+            int typeNameContext,
+            long typeName,
+            Context afterTypeContext) throws IOException, ParserException {
         
-        parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeNameContext, typeName, null, null, ReferenceType.SCALAR);
+        typeScratchInfo.initNonScoped(typeName, typeNameContext, afterTypeContext, ReferenceType.SCALAR);
+        
+        parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeScratchInfo, null);
     }
 
     private void parseRestOfTypeAndFieldScopedType(
@@ -637,11 +653,14 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
         final JavaToken periodToken = lexer.lexSkipWS(JavaToken.PERIOD);
         
         if (periodToken == JavaToken.PERIOD) {
+            
             parseNameListUntilOtherToken(typeNameContext, typeName, names -> {
                 
                 final TypeArgumentsList typeArguments = tryParseGenericTypeParametersToScratchList();
-                
-                parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeNameContext, typeName, names, typeArguments, ReferenceType.REFERENCE);
+
+                typeScratchInfo.initScoped(names, getLexerContext(), ReferenceType.REFERENCE);
+
+                parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeScratchInfo, typeArguments);
             });
         }
         else {
@@ -667,127 +686,133 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                 }
                 else {
                     // Not the same so try to just parse as a method but without return type since missing
-                    parseMethod(
-                            modifiers,
-                            ContextRef.NONE,
-                            StringRef.STRING_NONE,
-                            null,
-                            ReferenceType.NONE,
-                            typeNameContext,
-                            typeName);
+                    typeScratchInfo.initNoType();
+                    
+                    parseMethod(modifiers, typeScratchInfo, getLexerContext(), typeNameContext, typeName);
                 }
             }
             else {
-                parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeNameContext, typeName, null, typeArguments, ReferenceType.REFERENCE);
+                typeScratchInfo.initNonScoped(typeName, typeNameContext, getLexerContext(), ReferenceType.REFERENCE);
+                
+                parseRestOfMemberAfterInitialTypeDeclaration(modifiers, typeScratchInfo, typeArguments);
             }
         }
     }
     
     private void parseRestOfMemberAfterInitialTypeDeclaration(
             CachedKeywordsList<JavaToken> modifiers,
-            int typeNameContext,
-            long typeName,
-            Names names,
-            TypeArgumentsList typeArguments,
-            ReferenceType referenceType) throws ParserException, IOException {
+            TypeScratchInfo typeName,
+            TypeArgumentsList typeArguments) throws ParserException, IOException {
+        
+        final Context typeEndContext = initScratchContext();
+        
+        try {
 
-        // Next should be the name of the field or member
-        final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
-    
-        if (fieldNameToken != JavaToken.IDENTIFIER) {
-            throw lexer.unexpectedToken();
+            // Next should be the name of the field or member
+            final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+        
+            if (fieldNameToken != JavaToken.IDENTIFIER) {
+                throw lexer.unexpectedToken();
+            }
+            
+            final int identifierContext = writeCurContext();
+            final long identifier = getStringRef();
+            
+            final Context variableDeclaratorEndContext = initScratchContext();
+            
+            final int fieldDeclarationStartContext = writeContext(typeName.getStartContext());
+            
+            try {
+                
+                // Next should be start of method, semicolon after type, array indicator or comma separated variables
+                final JavaToken afterFieldToken = lexer.lexSkipWS(AFTER_FIELD_NAME);
+                
+                switch (afterFieldToken) {
+                case SEMI: {
+                    // This is a field with a single variable name, like 'int a;'
+                    listener.onFieldDeclarationStart(fieldDeclarationStartContext);
+                    
+                    if (modifiers != null) {
+                        modifiers.complete(keywords -> {
+                            listenerHelper.callFieldMemberModifiers(keywords);
+                        });
+                    }
+                    
+                    if (typeArguments != null) {
+                        typeArguments.complete(genericTypes -> listenerHelper.onType(typeName, genericTypes, typeEndContext));
+                    }
+                    else {
+                        listenerHelper.onType(typeName, null, typeEndContext);
+                    }
+                    
+                    final int variableDeclaratorStartContext = writeContext(identifierContext);
+                    
+                    listenerHelper.onVariableDeclarator(
+                            variableDeclaratorStartContext,
+                            identifier,
+                            identifierContext,
+                            variableDeclaratorEndContext);
+                    
+                    listener.onFieldDeclarationEnd(fieldDeclarationStartContext, getLexerContext());
+                    break;
+                }
+                    
+                case COMMA: {
+                    // This is a field with multiple variable names, like 'int a, b, c;'
+                    listener.onFieldDeclarationStart(fieldDeclarationStartContext);
+                    
+                    if (typeArguments != null) {
+                        typeArguments.complete(genericTypes -> listenerHelper.onType(typeName, genericTypes, getLexerContext()));
+                    }
+                    else {
+                        listenerHelper.onType(typeName, null, getLexerContext());
+                    }
+        
+                    // Initial variable name
+                    final int variableDeclaratorStartContext = writeContext(identifierContext);
+        
+                    listenerHelper.onVariableDeclarator(
+                            variableDeclaratorStartContext,
+                            identifier,
+                            identifierContext,
+                            variableDeclaratorEndContext);
+        
+                    parseVariableDeclaratorList();
+                    
+                    listener.onFieldDeclarationEnd(variableDeclaratorStartContext, getLexerContext());
+                    break;
+                }
+                 
+                case LPAREN: {
+                    parseMethod(modifiers, typeName, typeEndContext, identifierContext, identifier);
+                    break;
+                }
+                    
+                default:
+                    throw lexer.unexpectedToken();
+                }
+            }
+            finally {
+                freeScratchContext(variableDeclaratorEndContext);
+            }
         }
-        
-        final int identifierContext = writeCurContext();
-        final long identifier = getStringRef();
-        
-        final Context variableDeclaratorEndContext = initScratchContext();
-        
-        final int fieldDeclarationStartContext = writeContext(typeNameContext);
-        
-        // Next should be start of method, semicolon after type, array indicator or comma separated variables
-        final JavaToken afterFieldToken = lexer.lexSkipWS(AFTER_FIELD_NAME);
-        
-        switch (afterFieldToken) {
-        case SEMI: {
-            // This is a field with a single variable name, like 'int a;'
-            listener.onFieldDeclarationStart(fieldDeclarationStartContext);
-            
-            if (modifiers != null) {
-                modifiers.complete(keywords -> {
-                    listenerHelper.callFieldMemberModifiers(keywords);
-                });
-            }
-            
-            if (typeArguments != null) {
-                typeArguments.complete(genericTypes ->
-                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, genericTypes, referenceType, null));
-            }
-            else {
-                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, null, referenceType, null);
-            }
-            
-            final int variableDeclaratorStartContext = writeContext(identifierContext);
-            
-            listenerHelper.onVariableDeclarator(
-                    variableDeclaratorStartContext,
-                    identifier,
-                    identifierContext,
-                    variableDeclaratorEndContext);
-            
-            listener.onFieldDeclarationEnd(fieldDeclarationStartContext, getLexerContext());
-            break;
-        }
-            
-        case COMMA: {
-            // This is a field with multiple variable names, like 'int a, b, c;'
-            listener.onFieldDeclarationStart(fieldDeclarationStartContext);
-            
-            if (typeArguments != null) {
-                typeArguments.complete(genericTypes ->
-                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, genericTypes, referenceType, null));
-            }
-            else {
-                listenerHelper.onType(fieldDeclarationStartContext, typeName, names, null, null, referenceType, null);
-            }
-
-            // Initial variable name
-            final int variableDeclaratorStartContext = writeContext(identifierContext);
-
-            listenerHelper.onVariableDeclarator(
-                    variableDeclaratorStartContext,
-                    identifier,
-                    identifierContext,
-                    variableDeclaratorEndContext);
-
-            parseVariableDeclaratorList();
-            
-            listener.onFieldDeclarationEnd(variableDeclaratorStartContext, getLexerContext());
-            break;
-        }
-         
-        case LPAREN: {
-            parseMethod(modifiers, typeNameContext, typeName, names, referenceType, identifierContext, identifier);
-            break;
-        }
-            
-        default:
-            throw lexer.unexpectedToken();
+        finally {
+            freeScratchContext(typeEndContext);
         }
     }
     
     private void parseMethod(
             CachedKeywordsList<JavaToken> modifiers,
-            int typeNameContext,
-            long typeName,
-            Names names,
-            ReferenceType referenceType,
+            TypeScratchInfo typeInfo,
+            Context typeEndContext,
             int identifierContext,
             long identifier) throws IOException, ParserException {
 
-        final int classMethodStartContext = writeContext(typeNameContext);
-        final int methodReturnTypeStartContext = writeContext(typeNameContext);
-        final int methodParametersStartContext = writeContext(typeNameContext);
+        final int typeStartContext = typeInfo.getStartContext();
+        
+        final int classMethodStartContext = writeContext(typeStartContext);
+        final int methodReturnTypeStartContext = writeContext(typeStartContext);
+        final int methodParametersStartContext = writeContext(typeStartContext);
         
         listener.onClassMethodStart(classMethodStartContext);
         
@@ -799,7 +824,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
         
         listener.onMethodReturnTypeStart(methodReturnTypeStartContext);
         
-        listenerHelper.onType(typeNameContext, typeName, names, null, null, referenceType, null);
+        listenerHelper.onType(typeInfo, null, typeEndContext);
         
         listener.onMethodReturnTypeEnd(methodReturnTypeStartContext, getLexerContext());
         
