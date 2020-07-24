@@ -517,11 +517,15 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
     
     private void parseClassBody(long implementingClassName) throws IOException, ParserException {
         
+        boolean memberFound;
+        
         do {
-            
-            parseMember(implementingClassName);
-            
-        } while (lexer.lexSkipWS(JavaToken.RBRACE) != JavaToken.RBRACE);
+            memberFound = parseMember(implementingClassName);
+        } while (memberFound);
+        
+        if (lexer.lexSkipWS(JavaToken.RBRACE) != JavaToken.RBRACE) {
+            throw lexer.unexpectedToken();
+        }
     }
     
     private static JavaToken [] MEMBER_START_TOKENS = new JavaToken [] {
@@ -544,11 +548,13 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             JavaToken.IDENTIFIER // type
     };
     
-    private void parseMember(long implementingClassName) throws IOException, ParserException {
+    private boolean parseMember(long implementingClassName) throws IOException, ParserException {
 
         final CachedKeywordsList<JavaToken> modifiers = parseAnyMemberModifiers();
         
         final JavaToken initialToken = lexer.lexSkipWS(MEMBER_START_TOKENS);
+        
+        boolean memberFound = true;
         
         switch (initialToken) {
         
@@ -580,11 +586,14 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
         
         case NONE:
             // Not a member variable or method
+            memberFound = false;
             break;
             
         default:
             throw lexer.unexpectedToken();
         }
+        
+        return memberFound;
     }
     
     private static final JavaToken [] MEMBER_MODIFIER_TOKENS = new JavaToken [] {
