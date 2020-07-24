@@ -22,6 +22,7 @@ import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.util.io.strings.StringRef;
+import com.neaterbits.util.parse.IToken;
 import com.neaterbits.util.parse.ParserException;
 
 final class JavaListenerHelper<COMPILATION_UNIT> {
@@ -43,8 +44,48 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
         return contextWriter.writeContext(context);
     }
     
-    void onVariableDeclaration(
+    @FunctionalInterface
+    interface ModifiersProcessor<TOKEN extends IToken> {
+        
+        void process(CachedKeywords<TOKEN> keywords) throws ParserException;
+    }
+
+    void onMemberVariableDeclaration(
             CachedKeywordsList<JavaToken> modifiers,
+            TypeScratchInfo typeName,
+            Context typeEndContext,
+            TypeArgumentsList typeArguments,
+            long identifier,
+            int identifierContext,
+            Context variableDeclaratorEndContext) throws IOException, ParserException {
+        
+        onDeclaration(modifiers, this::callFieldMemberModifiers, typeName, typeEndContext, typeArguments, identifier, identifierContext, variableDeclaratorEndContext);
+    }
+
+    void onLocalVariableDeclaration(
+            TypeScratchInfo typeName,
+            Context typeEndContext,
+            TypeArgumentsList typeArguments,
+            long identifier,
+            int identifierContext,
+            Context variableDeclaratorEndContext) throws IOException, ParserException {
+        
+        onDeclaration(null, null, typeName, typeEndContext, typeArguments, identifier, identifierContext, variableDeclaratorEndContext);
+    }
+
+    void onTypeAndOptionalArgumentsList(TypeScratchInfo typeName, TypeArgumentsList typeArguments, Context typeEndContext) throws IOException, ParserException {
+        
+        if (typeArguments != null) {
+            typeArguments.complete(genericTypes -> onType(typeName, genericTypes, typeEndContext));
+        }
+        else {
+            onType(typeName, null, typeEndContext);
+        }
+    }
+    
+    private void onDeclaration(
+            CachedKeywordsList<JavaToken> modifiers,
+            ModifiersProcessor<JavaToken> outputModifiers,
             TypeScratchInfo typeName,
             Context typeEndContext,
             TypeArgumentsList typeArguments,
@@ -57,13 +98,8 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
                 callFieldMemberModifiers(keywords);
             });
         }
-        
-        if (typeArguments != null) {
-            typeArguments.complete(genericTypes -> onType(typeName, genericTypes, typeEndContext));
-        }
-        else {
-            onType(typeName, null, typeEndContext);
-        }
+
+        onTypeAndOptionalArgumentsList(typeName, typeArguments, typeEndContext);
         
         final int variableDeclaratorStartContext = writeContext(identifierContext);
         

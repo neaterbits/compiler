@@ -77,7 +77,7 @@ public final class UnresolvedTypeReference extends TypeReference {
 
 	@Override
 	public String toString() {
-		return "ResolveLaterTypeReference [scopedName=" + scopedName + "]";
+		return "UnresolvedTypeReference [scopedName=" + scopedName + "]";
 	}
 
 	@Override

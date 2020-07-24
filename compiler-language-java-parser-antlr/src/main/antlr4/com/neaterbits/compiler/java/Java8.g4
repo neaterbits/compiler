@@ -879,11 +879,11 @@ statementExpressionList
 	;
 
 enhancedForStatement
-	:	'for' '(' variableModifier* unannType variableDeclaratorId ':' expression ')' statement
+	:	keyword = 'for' '(' variableModifier* unannType variableDeclaratorId ':' expression ')' statement
 	;
 
 enhancedForStatementNoShortIf
-	:	'for' '(' variableModifier* unannType variableDeclaratorId ':' expression ')' statementNoShortIf
+	:	keyword = 'for' '(' variableModifier* unannType variableDeclaratorId ':' expression ')' statementNoShortIf
 	;
 
 breakStatement

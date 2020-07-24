@@ -732,7 +732,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                     // This is a field with a single variable name, like 'int a;'
                     listener.onFieldDeclarationStart(fieldDeclarationStartContext);
                     
-                    listenerHelper.onVariableDeclaration(
+                    listenerHelper.onMemberVariableDeclaration(
                             modifiers,
                             typeName,
                             typeEndContext,
@@ -748,7 +748,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                     // This is a field with multiple variable names, like 'int a, b, c;'
                     listener.onFieldDeclarationStart(fieldDeclarationStartContext);
                     
-                    listenerHelper.onVariableDeclaration(
+                    listenerHelper.onMemberVariableDeclaration(
                             modifiers,
                             typeName,
                             typeEndContext,

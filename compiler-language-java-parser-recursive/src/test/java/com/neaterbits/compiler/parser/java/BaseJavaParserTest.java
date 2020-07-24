@@ -33,6 +33,7 @@ import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
+import com.neaterbits.compiler.ast.objects.statement.IteratorForStatement;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.statement.ThrowStatement;
 import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
@@ -2414,6 +2415,35 @@ public abstract class BaseJavaParserTest {
         final StringLiteral stringLiteral = (StringLiteral)declarationStatement.getDeclarations().get(0).getInitializer();
         assertThat(stringLiteral).isNotNull();
         assertThat(stringLiteral.getValue()).isEqualTo("theLiteral");
+    }
+
+    @Test
+    public void testForCollection() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { for (Integer value : list) { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final IteratorForStatement iteratorForStatement
+            = (IteratorForStatement)method.getBlock().getStatements().get(0);
+
+        final UnresolvedTypeReference type = (UnresolvedTypeReference)iteratorForStatement.getVariableDeclaration().getTypeReference();
+        assertThat(type.getScopedName().getScope()).isNull();
+        assertThat(type.getScopedName().getName()).isEqualTo("Integer");
+        
+        assertThat(iteratorForStatement.getVariableDeclaration().getNameString()).isEqualTo("value");
+
+        final NameReference nameReference = (NameReference)iteratorForStatement.getCollectionExpression();
+        assertThat(nameReference).isNotNull();
+        assertThat(nameReference.getName()).isEqualTo("list");
     }
 
     private void checkExpressionListLiteral(ExpressionList list, int index, int value) {

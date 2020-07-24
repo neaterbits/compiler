@@ -22,7 +22,23 @@ final class TypeScratchInfo {
     TypeScratchInfo() {
         this.afterTypeContext = new MutableContext();
     }
-    
+
+    void initScopedOrNonScoped(Names scoped, Context afterTypeContext, ReferenceType referenceType) {
+        
+        switch (scoped.count()) {
+        case 0:
+            throw new IllegalArgumentException();
+            
+        case 1:
+            initNonScoped(scoped.getStringAt(0), scoped.getContextAt(0), afterTypeContext, referenceType);
+            break;
+            
+        default:
+            initScoped(scoped, afterTypeContext, referenceType);
+            break;
+        }
+    }
+
     void initScoped(Names scoped, Context afterTypeContext, ReferenceType referenceType) {
 
         Objects.requireNonNull(scoped);

@@ -1476,27 +1476,27 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onIteratorForStatementStart(int iteratorForStatementStartContext) {
+    public final void onIteratorForStatementStart(int iteratorForStatementStartContext, long forKeyword, int forKeywordContext) {
 
         writeStartElementContextRef(iteratorForStatementStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeIteratorForStatementStart(astBuffer, forKeyword, forKeywordContext);
     }
 
     @Override
     public void onIteratorForTestStart(int iteratorForTestStartContext) {
 
         writeStartElementContextRef(iteratorForTestStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeIteratorForTestStart(astBuffer);
     }
 
     @Override
     public final void onIteratorForTestEnd(int iteratorForTestStartContext, Context endContext) {
 
         writeEndElementContext(iteratorForTestStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeIteratorForTestEnd(astBuffer);
     }
 
     @Override
@@ -1504,7 +1504,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeEndElementContext(iteratorForStatementStartContext, endContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeIteratorForStatementEnd(astBuffer);
     }
 
     @Override

@@ -700,6 +700,30 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case ITERATOR_FOR_STATEMENT: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeIteratorForStatementStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeIteratorForStatementEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case ITERATOR_FOR_TEST: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeIteratorForTestStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeIteratorForTestEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             case THROW_STATEMENT: {
                 final int startContext = getStartContext(parseTreeRef);
 

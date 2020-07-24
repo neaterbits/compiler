@@ -1257,13 +1257,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onForStatementEnd(writeEndContext(context), context);
 	}
 	
-	public void onIteratorForStatementStart(Context context) {
+	public void onIteratorForStatementStart(Context context, long forKeyword, Context forKeywordContext) {
 		
 		statementsStack.add(JavaStatement.ENHANCED_FOR);
 		
 		statementsStack.push();
 		
-		delegate.onIteratorForStatementStart(writeStartContext(context));
+		delegate.onIteratorForStatementStart(writeStartContext(context), forKeyword, writeLeafContext(forKeywordContext));
 	}
 	
 	public void onIteratorForStatementEnd(Context context) {

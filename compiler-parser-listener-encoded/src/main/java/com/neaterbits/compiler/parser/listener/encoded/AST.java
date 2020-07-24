@@ -190,6 +190,10 @@ public class AST {
         case WHILE_STATEMENT:
             size = WHILE_STATEMENT_SIZE;
             break;
+
+        case ITERATOR_FOR_STATEMENT:
+            size = ITERATOR_FOR_STATEMENT_SIZE;
+            break;
             
         case THROW_STATEMENT:
             size = THROW_STATEMENT_SIZE;
@@ -1615,6 +1619,80 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onWhileStatementEnd(whileStatementStartContext, endContext);
+    }
+
+    private static final int ITERATOR_FOR_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeIteratorForStatementStart(StringASTBuffer astBuffer, long forKeyword, int forKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.ITERATOR_FOR_STATEMENT);
+        
+        astBuffer.writeStringRef(forKeyword);
+        astBuffer.writeContextRef(forKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeIteratorForStatementStart(
+            ASTBufferRead astBuffer,
+            int iteratorForStatementStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int iteratorForKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            iteratorForKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            iteratorForKeywordContext = ContextRef.NONE;
+        }
+
+        listener.onIteratorForStatementStart(
+                iteratorForStatementStartContext,
+                astBuffer.getStringRef(index),
+                iteratorForKeywordContext);
+    }
+
+    static void encodeIteratorForTestStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.ITERATOR_FOR_TEST);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeIteratorForTestStart(
+            ASTBufferRead astBuffer,
+            int iteratorForTestStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onIteratorForTestStart(iteratorForTestStartContext);
+    }
+
+    static void encodeIteratorForTestEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ITERATOR_FOR_TEST);
+    }
+
+    public static <COMPILATION_UNIT> void decodeIteratorForTestEnd(
+            ASTBufferRead astBuffer,
+            int iteratorForTestStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onIteratorForTestEnd(iteratorForTestStartContext, endContext);
+    }
+
+    static void encodeIteratorForStatementEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ITERATOR_FOR_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeIteratorForStatementEnd(
+            ASTBufferRead astBuffer,
+            int iteratorForStatementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onIteratorForStatementEnd(iteratorForStatementStartContext, endContext);
     }
 
     private static final int THROW_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;

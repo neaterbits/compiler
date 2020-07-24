@@ -1787,7 +1787,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterEnhancedForStatement(EnhancedForStatementContext ctx) {
-		delegate.onIteratorForStatementStart(context(ctx));
+		delegate.onIteratorForStatementStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 
 	@Override
@@ -1797,7 +1797,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterEnhancedForStatementNoShortIf(EnhancedForStatementNoShortIfContext ctx) {
-		delegate.onIteratorForStatementStart(context(ctx));
+		delegate.onIteratorForStatementStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 
 	@Override

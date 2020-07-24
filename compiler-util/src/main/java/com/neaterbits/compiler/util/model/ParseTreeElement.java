@@ -182,6 +182,7 @@ public enum ParseTreeElement {
 	ELSE_BLOCK(false),
 
 	ITERATOR_FOR_STATEMENT(false),
+    ITERATOR_FOR_TEST(false),
 	
 	RETURN_STATEMENT(false),
 	
