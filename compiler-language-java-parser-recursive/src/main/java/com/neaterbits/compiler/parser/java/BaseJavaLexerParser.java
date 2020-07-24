@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.recursive.BaseLexerParser;
 import com.neaterbits.compiler.parser.recursive.cached.ProcessParts;
+import com.neaterbits.compiler.parser.recursive.cached.expressions.ExpressionCache;
 import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.util.io.strings.CharInput;
@@ -98,14 +99,17 @@ abstract class BaseJavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<Jav
         }
     }
     
-    final void applyAndClearExpressionCache() {
+    final void applyAndClearExpressionCache(ExpressionCache expressionCache) {
+        
+        applyAndClearExpressionCache(expressionCache, listener);
+    }
+
+    static final <COMPILATION_UNIT> void applyAndClearExpressionCache(
+            ExpressionCache expressionCache,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
         
         expressionCache.apply(listener);
 
-        clearExpressionCache();
-    }
-    
-    final void clearExpressionCache() {
         expressionCache.clear();
     }
 }

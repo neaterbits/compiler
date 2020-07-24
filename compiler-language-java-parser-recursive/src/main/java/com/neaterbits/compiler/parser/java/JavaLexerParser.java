@@ -598,6 +598,8 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
     
     private static final JavaToken [] MEMBER_MODIFIER_TOKENS = new JavaToken [] {
       
+            JavaToken.AT,
+            
             JavaToken.PUBLIC,
             JavaToken.PRIVATE,
             JavaToken.FINAL,
@@ -615,6 +617,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             final JavaToken memberModifierToken = lexer.lexSkipWS(MEMBER_MODIFIER_TOKENS);
 
             switch (memberModifierToken) {
+            
             case PUBLIC:
             case PRIVATE:
             case FINAL:

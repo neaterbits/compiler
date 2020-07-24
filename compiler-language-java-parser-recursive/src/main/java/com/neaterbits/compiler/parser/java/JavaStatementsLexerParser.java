@@ -144,7 +144,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         if (!expressionFound) {
             foundStatement = false;
         }
-        else if ((variableDeclarationNames = getVariableDeclarationTypeAndClearExpressionCache(expressionCache)) != null) {
+        else if ((variableDeclarationNames = getVariableDeclarationTypeAndClearExpressionCache(baseClassExpressionCache)) != null) {
             // Only names like com.test.SomeClass.staticVariable
 
             parseVariableDeclarationStatement(startContext, variableDeclarationNames);
@@ -155,7 +155,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             // This is an expression statement
             listener.onExpressionStatementStart(startContext);
         
-            applyAndClearExpressionCache();
+            applyAndClearExpressionCache(baseClassExpressionCache);
             
             listener.onExpressionStatementEnd(startContext, getLexerContext());
 
@@ -306,7 +306,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         if (!expressionFound) {
             throw new ParserException("No expression found in for-statement");
         }
-        else if ((variableDeclarationNames = getVariableDeclarationTypeAndClearExpressionCache(expressionCache)) != null) {
+        else if ((variableDeclarationNames = getVariableDeclarationTypeAndClearExpressionCache(baseClassExpressionCache)) != null) {
 
             final Context namesEndContext = initScratchContext();
             

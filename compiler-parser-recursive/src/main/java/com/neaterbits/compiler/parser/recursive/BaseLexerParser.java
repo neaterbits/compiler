@@ -3,6 +3,14 @@ package com.neaterbits.compiler.parser.recursive;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.recursive.cached.ScratchBuf;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotation;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotations;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsImpl;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsList;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.elements.CachedAnnotationElement;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.elements.CachedAnnotationElements;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.elements.CachedAnnotationElementsImpl;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.elements.CachedAnnotationElementsList;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ContextWriter;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ExpressionCache;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.LanguageOperatorPrecedence;
@@ -32,7 +40,10 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
 
     private final LexerContext context;
     
-    protected final ExpressionCache expressionCache;
+    protected final ContextWriter contextWriter;
+    protected final LanguageOperatorPrecedence languageOperatorPrecedence;
+    
+    protected final ExpressionCache baseClassExpressionCache;
 
     private final MutableContext [] scratchContexts;
     private final boolean [] scratchContextInUse;
@@ -45,7 +56,19 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         CachedKeywordsList<TOKEN>,
         CachedKeywordsImpl<TOKEN>>
             scratchKeywords;
-    
+
+    private final ScratchBuf<
+        CachedAnnotation,
+        CachedAnnotations,
+        CachedAnnotationsList,
+        CachedAnnotationsImpl> scratchAnnotations;
+
+    private final ScratchBuf<
+        CachedAnnotationElement,
+        CachedAnnotationElements,
+        CachedAnnotationElementsList,
+        CachedAnnotationElementsImpl> scratchAnnotationElements;
+
     public BaseLexerParser(
             String file,
             Lexer<TOKEN, CharInput> lexer,
@@ -58,9 +81,11 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
 
         this.lexer = lexer;
         this.tokenizer = tokenizer;
+        this.contextWriter = contextWriter;
+        this.languageOperatorPrecedence = languageOperatorPrecedence;
         this.context = new LexerContext(file, lexer, tokenizer);
         
-        this.expressionCache = new ExpressionCache(contextWriter, languageOperatorPrecedence);
+        this.baseClassExpressionCache = new ExpressionCache(contextWriter, languageOperatorPrecedence);
         
         final int numScratchContexts = 10;
         
@@ -75,6 +100,8 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
         this.scratchNames = new ScratchBuf<>(NamesImpl::new);
         this.scratchTypeArguments = new ScratchBuf<>(TypeArgumentsImpl::new);
         this.scratchKeywords = new ScratchBuf<>(CachedKeywordsImpl::new);
+        this.scratchAnnotations = new ScratchBuf<>(CachedAnnotationsImpl::new);
+        this.scratchAnnotationElements = new ScratchBuf<>(CachedAnnotationElementsImpl::new);
     }
 
     protected final Context getLexerContext() {
@@ -133,5 +160,15 @@ public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
     protected final CachedKeywordsList<TOKEN> startScratchKeywords() {
         
         return scratchKeywords.startScratchParts();
+    }
+
+    protected final CachedAnnotationsList startScratchAnnotations() {
+        
+        return scratchAnnotations.startScratchParts();
+    }
+
+    protected final CachedAnnotationElementsList startScratchAnnotationElements() {
+        
+        return scratchAnnotationElements.startScratchParts();
     }
 }

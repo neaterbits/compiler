@@ -3,6 +3,11 @@ package com.neaterbits.compiler.parser.java;
 import java.io.IOException;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotation;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsList;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.elements.CachedAnnotationElement;
+import com.neaterbits.compiler.parser.recursive.cached.annotations.elements.CachedAnnotationElementsList;
+import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.StringRef;
@@ -20,21 +25,93 @@ abstract class JavaAnnotationLexerParser<COMPILATION_UNIT> extends JavaExpressio
         
         super(file, lexer, tokenizer, listener);
     }
+    
+    private static <COMPILATION_UNIT> void apply(CachedAnnotationsList annotationsList, IterativeParserListener<COMPILATION_UNIT> listener) throws IOException, ParserException {
+        
+        annotationsList.complete(annotations -> {
+            
+            final int num = annotations.count();
+            
+            for (int i = 0; i < num; ++ i) {
+
+                final CachedAnnotation annotation = annotations.getAnnotation(i);
+                
+                annotation.getTypeName().complete(typeName -> listener.onAnnotationStart(annotation.getStartContext(), typeName));
+
+                final CachedAnnotationElementsList elementsList = annotation.getElements();
+                
+                if (elementsList != null) {
+                    apply(elementsList, listener);
+                }
+                
+                listener.onAnnotationEnd(annotation.getStartContext(), annotation.getEndContext());
+            }
+        });
+    }
+
+    private static <COMPILATION_UNIT> void apply(
+            CachedAnnotationElementsList annotationElementsList,
+            IterativeParserListener<COMPILATION_UNIT> listener) throws IOException, ParserException {
+        
+        annotationElementsList.complete(elements -> {
+
+            final int num = elements.count();
+            
+            for (int i = 0; i < num; ++ i) {
+
+                final CachedAnnotationElement element = elements.getAnnotationElement(i);
+                
+                listener.onAnnotationElementStart(element.getStartContext(), element.getName(), element.getNameContext());
+                switch (element.getType()) {
+                
+                case NAME:
+                    break;
+                    
+                case ANNOTATION:
+                    apply(element.getAnnotations(), listener);
+                    break;
+                    
+                case EXPRESSION:
+                    applyAndClearExpressionCache(element.getExpressionCache(), listener);
+                    break;
+                    
+                case VALUE_LIST:
+                    apply(element.getValueList(), listener);
+                    break;
+
+                default:
+                    throw new UnsupportedOperationException();
+                }
+
+                listener.onAnnotationElementEnd(element.getStartContext(), element.getEndContext());
+            }
+        });
+    }
 
     final void parseAnnotation(int startContext) throws IOException, ParserException {
         
-        parseNameListUntilOtherToken(names -> {
-
-            listener.onAnnotationStart(startContext, names);
+        final CachedAnnotationsList list = startScratchAnnotations();
         
-            parseAnyAnnotationElements();
-            
-            listener.onAnnotationEnd(startContext, getLexerContext());
-        });
+        parseAnnotation(list, startContext);
+        
+        apply(list, listener);
+    }
+
+    final void parseAnnotation(CachedAnnotationsList list, int startContext) throws IOException, ParserException {
+        
+        final NamesList namesList = startScratchNameParts();
+        
+        parseNames(namesList);
+
+        final CachedAnnotationElementsList annotationElements = parseAnyAnnotationElements();
+        
+        list.addAnnotation(startContext, namesList, annotationElements, getLexerContext());
     }
     
-    private void parseAnyAnnotationElements() throws IOException, ParserException {
+    private CachedAnnotationElementsList parseAnyAnnotationElements() throws IOException, ParserException {
 
+        final CachedAnnotationElementsList list;
+        
         if (lexer.lexSkipWS(JavaToken.LPAREN) == JavaToken.LPAREN) {
             
             // Is this @Annotation(identifier = value) or @Annotation(STATIC_CONSTANT)
@@ -51,30 +128,45 @@ abstract class JavaAnnotationLexerParser<COMPILATION_UNIT> extends JavaExpressio
 
                 if (lexer.lexSkipWS(JavaToken.ASSIGN) == JavaToken.ASSIGN) {
 
-                    // @Annotation(identifier = value)
-                    parseExpressionOrAnnotationOrList(elementStartContext, stringRef, identifierContext);
+                    list = startScratchAnnotationElements();
                     
-                    parsePerhapsMultipleElementValues();
+                    // @Annotation(identifier = value)
+                    parseExpressionOrAnnotationOrList(list, elementStartContext, stringRef, identifierContext);
+                    
+                    parsePerhapsMultipleElementValues(list);
                 }
                 else {
-                    listener.onAnnotationElementStart(elementStartContext, StringRef.STRING_NONE, ContextRef.NONE);
+                    list = startScratchAnnotationElements();
                     
-                    listener.onVariableReference(identifierContext, stringRef);
-
-                    listener.onAnnotationElementEnd(elementStartContext, getLexerContext());
+                    final CachedAnnotationElement element = list.addExpression(
+                            elementStartContext,
+                            StringRef.STRING_NONE,
+                            ContextRef.NONE,
+                            contextWriter,
+                            languageOperatorPrecedence);
+                    
+                    element.getExpressionCache().addName(identifierContext, stringRef);
+                    
                 }
             }
             else {
-                parseExpressionOrAnnotationOrList(writeCurContext(), StringRef.STRING_NONE, ContextRef.NONE);
+                list = startScratchAnnotationElements();
+
+                parseExpressionOrAnnotationOrList(list, writeCurContext(), StringRef.STRING_NONE, ContextRef.NONE);
             }
             
             if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
                 throw lexer.unexpectedToken();
             }
         }
+        else {
+            list = null;
+        }
+        
+        return list;
     }
     
-    private void parsePerhapsMultipleElementValues() throws IOException, ParserException {
+    private void parsePerhapsMultipleElementValues(CachedAnnotationElementsList elementsList) throws IOException, ParserException {
 
         // List of more element values?
         for (;;) {
@@ -98,7 +190,7 @@ abstract class JavaAnnotationLexerParser<COMPILATION_UNIT> extends JavaExpressio
                 throw lexer.unexpectedToken();
             }
 
-            parseExpressionOrAnnotationOrList(otherElementStartContext, otherIdentifierRef, otherIdentifierContext);
+            parseExpressionOrAnnotationOrList(elementsList, otherElementStartContext, otherIdentifierRef, otherIdentifierContext);
         }
     }
 
@@ -113,36 +205,53 @@ abstract class JavaAnnotationLexerParser<COMPILATION_UNIT> extends JavaExpressio
     };
 
     private void parseExpressionOrAnnotationOrList(
+            CachedAnnotationElementsList list,
             int startContext,
             long identifier,
             int identifierContext) throws IOException, ParserException {
 
         final JavaToken token = lexer.lexSkipWS(EXPRESSION_OR_ANNOTATION_OR_LIST_TOKENS);
         
-        listener.onAnnotationElementStart(startContext, identifier, identifierContext);
-
         if (token == JavaToken.AT) {
             
             // @TheAnnotation(@OtherAnnotation)
-            
-            parseAnnotation(writeCurContext());
+
+            final CachedAnnotationsList annotationsList = startScratchAnnotations();
+                    
+            list.addAnnotation(writeCurContext(), identifier, identifierContext, annotationsList);
+
+            parseAnnotation(annotationsList, writeCurContext());
         }
         else if (token == JavaToken.LBRACE) {
+
+            final int listStartContext = writeCurContext();
+
+            final CachedAnnotationElementsList subElementsList = startScratchAnnotationElements();
+            
+            list.addValueList(listStartContext, identifier, identifierContext, subElementsList);
             
             for (;;) {
-
-                final int listStartContext = writeCurContext();
-                
-                listener.onAnnotationElementStart(listStartContext, StringRef.STRING_NONE, ContextRef.NONE);
                 
                 if (lexer.lexSkipWS(JavaToken.AT) == JavaToken.AT) {
-                    parseAnnotation(startContext);
+                    
+                    final CachedAnnotationsList annotationsList = startScratchAnnotations();
+                            
+                    subElementsList.addAnnotation(listStartContext, StringRef.STRING_NONE, ContextRef.NONE, annotationsList);
+                    
+                    parseAnnotation(annotationsList, startContext);
                 }
                 else {
-                    parseExpression();
+                    final CachedAnnotationElement element = subElementsList.addExpression(
+                            listStartContext,
+                            StringRef.STRING_NONE,
+                            ContextRef.NONE,
+                            contextWriter,
+                            languageOperatorPrecedence);
+
+                    parseExpressionToCache(element.getExpressionCache());
+                    
+                    element.initEndContext(getLexerContext());
                 }
-                
-                listener.onAnnotationElementEnd(listStartContext, getLexerContext());
                 
                 final JavaToken listToken = lexer.lexSkipWS(AFTER_ANNOTATION_ELEMENT_LIST_TOKENS);
                 
@@ -158,10 +267,16 @@ abstract class JavaAnnotationLexerParser<COMPILATION_UNIT> extends JavaExpressio
             }
         }
         else {
-            parseExpression();
-        }
-        
-        listener.onAnnotationElementEnd(startContext, getLexerContext());
-    }
+            final CachedAnnotationElement element = list.addExpression(
+                    startContext,
+                    identifier,
+                    identifierContext,
+                    contextWriter,
+                    languageOperatorPrecedence);
 
+            parseExpressionToCache(element.getExpressionCache());
+            
+            element.initEndContext(getLexerContext());
+        }
+    }
 }
