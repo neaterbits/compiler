@@ -60,6 +60,7 @@ import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodStatic;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.util.typedefinition.FieldStatic;
 import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
@@ -975,6 +976,30 @@ public abstract class BaseJavaParserTest {
         assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
         
         checkScalarType(member.getType(), "int");
+    }
+
+    @Test
+    public void testParseStaticInitializerMemberVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { private static final int memberVariable = 123; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
+
+        assertThat(member.getModifiers().getModifier(FieldStatic.class)).isNotNull();
+        assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
+        
+        checkScalarType(member.getType(), "int");
+
+        final IntegerLiteral integerLiteral = (IntegerLiteral)member.getInitializer(0).getInitializer();
+        assertThat(integerLiteral.getValue()).isEqualTo(123);
     }
 
     @Test

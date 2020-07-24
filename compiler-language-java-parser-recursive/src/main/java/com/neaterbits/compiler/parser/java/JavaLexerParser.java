@@ -655,8 +655,14 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
             
             JavaToken.SEMI,
             JavaToken.COMMA,
+            JavaToken.ASSIGN,
             JavaToken.LBRACKET,
             JavaToken.LPAREN
+    };
+
+    private static final JavaToken [] AFTER_INITIALIZER = new JavaToken [] {
+            JavaToken.SEMI,
+            JavaToken.COMMA
     };
 
     private void parseRestOfTypeAndFieldScalar(
@@ -788,6 +794,42 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<
                             variableDeclaratorEndContext);
         
                     parseVariableDeclaratorList();
+                    
+                    listener.onFieldDeclarationEnd(fieldDeclarationStartContext, getLexerContext());
+                    break;
+                }
+                
+                case ASSIGN: {
+                    
+                    listener.onFieldDeclarationStart(fieldDeclarationStartContext);
+                    
+                    listenerHelper.onModifiersAndType(
+                            modifiers,
+                            annotations,
+                            listenerHelper::callFieldMemberModifiers,
+                            typeName,
+                            typeEndContext,
+                            typeArguments);
+                    
+                    final int variableDeclaratorStartContext = writeContext(identifierContext);
+
+                    listenerHelper.onVariableDeclarator(
+                            variableDeclaratorStartContext,
+                            identifier, identifierContext,
+                            this::parseExpression,
+                            this::getLexerContext);
+                    
+                    switch (lexer.lexSkipWS(AFTER_INITIALIZER)) {
+                    case SEMI:
+                        break;
+                        
+                    case COMMA:
+                        parseVariableDeclaratorList();
+                        break;
+                        
+                    default:
+                        throw lexer.unexpectedToken();
+                    }
                     
                     listener.onFieldDeclarationEnd(fieldDeclarationStartContext, getLexerContext());
                     break;

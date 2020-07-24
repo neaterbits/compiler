@@ -94,6 +94,23 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
         }
     }
     
+    void onModifiersAndType(
+            CachedKeywordsList<JavaToken> modifiers,
+            CachedAnnotationsList annotations,
+            ModifiersProcessor<JavaToken> outputModifiers,
+            TypeScratchInfo typeName,
+            Context typeEndContext,
+            TypeArgumentsList typeArguments) throws IOException, ParserException {
+        
+        if (modifiers != null) {
+            modifiers.complete(keywords -> {
+                outputModifiers.process(keywords);
+            });
+        }
+
+        onTypeAndOptionalArgumentsList(typeName, typeArguments, typeEndContext);
+    }
+    
     private void onDeclaration(
             CachedKeywordsList<JavaToken> modifiers,
             CachedAnnotationsList annotations,
@@ -104,15 +121,9 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             long identifier,
             int identifierContext,
             Context variableDeclaratorEndContext) throws IOException, ParserException {
-        
-        if (modifiers != null) {
-            modifiers.complete(keywords -> {
-                callFieldMemberModifiers(keywords);
-            });
-        }
-
-        onTypeAndOptionalArgumentsList(typeName, typeArguments, typeEndContext);
-        
+ 
+        onModifiersAndType(modifiers, annotations, outputModifiers, typeName, typeEndContext, typeArguments);
+         
         final int variableDeclaratorStartContext = writeContext(identifierContext);
         
         onVariableDeclarator(
@@ -326,6 +337,10 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
 
             case FINAL:
                 listener.onMutabilityFieldModifier(keyword.getContext(), ASTMutability.VALUE_OR_REF_IMMUTABLE);
+                break;
+                
+            case STATIC:
+                listener.onStaticFieldModifier(keyword.getContext());
                 break;
 
             default:

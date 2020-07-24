@@ -232,7 +232,7 @@ public class AST {
             break;
 
         case FIELD_MODIFIER_HOLDER:
-            size = FIELD_MODIFIER_SIZE;
+            size = fieldModifierSize(astBuffer, index);
             break;
             
         case CLASS_INSTANCE_CREATION_EXPRESSION_NAME:
@@ -2359,8 +2359,29 @@ public class AST {
 
         listener.onGenericTypeParametersEnd(parameterStartContext, endContext);
     }
+    
+    private static int fieldModifierSize(ASTBufferRead astBuffer, int index) {
 
-    private static final int FIELD_MODIFIER_SIZE = 1 + 1;
+        final FieldModifier.Type type = astBuffer.getEnumByte(index, FieldModifier.Type.class);
+
+        final int size;
+        
+        switch (type) {
+        case MUTABILITY:
+        case VISIBILITY:
+            size = 1 + 1;
+            break;
+            
+        case STATIC:
+            size = 1;
+            break;
+            
+        default:
+            throw new UnsupportedOperationException();
+        }
+        
+        return size;
+    }
 
     static void encodeVisibilityFieldModifier(StringASTBuffer astBuffer, FieldVisibility fieldVisibility) {
 
@@ -2374,6 +2395,12 @@ public class AST {
         astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(FieldModifier.Type.MUTABILITY);
         astBuffer.writeEnumByte(mutability.getMutability());
+    }
+
+    static void encodeStaticFieldModifier(StringASTBuffer astBuffer) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(FieldModifier.Type.STATIC);
     }
 
     public static <COMPILATION_UNIT> void decodeFieldModifierHolder(
@@ -2395,6 +2422,10 @@ public class AST {
             listener.onMutabilityFieldModifier(
                     leafContext,
                     new ASTMutability(astBuffer.getEnumByte(index + 1, Mutability.class)));
+            break;
+
+        case STATIC:
+            listener.onStaticFieldModifier(leafContext);
             break;
             
          default:

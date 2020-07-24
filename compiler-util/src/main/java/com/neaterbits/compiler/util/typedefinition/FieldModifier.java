@@ -4,7 +4,8 @@ public interface FieldModifier {
 
     public enum Type {
         VISIBILITY,
-        MUTABILITY;
+        MUTABILITY,
+        STATIC;
     }
 
 	<T, R> R visit(FieldModifierVisitor<T, R> visitor, T param);
