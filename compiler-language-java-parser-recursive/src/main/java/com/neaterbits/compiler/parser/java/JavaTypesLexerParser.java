@@ -13,6 +13,19 @@ abstract class JavaTypesLexerParser<COMPILATION_UNIT> extends JavaAnnotationLexe
 
     abstract void tryParseGenericTypeArguments() throws IOException, ParserException;
     
+    static final JavaToken [] SCALAR_TYPE_TOKENS = new JavaToken [] {
+            
+            JavaToken.VOID,
+            
+            JavaToken.BYTE,
+            JavaToken.SHORT,
+            JavaToken.INT,
+            JavaToken.LONG,
+            JavaToken.FLOAT,
+            JavaToken.DOUBLE,
+            JavaToken.CHAR
+    };
+    
     JavaTypesLexerParser(
             String file,
             Lexer<JavaToken, CharInput> lexer,
@@ -20,6 +33,18 @@ abstract class JavaTypesLexerParser<COMPILATION_UNIT> extends JavaAnnotationLexe
             IterativeParserListener<COMPILATION_UNIT> listener) {
         
         super(file, lexer, tokenizer, listener);
+    }
+    
+    final void parseScalarOrTypeReference() throws IOException, ParserException {
+        
+        final JavaToken scalarToken = lexer.lexSkipWS(SCALAR_TYPE_TOKENS);
+        
+        if (scalarToken != JavaToken.NONE) {
+            listener.onLeafTypeReference(writeCurContext(), getStringRef(), ReferenceType.SCALAR);
+        }
+        else {
+            parseTypeReference();
+        }
     }
 
     final void parseTypeReference() throws IOException, ParserException {

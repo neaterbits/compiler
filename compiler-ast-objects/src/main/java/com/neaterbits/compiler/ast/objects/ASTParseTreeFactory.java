@@ -525,12 +525,16 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public ClassMethodMember createClassMethodMember(Context context, List<Annotation> annotations, List<ClassMethodModifierHolder> modifiers,
+	public ClassMethodMember createClassMethodMember(
+	        Context context,
+	        List<Annotation> annotations, List<ClassMethodModifierHolder> modifiers,
+	        List<NamedGenericTypeParameter> genericTypes,
 			TypeReference returnType, String name, Context nameContext, List<Parameter> parameters,
 			List<Statement> block) {
 
 		final ClassMethod classMethod = new ClassMethod(
 				context,
+				genericTypes,
 				returnType,
 				name,
 				nameContext,

@@ -244,6 +244,7 @@ public interface ParseTreeFactory<
 			Context context,
 			List<ANNOTATION> annotations,
 			List<CLASS_METHOD_MODIFIER_HOLDER> modifiers,
+			List<NAMED_GENERIC_TYPE_PARAMETER> genericTypes,
 			TYPE_REFERENCE returnType,
 			String name,
 			Context nameContext,

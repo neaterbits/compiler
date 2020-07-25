@@ -89,6 +89,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Construc
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ExpressionSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.InterfaceMethodMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.InterfaceSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NamedGenericParametersSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NestedExpressionSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ParametersSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
@@ -1259,7 +1260,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CLASS_METHOD_MODIFIER_HOLDER> method
+		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CLASS_METHOD_MODIFIER_HOLDER, NAMED_GENERIC_TYPE_PARAMETER> method
 			= new StackClassMethod<>(logger);
 
 		push(method);
@@ -1380,7 +1381,7 @@ public abstract class BaseParserListener<
 
 		logEnter(context);
 
-		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CLASS_METHOD_MODIFIER_HOLDER> stackMethod = get();
+		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CLASS_METHOD_MODIFIER_HOLDER, NAMED_GENERIC_TYPE_PARAMETER> stackMethod = get();
 
 		stackMethod.addModifier(parseTreeFactory.createClassMethodModifierHolder(context, modifier));
 
@@ -1466,7 +1467,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CLASS_METHOD_MODIFIER_HOLDER> method = pop();
+		final StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, CLASS_METHOD_MODIFIER_HOLDER, NAMED_GENERIC_TYPE_PARAMETER> method = pop();
 
 		final ClassMethodMemberSetter<CLASS_METHOD_MEMBER> methodMemberSetter = get();
 		
@@ -1474,6 +1475,7 @@ public abstract class BaseParserListener<
 				context,
 				method.getAnnotations(),
 				method.getModifiers(),
+				method.getGenericTypes(),
 				method.getReturnType(),
 				method.getName(),
 				method.getNameContext(),
@@ -3183,14 +3185,7 @@ public abstract class BaseParserListener<
 
         final StackGenericTypeParameters<NAMED_GENERIC_TYPE_PARAMETER> stackGenericTypeParameters = pop();
         
-        final StackNamedClass<
-            COMPLEX_MEMBER_DEFINITION,
-            COMPLEX_MEMBER_DEFINITION,
-            COMPLEX_MEMBER_DEFINITION,
-            COMPLEX_MEMBER_DEFINITION,
-            CLASS_MODIFIER_HOLDER,
-            NAMED_GENERIC_TYPE_PARAMETER,
-            TYPE_REFERENCE> entry = get();
+        final NamedGenericParametersSetter<NAMED_GENERIC_TYPE_PARAMETER> entry = get();
 
         entry.setGenericTypes(stackGenericTypeParameters.getList());
 

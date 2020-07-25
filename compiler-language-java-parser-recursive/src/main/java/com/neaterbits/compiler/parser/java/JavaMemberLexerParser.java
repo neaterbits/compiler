@@ -8,6 +8,7 @@ import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywordsLi
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.util.ArrayUtils;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
@@ -32,25 +33,20 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
         this.typeScratchInfo = new TypeScratchInfo();
     }
 
-    private static JavaToken [] MEMBER_START_TOKENS = new JavaToken [] {
+    private static JavaToken [] MEMBER_START_TOKENS = ArrayUtils.merge(
+            
+            
+            SCALAR_TYPE_TOKENS,
+            
+            new JavaToken [] {
             
             JavaToken.PRIVATE,
             JavaToken.PUBLIC,
             
             JavaToken.LT, // generic method
-            
-            JavaToken.VOID,
-            
-            JavaToken.BYTE,
-            JavaToken.SHORT,
-            JavaToken.INT,
-            JavaToken.LONG,
-            JavaToken.FLOAT,
-            JavaToken.DOUBLE,
-            JavaToken.CHAR,
 
             JavaToken.IDENTIFIER // type
-    };
+    });
     
     final boolean parseMember(long implementingClassName) throws IOException, ParserException {
 
@@ -93,6 +89,22 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
             
             parseRestOfTypeAndFieldScopedType(modifiers, annotations, implementingClassName, writeCurContext(), typeName);
             break;
+            
+        case LT: {
+
+            final int startContext = writeCurContext();
+            
+            listener.onClassMethodStart(startContext);
+            
+            applyModifiersAndAnnotations(modifiers, annotations);
+
+            parseGenericTypeParameters();
+            
+            parseMethod();
+            
+            listener.onClassMethodEnd(startContext, getLexerContext());
+            break;
+        }
         
         case NONE:
             // Not a member variable or method
@@ -351,7 +363,30 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
             freeScratchContext(typeEndContext);
         }
     }
-    
+
+    private void parseMethod() throws IOException, ParserException {
+        
+        final int returnTypeStartContext = writeCurContext();
+        
+        listener.onMethodReturnTypeStart(returnTypeStartContext);
+        
+        parseScalarOrTypeReference();
+        
+        listener.onMethodReturnTypeEnd(returnTypeStartContext, getLexerContext());
+        
+        if (lexer.lexSkipWS(JavaToken.IDENTIFIER) != JavaToken.IDENTIFIER) {
+            throw lexer.unexpectedToken();
+        }
+
+        listener.onMethodName(writeCurContext(), getStringRef());
+
+        if (lexer.lexSkipWS(JavaToken.LPAREN) != JavaToken.LPAREN) {
+            throw lexer.unexpectedToken();
+        }
+
+        parseParametersAndMethod(writeCurContext());
+    }
+
     private void parseMethod(
             CachedKeywordsList<JavaToken> modifiers,
             CachedAnnotationsList annotations,
@@ -368,17 +403,9 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
         final int methodParametersStartContext = writeContext(typeStartContext);
         
         listener.onClassMethodStart(classMethodStartContext);
-        
-        if (modifiers != null) {
-            modifiers.complete(keywords -> {
-                listenerHelper.callClassMethodMemberModifiers(keywords);
-            });
-        }
-        
-        if (annotations != null) {
-            apply(annotations, listener);
-        }
-        
+
+        applyModifiersAndAnnotations(modifiers, annotations);
+
         listener.onMethodReturnTypeStart(methodReturnTypeStartContext);
         
         listenerHelper.onTypeAndOptionalArgumentsList(typeInfo, typeArgumentsList, typeEndContext);
@@ -390,6 +417,20 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
         parseParametersAndMethod(methodParametersStartContext);
 
         listener.onClassMethodEnd(classMethodStartContext, getLexerContext());
+
+    }
+    
+    private void applyModifiersAndAnnotations(CachedKeywordsList<JavaToken> modifiers, CachedAnnotationsList annotations) throws IOException, ParserException {
+
+        if (modifiers != null) {
+            modifiers.complete(keywords -> {
+                listenerHelper.callClassMethodMemberModifiers(keywords);
+            });
+        }
+        
+        if (annotations != null) {
+            apply(annotations, listener);
+        }
 
     }
     

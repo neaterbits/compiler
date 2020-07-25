@@ -1369,6 +1369,65 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testGenericMethod() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { <T, R> void someMethod() { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        assertThat(member.getModifiers().isEmpty()).isTrue();
+        
+        final ClassMethod method = member.getMethod();
+        
+        assertThat(method.getGenericTypes().size()).isEqualTo(2);
+        assertThat(method.getGenericTypes().get(0).getNameString()).isEqualTo("T");
+        assertThat(method.getGenericTypes().get(1).getNameString()).isEqualTo("R");
+        
+        checkScalarType(method.getReturnType(), "void");
+        
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        assertThat(method.getParameters().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testGenericMethodWithModifier() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { static <T, R> void someMethod() { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        assertThat(member.getModifiers().count()).isEqualTo(1);
+        assertThat(member.getModifiers().getModifier(ClassMethodStatic.class)).isNotNull();
+        
+        final ClassMethod method = member.getMethod();
+
+        assertThat(method.getGenericTypes().size()).isEqualTo(2);
+        assertThat(method.getGenericTypes().get(0).getNameString()).isEqualTo("T");
+        assertThat(method.getGenericTypes().get(1).getNameString()).isEqualTo("R");
+
+        checkScalarType(method.getReturnType(), "void");
+        
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        assertThat(method.getParameters().isEmpty()).isTrue();
+    }
+
+    @Test
     public void testPrivateMethod() throws IOException, ParserException {
         
         final String source = "package com.test;\n"

@@ -229,6 +229,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 				
 				final Function function = new Function(
 						methodMember.getContext(),
+						null,
 						new FunctionQualifiers(false),
 						convertTypeReference(method.getReturnType(), state),
 						functionName,

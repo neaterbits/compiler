@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.CompilationCodeVisitor;
+import com.neaterbits.compiler.ast.objects.generics.NamedGenericTypeParameter;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
@@ -12,8 +13,8 @@ public final class Function extends CallableCode<FunctionName> {
 
 	private final FunctionQualifiers qualifiers;
 	
-	public Function(Context context, FunctionQualifiers qualifiers, TypeReference returnType, FunctionName name, List<Parameter> parameters, Block block) {
-		super(context, returnType, name, parameters, block);
+	public Function(Context context, List<NamedGenericTypeParameter> genericTypes, FunctionQualifiers qualifiers, TypeReference returnType, FunctionName name, List<Parameter> parameters, Block block) {
+		super(context, genericTypes, returnType, name, parameters, block);
 		
 		Objects.requireNonNull(returnType);
 		Objects.requireNonNull(qualifiers);

@@ -15,7 +15,7 @@ public final class Constructor extends CallableCode<ConstructorName> {
 			List<Parameter> parameters,
 			Block block) {
 		
-		super(context, null, name, parameters, block);
+		super(context, null, null, name, parameters, block);
 	}
 
 	@Override

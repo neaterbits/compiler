@@ -5,16 +5,19 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NamedGenericParametersSetter;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public final class StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, MODIFIER_HOLDER>
+public final class StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, MODIFIER_HOLDER, NAMED_GENERIC_TYPE_PARAMETERS>
 	extends CallableStackEntry<STATEMENT, PARAMETER, TYPE_REFERENCE>
-	implements AnnotationSetter<ANNOTATION> {
+	implements AnnotationSetter<ANNOTATION>, NamedGenericParametersSetter<NAMED_GENERIC_TYPE_PARAMETERS> {
 
     private final List<ANNOTATION> annotations;
 	private final List<MODIFIER_HOLDER> modifiers;
 	
+	private List<NAMED_GENERIC_TYPE_PARAMETERS> genericTypes;
+
 	public StackClassMethod(ParseLogger parseLogger) {
 		super(parseLogger);
 		
@@ -49,4 +52,20 @@ public final class StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTA
 	public List<MODIFIER_HOLDER> getModifiers() {
 		return modifiers;
 	}
+
+    @Override
+    public void setGenericTypes(List<NAMED_GENERIC_TYPE_PARAMETERS> genericTypes) {
+
+        Objects.requireNonNull(genericTypes);
+        
+        if (this.genericTypes != null) {
+            throw new IllegalStateException();
+        }
+     
+        this.genericTypes = genericTypes;
+    }
+
+    public List<NAMED_GENERIC_TYPE_PARAMETERS> getGenericTypes() {
+        return genericTypes;
+    }
 }

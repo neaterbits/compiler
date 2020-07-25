@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.InterfaceSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NamedGenericParametersSetter;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
@@ -19,7 +20,7 @@ public final class StackNamedClass<
 		TYPE_REFERENCE>
 
 	extends StackClass<COMPLEX_MEMBER_DEFINITION, CLASS_FIELD_MEMBER, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER>
-    implements ClassModifierSetter<CLASS_MODIFIER_HOLDER>, InterfaceSetter<TYPE_REFERENCE> {
+    implements ClassModifierSetter<CLASS_MODIFIER_HOLDER>, InterfaceSetter<TYPE_REFERENCE>, NamedGenericParametersSetter<NAMED_GENERIC_TYPE_PARAMETERS> {
 
 	private final String classKeyword;
 	private final Context classKeywordContext;
@@ -94,7 +95,15 @@ public final class StackNamedClass<
         return genericTypes;
     }
 
+	@Override
     public void setGenericTypes(List<NAMED_GENERIC_TYPE_PARAMETERS> genericTypes) {
+	    
+	    Objects.requireNonNull(genericTypes);
+	    
+	    if (this.genericTypes != null) {
+	        throw new IllegalStateException();
+	    }
+	    
         this.genericTypes = genericTypes;
     }
 
