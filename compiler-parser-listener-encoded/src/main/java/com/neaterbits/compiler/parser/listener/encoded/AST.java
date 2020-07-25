@@ -117,6 +117,14 @@ public class AST {
         case CLASS_IMPLEMENTS_NAME_PART:
             size = CLASS_IMPLEMENTS_NAME_PART_SIZE;
             break;
+            
+        case ENUM_DEFINITION:
+            size = ENUM_DEFINITION_SIZE;
+            break;
+
+        case ENUM_CONSTANT_DEFINITION:
+            size = ENUM_CONSTANT_DEFINITION_SIZE;
+            break;
 
         case SCALAR_TYPE_REFERENCE:
             size = SCALAR_TYPE_REFERENCE_SIZE;
@@ -1077,6 +1085,95 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
         
         listener.onMethodSignatureParameterEnd(signatureParameterStartContext, endContext);
+    }
+
+    private static final int ENUM_DEFINITION_SIZE = 2 * (STRING_REF_SIZE + CONTEXT_REF_SIZE);
+
+    static void encodeEnumStart(StringASTBuffer astBuffer, long enumKeyword, int enumKeywordContext, long name, int nameContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.ENUM_DEFINITION);
+        
+        astBuffer.writeStringRef(enumKeyword);
+        astBuffer.writeContextRef(enumKeywordContext);
+        
+        astBuffer.writeStringRef(name);
+        astBuffer.writeContextRef(nameContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeEnumStart(
+            ASTBufferRead astBuffer,
+            int enumStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int enumKeywordContext;
+        final int nameContext;
+        
+        if (contextGetter != null) {
+            
+            enumKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+            nameContext = astBuffer.getContextRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE + STRING_REF_SIZE);
+        }
+        else {
+            enumKeywordContext = ContextRef.NONE;
+            nameContext = ContextRef.NONE;
+        }
+
+        listener.onEnumStart(
+                enumStartContext,
+                astBuffer.getStringRef(index),
+                enumKeywordContext,
+                astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE),
+                nameContext);
+    }
+    
+    private static final int ENUM_CONSTANT_DEFINITION_SIZE = STRING_REF_SIZE;
+
+    static void encodeEnumConstantStart(StringASTBuffer astBuffer, long name) {
+
+        astBuffer.writeElementStart(ParseTreeElement.ENUM_CONSTANT_DEFINITION);
+        
+        astBuffer.writeStringRef(name);
+    }
+
+    public static <COMPILATION_UNIT> void decodeEnumConstantStart(
+            ASTBufferRead astBuffer,
+            int enumConstantStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onEnumConstantStart(enumConstantStartContext, astBuffer.getStringRef(index));
+    }
+
+    static void encodeEnumConstantEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ENUM_CONSTANT_DEFINITION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeEnumConstantEnd(
+            ASTBufferRead astBuffer,
+            int enumConstantStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onEnumConstantEnd(enumConstantStartContext, endContext);
+    }
+
+
+    static void encodeEnumEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.ENUM_DEFINITION);
+    }
+
+    public static <COMPILATION_UNIT> void decodeEnumEnd(
+            ASTBufferRead astBuffer,
+            int enumStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onEnumEnd(enumStartContext, endContext);
     }
 
     static void encodeScopedTypeReferenceStart(StringASTBuffer astBuffer) {

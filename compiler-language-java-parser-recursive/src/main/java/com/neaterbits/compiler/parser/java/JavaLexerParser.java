@@ -12,7 +12,7 @@ import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
 
-final class JavaLexerParser<COMPILATION_UNIT> extends JavaClassLexerParser<COMPILATION_UNIT> {
+final class JavaLexerParser<COMPILATION_UNIT> extends JavaEnumLexerParser<COMPILATION_UNIT> {
 
     JavaLexerParser(
             String file,
@@ -37,6 +37,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaClassLexerParser<COMPI
             JavaToken.ABSTRACT,
             
             JavaToken.CLASS,
+            JavaToken.ENUM,
             JavaToken.EOF
     };
 
@@ -48,6 +49,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaClassLexerParser<COMPI
             JavaToken.ABSTRACT,
             
             JavaToken.CLASS,
+            JavaToken.ENUM,
             JavaToken.EOF
     };
     
@@ -88,6 +90,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaClassLexerParser<COMPI
             case ABSTRACT:
             case FINAL:
             case CLASS:
+            case ENUM:
             case EOF:
                 done = true;
                 break;
@@ -144,6 +147,19 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaClassLexerParser<COMPI
                 done = true;
                 break;
                 
+            case ENUM:
+                final int enumStartContext = writeCurContext();
+                final int enumKeywordContext = writeCurContext();
+                
+                parseEnum(enumStartContext, getStringRef(), enumKeywordContext);
+
+                if (lexer.lexSkipWS(JavaToken.EOF) != JavaToken.EOF) {
+                    throw lexer.unexpectedToken();
+                }
+             
+                done = true;
+                break;
+
             case EOF:
                 done = true;
                 break;

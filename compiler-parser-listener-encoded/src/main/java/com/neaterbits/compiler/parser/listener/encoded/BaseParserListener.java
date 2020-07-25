@@ -719,8 +719,8 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
             int nameContext) {
 
         writeStartElementContextRef(enumStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeEnumStart(astBuffer, enumKeyword, enumKeywordContext, name, nameContext);
     }
 
     @Override
@@ -734,23 +734,23 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         writeStartElementContextRef(enumConstantStartContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeEnumConstantStart(astBuffer, name);
     }
 
     @Override
     public final void onEnumConstantEnd(int enumConstantStartContext, Context endContext) {
 
         writeEndElementContext(enumConstantStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeEnumConstantEnd(astBuffer);
     }
 
     @Override
     public final void onEnumEnd(int enumStartContext, Context endContext) {
 
         writeEndElementContext(enumStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeEnumEnd(astBuffer);
     }
 
     @Override

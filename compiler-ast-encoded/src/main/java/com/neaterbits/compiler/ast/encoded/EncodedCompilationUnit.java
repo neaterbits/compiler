@@ -540,6 +540,30 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case ENUM_DEFINITION: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeEnumStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeEnumEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case ENUM_CONSTANT_DEFINITION: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeEnumConstantStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeEnumConstantEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             case UNRESOLVED_SCOPED_TYPE_REFERENCE: {
                 final int startContext = getStartContext(parseTreeRef);
 

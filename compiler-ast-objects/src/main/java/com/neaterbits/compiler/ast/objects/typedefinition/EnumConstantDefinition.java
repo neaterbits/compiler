@@ -34,6 +34,10 @@ public final class EnumConstantDefinition extends CompilationCode  {
 	public EnumConstantName getName() {
 		return name;
 	}
+	
+	public String getNameString() {
+	    return name.getName();
+	}
 
 	public ParameterList getParameters() {
 		return parameters.get();

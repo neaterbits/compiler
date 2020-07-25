@@ -42,6 +42,7 @@ import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ConstructorMember;
+import com.neaterbits.compiler.ast.objects.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
@@ -592,7 +593,31 @@ public abstract class BaseJavaParserTest {
         assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
         assertThat(classDefinition.getMembers()).isEmpty();
     }
-    
+
+    @Test
+    public void testParseEnum() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "enum TestEnum { VALUE, ANOTHER_VALUE, YET_ANOTHER; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final EnumDefinition enumDefinition = (EnumDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(enumDefinition.getModifiers().isEmpty()).isTrue();
+
+        assertThat(enumDefinition.getNameString()).isEqualTo("TestEnum");
+        assertThat(enumDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(enumDefinition.getConstants().size()).isEqualTo(3);
+        assertThat(enumDefinition.getConstants().get(0).getNameString()).isEqualTo("VALUE");
+        assertThat(enumDefinition.getConstants().get(1).getNameString()).isEqualTo("ANOTHER_VALUE");
+        assertThat(enumDefinition.getConstants().get(2).getNameString()).isEqualTo("YET_ANOTHER");
+        assertThat(enumDefinition.getMembers()).isEmpty();
+    }
+
     @Test
     public void testParseMarkerAnnotation() throws IOException, ParserException {
         
