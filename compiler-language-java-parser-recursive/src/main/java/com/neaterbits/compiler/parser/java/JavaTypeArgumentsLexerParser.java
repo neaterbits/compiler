@@ -31,18 +31,29 @@ abstract class JavaTypeArgumentsLexerParser<COMPILATION_UNIT> extends JavaTypesL
         final TypeArgumentsList typeArgumentsList;
         
         if (lexer.lexSkipWS(JavaToken.LT) == JavaToken.LT) {
-            
+
             final int typeArgumentsStartContext = writeCurContext();
-            
+
             typeArgumentsList = startScratchTypeArguments();
 
-            parseGenericTypeArgumentToScratchList(typeArgumentsList);
+            for (;;) {
             
-            typeArgumentsList.setContexts(typeArgumentsStartContext, getLexerContext());
-            
-            if (lexer.lexSkipWS(JavaToken.GT) != JavaToken.GT) {
-                throw lexer.unexpectedToken();
+                parseGenericTypeArgumentToScratchList(typeArgumentsList);
+
+                final JavaToken afterTypeArgument = lexer.lexSkipWS(AFTER_TYPE_ARGUMENT_TOKENS);
+                
+                if (afterTypeArgument == JavaToken.COMMA) {
+                    // Continue on next type
+                }
+                else if (afterTypeArgument == JavaToken.GT) {
+                    break;
+                }
+                else {
+                    throw lexer.unexpectedToken();
+                }
             }
+
+            typeArgumentsList.setContexts(typeArgumentsStartContext, getLexerContext());
         }
         else {
             typeArgumentsList = null;
