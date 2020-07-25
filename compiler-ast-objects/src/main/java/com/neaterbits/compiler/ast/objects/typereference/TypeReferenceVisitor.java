@@ -3,7 +3,7 @@ package com.neaterbits.compiler.ast.objects.typereference;
 public interface TypeReferenceVisitor<T, R> {
 
 	R onScalarTypeReference(ScalarTypeReference typeReference, T param);
-	
+
 	R onComplexTypeReference(ComplexTypeReference typeReference, T param);
 	
 	R onPointerTypeReference(PointerTypeReference typeReference, T param);

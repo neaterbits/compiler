@@ -167,7 +167,6 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
             JavaToken.SEMI,
             JavaToken.COMMA,
             JavaToken.ASSIGN,
-            JavaToken.LBRACKET,
             JavaToken.LPAREN
     };
 
@@ -253,10 +252,13 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
         final Context typeEndContext = initScratchContext();
         
         try {
+            
+            int numDims = parseArrayIndicators(0);
 
             // Next should be the name of the field or member
             final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
         
+            
             if (fieldNameToken != JavaToken.IDENTIFIER) {
                 throw lexer.unexpectedToken();
             }
@@ -269,6 +271,9 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
             final int fieldDeclarationStartContext = writeContext(typeName.getStartContext());
             
             try {
+            
+                // Additional array indicators
+                numDims = parseArrayIndicators(numDims);
                 
                 // Next should be start of method, semicolon after type, array indicator or comma separated variables
                 final JavaToken afterFieldToken = lexer.lexSkipWS(AFTER_FIELD_NAME);
@@ -285,6 +290,7 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
                             typeEndContext,
                             typeArguments,
                             identifier, identifierContext,
+                            numDims,
                             variableDeclaratorEndContext);
                     
                     listener.onFieldDeclarationEnd(fieldDeclarationStartContext, getLexerContext());
@@ -302,6 +308,7 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
                             typeEndContext,
                             typeArguments,
                             identifier, identifierContext,
+                            numDims,
                             variableDeclaratorEndContext);
         
                     parseVariableDeclaratorList();

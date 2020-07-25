@@ -59,6 +59,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             TypeArgumentsList typeArguments,
             long identifier,
             int identifierContext,
+            int numDims,
             Context variableDeclaratorEndContext) throws IOException, ParserException {
         
         onDeclaration(
@@ -70,6 +71,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
                 typeArguments,
                 identifier,
                 identifierContext,
+                numDims,
                 variableDeclaratorEndContext);
     }
 
@@ -79,9 +81,10 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             TypeArgumentsList typeArguments,
             long identifier,
             int identifierContext,
+            int numDims,
             Context variableDeclaratorEndContext) throws IOException, ParserException {
         
-        onDeclaration(null, null, null, typeName, typeEndContext, typeArguments, identifier, identifierContext, variableDeclaratorEndContext);
+        onDeclaration(null, null, null, typeName, typeEndContext, typeArguments, identifier, identifierContext, numDims, variableDeclaratorEndContext);
     }
 
     void onTypeAndOptionalArgumentsList(TypeScratchInfo typeName, TypeArgumentsList typeArguments, Context typeEndContext) throws IOException, ParserException {
@@ -120,6 +123,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             TypeArgumentsList typeArguments,
             long identifier,
             int identifierContext,
+            int numDims,
             Context variableDeclaratorEndContext) throws IOException, ParserException {
  
         onModifiersAndType(modifiers, annotations, outputModifiers, typeName, typeEndContext, typeArguments);
@@ -130,6 +134,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
                 variableDeclaratorStartContext,
                 identifier,
                 identifierContext,
+                numDims,
                 variableDeclaratorEndContext);
     }
 
@@ -267,11 +272,12 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             int variableDeclaratorStartContext,
             long varName,
             int varNameContext,
+            int numDims,
             Context variableDeclaratorEndContext) {
 
         // Does not call Supplier based method version below in order to save an allocation for closure
         listener.onVariableDeclaratorStart(variableDeclaratorStartContext);
-        listener.onVariableName(varNameContext, varName, 0);
+        listener.onVariableName(varNameContext, varName, numDims);
         listener.onVariableDeclaratorEnd(variableDeclaratorStartContext, variableDeclaratorEndContext);
     }
 

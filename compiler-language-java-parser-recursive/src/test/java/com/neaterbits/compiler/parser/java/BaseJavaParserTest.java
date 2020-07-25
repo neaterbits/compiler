@@ -46,6 +46,7 @@ import com.neaterbits.compiler.ast.objects.statement.WhileStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
+import com.neaterbits.compiler.ast.objects.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ConstructorMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
@@ -2356,6 +2357,82 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testMemberArrayVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { int [] a [][],  b []; int c []; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass", 2);
+        
+        final ASTList<ComplexMemberDefinition> members = classDefinition.getMembers();
+        assertThat(members.size()).isEqualTo(2);
+
+        final ClassDataFieldMember member = (ClassDataFieldMember)members.get(0);
+
+        checkScalarType(member.getType(), "int");
+
+        assertThat(member.getInitializers().size()).isEqualTo(2);
+        
+        assertThat(member.getInitializers().get(0).getNameString()).isEqualTo("a");
+        assertThat(member.getInitializers().get(0).getNumDims()).isEqualTo(3);
+        
+
+        assertThat(member.getInitializers().get(1).getNameString()).isEqualTo("b");
+        assertThat(member.getInitializers().get(1).getNumDims()).isEqualTo(1);
+
+        final ClassDataFieldMember cmember = (ClassDataFieldMember)members.get(1);
+
+        assertThat(cmember.getInitializers().get(0).getNameString()).isEqualTo("c");
+        assertThat(cmember.getInitializers().get(0).getNumDims()).isEqualTo(1);
+
+        checkScalarType(cmember.getType(), "int");
+    }
+
+    @Test
+    public void testLocalArrayVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int [] a [][],  b []; int c []; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        
+        final ASTList<Statement> statements = method.getBlock().getStatements();
+        assertThat(statements.size()).isEqualTo(2);
+
+        final VariableDeclarationStatement declarationStatement = (VariableDeclarationStatement)statements.get(0);
+
+        checkScalarType(declarationStatement.getTypeReference(), "int");
+
+        assertThat(declarationStatement.getDeclarations().size()).isEqualTo(2);
+        
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        assertThat(declarationStatement.getDeclarations().get(0).getNumDims()).isEqualTo(3);
+        
+
+        assertThat(declarationStatement.getDeclarations().get(1).getNameString()).isEqualTo("b");
+        assertThat(declarationStatement.getDeclarations().get(1).getNumDims()).isEqualTo(1);
+
+        final VariableDeclarationStatement cdeclarationStatement = (VariableDeclarationStatement)statements.get(1);
+
+        assertThat(cdeclarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("c");
+        assertThat(cdeclarationStatement.getDeclarations().get(0).getNumDims()).isEqualTo(1);
+
+        checkScalarType(cdeclarationStatement.getTypeReference(), "int");
+    }
+
+    @Test
     public void testAssignmentStatement() throws IOException, ParserException {
         
         final String source = "package com.test;\n"
@@ -3082,6 +3159,11 @@ public abstract class BaseJavaParserTest {
     }
 
     private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className) {
+    
+        return checkBasicClass(compilationUnit, className, 1);
+    }
+    
+    private static ClassDefinition checkBasicClass(CompilationUnit compilationUnit, String className, int numMembers) {
         
         final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
         
@@ -3089,7 +3171,7 @@ public abstract class BaseJavaParserTest {
         assertThat(classDefinition.getNameString()).isEqualTo(className);
         assertThat(classDefinition.getExtendsClasses()).isEmpty();
         assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
-        assertThat(classDefinition.getMembers().size()).isEqualTo(1);
+        assertThat(classDefinition.getMembers().size()).isEqualTo(numMembers);
         
         return classDefinition;
     }

@@ -28,56 +28,94 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
             JavaToken.SEMI,
             JavaToken.COMMA,
             JavaToken.ASSIGN,
-            JavaToken.LBRACKET
     };
-    
+
     private static final JavaToken [] AFTER_VARIABLE_INITIALIZER = new JavaToken [] {
             JavaToken.SEMI,
             JavaToken.COMMA
     };
-
+    
     final void parseVariableDeclaratorList() throws IOException, ParserException {
         
-        boolean done = false;
+        // Parse any initial array indicators after type
+        final int numDims = parseArrayIndicators(0);
+
+        if (lexer.lexSkipWS(JavaToken.IDENTIFIER) != JavaToken.IDENTIFIER) {
+            throw lexer.unexpectedToken();
+        }
+
+        boolean done = parseAfterVariable(getStringRef(), writeCurContext(), numDims);
+
+        while (!done) {
+
+            if (lexer.lexSkipWS(JavaToken.IDENTIFIER) != JavaToken.IDENTIFIER) {
+                throw lexer.unexpectedToken();
+            }
+            
+            done = parseAfterVariable(getStringRef(), writeCurContext());
+        }
+    }
+    
+    final int parseArrayIndicators(int num) throws IOException, ParserException {
+     
+        int numDims = num;
         
-        do {
-            final JavaToken fieldNameToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+        for (;;) {
             
-            if (fieldNameToken != JavaToken.IDENTIFIER) {
+            if (lexer.lexSkipWS(JavaToken.LBRACKET) != JavaToken.LBRACKET) {
+                break;
+            }
+
+            if (lexer.lexSkipWS(JavaToken.RBRACKET) != JavaToken.RBRACKET) {
                 throw lexer.unexpectedToken();
             }
 
-            final long identifier = getStringRef();
-            final int identifierContext = writeCurContext();
-            
-            final Context variableDeclaratorEndContext = initScratchContext();
-            
-            final JavaToken afterVarNameToken = lexer.lexSkipWS(AFTER_VARIABLE_NAME);
-            
-            switch (afterVarNameToken) {
-            case COMMA:
-            case SEMI:
-                final int variableDeclaratorStartContext = writeContext(identifierContext);
+            ++ numDims;
+        }
+        
+        return numDims;
+    }
+    
+    private boolean parseAfterVariable(long identifier, int identifierContext) throws IOException, ParserException {
+        
+        return parseAfterVariable(identifier, identifierContext, 0);
+    }
 
-                listenerHelper.onVariableDeclarator(
-                        variableDeclaratorStartContext,
-                        identifier,
-                        identifierContext,
-                        variableDeclaratorEndContext);
-                
-                if (afterVarNameToken == JavaToken.SEMI) {
-                    done = true;
-                }
-                break;
+    private boolean parseAfterVariable(long identifier, int identifierContext, int numDims) throws IOException, ParserException {
 
-            case ASSIGN:
-                done = parseVariableInitializer(identifier, identifierContext);
-                break;
-                
-            default:
-                throw lexer.unexpectedToken();
-            }
-        } while (!done);
+        final boolean done;
+        
+        final Context variableDeclaratorEndContext = initScratchContext();
+
+        numDims = parseArrayIndicators(numDims);
+
+        final JavaToken afterVarNameToken = lexer.lexSkipWS(AFTER_VARIABLE_NAME);
+
+        switch (afterVarNameToken) {
+        
+        case COMMA:
+        case SEMI:
+            final int variableDeclaratorStartContext = writeContext(identifierContext);
+
+            listenerHelper.onVariableDeclarator(
+                    variableDeclaratorStartContext,
+                    identifier,
+                    identifierContext,
+                    numDims,
+                    variableDeclaratorEndContext);
+            
+            done = afterVarNameToken == JavaToken.SEMI;
+            break;
+
+        case ASSIGN:
+            done = parseVariableInitializer(identifier, identifierContext);
+            break;
+            
+        default:
+            throw lexer.unexpectedToken();
+        }
+        
+        return done;
     }
 
     final void parseVariableDeclaratorList(
@@ -111,6 +149,7 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
                         variableDeclaratorStartContext,
                         identifier,
                         identifierContext,
+                        0,
                         variableDeclaratorEndContext);
                 
                 if (afterVarNameToken == JavaToken.SEMI) {
