@@ -202,6 +202,10 @@ public class AST {
         case ITERATOR_FOR_STATEMENT:
             size = ITERATOR_FOR_STATEMENT_SIZE;
             break;
+        
+        case RETURN_STATEMENT:
+            size = RETURN_STATEMENT_SIZE;
+            break;
             
         case THROW_STATEMENT:
             size = THROW_STATEMENT_SIZE;
@@ -1803,6 +1807,53 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onIteratorForStatementEnd(iteratorForStatementStartContext, endContext);
+    }
+
+    private static final int RETURN_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeReturnStatementStart(StringASTBuffer astBuffer, long returnKeyword, int returnKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.RETURN_STATEMENT);
+        
+        astBuffer.writeStringRef(returnKeyword);
+        astBuffer.writeContextRef(returnKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeReturnStatementStart(
+            ASTBufferRead astBuffer,
+            int returnStatementStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int returnKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            returnKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            returnKeywordContext = ContextRef.NONE;
+        }
+
+        listener.onReturnStatementStart(
+                returnStatementStartContext,
+                astBuffer.getStringRef(index),
+                returnKeywordContext);
+    }
+
+    static void encodeReturnStatementEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.RETURN_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeReturnStatementEnd(
+            ASTBufferRead astBuffer,
+            int returnStatementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onReturnStatementEnd(returnStatementStartContext, endContext);
     }
 
     private static final int THROW_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;

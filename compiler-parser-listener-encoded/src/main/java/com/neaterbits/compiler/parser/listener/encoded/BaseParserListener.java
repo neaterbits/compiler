@@ -1654,19 +1654,19 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onReturnStatementStart(int returnStatementStartContext) {
+    public final void onReturnStatementStart(int returnStatementStartContext, long returnKeyword, int returnKeywordContext) {
 
         writeStartElementContextRef(returnStatementStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeReturnStatementStart(astBuffer, returnKeyword, returnKeywordContext);
     }
 
     @Override
     public final void onReturnStatementEnd(int returnStatementStartContext, Context endContext) {
 
         writeEndElementContext(returnStatementStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeReturnStatementEnd(astBuffer);
     }
 
     @Override

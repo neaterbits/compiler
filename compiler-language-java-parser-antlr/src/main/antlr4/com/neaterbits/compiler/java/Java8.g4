@@ -895,7 +895,7 @@ continueStatement
 	;
 
 returnStatement
-	:	'return' expression? ';'
+	:	keyword = 'return' expression? ';'
 	;
 
 throwStatement

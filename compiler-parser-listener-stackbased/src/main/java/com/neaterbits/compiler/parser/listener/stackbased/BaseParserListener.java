@@ -3654,7 +3654,7 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onReturnStatementStart(int startContext) {
+    public void onReturnStatementStart(int startContext, long returnKeyword, int returnKeywordContext) {
 	    
 	    final Context context = getStartContext(startContext);
 

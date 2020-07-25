@@ -35,6 +35,7 @@ import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.IteratorForStatement;
+import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.statement.ThrowStatement;
 import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
@@ -1774,6 +1775,37 @@ public abstract class BaseJavaParserTest {
         
         assertThat(statement.getDeclarations().size()).isEqualTo(1);
         assertThat(statement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+    }
+
+    @Test
+    public void testReturnStatement() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { int someMethod() { return value; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        
+        checkScalarType(method.getReturnType(), "int");
+        
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        
+        assertThat(method.getParameters().isEmpty()).isTrue();
+        
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ReturnStatement returnStatement = (ReturnStatement)method.getBlock().getStatements().get(0);
+        
+        final NameReference nameReference = (NameReference)returnStatement.getExpression();
+        assertThat(nameReference.getName()).isEqualTo("value");
     }
 
     @Test

@@ -1297,11 +1297,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		
 	}
 	
-	public void onReturnStatementStart(Context context) {
+	public void onReturnStatementStart(Context context, long keyword, Context keywordContext) {
 		
 		statementsStack.add(JavaStatement.RETURN);
 		
-		delegate.onReturnStatementStart(writeStartContext(context));
+		delegate.onReturnStatementStart(writeStartContext(context), keyword, writeOtherContext(keywordContext));
 	}
 	
 	public void onReturnStatementEnd(Context context) {

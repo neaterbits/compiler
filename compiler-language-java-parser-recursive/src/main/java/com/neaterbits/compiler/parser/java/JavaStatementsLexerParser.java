@@ -46,6 +46,8 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
 
             JavaToken.WHILE,
             JavaToken.FOR,
+            
+            JavaToken.RETURN,
             JavaToken.THROW,
 
             // Empty statement
@@ -95,6 +97,14 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             break;
         }
 
+        case RETURN: {
+            
+            final int returnKeywordContext = writeCurContext();
+            
+            parseReturn(getStringRef(), returnKeywordContext);
+            break;
+        }
+        
         case THROW: {
             
             final int throwKeywordContext = writeCurContext();
@@ -385,6 +395,17 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         else {
             throw lexer.unexpectedToken();
         }
+    }
+
+    private void parseReturn(long returnKeyword, int returnKeywordContext) throws IOException, ParserException {
+        
+        final int returnStartContext = writeContext(returnKeywordContext);
+        
+        listener.onReturnStatementStart(returnStartContext, returnKeyword, returnKeywordContext);
+
+        parseExpression();
+        
+        listener.onReturnStatementEnd(returnStartContext, getLexerContext());
     }
 
     private void parseThrow(long throwKeyword, int throwKeywordContext) throws IOException, ParserException {

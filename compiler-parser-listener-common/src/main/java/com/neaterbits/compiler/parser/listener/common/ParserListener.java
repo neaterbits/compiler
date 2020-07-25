@@ -419,7 +419,7 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onTryWithResourcesEnd(int startContext, Context endContext);
 	
-	void onReturnStatementStart(int startContext);
+	void onReturnStatementStart(int startContext, long returnKeyword, int returnKeywordContext);
 	
 	void onReturnStatementEnd(int startContext, Context endContext);
 	
