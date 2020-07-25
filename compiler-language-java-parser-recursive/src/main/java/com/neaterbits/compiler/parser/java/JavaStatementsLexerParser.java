@@ -185,7 +185,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
                 null);
         
         // Generic type?
-        tryParseGenericTypeParameters();
+        tryParseGenericTypeArguments();
 
         listenerHelper.callScopedTypeReferenceListenersEnd(typeReferenceStartContext, getLexerContext());
 
@@ -344,7 +344,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             final long identifier = getStringRef();
             final int identifierContext = writeCurContext();
 
-            final TypeArgumentsList typeArguments = tryParseGenericTypeParametersToScratchList();
+            final TypeArgumentsList typeArguments = tryParseGenericTypeArgumentsToScratchList();
             
             final Context typeEndContext = initScratchContext();
             

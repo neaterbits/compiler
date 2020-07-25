@@ -4,95 +4,94 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.MutableContext;
-import com.neaterbits.util.io.strings.StringRef;
 
 public final class TypeArgumentImpl implements TypeArgument {
 
-    private long genericTypeName;
-    private int genericTypeNameContext;
+    private Type type;
     
     // if isGenericTypeName() is false
-    private NamesList concreteTypeNames;
+    private int referenceStartContext;
+    private NamesList referenceTypeNames;
+    private TypeArgumentsList referenceTypeGenerics;
+    private MutableContext referenceEndContext;
     
-    private TypeArgumentsList concreteTypeGenerics;
-    
-    private MutableContext concreteEndContext;
+    private int wildcardStartContext;
+    private MutableContext wildcardEndContext;
 
     TypeArgumentImpl() {
 
     }
         
-    void init(int genericTypeNameContext, long genericTypeName) {
+    TypeArgumentImpl(int startContext, NamesList referenceTypeNames, TypeArgumentsList referenceTypeGenerics, Context referenceEndContext) {
+        
+        this.referenceEndContext = new MutableContext();
+        
+        initReferenceType(startContext, referenceTypeNames, referenceTypeGenerics, referenceEndContext);
+    }
+        
+    void initReferenceType(int startContext, NamesList referenceTypeNames, TypeArgumentsList referenceTypeGenerics, Context referenceEndContext) {
+        
+        Objects.requireNonNull(referenceTypeNames);
+        
+        this.type = Type.REFERENCE;
 
-        if (genericTypeNameContext == ContextRef.NONE) {
-            throw new IllegalArgumentException();
+        this.referenceStartContext = startContext;
+        this.referenceTypeNames = referenceTypeNames;
+        this.referenceTypeGenerics = referenceTypeGenerics;
+        
+        if (this.referenceEndContext == null) {
+            this.referenceEndContext = new MutableContext();
         }
 
-        if (genericTypeName == StringRef.STRING_NONE) {
-            throw new IllegalArgumentException();
+        this.referenceEndContext.init(referenceEndContext);
+    }
+    
+    void initWildcardType(int startContext, Context endContext) {
+        
+        if (wildcardEndContext == null) {
+            this.wildcardEndContext = new MutableContext(endContext);
         }
-        
-        this.genericTypeNameContext = genericTypeNameContext;
-        this.genericTypeName = genericTypeName;
-        
-        this.concreteTypeNames = null;
-        this.concreteTypeGenerics = null;
-    }
-
-    TypeArgumentImpl(NamesList concreteTypeNames, TypeArgumentsList concreteTypeGenerics, Context concreteEndContext) {
-        
-        this.concreteEndContext = new MutableContext();
-        
-        init(concreteTypeNames, concreteTypeGenerics, concreteEndContext);
-    }
-        
-    void init(NamesList concreteTypeNames, TypeArgumentsList concreteTypeGenerics, Context concreteEndContext) {
-        
-        Objects.requireNonNull(concreteTypeNames);
-
-        this.genericTypeName = StringRef.STRING_NONE;
-        this.genericTypeNameContext = ContextRef.NONE;
-        
-        this.concreteTypeNames = concreteTypeNames;
-        this.concreteTypeGenerics = concreteTypeGenerics;
-        
-        if (this.concreteEndContext == null) {
-            this.concreteEndContext = new MutableContext();
+        else {
+            wildcardEndContext.init(endContext);
         }
 
-        this.concreteEndContext.init(concreteEndContext);
+        this.type = Type.WILDCARD;
     }
 
     @Override
-    public boolean isGenericTypeName() {
-        return genericTypeName != StringRef.STRING_NONE;
+    public Type getType() {
+
+        return type;
     }
 
     @Override
-    public long getGenericTypeName() {
-        return genericTypeName;
+    public int getReferenceStartContext() {
+        return referenceStartContext;
     }
 
     @Override
-    public int getGenericTypeNameContext() {
-        return genericTypeNameContext;
+    public NamesList getReferenceTypeNames() {
+        return referenceTypeNames;
     }
 
     @Override
-    public NamesList getConcreteTypeNames() {
-        return concreteTypeNames;
+    public Context getReferenceEndContext() {
+        return referenceEndContext;
     }
 
     @Override
-    public Context getConcreteEndContext() {
-        // FIXME Auto-generated method stub
-        return null;
+    public TypeArgumentsList getReferenceTypeGenerics() {
+        return referenceTypeGenerics;
     }
 
     @Override
-    public TypeArgumentsList getConcreteTypeGenerics() {
-        return concreteTypeGenerics;
+    public int getWildcardStartContext() {
+        return wildcardStartContext;
+    }
+
+    @Override
+    public Context getWildcardEndContext() {
+        return wildcardEndContext;
     }
 }

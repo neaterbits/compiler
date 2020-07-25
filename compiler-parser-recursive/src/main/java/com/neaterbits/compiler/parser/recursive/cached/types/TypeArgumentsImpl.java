@@ -24,15 +24,15 @@ public final class TypeArgumentsImpl
     }
 
     @Override
-    public void addGenericType(int context, long name) {
+    public void addReferenceType(int startContext, NamesList names, TypeArgumentsList typeArguments, Context endContext) {
 
-        getOrCreate().init(context, name);
+        getOrCreate().initReferenceType(startContext, names, typeArguments, endContext);
     }
 
     @Override
-    public void addConcreteType(NamesList names, TypeArgumentsList typeArguments, Context endContext) {
+    public void addWildcardType(int startContext, Context endContext) {
 
-        getOrCreate().init(names, typeArguments, endContext);
+        getOrCreate().initWildcardType(startContext, endContext);
     }
 
     @Override

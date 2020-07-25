@@ -53,7 +53,8 @@ import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
-import com.neaterbits.compiler.ast.objects.generics.NamedTypeArgument;
+import com.neaterbits.compiler.ast.objects.generics.ReferenceTypeArgument;
+import com.neaterbits.compiler.ast.objects.generics.NamedGenericTypeParameter;
 import com.neaterbits.compiler.ast.objects.generics.TypeArgument;
 import com.neaterbits.compiler.ast.objects.generics.TypeBound;
 import com.neaterbits.compiler.ast.objects.generics.WildcardTypeArgument;
@@ -169,9 +170,10 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	AnnotationElement,
 	ClassModifierHolder,
 	TypeArgument,
-	NamedTypeArgument,
+	ReferenceTypeArgument,
 	WildcardTypeArgument,
 	TypeBound,
+	NamedGenericTypeParameter,
 	ClassDefinition,
 	ConstructorMember,
 	ConstructorModifierHolder,
@@ -384,7 +386,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
     
     @Override
     public TypeReference createUnresolvedTypeReference(Context context, ScopedName name,
-            Collection<TypeReference> genericTypeParameters, ReferenceType type) {
+            Collection<TypeArgument> genericTypeParameters, ReferenceType type) {
 
         return new UnresolvedTypeReference(context, name, genericTypeParameters, type);
     }
@@ -407,9 +409,9 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-    public NamedTypeArgument createNamedTypeArgument(Context context, Name name, List<TypeBound> bounds) {
+    public ReferenceTypeArgument createReferenceTypeArgument(Context context, TypeReference typeReference) {
 
-	    return new NamedTypeArgument(context, name, bounds);
+	    return new ReferenceTypeArgument(context, typeReference);
     }
 
     @Override
@@ -425,9 +427,15 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
     }
 
     @Override
+    public NamedGenericTypeParameter createNamedTypeParameter(Context context, Name name, List<TypeBound> bounds) {
+
+        return new NamedGenericTypeParameter(context, name, bounds);
+    }
+
+    @Override
 	public ClassDefinition createClassDefinition(Context context, List<Annotation> annotations, List<ClassModifierHolder> modifiers,
 			Keyword classKeyword, String name, Context nameContext,
-			List<TypeArgument> genericTypes,
+			List<NamedGenericTypeParameter> genericTypes,
 			Keyword extendsKeyword, List<TypeReference> extendsClasses,
 			List<TypeReference> implementsInterfaces,
 			List<ComplexMemberDefinition> members) {

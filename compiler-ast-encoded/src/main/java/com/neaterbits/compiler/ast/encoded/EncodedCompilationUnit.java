@@ -1008,14 +1008,26 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
-            case NAMED_GENERIC_TYPE:  {
+            case REFERENCE_GENERIC_TYPE_ARGUMENT:  {
                 final int startContext = getStartContext(parseTreeRef);
 
                 if (ref.isStart) {
-                    AST.decodeNamedTypeArgumentStart(astBuffer, startContext, ref.index, listener);
+                    AST.decodeReferenceTypeArgumentStart(astBuffer, startContext, ref.index, listener);
                 }
                 else {
-                    AST.decodeNamedTypeArgumentEnd(startContext, getEndContext(startContext), listener);
+                    AST.decodeReferenceTypeArgumentEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case WILDCARD_GENERIC_TYPE_ARGUMENT:  {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeWildcardTypeArgumentStart(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    AST.decodeWildcardTypeArgumentEnd(startContext, getEndContext(startContext), listener);
                 }
                 break;
             }
@@ -1044,6 +1056,18 @@ public final class EncodedCompilationUnit {
                 break;
             }
             
+            case NAMED_GENERIC_TYPE_PARAMETER:  {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeNamedGenericTypeParameterStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeNamedGenericTypeParameterEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             case FIELD_MODIFIER_HOLDER:
                 if (ref.isStart) {
                     final int leafContext = getStartContext(parseTreeRef);

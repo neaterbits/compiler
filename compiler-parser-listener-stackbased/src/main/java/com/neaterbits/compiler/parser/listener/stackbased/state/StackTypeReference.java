@@ -8,9 +8,9 @@ import java.util.Objects;
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.StackEntry;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
-public abstract class StackTypeReference<TYPE_REFERENCE> extends StackEntry {
+public abstract class StackTypeReference<TYPE_ARGUMENT> extends StackEntry {
 
-    private final List<TYPE_REFERENCE> genericTypeParameters;
+    private final List<TYPE_ARGUMENT> genericTypeParameters;
     
     public StackTypeReference(ParseLogger parseLogger) {
         super(parseLogger);
@@ -18,11 +18,11 @@ public abstract class StackTypeReference<TYPE_REFERENCE> extends StackEntry {
         this.genericTypeParameters = new ArrayList<>();
     }
 
-    public final List<TYPE_REFERENCE> getGenericTypeParameters() {
+    public final List<TYPE_ARGUMENT> getGenericTypeParameters() {
         return genericTypeParameters;
     }
 
-    public final void setTypeParameters(Collection<TYPE_REFERENCE> typeParameters) {
+    public final void setTypeParameters(Collection<TYPE_ARGUMENT> typeParameters) {
 
         Objects.requireNonNull(typeParameters);
         

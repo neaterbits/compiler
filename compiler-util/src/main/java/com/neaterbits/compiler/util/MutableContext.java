@@ -8,6 +8,10 @@ public final class MutableContext implements Context {
     public MutableContext() {
 
     }
+    
+    public MutableContext(Context context) {
+        this(context.getStartOffset(), context.getEndOffset());
+    }
 
     public MutableContext(int startOffset, int endOffset) {
 

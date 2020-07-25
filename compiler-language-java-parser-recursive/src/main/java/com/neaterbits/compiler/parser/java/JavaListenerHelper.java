@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import com.neaterbits.compiler.parser.java.JavaTypesLexerParser.ParseFunction;
+import com.neaterbits.compiler.parser.java.JavaTypeArgumentsLexerParser.ParseFunction;
 import com.neaterbits.compiler.parser.listener.common.ParserListener;
 import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsList;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ContextWriter;
@@ -174,7 +174,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
 
             // Generic type?
             if (typeArguments != null) {
-                onTypeArguments(typeArguments);
+                applyTypeArguments(typeArguments);
             }
 
             callScopedTypeReferenceListenersEnd(startContext, endContext);
@@ -185,7 +185,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
 
             // Generic type?
             if (typeArguments != null) {
-                onTypeArguments(typeArguments);
+                applyTypeArguments(typeArguments);
             }
 
             callNonScopedTypeReferenceListenersEnd(typeNameContext, endContext, referenceType);
@@ -195,27 +195,28 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
         }
     }
 
-    private void onTypeArguments(TypeArguments typeArguments) throws IOException, ParserException {
+    private void applyTypeArguments(TypeArguments typeArguments) throws IOException, ParserException {
         
         Objects.requireNonNull(typeArguments);
         
-        listener.onGenericTypeParametersStart(typeArguments.getStartContext());
+        listener.onGenericTypeArgumentsStart(typeArguments.getStartContext());
         
         for (int i = 0; i < typeArguments.count(); ++ i) {
             
             final TypeArgument typeArgument = typeArguments.getTypeArgument(i);
-
-            if (typeArgument.isGenericTypeName()) {
+            
+            switch (typeArgument.getType()) {
                 
-                listener.onGenericTypeParameter(
-                        typeArgument.getGenericTypeNameContext(),
-                        typeArgument.getGenericTypeName());
-            }
-            else {
-                typeArgument.getConcreteTypeNames().complete(names -> {
+            case REFERENCE: {
+                
+                final int startContext = typeArgument.getReferenceStartContext();
+                
+                listener.onGenericReferenceTypeArgumentStart(startContext);
+                
+                typeArgument.getReferenceTypeNames().complete(names -> {
                     
-                    if (typeArgument.getConcreteTypeGenerics() != null) {
-                        typeArgument.getConcreteTypeGenerics().complete(genericTypes -> {
+                    if (typeArgument.getReferenceTypeGenerics() != null) {
+                        typeArgument.getReferenceTypeGenerics().complete(genericTypes -> {
                             
                             onType(
                                 ContextRef.NONE,
@@ -224,7 +225,7 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
                                 null,
                                 genericTypes,
                                 ReferenceType.REFERENCE,
-                                typeArgument.getConcreteEndContext());
+                                typeArgument.getReferenceEndContext());
                         });
                     
                     }
@@ -236,14 +237,30 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
                                 null,
                                 null,
                                 ReferenceType.REFERENCE,
-                                typeArgument.getConcreteEndContext());
+                                typeArgument.getReferenceEndContext());
                     }
                 });
+
+                listener.onGenericReferenceTypeArgumentEnd(startContext, typeArgument.getReferenceEndContext());
+                break;
+            }
                 
+            case WILDCARD: {
+
+                final int startContext = typeArgument.getWildcardStartContext();
+                
+                listener.onGenericWildcardTypeArgumentStart(startContext);
+                
+                listener.onGenericWildcardTypeArgumentEnd(startContext, typeArgument.getWildcardEndContext());
+                break;
+            }
+
+            default:
+                throw new UnsupportedOperationException();
             }
         }
         
-        listener.onGenericTypeParametersEnd(typeArguments.getStartContext(), typeArguments.getEndContext());
+        listener.onGenericTypeArgumentsEnd(typeArguments.getStartContext(), typeArguments.getEndContext());
     }
     
     void onVariableDeclarator(

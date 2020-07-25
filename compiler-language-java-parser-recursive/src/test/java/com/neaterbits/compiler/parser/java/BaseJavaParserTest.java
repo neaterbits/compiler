@@ -29,7 +29,10 @@ import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
-import com.neaterbits.compiler.ast.objects.generics.NamedTypeArgument;
+import com.neaterbits.compiler.ast.objects.generics.ReferenceTypeArgument;
+import com.neaterbits.compiler.ast.objects.generics.NamedGenericTypeParameter;
+import com.neaterbits.compiler.ast.objects.generics.TypeArgument;
+import com.neaterbits.compiler.ast.objects.generics.WildcardTypeArgument;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
@@ -519,9 +522,9 @@ public abstract class BaseJavaParserTest {
         
         assertThat(classDefinition.getGenericTypes().size()).isEqualTo(1);
         
-        final NamedTypeArgument namedTypeArgument = (NamedTypeArgument)classDefinition.getGenericTypes().get(0);
-        assertThat(namedTypeArgument.getNameString()).isEqualTo("TYPE");
-        assertThat(namedTypeArgument.getTypeBounds().isEmpty()).isTrue();
+        final NamedGenericTypeParameter namedTypeParameter = (NamedGenericTypeParameter)classDefinition.getGenericTypes().get(0);
+        assertThat(namedTypeParameter.getNameString()).isEqualTo("TYPE");
+        assertThat(namedTypeParameter.getTypeBounds().isEmpty()).isTrue();
         
         assertThat(classDefinition.getExtendsClasses()).isEmpty();
         assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
@@ -547,12 +550,12 @@ public abstract class BaseJavaParserTest {
         
         assertThat(classDefinition.getGenericTypes().size()).isEqualTo(1);
         
-        final NamedTypeArgument namedTypeArgument = (NamedTypeArgument)classDefinition.getGenericTypes().get(0);
-        assertThat(namedTypeArgument.getNameString()).isEqualTo("TYPE");
-        assertThat(namedTypeArgument.getTypeBounds().size()).isEqualTo(1);
-        assertThat(namedTypeArgument.getTypeBounds().get(0).getType()).isEqualTo(TypeBoundType.EXTENDS);
+        final NamedGenericTypeParameter namedTypeParameter = (NamedGenericTypeParameter)classDefinition.getGenericTypes().get(0);
+        assertThat(namedTypeParameter.getNameString()).isEqualTo("TYPE");
+        assertThat(namedTypeParameter.getTypeBounds().size()).isEqualTo(1);
+        assertThat(namedTypeParameter.getTypeBounds().get(0).getType()).isEqualTo(TypeBoundType.EXTENDS);
 
-        final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)namedTypeArgument.getTypeBounds().get(0).getTypeReference();
+        final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)namedTypeParameter.getTypeBounds().get(0).getTypeReference();
 
         assertThat(typeReference.getScopedName().getScope()).isNull();
         assertThat(typeReference.getScopedName().getName()).isEqualTo("BaseClass");
@@ -581,12 +584,12 @@ public abstract class BaseJavaParserTest {
         
         assertThat(classDefinition.getGenericTypes().size()).isEqualTo(1);
         
-        final NamedTypeArgument namedTypeArgument = (NamedTypeArgument)classDefinition.getGenericTypes().get(0);
-        assertThat(namedTypeArgument.getNameString()).isEqualTo("TYPE");
-        assertThat(namedTypeArgument.getTypeBounds().size()).isEqualTo(1);
-        assertThat(namedTypeArgument.getTypeBounds().get(0).getType()).isEqualTo(TypeBoundType.EXTENDS);
+        final NamedGenericTypeParameter namedTypeParameter = (NamedGenericTypeParameter)classDefinition.getGenericTypes().get(0);
+        assertThat(namedTypeParameter.getNameString()).isEqualTo("TYPE");
+        assertThat(namedTypeParameter.getTypeBounds().size()).isEqualTo(1);
+        assertThat(namedTypeParameter.getTypeBounds().get(0).getType()).isEqualTo(TypeBoundType.EXTENDS);
         
-        final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)namedTypeArgument.getTypeBounds().get(0).getTypeReference();
+        final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)namedTypeParameter.getTypeBounds().get(0).getTypeReference();
         
         assertThat(typeReference.getScopedName().getScope()).isNull();
         assertThat(typeReference.getScopedName().getName()).isEqualTo("BaseClass");
@@ -1265,7 +1268,7 @@ public abstract class BaseJavaParserTest {
         
         final UnresolvedTypeReference type = checkIdentifierType(member.getType(), "SomeType");
         
-        checkIdentifierType(type.getGenericTypeParameters().get(0), "TYPE");
+        checkIdentifierTypeArgument(type.getGenericTypeParameters().get(0), "TYPE");
     }
 
     @Test
@@ -1517,7 +1520,7 @@ public abstract class BaseJavaParserTest {
         final UnresolvedTypeReference type = checkIdentifierType(method.getParameters().get(0).getType(), "List");
         
         assertThat(type.getGenericTypeParameters().size()).isEqualTo(1);
-        checkIdentifierType(type.getGenericTypeParameters().get(0), "String");
+        checkIdentifierTypeArgument(type.getGenericTypeParameters().get(0), "String");
     }
 
     @Test
@@ -1801,7 +1804,7 @@ public abstract class BaseJavaParserTest {
         final UnresolvedTypeReference type = checkIdentifierType(statement.getTypeReference(), "SomeType");
         
         assertThat(type.getGenericTypeParameters().size()).isEqualTo(1);
-        checkIdentifierType(type.getGenericTypeParameters().get(0), "OtherType");
+        checkIdentifierTypeArgument(type.getGenericTypeParameters().get(0), "OtherType");
         
         assertThat(statement.getModifiers().isEmpty()).isTrue();
         
@@ -1852,6 +1855,43 @@ public abstract class BaseJavaParserTest {
         final ClassMethod method = member.getMethod();
         
         checkScalarType(method.getReturnType(), "int");
+        
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        
+        assertThat(method.getParameters().isEmpty()).isTrue();
+        
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ReturnStatement returnStatement = (ReturnStatement)method.getBlock().getStatements().get(0);
+        
+        final NameReference nameReference = (NameReference)returnStatement.getExpression();
+        assertThat(nameReference.getName()).isEqualTo("value");
+    }
+
+    @Test
+    public void testReturnWildcardType() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { SomeClass<?> someMethod() { return value; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        
+        final UnresolvedTypeReference type = (UnresolvedTypeReference)method.getReturnType();
+        assertThat(type.getScopedName().getScope()).isNull();
+        assertThat(type.getScopedName().getName()).isEqualTo("SomeClass");
+        assertThat(type.getGenericTypeParameters().size()).isEqualTo(1);
+        
+        final WildcardTypeArgument typeArgument = (WildcardTypeArgument)type.getGenericTypeParameters().get(0);
+        assertThat(typeArgument).isNotNull();
         
         assertThat(method.getNameString()).isEqualTo("someMethod");
         
@@ -2901,6 +2941,18 @@ public abstract class BaseJavaParserTest {
         assertThat(type.getScopedName().getName()).isEqualTo(typeName);
         
         return type;
+    }
+
+    private static ReferenceTypeArgument checkIdentifierTypeArgument(TypeArgument typeArgument, String typeName) {
+
+        final ReferenceTypeArgument typeArg = (ReferenceTypeArgument)typeArgument;
+        
+        final UnresolvedTypeReference type = (UnresolvedTypeReference)typeArg.getTypeReference();
+        
+        assertThat(type.getScopedName().getScope()).isNull();
+        assertThat(type.getScopedName().getName()).isEqualTo(typeName);
+        
+        return typeArg;
     }
 
     private static void checkScopedType(TypeReference typeReference, String ...names) {

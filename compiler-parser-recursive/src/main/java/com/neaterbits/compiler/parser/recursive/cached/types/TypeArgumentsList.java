@@ -6,9 +6,9 @@ import com.neaterbits.compiler.util.Context;
 
 public interface TypeArgumentsList extends ScratchList<TypeArguments> {
 
-    void addGenericType(int context, long name);
-
-    void addConcreteType(NamesList names, TypeArgumentsList typeArguments, Context endContext);
+    void addReferenceType(int startContext, NamesList names, TypeArgumentsList typeArguments, Context endContext);
+    
+    void addWildcardType(int startContext, Context endContext);
 
     void setContexts(int startContext, Context endContext);
 }

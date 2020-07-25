@@ -36,10 +36,11 @@ public interface ParseTreeFactory<
 	ANNOTATION,
 	ANNOTATION_ELEMENT,
 	CLASS_MODIFIER_HOLDER,
-	GENERIC_TYPE,
-    NAMED_GENERIC_TYPE extends GENERIC_TYPE,
-    WILDCARD_GENERIC_TYPE extends GENERIC_TYPE,
+	GENERIC_TYPE_ARGUMENT,
+    REFERENCE_GENERIC_TYPE_ARGUMENT extends GENERIC_TYPE_ARGUMENT,
+    WILDCARD_GENERIC_TYPE_ARGUMENT extends GENERIC_TYPE_ARGUMENT,
     TYPE_BOUND,
+    NAMED_GENERIC_TYPE_PARAMETER,
 	CLASS_DEFINITION,
 	CONSTRUCTOR_MEMBER,
 	CONSTRUCTOR_MODIFIER_HOLDER,
@@ -173,7 +174,7 @@ public interface ParseTreeFactory<
 	TYPE_REFERENCE createUnresolvedTypeReference(
 	        Context context,
 	        ScopedName name,
-	        Collection<TYPE_REFERENCE> genericTypeParameters,
+	        Collection<GENERIC_TYPE_ARGUMENT> genericTypeParameters,
 	        ReferenceType type);
 		
 	COMPILATION_UNIT createCompilationUnit(Context context, List<IMPORT> imports, List<COMPILATION_CODE> code);
@@ -189,12 +190,14 @@ public interface ParseTreeFactory<
 			Context nameContext,
 			List<COMPILATION_CODE> codeLines);
 	
-	NAMED_GENERIC_TYPE createNamedTypeArgument(Context context, NAME name, List<TYPE_BOUND> bounds);
+	REFERENCE_GENERIC_TYPE_ARGUMENT createReferenceTypeArgument(Context context, TYPE_REFERENCE typeReference);
 
-	WILDCARD_GENERIC_TYPE createWildcardTypeArgument(Context context, List<TYPE_BOUND> bounds);
+	WILDCARD_GENERIC_TYPE_ARGUMENT createWildcardTypeArgument(Context context, List<TYPE_BOUND> bounds);
 	
 	TYPE_BOUND createTypeBound(Context context, TypeBoundType type, TYPE_REFERENCE typeReference);
-	
+
+	NAMED_GENERIC_TYPE_PARAMETER createNamedTypeParameter(Context context, NAME name, List<TYPE_BOUND> bounds);
+
 	CLASS_DEFINITION createClassDefinition(
 			Context context,
 			List<ANNOTATION> annotations,
@@ -202,7 +205,7 @@ public interface ParseTreeFactory<
 			KEYWORD classKeyword,
 			String name,
 			Context nameContext,
-			List<GENERIC_TYPE> genericTypes,
+			List<NAMED_GENERIC_TYPE_PARAMETER> genericTypes,
 			KEYWORD extendsKeyword,
 			List<TYPE_REFERENCE> extendsClasses,
 			List<TYPE_REFERENCE> implementsInterfaces,

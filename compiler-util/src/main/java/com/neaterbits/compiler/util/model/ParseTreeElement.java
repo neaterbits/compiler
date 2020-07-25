@@ -25,11 +25,14 @@ public enum ParseTreeElement {
 	
 	TYPE_ARGUMENT_LIST(false),
 	
-	NAMED_GENERIC_TYPE(false),
-    WILDCARD_GENERIC_TYPE(false),
+	REFERENCE_GENERIC_TYPE_ARGUMENT(false),
+    WILDCARD_GENERIC_TYPE_ARGUMENT(false),
+    
 	TYPE_BOUND(false),
 	
 	GENERIC_TYPE_PARAMETERS(false),
+
+	NAMED_GENERIC_TYPE_PARAMETER(false),
 	
 	CLASS_DEFINITION(false, false),
 	CLASS_MODIFIERS(true, true),

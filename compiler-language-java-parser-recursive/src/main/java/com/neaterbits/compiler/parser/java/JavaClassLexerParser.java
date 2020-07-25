@@ -50,7 +50,7 @@ abstract class JavaClassLexerParser<COMPILATION_UNIT> extends JavaMemberLexerPar
         switch (afterClassName) {
         
         case LT:
-            parseGenericTypeArguments();
+            parseGenericTypeParameters();
             
             parseExtendsOrImplementsOrBody(implementingClassName);
             break;

@@ -189,7 +189,7 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
             
             parseNameListUntilOtherToken(typeNameContext, typeName, names -> {
                 
-                final TypeArgumentsList typeArguments = tryParseGenericTypeParametersToScratchList();
+                final TypeArgumentsList typeArguments = tryParseGenericTypeArgumentsToScratchList();
 
                 typeScratchInfo.initScoped(names, getLexerContext(), ReferenceType.REFERENCE);
 
@@ -197,7 +197,7 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
             });
         }
         else {
-            final TypeArgumentsList typeArguments = tryParseGenericTypeParametersToScratchList();
+            final TypeArgumentsList typeArguments = tryParseGenericTypeArgumentsToScratchList();
 
             // Is this a constructor method?
             if (lexer.lexSkipWS(JavaToken.LPAREN) == JavaToken.LPAREN) {
@@ -221,7 +221,7 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
                     // Not the same so try to just parse as a method but without return type since missing
                     typeScratchInfo.initNoType();
                     
-                    parseMethod(modifiers, annotations, typeScratchInfo, getLexerContext(), typeNameContext, typeName);
+                    parseMethod(modifiers, annotations, typeScratchInfo, typeArguments, getLexerContext(), typeNameContext, typeName);
                 }
             }
             else {
@@ -335,7 +335,7 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
                 }
                  
                 case LPAREN: {
-                    parseMethod(modifiers, annotations, typeName, typeEndContext, identifierContext, identifier);
+                    parseMethod(modifiers, annotations, typeName, typeArguments, typeEndContext, identifierContext, identifier);
                     break;
                 }
                     
@@ -356,6 +356,7 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
             CachedKeywordsList<JavaToken> modifiers,
             CachedAnnotationsList annotations,
             TypeScratchInfo typeInfo,
+            TypeArgumentsList typeArgumentsList,
             Context typeEndContext,
             int identifierContext,
             long identifier) throws IOException, ParserException {
@@ -380,7 +381,7 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
         
         listener.onMethodReturnTypeStart(methodReturnTypeStartContext);
         
-        listenerHelper.onType(typeInfo, null, typeEndContext);
+        listenerHelper.onTypeAndOptionalArgumentsList(typeInfo, typeArgumentsList, typeEndContext);
         
         listener.onMethodReturnTypeEnd(methodReturnTypeStartContext, getLexerContext());
         

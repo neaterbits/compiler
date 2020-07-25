@@ -12,7 +12,7 @@ import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
 
 public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
-    extends JavaTypesLexerParser<COMPILATION_UNIT> {
+    extends JavaTypeParametersLexerParser<COMPILATION_UNIT> {
         
     protected JavaVariablesLexerParser(
             String file,

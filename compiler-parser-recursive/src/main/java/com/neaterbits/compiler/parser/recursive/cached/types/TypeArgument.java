@@ -5,16 +5,25 @@ import com.neaterbits.compiler.util.Context;
 
 public interface TypeArgument {
 
-    boolean isGenericTypeName();
+    public enum Type {
+
+        REFERENCE,
+        
+        WILDCARD
+    }
     
-    long getGenericTypeName();
+    Type getType();
     
-    int getGenericTypeNameContext();
+    int getReferenceStartContext();
     
     // if isGenericTypeName() is false
-    NamesList getConcreteTypeNames();
+    NamesList getReferenceTypeNames();
     
-    TypeArgumentsList getConcreteTypeGenerics();
+    TypeArgumentsList getReferenceTypeGenerics();
     
-    Context getConcreteEndContext();
+    Context getReferenceEndContext();
+    
+    int getWildcardStartContext();
+    
+    Context getWildcardEndContext();
 }

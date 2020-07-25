@@ -180,7 +180,7 @@ abstract class JavaParametersLexerParser<COMPILATION_UNIT>
 
             listener.onNonScopedTypeReferenceStart(startContext, stringRef, ReferenceType.REFERENCE);
 
-            tryParseGenericTypeParameters();
+            tryParseGenericTypeArguments();
 
             listener.onNonScopedTypeReferenceEnd(startContext, getLexerContext());
             break;
@@ -208,7 +208,7 @@ abstract class JavaParametersLexerParser<COMPILATION_UNIT>
 
             listener.onNonScopedTypeReferenceStart(startContext, stringRef, ReferenceType.REFERENCE);
             
-            tryParseGenericTypeParameters();
+            tryParseGenericTypeArguments();
             
             listener.onNonScopedTypeReferenceEnd(startContext, getLexerContext());
         }
@@ -258,7 +258,7 @@ abstract class JavaParametersLexerParser<COMPILATION_UNIT>
             }
         }
 
-        tryParseGenericTypeParameters();
+        tryParseGenericTypeArguments();
 
         listener.onScopedTypeReferenceNameEnd(namesStartContext, getLexerContext());
         

@@ -6,7 +6,7 @@ import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.objects.Keyword;
-import com.neaterbits.compiler.ast.objects.generics.TypeArgument;
+import com.neaterbits.compiler.ast.objects.generics.NamedGenericTypeParameter;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
@@ -15,12 +15,12 @@ import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ClassDefinition extends BaseClassDefinition {
 	
-    private final ASTList<TypeArgument> genericTypes;
+    private final ASTList<NamedGenericTypeParameter> genericTypes;
 	private final ASTSingle<Keyword> extendsKeyword;
 	private final ASTList<TypeReference> extendsClasses;
 	
 	public ClassDefinition(Context context, ClassModifiers modifiers, Keyword classKeyword, ClassDeclarationName name,
-	        List<TypeArgument> genericTypes,
+	        List<NamedGenericTypeParameter> genericTypes,
 			Keyword extendsKeyword, List<TypeReference> extendsClasses,
 			List<TypeReference> implementsInterfaces,
 			List<ComplexMemberDefinition> members) {
@@ -32,7 +32,7 @@ public final class ClassDefinition extends BaseClassDefinition {
 		this.extendsClasses = extendsClasses != null ? makeList(extendsClasses) : null;
 	}
 
-	public ASTList<TypeArgument> getGenericTypes() {
+	public ASTList<NamedGenericTypeParameter> getGenericTypes() {
         return genericTypes;
     }
 

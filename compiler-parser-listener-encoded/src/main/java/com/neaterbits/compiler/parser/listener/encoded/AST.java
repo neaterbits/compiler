@@ -235,10 +235,6 @@ public class AST {
             size = NAME_PRIMARY_SIZE;
             break;
 
-        case NAMED_GENERIC_TYPE:
-            size = NAMED_TYPE_ARGUMENT_SIZE;
-            break;
-            
         case TYPE_BOUND:
             size = TYPE_BOUND_SIZE;
             break;
@@ -249,6 +245,10 @@ public class AST {
             
         case CLASS_INSTANCE_CREATION_EXPRESSION_NAME:
             size = namesSize(astBuffer.getByte(index));
+            break;
+            
+        case NAMED_GENERIC_TYPE_PARAMETER:
+            size = NAMED_GENERIC_TYPE_PARAMETER_SIZE;
             break;
 
         default:
@@ -2411,7 +2411,7 @@ public class AST {
             int typeArgumentListStartContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onGenericClassDefinitionTypeListStart(typeArgumentListStartContext);
+        listener.onGenericTypeArgumentsStart(typeArgumentListStartContext);
     }
 
     static void encodeTypeArgumentListEnd(StringASTBuffer astBuffer) {
@@ -2424,42 +2424,63 @@ public class AST {
             Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onGenericClassDefinitionTypeListEnd(typeArgumentListStartContext, endContext);
+        listener.onGenericTypeArgumentsEnd(typeArgumentListStartContext, endContext);
     }
 
-    private static final int NAMED_TYPE_ARGUMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
-    
-    static void encodeNamedTypeArgumentStart(StringASTBuffer astBuffer, long name, int nameContext) {
+    static void encodeReferenceTypeArgumentStart(StringASTBuffer astBuffer) {
         
-        astBuffer.writeElementStart(ParseTreeElement.NAMED_GENERIC_TYPE);
-        astBuffer.writeStringRef(name);
-        astBuffer.writeContextRef(nameContext);
+        astBuffer.writeElementStart(ParseTreeElement.REFERENCE_GENERIC_TYPE_ARGUMENT);
     }
 
-    public static <COMPILATION_UNIT> void decodeNamedTypeArgumentStart(
+    public static <COMPILATION_UNIT> void decodeReferenceTypeArgumentStart(
             ASTBufferRead astBuffer,
-            int namedTypeArgumentStartContext,
+            int referenceTypeArgumentStartContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
 
 
-        listener.onGenericNamedTypeStart(
-                namedTypeArgumentStartContext,
-                astBuffer.getStringRef(index),
-                astBuffer.getContextRef(index + STRING_REF_SIZE));
+        listener.onGenericReferenceTypeArgumentStart(referenceTypeArgumentStartContext);
     }
 
-    static void encodeNamedTypeArgumentEnd(StringASTBuffer astBuffer) {
+    static void encodeReferenceTypeArgumentEnd(StringASTBuffer astBuffer) {
         
-        astBuffer.writeElementEnd(ParseTreeElement.NAMED_GENERIC_TYPE);
+        astBuffer.writeElementEnd(ParseTreeElement.REFERENCE_GENERIC_TYPE_ARGUMENT);
     }
 
-    public static <COMPILATION_UNIT> void decodeNamedTypeArgumentEnd(
-            int namedTypeArgumentStartContext,
+    public static <COMPILATION_UNIT> void decodeReferenceTypeArgumentEnd(
+            int referenceTypeArgumentStartContext,
             Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onGenericNamedTypeEnd(namedTypeArgumentStartContext, endContext);
+        listener.onGenericReferenceTypeArgumentEnd(referenceTypeArgumentStartContext, endContext);
+    }
+
+    static void encodeWildcardTypeArgumentStart(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.WILDCARD_GENERIC_TYPE_ARGUMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeWildcardTypeArgumentStart(
+            ASTBufferRead astBuffer,
+            int wildcardTypeArgumentStartContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+
+        listener.onGenericWildcardTypeArgumentStart(wildcardTypeArgumentStartContext);
+    }
+
+    static void encodeWildcardTypeArgumentEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.WILDCARD_GENERIC_TYPE_ARGUMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeWildcardTypeArgumentEnd(
+            int wildcardTypeArgumentStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onGenericWildcardTypeArgumentEnd(wildcardTypeArgumentStartContext, endContext);
     }
 
     private static final int TYPE_BOUND_SIZE = 1;
@@ -2506,6 +2527,51 @@ public class AST {
 
 
         listener.onGenericTypeParametersStart(parameterStartContext);
+    }
+
+    private static final int NAMED_GENERIC_TYPE_PARAMETER_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+
+    static void encodeNamedGenericTypeParameterStart(StringASTBuffer astBuffer, long name, int nameContext) {
+        
+        astBuffer.writeElementStart(ParseTreeElement.NAMED_GENERIC_TYPE_PARAMETER);
+        astBuffer.writeStringRef(name);
+        astBuffer.writeContextRef(nameContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeNamedGenericTypeParameterStart(
+            ASTBufferRead astBuffer,
+            int parameterStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int extendsKeywordContext;
+        
+        if (contextGetter != null) {
+            extendsKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            extendsKeywordContext = ContextRef.NONE;
+        }
+
+
+        listener.onNamedGenericTypeParameterStart(
+                parameterStartContext,
+                astBuffer.getStringRef(index),
+                extendsKeywordContext);
+    }
+
+    static void encodeNamedGenericTypeParameterEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.NAMED_GENERIC_TYPE_PARAMETER);
+    }
+
+    public static <COMPILATION_UNIT> void decodeNamedGenericTypeParameterEnd(
+            int parameterStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onNamedGenericTypeParameterEnd(parameterStartContext, endContext);
     }
 
     static void encodeGenericTypeParametersEnd(StringASTBuffer astBuffer) {

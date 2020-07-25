@@ -267,7 +267,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onGenericClassDefinitionTypeListStart(int startContext) {
+    public final void onGenericTypeArgumentsStart(int startContext) {
         
         writeStartElementContextRef(startContext);
 
@@ -275,35 +275,35 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onGenericNamedTypeStart(int startContext, long name, int nameContext) {
+    public final void onGenericReferenceTypeArgumentStart(int startContext) {
         
         writeStartElementContextRef(startContext);
         
-        AST.encodeNamedTypeArgumentStart(astBuffer, name, nameContext);
+        AST.encodeReferenceTypeArgumentStart(astBuffer);
     }
 
     @Override
-    public final void onGenericNamedTypeEnd(int startContext, Context endContext) {
+    public final void onGenericReferenceTypeArgumentEnd(int startContext, Context endContext) {
 
         writeEndElementContext(startContext, endContext);
 
-        AST.encodeNamedTypeArgumentEnd(astBuffer);
+        AST.encodeReferenceTypeArgumentEnd(astBuffer);
     }
 
     @Override
-    public final void onGenericWildcardTypeStart(int startContext) {
+    public final void onGenericWildcardTypeArgumentStart(int startContext) {
         
         writeStartElementContextRef(startContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeWildcardTypeArgumentStart(astBuffer);
     }
 
     @Override
-    public final void onGenericWildcardTypeEnd(int startContext, Context endContext) {
+    public final void onGenericWildcardTypeArgumentEnd(int startContext, Context endContext) {
         
         writeEndElementContext(startContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeWildcardTypeArgumentEnd(astBuffer);
     }
 
     @Override
@@ -323,7 +323,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onGenericClassDefinitionTypeListEnd(int startContext, Context endContext) {
+    public final void onGenericTypeArgumentsEnd(int startContext, Context endContext) {
         
         writeEndElementContext(startContext, endContext);
 
@@ -1380,11 +1380,19 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public void onGenericTypeParameter(int context, long name) {
+    public void onNamedGenericTypeParameterStart(int startContext, long name, int nameContext) {
 
-        writeLeafElementContextRef(context);
-        
-        throw new UnsupportedOperationException();
+        writeStartElementContextRef(startContext);
+
+        AST.encodeNamedGenericTypeParameterStart(astBuffer, name, nameContext);
+    }
+
+    @Override
+    public void onNamedGenericTypeParameterEnd(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
+
+        AST.encodeNamedGenericTypeParameterEnd(astBuffer);
     }
 
     @Override

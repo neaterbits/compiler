@@ -40,7 +40,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackFinallyBloc
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackForInit;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackForStatement;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackForUpdate;
-import com.neaterbits.compiler.parser.listener.stackbased.state.StackGenericTypeArgument;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackGenericParameter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackImplements;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackImport;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackInitializerVariableDeclarationElement;
@@ -51,7 +51,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackLambdaExpre
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackLambdaFormalParameters;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackMethodInvocation;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackNamedClass;
-import com.neaterbits.compiler.parser.listener.stackbased.state.StackNamedTypeArgument;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackReferenceTypeArgument;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackNamespace;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackNonScopedTypeReference;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackParameter;
@@ -93,6 +93,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NestedEx
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ParametersSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.StatementSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.TypeBoundSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.TypeReferenceSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableReferenceSetter;
@@ -161,10 +162,15 @@ public abstract class BaseParserListener<
 	    ANNOTATION,
 	    ANNOTATION_ELEMENT,
 		CLASS_MODIFIER_HOLDER,
-		GENERIC_TYPE,
-		NAMED_GENERIC_TYPE extends GENERIC_TYPE,
-	    WILDCARD_GENERIC_TYPE extends GENERIC_TYPE,
+		
+		GENERIC_TYPE_ARGUMENT,
+		REFERENCE_GENERIC_TYPE_ARGUMENT extends GENERIC_TYPE_ARGUMENT,
+	    WILDCARD_GENERIC_TYPE_ARGUMENT extends GENERIC_TYPE_ARGUMENT,
+	    
 	    TYPE_BOUND,
+	    
+	    NAMED_GENERIC_TYPE_PARAMETER,
+	    
 	    CLASS_DEFINITION extends TYPE_DEFINITION,
 		CONSTRUCTOR_MEMBER extends COMPLEX_MEMBER_DEFINITION,
 		CONSTRUCTOR_MODIFIER_HOLDER,
@@ -302,10 +308,11 @@ public abstract class BaseParserListener<
 		    ANNOTATION,
 		    ANNOTATION_ELEMENT,
 			CLASS_MODIFIER_HOLDER,
-			GENERIC_TYPE,
-	        NAMED_GENERIC_TYPE,
-	        WILDCARD_GENERIC_TYPE,
+			GENERIC_TYPE_ARGUMENT,
+			REFERENCE_GENERIC_TYPE_ARGUMENT,
+	        WILDCARD_GENERIC_TYPE_ARGUMENT,
 	        TYPE_BOUND,
+            NAMED_GENERIC_TYPE_PARAMETER,
 			CLASS_DEFINITION,
 			CONSTRUCTOR_MEMBER,
 			CONSTRUCTOR_MODIFIER_HOLDER,
@@ -758,54 +765,51 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-    public void onGenericClassDefinitionTypeListStart(int startContext) {
+    public void onGenericTypeArgumentsStart(int startContext) {
 
 	    final Context context = getStartContext(startContext);
         
         logEnter(context);
         
-        push(new StackGenericTypeArgumentList<GENERIC_TYPE>(getLogger()));
+        push(new StackGenericTypeArgumentList<GENERIC_TYPE_ARGUMENT>(getLogger()));
 
         logExit(context);
     }
 
+
     @Override
-    public void onGenericNamedTypeStart(int startContext, long name, int nameContext) {
+    public void onGenericReferenceTypeArgumentStart(int startContext) {
 
         final Context context = getStartContext(startContext);
         
         logEnter(context);
         
-        final NAME typeName = parseTreeFactory.createName(getOtherContext(nameContext), stringSource.asString(name));
-        
-        push(new StackNamedTypeArgument<NAME, TYPE_BOUND>(getLogger(), context, typeName));
+        push(new StackReferenceTypeArgument<>(getLogger()));
 
         logExit(context);
     }
 
     @Override
-    public void onGenericNamedTypeEnd(int startContext, Context endContext) {
-        
-        final Context context = getEndContext(startContext, endContext);
+    public void onGenericReferenceTypeArgumentEnd(int startContext, Context endContext) {
+
+        final Context context = getStartContext(startContext);
         
         logEnter(context);
         
-        final StackNamedTypeArgument<NAME, TYPE_BOUND> stackNamedTypeArgument = pop();
+        final StackReferenceTypeArgument<TYPE_REFERENCE> stackReferenceTypeArgument = pop();
         
-        final StackGenericTypeArgumentList<GENERIC_TYPE> list = get();
+        final StackGenericTypeArgumentList<GENERIC_TYPE_ARGUMENT> typeArgumentList = get();
         
-        final NAMED_GENERIC_TYPE namedType = parseTreeFactory.createNamedTypeArgument(
-                stackNamedTypeArgument.getContext(),
-                stackNamedTypeArgument.getName(),
-                stackNamedTypeArgument.getList());
+        final REFERENCE_GENERIC_TYPE_ARGUMENT typeArgument
+            = parseTreeFactory.createReferenceTypeArgument(context, stackReferenceTypeArgument.getTypeReference());
         
-        list.addTypeArgument(namedType);
-
+        typeArgumentList.addTypeArgument(typeArgument);
+        
         logExit(context);
     }
 
     @Override
-    public void onGenericWildcardTypeStart(int startContext) {
+    public void onGenericWildcardTypeArgumentStart(int startContext) {
         
         final Context context = getStartContext(startContext);
         
@@ -817,7 +821,7 @@ public abstract class BaseParserListener<
     }
 
     @Override
-    public void onGenericWildcardTypeEnd(int startContext, Context endContext) {
+    public void onGenericWildcardTypeArgumentEnd(int startContext, Context endContext) {
         
         final Context context = getEndContext(startContext, endContext);
         
@@ -825,9 +829,9 @@ public abstract class BaseParserListener<
 
         final StackWildcardTypeArgument<TYPE_BOUND> stackWildcardTypeArgument = pop();
         
-        final StackGenericTypeArgumentList<GENERIC_TYPE> list = get();
+        final StackGenericTypeArgumentList<GENERIC_TYPE_ARGUMENT> list = get();
         
-        final WILDCARD_GENERIC_TYPE wildcardType = parseTreeFactory.createWildcardTypeArgument(
+        final WILDCARD_GENERIC_TYPE_ARGUMENT wildcardType = parseTreeFactory.createWildcardTypeArgument(
                 stackWildcardTypeArgument.getContext(),
                 stackWildcardTypeArgument.getList());
         
@@ -862,32 +866,25 @@ public abstract class BaseParserListener<
                 stackTypeBound.getType(),
                 stackTypeBound.getTypeReference());
         
-        final StackGenericTypeArgument<TYPE_BOUND> typeArgument = get();
+        final TypeBoundSetter<TYPE_BOUND> typeArgument = get();
         
-        typeArgument.add(typeBound);
+        typeArgument.addTypeBound(typeBound);
         
         logExit(context);
     }
 
     @Override
-    public void onGenericClassDefinitionTypeListEnd(int startContext, Context endContext) {
+    public void onGenericTypeArgumentsEnd(int startContext, Context endContext) {
         
         final Context context = getEndContext(startContext, endContext);
         
         logEnter(context);
 
-        final StackGenericTypeArgumentList<GENERIC_TYPE> stackGenericTypeArgumentList = pop();
+        final StackGenericTypeArgumentList<GENERIC_TYPE_ARGUMENT> stackGenericTypeArgumentList = pop();
         
-        final StackNamedClass<
-                COMPLEX_MEMBER_DEFINITION,
-                COMPLEX_MEMBER_DEFINITION,
-                COMPLEX_MEMBER_DEFINITION,
-                COMPLEX_MEMBER_DEFINITION,
-                CLASS_MODIFIER_HOLDER,
-                GENERIC_TYPE,
-                TYPE_REFERENCE> stackNamedClass = get();
+        final StackTypeReference<GENERIC_TYPE_ARGUMENT> stackTypeReference = get();
                 
-        stackNamedClass.setGenericTypes(stackGenericTypeArgumentList.getList());
+        stackTypeReference.setTypeParameters(stackGenericTypeArgumentList.getList());
         
         logExit(context);
     }
@@ -905,7 +902,7 @@ public abstract class BaseParserListener<
 		        CONSTRUCTOR_MEMBER,
 		        CLASS_METHOD_MEMBER,
 		        CLASS_MODIFIER_HOLDER,
-		        GENERIC_TYPE,
+		        GENERIC_TYPE_ARGUMENT,
 		        TYPE_REFERENCE> stackNamedClass = get();
 
 		stackNamedClass.setExtendsKeyword(
@@ -949,7 +946,7 @@ public abstract class BaseParserListener<
                 CONSTRUCTOR_MEMBER,
                 CLASS_METHOD_MEMBER,
                 CLASS_MODIFIER_HOLDER,
-                GENERIC_TYPE,
+                GENERIC_TYPE_ARGUMENT,
                 TYPE_REFERENCE> stackNamedClass = get();
                 
         final TYPE_REFERENCE typeReference = parseTreeFactory.createUnresolvedTypeReference(
@@ -1062,7 +1059,7 @@ public abstract class BaseParserListener<
 		    COMPLEX_MEMBER_DEFINITION,
 		    COMPLEX_MEMBER_DEFINITION,
 		    CLASS_MODIFIER_HOLDER,
-		    GENERIC_TYPE,
+		    NAMED_GENERIC_TYPE_PARAMETER,
 		    TYPE_REFERENCE> entry = pop();
 
 		final List<COMPLEX_MEMBER_DEFINITION> classCode = entry.getList();
@@ -2258,7 +2255,7 @@ public abstract class BaseParserListener<
 		        CONSTRUCTOR_MEMBER,
 		        CLASS_METHOD_MEMBER,
 		        CLASS_MODIFIER_HOLDER,
-		        GENERIC_TYPE,
+		        GENERIC_TYPE_ARGUMENT,
 		        TYPE_REFERENCE> stackClass = mainStack.getFromTop(StackNamedClass.class);
 
 		final TYPE_REFERENCE typeReference = parseTreeFactory.createUnresolvedTypeReference(
@@ -3037,7 +3034,7 @@ public abstract class BaseParserListener<
 
         final TYPE_REFERENCE typeReference;
         
-        final StackNonScopedTypeReference<TYPE_REFERENCE> stackNonScopedTypeReference = pop();
+        final StackNonScopedTypeReference<GENERIC_TYPE_ARGUMENT> stackNonScopedTypeReference = pop();
 
         final ScopedName scopedName = ScopedName.makeScopedName(stackNonScopedTypeReference.getName());
 
@@ -3115,7 +3112,7 @@ public abstract class BaseParserListener<
 
         logEnter(context);
         
-        final StackScopedTypeReference<TYPE_REFERENCE> stackScopedTypeReference = pop();
+        final StackScopedTypeReference<GENERIC_TYPE_ARGUMENT> stackScopedTypeReference = pop();
         
         final TypeReferenceSetter<TYPE_REFERENCE> typeReferenceSetter = get();
 
@@ -3137,15 +3134,44 @@ public abstract class BaseParserListener<
 
         logEnter(context);
         
-        push(new StackGenericTypeParameters<TYPE_REFERENCE>(getLogger()));
+        push(new StackGenericTypeParameters<>(getLogger()));
 
         logExit(context);
     }
 
     @Override
-    public void onGenericTypeParameter(int context, long name) {
+    public void onNamedGenericTypeParameterStart(int startContext, long nameRef, int nameContext) {
 
-        throw new UnsupportedOperationException();
+        final Context context = getStartContext(startContext);
+        
+        logEnter(context);
+        
+        final NAME name = parseTreeFactory.createName(context, stringSource.asString(nameRef));
+        
+        push(new StackGenericParameter<NAME, TYPE_BOUND>(getLogger(), name));
+
+        logExit(context);
+    }
+
+    @Override
+    public void onNamedGenericTypeParameterEnd(int startContext, Context endContext) {
+        
+        final Context context = getEndContext(startContext, endContext);
+        
+        logEnter(context);
+        
+        final StackGenericParameter<NAME, TYPE_BOUND> stackNamedParameter = pop();
+        
+        final StackGenericTypeParameters<NAMED_GENERIC_TYPE_PARAMETER> list = get();
+        
+        final NAMED_GENERIC_TYPE_PARAMETER namedType = parseTreeFactory.createNamedTypeParameter(
+                context,
+                stackNamedParameter.getName(),
+                stackNamedParameter.getList());
+        
+        list.add(namedType);
+
+        logExit(context);
     }
 
     @Override
@@ -3154,13 +3180,20 @@ public abstract class BaseParserListener<
         final Context context = getEndContext(startContext, endContext);
 
         logEnter(context);
+
+        final StackGenericTypeParameters<NAMED_GENERIC_TYPE_PARAMETER> stackGenericTypeParameters = pop();
         
-        final StackGenericTypeParameters<TYPE_REFERENCE> stackGenericTypeParameters = pop();
-        
-        final StackTypeReference<TYPE_REFERENCE> stackTypeReference = get();
-        
-        stackTypeReference.setTypeParameters(stackGenericTypeParameters.getList());
-        
+        final StackNamedClass<
+            COMPLEX_MEMBER_DEFINITION,
+            COMPLEX_MEMBER_DEFINITION,
+            COMPLEX_MEMBER_DEFINITION,
+            COMPLEX_MEMBER_DEFINITION,
+            CLASS_MODIFIER_HOLDER,
+            NAMED_GENERIC_TYPE_PARAMETER,
+            TYPE_REFERENCE> entry = get();
+
+        entry.setGenericTypes(stackGenericTypeParameters.getList());
+
         logExit(context);
     }
 

@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
+import com.neaterbits.compiler.ast.objects.generics.TypeArgument;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
@@ -16,15 +17,15 @@ import com.neaterbits.compiler.util.model.ReferenceType;
 public final class UnresolvedTypeReference extends TypeReference {
 
 	private final ScopedName scopedName;
-	private final List<TypeReference> genericTypeParameters;
+	private final List<TypeArgument> genericTypeParameters;
 	private final ReferenceType referenceType;
 	private final int numPointers;
 
-	public UnresolvedTypeReference(Context context, ScopedName scopedName, Collection<TypeReference> genericTypeParameters, ReferenceType referenceType) {
+	public UnresolvedTypeReference(Context context, ScopedName scopedName, Collection<TypeArgument> genericTypeParameters, ReferenceType referenceType) {
 		this(context, scopedName, genericTypeParameters, referenceType, 0);
 	}
 
-	public UnresolvedTypeReference(Context context, ScopedName scopedName, Collection<TypeReference> genericTypeParameters, ReferenceType referenceType, int numPointers) {
+	public UnresolvedTypeReference(Context context, ScopedName scopedName, Collection<TypeArgument> genericTypeParameters, ReferenceType referenceType, int numPointers) {
 		super(context);
 
 		Objects.requireNonNull(scopedName);
@@ -53,7 +54,7 @@ public final class UnresolvedTypeReference extends TypeReference {
 		return scopedName;
 	}
 	
-	public List<TypeReference> getGenericTypeParameters() {
+	public List<TypeArgument> getGenericTypeParameters() {
         return genericTypeParameters;
     }
 

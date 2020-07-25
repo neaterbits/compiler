@@ -68,21 +68,21 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 
 	void onStrictfpClassModifier(int context);
 	
-	void onGenericClassDefinitionTypeListStart(int startContext);
+	void onGenericTypeArgumentsStart(int startContext);
 
-	void onGenericNamedTypeStart(int startContext, long name, int nameContext);
+	void onGenericReferenceTypeArgumentStart(int startContext);
 
-	void onGenericNamedTypeEnd(int startContext, Context endContext);
+	void onGenericReferenceTypeArgumentEnd(int startContext, Context endContext);
 
-	void onGenericWildcardTypeStart(int startContext);
+	void onGenericWildcardTypeArgumentStart(int startContext);
 
-    void onGenericWildcardTypeEnd(int startContext, Context endContext);
+    void onGenericWildcardTypeArgumentEnd(int startContext, Context endContext);
 
     void onTypeBoundStart(int context, TypeBoundType type);
     
     void onTypeBoundEnd(int startContext, Context endContext);
     
-	void onGenericClassDefinitionTypeListEnd(int startContext, Context endContext);
+	void onGenericTypeArgumentsEnd(int startContext, Context endContext);
 
 	void onClassExtendsStart(int startContext, long extendsKeyword, int extendsKeywordContext);
 
@@ -353,8 +353,10 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 
 	void onGenericTypeParametersStart(int startContext);
 	
-	void onGenericTypeParameter(int context, long name);
+    void onNamedGenericTypeParameterStart(int startContext, long name, int nameContext);
 
+    void onNamedGenericTypeParameterEnd(int startContext, Context endContext);
+	
 	void onGenericTypeParametersEnd(int startContext, Context endContext);
 
 	void onScopedTypeReferenceEnd(int startContext, Context endContext);
