@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-final class ParametersList {
+public final class ParametersList {
     
     private final int context;
     private final List<ExpressionCacheList> parameters;
@@ -19,6 +19,11 @@ final class ParametersList {
         Objects.requireNonNull(parameter);
         
         parameters.add(parameter);
+    }
+    
+    boolean isEmpty() {
+        
+        return parameters.isEmpty();
     }
     
     int count() {

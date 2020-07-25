@@ -10,7 +10,7 @@ import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.operator.Arity;
 import com.neaterbits.compiler.util.operator.Operator;
 
-final class ExpressionCacheList implements Names {
+public final class ExpressionCacheList implements Names {
     
     private final List<CachedPrimary> primaries;
     private final List<CachedOperator> operators;
@@ -146,6 +146,11 @@ final class ExpressionCacheList implements Names {
         operators.add(cachedOperator);
         
         cachedOperator.init(context, operator, precedence);
+    }
+    
+    public ParametersList getParametersAt(int index) {
+        
+        return primaries.get(index).getParametersList();
     }
 
     @Override

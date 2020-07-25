@@ -3,6 +3,8 @@ package com.neaterbits.compiler.parser.java;
 import java.io.IOException;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.recursive.cached.expressions.ExpressionCacheList;
+import com.neaterbits.compiler.parser.recursive.cached.expressions.ParametersList;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
@@ -66,7 +68,10 @@ abstract class JavaEnumLexerParser<COMPILATION_UNIT> extends JavaClassLexerParse
         }
         else if (valueToken == JavaToken.IDENTIFIER) {
             
-            parseEnumValue(writeCurContext(), getStringRef());
+            final int constantNameContext = writeCurContext();
+            final long constantName = getStringRef();
+            
+            parseEnumValue(constantNameContext, constantName);
 
             parseRemainingEnumValues();
         }
@@ -94,6 +99,7 @@ abstract class JavaEnumLexerParser<COMPILATION_UNIT> extends JavaClassLexerParse
             final JavaToken afterValueToken = lexer.lexSkipWS(AFTER_ENUM_VALUE_TOKENS);
             
             switch (afterValueToken) {
+            
             case COMMA:
                 final JavaToken valueToken = lexer.lexSkipWS(ENUM_VALUE_TOKENS);
                 
@@ -118,10 +124,41 @@ abstract class JavaEnumLexerParser<COMPILATION_UNIT> extends JavaClassLexerParse
         } while (!done);
     }
 
-    private void parseEnumValue(int enumConstantStartContext, long stringRef) {
+    private void parseEnumValue(int enumConstantStartContext, long stringRef) throws IOException, ParserException {
 
         listener.onEnumConstantStart(enumConstantStartContext, stringRef);
         
+        if (lexer.lexSkipWS(JavaToken.LPAREN) == JavaToken.LPAREN) {
+            // enum constructor
+            parseEnumConstantParameters(stringRef, enumConstantStartContext);
+        }
+
         listener.onEnumConstantEnd(enumConstantStartContext, getLexerContext());
+    }
+    
+    private void parseEnumConstantParameters(long name, int nameContext) throws IOException, ParserException {
+        
+        if (!baseClassExpressionCache.isEmpty()) {
+            throw new IllegalStateException();
+        }
+
+        baseClassExpressionCache.addName(nameContext, name);
+        baseClassExpressionCache.addMethodInvocationStart(writeCurContext());
+        
+        parseMethodInvocationParametersToCache();
+        
+        baseClassExpressionCache.addMethodInvocationEnd();
+        
+        final ExpressionCacheList methodinvocationList = baseClassExpressionCache.getStartingPoint();
+
+        if (methodinvocationList.count() != 1) {
+            throw new IllegalStateException();
+        }
+        
+        final ParametersList parameters = methodinvocationList.getParametersAt(0);
+
+        baseClassExpressionCache.getApplier().applyParameters(parameters, listener);
+        
+        baseClassExpressionCache.clear();
     }
 }

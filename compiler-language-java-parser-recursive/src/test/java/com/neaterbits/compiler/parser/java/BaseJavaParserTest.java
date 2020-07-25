@@ -22,6 +22,7 @@ import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
+import com.neaterbits.compiler.ast.objects.expression.ParameterList;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
@@ -615,6 +616,57 @@ public abstract class BaseJavaParserTest {
         assertThat(enumDefinition.getConstants().get(0).getNameString()).isEqualTo("VALUE");
         assertThat(enumDefinition.getConstants().get(1).getNameString()).isEqualTo("ANOTHER_VALUE");
         assertThat(enumDefinition.getConstants().get(2).getNameString()).isEqualTo("YET_ANOTHER");
+        assertThat(enumDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseEnumWithParameterValues() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "enum TestEnum { VALUE(1), ANOTHER_VALUE(\"string\", false), YET_ANOTHER(345); }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final EnumDefinition enumDefinition = (EnumDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(enumDefinition.getModifiers().isEmpty()).isTrue();
+
+        assertThat(enumDefinition.getNameString()).isEqualTo("TestEnum");
+        assertThat(enumDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(enumDefinition.getConstants().size()).isEqualTo(3);
+        assertThat(enumDefinition.getConstants().get(0).getNameString()).isEqualTo("VALUE");
+        
+        assertThat(enumDefinition.getConstants().get(0).getNameString()).isEqualTo("VALUE");
+        
+        final ParameterList valueParameters = enumDefinition.getConstants().get(0).getParameters();
+        assertThat(valueParameters.getList().size()).isEqualTo(1);
+        
+        final IntegerLiteral valueIntegerLiteral = (IntegerLiteral)valueParameters.getList().get(0);
+        assertThat(valueIntegerLiteral.getValue()).isEqualTo(1);
+        
+        assertThat(enumDefinition.getConstants().get(1).getNameString()).isEqualTo("ANOTHER_VALUE");
+        
+        final ParameterList anotherValueParameters = enumDefinition.getConstants().get(1).getParameters();
+        assertThat(anotherValueParameters.getList().size()).isEqualTo(2);
+        
+        final StringLiteral anotherValueStringLiteral = (StringLiteral)anotherValueParameters.getList().get(0);
+        assertThat(anotherValueStringLiteral.getValue()).isEqualTo("string");
+
+        final BooleanLiteral anotherValueBooleanLiteral = (BooleanLiteral)anotherValueParameters.getList().get(1);
+        assertThat(anotherValueBooleanLiteral.getValue()).isEqualTo(false);
+
+        final ParameterList yetAnotherValueParameters = enumDefinition.getConstants().get(2).getParameters();
+        assertThat(yetAnotherValueParameters.getList().size()).isEqualTo(1);
+
+        assertThat(enumDefinition.getConstants().get(2).getNameString()).isEqualTo("YET_ANOTHER");
+        assertThat(yetAnotherValueParameters.getList().size()).isEqualTo(1);
+        
+        final IntegerLiteral yetAnotherValueIntegerLiteral = (IntegerLiteral)yetAnotherValueParameters.getList().get(0);
+        assertThat(yetAnotherValueIntegerLiteral.getValue()).isEqualTo(345);
+
         assertThat(enumDefinition.getMembers()).isEmpty();
     }
 
