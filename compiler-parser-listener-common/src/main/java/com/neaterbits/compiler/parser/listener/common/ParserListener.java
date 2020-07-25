@@ -86,8 +86,6 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 
 	void onClassExtendsStart(int startContext, long extendsKeyword, int extendsKeywordContext);
 
-	void onClassExtendsNamePart(int context, long identifier);
-	
 	void onClassExtendsEnd(int startContext, Context endContext);
 
 	void onImplementsStart(int startContext, long implementsKeyword, int implementsKeywordContext);

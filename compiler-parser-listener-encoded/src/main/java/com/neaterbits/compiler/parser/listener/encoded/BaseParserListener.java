@@ -340,15 +340,6 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         AST.encodeClassExtendsStart(astBuffer, extendsKeyword, extendsKeywordContext);
     }
     
-
-    @Override
-    public void onClassExtendsNamePart(int leafContext, long identifier) {
-        
-        writeLeafElementContextRef(leafContext);
-
-        AST.encodeClassExtendsNamePart(astBuffer, identifier);
-    }
-
     @Override
     public void onClassExtendsEnd(int classExtendsStartContext, Context endContext) {
 

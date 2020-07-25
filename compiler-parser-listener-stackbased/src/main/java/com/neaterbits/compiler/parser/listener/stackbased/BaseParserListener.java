@@ -73,6 +73,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackGenericType
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackGenericTypeParameters;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTypeDefinition;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTypeReference;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackTypeReferenceSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackVariableDeclaration;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackVariableDeclarationList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackWhileStatement;
@@ -910,27 +911,10 @@ public abstract class BaseParserListener<
 		        stringSource.asString(extendsKeyword),
 		        getOtherContext(extendsKeywordContext));
 
-		final StackScopedName stackScopedName = new StackScopedName(getLogger());
-
-		push(stackScopedName);
+		push(new StackTypeReferenceSetter<>(getLogger()));
 
 		logExit(context);
 	}
-	
-	@Override
-    public void onClassExtendsNamePart(int leafContext, long identifier) {
-        
-	    final Context context = getLeafContext(leafContext);
-	    
-	    logEnter(context);
-
-	    final StackScopedName stackScopedName = get();
-    
-	    stackScopedName.addPart(stringSource.asString(identifier), context);
-	    
-	    logExit(context);
-	}
-	
 
     @Override
     public void onClassExtendsEnd(int startContext, Context endContext) {
@@ -939,7 +923,7 @@ public abstract class BaseParserListener<
         
         logEnter(context);
 
-        final StackScopedName stackScopedName = pop();
+        final StackTypeReferenceSetter<TYPE_REFERENCE> stackTypeReferenceSetter = pop();
 
         final StackNamedClass<
                 COMPLEX_MEMBER_DEFINITION,
@@ -950,13 +934,7 @@ public abstract class BaseParserListener<
                 GENERIC_TYPE_ARGUMENT,
                 TYPE_REFERENCE> stackNamedClass = get();
                 
-        final TYPE_REFERENCE typeReference = parseTreeFactory.createUnresolvedTypeReference(
-                stackScopedName.getNameContext(),
-                stackScopedName.getScopedName(),
-                null,
-                ReferenceType.NAME);
-
-        stackNamedClass.addExtendedClass(typeReference);
+        stackNamedClass.addExtendedClass(stackTypeReferenceSetter.getTypeReference());
         
         logExit(context);
     }
@@ -1291,7 +1269,7 @@ public abstract class BaseParserListener<
 
 		final CallableStackEntry<STATEMENT, PARAMETER, TYPE_REFERENCE> stackMethod = get();
 
-		stackMethod.setReturnType(stackReturnType.getType());
+		stackMethod.setReturnType(stackReturnType.getTypeReference());
 
 		logExit(context);
 	}

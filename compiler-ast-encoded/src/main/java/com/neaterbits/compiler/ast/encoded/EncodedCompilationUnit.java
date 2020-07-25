@@ -335,18 +335,6 @@ public final class EncodedCompilationUnit {
                 break;
             }
                 
-            case CLASS_EXTENDS_NAME_PART: {
-                final int leafContext = getLeafContext(parseTreeRef);
-
-                if (ref.isStart) {
-                    AST.decodeClassExtendsNamePart(astBuffer, leafContext, ref.index, listener);
-                }
-                else {
-                    throw new UnsupportedOperationException();
-                }
-                break;
-            }
-                
             case IMPLEMENTS: {
                 final int startContext = getStartContext(parseTreeRef);
 

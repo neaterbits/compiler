@@ -423,6 +423,36 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testParseClassExtendsGenericType() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass extends OtherClass<GenericType> { }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(classDefinition.getModifiers().isEmpty()).isTrue();
+        
+        assertThat(classDefinition.getNameString()).isEqualTo("TestClass");
+        assertThat(classDefinition.getExtendsClasses().size()).isEqualTo(1);
+        
+        final UnresolvedTypeReference type = checkIdentifierType(classDefinition.getExtendsClasses().get(0), "OtherClass");
+        assertThat(type.getGenericTypeParameters().size()).isEqualTo(1);
+        
+        final ReferenceTypeArgument typeArgument = (ReferenceTypeArgument)type.getGenericTypeParameters().get(0);
+        final UnresolvedTypeReference genericType = (UnresolvedTypeReference)typeArgument.getTypeReference();
+        assertThat(genericType.getScopedName().getScope()).isNull();
+        assertThat(genericType.getScopedName().getName()).isEqualTo("GenericType");
+
+        assertThat(classDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(classDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
     public void testParseClassImplementsOne() throws IOException, ParserException {
         
         final String source = "package com.test;\n"

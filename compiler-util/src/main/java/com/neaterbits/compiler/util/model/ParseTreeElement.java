@@ -40,7 +40,6 @@ public enum ParseTreeElement {
 	CLASS_DECLARATION_NAME(true),
 	
 	CLASS_EXTENDS(false),
-	CLASS_EXTENDS_NAME_PART(true),
 
 	IMPLEMENTS(false),
 	IMPLEMENTS_TYPE(false),

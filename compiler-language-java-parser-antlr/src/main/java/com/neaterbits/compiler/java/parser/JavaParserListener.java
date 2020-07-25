@@ -188,10 +188,6 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onClassExtendsStart(writeStartContext(context), extendsKeyword, writeOtherContext(extendsKeywordContext));
 	}
 	
-	public void onClassExtendsNamePart(Context context, long identifier) {
-	    delegate.onClassExtendsNamePart(writeLeafContext(context), identifier);
-	}
-	
 	public void onClassImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext) {
 		delegate.onImplementsStart(writeStartContext(context), implementsKeyword, writeOtherContext(implementsKeywordContext));
 	}

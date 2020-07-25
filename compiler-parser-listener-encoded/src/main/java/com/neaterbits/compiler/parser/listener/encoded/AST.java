@@ -106,10 +106,6 @@ public class AST {
             size = CLASS_EXTENDS_SIZE;
             break;
 
-        case CLASS_EXTENDS_NAME_PART:
-            size = CLASS_EXTENDS_NAME_PART_SIZE;
-            break;
-
         case IMPLEMENTS:
             size = CLASS_IMPLEMENTS_SIZE;
             break;
@@ -581,24 +577,6 @@ public class AST {
                 extendsKeywordContext);
     }
     
-    private static final int CLASS_EXTENDS_NAME_PART_SIZE = STRING_REF_SIZE;
-    
-    static void encodeClassExtendsNamePart(StringASTBuffer astBuffer, long identifier) {
-        
-        astBuffer.writeLeafElement(ParseTreeElement.CLASS_EXTENDS_NAME_PART);
-        
-        astBuffer.writeStringRef(identifier);
-    }
-
-    public static <COMPILATION_UNIT> void decodeClassExtendsNamePart(
-            ASTBufferRead astBuffer,
-            int leafContext,
-            int index,
-            ParserListener<COMPILATION_UNIT> listener) {
-        
-        listener.onClassExtendsNamePart(leafContext, astBuffer.getStringRef(index));
-    }
-
     static void encodeClassExtendsEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.CLASS_EXTENDS);

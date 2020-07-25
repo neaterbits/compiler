@@ -146,8 +146,8 @@ abstract class JavaClassLexerParser<COMPILATION_UNIT> extends JavaMemberLexerPar
                 extendsStartContext,
                 extendsKeyword,
                 extendsKeywordContext);
-        
-        parseScopedName(listener::onClassExtendsNamePart);
+
+        parseTypeReference();
         
         listener.onClassExtendsEnd(extendsStartContext, getLexerContext());
     }
