@@ -735,6 +735,63 @@ public abstract class BaseJavaParserTest {
         assertThat(enumDefinition.getMembers()).isEmpty();
     }
 
+
+    @Test
+    public void testWithMembers() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "enum TestEnum {"
+                + "    VALUE(1);"
+                
+                + "    private final int testValue;"
+                
+                + "    private TestEnum(int testValue) {"
+                + "        this.testValue = testValue;"
+                + "    }"
+                
+                + "    public int getTestValue() {"
+                + "        return testValue;"
+                + "    }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final EnumDefinition enumDefinition = (EnumDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(enumDefinition.getModifiers().isEmpty()).isTrue();
+
+        assertThat(enumDefinition.getNameString()).isEqualTo("TestEnum");
+        assertThat(enumDefinition.getImplementsInterfaces()).isEmpty();
+        assertThat(enumDefinition.getConstants().size()).isEqualTo(1);
+        assertThat(enumDefinition.getConstants().get(0).getNameString()).isEqualTo("VALUE");
+        
+        assertThat(enumDefinition.getMembers().size()).isEqualTo(3);
+        
+        final ClassDataFieldMember dataFieldMember = (ClassDataFieldMember)enumDefinition.getMembers().get(0);
+        checkScalarType(dataFieldMember.getType(), "int");
+        assertThat(dataFieldMember.getInitializers().size()).isEqualTo(1);
+        assertThat(dataFieldMember.getInitializers().get(0).getNameString()).isEqualTo("testValue");
+
+        final ConstructorMember constructorMember = (ConstructorMember)enumDefinition.getMembers().get(1);
+        assertThat(constructorMember.getConstructor().getNameString()).isEqualTo("TestEnum");
+        assertThat(constructorMember.getConstructor().getParameters().size()).isEqualTo(1);
+        checkScalarType(constructorMember.getConstructor().getParameters().get(0).getType(), "int");
+        assertThat(constructorMember.getConstructor().getParameters().get(0).getNameString()).isEqualTo("testValue");
+        
+        final ClassMethodMember methodMember = (ClassMethodMember)enumDefinition.getMembers().get(2);
+        assertThat(methodMember.getMethod().getNameString()).isEqualTo("getTestValue");
+        assertThat(methodMember.getMethod().getParameters().isEmpty()).isTrue();
+        assertThat(methodMember.getMethod().getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ReturnStatement returnStatement = (ReturnStatement)methodMember.getMethod().getBlock().getStatements().get(0);
+        
+        final NameReference nameReference = (NameReference)returnStatement.getExpression();
+        assertThat(nameReference.getName()).isEqualTo("testValue");
+    }
+
     @Test
     public void testParseMarkerAnnotation() throws IOException, ParserException {
         

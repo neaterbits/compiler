@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.ListStackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassFieldMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassMethodMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ConstructorMemberSetter;
@@ -18,6 +19,7 @@ public final class StackEnum<
 			TYPE_REFERENCE,
 			ANNOTATION,
 			CLASS_MODIFIER_HOLDER,
+			CLASS_FIELD_MEMBER extends COMPLEX_MEMBER_DEFINITION,
 			CONSTRUCTOR_MEMBER extends COMPLEX_MEMBER_DEFINITION,
 			CLASS_METHOD_MEMBER extends COMPLEX_MEMBER_DEFINITION,
 			ENUM_CONSTANT_DEFINITION
@@ -27,6 +29,7 @@ public final class StackEnum<
 	implements
 			ClassModifierSetter<CLASS_MODIFIER_HOLDER>,
 			InterfaceSetter<TYPE_REFERENCE>,
+			ClassFieldMemberSetter<CLASS_FIELD_MEMBER>,
 			ConstructorMemberSetter<CONSTRUCTOR_MEMBER>,
 			ClassMethodMemberSetter<CLASS_METHOD_MEMBER>,
 			AnnotationSetter<ANNOTATION> {
@@ -112,6 +115,14 @@ public final class StackEnum<
 	}
 
 	@Override
+    public void addField(CLASS_FIELD_MEMBER field) {
+
+	    Objects.requireNonNull(field);
+	    
+	    add(field);
+    }
+
+    @Override
 	public void addConstructorMember(CONSTRUCTOR_MEMBER constructor) {
 
 		Objects.requireNonNull(constructor);

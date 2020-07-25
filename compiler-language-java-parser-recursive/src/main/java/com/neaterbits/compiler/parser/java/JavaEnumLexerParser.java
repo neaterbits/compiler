@@ -44,9 +44,7 @@ abstract class JavaEnumLexerParser<COMPILATION_UNIT> extends JavaClassLexerParse
 
         parseEnumValues();
         
-        if (lexer.lexSkipWS(JavaToken.RBRACE) != JavaToken.RBRACE) {
-            throw lexer.unexpectedToken();
-        }
+        parseClassBody(className);
         
         listener.onEnumEnd(enumStartContext, getLexerContext());
     }

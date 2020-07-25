@@ -82,6 +82,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.base.ListStack;
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.StackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationElementSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassFieldMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassMethodMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ConstructorMemberSetter;
@@ -881,6 +882,7 @@ public abstract class BaseParserListener<
                 COMPLEX_MEMBER_DEFINITION,
                 COMPLEX_MEMBER_DEFINITION,
                 COMPLEX_MEMBER_DEFINITION,
+                COMPLEX_MEMBER_DEFINITION,
                 CLASS_MODIFIER_HOLDER,
                 GENERIC_TYPE,
                 TYPE_REFERENCE> stackNamedClass = get();
@@ -899,6 +901,7 @@ public abstract class BaseParserListener<
 
 		final StackNamedClass<
 		        COMPLEX_MEMBER_DEFINITION,
+		        CLASS_FIELD_MEMBER,
 		        CONSTRUCTOR_MEMBER,
 		        CLASS_METHOD_MEMBER,
 		        CLASS_MODIFIER_HOLDER,
@@ -942,6 +945,7 @@ public abstract class BaseParserListener<
 
         final StackNamedClass<
                 COMPLEX_MEMBER_DEFINITION,
+                CLASS_FIELD_MEMBER,
                 CONSTRUCTOR_MEMBER,
                 CLASS_METHOD_MEMBER,
                 CLASS_MODIFIER_HOLDER,
@@ -1056,6 +1060,7 @@ public abstract class BaseParserListener<
 		    COMPLEX_MEMBER_DEFINITION,
 		    COMPLEX_MEMBER_DEFINITION,
 		    COMPLEX_MEMBER_DEFINITION,
+		    COMPLEX_MEMBER_DEFINITION,
 		    CLASS_MODIFIER_HOLDER,
 		    GENERIC_TYPE,
 		    TYPE_REFERENCE> entry = pop();
@@ -1105,7 +1110,7 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-		final StackAnonymousClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER> entry = pop();
+		final StackAnonymousClass<COMPLEX_MEMBER_DEFINITION, CLASS_FIELD_MEMBER, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER> entry = pop();
 
 		final List<COMPLEX_MEMBER_DEFINITION> classCode = entry.getList();
 
@@ -1141,7 +1146,7 @@ public abstract class BaseParserListener<
 		final STATIC_INITIALIZER initializer = parseTreeFactory.createStaticInitializer(context,
 				stackStaticInitializer.getList());
 
-		final StackClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER> stackClass = get();
+		final StackClass<COMPLEX_MEMBER_DEFINITION, CLASS_FIELD_MEMBER, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER> stackClass = get();
 
 		stackClass.add(initializer);
 
@@ -1570,7 +1575,7 @@ public abstract class BaseParserListener<
 
 		final StackFieldDeclarationList<TYPE_REFERENCE, EXPRESSION, ANNOTATION, FIELD_MODIFIER_HOLDER> stackFieldDeclarationList = pop();
 
-		final StackClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER> stackClass = get();
+		final ClassFieldMemberSetter<COMPLEX_MEMBER_DEFINITION> fieldSetter = get();
 
 		final List<INITIALIZER_VARIABLE_DECLARATION_ELEMENT> initializers = new ArrayList<>(stackFieldDeclarationList.getList().size());
 		
@@ -1595,7 +1600,7 @@ public abstract class BaseParserListener<
                 initializers
             );
             
-        stackClass.add(dataFieldMember);
+        fieldSetter.addField(dataFieldMember);
 
 		logExit(context);
 	}
@@ -1776,6 +1781,7 @@ public abstract class BaseParserListener<
 		        TYPE_REFERENCE,
 		        ANNOTATION,
 		        CLASS_MODIFIER_HOLDER,
+		        CLASS_FIELD_MEMBER,
 		        CONSTRUCTOR_MEMBER,
 		        CLASS_METHOD_MEMBER,
 		        ENUM_CONSTANT_DEFINITION> stackEnum = get();
@@ -1797,6 +1803,7 @@ public abstract class BaseParserListener<
 		        TYPE_REFERENCE,
 		        ANNOTATION,
 		        CLASS_MODIFIER_HOLDER,
+		        CLASS_FIELD_MEMBER,
 		        CONSTRUCTOR_MEMBER,
 		        CLASS_METHOD_MEMBER,
 		        ENUM_CONSTANT_DEFINITION> stackEnum = pop();
@@ -2247,6 +2254,7 @@ public abstract class BaseParserListener<
 		@SuppressWarnings("unchecked")
 		final StackNamedClass<
 		        COMPLEX_MEMBER_DEFINITION,
+		        CLASS_FIELD_MEMBER,
 		        CONSTRUCTOR_MEMBER,
 		        CLASS_METHOD_MEMBER,
 		        CLASS_MODIFIER_HOLDER,

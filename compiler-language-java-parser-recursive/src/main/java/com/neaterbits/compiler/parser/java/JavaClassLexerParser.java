@@ -188,7 +188,7 @@ abstract class JavaClassLexerParser<COMPILATION_UNIT> extends JavaMemberLexerPar
         parseClassBody(implementingClassName);
     }
 
-    private void parseClassBody(long implementingClassName) throws IOException, ParserException {
+    final void parseClassBody(long implementingClassName) throws IOException, ParserException {
         
         boolean memberFound;
         
