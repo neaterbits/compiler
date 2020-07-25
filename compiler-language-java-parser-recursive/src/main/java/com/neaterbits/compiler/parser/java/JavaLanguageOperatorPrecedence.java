@@ -39,10 +39,6 @@ public final class JavaLanguageOperatorPrecedence implements LanguageOperatorPre
                 precedence = 12;
                 break;
             
-            case INCREMENT:
-            case DECREMENT:
-                throw new UnsupportedOperationException();
-                
             default:
                 throw new UnsupportedOperationException();
             }

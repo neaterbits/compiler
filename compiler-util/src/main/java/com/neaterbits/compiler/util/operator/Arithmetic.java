@@ -5,10 +5,7 @@ public enum Arithmetic implements NumericOperator {
 	MINUS(Arity.BINARY),
 	MULTIPLY(Arity.BINARY),
 	DIVIDE(Arity.BINARY),
-	MODULUS(Arity.BINARY),
-
-	INCREMENT(Arity.UNARY),
-	DECREMENT(Arity.UNARY);
+	MODULUS(Arity.BINARY);
 
 	private final Arity arity;
 
