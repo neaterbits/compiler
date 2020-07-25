@@ -112,4 +112,27 @@ abstract class BaseJavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<Jav
 
         expressionCache.clear();
     }
+    @FunctionalInterface
+    interface OnScopedNamePart {
+        
+        void onPart(int context, long identifier);
+    }
+    
+    final void parseScopedName(OnScopedNamePart processPart) throws IOException, ParserException {
+
+        for (;;) {
+            final JavaToken identifierToken = lexer.lexSkipWS(JavaToken.IDENTIFIER);
+            
+            processPart.onPart(writeCurContext(), lexer.getStringRef());
+            
+            if (identifierToken == JavaToken.NONE) {
+                throw lexer.unexpectedToken();
+            }
+            
+            final JavaToken periodToken = lexer.lexSkipWS(JavaToken.PERIOD);
+            if (periodToken == JavaToken.NONE) {
+                break;
+            }
+        }
+    }
 }
