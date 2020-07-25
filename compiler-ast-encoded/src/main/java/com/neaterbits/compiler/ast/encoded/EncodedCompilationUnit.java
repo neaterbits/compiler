@@ -347,35 +347,35 @@ public final class EncodedCompilationUnit {
                 break;
             }
                 
-            case CLASS_IMPLEMENTS: {
+            case IMPLEMENTS: {
                 final int startContext = getStartContext(parseTreeRef);
 
                 if (ref.isStart) {
-                    AST.decodeClassImplementsStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                    AST.decodeImplementsStart(astBuffer, startContext, contextGetter, ref.index, listener);
                 }
                 else {
-                    AST.decodeClassImplementsEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                    AST.decodeImplementsEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
             }
 
-            case CLASS_IMPLEMENTS_TYPE: {
+            case IMPLEMENTS_TYPE: {
                 final int startContext = getStartContext(parseTreeRef);
 
                 if (ref.isStart) {
-                    AST.decodeClassImplementsTypeStart(astBuffer, startContext, listener);
+                    AST.decodeImplementsTypeStart(astBuffer, startContext, listener);
                 }
                 else {
-                    AST.decodeClassImplementsTypeEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                    AST.decodeImplementsTypeEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
             }
 
-            case CLASS_IMPLEMENTS_NAME_PART: {
+            case IMPLEMENTS_NAME_PART: {
                 final int leafContext = getLeafContext(parseTreeRef);
 
                 if (ref.isStart) {
-                    AST.decodeClassImplementsNamePart(astBuffer, leafContext, ref.index, listener);
+                    AST.decodeImplementsNamePart(astBuffer, leafContext, ref.index, listener);
                 }
                 else {
                     throw new UnsupportedOperationException();

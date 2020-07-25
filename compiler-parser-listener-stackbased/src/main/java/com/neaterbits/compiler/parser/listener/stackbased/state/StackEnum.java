@@ -9,6 +9,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Annotati
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassMethodMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ConstructorMemberSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.InterfaceSetter;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
@@ -25,6 +26,7 @@ public final class StackEnum<
 	extends ListStackEntry<COMPLEX_MEMBER_DEFINITION>
 	implements
 			ClassModifierSetter<CLASS_MODIFIER_HOLDER>,
+			InterfaceSetter<TYPE_REFERENCE>,
 			ConstructorMemberSetter<CONSTRUCTOR_MEMBER>,
 			ClassMethodMemberSetter<CLASS_METHOD_MEMBER>,
 			AnnotationSetter<ANNOTATION> {
@@ -100,8 +102,11 @@ public final class StackEnum<
 		return implementedInterfaces;
 	}
 
-	public void addImplementedInterface(TYPE_REFERENCE implementedInterface) {
-		Objects.requireNonNull(implementedInterface);
+	
+	@Override
+    public void addImplementedInterface(String implementsKeyword, Context implementsKeywordContext, TYPE_REFERENCE implementedInterface) {
+
+	    Objects.requireNonNull(implementedInterface);
 
 		implementedInterfaces.add(implementedInterface);
 	}

@@ -87,6 +87,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassMod
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ConstructorMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ExpressionSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.InterfaceMethodMemberSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.InterfaceSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NestedExpressionSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ParametersSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
@@ -959,7 +960,7 @@ public abstract class BaseParserListener<
     }
 
     @Override
-	public final void onClassImplementsStart(int startContext, long implementsKeyword, int implementsKeywordContext) {
+	public final void onImplementsStart(int startContext, long implementsKeyword, int implementsKeywordContext) {
 
         final Context context = getStartContext(startContext);
         
@@ -971,7 +972,7 @@ public abstract class BaseParserListener<
 	}
     
     @Override
-    public void onClassImplementsTypeStart(int startContext) {
+    public void onImplementsTypeStart(int startContext) {
 
         final Context context = getStartContext(startContext);
         
@@ -985,7 +986,7 @@ public abstract class BaseParserListener<
     }
 
     @Override
-    public void onClassImplementsNamePart(int startContext, long identifier) {
+    public void onImplementsNamePart(int startContext, long identifier) {
 
         final Context context = getStartContext(startContext);
         
@@ -999,7 +1000,7 @@ public abstract class BaseParserListener<
     }
     
     @Override
-    public void onClassImplementsTypeEnd(int startContext, Context endContext) {
+    public void onImplementsTypeEnd(int startContext, Context endContext) {
 
         final Context context = getEndContext(startContext, endContext);
         
@@ -1017,7 +1018,7 @@ public abstract class BaseParserListener<
     }
 
     @Override
-    public void onClassImplementsEnd(int startContext, Context endContext) {
+    public void onImplementsEnd(int startContext, Context endContext) {
         
         final Context context = getEndContext(startContext, endContext);
         
@@ -1025,13 +1026,7 @@ public abstract class BaseParserListener<
 
         final StackImplements stackImplements = pop();
 
-        final StackNamedClass<
-                COMPLEX_MEMBER_DEFINITION,
-                CONSTRUCTOR_MEMBER,
-                CLASS_METHOD_MEMBER,
-                CLASS_MODIFIER_HOLDER,
-                GENERIC_TYPE,
-                TYPE_REFERENCE> stackNamedClass = get();
+        final InterfaceSetter<TYPE_REFERENCE> stackNamedClass = get();
         
         for (ContextScopedName contextScopedName : stackImplements.getList()) {
             
@@ -1745,33 +1740,6 @@ public abstract class BaseParserListener<
 		        getOtherContext(enumKeywordContext),
 		        stringSource.asString(name),
 		        getOtherContext(nameContext)));
-
-		logExit(context);
-	}
-
-	@Override
-	public final void onEnumImplements(int otherContext, ScopedName interfaceName) {
-	    
-	    final Context context = getOtherContext(otherContext);
-
-		logEnter(context);
-
-		final StackEnum<
-		        COMPLEX_MEMBER_DEFINITION,
-		        TYPE_REFERENCE,
-		        ANNOTATION,
-		        CLASS_MODIFIER_HOLDER,
-		        CONSTRUCTOR_MEMBER,
-		        CLASS_METHOD_MEMBER,
-		        ENUM_CONSTANT_DEFINITION> stackEnum = get();
-
-        final TYPE_REFERENCE typeReference = parseTreeFactory.createUnresolvedTypeReference(
-                context,
-                interfaceName,
-                null,
-                ReferenceType.NAME);
-		        
-		stackEnum.addImplementedInterface(typeReference);
 
 		logExit(context);
 	}

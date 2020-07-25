@@ -90,15 +90,15 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onClassExtendsEnd(int startContext, Context endContext);
 
-	void onClassImplementsStart(int startContext, long implementsKeyword, int implementsKeywordContext);
+	void onImplementsStart(int startContext, long implementsKeyword, int implementsKeywordContext);
 	
-	void onClassImplementsTypeStart(int context);
+	void onImplementsTypeStart(int context);
 
-    void onClassImplementsNamePart(int context, long identifier);
+    void onImplementsNamePart(int context, long identifier);
     
-    void onClassImplementsTypeEnd(int startContext, Context endContext);
+    void onImplementsTypeEnd(int startContext, Context endContext);
     
-    void onClassImplementsEnd(int startContext, Context endContext);
+    void onImplementsEnd(int startContext, Context endContext);
 	
 	void onClassEnd(int startContext, Context endContext);
 
@@ -185,8 +185,6 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onEnumStart(int startContext, long enumKeyword, int enumKeywordContext, long name,
 			int nameContext);
-	
-	void onEnumImplements(int context, ScopedName interfaceName);
 	
 	void onEnumConstantStart(int startContext, long name);
 	

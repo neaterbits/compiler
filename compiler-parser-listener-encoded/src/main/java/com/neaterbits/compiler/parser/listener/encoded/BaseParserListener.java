@@ -358,45 +358,45 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onClassImplementsStart(int classImplementsStartContext, long implementsKeyword, int implementsKeywordContext) {
+    public final void onImplementsStart(int classImplementsStartContext, long implementsKeyword, int implementsKeywordContext) {
 
         verifyNotSameContext(classImplementsStartContext, implementsKeywordContext);
         
         writeStartElementContextRef(classImplementsStartContext);
         
-        AST.encodeClassImplementsStart(astBuffer, implementsKeyword, implementsKeywordContext);
+        AST.encodeImplementsStart(astBuffer, implementsKeyword, implementsKeywordContext);
     }
     
     @Override
-    public void onClassImplementsTypeStart(int classImplementsTypeStartContext) {
+    public void onImplementsTypeStart(int classImplementsTypeStartContext) {
 
         writeStartElementContextRef(classImplementsTypeStartContext);
         
-        AST.encodeClassImplementsTypeStart(astBuffer);
+        AST.encodeImplementsTypeStart(astBuffer);
     }
 
     @Override
-    public void onClassImplementsNamePart(int leafContext, long identifier) {
+    public void onImplementsNamePart(int leafContext, long identifier) {
         
         writeLeafElementContextRef(leafContext);
 
-        AST.encodeClassImplementsNamePart(astBuffer, identifier);
+        AST.encodeImplementsNamePart(astBuffer, identifier);
     }
 
     @Override
-    public void onClassImplementsTypeEnd(int classImplementsTypeEndContext, Context endContext) {
+    public void onImplementsTypeEnd(int classImplementsTypeEndContext, Context endContext) {
 
         writeEndElementContext(classImplementsTypeEndContext, endContext);
         
-        AST.encodeClassImplementsTypeEnd(astBuffer);
+        AST.encodeImplementsTypeEnd(astBuffer);
     }
 
     @Override
-    public void onClassImplementsEnd(int classImplementsStartContext, Context endContext) {
+    public void onImplementsEnd(int classImplementsStartContext, Context endContext) {
 
         writeEndElementContext(classImplementsStartContext, endContext);
         
-        AST.encodeClassImplementsEnd(astBuffer);
+        AST.encodeImplementsEnd(astBuffer);
     }
 
     @Override
@@ -721,12 +721,6 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         writeStartElementContextRef(enumStartContext);
 
         AST.encodeEnumStart(astBuffer, enumKeyword, enumKeywordContext, name, nameContext);
-    }
-
-    @Override
-    public final void onEnumImplements(int context, ScopedName interfaceName) {
-
-        throw new UnsupportedOperationException();
     }
 
     @Override

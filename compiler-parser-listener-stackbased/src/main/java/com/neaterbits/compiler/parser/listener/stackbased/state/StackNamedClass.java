@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassModifierSetter;
+import com.neaterbits.compiler.parser.listener.stackbased.state.setters.InterfaceSetter;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
@@ -17,7 +18,7 @@ public final class StackNamedClass<
 		TYPE_REFERENCE>
 
 	extends StackClass<COMPLEX_MEMBER_DEFINITION, CONSTRUCTOR_MEMBER, CLASS_METHOD_MEMBER>
-    implements ClassModifierSetter<CLASS_MODIFIER_HOLDER> {
+    implements ClassModifierSetter<CLASS_MODIFIER_HOLDER>, InterfaceSetter<TYPE_REFERENCE> {
 
 	private final String classKeyword;
 	private final Context classKeywordContext;
@@ -123,6 +124,7 @@ public final class StackNamedClass<
 		extendedClasses.add(extendedClass);
 	}
 
+	@Override
 	public void addImplementedInterface(String implementsKeyword, Context implementsKeywordContext, TYPE_REFERENCE implementedInterface) {
 		Objects.requireNonNull(implementedInterface);
 

@@ -110,12 +110,12 @@ public class AST {
             size = CLASS_EXTENDS_NAME_PART_SIZE;
             break;
 
-        case CLASS_IMPLEMENTS:
+        case IMPLEMENTS:
             size = CLASS_IMPLEMENTS_SIZE;
             break;
 
-        case CLASS_IMPLEMENTS_NAME_PART:
-            size = CLASS_IMPLEMENTS_NAME_PART_SIZE;
+        case IMPLEMENTS_NAME_PART:
+            size = IMPLEMENTS_NAME_PART_SIZE;
             break;
             
         case ENUM_DEFINITION:
@@ -611,14 +611,14 @@ public class AST {
 
     private static final int CLASS_IMPLEMENTS_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeClassImplementsStart(StringASTBuffer astBuffer, long implementsKeyword, int implementsKeywordContext) {
+    static void encodeImplementsStart(StringASTBuffer astBuffer, long implementsKeyword, int implementsKeywordContext) {
 
-        astBuffer.writeElementStart(ParseTreeElement.CLASS_IMPLEMENTS);
+        astBuffer.writeElementStart(ParseTreeElement.IMPLEMENTS);
         astBuffer.writeStringRef(implementsKeyword);
         astBuffer.writeContextRef(implementsKeywordContext);
     }
     
-    public static <COMPILATION_UNIT> void decodeClassImplementsStart(
+    public static <COMPILATION_UNIT> void decodeImplementsStart(
             ASTBufferRead astBuffer,
             int classImplementsStartContext,
             ContextGetter contextGetter,
@@ -634,71 +634,71 @@ public class AST {
             implementsKeywordContext = ContextRef.NONE;
         }
 
-        listener.onClassImplementsStart(
+        listener.onImplementsStart(
                 classImplementsStartContext,
                 astBuffer.getStringRef(index),
                 implementsKeywordContext);
     }
 
-    static void encodeClassImplementsTypeStart(StringASTBuffer astBuffer) {
+    static void encodeImplementsTypeStart(StringASTBuffer astBuffer) {
 
-        astBuffer.writeElementStart(ParseTreeElement.CLASS_IMPLEMENTS_TYPE);
+        astBuffer.writeElementStart(ParseTreeElement.IMPLEMENTS_TYPE);
     
     }
 
-    static void encodeClassImplementsTypeEnd(StringASTBuffer astBuffer) {
+    static void encodeImplementsTypeEnd(StringASTBuffer astBuffer) {
 
-        astBuffer.writeElementEnd(ParseTreeElement.CLASS_IMPLEMENTS_TYPE);
+        astBuffer.writeElementEnd(ParseTreeElement.IMPLEMENTS_TYPE);
     
     }
 
-    private static final int CLASS_IMPLEMENTS_NAME_PART_SIZE = STRING_REF_SIZE;
+    private static final int IMPLEMENTS_NAME_PART_SIZE = STRING_REF_SIZE;
     
-    static void encodeClassImplementsNamePart(StringASTBuffer astBuffer, long identifier) {
+    static void encodeImplementsNamePart(StringASTBuffer astBuffer, long identifier) {
         
-        astBuffer.writeLeafElement(ParseTreeElement.CLASS_IMPLEMENTS_NAME_PART);
+        astBuffer.writeLeafElement(ParseTreeElement.IMPLEMENTS_NAME_PART);
         
         astBuffer.writeStringRef(identifier);
     }
 
-    public static <COMPILATION_UNIT> void decodeClassImplementsNamePart(
+    public static <COMPILATION_UNIT> void decodeImplementsNamePart(
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
             ParserListener<COMPILATION_UNIT> listener) {
         
-        listener.onClassImplementsNamePart(leafContext, astBuffer.getStringRef(index));
+        listener.onImplementsNamePart(leafContext, astBuffer.getStringRef(index));
     }
 
-    static void encodeClassImplementsEnd(StringASTBuffer astBuffer) {
+    static void encodeImplementsEnd(StringASTBuffer astBuffer) {
 
-        astBuffer.writeElementEnd(ParseTreeElement.CLASS_IMPLEMENTS);
+        astBuffer.writeElementEnd(ParseTreeElement.IMPLEMENTS);
     }
     
-    public static <COMPILATION_UNIT> void decodeClassImplementsEnd(
+    public static <COMPILATION_UNIT> void decodeImplementsEnd(
             ASTBufferRead astBuffer,
             int classImplementsStartContext,
             Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onClassImplementsEnd(classImplementsStartContext, endContext);
+        listener.onImplementsEnd(classImplementsStartContext, endContext);
     }
 
-    public static <COMPILATION_UNIT> void decodeClassImplementsTypeStart(
+    public static <COMPILATION_UNIT> void decodeImplementsTypeStart(
             ASTBufferRead astBuffer,
             int classImplementsTypeStartContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onClassImplementsTypeStart(classImplementsTypeStartContext);
+        listener.onImplementsTypeStart(classImplementsTypeStartContext);
     }
 
-    public static <COMPILATION_UNIT> void decodeClassImplementsTypeEnd(
+    public static <COMPILATION_UNIT> void decodeImplementsTypeEnd(
             ASTBufferRead astBuffer,
             int classImplementsTypeStartContext,
             Context endContext,
             ParserListener<COMPILATION_UNIT> listener) {
 
-        listener.onClassImplementsTypeEnd(classImplementsTypeStartContext, endContext);
+        listener.onImplementsTypeEnd(classImplementsTypeStartContext, endContext);
     }
 
     static void encodeFieldDeclarationStart(StringASTBuffer astBuffer) {

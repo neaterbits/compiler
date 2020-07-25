@@ -63,8 +63,8 @@ abstract class JavaClassLexerParser<COMPILATION_UNIT> extends JavaMemberLexerPar
             
         case IMPLEMENTS:
             parseImplements();
-            
-            parseClassBody(implementingClassName);
+         
+            parseClassBodyWithLBrace(implementingClassName);
             break;
             
         case LBRACE:
@@ -123,7 +123,7 @@ abstract class JavaClassLexerParser<COMPILATION_UNIT> extends JavaMemberLexerPar
         case IMPLEMENTS:
             parseImplements();
             
-            parseClassBody(implementingClassName);
+            parseClassBodyWithLBrace(implementingClassName);
             break;
             
         case LBRACE:
@@ -152,44 +152,40 @@ abstract class JavaClassLexerParser<COMPILATION_UNIT> extends JavaMemberLexerPar
         listener.onClassExtendsEnd(extendsStartContext, getLexerContext());
     }
     
-    private static final JavaToken [] AFTER_IMPLEMENTS_TYPE = new JavaToken [] {
-            JavaToken.LBRACE,
-            JavaToken.COMMA
-    };
-    
-    private void parseImplements() throws IOException, ParserException {
+    final void parseImplements() throws IOException, ParserException {
         
         final int implementsStartContext = writeCurContext();
         final int implementsKeywordContext = writeContext(implementsStartContext);
         
         final long implementsKeyword = lexer.getStringRef();
         
-        listener.onClassImplementsStart(implementsStartContext, implementsKeyword, implementsKeywordContext);
+        listener.onImplementsStart(implementsStartContext, implementsKeyword, implementsKeywordContext);
     
         for (;;) {
 
             final int implementsTypeStartContext = writeCurContext();
             
-            listener.onClassImplementsTypeStart(implementsTypeStartContext);
+            listener.onImplementsTypeStart(implementsTypeStartContext);
 
-            parseScopedName(listener::onClassImplementsNamePart);
+            parseScopedName(listener::onImplementsNamePart);
 
-            listener.onClassImplementsTypeEnd(implementsTypeStartContext, getLexerContext());
+            listener.onImplementsTypeEnd(implementsTypeStartContext, getLexerContext());
 
-            final JavaToken afterType = lexer.lexSkipWS(AFTER_IMPLEMENTS_TYPE);
-            
-            if (afterType == JavaToken.LBRACE) {
+            if (lexer.lexSkipWS(JavaToken.COMMA) != JavaToken.COMMA) {
                 break;
-            }
-            else if (afterType == JavaToken.COMMA) {
-                // Continue
-            }
-            else {
-                throw lexer.unexpectedToken();
             }
         }
         
-        listener.onClassImplementsEnd(implementsStartContext, getLexerContext());
+        listener.onImplementsEnd(implementsStartContext, getLexerContext());
+    }
+
+    private void parseClassBodyWithLBrace(long implementingClassName) throws IOException, ParserException {
+        
+        if (lexer.lexSkipWS(JavaToken.LBRACE) != JavaToken.LBRACE) {
+            throw lexer.unexpectedToken();
+        }
+
+        parseClassBody(implementingClassName);
     }
 
     private void parseClassBody(long implementingClassName) throws IOException, ParserException {

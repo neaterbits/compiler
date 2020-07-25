@@ -619,6 +619,70 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testParseEnumImplementsOneInterface() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "enum TestEnum implements SomeInterface { VALUE, ANOTHER_VALUE, YET_ANOTHER; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final EnumDefinition enumDefinition = (EnumDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(enumDefinition.getModifiers().isEmpty()).isTrue();
+
+        assertThat(enumDefinition.getNameString()).isEqualTo("TestEnum");
+        
+        assertThat(enumDefinition.getImplementsInterfaces().size()).isEqualTo(1);
+        
+        final UnresolvedTypeReference type = (UnresolvedTypeReference)enumDefinition.getImplementsInterfaces().get(0);
+        assertThat(type.getScopedName().getScope()).isNull();
+        assertThat(type.getScopedName().getName()).isEqualTo("SomeInterface");
+        
+        assertThat(enumDefinition.getConstants().size()).isEqualTo(3);
+        assertThat(enumDefinition.getConstants().get(0).getNameString()).isEqualTo("VALUE");
+        assertThat(enumDefinition.getConstants().get(1).getNameString()).isEqualTo("ANOTHER_VALUE");
+        assertThat(enumDefinition.getConstants().get(2).getNameString()).isEqualTo("YET_ANOTHER");
+        assertThat(enumDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
+    public void testParseEnumImplementsMultiple() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "enum TestEnum implements SomeInterface, com.test.AnotherInterface { VALUE, ANOTHER_VALUE, YET_ANOTHER; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final EnumDefinition enumDefinition = (EnumDefinition)compilationUnit.getCode().get(1);
+        
+        assertThat(enumDefinition.getModifiers().isEmpty()).isTrue();
+
+        assertThat(enumDefinition.getNameString()).isEqualTo("TestEnum");
+        
+        assertThat(enumDefinition.getImplementsInterfaces().size()).isEqualTo(2);
+
+        UnresolvedTypeReference type = (UnresolvedTypeReference)enumDefinition.getImplementsInterfaces().get(0);
+        assertThat(type.getScopedName().getScope()).isNull();
+        assertThat(type.getScopedName().getName()).isEqualTo("SomeInterface");
+        
+        type = (UnresolvedTypeReference)enumDefinition.getImplementsInterfaces().get(1);
+        assertThat(type.getScopedName().getScope()).isEqualTo(Arrays.asList("com", "test"));
+        assertThat(type.getScopedName().getName()).isEqualTo("AnotherInterface");
+        
+        assertThat(enumDefinition.getConstants().size()).isEqualTo(3);
+        assertThat(enumDefinition.getConstants().get(0).getNameString()).isEqualTo("VALUE");
+        assertThat(enumDefinition.getConstants().get(1).getNameString()).isEqualTo("ANOTHER_VALUE");
+        assertThat(enumDefinition.getConstants().get(2).getNameString()).isEqualTo("YET_ANOTHER");
+        assertThat(enumDefinition.getMembers()).isEmpty();
+    }
+
+    @Test
     public void testParseMarkerAnnotation() throws IOException, ParserException {
         
         final String source = "package com.test;\n"

@@ -193,11 +193,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 	
 	public void onClassImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext) {
-		delegate.onClassImplementsStart(writeStartContext(context), implementsKeyword, writeOtherContext(implementsKeywordContext));
+		delegate.onImplementsStart(writeStartContext(context), implementsKeyword, writeOtherContext(implementsKeywordContext));
 	}
 
     public void onClassImplementsNamePart(Context context, long identifier) {
-        delegate.onClassImplementsNamePart(writeOtherContext(context), identifier);
+        delegate.onImplementsNamePart(writeOtherContext(context), identifier);
     }
 	
 	public void onClassEnd(Context context) {
@@ -396,9 +396,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		        writeOtherContext(nameContext));
 	}
 
-	public void onEnumImplements(Context context, ScopedName interfaceName) {
-		delegate.onEnumImplements(writeOtherContext(context), interfaceName);
-	}
+    public void onEnumImplementsStart(Context context, long implementsKeyword, Context implementsKeywordContext) {
+        delegate.onImplementsStart(writeStartContext(context), implementsKeyword, writeOtherContext(implementsKeywordContext));
+    }
+
+    public void onEnumImplementsNamePart(Context context, long identifier) {
+        delegate.onImplementsNamePart(writeOtherContext(context), identifier);
+    }
 	
 	public void onEnumConstantStart(Context context, long name) {
 		delegate.onEnumConstantStart(writeStartContext(context), name);

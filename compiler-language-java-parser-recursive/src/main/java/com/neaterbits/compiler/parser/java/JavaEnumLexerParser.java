@@ -31,6 +31,11 @@ abstract class JavaEnumLexerParser<COMPILATION_UNIT> extends JavaClassLexerParse
         // Initial context of class is either class visibility or subclassing or class keyword
         listener.onEnumStart(enumStartContext, enumKeyword, enumKeywordContext, className, classNameContext);
         
+        // Implements?
+        if (lexer.lexSkipWS(JavaToken.IMPLEMENTS) == JavaToken.IMPLEMENTS) {
+            parseImplements();
+        }
+        
         if (lexer.lexSkipWS(JavaToken.LBRACE) != JavaToken.LBRACE) {
             throw lexer.unexpectedToken();
         }
