@@ -37,4 +37,26 @@ public class ASTMutability implements VariableModifier, FieldModifier {
 	public <T, R> R visit(FieldModifierVisitor<T, R> visitor, T param) {
 		return visitor.onFieldMutability(this, param);
 	}
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((mutability == null) ? 0 : mutability.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ASTMutability other = (ASTMutability) obj;
+        if (mutability != other.mutability)
+            return false;
+        return true;
+    }
 }

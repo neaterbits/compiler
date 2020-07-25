@@ -1956,6 +1956,62 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testMethodOneIdentifierLocalVariableWithModifier() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { final SomeType a; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final VariableDeclarationStatement statement = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+        checkIdentifierType(statement.getTypeReference(), "SomeType");
+        
+        assertThat(statement.getModifiers().count()).isEqualTo(1);
+        assertThat(statement.getModifiers().hasModifier(ASTMutability.VALUE_OR_REF_IMMUTABLE)).isTrue();
+        
+        assertThat(statement.getDeclarations().size()).isEqualTo(1);
+        assertThat(statement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+    }
+
+    @Test
+    public void testMethodOneIdentifierLocalVariableWithModifierAndInitializer() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { final SomeType a = new SomeType(); } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final VariableDeclarationStatement statement = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+        checkIdentifierType(statement.getTypeReference(), "SomeType");
+        
+        assertThat(statement.getModifiers().count()).isEqualTo(1);
+        assertThat(statement.getModifiers().hasModifier(ASTMutability.VALUE_OR_REF_IMMUTABLE)).isTrue();
+        
+        assertThat(statement.getDeclarations().size()).isEqualTo(1);
+        assertThat(statement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        
+        final ClassInstanceCreationExpression expression = (ClassInstanceCreationExpression)statement.getDeclarations().get(0).getInitializer();
+     
+        checkIdentifierType(expression.getTypeReference(), "SomeType");
+    }
+
+    @Test
     public void testMethodOneScopedLocalVariable() throws IOException, ParserException {
         
         final String source = "package com.test;\n"

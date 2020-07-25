@@ -4,10 +4,13 @@ import java.io.IOException;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ExpressionCache;
+import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
+import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
@@ -140,44 +143,69 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         
         return result;
     }
-
+    
     private boolean parseExpressionOrVariableDeclaration() throws IOException, ParserException {
         
         final boolean foundStatement;
-        
-        final int startContext = writeCurContext();
-        
-        final boolean expressionFound = parseExpressionStatementToCache();
-        
-        Names variableDeclarationNames;
-        
-        if (!expressionFound) {
-            foundStatement = false;
-        }
-        else if ((variableDeclarationNames = getVariableDeclarationTypeAndClearExpressionCache(baseClassExpressionCache)) != null) {
-            // Only names like com.test.SomeClass.staticVariable
 
-            parseVariableDeclarationStatement(startContext, variableDeclarationNames);
+        final int startContext = writeCurContext();
+
+        final boolean finalModifier = lexer.lexSkipWS(JavaToken.FINAL) == JavaToken.FINAL;
+        
+        if (finalModifier) {
             
+            final int finalContext = writeCurContext();
+            
+            final NamesList namesList = startScratchNameParts();
+            
+            try {
+                parseNames(namesList);
+            }
+            finally {
+                namesList.complete(names -> parseVariableDeclarationStatement(startContext, finalModifier, finalContext, names));
+            }
+         
             foundStatement = true;
         }
         else {
-            // This is an expression statement
-            listener.onExpressionStatementStart(startContext);
-        
-            applyAndClearExpressionCache(baseClassExpressionCache);
             
-            listener.onExpressionStatementEnd(startContext, getLexerContext());
-
-            foundStatement = true;
+            final boolean expressionFound = parseExpressionStatementToCache();
+            
+            Names variableDeclarationNames;
+            
+            if (!expressionFound) {
+                foundStatement = false;
+            }
+            else if ((variableDeclarationNames = getVariableDeclarationTypeAndClearExpressionCache(baseClassExpressionCache)) != null) {
+                // Only names like com.test.SomeClass.staticVariable
+    
+                parseVariableDeclarationStatement(startContext, false, ContextRef.NONE, variableDeclarationNames);
+                
+                foundStatement = true;
+            }
+            else {
+                // This is an expression statement
+                listener.onExpressionStatementStart(startContext);
+            
+                applyAndClearExpressionCache(baseClassExpressionCache);
+                
+                listener.onExpressionStatementEnd(startContext, getLexerContext());
+    
+                foundStatement = true;
+            }
         }
         
         return foundStatement;
     }
     
-    private void parseVariableDeclarationStatement(int statementContext, Names names) throws IOException, ParserException {
+    private void parseVariableDeclarationStatement(int statementContext, boolean finalModifier, int finalContext, Names names) throws IOException, ParserException {
         
         listener.onVariableDeclarationStatementStart(statementContext);
+        
+        if (finalModifier) {
+            
+            listener.onMutabilityVariableModifier(finalContext, ASTMutability.VALUE_OR_REF_IMMUTABLE);
+        }
 
         final int typeReferenceStartContext = listenerHelper.callScopedTypeReferenceListenersStartAndPart(
                 names,

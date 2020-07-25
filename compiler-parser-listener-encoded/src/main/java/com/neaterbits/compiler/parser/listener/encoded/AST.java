@@ -35,6 +35,7 @@ import com.neaterbits.compiler.util.typedefinition.FieldModifier;
 import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
+import com.neaterbits.compiler.util.typedefinition.VariableModifier;
 import com.neaterbits.util.io.strings.StringRef;
 
 public class AST {
@@ -239,6 +240,10 @@ public class AST {
             size = fieldModifierSize(astBuffer, index);
             break;
             
+        case VARIABLE_MODIFIER_HOLDER:
+            size = variableModifierSize(astBuffer, index);
+            break;
+
         case CLASS_INSTANCE_CREATION_EXPRESSION_NAME:
             size = namesSize(astBuffer.getByte(index));
             break;
@@ -1259,6 +1264,51 @@ public class AST {
         listener.onScopedTypeReferenceEnd(scopedTypeReferenceEndContext, endContext);
     }
     
+    private static int variableModifierSize(ASTBufferRead astBuffer, int index) {
+
+        final VariableModifier.Type type = astBuffer.getEnumByte(index, VariableModifier.Type.class);
+
+        final int size;
+        
+        switch (type) {
+        case MUTABILITY:
+            size = 1 + 1;
+            break;
+            
+        default:
+            throw new UnsupportedOperationException();
+        }
+        
+        return size;
+    }
+
+    static void encodeMutabilityVariableModifier(StringASTBuffer astBuffer, ASTMutability mutability) {
+        
+        astBuffer.writeLeafElement(ParseTreeElement.VARIABLE_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(VariableModifier.Type.MUTABILITY);
+        astBuffer.writeEnumByte(mutability.getMutability());
+    }
+    
+    public static <COMPILATION_UNIT> void decodeVariableModifierHolder(
+            ASTBufferRead astBuffer,
+            int leafContext,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        final VariableModifier.Type type = astBuffer.getEnumByte(index, VariableModifier.Type.class);
+        
+        switch (type) {
+        case MUTABILITY:
+            listener.onMutabilityVariableModifier(
+                    leafContext,
+                    new ASTMutability(astBuffer.getEnumByte(index + 1, Mutability.class)));
+            break;
+
+         default:
+             throw new UnsupportedOperationException();
+        }
+    }
+
     static void encodeVariableDeclarationStatementStart(StringASTBuffer astBuffer) {
         
         astBuffer.writeElementStart(ParseTreeElement.VARIABLE_DECLARATION_STATEMENT);
