@@ -228,6 +228,7 @@ public interface ParseTreeFactory<
 			String name,
 			Context nameContext,
 			List<PARAMETER> parameters,
+			List<TYPE_REFERENCE> thrownExceptions,
 			List<STATEMENT> statements);
 	
 	CONSTRUCTOR_MODIFIER_HOLDER createConstructorModifierHolder(Context context, ConstructorModifier modifier);
@@ -249,6 +250,7 @@ public interface ParseTreeFactory<
 			String name,
 			Context nameContext,
 			List<PARAMETER> parameters,
+			List<TYPE_REFERENCE> thrownExceptions,
 			List<STATEMENT> block);
 	
 	CLASS_METHOD_MODIFIER_HOLDER createClassMethodModifierHolder(Context context, ClassMethodModifier modifier);

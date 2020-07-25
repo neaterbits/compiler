@@ -234,6 +234,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 						convertTypeReference(method.getReturnType(), state),
 						functionName,
 						convertParameters(method.getParameters(), typeReference -> convertTypeReference(typeReference, state)),
+						null,
 						convertBlock(method.getBlock(), state));
 				
 				functions.add(function);

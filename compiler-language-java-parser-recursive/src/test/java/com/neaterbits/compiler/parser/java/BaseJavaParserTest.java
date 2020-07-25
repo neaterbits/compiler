@@ -1400,6 +1400,33 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testMethodDeclaringThrown() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { int someMethod() throws IOException, ParserException { } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassMethodMember member = (ClassMethodMember)classDefinition.getMembers().get(0);
+        
+        final ClassMethod method = member.getMethod();
+        
+        checkScalarType(method.getReturnType(), "int");
+        assertThat(method.getNameString()).isEqualTo("someMethod");
+        assertThat(method.getParameters().isEmpty()).isTrue();
+        
+        assertThat(method.getThrownExceptions().size()).isEqualTo(2);
+        
+        checkIdentifierType(method.getThrownExceptions().get(0), "IOException");
+        checkIdentifierType(method.getThrownExceptions().get(1), "ParserException");
+    }
+
+    @Test
     public void testStaticMethod() throws IOException, ParserException {
         
         final String source = "package com.test;\n"

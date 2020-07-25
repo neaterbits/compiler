@@ -73,6 +73,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackGenericType
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackGenericTypeParameters;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTypeDefinition;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTypeReference;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackTypeReferenceList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackTypeReferenceSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackVariableDeclaration;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackVariableDeclarationList;
@@ -1222,7 +1223,7 @@ public abstract class BaseParserListener<
 		final CONSTRUCTOR_MEMBER constructorMember = parseTreeFactory.createConstructorMember(context,
 		        stackConstructor.getAnnotations(), stackConstructor.getModifiers(),
 		        stackConstructor.getName(), stackConstructor.getNameContext(),
-				stackConstructor.getParameters(), stackConstructor.getList());
+				stackConstructor.getParameters(), stackConstructor.getThrownExceptions(), stackConstructor.getList());
 
 		final ConstructorMemberSetter<CONSTRUCTOR_MEMBER> constructorMemberSetter = get();
 
@@ -1355,7 +1356,37 @@ public abstract class BaseParserListener<
 	    logExit(context);
 	}
 
-	private final void addClassMethodModifier(Context context, ClassMethodModifier modifier) {
+	@Override
+    public void onThrowsStart(int startContext) {
+
+	    final Context context = getStartContext(startContext);
+        
+        logEnter(context);
+        
+        push(new StackTypeReferenceList<>(getLogger()));
+        
+        logExit(context);
+    }
+
+    @Override
+    public void onThrowsEnd(int startContext, Context endContext) {
+        
+        final Context context = getEndContext(startContext, endContext);
+        
+        logEnter(context);
+        
+        final StackTypeReferenceList<TYPE_REFERENCE> stackTypeReferenceList = pop();
+        
+        final CallableStackEntry<STATEMENT, PARAMETER, TYPE_REFERENCE> callableStackEntry = get();
+        
+        for (TYPE_REFERENCE thrownException : stackTypeReferenceList.getList()) {
+            callableStackEntry.addThrownException(thrownException);
+        }
+        
+        logExit(context);
+    }
+
+    private final void addClassMethodModifier(Context context, ClassMethodModifier modifier) {
 
 		logEnter(context);
 
@@ -1458,6 +1489,7 @@ public abstract class BaseParserListener<
 				method.getName(),
 				method.getNameContext(),
 				method.getParameters(),
+				method.getThrownExceptions(),
 				method.getList());
 
 		methodMemberSetter.addMethod(methodMember);

@@ -15,13 +15,23 @@ public abstract class CallableCode<NAME extends CallableName> extends Callable<N
 
 	private final ASTSingle<Block> block;
 	private final ASTList<NamedGenericTypeParameter> genericTypes;
+	private final ASTList<TypeReference> thrownExceptions;
 	
-	CallableCode(Context context, List<NamedGenericTypeParameter> genericTypes, TypeReference returnType, NAME name, List<Parameter> parameters, Block block) {
+	CallableCode(
+	        Context context,
+	        List<NamedGenericTypeParameter> genericTypes,
+	        TypeReference returnType,
+	        NAME name,
+	        List<Parameter> parameters,
+	        List<TypeReference> thrownExceptions,
+	        Block block) {
+	    
 		super(context, returnType, name, parameters);
 		
 		Objects.requireNonNull(block);
 
 		this.genericTypes = genericTypes != null ? makeList(genericTypes) : null;
+		this.thrownExceptions = thrownExceptions != null ? makeList(thrownExceptions) : null;
 		this.block = makeSingle(block);
 	}
 	
@@ -29,10 +39,13 @@ public abstract class CallableCode<NAME extends CallableName> extends Callable<N
         return genericTypes;
     }
 
+    public final ASTList<TypeReference> getThrownExceptions() {
+        return thrownExceptions;
+    }
+
     public final Block getBlock() {
 		return block.get();
 	}
-
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
@@ -41,6 +54,10 @@ public abstract class CallableCode<NAME extends CallableName> extends Callable<N
 		
 		if (genericTypes != null) {
 		    doIterate(genericTypes, recurseMode, iterator);
+		}
+
+		if (thrownExceptions != null) {
+		    doIterate(thrownExceptions, recurseMode, iterator);
 		}
 		
 		doIterate(block, recurseMode, iterator);

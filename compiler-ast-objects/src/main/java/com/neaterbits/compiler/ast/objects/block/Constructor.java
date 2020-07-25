@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.neaterbits.compiler.ast.objects.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.objects.typedefinition.ConstructorName;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 
@@ -13,9 +14,10 @@ public final class Constructor extends CallableCode<ConstructorName> {
 			Context context,
 			ConstructorName name,
 			List<Parameter> parameters,
+			List<TypeReference> thrownExceptions,
 			Block block) {
 		
-		super(context, null, null, name, parameters, block);
+		super(context, null, null, name, parameters, thrownExceptions, block);
 	}
 
 	@Override

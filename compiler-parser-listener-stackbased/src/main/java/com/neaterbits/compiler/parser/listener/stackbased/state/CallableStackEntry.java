@@ -17,16 +17,20 @@ public abstract class CallableStackEntry<STATEMENT, PARAMETER, TYPE_REFERENCE>
 
 	private TYPE_REFERENCE returnType;
 	
+    private final List<TYPE_REFERENCE> thrownExceptions;
+	
 	public CallableStackEntry(ParseLogger parseLogger) {
 		super(parseLogger);
 
 		this.parameters = new ArrayList<>();
+        this.thrownExceptions = new ArrayList<>();
 	}
 
 	public CallableStackEntry(ParseLogger parseLogger, String name, Context nameContext) {
 		super(parseLogger, name, nameContext);
 
 		this.parameters = new ArrayList<>();
+        this.thrownExceptions = new ArrayList<>();
 	}
 
 	public final TYPE_REFERENCE getReturnType() {
@@ -46,8 +50,19 @@ public abstract class CallableStackEntry<STATEMENT, PARAMETER, TYPE_REFERENCE>
 	public final List<PARAMETER> getParameters() {
 		return parameters;
 	}
+	
+	public final void addThrownException(TYPE_REFERENCE thrownException) {
+	    
+	    Objects.requireNonNull(thrownException);
+	    
+	    thrownExceptions.add(thrownException);
+	}
+	
+	public final List<TYPE_REFERENCE> getThrownExceptions() {
+        return thrownExceptions;
+    }
 
-	@Override
+    @Override
 	public final void addStatement(STATEMENT statement) {
 		super.add(statement);
 	}

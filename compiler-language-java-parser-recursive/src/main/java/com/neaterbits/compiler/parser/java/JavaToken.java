@@ -30,6 +30,8 @@ public enum JavaToken implements IToken {
     
     RETURN("return"),
     THROW("throw"),
+    
+    THROWS("throws"),
 
     IMPORT("import"),
     

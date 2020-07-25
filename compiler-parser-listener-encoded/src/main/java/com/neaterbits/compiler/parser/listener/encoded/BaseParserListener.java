@@ -537,6 +537,22 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
+    public final void onThrowsStart(int startContext) {
+
+        writeStartElementContextRef(startContext);
+
+        AST.encodeThrowsStart(astBuffer);
+    }
+
+    @Override
+    public final void onThrowsEnd(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
+        
+        AST.encodeThrowsEnd(astBuffer);
+    }
+
+    @Override
     public final void onVisibilityClassMethodModifier(int leafContext, ClassMethodVisibility visibility) {
 
         writeLeafElementContextRef(leafContext);

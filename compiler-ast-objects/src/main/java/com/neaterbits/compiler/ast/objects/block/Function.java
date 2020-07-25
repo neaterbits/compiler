@@ -13,8 +13,17 @@ public final class Function extends CallableCode<FunctionName> {
 
 	private final FunctionQualifiers qualifiers;
 	
-	public Function(Context context, List<NamedGenericTypeParameter> genericTypes, FunctionQualifiers qualifiers, TypeReference returnType, FunctionName name, List<Parameter> parameters, Block block) {
-		super(context, genericTypes, returnType, name, parameters, block);
+	public Function(
+	        Context context,
+	        List<NamedGenericTypeParameter> genericTypes,
+	        FunctionQualifiers qualifiers,
+	        TypeReference returnType,
+	        FunctionName name,
+	        List<Parameter> parameters,
+	        List<TypeReference> thrownExceptions,
+	        Block block) {
+	    
+		super(context, genericTypes, returnType, name, parameters, thrownExceptions, block);
 		
 		Objects.requireNonNull(returnType);
 		Objects.requireNonNull(qualifiers);

@@ -472,13 +472,19 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public ConstructorMember createConstructorMember(Context context, List<Annotation> annotations, List<ConstructorModifierHolder> modifiers,
-			String name, Context nameContext, List<Parameter> parameters, List<Statement> statements) {
+	public ConstructorMember createConstructorMember(
+	        Context context,
+	        List<Annotation> annotations, List<ConstructorModifierHolder> modifiers,
+			String name, Context nameContext,
+			List<Parameter> parameters,
+            List<TypeReference> thrownExceptions,
+			List<Statement> statements) {
 
 		final Constructor constructor = new Constructor(
 				context,
 				new ConstructorName(nameContext, name),
 				parameters,
+				thrownExceptions,
 				new Block(context, statements));
 		
 		final ConstructorMember constructorMember = new ConstructorMember(
@@ -529,7 +535,8 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	        Context context,
 	        List<Annotation> annotations, List<ClassMethodModifierHolder> modifiers,
 	        List<NamedGenericTypeParameter> genericTypes,
-			TypeReference returnType, String name, Context nameContext, List<Parameter> parameters,
+			TypeReference returnType, String name, Context nameContext,List<Parameter> parameters,
+			List<TypeReference> thrownExceptions,
 			List<Statement> block) {
 
 		final ClassMethod classMethod = new ClassMethod(
@@ -539,6 +546,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				name,
 				nameContext,
 				parameters,
+				thrownExceptions,
 				new Block(context, block));
 
 		final ClassMethodMember methodMember = new ClassMethodMember(

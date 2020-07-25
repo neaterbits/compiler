@@ -449,6 +449,8 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
         case RPAREN:
             listener.onMethodSignatureParametersEnd(methodParametersStartContext, getLexerContext());
             
+            parseAnyThrownExceptions();
+            
             parseMethodBodyOrSemicolon();
             break;
 
@@ -460,8 +462,31 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
                 throw lexer.unexpectedToken();
             }
             
+            parseAnyThrownExceptions();
+            
             parseMethodBodyOrSemicolon();
             break;
+        }
+    }
+
+    private void parseAnyThrownExceptions() throws IOException, ParserException {
+        
+        if (lexer.lexSkipWS(JavaToken.THROWS) == JavaToken.THROWS) {
+
+            final int startContext = writeCurContext();
+            
+            listener.onThrowsStart(startContext);
+    
+            for (;;) {
+                
+                parseTypeReference();
+                
+                if (lexer.lexSkipWS(JavaToken.COMMA) != JavaToken.COMMA) {
+                    break;
+                }
+            }
+
+            listener.onThrowsEnd(startContext, getLexerContext());
         }
     }
 

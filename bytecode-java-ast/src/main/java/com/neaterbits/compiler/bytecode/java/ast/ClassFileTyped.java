@@ -188,6 +188,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 				getUTF8(method.getNameIndex()),
 				null,
 				params,
+				null,
 				null);
 		
 		return new ClassMethodMember(context, modifiers, classMethod);

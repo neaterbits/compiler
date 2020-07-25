@@ -1069,6 +1069,31 @@ public class AST {
         listener.onMethodSignatureParameterEnd(signatureParameterStartContext, endContext);
     }
 
+    static void encodeThrowsStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.THROWS);
+    }
+
+    public static <COMPILATION_UNIT> void decodeThrowsStart(
+            int throwsStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onThrowsStart(throwsStartContext);
+    }
+
+    static void encodeThrowsEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.THROWS);
+    }
+
+    public static <COMPILATION_UNIT> void decodeThrowsEnd(
+            int throwsStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+        
+        listener.onThrowsEnd(throwsStartContext, endContext);
+    }
+
     private static final int ENUM_DEFINITION_SIZE = 2 * (STRING_REF_SIZE + CONTEXT_REF_SIZE);
 
     static void encodeEnumStart(StringASTBuffer astBuffer, long enumKeyword, int enumKeywordContext, long name, int nameContext) {

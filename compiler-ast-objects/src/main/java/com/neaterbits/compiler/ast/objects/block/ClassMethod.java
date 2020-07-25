@@ -12,8 +12,17 @@ import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ClassMethod extends CallableCode<MethodName> {
 
-	public ClassMethod(Context context, List<NamedGenericTypeParameter> genericTypes, TypeReference returnType, String name, Context nameContext, List<Parameter> parameters, Block block) {
-		super(context, genericTypes, returnType, new MethodName(nameContext, name), parameters, block);
+	public ClassMethod(
+	        Context context,
+	        List<NamedGenericTypeParameter> genericTypes,
+	        TypeReference returnType,
+	        String name,
+	        Context nameContext,
+	        List<Parameter> parameters,
+	        List<TypeReference> thrownExceptions,
+	        Block block) {
+	    
+		super(context, genericTypes, returnType, new MethodName(nameContext, name), parameters, thrownExceptions, block);
 
 		Objects.requireNonNull(returnType);
 	}

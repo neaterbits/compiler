@@ -528,6 +528,18 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case THROWS: {
+                final int startContext = getStartContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeThrowsStart(startContext, listener);
+                }
+                else {
+                    AST.decodeThrowsEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             case ENUM_DEFINITION: {
                 final int startContext = getStartContext(parseTreeRef);
 
