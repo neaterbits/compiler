@@ -96,6 +96,8 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             JavaToken.FALSE,
             JavaToken.NUMBER,
             JavaToken.LONG_NUMBER,
+            JavaToken.HEX_LITERAL,
+            JavaToken.LONG_HEX_LITERAL,
             JavaToken.IDENTIFIER,
     };
             
@@ -205,7 +207,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case NUMBER:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
-                    tokenizer.asInt(getStringRef()),
+                    tokenizer.asLong(getStringRef()),
                     Base.DECIMAL,
                     true,
                     32);
@@ -216,8 +218,30 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case LONG_NUMBER:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
-                    tokenizer.asInt(getStringRef(), 0, 1),
+                    tokenizer.asLong(getStringRef(), 0, 1),
                     Base.DECIMAL,
+                    true,
+                    64);
+
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+
+        case HEX_LITERAL:
+            expressionCache.addIntegerLiteral(
+                    writeCurContext(),
+                    tokenizer.asHexLong(getStringRef(), 2, 0),
+                    Base.HEX,
+                    true,
+                    32);
+
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+
+        case LONG_HEX_LITERAL:
+            expressionCache.addIntegerLiteral(
+                    writeCurContext(),
+                    tokenizer.asHexLong(getStringRef(), 2, 1),
+                    Base.HEX,
                     true,
                     64);
 

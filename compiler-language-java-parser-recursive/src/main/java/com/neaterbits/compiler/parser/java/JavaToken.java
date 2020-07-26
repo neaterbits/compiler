@@ -2,6 +2,7 @@ package com.neaterbits.compiler.parser.java;
 
 import java.util.Objects;
 
+import com.neaterbits.util.StringUtils;
 import com.neaterbits.util.parse.CharType;
 import com.neaterbits.util.parse.CharTypeInteger;
 import com.neaterbits.util.parse.CharTypeWS;
@@ -146,6 +147,59 @@ public enum JavaToken implements IToken {
         return matchResult;
     }),
     
+    HEX_LITERAL(string -> matchHex(string, string.length())),
+    
+    LONG_HEX_LITERAL(string -> {
+        
+        final int len = string.length();
+        
+        final CustomMatchResult hexMatches;
+        
+        if (len <= 3) {
+            
+            // at most 3 characters, eg. 0x1
+            
+            final CustomMatchResult matchResult = matchHex(string, len);
+            
+            hexMatches = matchResult == CustomMatchResult.MATCH
+                    ? CustomMatchResult.POSSIBLE_MATCH
+                    : matchResult;
+        }
+        else {
+            final char lastChar = string.charAt(len - 1);
+            
+            // at least 4 characters, eg. 0x1L so room for 'l' or 'L'
+            
+            if (lastChar == 'l' || lastChar == 'L') {
+                
+                // Should be the complete thing
+                final int decimalPartLen = len - 1;
+
+                hexMatches = matchHex(string, decimalPartLen);
+                
+                // Should always match or not since decimalPartLen > 2
+                if (hexMatches == CustomMatchResult.POSSIBLE_MATCH) {
+                    throw new IllegalStateException();
+                }
+            }
+            else {
+                final CustomMatchResult matchResult = matchHex(string, len);
+                
+                // Should always match or not since decimalPartLen > 2
+                if (matchResult == CustomMatchResult.POSSIBLE_MATCH) {
+                    throw new IllegalStateException();
+                }
+
+                // If matches as regular hex, then this is a possible match since not ending with 'l' or 'L'
+                hexMatches = matchResult == CustomMatchResult.MATCH
+                        ? CustomMatchResult.POSSIBLE_MATCH
+                        : CustomMatchResult.NO_MATCH;
+            }
+        }
+        
+        return hexMatches;
+    }),
+
     IDENTIFIER(string -> {
         
         CustomMatchResult matchResult;
@@ -325,11 +379,39 @@ public enum JavaToken implements IToken {
         boolean matches(char c);
     }
     
+    private static CustomMatchResult matchHex(CharSequence string, int len) {
+        CustomMatchResult matchResult;
+
+        switch (len) {
+        case 0:
+            throw new IllegalStateException();
+
+        case 1:
+            matchResult = string.charAt(0) == '0' ? CustomMatchResult.POSSIBLE_MATCH : CustomMatchResult.NO_MATCH;
+            break;
+
+        case 2:
+            matchResult = string.charAt(0) == '0' && string.charAt(1) == 'x' ? CustomMatchResult.POSSIBLE_MATCH
+                    : CustomMatchResult.NO_MATCH;
+            break;
+        default:
+            matchResult = matches(string, 2, len, StringUtils::isHexDigit) ? CustomMatchResult.MATCH
+                    : CustomMatchResult.NO_MATCH;
+            break;
+        }
+        return matchResult;
+    }
+
     private static boolean matches(CharSequence sequence, int length, CharMatcher matcher) {
+
+        return matches(sequence, 0, length, matcher);
+    }
+
+    private static boolean matches(CharSequence sequence, int initial, int length, CharMatcher matcher) {
 
         boolean matches = true;
         
-        for (int i = 0; i < length; ++ i) {
+        for (int i = initial; i < length; ++ i) {
             if (!matcher.matches(sequence.charAt(i))) {
                 matches = false;
                 break;
