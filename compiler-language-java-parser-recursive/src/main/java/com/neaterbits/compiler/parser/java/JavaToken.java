@@ -181,58 +181,8 @@ public enum JavaToken implements IToken {
         return matchResult;
     }),
 
-    HEX_LITERAL(string -> matchHex(string, string.length())),
-    
-    LONG_HEX_LITERAL(string -> {
-        
-        final int len = string.length();
-        
-        final CustomMatchResult hexMatches;
-        
-        if (len <= 3) {
-            
-            // at most 3 characters, eg. 0x1
-            
-            final CustomMatchResult matchResult = matchHex(string, len);
-            
-            hexMatches = matchResult == CustomMatchResult.MATCH
-                    ? CustomMatchResult.POSSIBLE_MATCH
-                    : matchResult;
-        }
-        else {
-            final char lastChar = string.charAt(len - 1);
-            
-            // at least 4 characters, eg. 0x1L so room for 'l' or 'L'
-            
-            if (lastChar == 'l' || lastChar == 'L') {
-                
-                // Should be the complete thing
-                final int decimalPartLen = len - 1;
-
-                hexMatches = matchHex(string, decimalPartLen);
-                
-                // Should always match or not since decimalPartLen > 2
-                if (hexMatches == CustomMatchResult.POSSIBLE_MATCH) {
-                    throw new IllegalStateException();
-                }
-            }
-            else {
-                final CustomMatchResult matchResult = matchHex(string, len);
-                
-                // Should always match or not since decimalPartLen > 2
-                if (matchResult == CustomMatchResult.POSSIBLE_MATCH) {
-                    throw new IllegalStateException();
-                }
-
-                // If matches as regular hex, then this is a possible match since not ending with 'l' or 'L'
-                hexMatches = matchResult == CustomMatchResult.MATCH
-                        ? CustomMatchResult.POSSIBLE_MATCH
-                        : CustomMatchResult.NO_MATCH;
-            }
-        }
-        
-        return hexMatches;
-    }),
+    HEX_LITERAL(string -> matchHexString(string, string.length())),
+    LONG_HEX_LITERAL(string -> matchLong(string, JavaToken::matchHexString)),
 
     OCTAL_LITERAL(string -> {
         
@@ -308,6 +258,9 @@ public enum JavaToken implements IToken {
         
         return matchResult;
     }),
+
+    BINARY_LITERAL(string -> matchBinaryString(string, string.length())),
+    LONG_BINARY_LITERAL(string -> matchLong(string, JavaToken::matchBinaryString)),
 
     IDENTIFIER(string -> {
         
@@ -488,7 +441,80 @@ public enum JavaToken implements IToken {
         boolean matches(char c);
     }
     
-    private static CustomMatchResult matchHex(CharSequence string, int len) {
+    @FunctionalInterface
+    interface MatchString {
+        
+        CustomMatchResult match(CharSequence string, int length);
+    }
+    
+    private static CustomMatchResult matchLong(CharSequence string, MatchString matchString) {
+        
+        final int len = string.length();
+        
+        final CustomMatchResult hexMatches;
+        
+        if (len <= 3) {
+            
+            // at most 3 characters, eg. 0x1
+            
+            final CustomMatchResult matchResult = matchString.match(string, len);
+            
+            hexMatches = matchResult == CustomMatchResult.MATCH
+                    ? CustomMatchResult.POSSIBLE_MATCH
+                    : matchResult;
+        }
+        else {
+            final char lastChar = string.charAt(len - 1);
+            
+            // at least 4 characters, eg. 0x1L so room for 'l' or 'L'
+            
+            if (lastChar == 'l' || lastChar == 'L') {
+                
+                // Should be the complete thing
+                final int decimalPartLen = len - 1;
+
+                hexMatches = matchString.match(string, decimalPartLen);
+                
+                // Should always match or not since decimalPartLen > 2
+                if (hexMatches == CustomMatchResult.POSSIBLE_MATCH) {
+                    throw new IllegalStateException();
+                }
+            }
+            else {
+                final CustomMatchResult matchResult = matchString.match(string, len);
+                
+                // Should always match or not since decimalPartLen > 2
+                if (matchResult == CustomMatchResult.POSSIBLE_MATCH) {
+                    throw new IllegalStateException();
+                }
+
+                // If matches as regular hex, then this is a possible match since not ending with 'l' or 'L'
+                hexMatches = matchResult == CustomMatchResult.MATCH
+                        ? CustomMatchResult.POSSIBLE_MATCH
+                        : CustomMatchResult.NO_MATCH;
+            }
+        }
+        
+        return hexMatches;
+    }
+    
+    private static CustomMatchResult matchHexString(CharSequence string, int len) {
+
+        return matchPrefixString(string, len, 'x', 'X', StringUtils::isHexDigit);
+    }
+
+    private static CustomMatchResult matchBinaryString(CharSequence string, int len) {
+
+        return matchPrefixString(string, len, 'b', 'B', c -> c == '0' || c == '1');
+    }
+
+    private static CustomMatchResult matchPrefixString(
+            CharSequence string,
+            int len,
+            char lowerPrefix,
+            char upperPrefix,
+            CharMatcher charMatcher) {
+        
         CustomMatchResult matchResult;
         
         switch (len) {
@@ -500,15 +526,17 @@ public enum JavaToken implements IToken {
                 ? CustomMatchResult.POSSIBLE_MATCH
                 : CustomMatchResult.NO_MATCH;
             break;
-
+            
         case 2:
-            matchResult = string.charAt(0) == '0' && string.charAt(1) == 'x'
+            final char charAt1 = string.charAt(1);
+            
+            matchResult = string.charAt(0) == '0' && (charAt1 == lowerPrefix || charAt1 == upperPrefix)
                 ? CustomMatchResult.POSSIBLE_MATCH
                 : CustomMatchResult.NO_MATCH;
             break;
 
         default:
-                matchResult = matches(string, 2, len, StringUtils::isHexDigit)
+                matchResult = matches(string, 2, len, charMatcher)
                     ? CustomMatchResult.MATCH
                     : CustomMatchResult.NO_MATCH;
                 break;

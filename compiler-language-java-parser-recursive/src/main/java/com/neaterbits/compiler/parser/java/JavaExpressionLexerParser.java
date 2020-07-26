@@ -100,6 +100,8 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             JavaToken.LONG_HEX_LITERAL,
             JavaToken.OCTAL_LITERAL,
             JavaToken.LONG_OCTAL_LITERAL,
+            JavaToken.BINARY_LITERAL,
+            JavaToken.LONG_BINARY_LITERAL,
             JavaToken.IDENTIFIER,
     };
             
@@ -266,6 +268,28 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
                     writeCurContext(),
                     tokenizer.asOctalLong(getStringRef(), 1, 1),
                     Base.OCTAL,
+                    true,
+                    64);
+
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+
+        case BINARY_LITERAL:
+            expressionCache.addIntegerLiteral(
+                    writeCurContext(),
+                    tokenizer.asBinaryLong(getStringRef(), 2, 0),
+                    Base.BINARY,
+                    true,
+                    32);
+
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+
+        case LONG_BINARY_LITERAL:
+            expressionCache.addIntegerLiteral(
+                    writeCurContext(),
+                    tokenizer.asBinaryLong(getStringRef(), 2, 1),
+                    Base.BINARY,
                     true,
                     64);
 

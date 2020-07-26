@@ -3113,11 +3113,11 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
-    public void testIntegerHexLiteralLower() throws IOException, ParserException {
+    public void testIntegerBinaryLiteralLower() throws IOException, ParserException {
      
         final String source = "package com.test;\n"
                 
-                + "class TestClass { void someMethod() { int value = 0xabcdef01; } }";
+                + "class TestClass { void someMethod() { int value = 0b0100101; } }";
         
         final CompilationUnit compilationUnit = parse(source);
         assertThat(compilationUnit.getCode()).isNotNull();
@@ -3125,18 +3125,18 @@ public abstract class BaseJavaParserTest {
         final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
 
         assertThat(integerLiteral).isNotNull();
-        assertThat(integerLiteral.getValue()).isEqualTo(0xABCDEF01L);
-        assertThat(integerLiteral.getBase()).isEqualTo(Base.HEX);
+        assertThat(integerLiteral.getValue()).isEqualTo(0b0100101);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.BINARY);
         assertThat(integerLiteral.isSigned()).isTrue();
         assertThat(integerLiteral.getBits()).isEqualTo(32);
     }
 
     @Test
-    public void testIntegerHexLiteralUpper() throws IOException, ParserException {
+    public void testIntegerBinaryLiteralUpper() throws IOException, ParserException {
      
         final String source = "package com.test;\n"
                 
-                + "class TestClass { void someMethod() { int value = 0xABCDEF01; } }";
+                + "class TestClass { void someMethod() { int value = 0B0100101; } }";
         
         final CompilationUnit compilationUnit = parse(source);
         assertThat(compilationUnit.getCode()).isNotNull();
@@ -3144,18 +3144,18 @@ public abstract class BaseJavaParserTest {
         final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
 
         assertThat(integerLiteral).isNotNull();
-        assertThat(integerLiteral.getValue()).isEqualTo(0xABCDEF01L);
-        assertThat(integerLiteral.getBase()).isEqualTo(Base.HEX);
+        assertThat(integerLiteral.getValue()).isEqualTo(0b0100101);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.BINARY);
         assertThat(integerLiteral.isSigned()).isTrue();
         assertThat(integerLiteral.getBits()).isEqualTo(32);
     }
 
     @Test
-    public void testLongHexLiteralLowerIntegerType() throws IOException, ParserException {
+    public void testLongBinaryLiteralLowerIntegerType() throws IOException, ParserException {
      
         final String source = "package com.test;\n"
                 
-                + "class TestClass { void someMethod() { long value = 0xa123Fl; } }";
+                + "class TestClass { void someMethod() { long value = 0b0100101l; } }";
         
         final CompilationUnit compilationUnit = parse(source);
         assertThat(compilationUnit.getCode()).isNotNull();
@@ -3163,18 +3163,18 @@ public abstract class BaseJavaParserTest {
         final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
 
         assertThat(integerLiteral).isNotNull();
-        assertThat(integerLiteral.getValue()).isEqualTo(0xA123FL);
-        assertThat(integerLiteral.getBase()).isEqualTo(Base.HEX);
+        assertThat(integerLiteral.getValue()).isEqualTo(0b0100101L);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.BINARY);
         assertThat(integerLiteral.isSigned()).isTrue();
         assertThat(integerLiteral.getBits()).isEqualTo(64);
     }
 
     @Test
-    public void testLongHexLiteralUpperIntegerType() throws IOException, ParserException {
+    public void testLongBinaryLiteralUpperIntegerType() throws IOException, ParserException {
      
         final String source = "package com.test;\n"
                 
-                + "class TestClass { void someMethod() { long value = 0xa123FL; } }";
+                + "class TestClass { void someMethod() { long value = 0B0100101L; } }";
         
         final CompilationUnit compilationUnit = parse(source);
         assertThat(compilationUnit.getCode()).isNotNull();
@@ -3182,8 +3182,8 @@ public abstract class BaseJavaParserTest {
         final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
 
         assertThat(integerLiteral).isNotNull();
-        assertThat(integerLiteral.getValue()).isEqualTo(0xA123FL);
-        assertThat(integerLiteral.getBase()).isEqualTo(Base.HEX);
+        assertThat(integerLiteral.getValue()).isEqualTo(0b0100101L);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.BINARY);
         assertThat(integerLiteral.isSigned()).isTrue();
         assertThat(integerLiteral.getBits()).isEqualTo(64);
     }
@@ -3241,6 +3241,82 @@ public abstract class BaseJavaParserTest {
         assertThat(integerLiteral).isNotNull();
         assertThat(integerLiteral.getValue()).isEqualTo(012345L);
         assertThat(integerLiteral.getBase()).isEqualTo(Base.OCTAL);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(64);
+    }
+
+    @Test
+    public void testIntegerHexLiteralLower() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int value = 0xabcdef01; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(0xABCDEF01L);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.HEX);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(32);
+    }
+
+    @Test
+    public void testIntegerHexLiteralUpper() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int value = 0XABCDEF01; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(0xABCDEF01L);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.HEX);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(32);
+    }
+
+    @Test
+    public void testLongHexLiteralLowerIntegerType() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { long value = 0xa123Fl; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(0xA123FL);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.HEX);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(64);
+    }
+
+    @Test
+    public void testLongHexLiteralUpperIntegerType() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { long value = 0Xa123FL; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(0xA123FL);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.HEX);
         assertThat(integerLiteral.isSigned()).isTrue();
         assertThat(integerLiteral.getBits()).isEqualTo(64);
     }
