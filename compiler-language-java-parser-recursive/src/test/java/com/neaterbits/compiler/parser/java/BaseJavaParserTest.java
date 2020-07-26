@@ -55,6 +55,7 @@ import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
+import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.Mutability;
 import com.neaterbits.compiler.util.model.Visibility;
@@ -3052,6 +3053,34 @@ public abstract class BaseJavaParserTest {
 
         assertThat(type.getScopedName().getScope()).isNull();
         assertThat(type.getScopedName().getName()).isEqualTo("SomeClass");
+    }
+
+    @Test
+    public void testIntegerDecimalLiteral() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int value = 123; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement
+            = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("value");
+
+        final IntegerLiteral integerLiteral = (IntegerLiteral)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(123);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.DECIMAL);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(32);
     }
 
     @Test
