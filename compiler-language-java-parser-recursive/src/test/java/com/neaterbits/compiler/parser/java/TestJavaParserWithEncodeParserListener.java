@@ -3,7 +3,6 @@
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 
 import com.neaterbits.compiler.ast.encoded.EncodedCompilationUnit;
 import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory;
@@ -43,24 +42,6 @@ public class TestJavaParserWithEncodeParserListener extends BaseJavaParserTest {
             public String asString(long stringRef) {
 
                 return encodedCompilationUnit.getStringFromRef((int)stringRef);
-            }
-            
-            @Override
-            public Integer asInteger(long stringRef) {
-
-                return Integer.parseInt(asString(stringRef));
-            }
-            
-            @Override
-            public int asInt(long stringRef) {
-                
-                return Integer.parseInt(asString(stringRef));
-            }
-
-            @Override
-            public BigDecimal asBigDecimal(long stringRef) {
-
-                return new BigDecimal(asString(stringRef));
             }
         };
         

@@ -3065,7 +3065,56 @@ public abstract class BaseJavaParserTest {
         final CompilationUnit compilationUnit = parse(source);
         assertThat(compilationUnit.getCode()).isNotNull();
         
-        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        final IntegerLiteral integerLiteral = checkIntegerLiteral(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(123);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.DECIMAL);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(32);
+    }
+
+    @Test
+    public void testLongDecimalLiteralUpperCase() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { long value = 123L; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteral(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(123);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.DECIMAL);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(64);
+    }
+
+    @Test
+    public void testLongDecimalLiteralLowerCase() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { long value = 123l; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteral(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(123);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.DECIMAL);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(64);
+    }
+
+    private IntegerLiteral checkIntegerLiteral(CompilationUnit compilationUnit, String className, String methodName, String varName) {
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, className, methodName);
         
         assertThat(method.getBlock()).isNotNull();
         assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
@@ -3073,14 +3122,9 @@ public abstract class BaseJavaParserTest {
         final VariableDeclarationStatement declarationStatement
             = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
 
-        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("value");
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo(varName);
 
-        final IntegerLiteral integerLiteral = (IntegerLiteral)declarationStatement.getDeclarations().get(0).getInitializer();
-        assertThat(integerLiteral).isNotNull();
-        assertThat(integerLiteral.getValue()).isEqualTo(123);
-        assertThat(integerLiteral.getBase()).isEqualTo(Base.DECIMAL);
-        assertThat(integerLiteral.isSigned()).isTrue();
-        assertThat(integerLiteral.getBits()).isEqualTo(32);
+        return (IntegerLiteral)declarationStatement.getDeclarations().get(0).getInitializer();
     }
 
     @Test

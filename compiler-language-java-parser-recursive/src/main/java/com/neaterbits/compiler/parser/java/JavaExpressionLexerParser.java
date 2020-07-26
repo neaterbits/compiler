@@ -94,8 +94,9 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             JavaToken.CHARACTER_LITERAL,
             JavaToken.TRUE,
             JavaToken.FALSE,
+            JavaToken.NUMBER,
+            JavaToken.LONG_NUMBER,
             JavaToken.IDENTIFIER,
-            JavaToken.NUMBER
     };
             
     final boolean parseExpression() throws IOException, ParserException {
@@ -186,7 +187,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         
         return parsePrimaryOrUnaryOperator(expressionCache, EXPRESSION_OR_UNARY_OPERATOR_TOKENS);
     }
-
+    
     private OperatorStatus parsePrimaryOrUnaryOperator(ExpressionCache expressionCache, JavaToken [] tokens) throws IOException, ParserException {
 
         final JavaToken token = lexer.lexSkipWS(tokens);
@@ -211,7 +212,18 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
 
             status = OperatorStatus.OPTIONAL_OPERATOR;
             break;
-            
+
+        case LONG_NUMBER:
+            expressionCache.addIntegerLiteral(
+                    writeCurContext(),
+                    tokenizer.asInt(getStringRef(), 0, 1),
+                    Base.DECIMAL,
+                    true,
+                    64);
+
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+
         case STRING_LITERAL:
             expressionCache.addStringLiteral(
                     writeCurContext(),

@@ -1,7 +1,5 @@
 package com.neaterbits.compiler.parser.java;
 
-import java.math.BigDecimal;
-
 import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
@@ -36,23 +34,6 @@ final class ObjectJavaParser extends JavaParser<CompilationUnit> {
             public String asString(long stringRef) {
                 return stringBuffers.getString(stringRef);
             }
-            
-            @Override
-            public Integer asInteger(long stringRef) {
-                
-                return Integer.parseInt(asString(stringRef));
-            }
-            
-            @Override
-            public int asInt(long stringRef) {
-
-                return Integer.parseInt(asString(stringRef));
-            }
-
-            @Override
-            public BigDecimal asBigDecimal(long stringRef) {
-                return new BigDecimal(asString(stringRef));
-            }
         };
           
         @SuppressWarnings("unchecked")
@@ -64,5 +45,4 @@ final class ObjectJavaParser extends JavaParser<CompilationUnit> {
         
         return listener;
     }
-    
 }

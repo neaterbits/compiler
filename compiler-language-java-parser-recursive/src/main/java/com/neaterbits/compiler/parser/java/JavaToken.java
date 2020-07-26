@@ -1,7 +1,6 @@
 package com.neaterbits.compiler.parser.java;
 
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import com.neaterbits.util.parse.CharType;
 import com.neaterbits.util.parse.CharTypeInteger;
@@ -116,28 +115,58 @@ public enum JavaToken implements IToken {
     NEW("new"),
 
     NUMBER(CharTypeInteger.INSTANCE),
+    
+    LONG_NUMBER(string -> {
+        
+        CustomMatchResult matchResult;
+        
+        final int len = string.length();
+        
+        if (len < 2) { // requires at least a digit and 'l' or 'L'
+            matchResult = CustomMatchResult.POSSIBLE_MATCH;
+        }
+        else {
+            final char lastChar = string.charAt(len - 1);
+            
+            if (lastChar == 'l' || lastChar == 'L') {
+                
+                final int decimalPartLen = len - 1;
 
+                matchResult = matches(string, decimalPartLen, Character::isDigit)
+                        ? CustomMatchResult.MATCH
+                        : CustomMatchResult.NO_MATCH;
+            }
+            else {
+                matchResult = matches(string, len, Character::isDigit)
+                        ? CustomMatchResult.POSSIBLE_MATCH
+                        : CustomMatchResult.NO_MATCH;
+            }
+        }
+        
+        return matchResult;
+    }),
+    
     IDENTIFIER(string -> {
         
-        boolean isIdentifier;
+        CustomMatchResult matchResult;
 
         if (Character.isJavaIdentifierStart(string.charAt(0))) {
 
-            isIdentifier = true;
+            matchResult = CustomMatchResult.MATCH;
             
             for (int i = 1; i < string.length(); ++ i) {
                 
                 if (!Character.isJavaIdentifierPart(string.charAt(i))) {
-                    isIdentifier = false;
+                    matchResult = CustomMatchResult.NO_MATCH;
                     break;
                 }
             }
         }
         else {
-            isIdentifier = false;
+            matchResult = CustomMatchResult.NO_MATCH;
         }
         
-        return isIdentifier;
+        return matchResult;
     }),
     
     C_COMMENT("/*", "*/"),
@@ -153,7 +182,7 @@ public enum JavaToken implements IToken {
     private final String literal;
     private final String toLiteral;
     
-    private final Predicate<CharSequence> custom;
+    private final CustomMatcher custom;
 
     private JavaToken(TokenType tokenType) {
 
@@ -233,7 +262,7 @@ public enum JavaToken implements IToken {
         this.custom = null;
     }
 
-    private JavaToken(Predicate<CharSequence> custom) {
+    private JavaToken(CustomMatcher custom) {
 
         Objects.requireNonNull(custom);
 
@@ -287,7 +316,26 @@ public enum JavaToken implements IToken {
     }
 
     @Override
-    public Predicate<CharSequence> getCustom() {
+    public CustomMatcher getCustom() {
         return custom;
+    }
+
+    @FunctionalInterface
+    interface CharMatcher {
+        boolean matches(char c);
+    }
+    
+    private static boolean matches(CharSequence sequence, int length, CharMatcher matcher) {
+
+        boolean matches = true;
+        
+        for (int i = 0; i < length; ++ i) {
+            if (!matcher.matches(sequence.charAt(i))) {
+                matches = false;
+                break;
+            }
+        }
+        
+        return matches;
     }
 }
