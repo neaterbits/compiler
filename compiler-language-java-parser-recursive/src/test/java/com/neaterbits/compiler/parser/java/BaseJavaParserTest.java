@@ -3163,7 +3163,7 @@ public abstract class BaseJavaParserTest {
         final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
 
         assertThat(integerLiteral).isNotNull();
-        assertThat(integerLiteral.getValue()).isEqualTo(0xA123F);
+        assertThat(integerLiteral.getValue()).isEqualTo(0xA123FL);
         assertThat(integerLiteral.getBase()).isEqualTo(Base.HEX);
         assertThat(integerLiteral.isSigned()).isTrue();
         assertThat(integerLiteral.getBits()).isEqualTo(64);
@@ -3182,8 +3182,65 @@ public abstract class BaseJavaParserTest {
         final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
 
         assertThat(integerLiteral).isNotNull();
-        assertThat(integerLiteral.getValue()).isEqualTo(0xA123F);
+        assertThat(integerLiteral.getValue()).isEqualTo(0xA123FL);
         assertThat(integerLiteral.getBase()).isEqualTo(Base.HEX);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(64);
+    }
+
+    @Test
+    public void testIntegerOctalLiteral() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int value = 012345; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(012345);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.OCTAL);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(32);
+    }
+
+    @Test
+    public void testLongOctalLiteralLowerIntegerType() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { long value = 012345l; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(012345L);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.OCTAL);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(64);
+    }
+
+    @Test
+    public void testLongOctalLiteralUpperIntegerType() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { long value = 012345L; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(012345L);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.OCTAL);
         assertThat(integerLiteral.isSigned()).isTrue();
         assertThat(integerLiteral.getBits()).isEqualTo(64);
     }
@@ -3473,7 +3530,7 @@ public abstract class BaseJavaParserTest {
         assertThat(expressionList.getOperators().size()).isEqualTo(1);
         assertThat(expressionList.getOperators().get(0)).isEqualTo(operator);
     }
-    
+
     private IntegerLiteral checkIntegerLiteralLocalVariable(CompilationUnit compilationUnit, String className, String methodName, String varName) {
         
         final ClassMethod method = checkBasicMethod(compilationUnit, className, methodName);

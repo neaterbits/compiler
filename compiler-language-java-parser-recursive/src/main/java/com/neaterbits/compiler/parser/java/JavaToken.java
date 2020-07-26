@@ -117,36 +117,70 @@ public enum JavaToken implements IToken {
 
     NUMBER(CharTypeInteger.INSTANCE),
     
-    LONG_NUMBER(string -> {
+    DECIMAL_LITERAL(string -> {
+        
+        final CustomMatchResult matchResult;
+        
+        final char c = string.charAt(0);
+        
+        if (c == '0') {
+            // conflict with octal, "0" by itself is a decimal 
+            matchResult = string.length() == 1
+                    ? CustomMatchResult.MATCH
+                    : CustomMatchResult.NO_MATCH;
+        }
+        else {
+            matchResult = matches(string, Character::isDigit)
+                    ? CustomMatchResult.MATCH
+                    : CustomMatchResult.NO_MATCH;
+        }
+    
+        return matchResult;
+    }),
+    LONG_DECIMAL_LITERAL(string -> {
         
         CustomMatchResult matchResult;
         
         final int len = string.length();
         
-        if (len < 2) { // requires at least a digit and 'l' or 'L'
-            matchResult = CustomMatchResult.POSSIBLE_MATCH;
-        }
-        else {
-            final char lastChar = string.charAt(len - 1);
-            
-            if (lastChar == 'l' || lastChar == 'L') {
-                
-                final int decimalPartLen = len - 1;
+        switch (len) {
+        
+        case 0:
+            throw new IllegalStateException();
 
-                matchResult = matches(string, decimalPartLen, Character::isDigit)
-                        ? CustomMatchResult.MATCH
-                        : CustomMatchResult.NO_MATCH;
+        case 1:
+            matchResult = Character.isDigit(string.charAt(0))
+                    ? CustomMatchResult.POSSIBLE_MATCH
+                    : CustomMatchResult.NO_MATCH;
+            break;
+            
+        default:
+            if (string.charAt(0) == '0') {
+                matchResult = CustomMatchResult.NO_MATCH;
             }
             else {
-                matchResult = matches(string, len, Character::isDigit)
-                        ? CustomMatchResult.POSSIBLE_MATCH
-                        : CustomMatchResult.NO_MATCH;
+                final char lastChar = string.charAt(len - 1);
+                
+                if (lastChar == 'l' || lastChar == 'L') {
+                    
+                    final int decimalPartLen = len - 1;
+    
+                    matchResult = matches(string, decimalPartLen, Character::isDigit)
+                            ? CustomMatchResult.MATCH
+                            : CustomMatchResult.NO_MATCH;
+                }
+                else {
+                    matchResult = matches(string, len, Character::isDigit)
+                            ? CustomMatchResult.POSSIBLE_MATCH
+                            : CustomMatchResult.NO_MATCH;
+                }
             }
+            break;
         }
         
         return matchResult;
     }),
-    
+
     HEX_LITERAL(string -> matchHex(string, string.length())),
     
     LONG_HEX_LITERAL(string -> {
@@ -198,6 +232,81 @@ public enum JavaToken implements IToken {
         }
         
         return hexMatches;
+    }),
+
+    OCTAL_LITERAL(string -> {
+        
+        final CustomMatchResult matchResult;
+        
+        final char c = string.charAt(0);
+        
+        if (c == '0') {
+            
+            if (string.length() > 1) {
+                // conflict with octal, "0" by itself is a decimal 
+                matchResult = matches(string, 1, string.length(), StringUtils::isOctalDigit)
+                        ? CustomMatchResult.MATCH
+                        : CustomMatchResult.NO_MATCH;
+            }
+            else {
+                matchResult = CustomMatchResult.POSSIBLE_MATCH;
+            }
+        }
+        else {
+            matchResult = CustomMatchResult.NO_MATCH;
+        }
+    
+        return matchResult;
+    }),
+    LONG_OCTAL_LITERAL(string -> {
+        
+        CustomMatchResult matchResult;
+        
+        final int len = string.length();
+        
+        // requires at least a 0 prefix, a digit and 'l' or 'L' for a match
+        
+        switch (len) {
+        case 0:
+            throw new IllegalStateException();
+            
+        case 1:
+            matchResult = string.charAt(0) == '0'
+                    ? CustomMatchResult.POSSIBLE_MATCH
+                    : CustomMatchResult.NO_MATCH;
+            break;
+
+        case 2:
+            matchResult = string.charAt(0) == '0' && StringUtils.isOctalDigit(string.charAt(1))
+                ? CustomMatchResult.POSSIBLE_MATCH
+                : CustomMatchResult.NO_MATCH;
+            break;
+            
+        default:
+            final char lastChar = string.charAt(len - 1);
+            
+            if (string.charAt(0) != '0') {
+                matchResult = CustomMatchResult.NO_MATCH;
+            }
+            else {
+                if (lastChar == 'l' || lastChar == 'L') {
+                    
+                    final int decimalPartLen = len - 1;
+    
+
+                    matchResult = matches(string, 1, decimalPartLen, StringUtils::isOctalDigit)
+                            ? CustomMatchResult.MATCH
+                            : CustomMatchResult.NO_MATCH;
+                }
+                else {
+                    matchResult = matches(string, 1, len, StringUtils::isOctalDigit)
+                            ? CustomMatchResult.POSSIBLE_MATCH
+                            : CustomMatchResult.NO_MATCH;
+                }
+            }
+        }
+        
+        return matchResult;
     }),
 
     IDENTIFIER(string -> {
@@ -381,32 +490,43 @@ public enum JavaToken implements IToken {
     
     private static CustomMatchResult matchHex(CharSequence string, int len) {
         CustomMatchResult matchResult;
-
+        
         switch (len) {
         case 0:
             throw new IllegalStateException();
 
         case 1:
-            matchResult = string.charAt(0) == '0' ? CustomMatchResult.POSSIBLE_MATCH : CustomMatchResult.NO_MATCH;
+            matchResult = string.charAt(0) == '0'
+                ? CustomMatchResult.POSSIBLE_MATCH
+                : CustomMatchResult.NO_MATCH;
             break;
 
         case 2:
-            matchResult = string.charAt(0) == '0' && string.charAt(1) == 'x' ? CustomMatchResult.POSSIBLE_MATCH
-                    : CustomMatchResult.NO_MATCH;
+            matchResult = string.charAt(0) == '0' && string.charAt(1) == 'x'
+                ? CustomMatchResult.POSSIBLE_MATCH
+                : CustomMatchResult.NO_MATCH;
             break;
+
         default:
-            matchResult = matches(string, 2, len, StringUtils::isHexDigit) ? CustomMatchResult.MATCH
+                matchResult = matches(string, 2, len, StringUtils::isHexDigit)
+                    ? CustomMatchResult.MATCH
                     : CustomMatchResult.NO_MATCH;
-            break;
+                break;
         }
+
         return matchResult;
     }
 
-    private static boolean matches(CharSequence sequence, int length, CharMatcher matcher) {
-
-        return matches(sequence, 0, length, matcher);
+    private static boolean matches(CharSequence sequence, CharMatcher matcher) {
+        
+        return matches(sequence, 0, sequence.length(), matcher);
     }
 
+    private static boolean matches(CharSequence sequence, int length, CharMatcher matcher) {
+        
+        return matches(sequence, 0, length, matcher);
+    }
+        
     private static boolean matches(CharSequence sequence, int initial, int length, CharMatcher matcher) {
 
         boolean matches = true;

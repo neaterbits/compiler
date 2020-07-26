@@ -94,10 +94,12 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             JavaToken.CHARACTER_LITERAL,
             JavaToken.TRUE,
             JavaToken.FALSE,
-            JavaToken.NUMBER,
-            JavaToken.LONG_NUMBER,
+            JavaToken.DECIMAL_LITERAL,
+            JavaToken.LONG_DECIMAL_LITERAL,
             JavaToken.HEX_LITERAL,
             JavaToken.LONG_HEX_LITERAL,
+            JavaToken.OCTAL_LITERAL,
+            JavaToken.LONG_OCTAL_LITERAL,
             JavaToken.IDENTIFIER,
     };
             
@@ -204,7 +206,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             status = OperatorStatus.OPTIONAL_OPERATOR;
             break;
 
-        case NUMBER:
+        case DECIMAL_LITERAL:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
                     tokenizer.asLong(getStringRef()),
@@ -215,7 +217,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             status = OperatorStatus.OPTIONAL_OPERATOR;
             break;
 
-        case LONG_NUMBER:
+        case LONG_DECIMAL_LITERAL:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
                     tokenizer.asLong(getStringRef(), 0, 1),
@@ -242,6 +244,28 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
                     writeCurContext(),
                     tokenizer.asHexLong(getStringRef(), 2, 1),
                     Base.HEX,
+                    true,
+                    64);
+
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+
+        case OCTAL_LITERAL:
+            expressionCache.addIntegerLiteral(
+                    writeCurContext(),
+                    tokenizer.asOctalLong(getStringRef(), 1, 0),
+                    Base.OCTAL,
+                    true,
+                    32);
+
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+
+        case LONG_OCTAL_LITERAL:
+            expressionCache.addIntegerLiteral(
+                    writeCurContext(),
+                    tokenizer.asOctalLong(getStringRef(), 1, 1),
+                    Base.OCTAL,
                     true,
                     64);
 
