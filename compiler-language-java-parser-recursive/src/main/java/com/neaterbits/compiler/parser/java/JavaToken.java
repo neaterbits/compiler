@@ -117,150 +117,17 @@ public enum JavaToken implements IToken {
 
     NUMBER(CharTypeInteger.INSTANCE),
     
-    DECIMAL_LITERAL(string -> {
-        
-        final CustomMatchResult matchResult;
-        
-        final char c = string.charAt(0);
-        
-        if (c == '0') {
-            // conflict with octal, "0" by itself is a decimal 
-            matchResult = string.length() == 1
-                    ? CustomMatchResult.MATCH
-                    : CustomMatchResult.NO_MATCH;
-        }
-        else {
-            matchResult = matches(string, Character::isDigit)
-                    ? CustomMatchResult.MATCH
-                    : CustomMatchResult.NO_MATCH;
-        }
-    
-        return matchResult;
-    }),
-    LONG_DECIMAL_LITERAL(string -> {
-        
-        CustomMatchResult matchResult;
-        
-        final int len = string.length();
-        
-        switch (len) {
-        
-        case 0:
-            throw new IllegalStateException();
-
-        case 1:
-            matchResult = Character.isDigit(string.charAt(0))
-                    ? CustomMatchResult.POSSIBLE_MATCH
-                    : CustomMatchResult.NO_MATCH;
-            break;
-            
-        default:
-            if (string.charAt(0) == '0') {
-                matchResult = CustomMatchResult.NO_MATCH;
-            }
-            else {
-                final char lastChar = string.charAt(len - 1);
-                
-                if (lastChar == 'l' || lastChar == 'L') {
-                    
-                    final int decimalPartLen = len - 1;
-    
-                    matchResult = matches(string, decimalPartLen, Character::isDigit)
-                            ? CustomMatchResult.MATCH
-                            : CustomMatchResult.NO_MATCH;
-                }
-                else {
-                    matchResult = matches(string, len, Character::isDigit)
-                            ? CustomMatchResult.POSSIBLE_MATCH
-                            : CustomMatchResult.NO_MATCH;
-                }
-            }
-            break;
-        }
-        
-        return matchResult;
-    }),
+    DECIMAL_LITERAL(string -> matchDecimalString(string, string.length())),
+    LONG_DECIMAL_LITERAL(string -> matchLong(string, 0, JavaToken::matchDecimalString)),
 
     HEX_LITERAL(string -> matchHexString(string, string.length())),
-    LONG_HEX_LITERAL(string -> matchLong(string, JavaToken::matchHexString)),
+    LONG_HEX_LITERAL(string -> matchLong(string, 2, JavaToken::matchHexString)),
 
-    OCTAL_LITERAL(string -> {
-        
-        final CustomMatchResult matchResult;
-        
-        final char c = string.charAt(0);
-        
-        if (c == '0') {
-            
-            if (string.length() > 1) {
-                // conflict with octal, "0" by itself is a decimal 
-                matchResult = matches(string, 1, string.length(), StringUtils::isOctalDigit)
-                        ? CustomMatchResult.MATCH
-                        : CustomMatchResult.NO_MATCH;
-            }
-            else {
-                matchResult = CustomMatchResult.POSSIBLE_MATCH;
-            }
-        }
-        else {
-            matchResult = CustomMatchResult.NO_MATCH;
-        }
-    
-        return matchResult;
-    }),
-    LONG_OCTAL_LITERAL(string -> {
-        
-        CustomMatchResult matchResult;
-        
-        final int len = string.length();
-        
-        // requires at least a 0 prefix, a digit and 'l' or 'L' for a match
-        
-        switch (len) {
-        case 0:
-            throw new IllegalStateException();
-            
-        case 1:
-            matchResult = string.charAt(0) == '0'
-                    ? CustomMatchResult.POSSIBLE_MATCH
-                    : CustomMatchResult.NO_MATCH;
-            break;
-
-        case 2:
-            matchResult = string.charAt(0) == '0' && StringUtils.isOctalDigit(string.charAt(1))
-                ? CustomMatchResult.POSSIBLE_MATCH
-                : CustomMatchResult.NO_MATCH;
-            break;
-            
-        default:
-            final char lastChar = string.charAt(len - 1);
-            
-            if (string.charAt(0) != '0') {
-                matchResult = CustomMatchResult.NO_MATCH;
-            }
-            else {
-                if (lastChar == 'l' || lastChar == 'L') {
-                    
-                    final int decimalPartLen = len - 1;
-    
-
-                    matchResult = matches(string, 1, decimalPartLen, StringUtils::isOctalDigit)
-                            ? CustomMatchResult.MATCH
-                            : CustomMatchResult.NO_MATCH;
-                }
-                else {
-                    matchResult = matches(string, 1, len, StringUtils::isOctalDigit)
-                            ? CustomMatchResult.POSSIBLE_MATCH
-                            : CustomMatchResult.NO_MATCH;
-                }
-            }
-        }
-        
-        return matchResult;
-    }),
+    OCTAL_LITERAL(string -> matchOctalString(string, string.length())),
+    LONG_OCTAL_LITERAL(string -> matchLong(string, 1, JavaToken::matchOctalString)),
 
     BINARY_LITERAL(string -> matchBinaryString(string, string.length())),
-    LONG_BINARY_LITERAL(string -> matchLong(string, JavaToken::matchBinaryString)),
+    LONG_BINARY_LITERAL(string -> matchLong(string, 2, JavaToken::matchBinaryString)),
 
     IDENTIFIER(string -> {
         
@@ -447,19 +314,19 @@ public enum JavaToken implements IToken {
         CustomMatchResult match(CharSequence string, int length);
     }
     
-    private static CustomMatchResult matchLong(CharSequence string, MatchString matchString) {
+    private static CustomMatchResult matchLong(CharSequence string, int prefixLength, MatchString matchString) {
         
         final int len = string.length();
         
-        final CustomMatchResult hexMatches;
+        final CustomMatchResult stringMatches;
         
-        if (len <= 3) {
+        if (len <= prefixLength + 1) {
             
             // at most 3 characters, eg. 0x1
             
             final CustomMatchResult matchResult = matchString.match(string, len);
             
-            hexMatches = matchResult == CustomMatchResult.MATCH
+            stringMatches = matchResult == CustomMatchResult.MATCH
                     ? CustomMatchResult.POSSIBLE_MATCH
                     : matchResult;
         }
@@ -473,10 +340,10 @@ public enum JavaToken implements IToken {
                 // Should be the complete thing
                 final int decimalPartLen = len - 1;
 
-                hexMatches = matchString.match(string, decimalPartLen);
+                stringMatches = matchString.match(string, decimalPartLen);
                 
                 // Should always match or not since decimalPartLen > 2
-                if (hexMatches == CustomMatchResult.POSSIBLE_MATCH) {
+                if (stringMatches == CustomMatchResult.POSSIBLE_MATCH) {
                     throw new IllegalStateException();
                 }
             }
@@ -489,14 +356,59 @@ public enum JavaToken implements IToken {
                 }
 
                 // If matches as regular hex, then this is a possible match since not ending with 'l' or 'L'
-                hexMatches = matchResult == CustomMatchResult.MATCH
+                stringMatches = matchResult == CustomMatchResult.MATCH
                         ? CustomMatchResult.POSSIBLE_MATCH
                         : CustomMatchResult.NO_MATCH;
             }
         }
         
-        return hexMatches;
+        return stringMatches;
     }
+    
+    private static CustomMatchResult matchDecimalString(CharSequence string, int len) {
+
+        final CustomMatchResult matchResult;
+        
+        final char c = string.charAt(0);
+        
+        if (c == '0') {
+            // conflict with octal, "0" by itself (len 1) is a decimal while a longer is octal 
+            matchResult = len == 1
+                    ? CustomMatchResult.MATCH
+                    : CustomMatchResult.NO_MATCH;
+        }
+        else {
+            matchResult = matches(string, len, Character::isDigit)
+                    ? CustomMatchResult.MATCH
+                    : CustomMatchResult.NO_MATCH;
+        }
+    
+        return matchResult;
+    }
+
+    private static CustomMatchResult matchOctalString(CharSequence string, int len) {
+
+        final CustomMatchResult matchResult;
+        
+        switch (len) {
+        case 0:
+            throw new IllegalStateException();
+            
+        case 1:
+            matchResult = string.charAt(0) == '0'
+                    ? CustomMatchResult.POSSIBLE_MATCH
+                    : CustomMatchResult.NO_MATCH;
+            break;
+            
+        default:
+            matchResult = matches(string, 1, len, StringUtils::isOctalDigit)
+                    ? CustomMatchResult.MATCH
+                    : CustomMatchResult.NO_MATCH;
+        }
+        
+        return matchResult;
+    }
+
     
     private static CustomMatchResult matchHexString(CharSequence string, int len) {
 
@@ -536,18 +448,13 @@ public enum JavaToken implements IToken {
             break;
 
         default:
-                matchResult = matches(string, 2, len, charMatcher)
-                    ? CustomMatchResult.MATCH
-                    : CustomMatchResult.NO_MATCH;
-                break;
+            matchResult = matches(string, 2, len, charMatcher)
+                ? CustomMatchResult.MATCH
+                : CustomMatchResult.NO_MATCH;
+            break;
         }
 
         return matchResult;
-    }
-
-    private static boolean matches(CharSequence sequence, CharMatcher matcher) {
-        
-        return matches(sequence, 0, sequence.length(), matcher);
     }
 
     private static boolean matches(CharSequence sequence, int length, CharMatcher matcher) {
