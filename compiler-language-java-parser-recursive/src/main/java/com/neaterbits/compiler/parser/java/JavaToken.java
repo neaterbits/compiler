@@ -71,6 +71,7 @@ public enum JavaToken implements IToken {
     VARARGS("..."),
 
     STRING_LITERAL('"', '"'),
+    CHARACTER_LITERAL('\'', '\''),
     
     LBRACE('{'),
     RBRACE('}'),

@@ -20,6 +20,8 @@ final class CachedPrimary {
     
     private long stringLiteralValue;
     
+    private char characterLiteralValue;
+    
     private boolean booleanLiteralValue;
     
     private long methodName;
@@ -62,6 +64,13 @@ final class CachedPrimary {
         init(ParseTreeElement.STRING_LITERAL, context);
         
         this.stringLiteralValue = value;
+    }
+
+    void initCharacterLiteral(int context, char value) {
+        
+        init(ParseTreeElement.CHARACTER_LITERAL, context);
+        
+        this.characterLiteralValue = value;
     }
 
     void initBooleanLiteral(int context, boolean value) {
@@ -122,6 +131,10 @@ final class CachedPrimary {
 
     public long getStringLiteralValue() {
         return stringLiteralValue;
+    }
+
+    public char getCharacterLiteralValue() {
+        return characterLiteralValue;
     }
 
     public boolean getBooleanLiteralValue() {

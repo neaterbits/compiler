@@ -26,6 +26,7 @@ import com.neaterbits.compiler.ast.objects.expression.ParameterList;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
+import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
@@ -3076,6 +3077,31 @@ public abstract class BaseJavaParserTest {
         final StringLiteral stringLiteral = (StringLiteral)declarationStatement.getDeclarations().get(0).getInitializer();
         assertThat(stringLiteral).isNotNull();
         assertThat(stringLiteral.getValue()).isEqualTo("theLiteral");
+    }
+
+    @Test
+    public void testCharacterLiteral() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { char value = 'a'; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement declarationStatement
+            = (VariableDeclarationStatement)method.getBlock().getStatements().get(0);
+
+        assertThat(declarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("value");
+
+        final CharacterLiteral characterLiteral = (CharacterLiteral)declarationStatement.getDeclarations().get(0).getInitializer();
+        assertThat(characterLiteral).isNotNull();
+        assertThat(characterLiteral.getValue()).isEqualTo('a');
     }
 
     @Test

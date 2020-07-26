@@ -172,6 +172,10 @@ public final class ExpressionCacheApplier {
             listener.onStringLiteral(primary.getContext(), primary.getStringLiteralValue());
             break;
 
+        case CHARACTER_LITERAL:
+            listener.onCharacterLiteral(primary.getContext(), primary.getCharacterLiteralValue());
+            break;
+
         case BOOLEAN_LITERAL:
             listener.onBooleanLiteral(primary.getContext(), primary.getBooleanLiteralValue());
             break;

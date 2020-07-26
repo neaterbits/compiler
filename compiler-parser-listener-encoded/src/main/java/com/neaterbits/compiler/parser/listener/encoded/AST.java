@@ -180,6 +180,10 @@ public class AST {
             size = STRING_LITERAL_SIZE;
             break;
 
+        case CHARACTER_LITERAL:
+            size = CHARACTER_LITERAL_SIZE;
+            break;
+
         case BOOLEAN_LITERAL:
             size = BOOLEAN_LITERAL_SIZE;
             break;
@@ -1720,6 +1724,26 @@ public class AST {
         listener.onStringLiteral(leafContext, astBuffer.getStringRef(index));
     }
 
+    private static final int CHARACTER_LITERAL_SIZE = 4;
+    
+    static void encodeCharacterLiteral(StringASTBuffer astBuffer, char value) {
+        
+        astBuffer.writeLeafElement(ParseTreeElement.CHARACTER_LITERAL);
+        
+        astBuffer.writeInt(value);
+    }
+
+    public static <COMPILATION_UNIT> void decodeCharacterLiteral(
+            ASTBufferRead astBuffer,
+            int leafContext,
+            int index,
+            IterativeParserListener<COMPILATION_UNIT> listener) {
+        
+        final char c = (char)astBuffer.getInt(index);
+        
+        listener.onCharacterLiteral(leafContext, c);
+    }
+
     private static final int BOOLEAN_LITERAL_SIZE = 1;
     
     static void encodeBooleanLiteral(StringASTBuffer astBuffer, boolean value) {
@@ -1739,7 +1763,6 @@ public class AST {
         
         listener.onBooleanLiteral(leafContext, b != 0);
     }
-
 
     private static final int WHILE_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
     

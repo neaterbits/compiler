@@ -88,7 +88,7 @@ import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatemen
 import com.neaterbits.compiler.ast.objects.statement.WhileStatement;
 import com.neaterbits.compiler.ast.objects.type.primitive.BooleanType;
 import com.neaterbits.compiler.ast.objects.type.primitive.BuiltinType;
-import com.neaterbits.compiler.ast.objects.type.primitive.CharacterType;
+import com.neaterbits.compiler.ast.objects.type.primitive.Char16Type;
 import com.neaterbits.compiler.ast.objects.type.primitive.NumericType;
 import com.neaterbits.compiler.ast.objects.type.primitive.StringType;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
@@ -856,7 +856,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
 	@Override
 	public CharacterLiteral createCharacterLiteral(Context context, char value) {
-		return new CharacterLiteral(context, value, getType(CharacterType.class));
+		return new CharacterLiteral(context, value, getType(Char16Type.class));
 	}
 
 	@Override

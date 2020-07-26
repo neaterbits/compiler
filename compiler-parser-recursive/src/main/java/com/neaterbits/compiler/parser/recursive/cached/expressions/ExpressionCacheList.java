@@ -115,6 +115,11 @@ public final class ExpressionCacheList implements Names {
         addPrimary().initStringLiteral(context, value);
     }
 
+    void addCharacterLiteral(int context, char value) {
+        
+        addPrimary().initCharacterLiteral(context, value);
+    }
+
     void addBooleanLiteral(int context, boolean value) {
         
         addPrimary().initBooleanLiteral(context, value);

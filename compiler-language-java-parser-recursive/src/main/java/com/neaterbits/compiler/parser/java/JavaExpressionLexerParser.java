@@ -91,6 +91,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
     private static final JavaToken [] EXPRESSION_TOKENS = new JavaToken [] {
             
             JavaToken.STRING_LITERAL,
+            JavaToken.CHARACTER_LITERAL,
             JavaToken.TRUE,
             JavaToken.FALSE,
             JavaToken.IDENTIFIER,
@@ -219,6 +220,14 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
             status = OperatorStatus.OPTIONAL_OPERATOR;
             break;
             
+        case CHARACTER_LITERAL:
+            expressionCache.addCharacterLiteral(
+                    writeCurContext(),
+                    lexer.getCharacter(1));
+            
+            status = OperatorStatus.OPTIONAL_OPERATOR;
+            break;
+
         case TRUE:
             expressionCache.addBooleanLiteral(writeCurContext(), true);
 

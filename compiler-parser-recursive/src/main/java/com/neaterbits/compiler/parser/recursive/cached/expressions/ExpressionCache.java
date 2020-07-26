@@ -117,6 +117,11 @@ public final class ExpressionCache {
         get().addStringLiteral(context, value);
     }
 
+    public void addCharacterLiteral(int context, char value) {
+
+        get().addCharacterLiteral(context, value);
+    }
+
     public void addBooleanLiteral(int context, boolean value) {
         
         get().addBooleanLiteral(context, value);
