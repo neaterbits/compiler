@@ -3562,7 +3562,7 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onTryStatementStart(int startContext) {
+	public final void onTryStatementStart(int startContext, long tryKeyword, int tryKeywordContext) {
 	    
 	    final Context context = getStartContext(startContext);
 
@@ -3592,7 +3592,7 @@ public abstract class BaseParserListener<
 	}
 	
 	@Override
-	public final void onCatchStart(int startContext) {
+	public final void onCatchStart(int startContext, long catchKeyword, int catchKeywordContext) {
 	    
 	    final Context context = getStartContext(startContext);
 
@@ -3626,7 +3626,7 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onFinallyStart(int startContext) {
+	public final void onFinallyStart(int startContext, long finallyKeyword, int finallyKeywordContext) {
 	    
 	    final Context context = getStartContext(startContext);
 
@@ -3666,7 +3666,9 @@ public abstract class BaseParserListener<
 				context,
 				stackTryCatchFinallyStatement.getTryBlock().getList(),
 				stackTryCatchFinallyStatement.getCatchBlocks(),
-				stackTryCatchFinallyStatement.getFinallyBlock().getList());
+				stackTryCatchFinallyStatement.getFinallyBlock() != null
+				    ? stackTryCatchFinallyStatement.getFinallyBlock().getList()
+		            : null);
 
 		final StatementSetter<STATEMENT> statementSetter = get();
 

@@ -203,6 +203,12 @@ public enum ParseTreeElement {
 	
 	TRY_CATCH_FINALLY_STATEMENT(false),
 	
+	TRY_BLOCK_END(true),
+
+	CATCH(false),
+	
+	FINALLY(false),
+
 	TRY_WITH_RESOURCES_STATEMENT(false),
 	RESOURCES_LIST(false),
 	

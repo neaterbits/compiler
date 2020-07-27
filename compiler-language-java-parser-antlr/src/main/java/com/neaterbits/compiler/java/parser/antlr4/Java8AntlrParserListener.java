@@ -1862,7 +1862,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterTryCatch(TryCatchContext ctx) {
-		delegate.onTryStatementStart(context(ctx));
+		delegate.onTryStatementStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 
 	@Override
@@ -1872,7 +1872,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterTryCatchFinally(TryCatchFinallyContext ctx) {
-		delegate.onTryStatementStart(context(ctx));
+		delegate.onTryStatementStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 
 	@Override
@@ -1912,7 +1912,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterCatchClause(CatchClauseContext ctx) {
-		delegate.onCatchStart(context(ctx));
+		delegate.onCatchStart(context(ctx), stringRef(ctx.keyword), context(ctx.keyword));
 	}
 
 	@Override

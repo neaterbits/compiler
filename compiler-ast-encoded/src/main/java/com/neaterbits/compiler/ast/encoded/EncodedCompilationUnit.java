@@ -773,6 +773,55 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case TRY_CATCH_FINALLY_STATEMENT: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeTryCatchFinallyStatementStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeTryCatchFinallyStatementEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+            
+            case TRY_BLOCK_END: {
+                
+                final int leafContext = getLeafContext(parseTreeRef);
+                
+                if (ref.isStart) {
+                    AST.decodeTryBlockEnd(leafContext, getEndContext(leafContext), listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+            }
+
+            case CATCH: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeCatchStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeCatchEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case FINALLY: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeFinallyStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeFinallyEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             case RETURN_STATEMENT: {
                 final int startContext = getStartContext(parseTreeRef);
 

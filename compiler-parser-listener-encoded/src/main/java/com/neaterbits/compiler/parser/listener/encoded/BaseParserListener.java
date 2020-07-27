@@ -1605,11 +1605,11 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onTryStatementStart(int tryStatementStartContext) {
+    public final void onTryStatementStart(int tryStatementStartContext, long tryKeyword, int tryKeywordContext) {
 
         writeStartElementContextRef(tryStatementStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeTryCatchFinallyStatementStart(astBuffer, tryKeyword, tryKeywordContext);
     }
 
     @Override
@@ -1617,15 +1617,15 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         writeEndElementContext(tryStartContext, endContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeTryBlockEnd(astBuffer);
     }
 
     @Override
-    public final void onCatchStart(int catchStartContext) {
+    public final void onCatchStart(int catchStartContext, long catchKeyword, int catchKeywordContext) {
         
         writeStartElementContextRef(catchStartContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeCatchStart(astBuffer, catchKeyword, catchKeywordContext);
     }
 
     @Override
@@ -1633,31 +1633,31 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
 
         writeEndElementContext(catchStartContext, endContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeCatchEnd(astBuffer);
     }
 
     @Override
-    public final void onFinallyStart(int finallyStartContext) {
+    public final void onFinallyStart(int finallyStartContext, long finallyKeyword, int finallyKeywordContext) {
 
         writeStartElementContextRef(finallyStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeFinallyStart(astBuffer, finallyKeyword, finallyKeywordContext);
     }
 
     @Override
     public final void onFinallyEnd(int finallyEndContext, Context endContext) {
 
         writeEndElementContext(finallyEndContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeFinallyEnd(astBuffer);
     }
 
     @Override
     public final void onTryStatementEnd(int tryStatementStartContext, Context endContext) {
 
         writeEndElementContext(tryStatementStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeTryCatchFinallyStatementEnd(astBuffer);
     }
 
     @Override

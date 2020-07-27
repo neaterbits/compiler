@@ -1328,13 +1328,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onAnnotationEnd(writeEndContext(context), context);
 	}
 
-	public void onTryStatementStart(Context context) {
+	public void onTryStatementStart(Context context, long tryKeyword, Context tryKeywordContext) {
 		
 		statementsStack.add(JavaStatement.TRY_CATCH);
 		
 		statementsStack.push();
 		
-		delegate.onTryStatementStart(writeStartContext(context));
+		delegate.onTryStatementStart(writeStartContext(context), tryKeyword, writeOtherContext(tryKeywordContext));
 	}
 
 	public void onTryStatementEnd(Context context) {
@@ -1374,13 +1374,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onTryWithResourcesEnd(writeEndContext(context), context);
 	}
 	
-	public void onCatchStart(Context context) {
+	public void onCatchStart(Context context, long keyword, Context keywordContext) {
 		
 		statementsStack.add(JavaStatement.CATCH);
 		
 		statementsStack.push();
 		
-		delegate.onCatchStart(writeStartContext(context));
+		delegate.onCatchStart(writeStartContext(context), keyword, writeOtherContext(keywordContext));
 	}
 
 	public void onCatchEnd(Context context) {
@@ -1390,13 +1390,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onCatchEnd(writeEndContext(context), context);
 	}
 
-	public void onFinallyStart(Context context) {
+	public void onFinallyStart(Context context, long keyword, Context keywordContext) {
 		
 		statementsStack.add(JavaStatement.FINALLY);
 		
 		statementsStack.push();
 
-		delegate.onFinallyStart(writeStartContext(context));
+		delegate.onFinallyStart(writeStartContext(context), keyword, writeOtherContext(keywordContext));
 	}
 
 	public void onFinallyEnd(Context context) {

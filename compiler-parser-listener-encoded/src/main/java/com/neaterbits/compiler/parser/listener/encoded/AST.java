@@ -204,6 +204,18 @@ public class AST {
             size = ITERATOR_FOR_STATEMENT_SIZE;
             break;
         
+        case TRY_CATCH_FINALLY_STATEMENT:
+            size = TRY_CATCH_FINALLY_STATEMENT_SIZE;
+            break;
+
+        case CATCH:
+            size = CATCH_SIZE;
+            break;
+
+        case FINALLY:
+            size = FINALLY_SIZE;
+            break;
+
         case RETURN_STATEMENT:
             size = RETURN_STATEMENT_SIZE;
             break;
@@ -1883,6 +1895,154 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onIteratorForStatementEnd(iteratorForStatementStartContext, endContext);
+    }
+
+    private static final int TRY_CATCH_FINALLY_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeTryCatchFinallyStatementStart(StringASTBuffer astBuffer, long tryKeyword, int tryKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.TRY_CATCH_FINALLY_STATEMENT);
+        
+        astBuffer.writeStringRef(tryKeyword);
+        astBuffer.writeContextRef(tryKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeTryCatchFinallyStatementStart(
+            ASTBufferRead astBuffer,
+            int tryCatchFinallyStatementStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int tryKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            tryKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            tryKeywordContext = ContextRef.NONE;
+        }
+
+        listener.onTryStatementStart(
+                tryCatchFinallyStatementStartContext,
+                astBuffer.getStringRef(index),
+                tryKeywordContext);
+    }
+
+    static void encodeTryBlockEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.TRY_BLOCK_END);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeTryBlockEnd(
+            int tryBlockContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onTryBlockEnd(tryBlockContext, endContext);
+    }
+
+    private static final int CATCH_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeCatchStart(StringASTBuffer astBuffer, long catchKeyword, int catchKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.CATCH);
+        
+        astBuffer.writeStringRef(catchKeyword);
+        astBuffer.writeContextRef(catchKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeCatchStart(
+            ASTBufferRead astBuffer,
+            int catchStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int catchKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            catchKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            catchKeywordContext = ContextRef.NONE;
+        }
+
+        listener.onCatchStart(catchStartContext, astBuffer.getStringRef(index), catchKeywordContext);
+    }
+
+    static void encodeCatchEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.CATCH);
+    }
+
+    public static <COMPILATION_UNIT> void decodeCatchEnd(
+            ASTBufferRead astBuffer,
+            int catchStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onCatchEnd(catchStartContext, endContext);
+    }
+
+    private static final int FINALLY_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeFinallyStart(StringASTBuffer astBuffer, long finallyKeyword, int finallyKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.FINALLY);
+        
+        astBuffer.writeStringRef(finallyKeyword);
+        astBuffer.writeContextRef(finallyKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeFinallyStart(
+            ASTBufferRead astBuffer,
+            int finallyStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int finallyKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            finallyKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            finallyKeywordContext = ContextRef.NONE;
+        }
+
+        listener.onFinallyStart(finallyStartContext, astBuffer.getStringRef(index), finallyKeywordContext);
+    }
+
+    static void encodeFinallyEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.FINALLY);
+    }
+
+    public static <COMPILATION_UNIT> void decodeFinallyEnd(
+            ASTBufferRead astBuffer,
+            int finallyStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onFinallyEnd(finallyStartContext, endContext);
+    }
+
+    static void encodeTryCatchFinallyStatementEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.TRY_CATCH_FINALLY_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeTryCatchFinallyStatementEnd(
+            ASTBufferRead astBuffer,
+            int tryCatchFinallyStatementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onTryStatementEnd(tryCatchFinallyStatementStartContext, endContext);
     }
 
     private static final int RETURN_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;

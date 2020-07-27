@@ -907,8 +907,8 @@ synchronizedStatement
 	;
 
 tryStatement
-	:	'try' block catches				# tryCatch
-	|	'try' block catches? finally_	# tryCatchFinally
+	:	keyword = 'try' block catches			# tryCatch
+	|	keyword = 'try' block catches? finally_	# tryCatchFinally
 	|	tryWithResourcesStatement		# tryWithResources
 	;
 
@@ -917,7 +917,7 @@ catches
 	;
 
 catchClause
-	:	'catch' '(' catchFormalParameter ')' block
+	:	keyword = 'catch' '(' catchFormalParameter ')' block
 	;
 
 catchFormalParameter
@@ -929,7 +929,7 @@ catchType
 	;
 
 finally_
-	:	'finally' block
+	:	keyword = 'finally' block
 	;
 
 tryWithResourcesStatement

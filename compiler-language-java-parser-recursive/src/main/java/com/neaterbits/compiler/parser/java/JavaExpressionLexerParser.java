@@ -22,6 +22,8 @@ import com.neaterbits.util.parse.ParserException;
 
 abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexerParser<COMPILATION_UNIT> {
 
+    private static final char SEPARATOR = '_';
+    
     JavaExpressionLexerParser(
             String file,
             Lexer<JavaToken, CharInput> lexer,
@@ -211,7 +213,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case DECIMAL_LITERAL:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
-                    tokenizer.asLong(getStringRef()),
+                    tokenizer.asLongWithSeparator(getStringRef(), 0, 0, SEPARATOR),
                     Base.DECIMAL,
                     true,
                     32);
@@ -222,7 +224,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case LONG_DECIMAL_LITERAL:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
-                    tokenizer.asLong(getStringRef(), 0, 1),
+                    tokenizer.asLongWithSeparator(getStringRef(), 0, 1, SEPARATOR),
                     Base.DECIMAL,
                     true,
                     64);
@@ -233,7 +235,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case HEX_LITERAL:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
-                    tokenizer.asHexLong(getStringRef(), 2, 0),
+                    tokenizer.asHexLongWithSeparator(getStringRef(), 2, 0, SEPARATOR),
                     Base.HEX,
                     true,
                     32);
@@ -244,7 +246,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case LONG_HEX_LITERAL:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
-                    tokenizer.asHexLong(getStringRef(), 2, 1),
+                    tokenizer.asHexLongWithSeparator(getStringRef(), 2, 1, SEPARATOR),
                     Base.HEX,
                     true,
                     64);
@@ -255,7 +257,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case OCTAL_LITERAL:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
-                    tokenizer.asOctalLong(getStringRef(), 1, 0),
+                    tokenizer.asOctalLongWithSeparator(getStringRef(), 1, 0, SEPARATOR),
                     Base.OCTAL,
                     true,
                     32);
@@ -266,7 +268,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case LONG_OCTAL_LITERAL:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
-                    tokenizer.asOctalLong(getStringRef(), 1, 1),
+                    tokenizer.asOctalLongWithSeparator(getStringRef(), 1, 1, SEPARATOR),
                     Base.OCTAL,
                     true,
                     64);
@@ -277,7 +279,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case BINARY_LITERAL:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
-                    tokenizer.asBinaryLong(getStringRef(), 2, 0),
+                    tokenizer.asBinaryLongWithSeparator(getStringRef(), 2, 0, SEPARATOR),
                     Base.BINARY,
                     true,
                     32);
@@ -288,7 +290,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
         case LONG_BINARY_LITERAL:
             expressionCache.addIntegerLiteral(
                     writeCurContext(),
-                    tokenizer.asBinaryLong(getStringRef(), 2, 1),
+                    tokenizer.asBinaryLongWithSeparator(getStringRef(), 2, 1, SEPARATOR),
                     Base.BINARY,
                     true,
                     64);

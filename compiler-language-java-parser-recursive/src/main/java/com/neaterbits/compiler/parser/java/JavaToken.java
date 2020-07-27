@@ -28,6 +28,10 @@ public enum JavaToken implements IToken {
     BREAK("break"),
     CONTINUE("continue"),
     
+    TRY("try"),
+    CATCH("catch"),
+    FINALLY("finally"),
+    
     RETURN("return"),
     THROW("throw"),
     
@@ -112,24 +116,26 @@ public enum JavaToken implements IToken {
     MUL('*'),
     DIV('/'),
     MOD('%'),
+    
+    BITWISE_OR('|'),
 
     NEW("new"),
 
     NUMBER(CharTypeInteger.INSTANCE),
     
-    DECIMAL_LITERAL(string -> matchDecimalString(string, string.length())),
-    LONG_DECIMAL_LITERAL(string -> matchLong(string, 0, JavaToken::matchDecimalString)),
+    DECIMAL_LITERAL(true, string -> matchDecimalString(string, string.length())),
+    LONG_DECIMAL_LITERAL(true, string -> matchLong(string, 0, JavaToken::matchDecimalString)),
 
-    HEX_LITERAL(string -> matchHexString(string, string.length())),
-    LONG_HEX_LITERAL(string -> matchLong(string, 2, JavaToken::matchHexString)),
+    HEX_LITERAL(true, string -> matchHexString(string, string.length())),
+    LONG_HEX_LITERAL(true, string -> matchLong(string, 2, JavaToken::matchHexString)),
 
-    OCTAL_LITERAL(string -> matchOctalString(string, string.length())),
-    LONG_OCTAL_LITERAL(string -> matchLong(string, 1, JavaToken::matchOctalString)),
+    OCTAL_LITERAL(true, string -> matchOctalString(string, string.length())),
+    LONG_OCTAL_LITERAL(true, string -> matchLong(string, 1, JavaToken::matchOctalString)),
 
-    BINARY_LITERAL(string -> matchBinaryString(string, string.length())),
-    LONG_BINARY_LITERAL(string -> matchLong(string, 2, JavaToken::matchBinaryString)),
+    BINARY_LITERAL(true, string -> matchBinaryString(string, string.length())),
+    LONG_BINARY_LITERAL(true, string -> matchLong(string, 2, JavaToken::matchBinaryString)),
 
-    IDENTIFIER(string -> {
+    IDENTIFIER(false, string -> {
         
         CustomMatchResult matchResult;
 
@@ -166,6 +172,7 @@ public enum JavaToken implements IToken {
     private final String toLiteral;
     
     private final CustomMatcher custom;
+    private final boolean customEager;
 
     private JavaToken(TokenType tokenType) {
 
@@ -178,6 +185,7 @@ public enum JavaToken implements IToken {
         this.literal = null;
         this.toLiteral = null;
         this.custom = null;
+        this.customEager = false;
     }
 
     private JavaToken(char character) {
@@ -188,6 +196,7 @@ public enum JavaToken implements IToken {
         this.literal = null;
         this.toLiteral = null;
         this.custom = null;
+        this.customEager = false;
     }
 
     private JavaToken(char fromCharacter, char toCharacter) {
@@ -198,6 +207,7 @@ public enum JavaToken implements IToken {
         this.literal = null;
         this.toLiteral = null;
         this.custom = null;
+        this.customEager = false;
     }
 
     private JavaToken(CharType charType) {
@@ -211,6 +221,7 @@ public enum JavaToken implements IToken {
         this.literal = null;
         this.toLiteral = null;
         this.custom = null;
+        this.customEager = false;
     }
 
     private JavaToken(String literal, TokenType tokenType) {
@@ -225,6 +236,7 @@ public enum JavaToken implements IToken {
         this.literal = literal;
         this.toLiteral = null;
         this.custom = null;
+        this.customEager = false;
     }
 
     private JavaToken(String literal) {
@@ -243,9 +255,10 @@ public enum JavaToken implements IToken {
         this.literal = fromLiteral;
         this.toLiteral = toLiteral;
         this.custom = null;
+        this.customEager = false;
     }
 
-    private JavaToken(CustomMatcher custom) {
+    private JavaToken(boolean customEager, CustomMatcher custom) {
 
         Objects.requireNonNull(custom);
 
@@ -256,6 +269,7 @@ public enum JavaToken implements IToken {
         this.literal = null;
         this.toLiteral = null;
         this.custom = custom;
+        this.customEager = customEager;
     }
 
     @Override
@@ -303,6 +317,12 @@ public enum JavaToken implements IToken {
         return custom;
     }
 
+    @Override
+    public boolean isEager() {
+
+        return tokenType == TokenType.CUSTOM && customEager;
+    }
+
     @FunctionalInterface
     interface CharMatcher {
         boolean matches(char c);
@@ -342,23 +362,18 @@ public enum JavaToken implements IToken {
 
                 stringMatches = matchString.match(string, decimalPartLen);
                 
-                // Should always match or not since decimalPartLen > 2
-                if (stringMatches == CustomMatchResult.POSSIBLE_MATCH) {
+                // Should always match or not since decimalPartLen > 2, unless ends with '_'
+                if (stringMatches == CustomMatchResult.POSSIBLE_MATCH && string.charAt(decimalPartLen - 1) != '_') {
                     throw new IllegalStateException();
                 }
             }
             else {
-                final CustomMatchResult matchResult = matchString.match(string, len);
+                stringMatches = matchString.match(string, len);
                 
-                // Should always match or not since decimalPartLen > 2
-                if (matchResult == CustomMatchResult.POSSIBLE_MATCH) {
+                // Should always match or not since decimalPartLen > 2, unless ends with '_'
+                if (stringMatches == CustomMatchResult.POSSIBLE_MATCH && string.charAt(len - 1) != '_') {
                     throw new IllegalStateException();
                 }
-
-                // If matches as regular hex, then this is a possible match since not ending with 'l' or 'L'
-                stringMatches = matchResult == CustomMatchResult.MATCH
-                        ? CustomMatchResult.POSSIBLE_MATCH
-                        : CustomMatchResult.NO_MATCH;
             }
         }
         
@@ -378,9 +393,7 @@ public enum JavaToken implements IToken {
                     : CustomMatchResult.NO_MATCH;
         }
         else {
-            matchResult = matches(string, len, Character::isDigit)
-                    ? CustomMatchResult.MATCH
-                    : CustomMatchResult.NO_MATCH;
+            matchResult = matches(string, len, Character::isDigit);
         }
     
         return matchResult;
@@ -401,9 +414,7 @@ public enum JavaToken implements IToken {
             break;
             
         default:
-            matchResult = matches(string, 1, len, StringUtils::isOctalDigit)
-                    ? CustomMatchResult.MATCH
-                    : CustomMatchResult.NO_MATCH;
+            matchResult = matches(string, len, StringUtils::isOctalDigit);
         }
         
         return matchResult;
@@ -448,28 +459,44 @@ public enum JavaToken implements IToken {
             break;
 
         default:
-            matchResult = matches(string, 2, len, charMatcher)
-                ? CustomMatchResult.MATCH
-                : CustomMatchResult.NO_MATCH;
+            matchResult = matches(string, 2, len, charMatcher);
             break;
         }
 
         return matchResult;
     }
 
-    private static boolean matches(CharSequence sequence, int length, CharMatcher matcher) {
+    private static CustomMatchResult matches(CharSequence sequence, int length, CharMatcher matcher) {
         
         return matches(sequence, 0, length, matcher);
     }
         
-    private static boolean matches(CharSequence sequence, int initial, int length, CharMatcher matcher) {
+    private static CustomMatchResult matches(CharSequence sequence, int initial, int length, CharMatcher matcher) {
 
-        boolean matches = true;
+        CustomMatchResult matches = CustomMatchResult.MATCH;
         
         for (int i = initial; i < length; ++ i) {
-            if (!matcher.matches(sequence.charAt(i))) {
-                matches = false;
-                break;
+            
+            final char c = sequence.charAt(i);
+            
+            if (c == '_') {
+                
+                if (i == initial) {
+                    // not allowed to have underscore as initial character
+                    matches = CustomMatchResult.NO_MATCH;
+                    break;
+                }
+                else if (i == length - 1) {
+                    // might match if given more input
+                    matches = CustomMatchResult.POSSIBLE_MATCH;
+                    break;
+                }
+            }
+            else {
+                if (!matcher.matches(c)) {
+                    matches = CustomMatchResult.NO_MATCH;
+                    break;
+                }
             }
         }
         

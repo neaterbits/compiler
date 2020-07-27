@@ -15,6 +15,7 @@ import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.annotation.Annotation;
 import com.neaterbits.compiler.ast.objects.annotation.AnnotationElement;
+import com.neaterbits.compiler.ast.objects.block.Block;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Constructor;
 import com.neaterbits.compiler.ast.objects.expression.ClassInstanceCreationExpression;
@@ -35,6 +36,7 @@ import com.neaterbits.compiler.ast.objects.generics.NamedGenericTypeParameter;
 import com.neaterbits.compiler.ast.objects.generics.TypeArgument;
 import com.neaterbits.compiler.ast.objects.generics.WildcardTypeArgument;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
+import com.neaterbits.compiler.ast.objects.statement.CatchBlock;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
@@ -42,6 +44,7 @@ import com.neaterbits.compiler.ast.objects.statement.IteratorForStatement;
 import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.statement.ThrowStatement;
+import com.neaterbits.compiler.ast.objects.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.ast.objects.statement.WhileStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
@@ -3075,6 +3078,25 @@ public abstract class BaseJavaParserTest {
     }
 
     @Test
+    public void testIntegerDecimalLiteralWithUnderscore() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int value = 1_2_3; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(123);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.DECIMAL);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(32);
+    }
+
+    @Test
     public void testLongDecimalLiteralUpperCase() throws IOException, ParserException {
      
         final String source = "package com.test;\n"
@@ -3194,6 +3216,25 @@ public abstract class BaseJavaParserTest {
         final String source = "package com.test;\n"
                 
                 + "class TestClass { void someMethod() { int value = 012345; } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final IntegerLiteral integerLiteral = checkIntegerLiteralLocalVariable(compilationUnit, "TestClass", "someMethod", "value");
+
+        assertThat(integerLiteral).isNotNull();
+        assertThat(integerLiteral.getValue()).isEqualTo(012345);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.OCTAL);
+        assertThat(integerLiteral.isSigned()).isTrue();
+        assertThat(integerLiteral.getBits()).isEqualTo(32);
+    }
+
+    @Test
+    public void testIntegerOctalLiteralWithUnderscore() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { int value = 0_123_45; } }";
         
         final CompilationUnit compilationUnit = parse(source);
         assertThat(compilationUnit.getCode()).isNotNull();
@@ -3441,6 +3482,206 @@ public abstract class BaseJavaParserTest {
         
         assertThat(method.getBlock()).isNotNull();
         assertThat(method.getBlock().getStatements().size()).isEqualTo(0);
+    }
+
+    @Test
+    public void testTryCatch() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    try {"
+                + "      int a; "
+                + "    }"
+                + "    catch (IOException ex) { "
+                + "      ex.printStackTrace();"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final TryCatchFinallyStatement tryCatchFinallyStatement
+            = (TryCatchFinallyStatement)method.getBlock().getStatements().get(0);
+        
+        assertThat(tryCatchFinallyStatement.getTryBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement variableDeclarationStatement
+            = (VariableDeclarationStatement)tryCatchFinallyStatement.getTryBlock().getStatements().get(0);
+        assertThat(variableDeclarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        
+        assertThat(tryCatchFinallyStatement.getCatchBlocks().size()).isEqualTo(1);
+        final CatchBlock catchBlock = tryCatchFinallyStatement.getCatchBlocks().get(0);
+        checkCatchBlock(catchBlock, "ex", "IOException");
+    }
+
+    @Test
+    public void testTryCatchMultipleExceptions() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    try {"
+                + "      int a; "
+                + "    }"
+                + "    catch (IOException|ParseException|IllegalArgumentException ex) { "
+                + "      ex.printStackTrace();"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final TryCatchFinallyStatement tryCatchFinallyStatement
+            = (TryCatchFinallyStatement)method.getBlock().getStatements().get(0);
+        
+        assertThat(tryCatchFinallyStatement.getTryBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement variableDeclarationStatement
+            = (VariableDeclarationStatement)tryCatchFinallyStatement.getTryBlock().getStatements().get(0);
+        assertThat(variableDeclarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        
+        assertThat(tryCatchFinallyStatement.getCatchBlocks().size()).isEqualTo(1);
+        final CatchBlock catchBlock = tryCatchFinallyStatement.getCatchBlocks().get(0);
+        
+        assertThat(catchBlock.getExceptionTypes().size()).isEqualTo(3);
+        checkCatchBlock(catchBlock, "ex", "IOException", "ParseException", "IllegalArgumentException");
+    }
+    
+    @Test
+    public void testTryCatchFinally() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    try {"
+                + "      int a;"
+                + "    }"
+                + "    catch (IOException ex) {"
+                + "      ex.printStackTrace(); "
+                + "    }"
+                + "    finally {"
+                + "      System.out.println(\"inside finally\");"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final TryCatchFinallyStatement tryCatchFinallyStatement
+            = (TryCatchFinallyStatement)method.getBlock().getStatements().get(0);
+        
+        assertThat(tryCatchFinallyStatement.getTryBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement variableDeclarationStatement
+            = (VariableDeclarationStatement)tryCatchFinallyStatement.getTryBlock().getStatements().get(0);
+        assertThat(variableDeclarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        
+        assertThat(tryCatchFinallyStatement.getCatchBlocks().size()).isEqualTo(1);
+        final CatchBlock catchBlock = tryCatchFinallyStatement.getCatchBlocks().get(0);
+        
+        assertThat(catchBlock.getExceptionTypes().size()).isEqualTo(1);
+        checkCatchBlock(catchBlock, "ex", "IOException");
+        
+        final Block finallyBlock = tryCatchFinallyStatement.getFinallyBlock();
+        assertThat(finallyBlock).isNotNull();
+        
+        assertThat(finallyBlock.getStatements().size()).isEqualTo(1);
+        
+        final ExpressionStatement expressionStatement = (ExpressionStatement)finallyBlock.getStatements().get(0);
+        final PrimaryList list = (PrimaryList)expressionStatement.getExpression();
+        assertThat(list.getPrimaries().size()).isEqualTo(3);
+    }
+
+    @Test
+    public void testTryCatchFinallyMultipleCatchClauses() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    try {"
+                + "      int a;"
+                + "    }"
+                + "    catch (IOException ex) {"
+                + "      ex.printStackTrace(); "
+                + "    }"
+                + "    catch (ParseException ex) {"
+                + "      ex.printStackTrace(); "
+                + "    }"
+                + "    catch (IllegalArgumentException ex) {"
+                + "      ex.printStackTrace(); "
+                + "    }"
+                + "    finally {"
+                + "      System.out.println(\"inside finally\");"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final TryCatchFinallyStatement tryCatchFinallyStatement
+            = (TryCatchFinallyStatement)method.getBlock().getStatements().get(0);
+        
+        assertThat(tryCatchFinallyStatement.getTryBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement variableDeclarationStatement
+            = (VariableDeclarationStatement)tryCatchFinallyStatement.getTryBlock().getStatements().get(0);
+        assertThat(variableDeclarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        
+        assertThat(tryCatchFinallyStatement.getCatchBlocks().size()).isEqualTo(3);
+        
+        checkCatchBlock(tryCatchFinallyStatement.getCatchBlocks().get(0), "ex", "IOException");
+        checkCatchBlock(tryCatchFinallyStatement.getCatchBlocks().get(1), "ex", "ParseException");
+        checkCatchBlock(tryCatchFinallyStatement.getCatchBlocks().get(2), "ex", "IllegalArgumentException");
+        
+        
+        final Block finallyBlock = tryCatchFinallyStatement.getFinallyBlock();
+        assertThat(finallyBlock).isNotNull();
+        
+        assertThat(finallyBlock.getStatements().size()).isEqualTo(1);
+        
+        final ExpressionStatement expressionStatement = (ExpressionStatement)finallyBlock.getStatements().get(0);
+        final PrimaryList list = (PrimaryList)expressionStatement.getExpression();
+        assertThat(list.getPrimaries().size()).isEqualTo(3);
+    }
+    
+    private void checkCatchBlock(CatchBlock catchBlock, String variableName, String ...typeNames) {
+
+        assertThat(catchBlock.getExceptionTypes().size()).isEqualTo(typeNames.length);
+        
+        for (int i = 0; i < typeNames.length; ++ i) {
+            checkIdentifierType(catchBlock.getExceptionTypes().get(i), typeNames[i]);
+        }
+        
+        assertThat(catchBlock.getExceptionVarName().getName()).isEqualTo(variableName);
     }
 
     private void checkExpressionListLiteral(ExpressionList list, int index, int value) {

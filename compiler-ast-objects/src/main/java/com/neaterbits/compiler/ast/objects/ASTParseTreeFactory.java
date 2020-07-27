@@ -970,7 +970,13 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	@Override
 	public TryCatchFinallyStatement createTryCatchFinallyStatement(Context context, List<Statement> tryBlock,
 			List<CatchBlock> catchBlocks, List<Statement> finallyBlock) {
-		return new TryCatchFinallyStatement(context, new Block(context, tryBlock), catchBlocks, new Block(context, finallyBlock));
+		return new TryCatchFinallyStatement(
+		        context,
+		        new Block(context, tryBlock),
+		        catchBlocks,
+		        finallyBlock != null
+		            ? new Block(context, finallyBlock)
+                    : null);
 	}
 
 	@Override
