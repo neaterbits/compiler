@@ -185,6 +185,7 @@ public enum ParseTreeElement {
 	FOR_STATEMENT(false),
 	FOR_INIT(false),
 	FOR_EXPRESSION_LIST(false),
+	FOR_UPDATE(false),
 
 	IF_ELSE_IF_ELSE_STATEMENT(false),
 	IF_CONDITION_BLOCK(false),

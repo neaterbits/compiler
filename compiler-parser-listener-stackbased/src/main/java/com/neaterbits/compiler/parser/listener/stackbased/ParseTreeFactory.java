@@ -405,7 +405,7 @@ public interface ParseTreeFactory<
 	
 	ASSIGNMENT_STATEMENT createAssignmentStatement(Context context, ASSIGNMENT_EXPRESSION assignmentExpression);
 	
-	FOR_INIT createForInit(Context context, INITIALIZER_VARIABLE_DECLARATION_ELEMENT initializer);
+	FOR_INIT createForInit(Context context, VARIABLE_DECLARATION_STATEMENT initializer);
 	FOR_INIT createForInit(Context context, List<EXPRESSION> expressionList);
 	FOR_STATEMENT createForStatement(
 			Context context,

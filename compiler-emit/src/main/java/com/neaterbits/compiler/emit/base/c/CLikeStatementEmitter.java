@@ -6,7 +6,7 @@ import com.neaterbits.compiler.ast.objects.statement.AssignmentStatement;
 import com.neaterbits.compiler.ast.objects.statement.BreakStatement;
 import com.neaterbits.compiler.ast.objects.statement.DoWhileStatement;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
-import com.neaterbits.compiler.ast.objects.statement.ForExpressionList;
+import com.neaterbits.compiler.ast.objects.statement.ForUpdateExpressionList;
 import com.neaterbits.compiler.ast.objects.statement.ForStatement;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
@@ -159,7 +159,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		return null;
 	}
 	
-	private void emitForExpressionList(ForExpressionList forExpressionList, T param) {
+	private void emitForExpressionList(ForUpdateExpressionList forExpressionList, T param) {
 		
 		emitListTo(param, forExpressionList.getExpressions(), ", ", expression -> {
 			emitExpression(expression, param);
@@ -175,7 +175,8 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 			param.append(' ');
 			
 			if (statement.getForInit().getLocalVariableDeclaration() != null) {
-				emitVariableDeclarationElement(statement.getForInit().getLocalVariableDeclaration(), param);
+			    throw new UnsupportedOperationException();
+				// emitVariableDeclarationElement(statement.getForInit().getLocalVariableDeclaration(), param);
 			}
 			else if (statement.getForInit().getExpressionList() != null) {
 				emitForExpressionList(statement.getForInit().getExpressionList(), param);

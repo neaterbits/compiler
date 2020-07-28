@@ -685,6 +685,18 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case EXPRESSION_LIST: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeExpressionListStart(startContext, listener);
+                }
+                else {
+                    AST.decodeExpressionListEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             case INTEGER_LITERAL: {
 
                 final int leafContext = getLeafContext(parseTreeRef);
@@ -745,6 +757,54 @@ public final class EncodedCompilationUnit {
                 }
                 else {
                     AST.decodeWhileStatementEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case FOR_STATEMENT: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeForStatementStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeForStatementEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case FOR_INIT: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeForInitStart(startContext, listener);
+                }
+                else {
+                    AST.decodeForInitEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case FOR_EXPRESSION_LIST: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeForExpressionStart(startContext, listener);
+                }
+                else {
+                    AST.decodeForExpressionEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case FOR_UPDATE: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeForUpdateStart(startContext, listener);
+                }
+                else {
+                    AST.decodeForUpdateEnd(startContext, getEndContext(startContext), listener);
                 }
                 break;
             }

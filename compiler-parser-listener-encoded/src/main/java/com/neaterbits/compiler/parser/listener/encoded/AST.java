@@ -200,6 +200,10 @@ public class AST {
             size = WHILE_STATEMENT_SIZE;
             break;
 
+        case FOR_STATEMENT:
+            size = FOR_STATEMENT_SIZE;
+            break;
+
         case ITERATOR_FOR_STATEMENT:
             size = ITERATOR_FOR_STATEMENT_SIZE;
             break;
@@ -1675,6 +1679,31 @@ public class AST {
        astBuffer.writeByte((byte)bits);
     }
 
+    static void encodeExpressionListStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.EXPRESSION_LIST);
+    }
+
+    public static <COMPILATION_UNIT> void decodeExpressionListStart(
+            int expressionListStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onExpressionListStart(expressionListStartContext);
+    }
+
+    static void encodeExpressionListEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.EXPRESSION_LIST);
+    }
+
+    public static <COMPILATION_UNIT> void decodeExpressionListEnd(
+            int expressionListStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onExpressionListEnd(expressionListStartContext, endContext);
+    }
+
     public static <COMPILATION_UNIT> void decodeIntegerLiteral(
             ASTBufferRead astBuffer,
             int leafContext,
@@ -1825,6 +1854,121 @@ public class AST {
             ParserListener<COMPILATION_UNIT> listener) {
 
         listener.onWhileStatementEnd(whileStatementStartContext, endContext);
+    }
+
+    private static final int FOR_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeForStatementStart(StringASTBuffer astBuffer, long forKeyword, int forKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.FOR_STATEMENT);
+        
+        astBuffer.writeStringRef(forKeyword);
+        astBuffer.writeContextRef(forKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeForStatementStart(
+            ASTBufferRead astBuffer,
+            int iteratorForStatementStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int iteratorForKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            iteratorForKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            iteratorForKeywordContext = ContextRef.NONE;
+        }
+
+        listener.onForStatementStart(
+                iteratorForStatementStartContext,
+                astBuffer.getStringRef(index),
+                iteratorForKeywordContext);
+    }
+
+    static void encodeForInitStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.FOR_INIT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeForInitStart(int forInitStartContext, ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onForInitStart(forInitStartContext);
+    }
+
+    static void encodeForInitEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.FOR_INIT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeForInitEnd(
+            int forInitStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onForInitEnd(forInitStartContext, endContext);
+    }
+
+    static void encodeForExpressionStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.FOR_EXPRESSION_LIST);
+    }
+
+    public static <COMPILATION_UNIT> void decodeForExpressionStart(int forInitStartContext, ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onForExpressionStart(forInitStartContext);
+    }
+
+    static void encodeForExpressionEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.FOR_EXPRESSION_LIST);
+    }
+
+    public static <COMPILATION_UNIT> void decodeForExpressionEnd(
+            int forExpressionStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onForExpressionEnd(forExpressionStartContext, endContext);
+    }
+
+    static void encodeForUpdateStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.FOR_UPDATE);
+    }
+
+    public static <COMPILATION_UNIT> void decodeForUpdateStart(int forUpdateStartContext, ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onForUpdateStart(forUpdateStartContext);
+    }
+
+    static void encodeForUpdateEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.FOR_UPDATE);
+    }
+
+    public static <COMPILATION_UNIT> void decodeForUpdateEnd(
+            int forUpdateStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onForUpdateEnd(forUpdateStartContext, endContext);
+    }
+
+    static void encodeForStatementEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.FOR_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeForStatementEnd(
+            int forStatementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onForStatementEnd(forStatementStartContext, endContext);
     }
 
     private static final int ITERATOR_FOR_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;

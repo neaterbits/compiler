@@ -16,9 +16,9 @@ public final class ForStatement extends LoopStatement {
 	private final ASTSingle<Keyword> keyword;
 	private final ASTSingle<ForInit> forInit;
 	private final ASTSingle<Expression> condition;
-	private final ASTSingle<ForExpressionList> forUpdate;
+	private final ASTSingle<ForUpdateExpressionList> forUpdate;
 
-	public ForStatement(Context context, Keyword keyword, ForInit forInit, Expression condition, ForExpressionList forUpdate, Block block) {
+	public ForStatement(Context context, Keyword keyword, ForInit forInit, Expression condition, ForUpdateExpressionList forUpdate, Block block) {
 		super(context, block);
 		
 		Objects.requireNonNull(keyword);
@@ -42,7 +42,7 @@ public final class ForStatement extends LoopStatement {
 		return condition != null ? condition.get() : null;
 	}
 
-	public ForExpressionList getForUpdate() {
+	public ForUpdateExpressionList getForUpdate() {
 		return forUpdate != null ? forUpdate.get() : null;
 	}
 

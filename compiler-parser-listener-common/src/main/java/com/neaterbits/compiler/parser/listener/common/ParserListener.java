@@ -267,6 +267,10 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onConditionalExpressionEnd(int startContext, Context endContext);
 	
+	void onExpressionListStart(int startContext);
+	
+	void onExpressionListEnd(int startContext, Context endContext);
+	
 	void onIntegerLiteral(int leafContext, long value, Base base, boolean signed, int bits);
 	
 	void onFloatingPointLiteral(int leafContext, BigDecimal value, Base base, int bits);
@@ -367,12 +371,16 @@ public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
 	
 	void onExpressionStatementEnd(int startContext, Context endContext);
 	
-	void onForStatementStart(int startContext, long keyword, int keywordContext);
+	void onForStatementStart(int startContext, long forKeyword, int forKeywordContext);
 	
 	void onForInitStart(int startContext);
 	
 	void onForInitEnd(int startContext, Context endContext);
-	
+
+    void onForExpressionStart(int startContext);
+    
+    void onForExpressionEnd(int startContext, Context endContext);
+
 	void onForUpdateStart(int startContext);
 	
 	void onForUpdateEnd(int startContext, Context endContext);

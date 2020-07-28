@@ -364,33 +364,64 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         if (lexer.lexSkipWS(JavaToken.LPAREN) != JavaToken.LPAREN) {
             throw lexer.unexpectedToken();
         }
+        
+        final int forCriteriaStartContext = writeCurContext();
 
         final boolean expressionFound = parseExpressionStatementToCache();
         
         Names variableDeclarationNames;
         
         if (!expressionFound) {
-            throw new ParserException("No expression found in for-statement");
+            // for (; i < 10; ++ i)
+            parseBasicForWithNoForInit(forStartContext, forKeyword, forKeywordContext);
         }
         else if ((variableDeclarationNames = getVariableDeclarationTypeAndClearExpressionCache(baseClassExpressionCache)) != null) {
 
             final Context namesEndContext = initScratchContext();
             
             try {
-                parseForWithNames(forStartContext, forKeyword, forKeywordContext, variableDeclarationNames, namesEndContext);
+                parseForWithNames(
+                        forStartContext,
+                        forKeyword, forKeywordContext,
+                        forCriteriaStartContext,
+                        variableDeclarationNames, namesEndContext);
             }
             finally {
                 freeScratchContext(namesEndContext);
             }
         }
         else {
-            throw lexer.unexpectedToken();
+            // with expression in forInit
+            listener.onForStatementStart(forStartContext, forKeyword, forKeywordContext);
+
+            listener.onForInitStart(forCriteriaStartContext);
+            
+            final int expressionListStartContext = writeContext(forCriteriaStartContext);
+            
+            listener.onExpressionListStart(expressionListStartContext);
+            
+            applyAndClearExpressionCache(baseClassExpressionCache);
+            
+            if (lexer.lexSkipWS(JavaToken.SEMI) != JavaToken.SEMI) {
+                throw lexer.unexpectedToken();
+            }
+            
+            listener.onExpressionListEnd(expressionListStartContext, getLexerContext());
+            
+            listener.onForInitEnd(forCriteriaStartContext, getLexerContext());
+            
+            parseBasicForExpressionAndUpdate();
+            
+            parseStatementOrBlock();
+            
+            listener.onForStatementEnd(forStartContext, getLexerContext());
         }
     }
     
     private void parseForWithNames(
             int forStartContext,
             long forKeyword, int forKeywordContext,
+            int forCriteriaStartContext,
             Names variableDeclarationNames,
             Context namesEndContext) throws IOException, ParserException {
 
@@ -410,33 +441,24 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
                 try {
                     
                     if (lexer.lexSkipWS(JavaToken.COLON) == JavaToken.COLON) {
+
+                        parseIteratorFor(
+                                forStartContext,
+                                forKeyword, forKeywordContext,
+                                variableDeclarationNames, namesEndContext,
+                                typeArguments, typeEndContext,
+                                identifier, identifierContext);
                         
-                        listener.onIteratorForStatementStart(forStartContext, forKeyword, forKeywordContext);
-    
-                        typeScratchInfo.initScopedOrNonScoped(variableDeclarationNames, namesEndContext, ReferenceType.REFERENCE);
-                        
-                        listenerHelper.onTypeAndOptionalArgumentsList(typeScratchInfo, typeArguments, typeEndContext);
-                        
-                        listener.onVariableName(identifierContext, identifier, 0);
-                        
-                        final int iteratorForTestStartContext = writeCurContext();
-                        
-                        listener.onIteratorForTestStart(iteratorForTestStartContext);
-                        
-                        parseExpression();
-                        
-                        listener.onIteratorForTestEnd(iteratorForTestStartContext, getLexerContext());
-                        
-                        if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
-                            throw lexer.unexpectedToken();
-                        }
-                        
-                        parseStatementOrBlock();
-    
-                        listener.onIteratorForStatementEnd(forStartContext, getLexerContext());
                     }
                     else {
-                        throw lexer.unexpectedToken();
+
+                        parseBasicForWithLocalVariableDeclaration(
+                                forStartContext,
+                                forKeyword, forKeywordContext,
+                                forCriteriaStartContext,
+                                variableDeclarationNames, namesEndContext,
+                                typeArguments, typeEndContext,
+                                identifier, identifierContext);
                     }
                 }
                 finally {
@@ -446,13 +468,143 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             finally {
                 freeScratchContext(typeEndContext);
             }
-            
         }
         else {
             throw lexer.unexpectedToken();
         }
     }
+
+    private void parseBasicForWithLocalVariableDeclaration(
+            int forStartContext,
+            long forKeyword, int forKeywordContext,
+            int forCriteriaStartContext,
+            Names variableDeclarationNames, Context namesEndContext,
+            TypeArgumentsList typeArguments, Context typeEndContext,
+            long identifier, int identifierContext) throws IOException, ParserException {
+        
+        listener.onForStatementStart(forStartContext, forKeyword, forKeywordContext);
+        
+        final int forInitStartContext = writeContext(forCriteriaStartContext);
+        
+        listener.onForInitStart(forInitStartContext);
+
+        typeScratchInfo.initScopedOrNonScoped(variableDeclarationNames, namesEndContext, ReferenceType.REFERENCE);
+        
+        listenerHelper.onTypeAndOptionalArgumentsList(typeScratchInfo, typeArguments, typeEndContext);
+
+        if (lexer.lexSkipWS(JavaToken.ASSIGN) != JavaToken.ASSIGN) {
+            throw lexer.unexpectedToken();
+        }
+
+        final boolean done = parseVariableInitializer(identifier, identifierContext);
+        if (!done) {
+            parseVariableDeclaratorList();
+        }
+        
+        listener.onForInitEnd(forInitStartContext, getLexerContext());
+
+        parseBasicForExpressionAndUpdate();
+
+        parseStatementOrBlock();
+
+        listener.onForStatementEnd(forStartContext, getLexerContext());
+    }
     
+    private void parseBasicForWithNoForInit(
+            int forStartContext,
+            long forKeyword, int forKeywordContext) throws IOException, ParserException {
+
+        listener.onForStatementStart(forStartContext, forKeyword, forKeywordContext);
+        
+        if (lexer.lexSkipWS(JavaToken.SEMI) != JavaToken.SEMI) {
+            throw lexer.unexpectedToken();
+        }
+
+        parseBasicForExpressionAndUpdate();
+
+        parseStatementOrBlock();
+
+        listener.onForStatementEnd(forStartContext, getLexerContext());
+    }
+    
+    private void parseBasicForExpressionAndUpdate() throws IOException, ParserException {
+        
+        final int forExpressionStartContext = writeCurContext();
+
+        listener.onForExpressionStart(forExpressionStartContext);
+
+        parseExpression();
+
+        listener.onForExpressionEnd(forExpressionStartContext, getLexerContext());
+
+        if (lexer.lexSkipWS(JavaToken.SEMI) != JavaToken.SEMI) {
+            throw lexer.unexpectedToken();
+        }
+        
+        final int forUpdateStartContext = writeCurContext();
+        
+        listener.onForUpdateStart(forUpdateStartContext);
+        
+        parseStatementExpressionList();
+        
+        listener.onForUpdateEnd(forUpdateStartContext, getLexerContext());
+        
+        if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
+            throw lexer.unexpectedToken();
+        }
+    }
+    
+    private void parseStatementExpressionList() throws IOException, ParserException {
+        
+        for (;;) {
+            
+            parseStatementExpression();
+            
+            if (lexer.lexSkipWS(JavaToken.COMMA) != JavaToken.COMMA) {
+                break;
+            }
+        }
+    }
+    
+    private void parseStatementExpression() throws IOException, ParserException {
+        
+        parseExpression();
+    }
+
+    private void parseIteratorFor(
+            int forStartContext,
+            long forKeyword,
+            int forKeywordContext,
+            Names variableDeclarationNames,
+            Context namesEndContext,
+            TypeArgumentsList typeArguments,
+            Context typeEndContext,
+            long identifier, int identifierContext) throws IOException, ParserException {
+        
+        listener.onIteratorForStatementStart(forStartContext, forKeyword, forKeywordContext);
+        
+        typeScratchInfo.initScopedOrNonScoped(variableDeclarationNames, namesEndContext, ReferenceType.REFERENCE);
+        
+        listenerHelper.onTypeAndOptionalArgumentsList(typeScratchInfo, typeArguments, typeEndContext);
+        
+        listener.onVariableName(identifierContext, identifier, 0);
+        
+        final int iteratorForTestStartContext = writeCurContext();
+        
+        listener.onIteratorForTestStart(iteratorForTestStartContext);
+        
+        parseExpression();
+        
+        listener.onIteratorForTestEnd(iteratorForTestStartContext, getLexerContext());
+        
+        if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
+            throw lexer.unexpectedToken();
+        }
+        
+        parseStatementOrBlock();
+
+        listener.onIteratorForStatementEnd(forStartContext, getLexerContext());
+    }
     
     private static final JavaToken [] CATCH_OR_FINALLY_TOKENS = new JavaToken [] {
 

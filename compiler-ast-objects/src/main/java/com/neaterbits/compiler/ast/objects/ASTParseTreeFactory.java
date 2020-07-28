@@ -70,7 +70,7 @@ import com.neaterbits.compiler.ast.objects.statement.ElseIfConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.EnumConstant;
 import com.neaterbits.compiler.ast.objects.statement.EnumSwitchCaseLabel;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
-import com.neaterbits.compiler.ast.objects.statement.ForExpressionList;
+import com.neaterbits.compiler.ast.objects.statement.ForUpdateExpressionList;
 import com.neaterbits.compiler.ast.objects.statement.ForInit;
 import com.neaterbits.compiler.ast.objects.statement.ForStatement;
 import com.neaterbits.compiler.ast.objects.statement.IfConditionBlock;
@@ -904,19 +904,28 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
     }
 
     @Override
-	public ForInit createForInit(Context context, InitializerVariableDeclarationElement initializer) {
+	public ForInit createForInit(Context context, VariableDeclarationStatement initializer) {
 		return new ForInit(context, initializer);
 	}
 
 	@Override
 	public ForInit createForInit(Context context, List<Expression> expressionList) {
-		return new ForInit(context, new ForExpressionList(context, expressionList));
+		return new ForInit(context, new ForUpdateExpressionList(context, expressionList));
 	}
 
 	@Override
 	public ForStatement createForStatement(Context context, Keyword keyword, ForInit forInit, Expression condition,
-			List<Expression> expressionList, List<Statement> statements) {
-		return new ForStatement(context, keyword, forInit, condition, new ForExpressionList(context, expressionList), new Block(context, statements));
+			List<Expression> forUpdateExpressionList, List<Statement> statements) {
+	    
+		return new ForStatement(
+		        context,
+		        keyword,
+		        forInit,
+		        condition,
+		        forUpdateExpressionList != null
+		            ? new ForUpdateExpressionList(context, forUpdateExpressionList)
+                    : null,
+		        new Block(context, statements));
 	}
 
 	@Override

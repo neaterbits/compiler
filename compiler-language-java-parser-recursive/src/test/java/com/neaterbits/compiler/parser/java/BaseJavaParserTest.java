@@ -19,6 +19,7 @@ import com.neaterbits.compiler.ast.objects.block.Block;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Constructor;
 import com.neaterbits.compiler.ast.objects.expression.ClassInstanceCreationExpression;
+import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
@@ -39,6 +40,7 @@ import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.statement.CatchBlock;
 import com.neaterbits.compiler.ast.objects.statement.ConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
+import com.neaterbits.compiler.ast.objects.statement.ForStatement;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.IteratorForStatement;
 import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
@@ -64,6 +66,7 @@ import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.Mutability;
 import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.operator.Arithmetic;
+import com.neaterbits.compiler.util.operator.Assignment;
 import com.neaterbits.compiler.util.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.operator.Logical;
 import com.neaterbits.compiler.util.operator.Relational;
@@ -3412,6 +3415,236 @@ public abstract class BaseJavaParserTest {
         assertThat(characterLiteral).isNotNull();
         assertThat(characterLiteral.getValue()).isEqualTo('a');
     }
+
+    @Test
+    public void testForWithWithoutVariableDeclaration() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { for (i = 0; i < 10; ++ i) { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ForStatement forStatement
+            = (ForStatement)method.getBlock().getStatements().get(0);
+
+        assertThat(forStatement.getForInit().getExpressionList().getExpressions().size()).isEqualTo(1);
+        
+        final ExpressionList list = (ExpressionList)forStatement.getForInit().getExpressionList().getExpressions().get(0);
+        assertThat(list.getExpressions().size()).isEqualTo(2);
+        
+        final NameReference nameReference = (NameReference)list.getExpressions().get(0);
+        assertThat(nameReference.getName()).isEqualTo("i");
+        
+        assertThat(list.getOperators().get(0)).isEqualTo(Assignment.ASSIGN);
+        
+        final IntegerLiteral integerLiteral = (IntegerLiteral)list.getExpressions().get(1);
+        assertThat(integerLiteral.getValue()).isEqualTo(0);
+
+        checkForCondition(forStatement);
+    
+        checkForUpdate(forStatement);
+
+        assertThat(forStatement.getBlock()).isNotNull();
+        assertThat(forStatement.getBlock().getStatements().isEmpty()).isTrue();
+    }
+    
+
+    @Test
+    public void testForWithVariableDeclaration() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { for (int i = 0; i < 10; ++ i) { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final ForStatement forStatement
+            = (ForStatement)method.getBlock().getStatements().get(0);
+
+        checkForLocalVariable(forStatement);
+
+        checkForCondition(forStatement);
+        
+        checkForUpdate(forStatement);
+    
+        assertThat(forStatement.getBlock()).isNotNull();
+        assertThat(forStatement.getBlock().getStatements().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testForWithMultipleVariableDeclarationsAndUpdates() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { for (int i = 0, j = 100; i < 10; ++ i, -- j ) { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+
+        final ForStatement forStatement
+            = (ForStatement)method.getBlock().getStatements().get(0);
+
+        final VariableDeclarationStatement declarationStatement = forStatement.getForInit().getLocalVariableDeclaration();
+        
+        checkIntScalarVariableDeclaration(declarationStatement, 0, "i", 0); 
+        checkIntScalarVariableDeclaration(declarationStatement, 1, "j", 100); 
+
+        checkForCondition(forStatement);
+        
+        checkPreIncrementExpression(forStatement.getForUpdate().getExpressions().get(0), "i");
+        checkPreDecrementExpression(forStatement.getForUpdate().getExpressions().get(1), "j");
+    
+        assertThat(forStatement.getBlock()).isNotNull();
+        assertThat(forStatement.getBlock().getStatements().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testForWithoutTest() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { for (int i = 0;; ++ i) { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ForStatement forStatement
+            = (ForStatement)method.getBlock().getStatements().get(0);
+
+        checkForLocalVariable(forStatement);
+
+        assertThat(forStatement.getCondition()).isNull();
+
+        checkForUpdate(forStatement);
+
+        assertThat(forStatement.getBlock()).isNotNull();
+        assertThat(forStatement.getBlock().getStatements().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testForWithoutIncrement() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { for (int i = 0; i < 10;) { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ForStatement forStatement
+            = (ForStatement)method.getBlock().getStatements().get(0);
+
+        checkForLocalVariable(forStatement);
+        
+        checkForCondition(forStatement);
+        
+        assertThat(forStatement.getForUpdate()).isNull();
+        
+        assertThat(forStatement.getBlock()).isNotNull();
+        assertThat(forStatement.getBlock().getStatements().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testFor() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { void someMethod() { for (;;) { } } }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final ForStatement forStatement
+            = (ForStatement)method.getBlock().getStatements().get(0);
+
+        assertThat(forStatement.getForInit()).isNull();
+        assertThat(forStatement.getCondition()).isNull();
+        assertThat(forStatement.getForUpdate()).isNull();
+        
+        assertThat(forStatement.getBlock()).isNotNull();
+        assertThat(forStatement.getBlock().getStatements().isEmpty()).isTrue();
+    }
+    
+    private void checkForLocalVariable(ForStatement forStatement) {
+        
+        assertThat(forStatement.getForInit().getExpressionList()).isNull();
+        
+        final VariableDeclarationStatement declarationStatement = forStatement.getForInit().getLocalVariableDeclaration();
+        
+        checkIntScalarVariableDeclaration(declarationStatement, 0, "i", 0); 
+    }
+    
+    private void checkForCondition(ForStatement forStatement) {
+        
+        final ExpressionList condition = (ExpressionList)forStatement.getCondition();
+        final NameReference conditionNameReference = (NameReference)condition.getExpressions().get(0);
+        assertThat(conditionNameReference.getName()).isEqualTo("i");
+        final IntegerLiteral conditionIntegerLiteral = (IntegerLiteral)condition.getExpressions().get(1);
+        assertThat(conditionIntegerLiteral.getValue()).isEqualTo(10L);
+        assertThat(condition.getExpressions().size()).isEqualTo(2);
+        assertThat(condition.getOperators().size()).isEqualTo(1);
+        assertThat(condition.getOperators().get(0)).isEqualTo(Relational.LESS_THAN);
+        
+    }
+    
+    private void checkForUpdate(ForStatement forStatement) {
+        
+        assertThat(forStatement.getForUpdate().getExpressions().size()).isEqualTo(1);
+        
+        checkPreIncrementExpression(forStatement.getForUpdate().getExpressions().get(0), "i");
+    }
+    
+    private void checkPreIncrementExpression(Expression expression, String variableName) {
+        
+        checkIncrementDecrementExpression(expression, variableName, IncrementDecrement.PRE_INCREMENT);
+    }
+
+    private void checkPreDecrementExpression(Expression expression, String variableName) {
+        
+        checkIncrementDecrementExpression(expression, variableName, IncrementDecrement.PRE_DECREMENT);
+    }
+
+    private void checkIncrementDecrementExpression(Expression expression, String variableName, IncrementDecrement operator) {
+        
+        final UnaryExpression incrementExpression = (UnaryExpression)expression;
+        assertThat(incrementExpression.getOperator()).isEqualTo(operator);
+        final NameReference nameReference = (NameReference)incrementExpression.getExpression();
+        assertThat(nameReference.getName()).isEqualTo(variableName);
+    }
+    
 
     @Test
     public void testForCollection() throws IOException, ParserException {

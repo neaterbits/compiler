@@ -1028,6 +1028,22 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
+    public void onExpressionListStart(int startContext) {
+
+        writeStartElementContextRef(startContext);
+
+        AST.encodeExpressionListStart(astBuffer);
+    }
+
+    @Override
+    public void onExpressionListEnd(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
+        
+        AST.encodeExpressionListEnd(astBuffer);
+    }
+
+    @Override
     public final void onIntegerLiteral(int leafContext, long value, Base base, boolean signed, int bits) {
 
         writeLeafElementContextRef(leafContext);
@@ -1443,21 +1459,21 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     }
 
     @Override
-    public final void onForStatementStart(int forStatementStartContext, long keyword, int keywordContext) {
+    public final void onForStatementStart(int forStatementStartContext, long forKeyword, int forKeywordContext) {
         
-        verifyNotSameContext(forStatementStartContext, keywordContext);
+        verifyNotSameContext(forStatementStartContext, forKeywordContext);
         
         writeStartElementContextRef(forStatementStartContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeForStatementStart(astBuffer, forKeyword, forKeywordContext);
     }
 
     @Override
     public final void onForInitStart(int forInitStartContext) {
 
         writeStartElementContextRef(forInitStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeForInitStart(astBuffer);
     }
 
     @Override
@@ -1465,23 +1481,39 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         writeEndElementContext(forInitStartContext, endContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeForInitEnd(astBuffer);
+    }
+
+    @Override
+    public final void onForExpressionStart(int startContext) {
+        
+        writeStartElementContextRef(startContext);
+
+        AST.encodeForExpressionStart(astBuffer);
+    }
+
+    @Override
+    public final void onForExpressionEnd(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
+
+        AST.encodeForExpressionEnd(astBuffer);
     }
 
     @Override
     public final void onForUpdateStart(int forUpdateStartContext) {
 
         writeStartElementContextRef(forUpdateStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeForUpdateStart(astBuffer);
     }
 
     @Override
     public final void onForUpdateEnd(int forUpdateStartContext, Context endContext) {
 
         writeEndElementContext(forUpdateStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeForUpdateEnd(astBuffer);
     }
 
     @Override
@@ -1489,7 +1521,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         writeEndElementContext(forStatementStartContext, endContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeForStatementEnd(astBuffer);
     }
 
     @Override

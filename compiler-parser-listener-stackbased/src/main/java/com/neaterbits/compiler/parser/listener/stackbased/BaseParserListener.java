@@ -2416,9 +2416,47 @@ public abstract class BaseParserListener<
 		logExit(context);
 	}
 
+	
 	// Literals
 
 	@Override
+    public void onExpressionListStart(int startContext) {
+
+	    final Context context = getStartContext(startContext);
+	    
+	    logEnter(context);
+	    
+	    push(new StackExpressionList<>(getLogger()));
+	    
+	    logExit(context);
+    }
+
+    @Override
+    public void onExpressionListEnd(int startContext, Context endContext) {
+
+        final Context context = getEndContext(startContext, endContext);
+        
+        logEnter(context);
+        
+        final StackExpressionList<
+            EXPRESSION,
+            NESTED_EXPRESSION,
+            PRIMARY,
+            VARIABLE_REFERENCE> stackExpressionList = pop(); 
+        
+        final EXPRESSION_LIST expressionList = parseTreeFactory.createExpressionList(
+                context,
+                stackExpressionList.getOperators(),
+                stackExpressionList.getList());
+        
+        final ExpressionSetter<EXPRESSION> expressionSetter = get();
+        
+        expressionSetter.addExpression(expressionList);
+            
+        logExit(context);
+    }
+
+    @Override
 	public final void onIntegerLiteral(int leafContext, long value, Base base, boolean signed, int bits) {
 
 	    final Context context = getLeafContext(leafContext);
@@ -3269,9 +3307,18 @@ public abstract class BaseParserListener<
 
 		if (!stackForInit.getList().isEmpty()) {
 
-			final StackInitializerVariableDeclarationElement<TYPE_REFERENCE, EXPRESSION> element = stackForInit.getList().get(0);
+			final VARIABLE_DECLARATION_STATEMENT statement
+			    = parseTreeFactory.createVariableDeclarationStatement(
+			            context,
+			            null,
+			            Collections.emptyList(),
+			            stackForInit.getTypeReference(),
+			            stackForInit.getList().stream()
+			                .map(this::createInitializer)
+			                .collect(Collectors.toList()));
 			
-			forInit = parseTreeFactory.createForInit(context, createInitializer(element));
+			forInit = parseTreeFactory.createForInit(context, statement);
+			
 		} else if (!stackForInit.getExpressions().isEmpty()) {
 			forInit = parseTreeFactory.createForInit(context, stackForInit.getExpressions());
 		} else {
@@ -3288,6 +3335,25 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
+    public void onForExpressionStart(int startContext) {
+        final Context context = getStartContext(startContext);
+
+        logEnter(context);
+
+        logExit(context);
+    }
+
+    @Override
+    public void onForExpressionEnd(int startContext, Context endContext) {
+
+        final Context context = getEndContext(startContext, endContext);
+
+        logEnter(context);
+
+        logExit(context);
+    }
+
+    @Override
 	public final void onForUpdateStart(int startContext) {
 	    
 	    final Context context = getStartContext(startContext);

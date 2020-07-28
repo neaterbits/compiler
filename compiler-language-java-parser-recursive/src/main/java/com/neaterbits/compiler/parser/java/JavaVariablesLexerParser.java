@@ -179,7 +179,7 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
         } while (!done);
     }
     
-    private boolean parseVariableInitializer(long identifier, int identifierContext) throws IOException, ParserException {
+    final boolean parseVariableInitializer(long identifier, int identifierContext) throws IOException, ParserException {
         
         final boolean done;
         

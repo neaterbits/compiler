@@ -6,16 +6,15 @@ import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
-import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ForInit extends BaseASTElement {
 
-	private final ASTSingle<InitializerVariableDeclarationElement> localVariableDeclaration;
-	private final ASTSingle<ForExpressionList> expressionList;
+	private final ASTSingle<VariableDeclarationStatement> localVariableDeclaration;
+	private final ASTSingle<ForUpdateExpressionList> expressionList;
 	
-	public ForInit(Context context, InitializerVariableDeclarationElement localVariableDeclaration) {
+	public ForInit(Context context, VariableDeclarationStatement localVariableDeclaration) {
 		super(context);
 		
 		Objects.requireNonNull(localVariableDeclaration);
@@ -24,7 +23,7 @@ public final class ForInit extends BaseASTElement {
 		this.expressionList = null;
 	}
 
-	public ForInit(Context context, ForExpressionList expressionList) {
+	public ForInit(Context context, ForUpdateExpressionList expressionList) {
 		super(context);
 		
 		Objects.requireNonNull(expressionList);
@@ -33,11 +32,11 @@ public final class ForInit extends BaseASTElement {
 		this.expressionList = makeSingle(expressionList);
 	}
 	
-	public InitializerVariableDeclarationElement getLocalVariableDeclaration() {
+	public VariableDeclarationStatement getLocalVariableDeclaration() {
 		return localVariableDeclaration != null ? localVariableDeclaration.get() : null;
 	}
 
-	public ForExpressionList getExpressionList() {
+	public ForUpdateExpressionList getExpressionList() {
 		return expressionList != null ? expressionList.get() : null;
 	}
 

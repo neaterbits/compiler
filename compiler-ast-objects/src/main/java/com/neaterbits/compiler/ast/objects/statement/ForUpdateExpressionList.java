@@ -11,11 +11,11 @@ import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 
-public final class ForExpressionList extends BaseASTElement {
+public final class ForUpdateExpressionList extends BaseASTElement {
 
 	private final ASTList<Expression> expressions;
 
-	public ForExpressionList(Context context, List<Expression> expressions) {
+	public ForUpdateExpressionList(Context context, List<Expression> expressions) {
 		super(context);
 		
 		Objects.requireNonNull(expressions);
