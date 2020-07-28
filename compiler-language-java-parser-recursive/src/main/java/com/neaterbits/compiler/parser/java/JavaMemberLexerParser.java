@@ -520,6 +520,6 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
 
     private void parseMethodBodyAndRBrace() throws IOException, ParserException {
         
-        parseBlockAndRBrace();
+        parseBlockStatementsAndRBrace();
     }
 }

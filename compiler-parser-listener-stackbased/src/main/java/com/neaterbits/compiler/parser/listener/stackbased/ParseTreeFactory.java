@@ -444,7 +444,12 @@ public interface ParseTreeFactory<
 	
 	TRY_CATCH_FINALLY createTryCatchFinallyStatement(Context context, List<STATEMENT> tryBlock, List<CATCH_BLOCK> catchBlocks, List<STATEMENT> finallyBlock);
 
-	TRY_WITH_RESOURCES createTryWithResourcesStatement(Context context, List<RESOURCE> resources, List<STATEMENT> tryBlock, List<CATCH_BLOCK> catchBlocks, List<STATEMENT> finallyBlock);
+	TRY_WITH_RESOURCES createTryWithResourcesStatement(
+	        Context context,
+	        List<RESOURCE> resources,
+	        List<STATEMENT> tryBlock,
+	        List<CATCH_BLOCK> catchBlocks,
+	        List<STATEMENT> finallyBlock);
 
 	RETURN_STATEMENT createReturnStatement(Context context, EXPRESSION expression);
 

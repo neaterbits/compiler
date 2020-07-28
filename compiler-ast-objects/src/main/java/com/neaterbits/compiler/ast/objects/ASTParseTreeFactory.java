@@ -953,13 +953,12 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 			String varName, Context varNameContext, int numDims, Expression initializer) {
 	    
 		return new Resource(
+		        context,
 				new VariableModifiers(annotations, modifiers),
                 type,
-				new InitializerVariableDeclarationElement(
-						context,
-						new VarNameDeclaration(varNameContext, varName),
-						numDims,
-						initializer));
+				new VarNameDeclaration(varNameContext, varName),
+				numDims,
+				initializer);
 	}
 
 	@Override
@@ -982,7 +981,14 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	@Override
 	public TryWithResourcesStatement createTryWithResourcesStatement(Context context, List<Resource> resources,
 			List<Statement> tryBlock, List<CatchBlock> catchBlocks, List<Statement> finallyBlock) {
-		return new TryWithResourcesStatement(context, resources, new Block(context, tryBlock), catchBlocks, new Block(context, finallyBlock));
+		return new TryWithResourcesStatement(
+		        context,
+		        resources,
+		        new Block(context, tryBlock),
+		        catchBlocks,
+		        finallyBlock != null
+		            ? new Block(context, finallyBlock)
+                    : null);
 	}
 
 	@Override

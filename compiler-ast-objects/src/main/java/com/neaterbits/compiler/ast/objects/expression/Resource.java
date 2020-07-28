@@ -25,10 +25,6 @@ public final class Resource extends InitializerVariableDeclarationElement {
 		this.modifiers = makeSingle(modifiers);
 		this.type = makeSingle(type);
 	}
-	
-	public Resource(VariableModifiers modifiers, TypeReference type, InitializerVariableDeclarationElement element) {
-		this(element.getContext(), modifiers, type, element.getNameDeclaration(), element.getNumDims(), element.getInitializer());
-	}
 
 	public VariableModifiers getModifiers() {
 		return modifiers.get();

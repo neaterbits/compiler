@@ -211,6 +211,7 @@ public enum ParseTreeElement {
 
 	TRY_WITH_RESOURCES_STATEMENT(false),
 	RESOURCES_LIST(false),
+	RESOURCE(false),
 	
 	WHILE_STATEMENT(false),
 	

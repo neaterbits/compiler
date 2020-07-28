@@ -216,6 +216,10 @@ public class AST {
             size = FINALLY_SIZE;
             break;
 
+        case TRY_WITH_RESOURCES_STATEMENT:
+            size = TRY_WITH_RESOURCES_STATEMENT_SIZE;
+            break;
+
         case RETURN_STATEMENT:
             size = RETURN_STATEMENT_SIZE;
             break;
@@ -2078,9 +2082,106 @@ public class AST {
                 returnKeywordContext);
     }
 
+    private static final int TRY_WITH_RESOURCES_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    static void encodeTryWithResourcesStatementStart(StringASTBuffer astBuffer, long tryKeyword, int tryKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.TRY_WITH_RESOURCES_STATEMENT);
+        
+        astBuffer.writeStringRef(tryKeyword);
+        astBuffer.writeContextRef(tryKeywordContext);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeTryWithResourcesStatementStart(
+            ASTBufferRead astBuffer,
+            int tryWithResourcesStatementStartContext,
+            ContextGetter contextGetter,
+            int index,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        final int tryKeywordContext;
+        
+        if (contextGetter != null) {
+            
+            tryKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            tryKeywordContext = ContextRef.NONE;
+        }
+
+        listener.onTryWithResourcesStatementStart(
+                tryWithResourcesStatementStartContext,
+                astBuffer.getStringRef(index),
+                tryKeywordContext);
+    }
+
+    static void encodeTryWithResourcesSpecificationStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.RESOURCES_LIST);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeTryWithResourcesSpecificationStart(
+            int resourcesSpecificationStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onTryWithResourcesSpecificationStart(resourcesSpecificationStartContext);
+    }
+
+    static void encodeTryWithResourcesSpecificationEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.RESOURCES_LIST);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeTryWithResourcesSpecificationEnd(
+            int resourcesSpecificationStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onTryWithResourcesSpecificationEnd(resourcesSpecificationStartContext, endContext);
+    }
+
+    static void encodeTryResourceStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.RESOURCE);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeTryResourceStart(
+            int resourceStartContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onResourceStart(resourceStartContext);
+    }
+
+    static void encodeTryResourceEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.RESOURCE);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeTryResourceEnd(
+            int resourceStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onResourceEnd(resourceStartContext, endContext);
+    }
+
     static void encodeReturnStatementEnd(StringASTBuffer astBuffer) {
         
         astBuffer.writeElementEnd(ParseTreeElement.RETURN_STATEMENT);
+    }
+
+    static void encodeTryWithResourcesStatementEnd(StringASTBuffer astBuffer) {
+        
+        astBuffer.writeElementEnd(ParseTreeElement.TRY_WITH_RESOURCES_STATEMENT);
+    }
+
+    public static <COMPILATION_UNIT> void decodeTryWithResourcesStatementEnd(
+            ASTBufferRead astBuffer,
+            int tryWithResourcesStatementStartContext,
+            Context endContext,
+            ParserListener<COMPILATION_UNIT> listener) {
+
+        listener.onTryWithResourcesStatementEnd(tryWithResourcesStatementStartContext, endContext);
     }
 
     public static <COMPILATION_UNIT> void decodeReturnStatementEnd(

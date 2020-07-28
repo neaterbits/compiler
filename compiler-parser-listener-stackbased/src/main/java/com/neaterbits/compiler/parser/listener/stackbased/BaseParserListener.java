@@ -3467,7 +3467,7 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-	public final void onTryWithResourcesStatementStart(int startContext) {
+	public final void onTryWithResourcesStatementStart(int startContext, long tryKeyword, int tryKeywordContext) {
 
 	    final Context context = getStartContext(startContext);
 	    
@@ -3561,6 +3561,31 @@ public abstract class BaseParserListener<
 		logExit(context);
 	}
 
+    @Override
+    public final void onTryWithResourcesStatementEnd(int startContext, Context endContext) {
+
+        final Context context = getEndContext(startContext, endContext);
+
+        logEnter(context);
+
+        final StackTryWithResourcesStatement<STATEMENT, CATCH_BLOCK, RESOURCE> stackTryWithResourcesStatement = pop();
+
+        final TRY_WITH_RESOURCES statement = parseTreeFactory.createTryWithResourcesStatement(
+                context,
+                stackTryWithResourcesStatement.getResources(),
+                stackTryWithResourcesStatement.getTryBlock().getList(),
+                stackTryWithResourcesStatement.getCatchBlocks(),
+                stackTryWithResourcesStatement.getFinallyBlock() != null
+                    ? stackTryWithResourcesStatement.getFinallyBlock().getList()
+                    : null);
+
+        final StatementSetter<STATEMENT> statementSetter = get();
+
+        statementSetter.addStatement(statement);
+
+        logExit(context);
+    }
+	
 	@Override
 	public final void onTryStatementStart(int startContext, long tryKeyword, int tryKeywordContext) {
 	    
@@ -3686,13 +3711,14 @@ public abstract class BaseParserListener<
 
 		final StackTryWithResourcesStatement<STATEMENT, CATCH_BLOCK, RESOURCE> stackTryWithResourcesStatement = pop();
 
-
 		final TRY_WITH_RESOURCES statement = parseTreeFactory.createTryWithResourcesStatement(
 				context,
 				stackTryWithResourcesStatement.getResources(),
 				stackTryWithResourcesStatement.getTryBlock().getList(),
 				stackTryWithResourcesStatement.getCatchBlocks(),
-				stackTryWithResourcesStatement.getFinallyBlock().getList());
+				stackTryWithResourcesStatement.getFinallyBlock() != null
+				    ? stackTryWithResourcesStatement.getFinallyBlock().getList()
+		            : null);
 
 		final StatementSetter<STATEMENT> statementSetter = get();
 

@@ -1342,13 +1342,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onTryStatementEnd(writeEndContext(context), context);
 	}
 	
-	public void onJavaTryWithResourcesStart(Context context) {
+	public void onJavaTryWithResourcesStart(Context context, long tryKeyword, Context tryKeywordContext) {
 		
 		statementsStack.add(JavaStatement.TRY_WITH_RESOURCES);
 
 		statementsStack.push();
 
-		delegate.onTryWithResourcesStatementStart(writeStartContext(context));
+		delegate.onTryWithResourcesStatementStart(writeStartContext(context), tryKeyword, writeOtherContext(tryKeywordContext));
 	}
 	
 	public void onJavaTryWithResourcesSpecificationStart(Context context) {

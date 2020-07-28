@@ -45,6 +45,7 @@ import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.statement.ThrowStatement;
 import com.neaterbits.compiler.ast.objects.statement.TryCatchFinallyStatement;
+import com.neaterbits.compiler.ast.objects.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.ast.objects.statement.WhileStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
@@ -3672,7 +3673,123 @@ public abstract class BaseJavaParserTest {
         final PrimaryList list = (PrimaryList)expressionStatement.getExpression();
         assertThat(list.getPrimaries().size()).isEqualTo(3);
     }
-    
+
+    @Test
+    public void testTryWithResources() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    try (InputStream stream = new FileInputStream()) {"
+                + "      int a; "
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final TryWithResourcesStatement tryWithResourcesStatement
+            = (TryWithResourcesStatement)method.getBlock().getStatements().get(0);
+        
+        assertThat(tryWithResourcesStatement.getResources().getList().size()).isEqualTo(1);
+        
+        checkIdentifierType(tryWithResourcesStatement.getResources().getList().get(0).getTypeReference(), "InputStream");
+        assertThat(tryWithResourcesStatement.getResources().getList().get(0).getNameString()).isEqualTo("stream");
+        final ClassInstanceCreationExpression resourceExpression
+            = (ClassInstanceCreationExpression)tryWithResourcesStatement.getResources().getList().get(0).getInitializer();
+        checkIdentifierType(resourceExpression.getTypeReference(), "FileInputStream");
+        assertThat(resourceExpression.getParameters().getList().isEmpty()).isTrue();
+        
+        assertThat(tryWithResourcesStatement.getTryBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement variableDeclarationStatement
+            = (VariableDeclarationStatement)tryWithResourcesStatement.getTryBlock().getStatements().get(0);
+        assertThat(variableDeclarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        
+        assertThat(tryWithResourcesStatement.getCatchBlocks().isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testTryWithMultipleResourcesAndCatchFinally() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    try (InputStream is = new FileInputStream(); OutputStream os = new FileOutputStream()) {"
+                + "      int a; "
+                + "    }"
+                + "    catch (IOException ex) {"
+                + "      ex.printStackTrace(); "
+                + "    }"
+                + "    catch (ParseException ex) {"
+                + "      ex.printStackTrace(); "
+                + "    }"
+                + "    catch (IllegalArgumentException ex) {"
+                + "      ex.printStackTrace(); "
+                + "    }"
+                + "    finally {"
+                + "      System.out.println(\"inside finally\");"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final TryWithResourcesStatement tryWithResourcesStatement
+            = (TryWithResourcesStatement)method.getBlock().getStatements().get(0);
+        
+        assertThat(tryWithResourcesStatement.getResources().getList().size()).isEqualTo(2);
+        
+        checkIdentifierType(tryWithResourcesStatement.getResources().getList().get(0).getTypeReference(), "InputStream");
+        assertThat(tryWithResourcesStatement.getResources().getList().get(0).getNameString()).isEqualTo("is");
+        final ClassInstanceCreationExpression isResourceExpression
+            = (ClassInstanceCreationExpression)tryWithResourcesStatement.getResources().getList().get(0).getInitializer();
+        checkIdentifierType(isResourceExpression.getTypeReference(), "FileInputStream");
+        assertThat(isResourceExpression.getParameters().getList().isEmpty()).isTrue();
+
+        checkIdentifierType(tryWithResourcesStatement.getResources().getList().get(1).getTypeReference(), "OutputStream");
+        assertThat(tryWithResourcesStatement.getResources().getList().get(1).getNameString()).isEqualTo("os");
+        final ClassInstanceCreationExpression osResourceExpression
+            = (ClassInstanceCreationExpression)tryWithResourcesStatement.getResources().getList().get(1).getInitializer();
+        checkIdentifierType(osResourceExpression.getTypeReference(), "FileOutputStream");
+        assertThat(osResourceExpression.getParameters().getList().isEmpty()).isTrue();
+
+        assertThat(tryWithResourcesStatement.getTryBlock().getStatements().size()).isEqualTo(1);
+        
+        final VariableDeclarationStatement variableDeclarationStatement
+            = (VariableDeclarationStatement)tryWithResourcesStatement.getTryBlock().getStatements().get(0);
+        assertThat(variableDeclarationStatement.getDeclarations().get(0).getNameString()).isEqualTo("a");
+        
+        assertThat(tryWithResourcesStatement.getCatchBlocks().size()).isEqualTo(3);
+        
+        checkCatchBlock(tryWithResourcesStatement.getCatchBlocks().get(0), "ex", "IOException");
+        checkCatchBlock(tryWithResourcesStatement.getCatchBlocks().get(1), "ex", "ParseException");
+        checkCatchBlock(tryWithResourcesStatement.getCatchBlocks().get(2), "ex", "IllegalArgumentException");
+        
+        final Block finallyBlock = tryWithResourcesStatement.getFinallyBlock();
+        assertThat(finallyBlock).isNotNull();
+        
+        assertThat(finallyBlock.getStatements().size()).isEqualTo(1);
+        
+        final ExpressionStatement expressionStatement = (ExpressionStatement)finallyBlock.getStatements().get(0);
+        final PrimaryList list = (PrimaryList)expressionStatement.getExpression();
+        assertThat(list.getPrimaries().size()).isEqualTo(3);
+    }
+
     private void checkCatchBlock(CatchBlock catchBlock, String variableName, String ...typeNames) {
 
         assertThat(catchBlock.getExceptionTypes().size()).isEqualTo(typeNames.length);

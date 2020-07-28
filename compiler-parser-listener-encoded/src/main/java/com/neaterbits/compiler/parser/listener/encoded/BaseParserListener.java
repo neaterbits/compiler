@@ -1557,11 +1557,11 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
    }
 
     @Override
-    public final void onTryWithResourcesStatementStart(int tryWithResourcesStatementStartContext) {
+    public final void onTryWithResourcesStatementStart(int tryWithResourcesStatementStartContext, long tryKeyword, int tryKeywordContext) {
 
         writeStartElementContextRef(tryWithResourcesStatementStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeTryWithResourcesStatementStart(astBuffer, tryKeyword, tryKeywordContext);
     }
 
     @Override
@@ -1569,7 +1569,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         writeStartElementContextRef(tryWithResourcesSpecificationStartContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeTryWithResourcesSpecificationStart(astBuffer);
     }
 
     @Override
@@ -1577,7 +1577,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         writeStartElementContextRef(resourceStartContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeTryResourceStart(astBuffer);
     }
 
     @Override
@@ -1593,15 +1593,23 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
         
         writeEndElementContext(resourceStartContext, endContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeTryResourceEnd(astBuffer);
     }
 
     @Override
     public final void onTryWithResourcesSpecificationEnd(int tryWithResourcesSpecificationStartContext, Context endContext) {
 
         writeEndElementContext(tryWithResourcesSpecificationStartContext, endContext);
+
+        AST.encodeTryWithResourcesSpecificationEnd(astBuffer);
+    }
+
+    @Override
+    public void onTryWithResourcesStatementEnd(int startContext, Context endContext) {
+
+        writeEndElementContext(startContext, endContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeTryWithResourcesStatementEnd(astBuffer);
     }
 
     @Override
@@ -1664,8 +1672,8 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<CO
     public final void onTryWithResourcesEnd(int tryWithResourcesStartContext, Context endContext) {
 
         writeEndElementContext(tryWithResourcesStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeTryWithResourcesStatementEnd(astBuffer);
     }
 
     @Override

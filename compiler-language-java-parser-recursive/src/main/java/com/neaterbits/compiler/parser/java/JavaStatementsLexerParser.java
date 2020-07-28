@@ -59,6 +59,11 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             JavaToken.SEMI
     };
 
+    private static final JavaToken [] AFTER_TRY_TOKENS = new JavaToken [] {
+            JavaToken.LBRACE,
+            JavaToken.LPAREN
+    };
+    
     private boolean parseStatement() throws ParserException, IOException {
         
         boolean foundStatement = true;
@@ -105,7 +110,21 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         case TRY: {
             final int tryKeywordContext = writeCurContext(); 
         
-            parseTryCatchFinally(getStringRef(), tryKeywordContext);
+            final JavaToken javaToken = lexer.lexSkipWS(AFTER_TRY_TOKENS);
+            
+            switch (javaToken) {
+            case LBRACE:
+                parseTryCatchFinallyWithoutLBrace(getStringRef(), tryKeywordContext);
+                break;
+                
+            case LPAREN:
+                parseTryWithResourcesWithoutLParen(getStringRef(), tryKeywordContext);
+                break;
+                
+            default:
+                throw lexer.unexpectedToken();
+            }
+            
             break;
         }
 
@@ -441,7 +460,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             JavaToken.FINALLY
     };
 
-    private void parseTryCatchFinally(long tryKeyword, int tryKeywordContext) throws IOException, ParserException {
+    private void parseTryCatchFinallyWithoutLBrace(long tryKeyword, int tryKeywordContext) throws IOException, ParserException {
         
         final int tryCatchFinallyStartContext = writeContext(tryKeywordContext);
         
@@ -449,9 +468,91 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         
         listener.onTryStatementStart(tryCatchFinallyStartContext, tryKeyword, tryKeywordContext);
 
+        parseBlockStatementsAndRBrace();
+        
+        listener.onTryBlockEnd(tryBlockStartContext, getLexerContext());
+
+        parseCatchesAndFinally();
+        
+        listener.onTryStatementEnd(tryCatchFinallyStartContext, getLexerContext());
+    }
+    
+    private void parseTryWithResourcesWithoutLParen(long tryKeyword, int tryKeywordContext) throws IOException, ParserException {
+        
+        final int tryWithResourcesStartContext = writeContext(tryKeywordContext);
+        
+        final int tryBlockStartContext = writeContext(tryKeywordContext);
+        
+        listener.onTryWithResourcesStatementStart(tryWithResourcesStartContext, tryKeyword, tryKeywordContext);
+        
+        parseResourcesSpecification();
+
         parseBlock();
         
         listener.onTryBlockEnd(tryBlockStartContext, getLexerContext());
+        
+        parseCatchesAndFinally();
+        
+        listener.onTryWithResourcesEnd(tryWithResourcesStartContext, getLexerContext());
+    }
+    
+    private static final JavaToken [] AFTER_RESOURCE_TOKENS = new JavaToken [] {
+            
+            JavaToken.SEMI,
+            
+            JavaToken.RPAREN
+    };
+    
+    private void parseResourcesSpecification() throws IOException, ParserException {
+        
+        final int startContext = writeCurContext();
+        
+        listener.onTryWithResourcesSpecificationStart(startContext);
+        
+        boolean done = false;
+        
+        do {
+            parseResource();
+            
+            final JavaToken javaToken = lexer.lexSkipWS(AFTER_RESOURCE_TOKENS);
+            
+            switch (javaToken) {
+            case SEMI:
+                break;
+                
+            case RPAREN:
+                done = true;
+                break;
+                
+            default:
+                throw lexer.unexpectedToken();
+            }
+
+        } while (!done);
+        
+        listener.onTryWithResourcesSpecificationEnd(startContext, getLexerContext());
+    }
+    
+    private void parseResource() throws IOException, ParserException {
+        
+        final int startContext = writeCurContext();
+        
+        listener.onResourceStart(startContext);
+        
+        parseTypeReference();
+        
+        parseVariableName();
+        
+        if (lexer.lexSkipWS(JavaToken.ASSIGN) != JavaToken.ASSIGN) {
+            throw lexer.unexpectedToken();
+        }
+        
+        parseExpression();
+        
+        listener.onResourceEnd(startContext, getLexerContext());
+    }
+    
+    private void parseCatchesAndFinally() throws IOException, ParserException {
 
         boolean done = false;
         
@@ -494,8 +595,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             }
         }
         while (!done);
-        
-        listener.onTryStatementEnd(tryCatchFinallyStartContext, getLexerContext());
+
     }
     
     private void parseCatchExceptions() throws IOException, ParserException {
@@ -513,15 +613,20 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             }
         }
         
+        parseVariableName();
+        
+        if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
+            throw lexer.unexpectedToken();
+        }
+    }
+    
+    private void parseVariableName() throws IOException, ParserException {
+        
         if (lexer.lexSkipWS(JavaToken.IDENTIFIER) != JavaToken.IDENTIFIER) {
             throw lexer.unexpectedToken();
         }
 
         listener.onVariableName(writeCurContext(), getStringRef(), 0);
-        
-        if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
-            throw lexer.unexpectedToken();
-        }
     }
 
     private void parseReturn(long returnKeyword, int returnKeywordContext) throws IOException, ParserException {
@@ -551,7 +656,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         final JavaToken optionalLBrace = lexer.lexSkipWS(JavaToken.LBRACE);
         
         if (optionalLBrace == JavaToken.LBRACE) {
-            parseBlockAndRBrace();
+            parseBlockStatementsAndRBrace();
         }
         else {
             throw lexer.unexpectedToken();
@@ -563,14 +668,14 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
         final JavaToken optionalLBrace = lexer.lexSkipWS(JavaToken.LBRACE);
         
         if (optionalLBrace == JavaToken.LBRACE) {
-            parseBlockAndRBrace();
+            parseBlockStatementsAndRBrace();
         }
         else {
             parseStatement();
         }
     }
 
-    final void parseBlockAndRBrace() throws ParserException, IOException {
+    final void parseBlockStatementsAndRBrace() throws ParserException, IOException {
 
         parseBlockStatements();
         

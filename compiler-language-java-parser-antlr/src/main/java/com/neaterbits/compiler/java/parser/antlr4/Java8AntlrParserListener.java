@@ -1882,7 +1882,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterTryWithResources(TryWithResourcesContext ctx) {
-		delegate.onJavaTryWithResourcesStart(context(ctx));
+		delegate.onJavaTryWithResourcesStart(
+		        context(ctx),
+		        stringRef(ctx.tryWithResourcesStatement().keyword),
+		        context(ctx.tryWithResourcesStatement().keyword));
 	}
 
 	@Override

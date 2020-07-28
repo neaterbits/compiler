@@ -822,6 +822,42 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
+            case TRY_WITH_RESOURCES_STATEMENT: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeTryWithResourcesStatementStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeTryWithResourcesStatementEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case RESOURCES_LIST: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeTryWithResourcesSpecificationStart(startContext, listener);
+                }
+                else {
+                    AST.decodeTryWithResourcesSpecificationEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case RESOURCE: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeTryResourceStart(startContext, listener);
+                }
+                else {
+                    AST.decodeTryResourceEnd(startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
             case RETURN_STATEMENT: {
                 final int startContext = getStartContext(parseTreeRef);
 

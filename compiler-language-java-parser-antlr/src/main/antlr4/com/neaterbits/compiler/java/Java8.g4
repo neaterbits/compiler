@@ -933,7 +933,7 @@ finally_
 	;
 
 tryWithResourcesStatement
-	:	'try' resourceSpecification block catches? finally_?
+	:	keyword = 'try' resourceSpecification block catches? finally_?
 	;
 
 resourceSpecification
