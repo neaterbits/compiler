@@ -32,14 +32,6 @@ public class ReadToClassFileTest extends BaseClassFileReaderTest {
 	}
 	*/
 	
-	private static File getRTJarPath() {
-		
-		final String jreDir = System.getProperty("java.home");
-		
-		final File file = new File(jreDir + "/lib/rt.jar");
-
-		return file;
-	}
 	
 	private static TypeName parseClassName(String className) {
 
@@ -53,12 +45,13 @@ public class ReadToClassFileTest extends BaseClassFileReaderTest {
 	
 	private ClassFile loadClassFileFromRTJar(String className) throws IOException, ClassFileException {
 
-		final File file = getRTJarPath();
 		final JavaBytecodeFormat javaByteCodeFormat = new JavaBytecodeFormat();
 		
 		final ClassFile classFile = new ClassFile();
 		
-		javaByteCodeFormat.loadClassBytecode(file, parseClassName(className),
+		javaByteCodeFormat.loadClassBytecode(
+		        JDKLibs.getJavaBaseLibraryPath(),
+		        parseClassName(className),
 				// new DebugReaderListener(
 						classFile
 				//		)
@@ -115,9 +108,10 @@ public class ReadToClassFileTest extends BaseClassFileReaderTest {
 	
 	private ClassBytecode loadClassAndBaseTypes(String className, HashTypeMap<TypeInfo> typeMap, CodeMap codeMap) throws IOException, ClassFileException {
 
-		final File file = getRTJarPath();
 		final JavaBytecodeFormat javaBytecodeFormat = new JavaBytecodeFormat();
 
+		final File library = JDKLibs.getJavaBaseLibraryPath();
+		
 		final LoadClassParameters<File, TypeInfo, Void> parameters = new LoadClassParameters<>(
 				typeMap,
 				codeMap,
@@ -126,7 +120,7 @@ public class ReadToClassFileTest extends BaseClassFileReaderTest {
 					return new TypeInfo(typeNo, typeName, typeSource);
 				},
 				null,
-				(typeName) -> javaBytecodeFormat.loadClassBytecode(file, typeName, TypeSource.LIBRARY));
+				(typeName) -> javaBytecodeFormat.loadClassBytecode(library, typeName, TypeSource.LIBRARY));
 		
 		return LoadClassHelper.loadClassAndBaseTypesAndAddToCodeMap(
 				parseClassName(className),

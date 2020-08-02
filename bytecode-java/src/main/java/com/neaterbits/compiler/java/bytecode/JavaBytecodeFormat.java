@@ -87,25 +87,33 @@ public class JavaBytecodeFormat implements BytecodeFormat {
 		return classFile;
 	}
 	
+	private static BaseZipFileClassLib<?, ?> getClassLib(File library) throws IOException {
+	    
+	    return library.getName().endsWith(".jmod")
+                ? new JModClassLib(library)
+                : new JarClassLib(library);
+	}
+	
 	@Override
 	public ClassByteCodeWithTypeSource loadClassBytecode(File library, TypeName typeName, TypeSource typeSource) throws IOException, ClassFileException {
 
 		Objects.requireNonNull(library);
 		Objects.requireNonNull(typeName);
 
-		final JarClassLib jarFile = new JarClassLib(library);
+        final BaseZipFileClassLib<?, ?> libraryFile = getClassLib(library);
+		
 		final ClassFileWithTypeSource classFile = new ClassFileWithTypeSource(typeSource);
 		
-		loadClassByteCodeAndCloseStream(jarFile.openClassFile(typeName), classFile);
+		loadClassByteCodeAndCloseStream(libraryFile.openClassFile(typeName), classFile);
 		
 		return classFile;
 	}
 
 	void loadClassBytecode(File library, TypeName typeName, ClassFileReaderListener readerListener) throws IOException, ClassFileException {
 
-		final JarClassLib jarFile = new JarClassLib(library);
+		final BaseZipFileClassLib<?, ?> libraryFile = getClassLib(library);
 
-		loadClassByteCodeAndCloseStream(jarFile.openClassFile(typeName), readerListener);
+		loadClassByteCodeAndCloseStream(libraryFile.openClassFile(typeName), readerListener);
 	}
 
 	private static void loadClassByteCode(TypeName className, InputStream inputStream, ClassFileReaderListener readerListener) throws IOException, ClassFileException {
