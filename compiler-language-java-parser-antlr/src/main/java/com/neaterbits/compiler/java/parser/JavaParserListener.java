@@ -6,10 +6,7 @@ import org.antlr.v4.runtime.Token;
 
 import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
-import com.neaterbits.compiler.ast.objects.CompilationUnit;
-import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
-import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
-import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
+import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextNamePart;
 import com.neaterbits.compiler.util.FullContext;
@@ -42,7 +39,7 @@ import static com.neaterbits.compiler.antlr4.AntlrStringRefs.stringRef;
  * Listener for the Java grammars
  */
 
-public class JavaParserListener implements ModelParserListener<CompilationUnit> {
+public class JavaParserListener<COMPILATION_UNIT> implements ModelParserListener<COMPILATION_UNIT> {
 
 	// Delegate to make sure make all special handling here
 
@@ -53,7 +50,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	// Cache packagename
 	private String packageName;
 
-	private CompilationUnit compilationUnit;
+	private COMPILATION_UNIT compilationUnit;
 
 	// Workaround for Java grammar oddities where 'else if' is specified like
 	// ifThenElseStatement [ ifThenElseStatement ]
@@ -63,7 +60,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 	// We use delegation instead of subclassing to make sure that we handle all methods in this class
 
-	private final JavaIterativeListener delegate;
+	private final IterativeParserListener<COMPILATION_UNIT> delegate;
 	private final StatementsStack statementsStack;
 
 	private void printStack(String statement) {
@@ -94,16 +91,16 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	        StringSource stringSource,
 	        ParseLogger logger,
 	        String file,
-	        @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
+	        IterativeParserListener<COMPILATION_UNIT> delegate) {
 		this.stringSource = stringSource;
 		this.logger = logger;
 		this.file = file;
-		this.delegate = new JavaIterativeListener(stringSource, new ListContextAccess(), logger, parseTreeFactory);
+		this.delegate = delegate;
 		this.statementsStack = new StatementsStack();
 	}
 
 	@Override
-	public CompilationUnit getResult() {
+	public COMPILATION_UNIT getResult() {
 		return compilationUnit;
 	}
 
@@ -758,7 +755,6 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onFormalLambdaParameterListEnd(writeEndContext(context), context);
 	}
 	
-	@SuppressWarnings("unchecked")
     public void onInferredLambdaParameterList(Context context, List<String> varNames, Context varNamesContext) {
 		delegate.onInferredLambdaParameterList(writeOtherContext(context), varNames, writeOtherContext(varNamesContext));
 	}
@@ -775,13 +771,13 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onLambdaExpressionEnd(writeEndContext(context), context);
 	}
 	
-	public CompilationUnit onCompilationUnitEnd(Context context) {
+	public COMPILATION_UNIT onCompilationUnitEnd(Context context) {
 		
 		// Trigger namespace end here since namespace contains code
 		// to suppert eg. C# namespace { }, namespace { }
 		delegate.onNameSpaceEnd(writeEndContext(context), context);
 		
-		final CompilationUnit compilationUnit = (CompilationUnit)delegate.onCompilationUnitEnd(writeEndContext(context), context);
+		final COMPILATION_UNIT compilationUnit = (COMPILATION_UNIT)delegate.onCompilationUnitEnd(writeEndContext(context), context);
 		
 		this.compilationUnit = compilationUnit;
 		

@@ -44,9 +44,9 @@ import com.neaterbits.compiler.antlr4.Antlr4;
 
 import static com.neaterbits.compiler.antlr4.AntlrStringRefs.stringRef;
 
-public class Java8AntlrParserListener extends Java8BaseListener {
+public class Java8AntlrParserListener<COMPILATION_UNIT> extends Java8BaseListener {
 
-	private final JavaParserListener delegate;
+	private final JavaParserListener<COMPILATION_UNIT> delegate;
 	
 	private static final Boolean DEBUG = false;
 	
@@ -56,7 +56,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	private int indent = 0;
 
-	public Java8AntlrParserListener(JavaParserListener delegate, boolean debug, String file, ParseLogger logger) {
+	public Java8AntlrParserListener(JavaParserListener<COMPILATION_UNIT> delegate, boolean debug, String file, ParseLogger logger) {
 
 		this.delegate = delegate;
 		this.debug = debug;

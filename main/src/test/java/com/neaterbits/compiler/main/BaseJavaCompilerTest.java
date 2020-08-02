@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory;
 import com.neaterbits.compiler.ast.objects.CompilationCode;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Import;
@@ -30,9 +29,7 @@ import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ProgramEmitter;
-import com.neaterbits.compiler.java.parser.JavaParserListener;
-import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
-import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaTypes;
+import com.neaterbits.compiler.java.JavaLexerObjectParser;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
 import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
@@ -45,11 +42,14 @@ import com.neaterbits.compiler.util.modules.ModuleSpec;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.ParserException;
 
 public abstract class BaseJavaCompilerTest {
 	
-	final CompilationUnit compile(String fileName) throws IOException {
-		final Java8AntlrParser parser = new Java8AntlrParser(true);
+	final CompilationUnit compile(String fileName) throws IOException, ParserException {
+		
+		final JavaLexerObjectParser parser = new JavaLexerObjectParser();
+		
 		final List<ParseError> errors = new ArrayList<>();
 
 		final CompilationUnit compilationUnit;
@@ -57,6 +57,7 @@ public abstract class BaseJavaCompilerTest {
 		final File file = new File(fileName);
 		
 		try (FileInputStream inputStream = new FileInputStream(file)) {
+		    
 			compilationUnit = parser.parse(
 			        inputStream,
 			        Charset.defaultCharset(),
@@ -71,7 +72,7 @@ public abstract class BaseJavaCompilerTest {
 		return compilationUnit;
 	}
 
-	final ClassDefinition compileAndReturnClass(String fileName) throws IOException {
+	final ClassDefinition compileAndReturnClass(String fileName) throws IOException, ParserException {
 		
 		final CompilationUnit compilationUnit = compile(fileName);
 		
@@ -115,11 +116,8 @@ public abstract class BaseJavaCompilerTest {
 	}
 	
 	final Program parseProgram(List<ModuleSpec> modules) throws IOException {
-		
-		final FileTypeParser<JavaParserListener> javaParser = new FileTypeParser<>(
-				new Java8AntlrParser(true),
-				(stringSource, logger) -> new JavaParserListener(stringSource, logger, "testfile", new ASTParseTreeFactory(JavaTypes.getBuiltinTypes())), 
-				".java");
+	    
+		final FileTypeParser javaParser = new FileTypeParser(new JavaLexerObjectParser(), ".java");
 
 		final DirectoryParser directoryParser = new DirectoryParser(javaParser);
 		

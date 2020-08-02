@@ -1,27 +1,27 @@
-package com.neaterbits.compiler.javascript;
-
-import static org.assertj.core.api.Assertions.assertThat;
+package com.neaterbits.compiler.java;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.javascript.parser.antlr4.JavascriptAntlrParser;
 import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.parse.ParserException;
 
-public class JavascriptParserTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class JavaParserTest {
 
 	@Test
 	public void testParser() throws ParserException {
 		final String source = 
-			"function xyz() {\n" +
+			"package com.test;\n" +
+			"class TestClass {\n" +
 		    "}\n";
 		
-		final JavascriptAntlrParser parser = new JavascriptAntlrParser(true);
+		final Java8AntlrObjectModelParser parser = new Java8AntlrObjectModelParser(true);
 
 		final List<ParseError> errors = new ArrayList<>();
 		

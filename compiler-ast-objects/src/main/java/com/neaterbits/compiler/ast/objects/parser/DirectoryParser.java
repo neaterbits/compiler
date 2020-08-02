@@ -19,6 +19,7 @@ import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.IOError;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.ParserException;
 
 public class DirectoryParser {
 
@@ -85,7 +86,7 @@ public class DirectoryParser {
 
 					allFileerrors.addAll(parseErrors);
 					
-				} catch (IOException ex) {
+				} catch (IOException | ParserException ex) {
 					allFileerrors.add(new IOError(file, "Failed to load file", ex));
 				}
 				

@@ -21,10 +21,10 @@ import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseCompilationUnitEmitter;
-import com.neaterbits.compiler.java.JavaImportsModel;
-import com.neaterbits.compiler.java.JavaProgramModel;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
-import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaTypes;
+import com.neaterbits.compiler.language.java.JavaTypes;
+import com.neaterbits.compiler.language.java.model.astobjects.JavaImportsModel;
+import com.neaterbits.compiler.language.java.model.astobjects.JavaProgramModel;
 import com.neaterbits.compiler.main.convert.ConvertClass;
 import com.neaterbits.compiler.resolver.FilesResolver;
 import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
@@ -46,13 +46,14 @@ import com.neaterbits.compiler.util.model.ResolveTypesModel;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
 import com.neaterbits.compiler.util.passes.ParsedFiles;
+import com.neaterbits.util.parse.ParserException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
 	@Test
-	public void testIfStatements() throws IOException {
+	public void testIfStatements() throws IOException, ParserException {
 
 		// final String fileName = "src/test/java/com/neaterbits/compiler/main/JavaToCConverterTest.java";
 		//final String fileName = "../common/src/main/java/com/neaterbits/compiler/common/ModuleSpec.java";

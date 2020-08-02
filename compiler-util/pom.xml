@@ -15,5 +15,10 @@
   		<artifactId>util-io-common</artifactId>
   		<version>${utilVersion}</version>
   	</dependency>
+  	<dependency>
+  		<groupId>${utilGroupId}</groupId>
+  		<artifactId>util-parse</artifactId>
+  		<version>${utilVersion}</version>
+  	</dependency>
   </dependencies>
 </project>

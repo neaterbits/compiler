@@ -31,6 +31,7 @@ import com.neaterbits.compiler.util.modules.SourceModuleSpec;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.Parser;
+import com.neaterbits.util.parse.ParserException;
 
 public class BuildAndResolve {
 
@@ -48,7 +49,7 @@ public class BuildAndResolve {
 			Consumer<ASTParsedFile> onParsedFile,
 			ObjectProgramModel programModel,
 			Collection<BuiltinTypeRef> builtinTypes,
-			ResolvedTypes resolvedTypes) throws IOException {
+			ResolvedTypes resolvedTypes) throws IOException, ParserException {
 
 		final List<ASTParsedFile> parsedFiles = new ArrayList<>(inputs.size());
 		final List<CompiledFile<CompilationUnit>> allFiles = new ArrayList<>(inputs.size());
@@ -81,7 +82,7 @@ public class BuildAndResolve {
 			InputStream inputStream,
 			Charset charset,
 			FileSpec fileSpec,
-			ResolvedTypes resolvedTypes) throws IOException {
+			ResolvedTypes resolvedTypes) throws IOException, ParserException {
 		
 		final List<ParseError> errors = new ArrayList<>();
 		

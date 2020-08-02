@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.util.parse.ParserException;
+
 public class LanguageCompiler<INPUT, OUTPUT> {
 
 	private final List<Pass<?, ?>> passes;
@@ -18,11 +20,11 @@ public class LanguageCompiler<INPUT, OUTPUT> {
 		this.passes = passes;
 	}
 
-	public OUTPUT compile(FilePassInput input) throws IOException {
+	public OUTPUT compile(FilePassInput input) throws IOException, ParserException {
 		return compile(Arrays.asList(input));
 	}
 	
-	public OUTPUT compile(Collection<? extends FilePassInput> inputs) throws IOException {
+	public OUTPUT compile(Collection<? extends FilePassInput> inputs) throws IOException, ParserException {
 		
 		Objects.requireNonNull(inputs);
 		

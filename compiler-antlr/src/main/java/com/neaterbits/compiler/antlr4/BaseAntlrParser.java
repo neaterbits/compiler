@@ -2,7 +2,6 @@ package com.neaterbits.compiler.antlr4;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -22,7 +21,6 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.parse.BaseParser;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -59,49 +57,7 @@ public abstract class BaseAntlrParser<T, LISTENER extends ModelParserListener<T>
 	}
 
 	@Override
-	public final T parse(String string) {
-		return parse(string, true);
-	}
-	
-	private static ParseLogger makeParseLogger() {
-	    
-	    return new ParseLogger(System.out, CastFullContextProvider.INSTANCE);
-	}
-	
-	@Override
-	public final T parse(String string, boolean log) {
-		try {
-			return parse(
-					StringSourceInputStream.fromString(string),
-					new ArrayList<>(),
-					null,
-					log ? makeParseLogger() : null);
-		} catch (IOException ex) {
-			throw new IllegalStateException(ex);
-		}
-	}
-
-	@Override
-	public final T parse(InputStream stream, Charset charset, String file) throws IOException {
-		return parse(new StringSourceInputStream(stream, charset), new ArrayList<>(), file, makeParseLogger());
-	}
-
-	@Override
-	public T parse(String string, Collection<ParseError> errors, ParseLogger parseLogger) {
-		
-		try {
-			return parse(StringSourceInputStream.fromString(string), errors, null, parseLogger);
-		} catch (IOException ex) {
-			throw new IllegalStateException(ex);
-		}
-	}
-
-	@Override
-	public T parse(InputStream stream, Charset charset, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
-		return parse(new StringSourceInputStream(stream, charset), errors, file, parseLogger);
-	}
-
-	private T parse(StringSourceInputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
+	protected final T parse(StringSourceInputStream stream, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException {
 
 		final LISTENER listener = createListener(stream, parseLogger, file);
 

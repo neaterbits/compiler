@@ -10,12 +10,19 @@ import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.ParserException;
 
 public interface LanguageParser {
 
 	boolean canParseFile(File file);
 
-	CompilationUnit parse(InputStream inputStream, Charset charset, Collection<ParseError> errors, String file, ParseLogger parseLogger) throws IOException;
+	CompilationUnit parse(
+	        InputStream inputStream,
+	        Charset charset,
+	        Collection<ParseError> errors,
+	        String file,
+	        ParseLogger parseLogger)
+	                throws IOException, ParserException;
 	
 	FullContextProvider getFullContextProvider();
 }

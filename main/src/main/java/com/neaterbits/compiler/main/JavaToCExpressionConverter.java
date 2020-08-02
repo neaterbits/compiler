@@ -27,7 +27,7 @@ import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.convert.MethodDispatch;
 import com.neaterbits.compiler.convert.OOToProceduralConverterUtil;
 import com.neaterbits.compiler.convert.ootofunction.BaseExpressionConverter;
-import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaTypes;
+import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.model.MethodInfo;
 import com.neaterbits.compiler.util.parse.FieldAccessType;

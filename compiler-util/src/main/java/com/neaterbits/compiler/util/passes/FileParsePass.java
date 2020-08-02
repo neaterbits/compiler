@@ -14,6 +14,7 @@ import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.compiler.util.parse.ParsedFile;
+import com.neaterbits.util.parse.ParserException;
 
 public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFile>
 		extends FilePass<FileParsePassInput<COMPILATION_UNIT>, PARSED_FILE> {
@@ -35,7 +36,7 @@ public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
 	}
 
 	@Override
-	public PARSED_FILE execute(FileParsePassInput<COMPILATION_UNIT> input) throws IOException {
+	public PARSED_FILE execute(FileParsePassInput<COMPILATION_UNIT> input) throws IOException, ParserException {
 
 		
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();

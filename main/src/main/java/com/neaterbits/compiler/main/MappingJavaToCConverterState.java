@@ -8,7 +8,7 @@ import com.neaterbits.compiler.ast.objects.type.primitive.IntType;
 import com.neaterbits.compiler.ast.objects.typedefinition.StructName;
 import com.neaterbits.compiler.convert.Converters;
 import com.neaterbits.compiler.convert.OOToProceduralConverterState;
-import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaTypes;
+import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.name.BaseTypeName;
