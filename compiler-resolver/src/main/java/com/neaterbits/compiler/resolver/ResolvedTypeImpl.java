@@ -37,10 +37,6 @@ final class ResolvedTypeImpl extends BaseResolverType implements ResolvedType {
 		Objects.requireNonNull(type);
 		
 		if (extendsFrom != null) {
-			if (extendsFrom.stream().anyMatch(ef -> ef.getCompleteName().equals(getTypeName()))) {
-				throw new IllegalArgumentException();
-			}
-	
 			if (extendsFrom.stream().anyMatch(e -> e.getCompleteName().equals(type.getTypeName()))) {
 				throw new IllegalArgumentException();
 			}
