@@ -2,6 +2,11 @@ package com.neaterbits.runtime._native;
 
 public class NativeMethodsTyped {
 	
+    public static boolean isLinux() {
+        
+        return System.getProperty("os.name").toLowerCase().contains("linux");
+    }
+
 	public static void load() {
 		System.load(System.getenv("HOME") + "/projects/compiler/runtime-linux/Debug/liblinuxjni.so");
 	}

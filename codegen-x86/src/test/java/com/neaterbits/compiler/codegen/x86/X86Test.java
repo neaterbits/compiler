@@ -9,44 +9,49 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Arrays;
 
+import static com.neaterbits.runtime._native.NativeMethodsTyped.isLinux;
+
 public class X86Test {
 
 	@Test
 	public void testCode() {
-		
-		NativeMethodsTyped.load();
-		
-		final NativeMemory nativeMemory = NativeMethodsTyped.allocExecutablePages(1);
-		
-		final byte [] bytes = new byte[10000];
-		
-		final NativeMemory stringMemory = NativeMethodsTyped.alloc(15);
-		
-		NativeMethodsTyped.putString(stringMemory, 0, "abc123\n");
-		
-		final long putc = NativeMethodsTyped.getFunctionAddress("libc.so.6", "puts");
-		
-		assertThat(putc).isGreaterThan(0L);
-		
-		int idx = 0;
-		
-		System.out.format("## call code at %016x\n", nativeMemory.getAddress());
-		
-		idx += X86Instructions.MOVABS_REX(bytes, idx, (byte)(REX.ENABLE|REX.W), X86Registers.DI, stringMemory.getAddress());
-		
-		idx += X86Instructions.MOVABS_REX(bytes, idx, (byte)(REX.ENABLE|REX.W), X86Registers.AX, putc);
-		
-		idx += X86Instructions.CALL_INDIRECT(bytes, idx, X86Registers.AX);
-		
-		idx += X86Instructions.RET_NEAR(bytes, idx);
-		
-		final byte [] instructions = Arrays.copyOf(bytes, idx);
-		
-		hexdump(instructions);
 
-		NativeMethodsTyped.putBytes(nativeMemory, 0, bytes, 0, idx);
-		
-		NativeMethodsTyped.runCode(nativeMemory);
+	    if (isLinux()) {
+    	    
+    		NativeMethodsTyped.load();
+    		
+    		final NativeMemory nativeMemory = NativeMethodsTyped.allocExecutablePages(1);
+    		
+    		final byte [] bytes = new byte[10000];
+    		
+    		final NativeMemory stringMemory = NativeMethodsTyped.alloc(15);
+    		
+    		NativeMethodsTyped.putString(stringMemory, 0, "abc123\n");
+    		
+    		final long putc = NativeMethodsTyped.getFunctionAddress("libc.so.6", "puts");
+    		
+    		assertThat(putc).isGreaterThan(0L);
+    		
+    		int idx = 0;
+    		
+    		System.out.format("## call code at %016x\n", nativeMemory.getAddress());
+    		
+    		idx += X86Instructions.MOVABS_REX(bytes, idx, (byte)(REX.ENABLE|REX.W), X86Registers.DI, stringMemory.getAddress());
+    		
+    		idx += X86Instructions.MOVABS_REX(bytes, idx, (byte)(REX.ENABLE|REX.W), X86Registers.AX, putc);
+    		
+    		idx += X86Instructions.CALL_INDIRECT(bytes, idx, X86Registers.AX);
+    		
+    		idx += X86Instructions.RET_NEAR(bytes, idx);
+    		
+    		final byte [] instructions = Arrays.copyOf(bytes, idx);
+    		
+    		hexdump(instructions);
+    
+    		NativeMethodsTyped.putBytes(nativeMemory, 0, bytes, 0, idx);
+    		
+    		NativeMethodsTyped.runCode(nativeMemory);
+	    }
 	}
 	
 	private static void hexdump(byte [] buffer) {
