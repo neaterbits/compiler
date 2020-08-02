@@ -157,7 +157,10 @@ public class JavaParserListener<COMPILATION_UNIT> implements ModelParserListener
 	}
 
 	public void onClassStart(Context context, long classKeyword, Context classKeywordContext, long name, Context nameContext) {
-		delegate.onClassStart(
+
+	    delegate.onTypeDefinitionStart(writeStartContext(context));
+
+	    delegate.onClassStart(
 		        writeStartContext(context),
 		        classKeyword,
 		        writeOtherContext(classKeywordContext),
@@ -195,6 +198,8 @@ public class JavaParserListener<COMPILATION_UNIT> implements ModelParserListener
 	
 	public void onClassEnd(Context context) {
 		delegate.onClassEnd(writeEndContext(context), context);
+
+		delegate.onTypeDefinitionEnd(writeEndContext(context), context);
 	}
 	
 	public void onAnonymousClassStart(Context context) {
