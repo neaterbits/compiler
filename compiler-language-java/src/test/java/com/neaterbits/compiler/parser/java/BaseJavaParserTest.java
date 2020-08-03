@@ -77,7 +77,9 @@ import com.neaterbits.compiler.util.typedefinition.ClassMethodStatic;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.FieldStatic;
+import com.neaterbits.compiler.util.typedefinition.FieldTransient;
 import com.neaterbits.compiler.util.typedefinition.FieldVisibility;
+import com.neaterbits.compiler.util.typedefinition.FieldVolatile;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.util.parse.ParserException;
@@ -1244,6 +1246,81 @@ public abstract class BaseJavaParserTest {
         assertThat(integerLiteral.getValue()).isEqualTo(123);
     }
 
+    @Test
+    public void testParseStaticVolatileMemberVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { private static volatile int memberVariable = 123; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
+
+        assertThat(member.getModifiers().getModifier(FieldStatic.class)).isNotNull();
+        assertThat(member.getModifiers().getModifier(FieldVolatile.class)).isNotNull();
+        assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
+        
+        checkScalarType(member.getType(), "int");
+
+        final IntegerLiteral integerLiteral = (IntegerLiteral)member.getInitializer(0).getInitializer();
+        assertThat(integerLiteral.getValue()).isEqualTo(123);
+    }
+
+    @Test
+    public void testParseStaticTransientMemberVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { private static transient int memberVariable = 123; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
+
+        assertThat(member.getModifiers().getModifier(FieldStatic.class)).isNotNull();
+        assertThat(member.getModifiers().getModifier(FieldTransient.class)).isNotNull();
+        assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
+        
+        checkScalarType(member.getType(), "int");
+
+        final IntegerLiteral integerLiteral = (IntegerLiteral)member.getInitializer(0).getInitializer();
+        assertThat(integerLiteral.getValue()).isEqualTo(123);
+    }
+
+    @Test
+    public void testParseTransientVolatileMemberVariable() throws IOException, ParserException {
+        
+        final String source = "package com.test;\n"
+                
+                + "class TestClass { private transient volatile int memberVariable = 123; }";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassDefinition classDefinition = checkBasicClass(compilationUnit, "TestClass");
+        
+        final ClassDataFieldMember member = (ClassDataFieldMember)classDefinition.getMembers().get(0);
+
+        assertThat(member.getModifiers().getModifier(FieldTransient.class)).isNotNull();
+        assertThat(member.getModifiers().getModifier(FieldVolatile.class)).isNotNull();
+        assertThat(member.getInitializer(0).getNameString()).isEqualTo("memberVariable");
+        
+        checkScalarType(member.getType(), "int");
+
+        final IntegerLiteral integerLiteral = (IntegerLiteral)member.getInitializer(0).getInitializer();
+        assertThat(integerLiteral.getValue()).isEqualTo(123);
+    }
+    
     @Test
     public void testParseModiferScalarClassMemberVariable() throws IOException, ParserException {
         

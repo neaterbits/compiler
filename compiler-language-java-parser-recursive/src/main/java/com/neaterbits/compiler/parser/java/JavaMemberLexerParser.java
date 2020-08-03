@@ -126,7 +126,9 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
             JavaToken.PRIVATE,
             JavaToken.FINAL,
             
-            JavaToken.STATIC
+            JavaToken.STATIC,
+            JavaToken.VOLATILE,
+            JavaToken.TRANSIENT
     };
     
     private void parseAnyMemberModifiersOrAnnotations() throws IOException, ParserException {
@@ -149,6 +151,8 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
             case PRIVATE:
             case FINAL:
             case STATIC:
+            case VOLATILE:
+            case TRANSIENT:
                 cachedModifiers.addScratchKeyword(memberModifierToken, writeCurContext(), getStringRef());
                 break;
 

@@ -67,6 +67,8 @@ public enum JavaToken implements IToken {
     ABSTRACT("abstract"),
     
     STATIC("static"),
+    VOLATILE("volatile"),
+    TRANSIENT("transient"),
 
     PUBLIC("public"),
     PROTECTED("protected"),

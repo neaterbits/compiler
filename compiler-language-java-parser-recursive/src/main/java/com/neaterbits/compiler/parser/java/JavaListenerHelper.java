@@ -365,6 +365,14 @@ final class JavaListenerHelper<COMPILATION_UNIT> {
             case STATIC:
                 listener.onStaticFieldModifier(keyword.getContext());
                 break;
+                
+            case VOLATILE:
+                listener.onVolatileFieldModifier(keyword.getContext());
+                break;
+                
+            case TRANSIENT:
+                listener.onTransientFieldModifier(keyword.getContext());
+                break;
 
             default:
                 throw new ParserException("Unexpected token " + keyword.getToken());

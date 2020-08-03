@@ -3081,6 +3081,8 @@ public class AST {
             break;
             
         case STATIC:
+        case VOLATILE:
+        case TRANSIENT:
             size = 1;
             break;
             
@@ -3111,6 +3113,18 @@ public class AST {
         astBuffer.writeEnumByte(FieldModifier.Type.STATIC);
     }
 
+    static void encodeVolatileFieldModifier(StringASTBuffer astBuffer) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(FieldModifier.Type.VOLATILE);
+    }
+
+    static void encodeTransientFieldModifier(StringASTBuffer astBuffer) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
+        astBuffer.writeEnumByte(FieldModifier.Type.TRANSIENT);
+    }
+
     public static <COMPILATION_UNIT> void decodeFieldModifierHolder(
             ASTBufferRead astBuffer,
             int leafContext,
@@ -3134,6 +3148,14 @@ public class AST {
 
         case STATIC:
             listener.onStaticFieldModifier(leafContext);
+            break;
+            
+        case VOLATILE:
+            listener.onVolatileFieldModifier(leafContext);
+            break;
+            
+        case TRANSIENT:
+            listener.onTransientFieldModifier(leafContext);
             break;
             
          default:
