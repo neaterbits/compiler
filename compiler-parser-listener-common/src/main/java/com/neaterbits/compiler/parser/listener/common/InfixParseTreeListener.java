@@ -4,7 +4,7 @@ import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.operator.Operator;
 
-public interface InfixParserListener<COMPILATION_UNIT> extends ParserListener<COMPILATION_UNIT> {
+public interface InfixParseTreeListener<COMPILATION_UNIT> extends ParseTreeListener<COMPILATION_UNIT> {
     
     void onUnaryExpressionStart(int startContext, Operator operator);
     

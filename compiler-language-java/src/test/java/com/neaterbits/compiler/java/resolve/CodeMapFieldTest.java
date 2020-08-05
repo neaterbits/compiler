@@ -61,7 +61,5 @@ public class CodeMapFieldTest extends BaseCompilerTest {
 		assertThat(integerFieldInfo.isVolatile()).isFalse();
 		assertThat(integerFieldInfo.isTransient()).isTrue();
 		assertThat(integerFieldInfo.getFieldType()).isEqualTo(intTypeNo);
-
 	}
-
 }

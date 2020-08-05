@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
-import com.neaterbits.compiler.parser.listener.common.ParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
+import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
@@ -336,7 +336,7 @@ public class AST {
             int importStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         final int importKeywordContext;
         final int staticKeywordContext;
@@ -372,7 +372,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onImportName(leafContext, astBuffer.getStringRef(index));
     }
@@ -389,7 +389,7 @@ public class AST {
             int importStartContext,
             Context endContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onImportEnd(importStartContext, endContext, astBuffer.getBoolean(index));
     }
@@ -407,7 +407,7 @@ public class AST {
             int namespaceStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         final int namespaceKeywordContext;
         
@@ -438,7 +438,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onNamespacePart(leafContext, astBuffer.getStringRef(index));
     }
@@ -451,7 +451,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeNamespaceEnd(
             int namespaceStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onNameSpaceEnd(namespaceStartContext, endContext);
     }
@@ -464,7 +464,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeTypeDefinitionStart(
             ASTBufferRead astBuffer,
             int typeDefinitionStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onTypeDefinitionStart(typeDefinitionStartContext);
     }
@@ -477,7 +477,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeTypeDefinitionEnd(
             int typeDefinitionStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onTypeDefinitionEnd(typeDefinitionStartContext, endContext);
     }
@@ -500,7 +500,7 @@ public class AST {
             int classStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int classKeywordContext;
         final int nameContext;
@@ -532,7 +532,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int classStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onClassEnd(classStartContext, endContext);
     }
@@ -557,7 +557,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         final ClassModifier.Type type = astBuffer.getEnumByte(index, ClassModifier.Type.class);
         
@@ -589,7 +589,7 @@ public class AST {
             int classExtendsStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int extendsKeywordContext;
         
@@ -615,7 +615,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int classExtendsStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onClassExtendsEnd(classExtendsStartContext, endContext);
     }
@@ -634,7 +634,7 @@ public class AST {
             int classImplementsStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int implementsKeywordContext;
         
@@ -676,7 +676,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onImplementsNamePart(leafContext, astBuffer.getStringRef(index));
     }
@@ -690,7 +690,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int classImplementsStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onImplementsEnd(classImplementsStartContext, endContext);
     }
@@ -698,7 +698,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeImplementsTypeStart(
             ASTBufferRead astBuffer,
             int classImplementsTypeStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onImplementsTypeStart(classImplementsTypeStartContext);
     }
@@ -707,7 +707,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int classImplementsTypeStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onImplementsTypeEnd(classImplementsTypeStartContext, endContext);
     }
@@ -720,7 +720,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeFieldDeclarationStart(
             ASTBufferRead astBuffer,
             int fieldDeclarationStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onFieldDeclarationStart(fieldDeclarationStartContext);
     }
@@ -734,7 +734,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int fieldDeclarationStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onFieldDeclarationEnd(fieldDeclarationStartContext, endContext);
     }
@@ -752,7 +752,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onLeafTypeReference(leafContext, astBuffer.getStringRef(index), ReferenceType.SCALAR);
     }
@@ -770,7 +770,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onNonScopedTypeReferenceStart(leafContext, astBuffer.getStringRef(index), ReferenceType.REFERENCE);
     }
@@ -783,7 +783,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeIdentifierTypeReferenceEnd(
             int leafContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onNonScopedTypeReferenceEnd(leafContext, endContext);
     }
@@ -796,7 +796,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeVariableDeclaratorStart(
             ASTBufferRead astBuffer,
             int variableDeclaratorStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onVariableDeclaratorStart(variableDeclaratorStartContext);
     }
@@ -810,7 +810,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int variableDeclaratorStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onVariableDeclaratorEnd(variableDeclaratorStartContext, endContext);
     }
@@ -829,7 +829,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onVariableName(
                 leafContext,
@@ -845,7 +845,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeConstructorStart(
             ASTBufferRead astBuffer,
             int constructorStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onConstructorStart(constructorStartContext);
     }
@@ -863,7 +863,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onConstructorName(leafContext, astBuffer.getStringRef(index));
     }
@@ -876,7 +876,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeConstructorEnd(
             int constructorStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onConstructorEnd(constructorStartContext, endContext);
     }
@@ -889,7 +889,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeClassMethodStart(
             ASTBufferRead astBuffer,
             int classMethodStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onClassMethodStart(classMethodStartContext);
     }
@@ -940,7 +940,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         final ClassMethodModifier.Type type = astBuffer.getEnumByte(index, ClassMethodModifier.Type.class);
         
@@ -972,7 +972,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeMethodReturnTypeStart(
             ASTBufferRead astBuffer,
             int methodReturnTypeContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onMethodReturnTypeStart(methodReturnTypeContext);
     }
@@ -986,7 +986,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int methodReturnTypeStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onMethodReturnTypeEnd(methodReturnTypeStartContext, endContext);
     }
@@ -1004,7 +1004,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onMethodName(leafContext, astBuffer.getStringRef(index));
     }
@@ -1018,7 +1018,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int classMethodStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onClassMethodEnd(classMethodStartContext, endContext);
     }
@@ -1032,7 +1032,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int signatureParametersStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onMethodSignatureParametersStart(signatureParametersStartContext);
     }
@@ -1047,7 +1047,7 @@ public class AST {
             int signatureParametersStartContext,
             Context endContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onMethodSignatureParametersEnd(signatureParametersStartContext, endContext);
     }
@@ -1065,7 +1065,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int signatureParameterStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onMethodSignatureParameterStart(signatureParameterStartContext, astBuffer.getBoolean(index));
     }
@@ -1078,7 +1078,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeSignatureParameterVarargs(
             ASTBufferRead astBuffer,
             int signatureParameterVarargsContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onMethodSignatureParameterVarargs(signatureParameterVarargsContext);
     }
@@ -1093,7 +1093,7 @@ public class AST {
             int signatureParameterStartContext,
             Context endContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onMethodSignatureParameterEnd(signatureParameterStartContext, endContext);
     }
@@ -1105,7 +1105,7 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeThrowsStart(
             int throwsStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onThrowsStart(throwsStartContext);
     }
@@ -1118,7 +1118,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeThrowsEnd(
             int throwsStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onThrowsEnd(throwsStartContext, endContext);
     }
@@ -1141,7 +1141,7 @@ public class AST {
             int enumStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int enumKeywordContext;
         final int nameContext;
@@ -1178,7 +1178,7 @@ public class AST {
             int enumConstantStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onEnumConstantStart(enumConstantStartContext, astBuffer.getStringRef(index));
     }
@@ -1192,7 +1192,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int enumConstantStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onEnumConstantEnd(enumConstantStartContext, endContext);
     }
@@ -1207,7 +1207,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int enumStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onEnumEnd(enumStartContext, endContext);
     }
@@ -1221,7 +1221,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int scopedTypeReferenceStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onScopedTypeReferenceStart(scopedTypeReferenceStartContext, ReferenceType.REFERENCE);
     }
@@ -1234,7 +1234,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeScopedTypeReferenceNameStart(
             ASTBufferRead astBuffer,
             int scopedTypeReferenceNameStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onScopedTypeReferenceNameStart(scopedTypeReferenceNameStartContext);
     }
@@ -1253,7 +1253,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onScopedTypeReferenceNamePart(leafContext, astBuffer.getStringRef(index));
     }
@@ -1268,7 +1268,7 @@ public class AST {
             int scopedTypeReferenceNameEndContext,
             Context endContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onScopedTypeReferenceNameEnd(scopedTypeReferenceNameEndContext, endContext);
     }
@@ -1283,7 +1283,7 @@ public class AST {
             int scopedTypeReferenceEndContext,
             Context endContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onScopedTypeReferenceEnd(scopedTypeReferenceEndContext, endContext);
     }
@@ -1317,7 +1317,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         final VariableModifier.Type type = astBuffer.getEnumByte(index, VariableModifier.Type.class);
         
@@ -1341,7 +1341,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeVariableDeclarationStatementStart(
             ASTBufferRead astBuffer,
             int variableDeclarationStatementStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onVariableDeclarationStatementStart(variableDeclarationStatementStartContext);
     }
@@ -1355,7 +1355,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int variableDeclarationStatementStartContext,
             Context context,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onVariableDeclarationStatementEnd(variableDeclarationStatementStartContext, context);
     }
@@ -1375,7 +1375,7 @@ public class AST {
             int ifStartContext,
             ContextGetter contextGetter,
             int index,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int ifKeywordContext;
         
@@ -1398,7 +1398,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int ifStatementStartContext,
             Context endContext,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onEndIfStatement(ifStatementStartContext, endContext);
     }
@@ -1411,7 +1411,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeIfConditionBlockStart(
             ASTBufferRead astBuffer,
             int conditionBlockStartContext,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onIfStatementInitialBlockStart(conditionBlockStartContext);
     }
@@ -1425,7 +1425,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int conditionBlockStartContext,
             Context endContext,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onIfStatementInitialBlockEnd(conditionBlockStartContext, endContext);
     }
@@ -1453,7 +1453,7 @@ public class AST {
             int elseIfConditionBlockStartContext,
             ContextGetter contextGetter,
             int index,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         
         final int elseKeywordContext;
@@ -1483,7 +1483,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int elseIfConditionBlockStartContext,
             Context endContext,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onElseIfStatementEnd(elseIfConditionBlockStartContext, endContext);
     }
@@ -1502,7 +1502,7 @@ public class AST {
             int elseStartContext,
             ContextGetter contextGetter,
             int index,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         
         final int elseKeywordContext;
@@ -1526,7 +1526,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int elseStartContext,
             Context endContext,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onElseStatementEnd(elseStartContext, endContext);
     }
@@ -1544,7 +1544,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onVariableReference(leafContext, astBuffer.getStringRef(index));
     }
@@ -1563,7 +1563,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int startContext,
             int index,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         final OperatorType operatorType = astBuffer.getEnumByte(index, OperatorType.class);
         
@@ -1595,7 +1595,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int startContext,
             Context endContext,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onUnaryExpressionEnd(startContext, endContext);
     }
@@ -1614,7 +1614,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         final OperatorType operatorType = astBuffer.getEnumByte(index, OperatorType.class);
         
@@ -1686,7 +1686,7 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeExpressionListStart(
             int expressionListStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onExpressionListStart(expressionListStartContext);
     }
@@ -1699,7 +1699,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeExpressionListEnd(
             int expressionListStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onExpressionListEnd(expressionListStartContext, endContext);
     }
@@ -1708,7 +1708,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         final long value;
         // length
@@ -1764,7 +1764,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onStringLiteral(leafContext, astBuffer.getStringRef(index));
     }
@@ -1782,7 +1782,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         final char c = (char)astBuffer.getInt(index);
         
@@ -1802,7 +1802,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         final byte b = astBuffer.getByte(index);
         
@@ -1824,7 +1824,7 @@ public class AST {
             int whileStatementStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int whileKeywordContext;
         
@@ -1851,7 +1851,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int whileStatementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onWhileStatementEnd(whileStatementStartContext, endContext);
     }
@@ -1871,7 +1871,7 @@ public class AST {
             int iteratorForStatementStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int iteratorForKeywordContext;
         
@@ -1894,7 +1894,7 @@ public class AST {
         astBuffer.writeElementStart(ParseTreeElement.FOR_INIT);
     }
 
-    public static <COMPILATION_UNIT> void decodeForInitStart(int forInitStartContext, ParserListener<COMPILATION_UNIT> listener) {
+    public static <COMPILATION_UNIT> void decodeForInitStart(int forInitStartContext, ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onForInitStart(forInitStartContext);
     }
@@ -1907,7 +1907,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeForInitEnd(
             int forInitStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onForInitEnd(forInitStartContext, endContext);
     }
@@ -1917,7 +1917,7 @@ public class AST {
         astBuffer.writeElementStart(ParseTreeElement.FOR_EXPRESSION_LIST);
     }
 
-    public static <COMPILATION_UNIT> void decodeForExpressionStart(int forInitStartContext, ParserListener<COMPILATION_UNIT> listener) {
+    public static <COMPILATION_UNIT> void decodeForExpressionStart(int forInitStartContext, ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onForExpressionStart(forInitStartContext);
     }
@@ -1930,7 +1930,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeForExpressionEnd(
             int forExpressionStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onForExpressionEnd(forExpressionStartContext, endContext);
     }
@@ -1940,7 +1940,7 @@ public class AST {
         astBuffer.writeElementStart(ParseTreeElement.FOR_UPDATE);
     }
 
-    public static <COMPILATION_UNIT> void decodeForUpdateStart(int forUpdateStartContext, ParserListener<COMPILATION_UNIT> listener) {
+    public static <COMPILATION_UNIT> void decodeForUpdateStart(int forUpdateStartContext, ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onForUpdateStart(forUpdateStartContext);
     }
@@ -1953,7 +1953,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeForUpdateEnd(
             int forUpdateStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onForUpdateEnd(forUpdateStartContext, endContext);
     }
@@ -1966,7 +1966,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeForStatementEnd(
             int forStatementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onForStatementEnd(forStatementStartContext, endContext);
     }
@@ -1986,7 +1986,7 @@ public class AST {
             int iteratorForStatementStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int iteratorForKeywordContext;
         
@@ -2012,7 +2012,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeIteratorForTestStart(
             ASTBufferRead astBuffer,
             int iteratorForTestStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onIteratorForTestStart(iteratorForTestStartContext);
     }
@@ -2026,7 +2026,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int iteratorForTestStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onIteratorForTestEnd(iteratorForTestStartContext, endContext);
     }
@@ -2040,7 +2040,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int iteratorForStatementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onIteratorForStatementEnd(iteratorForStatementStartContext, endContext);
     }
@@ -2060,7 +2060,7 @@ public class AST {
             int tryCatchFinallyStatementStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int tryKeywordContext;
         
@@ -2086,7 +2086,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeTryBlockEnd(
             int tryBlockContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onTryBlockEnd(tryBlockContext, endContext);
     }
@@ -2106,7 +2106,7 @@ public class AST {
             int catchStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int catchKeywordContext;
         
@@ -2130,7 +2130,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int catchStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onCatchEnd(catchStartContext, endContext);
     }
@@ -2150,7 +2150,7 @@ public class AST {
             int finallyStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int finallyKeywordContext;
         
@@ -2174,7 +2174,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int finallyStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onFinallyEnd(finallyStartContext, endContext);
     }
@@ -2188,7 +2188,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int tryCatchFinallyStatementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onTryStatementEnd(tryCatchFinallyStatementStartContext, endContext);
     }
@@ -2208,7 +2208,7 @@ public class AST {
             int returnStatementStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int returnKeywordContext;
         
@@ -2241,7 +2241,7 @@ public class AST {
             int tryWithResourcesStatementStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int tryKeywordContext;
         
@@ -2266,7 +2266,7 @@ public class AST {
     
     public static <COMPILATION_UNIT> void decodeTryWithResourcesSpecificationStart(
             int resourcesSpecificationStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onTryWithResourcesSpecificationStart(resourcesSpecificationStartContext);
     }
@@ -2279,7 +2279,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeTryWithResourcesSpecificationEnd(
             int resourcesSpecificationStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onTryWithResourcesSpecificationEnd(resourcesSpecificationStartContext, endContext);
     }
@@ -2291,7 +2291,7 @@ public class AST {
     
     public static <COMPILATION_UNIT> void decodeTryResourceStart(
             int resourceStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onResourceStart(resourceStartContext);
     }
@@ -2304,7 +2304,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeTryResourceEnd(
             int resourceStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onResourceEnd(resourceStartContext, endContext);
     }
@@ -2323,7 +2323,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int tryWithResourcesStatementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onTryWithResourcesStatementEnd(tryWithResourcesStatementStartContext, endContext);
     }
@@ -2332,7 +2332,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int returnStatementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onReturnStatementEnd(returnStatementStartContext, endContext);
     }
@@ -2352,7 +2352,7 @@ public class AST {
             int throwStatementStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int throwKeywordContext;
         
@@ -2379,7 +2379,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int throwStatementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onThrowStatementEnd(throwStatementStartContext, endContext);
     }
@@ -2392,7 +2392,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeAssignmentStatementStart(
             ASTBufferRead astBuffer,
             int assignmentStatementStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onAssignmentStatementStart(assignmentStatementStartContext);
     }
@@ -2406,7 +2406,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int assignmentStatementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onAssignmentStatementEnd(assignmentStatementStartContext, endContext);
     }
@@ -2419,7 +2419,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeAssignmentExpressionStart(
             ASTBufferRead astBuffer,
             int assignmentExpressionStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onEnterAssignmentExpression(assignmentExpressionStartContext);
     }
@@ -2433,7 +2433,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int assignmentStatementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onExitAssignmentExpression(assignmentStatementStartContext, endContext);
     }
@@ -2446,7 +2446,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeAssignmentLHSStart(
             ASTBufferRead astBuffer,
             int assignmentLHSStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onEnterAssignmentLHS(assignmentLHSStartContext);
     }
@@ -2460,7 +2460,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int assignmentLHSStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         listener.onExitAssignmentLHS(assignmentLHSStartContext, endContext);
     }
@@ -2473,7 +2473,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeExpressionStatementStart(
             ASTBufferRead astBuffer,
             int expressionStatementStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
 
         listener.onExpressionStatementStart(expressionStatementStartContext);
@@ -2488,7 +2488,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int expressionStatementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onExpressionStatementEnd(expressionStatementStartContext, endContext);
     }
@@ -2524,7 +2524,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int methodInvocationStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final MethodInvocationType type = astBuffer.getEnumByte(index, MethodInvocationType.class);
         
@@ -2604,7 +2604,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int methodInvocationStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final MethodInvocationType type = astBuffer.getEnumByte(index, MethodInvocationType.class);
         final long methodName = astBuffer.getStringRef(index + 1);
@@ -2626,7 +2626,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int methodInvocationStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onMethodInvocationEnd(methodInvocationStartContext, endContext);
     }
@@ -2639,7 +2639,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeParametersStart(
             ASTBufferRead astBuffer,
             int parametersStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
 
         listener.onParametersStart(parametersStartContext);
@@ -2653,7 +2653,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeParametersEnd(
             int parameterStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onParametersEnd(parameterStartContext, endContext);
     }
@@ -2666,7 +2666,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeParameterStart(
             ASTBufferRead astBuffer,
             int parameterStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
 
         listener.onParameterStart(parameterStartContext);
@@ -2680,7 +2680,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeParameterEnd(
             int parameterStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onParameterEnd(parameterStartContext, endContext);
     }
@@ -2693,7 +2693,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeNestedExpressionStart(
             ASTBufferRead astBuffer,
             int nestedExpressionStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
 
         listener.onNestedExpressionStart(nestedExpressionStartContext);
@@ -2707,7 +2707,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeNestedExpressionEnd(
             int nestedExpressionStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onNestedExpressionEnd(nestedExpressionStartContext, endContext);
     }
@@ -2720,7 +2720,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodePrimariesStart(
             ASTBufferRead astBuffer,
             int primariesStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onPrimaryStart(primariesStartContext);
     }
@@ -2734,7 +2734,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int primariesStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onPrimaryEnd(primariesStartContext, endContext);
     }
@@ -2751,7 +2751,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int fieldAccessStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onFieldAccess(
                 fieldAccessStartContext,
@@ -2773,7 +2773,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int annotationStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final Names names = decodeNames(astBuffer, index);
 
@@ -2788,7 +2788,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeAnnotationEnd(
             int annotationStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onAnnotationEnd(annotationStartContext, endContext);
     }
@@ -2813,7 +2813,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int annotationElementStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onAnnotationElementStart(
                 annotationElementStartContext,
@@ -2829,7 +2829,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeAnnotationElementEnd(
             int annotationElementStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onAnnotationElementEnd(annotationElementStartContext, endContext);
     }
@@ -2851,7 +2851,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int namePrimaryStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onNamePrimary(
                 namePrimaryStartContext,
@@ -2875,7 +2875,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int nameReferenceStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onNameReference(
                 nameReferenceStartContext,
@@ -2890,7 +2890,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeTypeArgumentListStart(
             ASTBufferRead astBuffer,
             int typeArgumentListStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onGenericTypeArgumentsStart(typeArgumentListStartContext);
     }
@@ -2903,7 +2903,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeTypeArgumentListEnd(
             int typeArgumentListStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onGenericTypeArgumentsEnd(typeArgumentListStartContext, endContext);
     }
@@ -2917,7 +2917,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int referenceTypeArgumentStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
 
         listener.onGenericReferenceTypeArgumentStart(referenceTypeArgumentStartContext);
@@ -2931,7 +2931,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeReferenceTypeArgumentEnd(
             int referenceTypeArgumentStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onGenericReferenceTypeArgumentEnd(referenceTypeArgumentStartContext, endContext);
     }
@@ -2945,7 +2945,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int wildcardTypeArgumentStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
 
         listener.onGenericWildcardTypeArgumentStart(wildcardTypeArgumentStartContext);
@@ -2959,7 +2959,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeWildcardTypeArgumentEnd(
             int wildcardTypeArgumentStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onGenericWildcardTypeArgumentEnd(wildcardTypeArgumentStartContext, endContext);
     }
@@ -2976,7 +2976,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int typeBoundStartContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final TypeBoundType type = astBuffer.getEnumByte(index, TypeBoundType.class);
 
@@ -2991,7 +2991,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeTypeBoundEnd(
             int typeBoundStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onTypeBoundEnd(typeBoundStartContext, endContext);
     }
@@ -3004,7 +3004,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeGenericTypeParametersStart(
             ASTBufferRead astBuffer,
             int parameterStartContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
 
         listener.onGenericTypeParametersStart(parameterStartContext);
@@ -3024,7 +3024,7 @@ public class AST {
             int parameterStartContext,
             ContextGetter contextGetter,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int extendsKeywordContext;
         
@@ -3050,7 +3050,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeNamedGenericTypeParameterEnd(
             int parameterStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onNamedGenericTypeParameterEnd(parameterStartContext, endContext);
     }
@@ -3063,7 +3063,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeGenericTypeParametersEnd(
             int parameterStartContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onGenericTypeParametersEnd(parameterStartContext, endContext);
     }
@@ -3129,7 +3129,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
         
         final FieldModifier.Type type = astBuffer.getEnumByte(index, FieldModifier.Type.class);
         
@@ -3170,7 +3170,7 @@ public class AST {
 
     public static <COMPILATION_UNIT> void decodeClassInstanceCreationExpressionStart(
             int startContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onClassInstanceCreationExpressionStart(startContext);
     }
@@ -3187,7 +3187,7 @@ public class AST {
             ASTBufferRead astBuffer,
             int startContext,
             int index,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onClassInstanceCreationTypeAndConstructorName(startContext, decodeNames(astBuffer, index));
     }
@@ -3200,7 +3200,7 @@ public class AST {
     public static <COMPILATION_UNIT> void decodeClassInstanceCreationExpressionEnd(
             int startContext,
             Context endContext,
-            ParserListener<COMPILATION_UNIT> listener) {
+            ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onClassInstanceCreationExpressionEnd(startContext, endContext);
     }

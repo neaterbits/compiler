@@ -2,7 +2,7 @@ package com.neaterbits.compiler.parser.java;
 
 import java.io.IOException;
 
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotation;
 import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsList;
 import com.neaterbits.compiler.parser.recursive.cached.annotations.elements.CachedAnnotationElement;
@@ -21,12 +21,12 @@ abstract class JavaAnnotationLexerParser<COMPILATION_UNIT> extends JavaExpressio
             String file,
             Lexer<JavaToken, CharInput> lexer,
             Tokenizer tokenizer,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         super(file, lexer, tokenizer, listener);
     }
     
-    static <COMPILATION_UNIT> void apply(CachedAnnotationsList annotationsList, IterativeParserListener<COMPILATION_UNIT> listener) throws IOException, ParserException {
+    static <COMPILATION_UNIT> void apply(CachedAnnotationsList annotationsList, IterativeParseTreeListener<COMPILATION_UNIT> listener) throws IOException, ParserException {
         
         annotationsList.complete(annotations -> {
             
@@ -51,7 +51,7 @@ abstract class JavaAnnotationLexerParser<COMPILATION_UNIT> extends JavaExpressio
 
     private static <COMPILATION_UNIT> void apply(
             CachedAnnotationElementsList annotationElementsList,
-            IterativeParserListener<COMPILATION_UNIT> listener) throws IOException, ParserException {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) throws IOException, ParserException {
         
         annotationElementsList.complete(elements -> {
 

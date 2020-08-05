@@ -3,7 +3,7 @@ package com.neaterbits.compiler.parser.java;
 import java.io.IOException;
 import java.util.Objects;
 
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.recursive.BaseLexerParser;
 import com.neaterbits.compiler.parser.recursive.cached.ProcessParts;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ExpressionCache;
@@ -16,14 +16,14 @@ import com.neaterbits.util.parse.ParserException;
 
 abstract class BaseJavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<JavaToken> {
 
-    final IterativeParserListener<COMPILATION_UNIT> listener;
+    final IterativeParseTreeListener<COMPILATION_UNIT> listener;
     final JavaListenerHelper<COMPILATION_UNIT> listenerHelper;
 
     BaseJavaLexerParser(
             String file,
             Lexer<JavaToken, CharInput> lexer,
             Tokenizer tokenizer,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         super(
                 file,
@@ -106,7 +106,7 @@ abstract class BaseJavaLexerParser<COMPILATION_UNIT> extends BaseLexerParser<Jav
 
     static final <COMPILATION_UNIT> void applyAndClearExpressionCache(
             ExpressionCache expressionCache,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         expressionCache.apply(listener);
 

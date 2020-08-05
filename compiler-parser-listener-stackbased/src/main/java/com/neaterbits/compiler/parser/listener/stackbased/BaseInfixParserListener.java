@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.parser.listener.stackbased;
 
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
-import com.neaterbits.compiler.parser.listener.common.InfixParserListener;
+import com.neaterbits.compiler.parser.listener.common.InfixParseTreeListener;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackExpressionList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackIncrementDecrementExpression;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ExpressionSetter;
@@ -294,7 +294,7 @@ public abstract class BaseInfixParserListener<
 		BREAK_STATEMENT
 		>
 
-	implements InfixParserListener<COMPILATION_UNIT> {
+	implements InfixParseTreeListener<COMPILATION_UNIT> {
 
 	protected BaseInfixParserListener(
 	        StringSource stringSource,

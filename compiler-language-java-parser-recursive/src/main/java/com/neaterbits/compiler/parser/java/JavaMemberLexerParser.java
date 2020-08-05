@@ -2,7 +2,7 @@ package com.neaterbits.compiler.parser.java;
 
 import java.io.IOException;
 
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsList;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywordsList;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
@@ -26,7 +26,7 @@ abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLex
             String file,
             Lexer<JavaToken, CharInput> lexer,
             Tokenizer tokenizer,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         super(file, lexer, tokenizer, listener);
 

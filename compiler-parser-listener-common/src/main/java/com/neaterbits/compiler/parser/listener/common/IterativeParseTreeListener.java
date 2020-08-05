@@ -2,7 +2,7 @@ package com.neaterbits.compiler.parser.listener.common;
 
 import com.neaterbits.compiler.util.Context;
 
-public interface IterativeParserListener<COMPILATION_UNIT> extends InfixParserListener<COMPILATION_UNIT> {
+public interface IterativeParseTreeListener<COMPILATION_UNIT> extends InfixParseTreeListener<COMPILATION_UNIT> {
 
 	void onIfStatementStart(int ifStartContext, long ifKeyword, int ifKeywordContext);
 

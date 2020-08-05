@@ -9,7 +9,7 @@ import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 import com.neaterbits.util.parse.ParserException;
@@ -24,7 +24,7 @@ public class TestJavaParserWithEncodeParserListener extends BaseJavaParserTest {
         
         final JavaParser<EncodedCompilationUnit> parser = new JavaParser<>(stringBuffers -> {
             
-            final IterativeParserListener<EncodedCompilationUnit> listener
+            final IterativeParseTreeListener<EncodedCompilationUnit> listener
                 = new JavaEncodedParserListener("testfile", stringBuffers);
             
             return listener;

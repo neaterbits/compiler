@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
-import com.neaterbits.compiler.parser.listener.common.ParserListener;
+import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
 import com.neaterbits.compiler.parser.listener.stackbased.state.BaseStackTryCatchFinally;
 import com.neaterbits.compiler.parser.listener.stackbased.state.BaseStackVariableDeclarationList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.CallStackEntry;
@@ -290,7 +290,7 @@ public abstract class BaseParserListener<
 		
 		BREAK_STATEMENT extends STATEMENT>
 
-	implements ParserListener<COMPILATION_UNIT> {
+	implements ParseTreeListener<COMPILATION_UNIT> {
 
 	final StringSource stringSource;
 	final ContextAccess contextAccess;

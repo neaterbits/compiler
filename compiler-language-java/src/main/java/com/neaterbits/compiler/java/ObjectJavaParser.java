@@ -5,7 +5,7 @@ import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
 import com.neaterbits.compiler.parser.java.JavaParser;
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
 import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -24,7 +24,7 @@ public final class ObjectJavaParser extends JavaParser<CompilationUnit> {
         super(stringBuffers -> makeListener(stringBuffers, parseTreeFactory, logger));
     }
 
-    private static IterativeParserListener<CompilationUnit> makeListener(
+    private static IterativeParseTreeListener<CompilationUnit> makeListener(
             StringBuffers stringBuffers,
             ASTParseTreeFactory parseTreeFactory,
             ParseLogger logger) {
@@ -38,7 +38,7 @@ public final class ObjectJavaParser extends JavaParser<CompilationUnit> {
         };
           
         @SuppressWarnings("unchecked")
-        final IterativeParserListener<CompilationUnit> listener = new JavaIterativeListener(
+        final IterativeParseTreeListener<CompilationUnit> listener = new JavaIterativeListener(
                 stringSource,
                 new ListContextAccess(),
                 logger,

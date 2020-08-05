@@ -3,11 +3,11 @@ package com.neaterbits.compiler.parser.listener.encoded;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.operator.Operator;
-import com.neaterbits.compiler.parser.listener.common.InfixParserListener;
+import com.neaterbits.compiler.parser.listener.common.InfixParseTreeListener;
 import com.neaterbits.util.io.strings.Tokenizer;
 
 abstract class BaseInfixParserListener<COMPILATION_UNIT>
-    extends BaseParserListener<COMPILATION_UNIT> implements InfixParserListener<COMPILATION_UNIT> {
+    extends BaseParserListener<COMPILATION_UNIT> implements InfixParseTreeListener<COMPILATION_UNIT> {
 
     BaseInfixParserListener(String file, Tokenizer tokenizer) {
         super(file, tokenizer);

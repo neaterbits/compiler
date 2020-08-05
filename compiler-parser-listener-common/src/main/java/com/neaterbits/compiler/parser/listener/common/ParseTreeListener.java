@@ -22,7 +22,7 @@ import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 
-public interface ParserListener<COMPILATION_UNIT> extends ContextWriteAccess {
+public interface ParseTreeListener<COMPILATION_UNIT> extends ContextWriteAccess {
 
 	void onCompilationUnitStart(int startContext);
 

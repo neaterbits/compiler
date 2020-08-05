@@ -1,12 +1,12 @@
 package com.neaterbits.compiler.parser.listener.encoded;
 
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.util.io.strings.Tokenizer;
 
 public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
     extends BaseInfixParserListener<COMPILATION_UNIT>
-    implements IterativeParserListener<COMPILATION_UNIT> {
+    implements IterativeParseTreeListener<COMPILATION_UNIT> {
 
     protected BaseEncodedIterativeParserListener(String file, Tokenizer tokenizer) {
         super(file, tokenizer);

@@ -11,7 +11,7 @@ import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.listener.encoded.AST;
 import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead;
 import com.neaterbits.compiler.parser.listener.encoded.ContextGetter;
@@ -192,7 +192,7 @@ public final class EncodedCompilationUnit {
         };
     }
 
-    public <COMP_UNIT> COMP_UNIT iterate(IterativeParserListener<COMP_UNIT> listener) {
+    public <COMP_UNIT> COMP_UNIT iterate(IterativeParseTreeListener<COMP_UNIT> listener) {
      
         int parseTreeRef = 0;
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.neaterbits.compiler.parser.java.JavaTypeArgumentsLexerParser.ParseFunction;
-import com.neaterbits.compiler.parser.listener.common.ParserListener;
+import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
 import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsList;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ContextWriter;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeyword;
@@ -28,10 +28,10 @@ import com.neaterbits.util.parse.ParserException;
 
 final class JavaListenerHelper<COMPILATION_UNIT> {
     
-    private final ParserListener<COMPILATION_UNIT> listener;
+    private final ParseTreeListener<COMPILATION_UNIT> listener;
     private final ContextWriter contextWriter;
     
-    JavaListenerHelper(ParserListener<COMPILATION_UNIT> listener, ContextWriter contextWriter) {
+    JavaListenerHelper(ParseTreeListener<COMPILATION_UNIT> listener, ContextWriter contextWriter) {
         
         Objects.requireNonNull(listener);
         Objects.requireNonNull(contextWriter);

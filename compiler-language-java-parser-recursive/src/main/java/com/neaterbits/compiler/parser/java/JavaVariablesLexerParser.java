@@ -2,7 +2,7 @@ package com.neaterbits.compiler.parser.java;
 
 import java.io.IOException;
 
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.util.io.strings.CharInput;
@@ -18,7 +18,7 @@ public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
             String file,
             Lexer<JavaToken, CharInput> lexer,
             Tokenizer tokenizer,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         super(file, lexer, tokenizer, listener);
     }

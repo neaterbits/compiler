@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.util.typedefinition.Subclassing;
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
@@ -18,7 +18,7 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaEnumLexerParser<COMPIL
             String file,
             Lexer<JavaToken, CharInput> lexer,
             Tokenizer tokenizer,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         super(file, lexer, tokenizer, listener);
     }

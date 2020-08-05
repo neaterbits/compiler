@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.Token;
 
 import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextNamePart;
 import com.neaterbits.compiler.util.FullContext;
@@ -60,7 +60,7 @@ public class JavaParserListener<COMPILATION_UNIT> implements ModelParserListener
 
 	// We use delegation instead of subclassing to make sure that we handle all methods in this class
 
-	private final IterativeParserListener<COMPILATION_UNIT> delegate;
+	private final IterativeParseTreeListener<COMPILATION_UNIT> delegate;
 	private final StatementsStack statementsStack;
 
 	private void printStack(String statement) {
@@ -91,7 +91,7 @@ public class JavaParserListener<COMPILATION_UNIT> implements ModelParserListener
 	        StringSource stringSource,
 	        ParseLogger logger,
 	        String file,
-	        IterativeParserListener<COMPILATION_UNIT> delegate) {
+	        IterativeParseTreeListener<COMPILATION_UNIT> delegate) {
 		this.stringSource = stringSource;
 		this.logger = logger;
 		this.file = file;

@@ -2,7 +2,7 @@ package com.neaterbits.compiler.parser.recursive.cached.expressions;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.util.method.MethodInvocationType;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.operator.Arity;
@@ -21,7 +21,7 @@ public final class ExpressionCacheApplier {
         this.contextWriter = contextWriter;
     }
 
-    public <COMPILATION_UNIT> void apply(ExpressionCacheList cacheList, IterativeParserListener<COMPILATION_UNIT> listener) {
+    public <COMPILATION_UNIT> void apply(ExpressionCacheList cacheList, IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         if (cacheList.operatorsCount() > 0) {
             
@@ -47,7 +47,7 @@ public final class ExpressionCacheApplier {
         }
     }
     
-    private <COMPILATION_UNIT> void applyUnaryOperatorsList(ExpressionCacheList cacheList, IterativeParserListener<COMPILATION_UNIT> listener) {
+    private <COMPILATION_UNIT> void applyUnaryOperatorsList(ExpressionCacheList cacheList, IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         if (cacheList.operatorsCount() != 1) {
             throw new IllegalStateException();
@@ -87,7 +87,7 @@ public final class ExpressionCacheApplier {
         }
     }
 
-    private <COMPILATION_UNIT> void applyBinaryOperatorsList(ExpressionCacheList cacheList, IterativeParserListener<COMPILATION_UNIT> listener) {
+    private <COMPILATION_UNIT> void applyBinaryOperatorsList(ExpressionCacheList cacheList, IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int numOperators = cacheList.operatorsCount();
         
@@ -155,7 +155,7 @@ public final class ExpressionCacheApplier {
     
     private <COMPILATION_UNIT> void applyPrimaryToListener(
             CachedPrimary primary,
-            IterativeParserListener<COMPILATION_UNIT> listener) {
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
  
         switch (primary.getType()) {
         
@@ -235,7 +235,7 @@ public final class ExpressionCacheApplier {
         }
     }
     
-    public <COMPILATION_UNIT> void applyParameters(ParametersList parametersList, IterativeParserListener<COMPILATION_UNIT> listener) {
+    public <COMPILATION_UNIT> void applyParameters(ParametersList parametersList, IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         final int parametersCount = parametersList.count();
 

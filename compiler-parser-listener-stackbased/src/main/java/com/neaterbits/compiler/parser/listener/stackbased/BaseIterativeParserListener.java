@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.parser.listener.stackbased;
 
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackConstantSwitchLabel;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackElseBlock;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackElseIfConditionBlock;
@@ -297,7 +297,7 @@ public abstract class BaseIterativeParserListener<
 		
 		
 		> 
-	implements IterativeParserListener<COMPILATION_UNIT> {
+	implements IterativeParseTreeListener<COMPILATION_UNIT> {
 	
 	protected BaseIterativeParserListener(
 	        StringSource stringSource,

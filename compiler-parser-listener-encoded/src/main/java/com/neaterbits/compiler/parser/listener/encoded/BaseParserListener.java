@@ -20,7 +20,7 @@ import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.statement.ASTMutability;
-import com.neaterbits.compiler.parser.listener.common.ParserListener;
+import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
@@ -33,7 +33,7 @@ import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.util.io.strings.Tokenizer;
 
-abstract class BaseParserListener<COMPILATION_UNIT> implements ParserListener<COMPILATION_UNIT> {
+abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener<COMPILATION_UNIT> {
 
     final StringASTBuffer astBuffer;
 

@@ -2,7 +2,7 @@ package com.neaterbits.compiler.parser.recursive.cached.expressions;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.parser.listener.common.IterativeParserListener;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.recursive.cached.ScratchBuf;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.model.ParseTreeElement;
@@ -434,7 +434,7 @@ public final class ExpressionCache {
         }
     }
     
-    public <COMPILATION_UNIT> void apply(IterativeParserListener<COMPILATION_UNIT> listener) {
+    public <COMPILATION_UNIT> void apply(IterativeParseTreeListener<COMPILATION_UNIT> listener) {
         
         applier.apply(getStartingPoint(), listener);
     }
