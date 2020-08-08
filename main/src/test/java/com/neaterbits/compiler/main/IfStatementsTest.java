@@ -13,13 +13,14 @@ import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
+import com.neaterbits.util.parse.ParserException;
 
 public class IfStatementsTest extends BaseJavaCompilerTest {
 
 	final String FILENAME = "src/test/java/com/neaterbits/compiler/main/IfStatementTestClass.java";
 
 	@Test
-	public void testEmitCompilation() throws IOException {
+	public void testEmitCompilation() throws IOException, ParserException {
 		final CompilationUnit compilationUnit = compile(FILENAME);
 		
 		final String emitted = emitCompilationUnit(compilationUnit, new JavaCompilationUnitEmitter());
@@ -28,7 +29,7 @@ public class IfStatementsTest extends BaseJavaCompilerTest {
 	}
 	
 	@Test
-	public void testIfStatementsMethod1() throws IOException {
+	public void testIfStatementsMethod1() throws IOException, ParserException {
 		
 		final Block block = checkGetMethodBlock("testMethod1");
 
@@ -46,7 +47,7 @@ public class IfStatementsTest extends BaseJavaCompilerTest {
 	}
 	
 	@Test
-	public void testIfStatementsMethod2() throws IOException {
+	public void testIfStatementsMethod2() throws IOException, ParserException {
 
 		final Block block = checkGetMethodBlock("testMethod2");
 
@@ -64,7 +65,7 @@ public class IfStatementsTest extends BaseJavaCompilerTest {
 	}
 
 	@Test
-	public void testIfStatementsMethod3() throws IOException {
+	public void testIfStatementsMethod3() throws IOException, ParserException {
 
 		final Block block = checkGetMethodBlock("testMethod3");
 
@@ -84,7 +85,7 @@ public class IfStatementsTest extends BaseJavaCompilerTest {
 	}
 
 	@Test
-	public void testIfStatementsMethod4() throws IOException {
+	public void testIfStatementsMethod4() throws IOException, ParserException {
 
 		final Block block = checkGetMethodBlock("testMethod4");
 
@@ -104,7 +105,7 @@ public class IfStatementsTest extends BaseJavaCompilerTest {
 	}
 
 	@Test
-	public void testIfStatementsMethod5() throws IOException {
+	public void testIfStatementsMethod5() throws IOException, ParserException {
 
 		final Block block = checkGetMethodBlock("testMethod5");
 
@@ -123,7 +124,7 @@ public class IfStatementsTest extends BaseJavaCompilerTest {
 		assertThat(ifElseIfElse.getElseBlock()).isNull();
 	}
 
-	private Block checkGetMethodBlock(String methodName) throws IOException {
+	private Block checkGetMethodBlock(String methodName) throws IOException, ParserException {
 
 		final ClassDefinition classDefinition = compileAndReturnClass(FILENAME);
 		
