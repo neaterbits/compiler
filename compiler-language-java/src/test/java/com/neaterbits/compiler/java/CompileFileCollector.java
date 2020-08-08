@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
@@ -18,7 +18,16 @@ import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.passes.FilePassInput;
 import com.neaterbits.util.parse.ParserException;
 
-public class CompileFileCollector {
+public class CompileFileCollector<COMPILATION_UNIT> {
+    
+    @FunctionalInterface
+    public interface Compiler<COMPILED_AND_MAPPED_FILES> {
+        
+        COMPILED_AND_MAPPED_FILES compile(
+                    List<FilePassInput> parseInputs,
+                    ResolvedTypes resolvedTypes,
+                    CompilerCodeMap codeMap) throws IOException, ParserException;
+    }
 
 	private static class CompileFile {
 		private final FileSpec name;
@@ -31,20 +40,28 @@ public class CompileFileCollector {
 		}
 	}
 	
+	private final Compiler<CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>> compiler;
+	
 	private final List<CompileFile> files;
 
-	public CompileFileCollector() {
+	public CompileFileCollector(Compiler<CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>> compiler) {
+	    
+	    Objects.requireNonNull(compiler);
+	    
+	    this.compiler = compiler;
+	    
 		this.files = new ArrayList<>();
 	}
 	
-	public CompileFileCollector add(FileSpec name, String text) {
+	public CompileFileCollector<COMPILATION_UNIT> add(FileSpec name, String text) {
 
 		files.add(new CompileFile(name, text));
 		
 		return this;
 	}
 
-	public CompileFileCollector add(String name, String text) {
+	public CompileFileCollector<COMPILATION_UNIT> add(String name, String text) {
+
 		return add(new NameFileSpec(name), text);
 	}
 
@@ -52,7 +69,7 @@ public class CompileFileCollector {
 		return compile(resolvedTypes, new IntCompilerCodeMap());
 	}
 
-	public CodeMapCompiledAndMappedFiles<CompilationUnit>
+	public CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>
 		compile(ResolvedTypes resolvedTypes, CompilerCodeMap codeMap) throws IOException, ParserException {
 		
 		final List<FilePassInput> parseInputs = files.stream()
@@ -64,6 +81,6 @@ public class CompileFileCollector {
 
 				.collect(Collectors.toList());
 
-		return BaseCompilerTest.compile(parseInputs, resolvedTypes, codeMap);
+		return compiler.compile(parseInputs, resolvedTypes, codeMap);
 	}
 }

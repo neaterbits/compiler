@@ -29,6 +29,7 @@ import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
+import com.neaterbits.compiler.resolver.LanguageSpec;
 import com.neaterbits.compiler.resolver.ast.objects.MethodInvocationExpressionResolver;
 import com.neaterbits.compiler.resolver.util.SourceTokenUtil;
 import com.neaterbits.compiler.util.ArrayStack;
@@ -94,6 +95,10 @@ public class ObjectProgramModel
 		
 		this.fullContextProvider = fullContextProvider;
 		this.dataFieldDefaultModifiers = dataFieldDefaultModifiers;
+	}
+	
+	public ObjectProgramModel(FullContextProvider fullContextProvider, LanguageSpec languageSpec) {
+	    this(fullContextProvider, languageSpec.getImplicitImports(), languageSpec.getDefaultModifiers());
 	}
 
 	@Override

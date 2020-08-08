@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -19,19 +18,17 @@ import com.neaterbits.util.parse.ParserException;
 public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFile>
 		extends FilePass<FileParsePassInput<COMPILATION_UNIT>, PARSED_FILE> {
 
-	private final CreateParsedFile<COMPILATION_UNIT, PARSED_FILE> makeParsedFile;
+	private final CompilerModel<COMPILATION_UNIT, PARSED_FILE> model;
 	private final FullContextProvider fullContextProvider;
 
 	public FileParsePass(
-			CreateParsedFile<COMPILATION_UNIT, PARSED_FILE> makeParsedFile,
-			Function<PARSED_FILE, FileSpec> getFileSpec,
+	        CompilerModel<COMPILATION_UNIT, PARSED_FILE> model,
 			FullContextProvider fullContextProvider) {
 
-		Objects.requireNonNull(makeParsedFile);
-		Objects.requireNonNull(getFileSpec);
+		Objects.requireNonNull(model);
 		Objects.requireNonNull(fullContextProvider);
 		
-		this.makeParsedFile = makeParsedFile;
+		this.model = model;
 		this.fullContextProvider = fullContextProvider;
 	}
 
@@ -52,7 +49,7 @@ public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
 				input.getFile().getParseContextName(),
 				parseLogger);
 		
-		final PARSED_FILE parsedFile = makeParsedFile.create(
+		final PARSED_FILE parsedFile = model.createParsedFile(
 				input.getFile(),
 				compilationUnit,
 				errors.stream().map(Function.identity()).collect(Collectors.toList()),

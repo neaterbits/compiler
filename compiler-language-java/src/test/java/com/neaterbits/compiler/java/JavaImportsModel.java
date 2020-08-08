@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.language.java.model.astobjects;
+package com.neaterbits.compiler.java;
 
 
 import com.neaterbits.compiler.language.java.JavaTypes;

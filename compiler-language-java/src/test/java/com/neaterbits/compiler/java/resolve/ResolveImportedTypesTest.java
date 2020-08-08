@@ -42,7 +42,7 @@ public class ResolveImportedTypesTest extends BaseCompilerTest {
 	
 	private CompiledAndResolvedFile compile(String refererSource) throws IOException, ParserException {
 
-		final CompiledAndResolvedFile referer = new CompileFileCollector()
+		final CompiledAndResolvedFile referer = new CompileFileCollector<>(this::compileFiles)
 				.add(refererSpec, refererSource)
 				.add("Refered.java", referedSource)
 				.compile(new TestResolvedTypes())

@@ -64,7 +64,7 @@ public class ResolveSamePackageTest extends BaseCompilerTest {
 	@Test
 	public void testResolveOtherClassSamePackage() throws IOException, ParserException {
 						
-		final CompiledAndResolvedFile referer = new CompileFileCollector()
+		final CompiledAndResolvedFile referer = new CompileFileCollector<>(this::compileFiles)
 				.add(refererSpec, refererSource)
 				.add("Refered.java", referedSource)
 				.compile(new TestResolvedTypes())

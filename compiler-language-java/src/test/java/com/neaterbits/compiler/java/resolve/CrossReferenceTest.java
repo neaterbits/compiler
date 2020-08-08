@@ -10,7 +10,7 @@ import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompileFileCollector;
-import com.neaterbits.compiler.language.java.model.astobjects.JavaProgramModel;
+import com.neaterbits.compiler.java.JavaProgramModel;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.model.ISourceToken;
@@ -162,7 +162,7 @@ public class CrossReferenceTest extends BaseCompilerTest {
 		final ResolvedTypes resolvedTypes = new TestResolvedTypes();
 		
 		final CodeMapCompiledAndMappedFiles<CompilationUnit> compiledAndMapped
-				= new CompileFileCollector()
+				= new CompileFileCollector<>(this::compileFiles)
 				.add(mainClass, mainClassSource)
 				.add(fieldClass, fieldClassSource)
 				.compile(resolvedTypes, codeMap);

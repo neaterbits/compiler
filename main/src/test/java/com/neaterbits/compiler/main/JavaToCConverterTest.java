@@ -23,8 +23,6 @@ import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseCompilationUnitEmitter;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.language.java.JavaTypes;
-import com.neaterbits.compiler.language.java.model.astobjects.JavaImportsModel;
-import com.neaterbits.compiler.language.java.model.astobjects.JavaProgramModel;
 import com.neaterbits.compiler.main.convert.ConvertClass;
 import com.neaterbits.compiler.resolver.FilesResolver;
 import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
@@ -34,6 +32,7 @@ import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.resolver.ResolverLibraryTypes;
 import com.neaterbits.compiler.resolver.UnresolvedDependencies;
 import com.neaterbits.compiler.resolver.ast.objects.ProgramLoader;
+import com.neaterbits.compiler.resolver.ast.objects.model.ObjectImportsModel;
 import com.neaterbits.compiler.resolver.ast.objects.model.ObjectProgramModel;
 import com.neaterbits.compiler.resolver.passes.AddTypesAndMembersToCodeMapPass;
 import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass;
@@ -80,7 +79,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		listProgram(program);
 
-		final ObjectProgramModel astModel = new JavaProgramModel();
+		final ObjectProgramModel astModel = new ObjectProgramModel();
 
 		// Uses imports to resolve all type references to their class implementations that should now have been loaded
 
@@ -204,7 +203,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 				logger,
 				JavaTypes.getBuiltinTypeRefs(),
 				libraryTypes,
-				new JavaImportsModel(),
+				new ObjectImportsModel(JavaTypes.getImplicitImports()),
 				astModel);
 		
 		final Collection<CompiledFile<CompilationUnit>> allFiles = ProgramLoader.getCompiledFiles(program);
@@ -240,7 +239,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		final Program program = parseProgram(Arrays.asList(commonModuleSpec));
 
-		final ObjectProgramModel astModel = new JavaProgramModel();
+		final ObjectProgramModel astModel = new ObjectProgramModel();
 		
 		resolveFiles(program, null, astModel);
 		

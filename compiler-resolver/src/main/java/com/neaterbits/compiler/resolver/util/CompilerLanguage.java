@@ -1,48 +1,39 @@
 package com.neaterbits.compiler.resolver.util;
 
-import java.util.function.Function;
+import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.FullContextProvider;
+import com.neaterbits.compiler.resolver.LanguageSpec;
+import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
 import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.parse.ParsedFile;
-import com.neaterbits.compiler.util.parse.Parser;
-import com.neaterbits.compiler.util.passes.CompilerBuilder;
-import com.neaterbits.compiler.util.passes.CompilerBuilderIntermediate;
-import com.neaterbits.compiler.util.passes.CreateParsedFile;
-import com.neaterbits.compiler.util.passes.FileParsePass;
+import com.neaterbits.compiler.util.passes.CompilerModel;
 import com.neaterbits.compiler.util.passes.FileParsePassInput;
 import com.neaterbits.compiler.util.passes.LanguageCompiler;
 
-public abstract class CompilerLanguage<
+public class CompilerLanguage<
 		COMPILATION_UNIT,
 		PARSED_FILE extends ParsedFile,
 		OUTPUT extends CompiledAndMappedFiles> {
+    
+    private final LanguageSpec languageSpec;
+    private final CompilerModel<COMPILATION_UNIT, PARSED_FILE> model;
 
-	public abstract LanguageCompiler<
-		FileParsePassInput<COMPILATION_UNIT>,
-		OUTPUT> makeCompilerPasses(ResolvedTypes resolvedTypes, CompilerCodeMap codeMap);
-	
-	protected abstract Parser<COMPILATION_UNIT> getParser();  
+	public CompilerLanguage(LanguageSpec languageSpec, CompilerModel<COMPILATION_UNIT, PARSED_FILE> model) {
+	    
+	    Objects.requireNonNull(languageSpec);
+	    Objects.requireNonNull(model);
 
-	protected abstract CompilerBuilderIntermediate<PARSED_FILE, FileParsePassInput<COMPILATION_UNIT>> buildCompilerParsePass();
-			
-	protected final CompilerBuilderIntermediate<PARSED_FILE, FileParsePassInput<COMPILATION_UNIT>> 
-	
-		buildCompilerParsePass(
-			CreateParsedFile<COMPILATION_UNIT, PARSED_FILE> makeParsedFile,
-			Function<PARSED_FILE, FileSpec> getFileSpec,
-			FullContextProvider fullContextProvider) {
-		
-		final CompilerBuilder<FileParsePassInput<COMPILATION_UNIT>> builder = new CompilerBuilder<>();
-		
-		final FileParsePass<COMPILATION_UNIT, PARSED_FILE> parsePass = new FileParsePass<COMPILATION_UNIT, PARSED_FILE>(
-				makeParsedFile,
-				getFileSpec,
-				fullContextProvider);
-		
-		return builder.addPass(parsePass);
-	}
+	    this.languageSpec = languageSpec;
+	    this.model = model;
+    }
+
+    public final LanguageCompiler<
+		FileParsePassInput<COMPILATION_UNIT>, CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>> makeCompilerPasses(
+		        ResolvedTypes resolvedTypes,
+		        CompilerCodeMap codeMap) {
+        
+        return languageSpec.makeCompilerPasses(model, resolvedTypes, codeMap);
+    }
 }
