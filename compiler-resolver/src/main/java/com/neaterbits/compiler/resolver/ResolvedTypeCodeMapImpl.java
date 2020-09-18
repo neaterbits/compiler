@@ -11,21 +11,21 @@ import com.neaterbits.compiler.resolver.codemap.ResolvedTypeBuiltin;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
+import com.neaterbits.compiler.types.FieldInfo;
+import com.neaterbits.compiler.types.MethodInfo;
+import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ResolveTypesModel;
-import com.neaterbits.compiler.util.model.BuiltinTypeRef;
-import com.neaterbits.compiler.util.model.FieldInfo;
-import com.neaterbits.compiler.util.model.MethodInfo;
-import com.neaterbits.compiler.util.model.MethodVariant;
-import com.neaterbits.compiler.util.model.Mutability;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
-import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMapGetters;
 import com.neaterbits.compiler.codemap.compiler.CrossReferenceUpdater;
+import com.neaterbits.compiler.model.common.BuiltinTypeRef;
+import com.neaterbits.compiler.model.common.ResolveTypesModel;
+import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 
 public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT>
 		implements ResolvedTypeCodeMap {

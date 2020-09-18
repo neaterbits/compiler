@@ -23,39 +23,38 @@ import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceMethodMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceMethodModifierHolder;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseOOCompilationUnitEmitter;
+import com.neaterbits.compiler.types.typedefinition.ClassMethodModifierVisitor;
+import com.neaterbits.compiler.types.typedefinition.ClassMethodNative;
+import com.neaterbits.compiler.types.typedefinition.ClassMethodOverride;
+import com.neaterbits.compiler.types.typedefinition.ClassMethodStatic;
+import com.neaterbits.compiler.types.typedefinition.ClassMethodStrictfp;
+import com.neaterbits.compiler.types.typedefinition.ClassMethodSynchronized;
+import com.neaterbits.compiler.types.typedefinition.ClassMethodVisibility;
+import com.neaterbits.compiler.types.typedefinition.ClassModifier;
+import com.neaterbits.compiler.types.typedefinition.ClassModifierVisitor;
+import com.neaterbits.compiler.types.typedefinition.ClassStatic;
+import com.neaterbits.compiler.types.typedefinition.ClassStrictfp;
+import com.neaterbits.compiler.types.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.types.typedefinition.ConstructorModifierVisitor;
+import com.neaterbits.compiler.types.typedefinition.ConstructorVisibility;
+import com.neaterbits.compiler.types.typedefinition.InterfaceAbstract;
+import com.neaterbits.compiler.types.typedefinition.InterfaceMethodAbstract;
+import com.neaterbits.compiler.types.typedefinition.InterfaceMethodDefault;
+import com.neaterbits.compiler.types.typedefinition.InterfaceMethodModifierVisitor;
+import com.neaterbits.compiler.types.typedefinition.InterfaceMethodStatic;
+import com.neaterbits.compiler.types.typedefinition.InterfaceMethodStrictfp;
+import com.neaterbits.compiler.types.typedefinition.InterfaceMethodVisibility;
+import com.neaterbits.compiler.types.typedefinition.InterfaceModifier;
+import com.neaterbits.compiler.types.typedefinition.InterfaceModifierVisitor;
+import com.neaterbits.compiler.types.typedefinition.InterfaceStatic;
+import com.neaterbits.compiler.types.typedefinition.InterfaceStrictfp;
+import com.neaterbits.compiler.types.typedefinition.InterfaceVisibility;
+import com.neaterbits.compiler.types.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.typedefinition.ClassMethodModifierVisitor;
-import com.neaterbits.compiler.util.typedefinition.ClassMethodNative;
-import com.neaterbits.compiler.util.typedefinition.ClassMethodOverride;
-import com.neaterbits.compiler.util.typedefinition.ClassMethodStatic;
-import com.neaterbits.compiler.util.typedefinition.ClassMethodStrictfp;
-import com.neaterbits.compiler.util.typedefinition.ClassMethodSynchronized;
-import com.neaterbits.compiler.util.typedefinition.ClassMethodVisibility;
-import com.neaterbits.compiler.util.typedefinition.ClassModifier;
-import com.neaterbits.compiler.util.typedefinition.ClassModifierVisitor;
-import com.neaterbits.compiler.util.typedefinition.ClassStatic;
-import com.neaterbits.compiler.util.typedefinition.ClassStrictfp;
-import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
-import com.neaterbits.compiler.util.typedefinition.ConstructorModifierVisitor;
-import com.neaterbits.compiler.util.typedefinition.ConstructorVisibility;
-import com.neaterbits.compiler.util.typedefinition.InterfaceAbstract;
-import com.neaterbits.compiler.util.typedefinition.InterfaceMethodAbstract;
-import com.neaterbits.compiler.util.typedefinition.InterfaceMethodDefault;
-import com.neaterbits.compiler.util.typedefinition.InterfaceMethodModifierVisitor;
-import com.neaterbits.compiler.util.typedefinition.InterfaceMethodStatic;
-import com.neaterbits.compiler.util.typedefinition.InterfaceMethodStrictfp;
-import com.neaterbits.compiler.util.typedefinition.InterfaceMethodVisibility;
-import com.neaterbits.compiler.util.typedefinition.InterfaceModifier;
-import com.neaterbits.compiler.util.typedefinition.InterfaceModifierVisitor;
-import com.neaterbits.compiler.util.typedefinition.InterfaceStatic;
-import com.neaterbits.compiler.util.typedefinition.InterfaceStrictfp;
-import com.neaterbits.compiler.util.typedefinition.InterfaceVisibility;
-import com.neaterbits.compiler.util.typedefinition.Subclassing;
 
 public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<EmitterState> {
 
-	private static final JavaStatementEmitter STATEMENT_EMITTER = new JavaStatementEmitter();
-	
+	private static final JavaStatementEmitter STATEMENT_EMITTER = new JavaStatementEmitter();	
 	private static final JavaExpressionEmitter EXPRESSION_EMITTER = new JavaExpressionEmitter();
 	
 	@Override
@@ -238,7 +237,7 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 			
 			return s;
 		}
-		
+
 		@Override
 		public String onStrictfp(InterfaceMethodStrictfp methodStrictfp, Void param) {
 			return "strictfp";

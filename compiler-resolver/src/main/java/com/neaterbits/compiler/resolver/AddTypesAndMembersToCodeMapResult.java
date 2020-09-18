@@ -11,10 +11,10 @@ import com.neaterbits.compiler.resolver.passes.MappedFiles;
 import com.neaterbits.compiler.resolver.passes.PostResolveFiles;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.types.FieldInfo;
+import com.neaterbits.compiler.types.MethodInfo;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.FieldInfo;
-import com.neaterbits.compiler.util.model.MethodInfo;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 
 public final class AddTypesAndMembersToCodeMapResult<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>

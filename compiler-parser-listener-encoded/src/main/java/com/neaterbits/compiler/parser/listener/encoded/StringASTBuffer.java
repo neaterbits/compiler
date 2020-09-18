@@ -2,7 +2,7 @@ package com.neaterbits.compiler.parser.listener.encoded;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.util.io.strings.Tokenizer;
 

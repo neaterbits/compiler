@@ -7,16 +7,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.neaterbits.compiler.model.common.ResolveTypesModel;
+import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
+import com.neaterbits.compiler.model.common.passes.ParsedFiles;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.types.ResolvedFile;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
+import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ResolveTypesModel;
-import com.neaterbits.compiler.util.model.MethodVariant;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.parse.ParsedFile;
-import com.neaterbits.compiler.util.passes.ParsedFiles;
 
 public final class MethodsResolver<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE> {
 

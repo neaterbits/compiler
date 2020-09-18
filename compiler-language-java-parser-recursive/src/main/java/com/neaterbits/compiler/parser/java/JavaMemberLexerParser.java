@@ -6,8 +6,8 @@ import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener
 import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsList;
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywordsList;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
+import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.util.ArrayUtils;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;

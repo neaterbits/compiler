@@ -2,7 +2,7 @@ package com.neaterbits.compiler.parser.listener.encoded;
 
 import java.util.Arrays;
 
-import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.types.ParseTreeElement;
 
 final class ASTBufferImpl implements ASTBuffer {
 

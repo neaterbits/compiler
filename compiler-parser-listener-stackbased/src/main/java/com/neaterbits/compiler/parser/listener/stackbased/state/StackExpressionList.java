@@ -9,8 +9,8 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Expressi
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NestedExpressionSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableReferenceSetter;
-import com.neaterbits.compiler.util.operator.Arity;
-import com.neaterbits.compiler.util.operator.Operator;
+import com.neaterbits.compiler.types.operator.Arity;
+import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public class StackExpressionList<EXPRESSION, NESTED_EXPRESSION extends EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY>

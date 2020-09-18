@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.parser.listener.common;
 
+import com.neaterbits.compiler.types.operator.IncrementDecrement;
+import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.operator.IncrementDecrement;
-import com.neaterbits.compiler.util.operator.Operator;
 
 public interface InfixParseTreeListener<COMPILATION_UNIT> extends ParseTreeListener<COMPILATION_UNIT> {
     

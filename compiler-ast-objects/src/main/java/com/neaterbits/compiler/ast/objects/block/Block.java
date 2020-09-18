@@ -8,8 +8,8 @@ import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class Block extends BaseASTElement {
 	

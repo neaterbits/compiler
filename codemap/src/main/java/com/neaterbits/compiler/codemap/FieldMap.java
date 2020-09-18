@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.model.FieldInfo;
-import com.neaterbits.compiler.util.model.Mutability;
-import com.neaterbits.compiler.util.model.Visibility;
+import com.neaterbits.compiler.types.FieldInfo;
+import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.Visibility;
 
 final class FieldMap {
 

@@ -10,8 +10,8 @@ import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.BasePlaceholderASTElement;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 

@@ -8,13 +8,13 @@ import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.IntKeyIntValueHash;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.listener.encoded.AST;
 import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead;
 import com.neaterbits.compiler.parser.listener.encoded.ContextGetter;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead.ParseTreeElementRef;
 
 public final class EncodedCompilationUnit {

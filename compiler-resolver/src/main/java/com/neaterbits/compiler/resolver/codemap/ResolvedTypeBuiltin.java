@@ -4,14 +4,14 @@ import java.util.Collection;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.model.common.BuiltinTypeRef;
+import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.resolver.types.TypeSpec;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.BuiltinTypeRef;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 public final class ResolvedTypeBuiltin
 		implements ResolvedType {

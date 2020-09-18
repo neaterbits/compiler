@@ -11,8 +11,8 @@ import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.VarName;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class CatchBlock extends BaseASTElement {
 

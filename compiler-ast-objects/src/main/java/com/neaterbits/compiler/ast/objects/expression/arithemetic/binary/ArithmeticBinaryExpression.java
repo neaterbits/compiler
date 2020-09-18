@@ -6,9 +6,9 @@ import com.neaterbits.compiler.ast.objects.expression.BinaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.operator.Arithmetic;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.operator.Arithmetic;
 
 public class ArithmeticBinaryExpression extends BinaryExpression {
 

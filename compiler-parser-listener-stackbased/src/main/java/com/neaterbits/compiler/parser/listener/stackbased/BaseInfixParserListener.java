@@ -5,10 +5,10 @@ import com.neaterbits.compiler.parser.listener.common.InfixParseTreeListener;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackExpressionList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackIncrementDecrementExpression;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ExpressionSetter;
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.operator.IncrementDecrement;
+import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.operator.IncrementDecrement;
-import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 

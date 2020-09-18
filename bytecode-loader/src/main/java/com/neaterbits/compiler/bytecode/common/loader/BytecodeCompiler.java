@@ -2,7 +2,7 @@ package com.neaterbits.compiler.bytecode.common.loader;
 
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.codemap.VTableScratchArea;
-import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.types.MethodVariant;
 
 public interface BytecodeCompiler<CLASS, METHOD> {
 

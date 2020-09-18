@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.ast.objects.typedefinition;
 
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.typedefinition.FieldModifier;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.typedefinition.FieldModifier;
 
 public final class FieldModifierHolder extends BaseModifierHolder<FieldModifier> {
 

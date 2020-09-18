@@ -3,12 +3,12 @@ package com.neaterbits.compiler.resolver.types;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.resolver.ReferenceLocation;
+import com.neaterbits.compiler.model.common.UpdateOnResolve;
+import com.neaterbits.compiler.model.common.util.ReferenceLocation;
 import com.neaterbits.compiler.resolver.types.ResolvedTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.model.UpdateOnResolve;
 
 public final class ResolvedTypeDependency {
 

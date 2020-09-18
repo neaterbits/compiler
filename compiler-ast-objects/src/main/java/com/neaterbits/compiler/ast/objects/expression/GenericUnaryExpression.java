@@ -2,10 +2,10 @@ package com.neaterbits.compiler.ast.objects.expression;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.operator.Arity;
+import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.operator.Arity;
-import com.neaterbits.compiler.util.operator.Operator;
 
 public final class GenericUnaryExpression extends UnaryExpression {
 

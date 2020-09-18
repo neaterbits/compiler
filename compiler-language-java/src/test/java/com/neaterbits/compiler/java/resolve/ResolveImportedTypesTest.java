@@ -12,10 +12,10 @@ import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompileFileCollector;
+import com.neaterbits.compiler.model.common.CompiledAndMappedFiles;
+import com.neaterbits.compiler.model.common.CompiledAndResolvedFile;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
-import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
 import com.neaterbits.util.parse.ParserException;
 
 public class ResolveImportedTypesTest extends BaseCompilerTest {

@@ -8,12 +8,12 @@ import org.junit.Test;
 
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.JavaUtil;
+import com.neaterbits.compiler.model.common.CompiledAndMappedFiles;
+import com.neaterbits.compiler.types.FieldInfo;
+import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
-import com.neaterbits.compiler.util.model.FieldInfo;
-import com.neaterbits.compiler.util.model.Mutability;
-import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.util.parse.ParserException;
 
 public class CodeMapFieldTest extends BaseCompilerTest {

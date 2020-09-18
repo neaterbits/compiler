@@ -14,8 +14,8 @@ import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.c.CLikeStatementEmitter;
-import com.neaterbits.compiler.util.statement.ASTMutability;
-import com.neaterbits.compiler.util.typedefinition.VariableModifierVisitor;
+import com.neaterbits.compiler.types.statement.ASTMutability;
+import com.neaterbits.compiler.types.typedefinition.VariableModifierVisitor;
 
 public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterState> {
 

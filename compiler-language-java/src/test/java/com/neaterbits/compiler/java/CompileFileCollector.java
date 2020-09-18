@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.compiler.model.common.CompiledAndMappedFiles;
+import com.neaterbits.compiler.model.common.ResolvedTypes;
+import com.neaterbits.compiler.model.common.passes.FilePassInput;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.NameFileSpec;
-import com.neaterbits.compiler.util.model.CompiledAndMappedFiles;
-import com.neaterbits.compiler.util.model.ResolvedTypes;
-import com.neaterbits.compiler.util.passes.FilePassInput;
 import com.neaterbits.util.parse.ParserException;
 
 public class CompileFileCollector<COMPILATION_UNIT> {

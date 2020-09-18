@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.parser.listener.encoded;
 
-import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.types.ParseTreeElement;
 
 public interface ASTBufferRead {
 

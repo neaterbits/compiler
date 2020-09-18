@@ -3,8 +3,8 @@ package com.neaterbits.compiler.resolver.passes;
 import java.util.Map;
 import java.util.Objects;
 
+import com.neaterbits.compiler.model.common.CompiledAndResolvedFile;
 import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 
 public abstract class MappedFiles<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>

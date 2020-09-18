@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 
+import com.neaterbits.compiler.model.common.BuiltinTypeRef;
+import com.neaterbits.compiler.model.common.ImportsModel;
+import com.neaterbits.compiler.model.common.ResolveTypesModel;
+import com.neaterbits.compiler.model.common.passes.MultiPass;
 import com.neaterbits.compiler.resolver.FilesResolver;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.resolver.ResolveLogger;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledFiles;
-import com.neaterbits.compiler.util.model.ResolveTypesModel;
-import com.neaterbits.compiler.util.model.BuiltinTypeRef;
-import com.neaterbits.compiler.util.model.ImportsModel;
 import com.neaterbits.compiler.util.parse.ParsedFile;
-import com.neaterbits.compiler.util.passes.MultiPass;
 
 public final class ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE extends ParsedFile>
 		extends MultiPass<

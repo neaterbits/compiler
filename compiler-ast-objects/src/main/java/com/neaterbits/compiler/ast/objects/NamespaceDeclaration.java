@@ -2,8 +2,8 @@ package com.neaterbits.compiler.ast.objects;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.name.NamespaceReference;
 
 public final class NamespaceDeclaration extends BaseASTElement {

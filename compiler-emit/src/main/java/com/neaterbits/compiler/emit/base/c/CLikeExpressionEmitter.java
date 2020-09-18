@@ -12,16 +12,16 @@ import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreDecre
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreIncrementExpression;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseInfixExpressionEmitter;
-import com.neaterbits.compiler.util.operator.Arithmetic;
-import com.neaterbits.compiler.util.operator.Assignment;
-import com.neaterbits.compiler.util.operator.Bitwise;
-import com.neaterbits.compiler.util.operator.IncrementDecrement;
-import com.neaterbits.compiler.util.operator.Instantiation;
-import com.neaterbits.compiler.util.operator.Logical;
-import com.neaterbits.compiler.util.operator.Operator;
-import com.neaterbits.compiler.util.operator.OperatorVisitor;
-import com.neaterbits.compiler.util.operator.Relational;
-import com.neaterbits.compiler.util.operator.Scope;
+import com.neaterbits.compiler.types.operator.Arithmetic;
+import com.neaterbits.compiler.types.operator.Assignment;
+import com.neaterbits.compiler.types.operator.Bitwise;
+import com.neaterbits.compiler.types.operator.IncrementDecrement;
+import com.neaterbits.compiler.types.operator.Instantiation;
+import com.neaterbits.compiler.types.operator.Logical;
+import com.neaterbits.compiler.types.operator.Operator;
+import com.neaterbits.compiler.types.operator.OperatorVisitor;
+import com.neaterbits.compiler.types.operator.Relational;
+import com.neaterbits.compiler.types.operator.Scope;
 
 public abstract class CLikeExpressionEmitter<T extends EmitterState> extends BaseInfixExpressionEmitter<T> {
 

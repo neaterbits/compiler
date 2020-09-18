@@ -3,7 +3,7 @@ package com.neaterbits.compiler.parser.java;
 import java.io.IOException;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
-import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
+import com.neaterbits.compiler.types.typedefinition.TypeBoundType;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;

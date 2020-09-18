@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.neaterbits.compiler.model.common.BuiltinTypeRef;
 import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.model.BuiltinTypeRef;
 
 public final class BuiltinTypesMap {
 

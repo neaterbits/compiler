@@ -2,7 +2,7 @@ package com.neaterbits.compiler.codemap;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.types.MethodVariant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

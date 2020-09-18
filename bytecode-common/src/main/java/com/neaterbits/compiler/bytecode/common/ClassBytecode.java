@@ -3,9 +3,9 @@ package com.neaterbits.compiler.bytecode.common;
 import java.util.List;
 
 import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.util.FieldType;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.MethodVariant;
 
 public interface ClassBytecode extends ClassStatics, ClassFields {
 

@@ -7,8 +7,8 @@ import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.BasePlaceholderASTElement;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ParameterList extends BasePlaceholderASTElement {
 

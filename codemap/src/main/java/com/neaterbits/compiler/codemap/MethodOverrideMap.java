@@ -7,7 +7,7 @@ import static com.neaterbits.compiler.codemap.ArrayAllocation.subIntArraySize;
 import static com.neaterbits.compiler.codemap.Encode.decodeMethodNo;
 import static com.neaterbits.compiler.codemap.Encode.getMethodVariant;
 
-import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.types.MethodVariant;
 
 public abstract class MethodOverrideMap {
 	

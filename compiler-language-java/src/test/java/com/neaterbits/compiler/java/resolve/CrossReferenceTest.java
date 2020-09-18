@@ -11,11 +11,11 @@ import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompileFileCollector;
 import com.neaterbits.compiler.java.JavaProgramModel;
+import com.neaterbits.compiler.model.common.ISourceToken;
+import com.neaterbits.compiler.model.common.ResolvedTypes;
+import com.neaterbits.compiler.model.common.SourceTokenType;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.util.NameFileSpec;
-import com.neaterbits.compiler.util.model.ISourceToken;
-import com.neaterbits.compiler.util.model.ResolvedTypes;
-import com.neaterbits.compiler.util.model.SourceTokenType;
 import com.neaterbits.util.parse.ParserException;
 
 public class CrossReferenceTest extends BaseCompilerTest {

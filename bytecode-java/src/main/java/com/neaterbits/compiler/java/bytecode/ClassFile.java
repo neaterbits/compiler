@@ -17,11 +17,11 @@ import com.neaterbits.compiler.java.bytecode.reader.ClassFileAttributesListener;
 import com.neaterbits.compiler.java.bytecode.reader.ClassFileReader;
 import com.neaterbits.compiler.java.bytecode.reader.ClassFileReaderListener;
 import com.neaterbits.compiler.java.bytecode.reader.ConstantPoolTag;
+import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.util.FieldType;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.ValueMap;
-import com.neaterbits.compiler.util.model.MethodVariant;
 
 import static com.neaterbits.compiler.java.bytecode.JavaBytecodes.*;
 

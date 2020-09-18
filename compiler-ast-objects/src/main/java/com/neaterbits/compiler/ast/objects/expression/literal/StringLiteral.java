@@ -4,8 +4,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.objects.type.primitive.StringType;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class StringLiteral extends Literal {
 

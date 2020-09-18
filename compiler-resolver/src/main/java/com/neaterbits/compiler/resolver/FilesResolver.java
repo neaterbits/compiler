@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import com.neaterbits.compiler.model.common.BuiltinTypeRef;
+import com.neaterbits.compiler.model.common.ImportsModel;
+import com.neaterbits.compiler.model.common.LibraryTypeRef;
+import com.neaterbits.compiler.model.common.ResolveTypesModel;
+import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
@@ -19,10 +24,6 @@ import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.model.ResolveTypesModel;
-import com.neaterbits.compiler.util.model.BuiltinTypeRef;
-import com.neaterbits.compiler.util.model.ImportsModel;
-import com.neaterbits.compiler.util.model.LibraryTypeRef;
 
 public final class FilesResolver<COMPILATION_UNIT> extends ResolveUtil {
 

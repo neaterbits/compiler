@@ -4,12 +4,12 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.recursive.cached.ScratchBuf;
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.operator.Arity;
+import com.neaterbits.compiler.types.operator.Operator;
+import com.neaterbits.compiler.types.operator.OperatorType;
 import com.neaterbits.compiler.util.Base;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.compiler.util.name.Names;
-import com.neaterbits.compiler.util.operator.Arity;
-import com.neaterbits.compiler.util.operator.Operator;
-import com.neaterbits.compiler.util.operator.OperatorType;
 
 public final class ExpressionCache {
 

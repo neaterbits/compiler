@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.neaterbits.compiler.model.common.passes.ParsedFiles;
+import com.neaterbits.compiler.model.common.passes.SingleToMultiPass;
 import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledFiles;
 import com.neaterbits.compiler.util.parse.ParsedFile;
-import com.neaterbits.compiler.util.passes.ParsedFiles;
-import com.neaterbits.compiler.util.passes.SingleToMultiPass;
 
 public class FindTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE extends ParsedFile> 
 	extends SingleToMultiPass<PARSED_FILE, CompiledFiles<COMPILATION_UNIT, PARSED_FILE>> {

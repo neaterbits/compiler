@@ -4,11 +4,11 @@ import java.util.Collection;
 
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.compiler.CrossReferenceUpdater;
+import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.resolver.types.ResolvedType;
+import com.neaterbits.compiler.types.FieldInfo;
+import com.neaterbits.compiler.types.MethodInfo;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.FieldInfo;
-import com.neaterbits.compiler.util.model.MethodInfo;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 public interface ResolvedTypeCodeMap extends CrossReferenceUpdater {
 

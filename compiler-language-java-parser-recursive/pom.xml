@@ -19,6 +19,12 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>compiler-model-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>compiler-ast-encoded</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -62,7 +68,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>compiler-language-java-parser-listener-stackbased</artifactId>
+			<artifactId>compiler-parser-listener-stackbased</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

@@ -22,6 +22,10 @@
 		<module>compiler-ast-encoded</module>
 		<module>compiler-convert</module>
 		<module>compiler-emit</module>
+		<module>compiler-types</module>
+		<module>compiler-model-common</module>
+		<module>compiler-model-objects</module>
+		<module>compiler-model-encoded</module>
 		<module>compiler-resolver</module>
 		<module>compiler-resolver-ast-objects</module>
 		<module>compiler-resolver-ast-encoded</module>

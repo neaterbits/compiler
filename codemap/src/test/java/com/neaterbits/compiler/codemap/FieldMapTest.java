@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.util.model.FieldInfo;
-import com.neaterbits.compiler.util.model.Mutability;
-import com.neaterbits.compiler.util.model.Visibility;
+import com.neaterbits.compiler.types.FieldInfo;
+import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.Visibility;
 
 public class FieldMapTest {
 

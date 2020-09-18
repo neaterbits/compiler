@@ -3,9 +3,9 @@ package com.neaterbits.compiler.parser.java;
 import java.io.IOException;
 
 import com.neaterbits.compiler.util.ContextRef;
-import com.neaterbits.compiler.util.typedefinition.ClassVisibility;
-import com.neaterbits.compiler.util.typedefinition.Subclassing;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
+import com.neaterbits.compiler.types.typedefinition.ClassVisibility;
+import com.neaterbits.compiler.types.typedefinition.Subclassing;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;

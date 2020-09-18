@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.compiler.CrossReferenceUpdater;
+import com.neaterbits.compiler.model.common.CompilationUnitModel;
+import com.neaterbits.compiler.model.common.CompiledAndResolvedFile;
+import com.neaterbits.compiler.model.common.passes.MultiPass;
 import com.neaterbits.compiler.resolver.UnknownReferenceError;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.CompilationUnitModel;
-import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.parse.ScopesListener;
-import com.neaterbits.compiler.util.passes.MultiPass;
 
 public class NameReferenceResolvePass<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
 		extends MultiPass<

@@ -4,23 +4,23 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.ReferenceType;
+import com.neaterbits.compiler.types.block.ConstructorInvocation;
+import com.neaterbits.compiler.types.method.MethodInvocationType;
+import com.neaterbits.compiler.types.operator.Operator;
+import com.neaterbits.compiler.types.typedefinition.ClassMethodModifier;
+import com.neaterbits.compiler.types.typedefinition.ClassModifier;
+import com.neaterbits.compiler.types.typedefinition.ConstructorModifier;
+import com.neaterbits.compiler.types.typedefinition.FieldModifier;
+import com.neaterbits.compiler.types.typedefinition.InterfaceMethodModifier;
+import com.neaterbits.compiler.types.typedefinition.InterfaceModifier;
+import com.neaterbits.compiler.types.typedefinition.TypeBoundType;
+import com.neaterbits.compiler.types.typedefinition.VariableModifier;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.block.ConstructorInvocation;
-import com.neaterbits.compiler.util.method.MethodInvocationType;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.model.ReferenceType;
-import com.neaterbits.compiler.util.operator.Operator;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
-import com.neaterbits.compiler.util.typedefinition.ClassMethodModifier;
-import com.neaterbits.compiler.util.typedefinition.ClassModifier;
-import com.neaterbits.compiler.util.typedefinition.ConstructorModifier;
-import com.neaterbits.compiler.util.typedefinition.FieldModifier;
-import com.neaterbits.compiler.util.typedefinition.InterfaceMethodModifier;
-import com.neaterbits.compiler.util.typedefinition.InterfaceModifier;
-import com.neaterbits.compiler.util.typedefinition.TypeBoundType;
-import com.neaterbits.compiler.util.typedefinition.VariableModifier;
 
 public interface ParseTreeFactory<
 	KEYWORD,
