@@ -7,11 +7,11 @@ import java.util.function.Predicate;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.list.ASTNode;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackView;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public abstract class BaseASTElement extends ASTNode {
 	

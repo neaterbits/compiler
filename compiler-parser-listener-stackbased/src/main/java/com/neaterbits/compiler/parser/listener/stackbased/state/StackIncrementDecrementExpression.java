@@ -2,7 +2,7 @@ package com.neaterbits.compiler.parser.listener.stackbased.state;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.operator.IncrementDecrement;
+import com.neaterbits.compiler.types.operator.IncrementDecrement;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class StackIncrementDecrementExpression<EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY>

@@ -6,15 +6,14 @@ import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ConditionalExpression extends Expression {
 
 	private final ASTSingle<Expression> part1;
 	private final ASTSingle<Expression> part2;
 	private final ASTSingle<Expression> part3;
-	
 	
 	public ConditionalExpression(Context context, Expression part1, Expression part2, Expression part3) {
 		super(context);

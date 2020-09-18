@@ -9,7 +9,7 @@ import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.emit.EmitterState;
-import com.neaterbits.compiler.util.operator.Operator;
+import com.neaterbits.compiler.types.operator.Operator;
 
 public abstract class BaseInfixExpressionEmitter<T extends EmitterState> extends BaseExpressionEmitter<T> {
 

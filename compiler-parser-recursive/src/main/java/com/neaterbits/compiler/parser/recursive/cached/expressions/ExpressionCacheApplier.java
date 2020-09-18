@@ -3,11 +3,11 @@ package com.neaterbits.compiler.parser.recursive.cached.expressions;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
-import com.neaterbits.compiler.util.method.MethodInvocationType;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.operator.Arity;
-import com.neaterbits.compiler.util.operator.Instantiation;
-import com.neaterbits.compiler.util.operator.OperatorType;
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.method.MethodInvocationType;
+import com.neaterbits.compiler.types.operator.Arity;
+import com.neaterbits.compiler.types.operator.Instantiation;
+import com.neaterbits.compiler.types.operator.OperatorType;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 
 public final class ExpressionCacheApplier {

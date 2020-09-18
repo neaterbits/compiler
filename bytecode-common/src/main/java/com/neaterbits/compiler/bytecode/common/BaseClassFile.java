@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.bytecode.common;
 
+import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.util.FieldType;
-import com.neaterbits.compiler.util.model.MethodVariant;
 
 public abstract class BaseClassFile implements ClassBytecode {
 

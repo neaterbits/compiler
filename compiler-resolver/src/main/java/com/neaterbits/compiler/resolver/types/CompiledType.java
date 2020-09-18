@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 public final class CompiledType extends BaseResolverType implements ResolveTypeInfo {
 

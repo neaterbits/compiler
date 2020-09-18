@@ -4,10 +4,10 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.block.MethodName;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassOrInterfaceName;
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.imports.TypeImport;
+import com.neaterbits.compiler.types.imports.TypeImportVisitor;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.imports.TypeImport;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.model.TypeImportVisitor;
 import com.neaterbits.compiler.util.name.NamespaceReference;
 
 public final class ImportName extends BaseASTElement {

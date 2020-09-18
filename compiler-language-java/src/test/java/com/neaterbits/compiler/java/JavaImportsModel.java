@@ -2,7 +2,7 @@ package com.neaterbits.compiler.java;
 
 
 import com.neaterbits.compiler.language.java.JavaTypes;
-import com.neaterbits.compiler.resolver.ast.objects.model.ObjectImportsModel;
+import com.neaterbits.compiler.model.objects.ObjectImportsModel;
 
 public class JavaImportsModel extends ObjectImportsModel {
 

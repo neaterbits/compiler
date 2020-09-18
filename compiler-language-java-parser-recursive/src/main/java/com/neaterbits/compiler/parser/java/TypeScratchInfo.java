@@ -2,10 +2,10 @@ package com.neaterbits.compiler.parser.java;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.MutableContext;
-import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.util.io.strings.StringRef;
 

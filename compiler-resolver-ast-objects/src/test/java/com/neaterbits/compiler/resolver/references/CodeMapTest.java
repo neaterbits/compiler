@@ -10,7 +10,6 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.neaterbits.compiler.resolver.BaseResolveTest;
-import com.neaterbits.compiler.resolver.ReferenceLocation;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMapImpl;
 import com.neaterbits.compiler.resolver.TestResolvedFile;
 import com.neaterbits.compiler.resolver.TestResolvedType;
@@ -24,8 +23,6 @@ import com.neaterbits.compiler.util.IntValue;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.model.ResolveTypesModel;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.name.ClassName;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDeclarationName;
@@ -37,6 +34,9 @@ import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceModifiers;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceName;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.compiler.model.common.ResolveTypesModel;
+import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
+import com.neaterbits.compiler.model.common.util.ReferenceLocation;
 
 public class CodeMapTest extends BaseResolveTest {
 

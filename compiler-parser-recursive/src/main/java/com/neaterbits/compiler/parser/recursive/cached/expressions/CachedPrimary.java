@@ -2,8 +2,8 @@ package com.neaterbits.compiler.parser.recursive.cached.expressions;
 
 import java.util.Objects;
 
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.Base;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 import com.neaterbits.util.io.strings.StringRef;
 
 final class CachedPrimary {

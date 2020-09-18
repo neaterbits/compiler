@@ -12,6 +12,8 @@ import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.ImportName;
 import com.neaterbits.compiler.ast.objects.Keyword;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassOrInterfaceName;
+import com.neaterbits.compiler.model.common.util.ReferenceLocation;
+import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
 import com.neaterbits.compiler.resolver.ast.objects.model.ObjectImportsModel;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FullContext;

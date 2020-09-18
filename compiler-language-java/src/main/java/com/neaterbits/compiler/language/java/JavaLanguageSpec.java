@@ -3,6 +3,12 @@ package com.neaterbits.compiler.language.java;
 import java.util.List;
 
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.compiler.model.common.LibraryTypeRef;
+import com.neaterbits.compiler.model.common.ResolvedTypes;
+import com.neaterbits.compiler.model.common.passes.CompilerBuilderIntermediate;
+import com.neaterbits.compiler.model.common.passes.CompilerModel;
+import com.neaterbits.compiler.model.common.passes.FileParsePassInput;
+import com.neaterbits.compiler.model.common.passes.LanguageCompiler;
 import com.neaterbits.compiler.resolver.LanguageSpec;
 import com.neaterbits.compiler.resolver.passes.AddTypesAndMembersToCodeMapPass;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
@@ -11,26 +17,19 @@ import com.neaterbits.compiler.resolver.passes.LibraryTypes;
 import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass;
 import com.neaterbits.compiler.resolver.passes.ResolveTypeDependenciesPass;
 import com.neaterbits.compiler.resolver.passes.namereferenceresolve.NameReferenceResolvePass;
+import com.neaterbits.compiler.types.FieldModifiers;
+import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.Visibility;
+import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.imports.TypeImport;
-import com.neaterbits.compiler.util.model.FieldModifiers;
-import com.neaterbits.compiler.util.model.LibraryTypeRef;
-import com.neaterbits.compiler.util.model.Mutability;
-import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.model.TypeSources;
-import com.neaterbits.compiler.util.model.Visibility;
 import com.neaterbits.compiler.util.parse.ParsedFile;
-import com.neaterbits.compiler.util.passes.CompilerBuilderIntermediate;
-import com.neaterbits.compiler.util.passes.CompilerModel;
-import com.neaterbits.compiler.util.passes.FileParsePassInput;
-import com.neaterbits.compiler.util.passes.LanguageCompiler;
 
 public final class JavaLanguageSpec implements LanguageSpec {
 
     public static final JavaLanguageSpec INSTANCE = new JavaLanguageSpec();
-
     private static final FullContextProvider FULL_CONTEXT_PROVIDER = CastFullContextProvider.INSTANCE;
 
     private JavaLanguageSpec() {

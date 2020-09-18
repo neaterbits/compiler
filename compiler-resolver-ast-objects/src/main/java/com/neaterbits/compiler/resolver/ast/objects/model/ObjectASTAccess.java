@@ -8,11 +8,11 @@ import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
-import com.neaterbits.compiler.resolver.util.SourceTokenUtil.ASTAccess;
+import com.neaterbits.compiler.model.common.SourceTokenUtil.ASTAccess;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ObjectASTAccess implements ASTAccess<BaseASTElement, CompilationUnit> {
 

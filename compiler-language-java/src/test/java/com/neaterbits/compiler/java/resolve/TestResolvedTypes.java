@@ -5,8 +5,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.neaterbits.compiler.java.JavaUtil;
+import com.neaterbits.compiler.model.common.ResolvedTypes;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ResolvedTypes;
 import com.neaterbits.compiler.util.model.TypeSources;
 
 public class TestResolvedTypes implements ResolvedTypes {

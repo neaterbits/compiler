@@ -5,14 +5,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.model.common.CompiledAndResolvedFile;
+import com.neaterbits.compiler.model.common.CompiledAndResolvedFiles;
+import com.neaterbits.compiler.model.common.passes.ParsedFiles;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.ResolveFilesResult;
 import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
-import com.neaterbits.compiler.util.model.CompiledAndResolvedFiles;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParsedFile;
-import com.neaterbits.compiler.util.passes.ParsedFiles;
 
 public abstract class PostResolveFiles<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>
 		extends ParsedFiles<PARSED_FILE>

@@ -22,10 +22,10 @@ import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.c.CLikeExpressionEmitter;
+import com.neaterbits.compiler.types.operator.Bitwise;
+import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.operator.Bitwise;
-import com.neaterbits.compiler.util.operator.Operator;
 
 final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 

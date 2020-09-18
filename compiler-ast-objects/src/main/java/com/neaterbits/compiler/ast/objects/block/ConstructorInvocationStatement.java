@@ -9,9 +9,9 @@ import com.neaterbits.compiler.ast.objects.expression.ParameterList;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.statement.StatementVisitor;
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.block.ConstructorInvocation;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class ConstructorInvocationStatement extends Statement {
 

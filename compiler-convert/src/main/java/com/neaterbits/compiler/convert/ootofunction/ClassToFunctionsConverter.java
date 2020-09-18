@@ -33,9 +33,9 @@ import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarat
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.convert.OOToProceduralConverterUtil;
+import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 /**
  * Converts a class to C code

@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Import;
-import com.neaterbits.compiler.util.imports.TypeImport;
-import com.neaterbits.compiler.util.model.BaseImportsModel;
-import com.neaterbits.compiler.util.model.ImportsModel;
-import com.neaterbits.compiler.util.model.TypeImportVisitor;
+import com.neaterbits.compiler.model.common.BaseImportsModel;
+import com.neaterbits.compiler.model.common.ImportsModel;
+import com.neaterbits.compiler.types.imports.TypeImport;
+import com.neaterbits.compiler.types.imports.TypeImportVisitor;
 
 public class ObjectImportsModel
     extends BaseImportsModel<CompilationUnit>

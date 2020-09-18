@@ -16,10 +16,9 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.CodeMap.MethodFilter;
+import com.neaterbits.compiler.types.MethodInfo;
+import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.util.Hash;
-import com.neaterbits.compiler.util.model.MethodInfo;
-import com.neaterbits.compiler.util.model.MethodVariant;
-
 
 final class MethodMap {
 
@@ -183,7 +182,6 @@ final class MethodMap {
 
 		return methodIndex;
 	}
-	
 	
 	MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes, MethodMapCache methodMapCache) {
 

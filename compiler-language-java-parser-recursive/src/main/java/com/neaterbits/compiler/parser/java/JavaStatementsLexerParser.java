@@ -6,11 +6,11 @@ import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ExpressionCache;
 import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
+import com.neaterbits.compiler.types.ReferenceType;
+import com.neaterbits.compiler.types.statement.ASTMutability;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
-import com.neaterbits.compiler.util.model.ReferenceType;
 import com.neaterbits.compiler.util.name.Names;
-import com.neaterbits.compiler.util.statement.ASTMutability;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;

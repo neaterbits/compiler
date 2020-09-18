@@ -12,13 +12,13 @@ import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.variables.StaticMemberReference;
+import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
+import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.method.MethodInvocationType;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 
 public class MethodInvocationExpressionResolver {

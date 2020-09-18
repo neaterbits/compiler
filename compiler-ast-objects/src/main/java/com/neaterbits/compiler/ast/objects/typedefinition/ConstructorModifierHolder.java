@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.ast.objects.typedefinition;
 
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.typedefinition.ConstructorModifier;
+import com.neaterbits.compiler.types.typedefinition.ConstructorModifierVisitor;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.typedefinition.ConstructorModifier;
-import com.neaterbits.compiler.util.typedefinition.ConstructorModifierVisitor;
 
 public final class ConstructorModifierHolder extends BaseModifierHolder<ConstructorModifier> implements ConstructorModifier {
 

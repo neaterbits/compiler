@@ -3,10 +3,10 @@ package com.neaterbits.compiler.ast.objects.expression.arithemetic.unary;
 import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.objects.expression.UnaryExpression;
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.operator.IncrementDecrement;
+import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.operator.IncrementDecrement;
-import com.neaterbits.compiler.util.operator.Operator;
 
 public final class PostDecrementExpression extends UnaryExpression {
 

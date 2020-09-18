@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.ast.objects.typedefinition;
 
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.typedefinition.ClassModifier;
+import com.neaterbits.compiler.types.typedefinition.ClassModifierVisitor;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.typedefinition.ClassModifier;
-import com.neaterbits.compiler.util.typedefinition.ClassModifierVisitor;
 
 public final class ClassModifierHolder extends BaseModifierHolder<ClassModifier>
 		implements ClassModifier {

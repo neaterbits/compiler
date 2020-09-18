@@ -9,13 +9,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.neaterbits.compiler.types.FieldInfo;
+import com.neaterbits.compiler.types.MethodInfo;
+import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.util.Bits;
 import com.neaterbits.compiler.util.ValueMap;
-import com.neaterbits.compiler.util.model.FieldInfo;
-import com.neaterbits.compiler.util.model.MethodInfo;
-import com.neaterbits.compiler.util.model.MethodVariant;
-import com.neaterbits.compiler.util.model.Mutability;
-import com.neaterbits.compiler.util.model.Visibility;
 
 public class IntCodeMap implements CodeMap {
 

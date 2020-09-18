@@ -6,9 +6,9 @@ import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.type.NamedType;
 import com.neaterbits.compiler.ast.objects.type.PointerType;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class PointerTypeReference extends ResolvedTypeReference {
 

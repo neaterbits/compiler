@@ -2,9 +2,9 @@ package com.neaterbits.compiler.resolver.types;
 
 import java.util.Collection;
 
+import com.neaterbits.compiler.model.common.BuiltinTypeRef;
+import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.model.BuiltinTypeRef;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 
 public interface ResolvedType extends ResolveTypeInfo {
 

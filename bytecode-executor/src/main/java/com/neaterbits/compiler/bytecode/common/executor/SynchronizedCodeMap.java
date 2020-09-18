@@ -5,11 +5,11 @@ import java.util.Objects;
 import com.neaterbits.compiler.codemap.CodeMap;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.VTableScratchArea;
-import com.neaterbits.compiler.util.model.FieldInfo;
-import com.neaterbits.compiler.util.model.MethodInfo;
-import com.neaterbits.compiler.util.model.MethodVariant;
-import com.neaterbits.compiler.util.model.Mutability;
-import com.neaterbits.compiler.util.model.Visibility;
+import com.neaterbits.compiler.types.FieldInfo;
+import com.neaterbits.compiler.types.MethodInfo;
+import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.Visibility;
 
 class SynchronizedCodeMap implements CodeMap {
 

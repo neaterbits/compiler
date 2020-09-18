@@ -2,7 +2,7 @@ package com.neaterbits.compiler.bytecode.common.loader.codemap;
 
 import com.neaterbits.compiler.codemap.IntCodeMap;
 import com.neaterbits.compiler.codemap.MethodOverrideMap;
-import com.neaterbits.compiler.util.model.MethodVariant;
+import com.neaterbits.compiler.types.MethodVariant;
 
 public final class IntLoaderCodeMap extends IntCodeMap implements LoaderCodeMap {
 

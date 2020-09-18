@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.ast.objects.typedefinition;
 
 
+import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.typedefinition.InterfaceModifier;
+import com.neaterbits.compiler.types.typedefinition.InterfaceModifierVisitor;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
-import com.neaterbits.compiler.util.typedefinition.InterfaceModifier;
-import com.neaterbits.compiler.util.typedefinition.InterfaceModifierVisitor;
 
 public final class InterfaceModifierHolder extends BaseModifierHolder<InterfaceModifier> implements InterfaceModifier {
 

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ParametersSetter;
-import com.neaterbits.compiler.util.block.ConstructorInvocation;
+import com.neaterbits.compiler.types.block.ConstructorInvocation;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class StackConstructorInvocation<EXPRESSION, NESTED_EXPRESSION extends EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY>

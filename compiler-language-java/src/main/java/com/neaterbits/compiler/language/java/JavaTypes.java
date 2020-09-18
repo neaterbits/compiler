@@ -18,8 +18,8 @@ import com.neaterbits.compiler.ast.objects.type.primitive.NamedVoidType;
 import com.neaterbits.compiler.ast.objects.type.primitive.ScalarType;
 import com.neaterbits.compiler.ast.objects.type.primitive.ShortType;
 import com.neaterbits.compiler.ast.objects.type.primitive.StringType;
-import com.neaterbits.compiler.util.imports.TypeImport;
-import com.neaterbits.compiler.util.model.BuiltinTypeRef;
+import com.neaterbits.compiler.model.common.BuiltinTypeRef;
+import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.util.name.BaseTypeName;
 
 public class JavaTypes {

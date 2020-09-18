@@ -12,8 +12,8 @@ import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression
 import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
 import com.neaterbits.compiler.java.BaseCompilerTest;
-import com.neaterbits.compiler.util.method.MethodInvocationType;
-import com.neaterbits.compiler.util.model.CompiledAndResolvedFile;
+import com.neaterbits.compiler.model.common.CompiledAndResolvedFile;
+import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.util.parse.ParserException;
 
 // Test various compile and resolve issues

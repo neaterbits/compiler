@@ -39,7 +39,7 @@
 		<!-- Test dependencies -->
 	  	<dependency>
 	  		<groupId>${project.groupId}</groupId>
-	  		<artifactId>compiler-resolver-ast-objects</artifactId>
+	  		<artifactId>compiler-model-objects</artifactId>
 	  		<version>${project.version}</version>
 	  		<scope>test</scope>
 	  	</dependency>

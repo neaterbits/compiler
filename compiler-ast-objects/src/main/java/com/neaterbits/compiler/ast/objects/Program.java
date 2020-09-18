@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
+import com.neaterbits.compiler.types.ParseTreeElement;
 
 public final class Program extends BaseASTElement {
 

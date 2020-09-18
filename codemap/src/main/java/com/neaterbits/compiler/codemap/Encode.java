@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.codemap;
 
+import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.util.Bits;
-import com.neaterbits.compiler.util.model.MethodVariant;
-import com.neaterbits.compiler.util.model.Mutability;
-import com.neaterbits.compiler.util.model.Visibility;
 
 class Encode {
 	private static final int TYPEVARIANT_BITS = 2;

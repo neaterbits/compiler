@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.resolver.ReferenceLocation;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.resolver.types.CompiledTypeDependency;
 import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.model.UpdateOnResolve;
 import com.neaterbits.compiler.util.name.DefinitionName;
 import com.neaterbits.compiler.util.name.NamespaceReference;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.model.common.UpdateOnResolve;
+import com.neaterbits.compiler.model.common.util.ReferenceLocation;
 
 final class TypeFinderStackEntry {
 	private final BaseASTElement element;

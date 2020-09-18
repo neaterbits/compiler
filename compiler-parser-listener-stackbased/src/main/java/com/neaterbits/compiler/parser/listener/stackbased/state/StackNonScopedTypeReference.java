@@ -2,7 +2,7 @@ package com.neaterbits.compiler.parser.listener.stackbased.state;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.model.ReferenceType;
+import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 
 public final class StackNonScopedTypeReference<TYPE_REFERENCE> extends StackTypeReference<TYPE_REFERENCE> {

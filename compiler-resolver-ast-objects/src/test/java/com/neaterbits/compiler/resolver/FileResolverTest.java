@@ -21,7 +21,6 @@ import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
-import com.neaterbits.compiler.util.model.UserDefinedTypeRef;
 import com.neaterbits.compiler.util.name.ClassName;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Keyword;
@@ -29,6 +28,8 @@ import com.neaterbits.compiler.ast.objects.typedefinition.ClassDeclarationName;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassModifiers;
 import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
+import com.neaterbits.compiler.model.common.util.ReferenceLocation;
 
 public class FileResolverTest extends BaseResolveTest {
 

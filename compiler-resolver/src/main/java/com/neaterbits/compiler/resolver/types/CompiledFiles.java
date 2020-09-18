@@ -3,9 +3,9 @@ package com.neaterbits.compiler.resolver.types;
 import java.util.Collections;
 import java.util.List;
 
+import com.neaterbits.compiler.model.common.passes.MultiFileInputOutput;
+import com.neaterbits.compiler.model.common.passes.ParsedFiles;
 import com.neaterbits.compiler.util.parse.ParsedFile;
-import com.neaterbits.compiler.util.passes.MultiFileInputOutput;
-import com.neaterbits.compiler.util.passes.ParsedFiles;
 
 public class CompiledFiles<COMPILATION_UNIT, PARSED_FILE extends ParsedFile> 
 

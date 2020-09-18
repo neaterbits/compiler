@@ -9,8 +9,8 @@ import com.neaterbits.compiler.ast.objects.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.objects.Keyword;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.model.ParseTreeElement;
 
 public final class EnumDefinition extends BaseClassDefinition {
 
