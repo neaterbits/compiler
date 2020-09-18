@@ -9,8 +9,8 @@ import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener
 import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
 import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.io.buffers.StringBuffers;
 import com.neaterbits.util.io.strings.StringSource;
-import com.test.util.io.buffers.StringBuffers;
 
 public final class ObjectJavaParser extends JavaParser<CompilationUnit> {
 

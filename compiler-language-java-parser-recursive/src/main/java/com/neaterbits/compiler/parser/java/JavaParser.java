@@ -6,11 +6,11 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
+import com.neaterbits.util.io.buffers.StringBuffers;
 import com.neaterbits.util.io.loadstream.SimpleLoadStream;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
-import com.test.util.io.buffers.StringBuffers;
 
 public class JavaParser<COMPILATION_UNIT> {
     
