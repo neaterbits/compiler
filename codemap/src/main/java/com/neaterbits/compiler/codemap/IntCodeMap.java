@@ -20,28 +20,26 @@ import com.neaterbits.compiler.util.ValueMap;
 public class IntCodeMap implements CodeMap {
 
 	private static final int NUM_METHOD_VARIANT_BITS = Bits.getNumBitsForStoringMaxValue(MethodVariant.values().length);
-	
+
 	private final TypeHierarchy typeHierarchy;
 
 	private final FieldMap fieldMap;
-	
+
 	private final MethodMap methodMap;
-	private final CallablesSignatureMap methodMapCache;
-	
+
 	private final MethodOverrideMap methodOverrideMap;
-	
+
 	private final ValueMap methodVariants;
-	
+
 	public IntCodeMap(MethodOverrideMap methodOverrideMap) {
 		this.typeHierarchy 	= new TypeHierarchy();
-		
+
 		this.fieldMap = new FieldMap();
-		
+
 		this.methodMap = new MethodMap();
-		this.methodMapCache = new CallablesSignatureMap();
-		
+
 		this.methodOverrideMap = methodOverrideMap;
-		
+
 		this.methodVariants = new ValueMap(NUM_METHOD_VARIANT_BITS, 10000);
 	}
 
@@ -63,14 +61,14 @@ public class IntCodeMap implements CodeMap {
 	public void computeMethodExtends(int typeNo) {
 
 		final int encodedTypeNo = getEncodedTypeNo(typeNo);
-		
+
 		final int [] extendedByEncoded = typeHierarchy.getTypesExtendingThisEncoded(typeNo);
-		
+
 		if (extendedByEncoded != null) {
 			methodOverrideMap.addTypeExtendsTypes(encodedTypeNo, extendedByEncoded, methodMap);
 		}
 	}
-	
+
 	@Override
 	public TypeVariant getTypeVariantForType(int typeNo) {
 		return typeHierarchy.getTypeVariantForType(typeNo);
@@ -82,16 +80,16 @@ public class IntCodeMap implements CodeMap {
 	}
 
 	private static final int [] EMPTY_ARRAY = new int[0];
-	
+
 	@Override
 	public int[] getTypesThisDirectlyExtends(int typeNo) {
 		final int [] encodedTypes = typeHierarchy.getTypesThisExtendsFromEncoded(typeNo);
 
 		final int [] result;
-		
+
 		if (encodedTypes != null) {
 			result = new int[encodedTypes.length];
-			
+
 			for (int i = 0; i < encodedTypes.length; ++ i) {
 				result[i] = Encode.decodeTypeNo(encodedTypes[i]);
 			}
@@ -99,7 +97,7 @@ public class IntCodeMap implements CodeMap {
 		else {
 			result = EMPTY_ARRAY;
 		}
-		
+
 		return result;
 	}
 
@@ -109,10 +107,10 @@ public class IntCodeMap implements CodeMap {
 		final int [] encodedTypes = typeHierarchy.getTypesExtendingThisEncoded(typeNo);
 
 		final int [] result;
-		
+
 		if (encodedTypes != null) {
 			result = new int[encodedTypes.length];
-			
+
 			for (int i = 0; i < encodedTypes.length; ++ i) {
 				result[i] = Encode.decodeTypeNo(encodedTypes[i]);
 			}
@@ -120,30 +118,30 @@ public class IntCodeMap implements CodeMap {
 		else {
 			result = EMPTY_ARRAY;
 		}
-		
+
 		return result;
 	}
 
-	
+
 	@Override
 	public int[] getAllTypesExtendingThis(int typeNo) {
 
 		final List<Integer> allTypes = new ArrayList<>();
-		
+
 		final int [] directSubtypes = getTypesDirectlyExtendingThis(typeNo);
-		
+
 		addAll(allTypes, directSubtypes);
-		
+
 		getAllSubtypes(directSubtypes, allTypes);
-		
+
 		// Use separate set to find duplicates so that returns in order
 		final Set<Integer> found = new HashSet<>();
-		
+
 		final Iterator<Integer> iterator = allTypes.iterator();
-		
+
 		while (iterator.hasNext()) {
 			final Integer subType = iterator.next();
-			
+
 			if (found.contains(subType)) {
 				iterator.remove();
 			}
@@ -151,29 +149,29 @@ public class IntCodeMap implements CodeMap {
 				found.add(subType);
 			}
 		}
-		
+
 		final int [] result = new int[allTypes.size()];
 
 		int dstIdx = 0;
-		
+
 		for (Integer foundTypeNo : allTypes) {
 			result[dstIdx ++] = foundTypeNo;
 		}
-		
+
 		return result;
 	}
 
 	private void getAllSubtypes(int [] types, Collection<Integer> allTypes) {
-		
+
 		for (int type : types) {
 			final int [] subTypes = getTypesDirectlyExtendingThis(type);
-			
+
 			addAll(allTypes, subTypes);
-			
+
 			getAllSubtypes(subTypes, allTypes);
 		}
 	}
-	
+
 	private static void addAll(Collection<Integer> collection, int [] array) {
 		for (int i : array) {
 			collection.add(i);
@@ -199,18 +197,17 @@ public class IntCodeMap implements CodeMap {
 
 	@Override
 	public int addOrGetMethod(int type, String methodName, MethodVariant methodVariant, int returnType, int [] parameters, int indexInType) {
-		
+
 		final int methodNo = methodMap.addMethod(
 				type,
 				typeHierarchy.getTypeVariantForType(type),
 				methodName,
 				parameters,
 				methodVariant,
-				indexInType,
-				methodMapCache);
-		
+				indexInType);
+
 		methodVariants.storeValue(methodNo, methodVariant.ordinal());
-		
+
 		return methodNo;
 	}
 
@@ -224,25 +221,25 @@ public class IntCodeMap implements CodeMap {
 			int[] parameters,
 			int indexInType) {
 
-		int methodNo = methodMap.getMethodNo(type, methodName, parameters, methodMapCache);
-		
+		int methodNo = methodMap.getMethodNo(type, methodName, parameters);
+
 		if (methodNo < 0) {
 			methodNo = addOrGetMethod(type, methodName, methodVariant, returnType, parameters, indexInType);
 		}
-		
+
 		methodOverrideMap.addMethodExtends(
 				extendedMethod, extendedMethodVariant,
 				methodNo, methodVariant);
-		
+
 		return methodNo;
 	}
 
 	protected final MethodVariant getMethodVariant(int methodNo) {
 		final long value = methodVariants.getValue(methodNo);
-		
+
 		return MethodVariant.values()[(int)value];
 	}
-	
+
 	@Override
 	public int getTypeForMethod(int methodNo) {
 		return methodMap.getTypeForMethod(methodNo);
@@ -260,9 +257,9 @@ public class IntCodeMap implements CodeMap {
 
 	@Override
 	public MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes) {
-		return methodMap.getMethodInfo(typeNo, methodName, parameterTypes, methodMapCache);
+		return methodMap.getMethodInfo(typeNo, methodName, parameterTypes);
 	}
-	
+
 	protected final int [] getMethodsDirectlyExtending(int methodNo) {
 		return methodOverrideMap.getMethodsDirectlyExtending(methodNo);
 	}
