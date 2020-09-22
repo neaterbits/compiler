@@ -16,8 +16,6 @@ public class MethodMapTest {
 		final int paramType1 = 2;
 		final int paramType2 = 3;
 
-		final CallablesSignatureMap cache = new CallablesSignatureMap();
-
 		final MethodMap methodMap = new MethodMap();
 
 		final StaticMethodOverrideMap methodOverrideMap = new StaticMethodOverrideMap();
@@ -30,8 +28,7 @@ public class MethodMapTest {
 				"someMethod",
 				new int [] { paramType1, paramType2 },
 				MethodVariant.OVERRIDABLE_IMPLEMENTATION,
-				0,
-				cache);
+				0);
 
 		assertThat(methodNo).isEqualTo(0);
 
@@ -41,8 +38,7 @@ public class MethodMapTest {
 				"someOtherMethod",
 				new int [] { paramType1 },
 				MethodVariant.FINAL_IMPLEMENTATION,
-				1,
-				cache);
+				1);
 
 		assertThat(anotherMethodNo).isEqualTo(1);
 
@@ -56,25 +52,24 @@ public class MethodMapTest {
 				"someMethod",
 				new int [] { paramType1, paramType2 },
 				MethodVariant.FINAL_IMPLEMENTATION,
-				0,
-				cache);
+				0);
 
 		assertThat(overrideMethodNo).isEqualTo(2);
 
-		assertThat(methodMap.getMethodNo(1, "someMethod", new int [] { paramType1, paramType2 }, cache)).isEqualTo(0);
-		assertThat(methodMap.getMethodNo(1, "notSomeMethod", new int [] { paramType1, paramType2 }, cache)).isEqualTo(-1);
+		assertThat(methodMap.getMethodNo(1, "someMethod", new int [] { paramType1, paramType2 })).isEqualTo(0);
+		assertThat(methodMap.getMethodNo(1, "notSomeMethod", new int [] { paramType1, paramType2 })).isEqualTo(-1);
 
-		assertThat(methodMap.getMethodNo(1, "someMethod", new int [] { paramType1 }, cache)).isEqualTo(-1);
-		assertThat(methodMap.getMethodNo(1, "someOtherMethod", new int [] { paramType1 }, cache)).isEqualTo(1);
-		assertThat(methodMap.getMethodNo(4, "someMethod", new int [] { paramType1, paramType2 }, cache)).isEqualTo(2);
+		assertThat(methodMap.getMethodNo(1, "someMethod", new int [] { paramType1 })).isEqualTo(-1);
+		assertThat(methodMap.getMethodNo(1, "someOtherMethod", new int [] { paramType1 })).isEqualTo(1);
+		assertThat(methodMap.getMethodNo(4, "someMethod", new int [] { paramType1, paramType2 })).isEqualTo(2);
 
-		assertThat(methodMap.getMethodName(methodNo, cache)).isEqualTo("someMethod");
-		assertThat(methodMap.getMethodName(anotherMethodNo, cache)).isEqualTo("someOtherMethod");
-		assertThat(methodMap.getMethodName(overrideMethodNo, cache)).isEqualTo("someMethod");
+		assertThat(methodMap.getMethodName(methodNo)).isEqualTo("someMethod");
+		assertThat(methodMap.getMethodName(anotherMethodNo)).isEqualTo("someOtherMethod");
+		assertThat(methodMap.getMethodName(overrideMethodNo)).isEqualTo("someMethod");
 
-		assertThat(methodMap.getMethodParameterTypes(methodNo, cache)).containsExactly(paramType1, paramType2);
-		assertThat(methodMap.getMethodParameterTypes(anotherMethodNo, cache)).containsExactly(paramType1);
-		assertThat(methodMap.getMethodParameterTypes(overrideMethodNo, cache)).containsExactly(paramType1, paramType2);
+		assertThat(methodMap.getMethodParameterTypes(methodNo)).containsExactly(paramType1, paramType2);
+		assertThat(methodMap.getMethodParameterTypes(anotherMethodNo)).containsExactly(paramType1);
+		assertThat(methodMap.getMethodParameterTypes(overrideMethodNo)).containsExactly(paramType1, paramType2);
 
 		methodOverrideMap.addTypeExtendsTypes(
 				Encode.encodeType(anotherTypeNo, TypeVariant.CLASS),

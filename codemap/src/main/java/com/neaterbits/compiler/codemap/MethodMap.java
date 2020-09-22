@@ -35,12 +35,15 @@ final class MethodMap {
 	// entries are 20 bits for typeno, 20 bits for signatureno and 24 bits for methodno
 	private long [] typeAndMethodSignatureToMethodHash;
 
+	private final CallablesSignatureMap signatureMap;
+
 	private static final long HASH_UNDEF = 0xFFFFFFFFFFFFFFFFL;
 
 	MethodMap() {
 		this.typeAndMethodSignatureToMethodHash = Hash.makeHashMap(10000, HASH_UNDEF);
-	}
 
+		this.signatureMap = new CallablesSignatureMap();
+	}
 
 	private static final GetCompareValue TYPE_AND_METHOD_SIGNATURE_HASH = new GetCompareValue() {
 
@@ -90,15 +93,22 @@ final class MethodMap {
 		this.methodsByType[typeNo] = allocateSubArray(numMethods);
 	}
 
-	int addMethod(int typeNo, TypeVariant typeVariant, String name, int [] parameters, MethodVariant methodVariant, int indexInType, CallablesSignatureMap cache) {
-		Objects.requireNonNull(name);
+	int addMethod(
+	        int typeNo,
+	        TypeVariant typeVariant,
+	        String name,
+	        int [] parameters,
+	        MethodVariant methodVariant,
+	        int indexInType) {
+
+	    Objects.requireNonNull(name);
 		Objects.requireNonNull(parameters);
 
 		// Allocate new method identifier
 		final int methodIndex = methodNo ++;
 		final int numMethods = methodNo;
 
-		final int signatureNo = cache.findOrAddSignature(name, parameters);
+		final int signatureNo = signatureMap.findOrAddSignature(name, parameters);
 
 		this.methodSignaturesByMethod = allocateIntArray(methodSignaturesByMethod, numMethods);
 		methodSignaturesByMethod[methodIndex] = signatureNo;
@@ -122,9 +132,9 @@ final class MethodMap {
 		return methodIndex;
 	}
 
-	MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes, CallablesSignatureMap methodMapCache) {
+	MethodInfo getMethodInfo(int typeNo, String methodName, int [] parameterTypes) {
 
-		final Integer nameIndex = methodMapCache.getCallableNameNo(methodName);
+		final Integer nameIndex = signatureMap.getCallableNameNo(methodName);
 
 		final MethodInfo methodInfo;
 
@@ -139,14 +149,14 @@ final class MethodMap {
 				paramIndex = CallablesSignatureMap.NO_PARAM_TYPES_INDEX;
 			}
 			else {
-				paramIndex = methodMapCache.getParamTypesNo(parameterTypes);
+				paramIndex = signatureMap.getParamTypesNo(parameterTypes);
 			}
 
 			if (paramIndex == null) {
 				methodInfo = null;
 			}
 			else {
-				final long signatureNo = methodMapCache.getCallableSignatureNo(nameIndex, paramIndex);
+				final long signatureNo = signatureMap.getCallableSignatureNo(nameIndex, paramIndex);
 
 				final long key = typeAndSignatureKey(typeNo, (int)signatureNo);
 
@@ -168,22 +178,22 @@ final class MethodMap {
 		return methodInfo;
 	}
 
-	int getMethodNo(int typeNo, String methodName, int [] parameterTypes, CallablesSignatureMap methodMapCache) {
+	int getMethodNo(int typeNo, String methodName, int [] parameterTypes) {
 
-		final MethodInfo methodInfo = getMethodInfo(typeNo, methodName, parameterTypes, methodMapCache);
+		final MethodInfo methodInfo = getMethodInfo(typeNo, methodName, parameterTypes);
 
 		return methodInfo != null ? methodInfo.getMethodNo() : -1;
 	}
 
-	String getMethodName(int methodNo, CallablesSignatureMap methodMapCache) {
-		return methodMapCache.getCallableName(methodNo);
+	String getMethodName(int methodNo) {
+		return signatureMap.getCallableName(methodNo);
 	}
 
-	int [] getMethodParameterTypes(int methodNo, CallablesSignatureMap methodMapCache) {
+	int [] getMethodParameterTypes(int methodNo) {
 
 		final int signatureIndex = methodSignaturesByMethod[methodNo];
 
-		return methodMapCache.getSignatureParameterTypes(signatureIndex);
+		return signatureMap.getSignatureParameterTypes(signatureIndex);
 	}
 
 	int getTypeForMethod(int methodNo) {
