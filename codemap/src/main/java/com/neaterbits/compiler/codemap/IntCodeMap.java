@@ -26,7 +26,7 @@ public class IntCodeMap implements CodeMap {
 	private final FieldMap fieldMap;
 	
 	private final MethodMap methodMap;
-	private final MethodMapCache methodMapCache;
+	private final CallablesSignatureMap methodMapCache;
 	
 	private final MethodOverrideMap methodOverrideMap;
 	
@@ -38,7 +38,7 @@ public class IntCodeMap implements CodeMap {
 		this.fieldMap = new FieldMap();
 		
 		this.methodMap = new MethodMap();
-		this.methodMapCache = new MethodMapCache();
+		this.methodMapCache = new CallablesSignatureMap();
 		
 		this.methodOverrideMap = methodOverrideMap;
 		
