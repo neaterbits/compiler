@@ -242,9 +242,17 @@ final class MethodMap {
 
 		int distinctMethods = 0;
 
-		for (int encodedMethodNo : methodsByType[type]) {
+		final int [] subArray = methodsByType[type];
+
+		final int initial = ArrayAllocation.subIntArrayInitialIndex(subArray);
+        final int last = ArrayAllocation.subIntArrayLastIndex(subArray);
+
+		for (int i = initial; i <= last; ++ i) {
+
+		    final int encodedMethodNo = subArray[i];
 
 			final int methodNo = Encode.decodeMethodNo(encodedMethodNo);
+
 			final MethodVariant methodVariant = Encode.getMethodVariant(encodedMethodNo);
 
 			if (!methodFilter.addMethod(methodNo, methodVariant)) {
@@ -259,11 +267,10 @@ final class MethodMap {
 
 				++ distinctMethods;
 
-				scratchArea.getAddedMethods().add(encodedMethodNo);
+				scratchArea.getAddedMethods().add(signatureNo);
 			}
 		}
 
 		return distinctMethods;
 	}
-
 }

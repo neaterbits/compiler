@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
+import com.neaterbits.compiler.codemap.CodeMap.MethodFilter;
+import com.neaterbits.compiler.codemap.MethodMap.GetSuperType;
+import com.neaterbits.compiler.types.MethodInfo;
 import com.neaterbits.compiler.types.MethodVariant;
 
 public class MethodMapTest {
@@ -31,6 +34,8 @@ public class MethodMapTest {
 				0);
 
 		assertThat(methodNo).isEqualTo(0);
+
+		assertThat(methodMap.getTypeForMethod(methodNo)).isEqualTo(typeNo);
 
 		final int anotherMethodNo = methodMap.addMethod(
 				typeNo,
@@ -92,4 +97,209 @@ public class MethodMapTest {
 				Encode.encodeMethod(methodNo, TypeVariant.CLASS, MethodVariant.OVERRIDABLE_IMPLEMENTATION));
 	}
 
+	@Test
+	public void testGetMethodInfoForNoParamsMethod() {
+
+        final int typeNo = 1;
+
+        final MethodMap methodMap = new MethodMap();
+
+        methodMap.allocateMethods(typeNo, 3);
+
+        final int methodNo = methodMap.addMethod(
+                typeNo,
+                TypeVariant.CLASS,
+                "someMethod",
+                new int [0],
+                MethodVariant.OVERRIDABLE_IMPLEMENTATION,
+                0);
+
+        final MethodInfo methodInfo = methodMap.getMethodInfo(typeNo, "someMethod", new int[0]);
+
+        assertThat(methodInfo).isNotNull();
+
+        assertThat(methodInfo.getMethodNo()).isEqualTo(methodNo);
+	}
+
+	@Test
+    public void testGetMethodInfoForUnknownParams() {
+
+        final int typeNo = 1;
+
+        final int paramType1 = 2;
+        final int paramType2 = 3;
+        final int paramType3 = 4;
+
+        final MethodMap methodMap = new MethodMap();
+
+        methodMap.allocateMethods(typeNo, 3);
+
+        final int methodNo = methodMap.addMethod(
+                typeNo,
+                TypeVariant.CLASS,
+                "someMethod",
+                new int [] { paramType1, paramType2 },
+                MethodVariant.OVERRIDABLE_IMPLEMENTATION,
+                0);
+
+        assertThat(methodNo).isGreaterThanOrEqualTo(0);
+
+        assertThat(methodMap.getMethodInfo(
+                typeNo,
+                "someMethod",
+                new int [] { paramType1, paramType3 }))
+            .isNull();
+    }
+
+    @Test
+    public void testGetMethodNoForUnknownSignature() {
+
+        final int typeNo = 1;
+
+        final int paramType1 = 2;
+        final int paramType2 = 3;
+
+        final MethodMap methodMap = new MethodMap();
+
+        methodMap.allocateMethods(typeNo, 3);
+
+        methodMap.addMethod(
+                typeNo,
+                TypeVariant.CLASS,
+                "someMethod",
+                new int [] { paramType1, paramType2 },
+                MethodVariant.OVERRIDABLE_IMPLEMENTATION,
+                0);
+
+        assertThat(methodMap.getMethodNoBySignatureNo(typeNo, 123)).isEqualTo(-1);
+    }
+
+    @Test
+    public void testGetDistinctMethods() {
+
+        final MethodMap methodMap = new MethodMap();
+
+        final int typeNo = 1;
+
+        final int numMethods = 100;
+
+        methodMap.allocateMethods(typeNo, numMethods);
+
+        for (int i = 0; i < numMethods; ++ i) {
+
+            methodMap.addMethod(
+                    typeNo,
+                    TypeVariant.CLASS,
+                    "method" + i,
+                    new int [0],
+                    MethodVariant.OVERRIDABLE_IMPLEMENTATION,
+                    i);
+        }
+
+        final VTableScratchArea scratchArea = new VTableScratchArea();
+
+        final MethodFilter methodFilter = (methodNo, variant) -> true;
+
+        final GetSuperType getSuperType = type -> -1;
+
+        assertThat(methodMap.getDistinctMethodCount(
+                typeNo,
+                methodFilter,
+                getSuperType,
+                scratchArea)).isEqualTo(numMethods);
+
+        final int [] vtable = scratchArea.copyVTable();
+        assertThat(vtable.length).isEqualTo(numMethods);
+    }
+
+    @Test
+    public void testGetDistinctMethodsWithFilter() {
+
+        final MethodMap methodMap = new MethodMap();
+
+        final int typeNo = 1;
+
+        final int numMethods = 100;
+
+        methodMap.allocateMethods(typeNo, numMethods);
+
+        for (int i = 0; i < numMethods; ++ i) {
+
+            methodMap.addMethod(
+                    typeNo,
+                    TypeVariant.CLASS,
+                    "method" + i,
+                    new int [0],
+                    MethodVariant.OVERRIDABLE_IMPLEMENTATION,
+                    i);
+        }
+
+        final VTableScratchArea scratchArea = new VTableScratchArea();
+
+        final MethodFilter methodFilter = (methodNo, variant) -> methodNo % 2 == 0;
+
+        final GetSuperType getSuperType = type -> -1;
+
+        assertThat(methodMap.getDistinctMethodCount(
+                typeNo,
+                methodFilter,
+                getSuperType,
+                scratchArea)).isEqualTo(numMethods / 2);
+
+        final int [] vtable = scratchArea.copyVTable();
+        assertThat(vtable.length).isEqualTo(numMethods / 2);
+    }
+
+    @Test
+    public void testGetDistinctMethodsWithSuperType() {
+
+        final MethodMap methodMap = new MethodMap();
+
+        final int superTypeNo = 1;
+        final int typeNo = 2;
+
+        final int numSuperMethods = 50;
+        final int numMethods = numSuperMethods * 2;
+
+        methodMap.allocateMethods(superTypeNo, numSuperMethods);
+
+        for (int i = 0; i < numSuperMethods; ++ i) {
+
+            methodMap.addMethod(
+                    superTypeNo,
+                    TypeVariant.CLASS,
+                    "method" + i,
+                    new int [0],
+                    MethodVariant.OVERRIDABLE_IMPLEMENTATION,
+                    i);
+        }
+
+        methodMap.allocateMethods(typeNo, numMethods);
+
+        for (int i = 0; i < numMethods; ++ i) {
+
+            methodMap.addMethod(
+                    typeNo,
+                    TypeVariant.CLASS,
+                    "method" + i,
+                    new int [0],
+                    MethodVariant.OVERRIDABLE_IMPLEMENTATION,
+                    i);
+        }
+
+        final VTableScratchArea scratchArea = new VTableScratchArea();
+
+        final MethodFilter methodFilter = (methodNo, variant) -> true;
+
+        final GetSuperType getSuperType = type -> type == typeNo ? superTypeNo : -1;
+
+        assertThat(methodMap.getDistinctMethodCount(
+                typeNo,
+                methodFilter,
+                getSuperType,
+                scratchArea)).isEqualTo(numMethods);
+
+        final int [] vtable = scratchArea.copyVTable();
+        assertThat(vtable.length).isEqualTo(numMethods);
+    }
 }
