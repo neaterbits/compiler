@@ -143,14 +143,7 @@ final class MethodMap {
 		}
 		else {
 
-			final Integer paramIndex;
-
-			if (parameterTypes == null || parameterTypes.length == 0) {
-				paramIndex = CallablesSignatureMap.NO_PARAM_TYPES_INDEX;
-			}
-			else {
-				paramIndex = signatureMap.getParamTypesNo(parameterTypes);
-			}
+			final Integer paramIndex = signatureMap.getParamTypesNo(parameterTypes);
 
 			if (paramIndex == null) {
 				methodInfo = null;

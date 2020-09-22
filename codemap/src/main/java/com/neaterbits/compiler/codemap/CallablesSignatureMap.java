@@ -19,8 +19,6 @@ import com.neaterbits.compiler.util.Hash.GetCompareValue;
 
 public final class CallablesSignatureMap {
 
-    static final int NO_PARAM_TYPES_INDEX = 0;
-
 	private static final long HASH_UNDEF = 0xFFFFFFFFFFFFFFFFL;
 
 	private long [] nameAndParamToSignatureNoHash;
@@ -48,8 +46,6 @@ public final class CallablesSignatureMap {
 		this.callableNameToIndex = new HashMap<>();
 
 		this.nameAndParamToSignatureNoHash = Hash.makeHashMap(10000, HASH_UNDEF);
-
-        this.parameterSignatureNoGenerator = NO_PARAM_TYPES_INDEX + 1;
 	}
 
 	private static final GetCompareValue NAME_AND_PARAMS_AND_SIGNATURENO_HASH = new GetCompareValue() {
@@ -97,9 +93,13 @@ public final class CallablesSignatureMap {
      */
     int [] getSignatureParameterTypes(int signatureNo) {
 
+        if (signatureNo >= callableSignatureNoGenerator) {
+            throw new IllegalArgumentException();
+        }
+
         final int [] types = parameterSignatures[(int)(callableSignaturesBySignatureIndex[signatureNo] & 0xFFFFFFFF)];
 
-        return types != null ? Arrays.copyOf(types, types.length) : null;
+        return types;
     }
 
     /**
@@ -111,6 +111,7 @@ public final class CallablesSignatureMap {
      * @return existing or new signature no
      */
     final int findOrAddSignature(String callableName, int [] parameterTypes) {
+
         Integer paramsIndex = getParamTypesNo(parameterTypes);
 
         if (paramsIndex == null) {
@@ -157,7 +158,7 @@ public final class CallablesSignatureMap {
 	 * @param callableNameNo registered callable no
 	 * @param paramTypesNo registered parameter types no
 	 *
-	 * @return callable signature no
+	 * @return callable signature no or -1 if not found
 	 */
 	int getCallableSignatureNo(int callableNameNo, int paramTypesNo) {
 
