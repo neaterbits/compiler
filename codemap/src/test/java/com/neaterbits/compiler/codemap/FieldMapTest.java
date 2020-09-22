@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.codemap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import org.junit.Test;
 
@@ -12,12 +13,12 @@ public class FieldMapTest {
 
 	@Test
 	public void testAddFields() {
-		
+
 		final FieldMap fieldMap = new FieldMap();
-		
+
 		final int typeNo = 1;
 		final int fieldTypeNo = 123;
-		
+
 		int addedField = fieldMap.addField(
 				typeNo,
 				"staticField",
@@ -28,7 +29,7 @@ public class FieldMapTest {
 				Mutability.MUTABLE,
 				false,
 				false);
-		
+
 		assertThat(addedField).isGreaterThanOrEqualTo(0);
 		assertThat(fieldMap.getFieldCount(typeNo)).isEqualTo(1);
 		assertThat(fieldMap.getFieldNo(typeNo, 0)).isEqualTo(addedField);
@@ -51,7 +52,7 @@ public class FieldMapTest {
 				Mutability.MUTABLE,
 				false,
 				false);
-		
+
 		assertThat(addedField).isGreaterThanOrEqualTo(0);
 		assertThat(fieldMap.getFieldCount(typeNo)).isEqualTo(2);
 		assertThat(fieldMap.getFieldNo(typeNo, 1)).isEqualTo(addedField);
@@ -74,7 +75,7 @@ public class FieldMapTest {
 				Mutability.VALUE_OR_REF_IMMUTABLE,
 				false,
 				false);
-		
+
 		assertThat(addedField).isGreaterThanOrEqualTo(0);
 		assertThat(fieldMap.getFieldCount(typeNo)).isEqualTo(3);
 		assertThat(fieldMap.getFieldNo(typeNo, 2)).isEqualTo(addedField);
@@ -97,7 +98,7 @@ public class FieldMapTest {
 				Mutability.MUTABLE,
 				true,
 				false);
-		
+
 		assertThat(addedField).isGreaterThanOrEqualTo(0);
 		assertThat(fieldMap.getFieldCount(typeNo)).isEqualTo(4);
 		assertThat(fieldMap.getFieldNo(typeNo, 3)).isEqualTo(addedField);
@@ -120,7 +121,7 @@ public class FieldMapTest {
 				Mutability.MUTABLE,
 				false,
 				true);
-		
+
 		assertThat(addedField).isGreaterThanOrEqualTo(0);
 		assertThat(fieldMap.getFieldCount(typeNo)).isEqualTo(5);
 		assertThat(fieldMap.getFieldNo(typeNo, 4)).isEqualTo(addedField);
@@ -134,7 +135,7 @@ public class FieldMapTest {
 		assertThat(fieldMap.getFieldByName(typeNo, "transientField")).isEqualTo(addedField);
 
 		final FieldInfo fieldInfo = fieldMap.getFieldInfo(typeNo, "transientField");
-		
+
 		assertThat(fieldInfo.getFieldNo()).isEqualTo(addedField);
 		assertThat(fieldInfo.isStatic()).isFalse();
 		assertThat(fieldInfo.getVisibility()).isEqualTo(Visibility.NAMESPACE);
@@ -143,4 +144,126 @@ public class FieldMapTest {
 		assertThat(fieldInfo.isTransient()).isTrue();
 		assertThat(fieldInfo.getFieldType()).isEqualTo(fieldTypeNo);
 	}
+
+	@Test
+	public void testGetFieldInfoForNonAddedName() {
+
+        final FieldMap fieldMap = new FieldMap();
+
+        final int typeNo = 1;
+
+        assertThat(fieldMap.getFieldInfo(typeNo, "nonAddedField")).isNull();
+	}
+
+    @Test
+    public void testGetFieldNo() {
+
+        final FieldMap fieldMap = new FieldMap();
+
+        final int typeNo = 1;
+        final int fieldTypeNo = 123;
+
+        final int addedField = fieldMap.addField(
+                typeNo,
+                "staticField",
+                12,
+                fieldTypeNo,
+                true,
+                Visibility.NAMESPACE,
+                Mutability.MUTABLE,
+                false,
+                false);
+
+        assertThat(addedField).isGreaterThanOrEqualTo(0);
+
+        assertThat(fieldMap.getFieldByName(typeNo, "staticField")).isEqualTo(addedField);
+    }
+
+	@Test
+	public void testGetFieldNoForNonAddedName() {
+
+        final FieldMap fieldMap = new FieldMap();
+
+        final int typeNo = 1;
+
+        assertThat(fieldMap.getFieldByName(typeNo, "nonAddedField")).isNull();
+	}
+
+	@Test
+	public void testMultipleFieldsWithSameNameForDifferentTypes() {
+
+        final FieldMap fieldMap = new FieldMap();
+
+        final int typeNo = 1;
+        final int fieldTypeNo = 123;
+
+        int addedField = fieldMap.addField(
+                typeNo,
+                "staticField",
+                12,
+                fieldTypeNo,
+                true,
+                Visibility.NAMESPACE,
+                Mutability.MUTABLE,
+                false,
+                false);
+
+        assertThat(addedField).isGreaterThanOrEqualTo(0);
+
+        final int otherTypeNo = 2;
+
+        addedField = fieldMap.addField(
+                otherTypeNo,
+                "staticField",
+                12,
+                fieldTypeNo,
+                true,
+                Visibility.NAMESPACE,
+                Mutability.MUTABLE,
+                false,
+                false);
+
+        assertThat(addedField).isGreaterThanOrEqualTo(0);
+	}
+
+    @Test
+    public void testSameNameForSameTypeThrowsException() {
+
+        final FieldMap fieldMap = new FieldMap();
+
+        final int typeNo = 1;
+        final int fieldTypeNo = 123;
+
+        int addedField = fieldMap.addField(
+                typeNo,
+                "staticField",
+                12,
+                fieldTypeNo,
+                true,
+                Visibility.NAMESPACE,
+                Mutability.MUTABLE,
+                false,
+                false);
+
+        assertThat(addedField).isGreaterThanOrEqualTo(0);
+
+        try {
+            addedField = fieldMap.addField(
+                typeNo,
+                "staticField",
+                12,
+                fieldTypeNo,
+                true,
+                Visibility.NAMESPACE,
+                Mutability.MUTABLE,
+                false,
+                false);
+
+            fail("Expected exception");
+        }
+        catch (IllegalArgumentException ex) {
+
+        }
+    }
+
 }
