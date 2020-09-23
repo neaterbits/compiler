@@ -117,11 +117,55 @@ public final class ArrayAllocation {
 		++ subArray[0];
 	}
 
+    public static void removeDistinctFromSubIntArray(int [][] array, int primaryIndex, int toRemove) {
+
+        array[primaryIndex] = removeDistinctFromSubIntArray(array[primaryIndex], toRemove);
+    }
+
+    private static int [] removeDistinctFromSubIntArray(int [] array, int toRemove) {
+
+        final int numEntries = array[0];
+
+        if (numEntries <= 0) {
+            throw new IllegalArgumentException();
+        }
+
+        final int [] updated = new int[array.length - 1];
+
+        int dstIdx = 1;
+
+        boolean removed = false;
+
+        for (int i = 1; i <= numEntries; ++ i) {
+
+            if (dstIdx >= updated.length) {
+                throw new IllegalStateException("Value not found");
+            }
+
+            final int toMove = array[i];
+
+            if (toMove != toRemove) {
+                updated[dstIdx ++] = toMove;
+            }
+            else {
+                if (removed) {
+                    throw new IllegalStateException();
+                }
+
+                removed = true;
+            }
+        }
+
+        updated[0] = numEntries - 1;
+
+        return updated;
+    }
+
 	static int [] allocateSubArray(int initialSize) {
 		return new int[initialSize + 1];
 	}
 
-	static int subIntArraySize(int [][] array, int index) {
+	public static int subIntArraySize(int [][] array, int index) {
 		return array[index][0];
 	}
 
@@ -137,10 +181,14 @@ public final class ArrayAllocation {
 		return 1;
 	}
 
-	static int subIntArrayLastIndex(int [] array) {
+	public static int subIntArrayLastIndex(int [] array) {
 		return array[0];
 	}
 
+	public static int [] subIntArrayValues(int [][] array, int primaryIndex) {
+
+	    return subIntArrayCopy(array[primaryIndex]);
+	}
 
 	public static int [] subIntArrayCopy(int [] array) {
 

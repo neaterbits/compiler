@@ -134,7 +134,7 @@ public class IntCompilerCodeMapTest {
 
         int i;
 
-        for (i = 0; i < BitDefs.MAX_SOURCE_FILE - 1; ++ i) {
+        for (i = 0; i < BitDefs.MAX_SOURCE_FILE; ++ i) {
             codeMap.addFile("someFile" + i, new int [] { 1, 2, 3 });
         }
 
