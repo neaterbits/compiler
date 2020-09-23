@@ -84,7 +84,7 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 	}
 	
 	@Override
-	public void addMapping(TypeName name, int typeNo) {
+	public void addTypeMapping(TypeName name, int typeNo) {
 		nameToTypeNoMap.addMapping(name, typeNo);
 	}
 
