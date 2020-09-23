@@ -138,7 +138,7 @@ public final class ResolvedTypeCodeMapImpl<COMPILATION_UNIT>
 		
 		resolvedTypes[typeNo] = (ResolvedType)type;
 		
-		codeMap.addMapping(typeName, typeNo);
+		codeMap.addTypeMapping(typeName, typeNo);
 		
 		return typeNo;
 	}

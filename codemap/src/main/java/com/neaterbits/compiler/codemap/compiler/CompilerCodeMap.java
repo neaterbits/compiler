@@ -9,7 +9,7 @@ public interface CompilerCodeMap extends CodeMap, CrossReferenceUpdater, CrossRe
 
 	int addFile(String file, int [] types);
 
-	void addMapping(TypeName name, int typeNo);
+	void addTypeMapping(TypeName name, int typeNo);
 	
 	Integer getTypeNoByTypeName(TypeName typeName);
 	

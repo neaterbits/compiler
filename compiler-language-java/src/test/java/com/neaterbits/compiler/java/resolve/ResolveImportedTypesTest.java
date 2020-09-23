@@ -69,7 +69,7 @@ public class ResolveImportedTypesTest extends BaseCompilerTest {
 		
 		final int integerTypeNo = codeMap.addType(TypeVariant.CLASS, null, null);
 		
-		codeMap.addMapping(integerType, integerTypeNo);
+		codeMap.addTypeMapping(integerType, integerTypeNo);
 		
 		final NameFileSpec fileSpec = new NameFileSpec("JavaLangTestClass.java");
 		
