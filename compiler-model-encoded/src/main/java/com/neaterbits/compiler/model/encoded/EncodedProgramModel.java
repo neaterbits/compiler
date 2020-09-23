@@ -13,6 +13,7 @@ import com.neaterbits.compiler.model.common.ResolvedTypes;
 import com.neaterbits.compiler.model.common.SourceTokenUtil;
 import com.neaterbits.compiler.model.common.SourceTokenUtil.ASTAccess;
 import com.neaterbits.compiler.model.common.SourceTokenVisitor;
+import com.neaterbits.compiler.model.common.TypeVisitor;
 import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.imports.TypeImport;
@@ -29,7 +30,7 @@ public final class EncodedProgramModel
         super(implicitImports);
     }
 
-    
+
     @Override
     public void iterate(
             EncodedCompilationUnit sourceFile,
@@ -44,7 +45,7 @@ public final class EncodedProgramModel
             EncodedCompilationUnit sourceFile,
             long offset,
             ResolvedTypes resolvedTypes) {
-        
+
         // FIXME Auto-generated method stub
         return null;
     }
@@ -65,7 +66,7 @@ public final class EncodedProgramModel
 
     @Override
     public int getTokenOffset(EncodedCompilationUnit sourceFile, int parseTreeTokenRef) {
-        
+
         return sourceFile.getTokenOffset(parseTreeTokenRef);
     }
 
@@ -84,7 +85,7 @@ public final class EncodedProgramModel
     @Override
     public void iterateScopesAndVariables(EncodedCompilationUnit sourceFile, ScopesListener scopesListener) {
         // FIXME Auto-generated method stub
-        
+
     }
 
     @Override
@@ -97,7 +98,7 @@ public final class EncodedProgramModel
     public String getVariableName(
             EncodedCompilationUnit sourceFile,
             int parseTreeVariableDeclarationRef) {
-        
+
         return sourceFile.getStringFromASTBufferOffset(parseTreeVariableDeclarationRef + 1);
     }
 
@@ -105,7 +106,7 @@ public final class EncodedProgramModel
     public String getClassDataFieldMemberName(
             EncodedCompilationUnit sourceFile,
             int parseTreeDataMemberDeclarationRef) {
-        
+
         return sourceFile.getStringFromASTBufferOffset(parseTreeDataMemberDeclarationRef + 1);
     }
 
@@ -126,10 +127,10 @@ public final class EncodedProgramModel
     public int getNumMethods(
             EncodedCompilationUnit compilationUnit,
             UserDefinedTypeRef userDefinedType) {
-        
+
         Objects.requireNonNull(compilationUnit);
         Objects.requireNonNull(userDefinedType);
-        
+
         int numMethods = 0;
 
         if (compilationUnit.getParseTreeElement(userDefinedType.getParseTreeRef()) != ParseTreeElement.CLASS_DEFINITION) {
@@ -140,16 +141,21 @@ public final class EncodedProgramModel
     }
 
     @Override
+    public void iterateTypes(EncodedCompilationUnit compilationUnit, TypeVisitor visitor) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
     public void iterateClassMembers(
             EncodedCompilationUnit compilationUnit,
             UserDefinedTypeRef complexType,
             FieldVisitor fieldVisitor,
             MethodVisitor methodVisitor) {
-        
+
         // Iterate all elements since they are in sequence. Must use a stack to keep track of level
-        
+
         // FIXME Auto-generated method stub
-        
+
     }
 
     @Override
@@ -163,7 +169,7 @@ public final class EncodedProgramModel
 
     @Override
     public EncodedCompilationUnit getCompilationUnit(EncodedParsedFile sourceFile) {
-        
+
         return sourceFile.getCompilationUnit();
     }
 }

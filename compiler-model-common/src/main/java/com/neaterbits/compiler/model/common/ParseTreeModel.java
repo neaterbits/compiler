@@ -19,6 +19,8 @@ public interface ParseTreeModel<COMPILATION_UNIT> {
 	void print(COMPILATION_UNIT sourceFile, PrintStream out);
 
 	int getNumMethods(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef complextype);
-	
-	void iterateClassMembers(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef complexType, FieldVisitor fieldVisitor, MethodVisitor methodVisitor);
+
+    void iterateTypes(COMPILATION_UNIT compilationUnit, TypeVisitor visitor);
+
+    void iterateClassMembers(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef complexType, FieldVisitor fieldVisitor, MethodVisitor methodVisitor);
 }
