@@ -12,8 +12,6 @@ import com.neaterbits.compiler.util.TypeName;
 
 public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 
-	static final int SOURCEFILE_UNDEF = 0;
-
 	private int sourceFileNo; // source file allocator
 	private String [] sourceFiles;
 	private final Map<String, Integer> sourceFileToIndex;
@@ -27,7 +25,6 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 		super(new StaticMethodOverrideMap());
 
 		this.sourceFileToIndex = new HashMap<>();
-		this.sourceFileNo = SOURCEFILE_UNDEF + 1;
 
 		this.fileReferences = new FileReferences();
 		this.crossReference = new TokenCrossReference();
@@ -137,4 +134,9 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 	public void addTokenVariableReference(int fromToken, int toDeclarationToken) {
 		crossReference.addTokenVariableReference(fromToken, toDeclarationToken);
 	}
+
+    @Override
+    public int getMethodDeclarationTokenReferencedFrom(int fromReferenceToken) {
+        return crossReference.getMethodDeclarationTokenReferencedFrom(fromReferenceToken);
+    }
 }

@@ -47,7 +47,7 @@ public final class FileReferences {
 	void removeFile(int fileNo) {
 
 		for (int type : typesByFile[fileNo]) {
-			fileByType[type] = IntCompilerCodeMap.SOURCEFILE_UNDEF;
+			fileByType[type] = -1;
 		}
 
 		typesByFile[fileNo] = null;
