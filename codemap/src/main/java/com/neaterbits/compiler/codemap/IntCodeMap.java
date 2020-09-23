@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.neaterbits.compiler.codemap.MethodOverrideMap.GetExtendedTypesEncoded;
 import com.neaterbits.compiler.types.FieldInfo;
 import com.neaterbits.compiler.types.MethodInfo;
 import com.neaterbits.compiler.types.MethodVariant;
@@ -62,7 +63,7 @@ public class IntCodeMap implements CodeMap {
 
 		final int encodedTypeNo = getEncodedTypeNo(typeNo);
 
-		final int [] extendedByEncoded = typeHierarchy.getTypesExtendingThisEncoded(typeNo);
+		final GetExtendedTypesEncoded extendedByEncoded = type -> typeHierarchy.getTypesThisExtendsFromEncoded(type);
 
 		if (extendedByEncoded != null) {
 			methodOverrideMap.addTypeExtendsTypes(encodedTypeNo, extendedByEncoded, methodMap);

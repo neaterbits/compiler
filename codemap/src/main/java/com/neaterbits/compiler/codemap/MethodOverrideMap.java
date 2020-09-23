@@ -2,30 +2,37 @@ package com.neaterbits.compiler.codemap;
 
 import static com.neaterbits.compiler.codemap.ArrayAllocation.addToSubIntArray;
 import static com.neaterbits.compiler.codemap.ArrayAllocation.allocateIntArray;
-import static com.neaterbits.compiler.codemap.ArrayAllocation.subIntArrayCopy;
+import static com.neaterbits.compiler.codemap.ArrayAllocation.subIntArrayInitialIndex;
+import static com.neaterbits.compiler.codemap.ArrayAllocation.subIntArrayLastIndex;
 import static com.neaterbits.compiler.codemap.ArrayAllocation.subIntArraySize;
+import static com.neaterbits.compiler.codemap.ArrayAllocation.subIntArrayValue;
 import static com.neaterbits.compiler.codemap.Encode.decodeMethodNo;
 import static com.neaterbits.compiler.codemap.Encode.getMethodVariant;
 
 import com.neaterbits.compiler.types.MethodVariant;
 
 public abstract class MethodOverrideMap {
-	
+
+    @FunctionalInterface
+    interface GetExtendedTypesEncoded {
+        int [] getTypes(int type);
+    }
+
 	private int [][] extendedMethodsByExtending; // Map from methodNo to an array of methods that are extended by this one
 	private int [][] extendingMethodsByExtended;  // Map from methodNo to an array of methods that are extending this one
 
-	abstract void addTypeExtendsTypes(int extendingTypeEncoded, int [] extendedTypesEncoded, MethodMap methodMap);
-	
+	abstract void addTypeExtendsTypes(int extendingTypeEncoded, GetExtendedTypesEncoded extendedTypes, MethodMap methodMap);
+
 	private static void checkHasNonStaticMethodVariant(int methodWithMethodVariant) {
 		if (getMethodVariant(methodWithMethodVariant) == MethodVariant.STATIC) {
-			throw new IllegalStateException();
+			throw new IllegalArgumentException();
 		}
 	}
 
 	final void addMethodExtends(
 			int extendedMethod, MethodVariant extendedMethodVariant,
 			int extendingMethod, MethodVariant extendingMethodVariant) {
-		
+
 		addMethodExtends(
 				Encode.encodeMethodWithoutTypeVariant(extendedMethod, extendedMethodVariant),
 				Encode.encodeMethodWithoutTypeVariant(extendingMethod, extendingMethodVariant));
@@ -37,6 +44,10 @@ public abstract class MethodOverrideMap {
 		final int extendedMethod  = decodeMethodNo(extendedMethodEncoded);
 		final int extendingMethod = decodeMethodNo(extendingMethodEncoded);
 
+		if (getMethodVariant(extendedMethodEncoded) == MethodVariant.FINAL_IMPLEMENTATION) {
+		    throw new IllegalArgumentException("Overriding final method");
+		}
+
 		checkHasNonStaticMethodVariant(extendedMethodEncoded);
 		checkHasNonStaticMethodVariant(extendingMethodEncoded);
 
@@ -47,36 +58,95 @@ public abstract class MethodOverrideMap {
 		addToSubIntArray(extendedMethodsByExtending, extendingMethod, extendedMethodEncoded, 3);
 	}
 
+	private static boolean hasMethod(int [][] array, int methodNo) {
+
+        final boolean hasMethod;
+
+        if (array == null) {
+            hasMethod = false;
+        }
+        else if (methodNo > array.length) {
+            hasMethod = false;
+        }
+        else if (array[methodNo] == null) {
+            hasMethod = false;
+        }
+        else {
+            hasMethod = true;
+        }
+
+        return hasMethod;
+	}
+
+	private static int getNum(int [][] array, int methodNo) {
+
+	    return hasMethod(array, methodNo)
+	            ? subIntArraySize(array, methodNo)
+                : 0;
+	}
+
+    private static int [] getMethods(int [][] array, int methodNo) {
+
+        return hasMethod(array, methodNo)
+                ? decodeMethods(array[methodNo])
+                : null;
+    }
+
 	final int getNumberOfMethodsDirectlyExtending(int methodNo) {
-		return this.extendingMethodsByExtended[methodNo] != null ? subIntArraySize(this.extendingMethodsByExtended, methodNo) : 0;
+
+		return getNum(this.extendingMethodsByExtended, methodNo);
 	}
-	
+
 	final int [] getMethodsDirectlyExtending(int methodNo) {
-		return this.extendingMethodsByExtended[methodNo] != null ? subIntArrayCopy(this.extendingMethodsByExtended[methodNo]) : null;
+
+		return getMethods(this.extendingMethodsByExtended, methodNo);
 	}
-	
+
 
 	final int getNumberOfMethodsDirectlyExtendedBy(int methodNo) {
-		return this.extendedMethodsByExtending[methodNo] != null ? subIntArraySize(this.extendedMethodsByExtending, methodNo) : 0;
+
+		return getNum(this.extendedMethodsByExtending, methodNo);
 	}
 
 	final int [] getMethodsDirectlyExtendedBy(int methodNo) {
-		
-		return this.extendedMethodsByExtending[methodNo] != null ? subIntArrayCopy(this.extendedMethodsByExtending[methodNo]) : null;
+
+		return getMethods(this.extendedMethodsByExtending, methodNo);
 	}
-	
+
+	private static int [] decodeMethods(int [] array) {
+
+	    final int initial = subIntArrayInitialIndex(array);
+	    final int last = subIntArrayLastIndex(array);
+
+	    final int [] dst = new int[subIntArraySize(array)];
+
+	    int dstIdx = 0;
+
+	    for (int i = initial; i <= last; ++ i) {
+	        dst[dstIdx ++] = Encode.decodeMethodNo(array[i]);
+	    }
+
+	    return dst;
+	}
+
 	final int getTotalNumberOfMethodsExtending(int methodNo) {
 
 		int count = 0;
-		
-		if (this.extendedMethodsByExtending[methodNo] != null) {
-			final int subSize = subIntArraySize(extendedMethodsByExtending, methodNo);
+
+		if (hasMethod(this.extendingMethodsByExtended, methodNo)) {
+
+			final int subSize = subIntArraySize(extendingMethodsByExtended, methodNo);
+
+			count += subSize;
 
 			for (int i = 0; i < subSize; ++ i) {
-				count += getTotalNumberOfMethodsExtending(extendedMethodsByExtending[methodNo][i + 1]);
+
+			    final int extendingMethodEncoded = subIntArrayValue(extendingMethodsByExtended[methodNo], i);
+
+				count += getTotalNumberOfMethodsExtending(Encode.decodeMethodNo(extendingMethodEncoded));
 			}
 		}
-		
+
 		return count;
 	}
 }

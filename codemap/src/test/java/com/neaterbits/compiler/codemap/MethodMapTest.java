@@ -78,9 +78,9 @@ public class MethodMapTest {
 
 		methodOverrideMap.addTypeExtendsTypes(
 				Encode.encodeType(anotherTypeNo, TypeVariant.CLASS),
-				new int [] {
-						Encode.encodeType(typeNo, TypeVariant.CLASS)
-				},
+				type -> type == anotherTypeNo
+				    ? new int [] { Encode.encodeType(typeNo, TypeVariant.CLASS) }
+				    : null,
 				methodMap);
 
 		assertThat(methodOverrideMap.getNumberOfMethodsDirectlyExtending(methodNo)).isEqualTo(1);
@@ -88,13 +88,13 @@ public class MethodMapTest {
 
 		assertThat(Encode.decodeMethodNo(methodOverrideMap.getMethodsDirectlyExtending(methodNo)[0])).isEqualTo(overrideMethodNo);
 
-		assertThat(methodOverrideMap.getMethodsDirectlyExtending(methodNo)[0]).isEqualTo(
-				Encode.encodeMethod(overrideMethodNo, TypeVariant.CLASS, MethodVariant.FINAL_IMPLEMENTATION));
+		assertThat(methodOverrideMap.getMethodsDirectlyExtending(methodNo)[0])
+		    .isEqualTo(overrideMethodNo);
 
 		assertThat(methodOverrideMap.getNumberOfMethodsDirectlyExtendedBy(overrideMethodNo)).isEqualTo(1);
 		assertThat(methodOverrideMap.getMethodsDirectlyExtendedBy(overrideMethodNo).length).isEqualTo(1);
-		assertThat(methodOverrideMap.getMethodsDirectlyExtendedBy(overrideMethodNo)[0]).isEqualTo(
-				Encode.encodeMethod(methodNo, TypeVariant.CLASS, MethodVariant.OVERRIDABLE_IMPLEMENTATION));
+		assertThat(methodOverrideMap.getMethodsDirectlyExtendedBy(overrideMethodNo)[0])
+		    .isEqualTo(methodNo);
 	}
 
 	@Test
