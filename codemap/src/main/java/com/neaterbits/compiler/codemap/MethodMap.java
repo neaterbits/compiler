@@ -261,13 +261,11 @@ final class MethodMap {
 
 			final int signatureNo = methodSignaturesByMethod[methodNo];
 
-			if (!scratchArea.getAddedMethods().contains(signatureNo)) {
+			if (!scratchArea.hasAddedMethod(signatureNo)) {
 
-				scratchArea.add(type, indexByMethod[methodNo], distinctMethods);
+				scratchArea.add(type, signatureNo, indexByMethod[methodNo], distinctMethods);
 
 				++ distinctMethods;
-
-				scratchArea.getAddedMethods().add(signatureNo);
 			}
 		}
 
