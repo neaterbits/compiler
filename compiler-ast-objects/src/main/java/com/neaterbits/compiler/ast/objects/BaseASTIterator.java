@@ -1,29 +1,29 @@
 package com.neaterbits.compiler.ast.objects;
 
-class BaseASTIterator implements ASTIterator {
+public class BaseASTIterator implements ASTIterator {
 
 	private boolean continueIteration;
-	
-	BaseASTIterator() {
+
+	public BaseASTIterator() {
 		this.continueIteration = true;
 	}
-	
+
 	boolean isContinueIteration() {
 		return continueIteration;
 	}
 
 	void cancelIteration() {
-		
+
 		if (!continueIteration) {
 			throw new IllegalStateException();
 		}
-		
+
 		this.continueIteration = false;
 	}
 
 	@Override
 	public void onPush(BaseASTElement element) {
-		
+
 	}
 
 	@Override

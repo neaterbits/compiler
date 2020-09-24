@@ -8,7 +8,9 @@ import java.util.function.Function;
 
 import com.neaterbits.compiler.ast.objects.ASTVisitor;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
+import com.neaterbits.compiler.ast.objects.BaseASTIterator;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
+import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.Program;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Parameter;
@@ -20,7 +22,9 @@ import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodModifiers;
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexTypeDefinition;
+import com.neaterbits.compiler.ast.objects.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldModifierHolder;
+import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.LibraryTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
@@ -469,8 +473,70 @@ public class ObjectProgramModel
 
 	@Override
     public void iterateTypes(CompilationUnit compilationUnit, TypeVisitor visitor) {
-        // TODO Auto-generated method stub
-    }
+
+	    compilationUnit.iterateNodeFirst(new BaseASTIterator() {
+
+            @Override
+            public void onPush(BaseASTElement element) {
+
+                if (element instanceof Namespace) {
+
+                    final Namespace namespace = (Namespace)element;
+
+                    visitor.onNamespaceStart();
+
+                    for (String part : namespace.getNamespaceDeclaration().getNamespaceReference().getParts()) {
+                        visitor.onNamespacePart(part);
+                    }
+                }
+                else if (element instanceof ClassDefinition) {
+
+                    final ClassDefinition classDefinition = (ClassDefinition)element;
+
+                    visitor.onClassStart(classDefinition.getNameString());
+                }
+                else if (element instanceof InterfaceDefinition) {
+
+                    final InterfaceDefinition interfaceDefinition = (InterfaceDefinition)element;
+
+                    visitor.onInterfaceStart(interfaceDefinition.getNameString());
+                }
+                else if (element instanceof EnumDefinition) {
+
+                    final EnumDefinition enumDefinition = (EnumDefinition)element;
+
+                    visitor.onEnumStart(enumDefinition.getNameString());
+                }
+            }
+
+            @Override
+            public boolean onElement(BaseASTElement element) {
+
+                return true;
+            }
+
+            @Override
+            public boolean onPop(BaseASTElement element) {
+
+                if (element instanceof Namespace) {
+                    visitor.onNamespaceEnd();
+                }
+                else if (element instanceof ClassDefinition) {
+                    visitor.onClassEnd();
+                }
+                else if (element instanceof InterfaceDefinition) {
+                    visitor.onInterfaceEnd();
+                }
+                else if (element instanceof EnumDefinition) {
+                    visitor.onEnumEnd();
+                }
+
+                return true;
+            }
+
+        });
+
+	}
 
     @Override
 	public void iterateClassMembers(CompilationUnit compilationUnit, UserDefinedTypeRef userDefinedType, FieldVisitor fieldVisitor, MethodVisitor methodVisitor) {

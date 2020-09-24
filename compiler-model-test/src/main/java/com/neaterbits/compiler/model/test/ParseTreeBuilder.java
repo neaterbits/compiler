@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.model.encoded;
+package com.neaterbits.compiler.model.test;
 
 import java.util.Objects;
 
@@ -67,6 +67,8 @@ public final class ParseTreeBuilder<COMPILATION_UNIT> {
 
     public final void startClass(String className) {
 
+        listener.onTypeDefinitionStart(addStartContext());
+
         listener.onClassStart(
                 addStartContext(),
                 testTokenizer.addString("class"),
@@ -78,6 +80,8 @@ public final class ParseTreeBuilder<COMPILATION_UNIT> {
     public final void endClass() {
 
         listener.onClassEnd(getStartContext(), getEndContext());
+
+        listener.onTypeDefinitionEnd(getStartContext(), getEndContext());
     }
 
     public final void startInterface(String interfaceName) {

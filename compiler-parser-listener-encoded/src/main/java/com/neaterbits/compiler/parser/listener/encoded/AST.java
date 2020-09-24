@@ -438,7 +438,7 @@ public class AST {
         astBuffer.writeStringRef(part);
     }
 
-    public static long decodeNamespacePart(ASTBufferRead astBuffer, int index) {
+    public static int decodeNamespacePart(ASTBufferRead astBuffer, int index) {
 
         return astBuffer.getStringRef(index);
     }
@@ -504,7 +504,7 @@ public class AST {
         astBuffer.writeContextRef(nameContext);
     }
 
-    public static long decodeClassName(ASTBufferRead astBuffer, int index) {
+    public static int decodeClassName(ASTBufferRead astBuffer, int index) {
         return astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE);
     }
 
@@ -1149,7 +1149,7 @@ public class AST {
         astBuffer.writeContextRef(nameContext);
     }
 
-    public static long decodeEnumName(ASTBufferRead astBuffer, int index) {
+    public static int decodeEnumName(ASTBufferRead astBuffer, int index) {
         return astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE);
     }
 
@@ -1246,7 +1246,7 @@ public class AST {
         astBuffer.writeContextRef(nameContext);
     }
 
-    public static long decodeInterfaceName(ASTBufferRead astBuffer, int index) {
+    public static int decodeInterfaceName(ASTBufferRead astBuffer, int index) {
         return astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE);
     }
 

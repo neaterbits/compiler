@@ -171,12 +171,15 @@ public final class EncodedProgramModel
                 break;
 
             case NAMESPACE_PART:
-                visitor.onNamespacePart(AST.decodeNamespacePart(astBuffer, ref.index));
+                final int partStringRef = AST.decodeNamespacePart(astBuffer, ref.index);
+                visitor.onNamespacePart(compilationUnit.getStringFromRef(partStringRef));
                 break;
 
             case CLASS_DEFINITION:
                 if (ref.isStart) {
-                    visitor.onClassStart(AST.decodeClassName(astBuffer, ref.index));
+                    final int classNameStringRef = AST.decodeClassName(astBuffer, ref.index);
+
+                    visitor.onClassStart(compilationUnit.getStringFromRef(classNameStringRef));
                 }
                 else {
                     visitor.onClassEnd();
@@ -185,7 +188,9 @@ public final class EncodedProgramModel
 
             case INTERFACE_DEFINITION:
                 if (ref.isStart) {
-                    visitor.onInterfaceStart(AST.decodeInterfaceName(astBuffer, ref.index));
+                    final int interfaceNameStringRef = AST.decodeInterfaceName(astBuffer, ref.index);
+
+                    visitor.onInterfaceStart(compilationUnit.getStringFromRef(interfaceNameStringRef));
                 }
                 else {
                     visitor.onInterfaceEnd();
@@ -194,7 +199,9 @@ public final class EncodedProgramModel
 
             case ENUM_DEFINITION:
                 if (ref.isStart) {
-                    visitor.onEnumStart(AST.decodeEnumName(astBuffer, ref.index));
+                    final int enumNameStringRef = AST.decodeEnumName(astBuffer, ref.index);
+
+                    visitor.onEnumStart(compilationUnit.getStringFromRef(enumNameStringRef));
                 }
                 else {
                     visitor.onEnumEnd();

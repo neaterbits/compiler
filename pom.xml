@@ -7,7 +7,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-
 	<name>root</name>
 	<url>http://maven.apache.org</url>
 
@@ -15,6 +14,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<utilGroupId>com.neaterbits.util</utilGroupId>
 		<utilVersion>0.0.1-SNAPSHOT</utilVersion>
+		<assertjVersion>1.7.1</assertjVersion>
+		<mockitoVersion>2.21.0</mockitoVersion>
 	</properties>
 
 	<modules>
@@ -51,6 +52,7 @@
 		<module>compiler-parser-listener-encoded</module>
 		<module>compiler-language-java</module>
 		<module>compiler-parser-recursive</module>
+		<module>compiler-model-test</module>
 	</modules>
 
 	<dependencies>
@@ -63,13 +65,13 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>1.7.1</version>
+			<version>${assertjVersion}</version>
 			<scope>test</scope>
 		</dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.21.0</version>
+            <version>${mockitoVersion}</version>
             <scope>test</scope>
         </dependency>
 		<dependency>

@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.model.encoded;
+package com.neaterbits.compiler.model.test;
 
 import java.util.Objects;
 

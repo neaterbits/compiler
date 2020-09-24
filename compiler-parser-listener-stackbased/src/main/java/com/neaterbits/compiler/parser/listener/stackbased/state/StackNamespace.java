@@ -13,19 +13,19 @@ public final class StackNamespace<COMPILATION_CODE> extends ListStackEntry<COMPI
 
 	private final String namespaceKeyword;
 	private final Context namespaceKeywordContext;
-	
+
 	private final List<String> parts;
 	private final List<Context> partContexts;
-	
+
 	public StackNamespace(
 	        ParseLogger parseLogger,
 	        String namespaceKeyword, Context namespaceKeywordContext) {
-	    
+
 		super(parseLogger);
 
 		this.namespaceKeyword = namespaceKeyword;
 		this.namespaceKeywordContext = namespaceKeywordContext;
-		
+
 		this.parts = new ArrayList<>();
 		this.partContexts = new ArrayList<>();
 	}
@@ -37,9 +37,9 @@ public final class StackNamespace<COMPILATION_CODE> extends ListStackEntry<COMPI
 	public Context getNamespaceKeywordContext() {
 		return namespaceKeywordContext;
 	}
-	
+
 	public void addPart(String part, Context partContext) {
-	    
+
 	    Objects.requireNonNull(part);
 	    Objects.requireNonNull(partContext);
 
@@ -50,9 +50,11 @@ public final class StackNamespace<COMPILATION_CODE> extends ListStackEntry<COMPI
 	public List<String> getParts() {
 		return parts;
 	}
-	
+
 	public Context getNameContext() {
-	    
-	    return Context.merge(partContexts, Function.identity());
+
+	    return partContexts.size() == 1
+	            ? partContexts.get(0)
+	            : Context.merge(partContexts, Function.identity());
 	}
 }

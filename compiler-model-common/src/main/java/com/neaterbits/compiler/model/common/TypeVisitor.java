@@ -4,19 +4,19 @@ public interface TypeVisitor {
 
     void onNamespaceStart();
 
-    void onNamespacePart(long part);
+    void onNamespacePart(CharSequence part);
 
     void onNamespaceEnd();
 
-    void onClassStart(long name);
+    void onClassStart(CharSequence name);
 
     void onClassEnd();
 
-    void onInterfaceStart(long name);
+    void onInterfaceStart(CharSequence name);
 
     void onInterfaceEnd();
 
-    void onEnumStart(long name);
+    void onEnumStart(CharSequence name);
 
     void onEnumEnd();
 }
