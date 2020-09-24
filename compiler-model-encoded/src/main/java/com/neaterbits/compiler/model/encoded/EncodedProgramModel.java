@@ -15,6 +15,9 @@ import com.neaterbits.compiler.model.common.SourceTokenUtil.ASTAccess;
 import com.neaterbits.compiler.model.common.SourceTokenVisitor;
 import com.neaterbits.compiler.model.common.TypeVisitor;
 import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
+import com.neaterbits.compiler.parser.listener.encoded.AST;
+import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead;
+import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead.ParseTreeElementRef;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.util.FileSpec;
@@ -142,7 +145,71 @@ public final class EncodedProgramModel
 
     @Override
     public void iterateTypes(EncodedCompilationUnit compilationUnit, TypeVisitor visitor) {
-        // TODO Auto-generated method stub
+
+        // Iterate through the parse tree
+        final ASTBufferRead astBuffer = compilationUnit.getBuffer();
+
+        final ParseTreeElementRef ref = new ParseTreeElementRef();
+
+        int parseTreeRef = 0;
+
+        boolean done = false;
+
+        do {
+            astBuffer.getParseTreeElement(parseTreeRef, ref);
+
+            switch (ref.element) {
+            case NAMESPACE:
+                if (ref.isStart) {
+                    visitor.onNamespaceStart();
+                }
+                else {
+                    visitor.onNamespaceEnd();
+
+                    done = true;
+                }
+                break;
+
+            case NAMESPACE_PART:
+                visitor.onNamespacePart(AST.decodeNamespacePart(astBuffer, ref.index));
+                break;
+
+            case CLASS_DEFINITION:
+                if (ref.isStart) {
+                    visitor.onClassStart(AST.decodeClassName(astBuffer, ref.index));
+                }
+                else {
+                    visitor.onClassEnd();
+                }
+                break;
+
+            case INTERFACE_DEFINITION:
+                if (ref.isStart) {
+                    visitor.onInterfaceStart(AST.decodeInterfaceName(astBuffer, ref.index));
+                }
+                else {
+                    visitor.onInterfaceEnd();
+                }
+                break;
+
+            case ENUM_DEFINITION:
+                if (ref.isStart) {
+                    visitor.onEnumStart(AST.decodeEnumName(astBuffer, ref.index));
+                }
+                else {
+                    visitor.onEnumEnd();
+                }
+                break;
+
+            default:
+                break;
+            }
+
+            parseTreeRef += ref.isStart
+                ? AST.sizeStart(ref.element, astBuffer, ref.index)
+                : AST.sizeEnd(ref.element);
+
+        } while (!done);
     }
 
     @Override
