@@ -14,22 +14,28 @@ public final class VTableScratchArea {
 		this.vtableIdx = new int[50];
 		this.addedMethods = new IntSet(50);
 	}
-	
-	void add(int type, int methodIdx, int vtableIndex) {
+
+	void add(int type, int methodNo, int methodIdx, int vtableIndex) {
 		if (count == vtableIdx.length) {
 			this.vtableIdx = new int[vtableIdx.length * 3];
 		}
-		
+
 		vtableIdx[count ++] = vtableIndex;
-	}
-	
-	IntSet getAddedMethods() {
-		return addedMethods;
+
+		addedMethods.add(methodNo);
 	}
 
 	void clear() {
 		this.count = 0;
 		addedMethods.clear();
+	}
+
+	int getNumAddedMethods() {
+	    return addedMethods.size();
+	}
+
+	boolean hasAddedMethod(int methodNo) {
+	    return addedMethods.contains(methodNo);
 	}
 
 	public int [] copyVTable() {

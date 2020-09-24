@@ -133,6 +133,11 @@ public final class Hash {
         }
 	}
 
+	public static int hashSize(long [] hashMap) {
+
+	    return (int)hashMap[0];
+	}
+
 	static void hashClear(long [] hashMap, long undefValue) {
 		Arrays.fill(hashMap, undefValue);
 
