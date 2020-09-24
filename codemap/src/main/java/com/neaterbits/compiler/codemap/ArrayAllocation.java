@@ -18,7 +18,7 @@ public final class ArrayAllocation {
 			result = array;
 		}
 		else if (array.length == numEntries) {
-			result = Arrays.copyOf(array, array.length);
+			result = Arrays.copyOf(array, array.length + DEFAULT_LENGTH);
 		}
 		else {
 			throw new IllegalStateException();
@@ -38,7 +38,7 @@ public final class ArrayAllocation {
 			result = array;
 		}
 		else if (array.length == numEntries) {
-			result = Arrays.copyOf(array, array.length);
+			result = Arrays.copyOf(array, array.length + DEFAULT_LENGTH);
 		}
 		else {
 			throw new IllegalStateException();
@@ -103,12 +103,12 @@ public final class ArrayAllocation {
 		int [] subArray = array[primaryIndex];
 
 		if (subArray == null) {
-			subArray = array[primaryIndex] = new int[initialSize + 1];
+			subArray = array[primaryIndex] = allocateSubArray(initialSize);
 		}
 
 		final int numEntries = subArray[0];
 
-		if (numEntries + 1 + 1> subArray.length) {
+		if (numEntries + 1 + 1 > subArray.length) {
 			array[primaryIndex] = subArray = Arrays.copyOf(subArray, subArray.length * 2);
 		}
 
@@ -166,7 +166,7 @@ public final class ArrayAllocation {
 	}
 
 	public static int subIntArraySize(int [][] array, int index) {
-		return array[index][0];
+		return subIntArraySize(array[index]);
 	}
 
     static int subIntArraySize(int [] subArray) {
