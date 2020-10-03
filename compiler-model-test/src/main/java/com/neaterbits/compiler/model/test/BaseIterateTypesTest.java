@@ -14,7 +14,7 @@ public abstract class BaseIterateTypesTest<COMPILATION_UNIT> extends BaseParseTr
     @Test
     public void testIterateTypes() {
 
-        final Util<COMPILATION_UNIT> util = makeUtil();
+        final Util util = makeUtil();
 
         util.builder.startCompilationUnit();
 

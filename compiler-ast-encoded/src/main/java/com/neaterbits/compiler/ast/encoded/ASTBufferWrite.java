@@ -20,5 +20,5 @@ public interface ASTBufferWrite {
 
     void writeLeafElement(ParseTreeElement element);
 
-    void replaceElement(int index, int replacementIndex);
+    void replaceElement(int index, int replacementIndex, int continueIndex);
 }

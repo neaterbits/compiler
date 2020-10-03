@@ -43,6 +43,7 @@ import com.neaterbits.compiler.model.common.ResolvedTypes;
 import com.neaterbits.compiler.model.common.SourceToken;
 import com.neaterbits.compiler.model.common.SourceTokenUtil;
 import com.neaterbits.compiler.model.common.SourceTokenVisitor;
+import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
 import com.neaterbits.compiler.model.common.TypeVisitor;
 import com.neaterbits.compiler.model.common.UpdateOnResolve;
 import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
@@ -684,6 +685,12 @@ public class ObjectProgramModel
 
     @Override
     public void replaceTypeReference(CompilationUnit compilationUnit, int toReplace, int typeNo) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void iterateTypeReferences(CompilationUnit compilationUnit, TypeReferenceVisitor visitor) {
         // TODO Auto-generated method stub
 
     }

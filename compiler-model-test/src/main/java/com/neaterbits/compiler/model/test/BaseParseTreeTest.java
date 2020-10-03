@@ -7,7 +7,7 @@ public abstract class BaseParseTreeTest<COMPILATION_UNIT> {
 
     private final ParseTreeTestModel<COMPILATION_UNIT> testModel;
 
-    static class Util<COMPILATION_UNIT> {
+    class Util {
         final ParseTreeBuilder<COMPILATION_UNIT> builder;
         final ParseTreeModel<COMPILATION_UNIT> parseTreeModel;
 
@@ -21,7 +21,7 @@ public abstract class BaseParseTreeTest<COMPILATION_UNIT> {
         this.testModel = testModel;
     }
 
-    final Util<COMPILATION_UNIT> makeUtil() {
+    final Util makeUtil() {
 
         final TestTokenizer testTokenizer = new TestTokenizer();
 
@@ -33,6 +33,6 @@ public abstract class BaseParseTreeTest<COMPILATION_UNIT> {
 
         final ParseTreeModel<COMPILATION_UNIT> parseTreeModel = testModel.makeParseTreeModel();
 
-        return new Util<>(builder, parseTreeModel);
+        return new Util(builder, parseTreeModel);
     }
 }

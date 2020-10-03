@@ -280,6 +280,14 @@ public class AST {
             size = NAMED_GENERIC_TYPE_PARAMETER_SIZE;
             break;
 
+        case COMPLEX_TYPE_REFERENCE:
+            size = RESOLVED_TYPE_REFERENCE_SIZE;
+            break;
+
+        case REPLACE:
+            size = ASTBufferImpl.REPLACE_SIZE;
+            break;
+
         default:
             size = 0; // ParseTreeElement
             break;
@@ -783,13 +791,20 @@ public class AST {
         astBuffer.writeStringRef(typeName);
     }
 
+    public static int decodeIdentifierTypeReferenceName(ASTBufferRead astBuffer, int index) {
+        return astBuffer.getStringRef(index);
+    }
+
     public static <COMPILATION_UNIT> void decodeIdentifierTypeReferenceStart(
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
             ParseTreeListener<COMPILATION_UNIT> listener) {
 
-        listener.onNonScopedTypeReferenceStart(leafContext, astBuffer.getStringRef(index), ReferenceType.REFERENCE);
+        listener.onNonScopedTypeReferenceStart(
+                leafContext,
+                decodeIdentifierTypeReferenceName(astBuffer, index),
+                ReferenceType.REFERENCE);
     }
 
     public static void encodeIdentifierTypeReferenceEnd(StringASTBuffer astBuffer) {
@@ -1370,6 +1385,20 @@ public class AST {
             ParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onScopedTypeReferenceEnd(scopedTypeReferenceEndContext, endContext);
+    }
+
+    private static final int RESOLVED_TYPE_REFERENCE_SIZE = 4;
+
+    public static void encodeResolvedTypeReference(ASTBuffer astBuffer, int typeNo) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.COMPLEX_TYPE_REFERENCE);
+
+        astBuffer.writeInt(typeNo);
+    }
+
+    public static int decodeResolvedTypeReferenceTypeNo(ASTBufferRead astBuffer, int index) {
+
+        return astBuffer.getInt(index);
     }
 
     private static int variableModifierSize(ASTBufferRead astBuffer, int index) {

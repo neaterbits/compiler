@@ -103,7 +103,7 @@ public enum ParseTreeElement {
 	STRUCT_DECLARATION_NAME(true),
 	STRUCT_DATA_FIELD_MEMBER(false),
 
-	COMPLEX_TYPE_REFERENCE(false),
+	COMPLEX_TYPE_REFERENCE(true),
 	ENCODED_TYPE_REFERENCE(false),
 	FUNCTION_POINTER_TYPE_REFERENCE(false),
 	LIBRARY_TYPE_REFERENCE(false),
@@ -224,7 +224,8 @@ public enum ParseTreeElement {
 	VAR_NAME_DECLARATION(true),
 	INITIALIZER_VARIABLE_DECLARATION_ELEMENT(false),
 
-	REPLACE(true, true);
+	REPLACE(true),
+	REPLACE_END(true);
 
     private final boolean leaf;
     private final boolean placeholder;

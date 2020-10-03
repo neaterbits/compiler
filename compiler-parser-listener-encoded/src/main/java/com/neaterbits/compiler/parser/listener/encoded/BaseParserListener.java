@@ -51,7 +51,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener
     private final Map<TypeName, Integer> typeNameToIndex;
 
     protected abstract COMPILATION_UNIT makeCompilationUnit(
-            ASTBufferRead astBuffer,
+            ASTBuffer astBuffer,
             ASTBufferRead contextBuffer,
             FullContextProvider fullContextProvider,
             IntKeyIntValueHash parseTreeRefToStartContextHash,
@@ -147,7 +147,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener
         astBuffer.writeElementEnd(ParseTreeElement.COMPILATION_UNIT);
 
         return makeCompilationUnit(
-                astBuffer.getASTReadBuffer(),
+                astBuffer.getASTBuffer(),
                 contextBuffer,
                 fullContextProvider,
                 parseTreeRefToStartContextHash,
@@ -1346,7 +1346,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener
             break;
 
         default:
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Unknown reference type " + referenceType);
         }
     }
 

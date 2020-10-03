@@ -16,6 +16,7 @@ import com.neaterbits.compiler.model.common.ResolvedTypes;
 import com.neaterbits.compiler.model.common.SourceTokenUtil;
 import com.neaterbits.compiler.model.common.SourceTokenUtil.ASTAccess;
 import com.neaterbits.compiler.model.common.SourceTokenVisitor;
+import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
 import com.neaterbits.compiler.model.common.TypeVisitor;
 import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.types.ParseTreeElement;
@@ -250,7 +251,84 @@ public final class EncodedProgramModel
 
     @Override
     public void replaceTypeReference(EncodedCompilationUnit compilationUnit, int toReplace, int typeNo) {
-        // TODO Auto-generated method stub
 
+        compilationUnit.replaceTypeReference(toReplace, typeNo);
+    }
+
+
+    @Override
+    public void iterateTypeReferences(
+            EncodedCompilationUnit compilationUnit,
+            TypeReferenceVisitor visitor) {
+
+        iterateTypeReferences(compilationUnit.getBuffer(), 0, compilationUnit, visitor);
+    }
+
+    private static void iterateTypeReferences(
+            ASTBufferRead astBuffer,
+            int parseTreeRef,
+            EncodedCompilationUnit compilationUnit,
+            TypeReferenceVisitor visitor) {
+
+        final ParseTreeElementRef ref = new ParseTreeElementRef();
+
+        boolean done = false;
+
+        do {
+            astBuffer.getParseTreeElement(parseTreeRef, ref);
+
+            int nextParseTreeRef = parseTreeRef + (ref.isStart
+                    ? AST.sizeStart(ref.element, astBuffer, ref.index)
+                    : AST.sizeEnd(ref.element));
+
+            switch (ref.element) {
+
+            case UNRESOLVED_IDENTIFIER_TYPE_REFERENCE:
+                if (ref.isStart) {
+                    final int typeReferenceName
+                        = AST.decodeIdentifierTypeReferenceName(astBuffer, ref.index);
+
+                    visitor.onNonScopedTypeReference(
+                            parseTreeRef,
+                            compilationUnit.getStringFromRef(typeReferenceName));
+                }
+                break;
+
+            case COMPLEX_TYPE_REFERENCE:
+                final int typeNo = AST.decodeResolvedTypeReferenceTypeNo(astBuffer, ref.index);
+
+                visitor.onResolvedTypeReference(parseTreeRef, typeNo);
+                break;
+
+            case COMPILATION_UNIT:
+                if (!ref.isStart) {
+                    done = true;
+                }
+                break;
+
+            case REPLACE:
+                final int replacementIndex = astBuffer.getReplacementIndex(parseTreeRef);
+                final int originalSize = astBuffer.getOriginalSize(parseTreeRef);
+
+                iterateTypeReferences(
+                        compilationUnit.getReplaceBuffer(),
+                        replacementIndex,
+                        compilationUnit,
+                        visitor);
+
+                nextParseTreeRef = parseTreeRef + originalSize;
+                break;
+
+            case REPLACE_END:
+                done = true;
+                break;
+
+            default:
+                break;
+            }
+
+            parseTreeRef = nextParseTreeRef;
+
+        } while (!done);
     }
 }

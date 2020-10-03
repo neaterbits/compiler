@@ -1,5 +1,4 @@
 package com.neaterbits.compiler.ast.encoded;
-
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,7 +15,7 @@ import com.neaterbits.util.buffers.MapStringStorageBuffer;
 
 public final class EncodedCompilationUnit {
 
-    private final ASTBufferRead astBuffer;
+    private final ASTBuffer astBuffer;
     private final IntKeyIntValueHash parseTreeRefToStartContextHash;
     private final IntKeyIntValueHash parseTreeRefToEndContextHash;
     private final ASTBufferRead contexts;
@@ -28,8 +27,11 @@ public final class EncodedCompilationUnit {
 
     private final boolean passContextToDecode;
 
+    private final int replaceSize;
+    private ASTBuffer replaceBuffer;
+
     public EncodedCompilationUnit(
-            ASTBufferRead astBuffer,
+            ASTBuffer astBuffer,
             ASTBufferRead contextBuffer,
             FullContextProvider fullContextProvider,
             IntKeyIntValueHash parseTreeRefToStartContextHash,
@@ -63,6 +65,9 @@ public final class EncodedCompilationUnit {
 
             indexToTypeName[index] = entry.getKey();
         }
+
+        this.replaceSize = AST.sizeLeaf(ParseTreeElement.REPLACE, astBuffer, 0);
+        this.replaceBuffer = new ASTBufferImpl();
     }
 
     public ASTBufferRead getBuffer() {
@@ -1256,5 +1261,35 @@ public final class EncodedCompilationUnit {
         while (compUnit == null);
 
         return compUnit;
+    }
+
+    public ASTBuffer getReplaceBuffer() {
+        return replaceBuffer;
+    }
+
+    public void replaceTypeReference(int toReplaceParseTreeRef, int typeNo) {
+
+        final ParseTreeElement toReplace = astBuffer.getParseTreeElement(toReplaceParseTreeRef);
+
+        final int toReplaceSize = AST.sizeLeaf(toReplace, astBuffer, toReplaceParseTreeRef);
+
+        if (toReplaceSize < replaceSize) {
+            throw new IllegalStateException("to replace of " + toReplaceSize + " less than replace size");
+        }
+
+        if (replaceBuffer == null) {
+            this.replaceBuffer = new ASTBufferImpl();
+        }
+
+        final int replacementIndex = replaceBuffer.getWritePos();
+
+        AST.encodeResolvedTypeReference(replaceBuffer, typeNo);
+
+        replaceBuffer.writeLeafElement(ParseTreeElement.REPLACE_END);
+
+        astBuffer.replaceElement(
+                toReplaceParseTreeRef,
+                replacementIndex,
+                toReplaceSize);
     }
 }

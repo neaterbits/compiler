@@ -101,6 +101,10 @@ public final class StringASTBuffer {
         astBuffer.writeByte((byte)ordinal);
     }
 
+    public ASTBuffer getASTBuffer() {
+        return astBuffer;
+    }
+
     public ASTBufferRead getASTReadBuffer() {
         return astBuffer;
     }

@@ -2,6 +2,7 @@ package com.neaterbits.compiler.model.encoded;
 
 import java.util.Map;
 
+import com.neaterbits.compiler.ast.encoded.ASTBuffer;
 import com.neaterbits.compiler.ast.encoded.ASTBufferRead;
 import com.neaterbits.compiler.ast.encoded.EncodedCompilationUnit;
 import com.neaterbits.compiler.parser.listener.encoded.BaseEncodedIterativeParserListener;
@@ -20,7 +21,7 @@ public final class EncodedParserListener
 
     @Override
     protected EncodedCompilationUnit makeCompilationUnit(
-            ASTBufferRead astBuffer,
+            ASTBuffer astBuffer,
             ASTBufferRead contextBuffer,
             FullContextProvider fullContextProvider,
             IntKeyIntValueHash parseTreeRefToStartContextHash,

@@ -3,6 +3,7 @@ package com.neaterbits.compiler.model.test;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
+import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.util.Context;
 
 public final class ParseTreeBuilder<COMPILATION_UNIT> {
@@ -12,7 +13,7 @@ public final class ParseTreeBuilder<COMPILATION_UNIT> {
 
     private int context;
 
-    protected ParseTreeBuilder(ParseTreeListener<COMPILATION_UNIT> listener, TestTokenizer testTokenizer) {
+    ParseTreeBuilder(ParseTreeListener<COMPILATION_UNIT> listener, TestTokenizer testTokenizer) {
 
         Objects.requireNonNull(listener);
         Objects.requireNonNull(testTokenizer);
@@ -112,5 +113,15 @@ public final class ParseTreeBuilder<COMPILATION_UNIT> {
     public final void endEnum() {
 
         listener.onEnumEnd(getStartContext(), getEndContext());
+    }
+
+    public void addNonScopedTypeReference(String name) {
+
+        listener.onNonScopedTypeReferenceStart(
+                addStartContext(),
+                testTokenizer.addString(name),
+                ReferenceType.REFERENCE);
+
+        listener.onNonScopedTypeReferenceEnd(getStartContext(), getEndContext());
     }
 }

@@ -82,6 +82,14 @@ public final class ASTBufferImpl implements ASTBuffer {
         writeUnsigned(value & 0x00FF);
     }
 
+    private void writeShort(int index, short value) {
+
+        final short shifted = (short)(value >>> 8);
+
+        writeUnsigned(index, shifted);
+        writeUnsigned(index + 1, value & 0x00FF);
+    }
+
     @Override
     public void writeInt(int value) {
 
@@ -91,14 +99,6 @@ public final class ASTBufferImpl implements ASTBuffer {
         writeUnsigned((value >>> 16) & 0x000000FF);
         writeUnsigned((value >>> 8 ) & 0x000000FF);
         writeUnsigned((value >>> 0 ) & 0x000000FF);
-    }
-
-    private void writeInt(int index, int value) {
-
-        writeUnsigned(index,      value >>> 24);
-        writeUnsigned(index + 1, (value >>> 16) & 0x000000FF);
-        writeUnsigned(index + 2, (value >>> 8 ) & 0x000000FF);
-        writeUnsigned(index + 3, (value >>> 0 ) & 0x000000FF);
     }
 
     @Override
@@ -317,11 +317,33 @@ public final class ASTBufferImpl implements ASTBuffer {
         this.index += size;
     }
 
+    public static final int REPLACE_SIZE = 4;
+
     @Override
-    public void replaceElement(int index, int replacementIndex) {
+    public void replaceElement(int index, int replacementIndex, int originalSize) {
+
+        if (replacementIndex >= 1 << 15) {
+            throw new IllegalArgumentException();
+        }
+
+        if (originalSize >= 1 << 15) {
+            throw new IllegalArgumentException();
+        }
 
         writeUnsigned(index, ParseTreeElement.REPLACE.ordinal());
-        writeInt(index + 1, replacementIndex);
+        writeShort(index + 1, (short)replacementIndex);
+        writeShort(index + 3, (short)originalSize);
+    }
 
+    @Override
+    public int getReplacementIndex(int index) {
+
+        return getShort(index + 1);
+    }
+
+    @Override
+    public int getOriginalSize(int index) {
+
+        return getShort(index + 3);
     }
 }
