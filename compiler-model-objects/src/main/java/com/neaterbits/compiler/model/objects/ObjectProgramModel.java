@@ -681,4 +681,10 @@ public class ObjectProgramModel
 				parameterTypes,
 				indexInType);
 	}
+
+    @Override
+    public void replaceTypeReference(CompilationUnit compilationUnit, int toReplace, int typeNo) {
+        // TODO Auto-generated method stub
+
+    }
 }

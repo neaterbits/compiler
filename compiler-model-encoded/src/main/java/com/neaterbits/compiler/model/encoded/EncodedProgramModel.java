@@ -246,4 +246,11 @@ public final class EncodedProgramModel
 
         return sourceFile.getCompilationUnit();
     }
+
+
+    @Override
+    public void replaceTypeReference(EncodedCompilationUnit compilationUnit, int toReplace, int typeNo) {
+        // TODO Auto-generated method stub
+
+    }
 }
