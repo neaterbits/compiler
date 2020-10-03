@@ -16,10 +16,10 @@ public final class ObjectJavaParser extends JavaParser<CompilationUnit> {
 
     public ObjectJavaParser() {
         this(
-                new ASTParseTreeFactory(JavaTypes.getBuiltinTypes()),
+                new ASTParseTreeFactory(JavaTypes.getBuiltinTypes(), null),
                 new ParseLogger(System.out, CastFullContextProvider.INSTANCE));
     }
-    
+
     public ObjectJavaParser(ASTParseTreeFactory parseTreeFactory, ParseLogger logger) {
         super(stringBuffers -> makeListener(stringBuffers, parseTreeFactory, logger));
     }
@@ -28,22 +28,22 @@ public final class ObjectJavaParser extends JavaParser<CompilationUnit> {
             StringBuffers stringBuffers,
             ASTParseTreeFactory parseTreeFactory,
             ParseLogger logger) {
-        
+
         final StringSource stringSource = new StringSource() {
-            
+
             @Override
             public String asString(long stringRef) {
                 return stringBuffers.getString(stringRef);
             }
         };
-          
+
         @SuppressWarnings("unchecked")
         final IterativeParseTreeListener<CompilationUnit> listener = new JavaIterativeListener(
                 stringSource,
                 new ListContextAccess(),
                 logger,
                 parseTreeFactory);
-        
+
         return listener;
     }
 }

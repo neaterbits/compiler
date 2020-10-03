@@ -13,12 +13,12 @@ import com.neaterbits.compiler.util.TypeName;
 public final class PointerTypeReference extends ResolvedTypeReference {
 
 	private final PointerType pointerType;
-	
-	public PointerTypeReference(Context context, PointerType pointerType) {
-		super(context);
-		
+
+	public PointerTypeReference(Context context, int typeNo, PointerType pointerType) {
+		super(context, typeNo);
+
 		Objects.requireNonNull(pointerType);
-		
+
 		this.pointerType = pointerType;
 	}
 
@@ -30,7 +30,7 @@ public final class PointerTypeReference extends ResolvedTypeReference {
 	public PointerType getType() {
 		return pointerType;
 	}
-	
+
 	@Override
 	public TypeName getTypeName() {
 		return ((NamedType)pointerType.getDelegate()).getTypeName();
@@ -48,6 +48,6 @@ public final class PointerTypeReference extends ResolvedTypeReference {
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		
+
 	}
 }

@@ -8,8 +8,8 @@ import com.neaterbits.compiler.util.TypeName;
 
 public class LibraryTypeReference extends ResolvedNamedTypeReference {
 
-	public LibraryTypeReference(Context context, TypeName typeName) {
-		super(context, typeName);
+	public LibraryTypeReference(Context context, int typeNo, TypeName typeName) {
+		super(context, typeNo, typeName);
 	}
 
 	@Override
@@ -24,6 +24,6 @@ public class LibraryTypeReference extends ResolvedNamedTypeReference {
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		
+
 	}
 }

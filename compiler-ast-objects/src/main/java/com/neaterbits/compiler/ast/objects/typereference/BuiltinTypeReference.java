@@ -6,8 +6,8 @@ import com.neaterbits.compiler.util.TypeName;
 public abstract class BuiltinTypeReference extends ResolvedNamedTypeReference {
 
 	public abstract boolean isScalar();
-	
-	public BuiltinTypeReference(Context context, TypeName type) {
-		super(context, type);
+
+	public BuiltinTypeReference(Context context, int typeNo, TypeName type) {
+		super(context, typeNo, type);
 	}
 }

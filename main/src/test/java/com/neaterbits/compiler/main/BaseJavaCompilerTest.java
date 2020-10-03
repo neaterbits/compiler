@@ -45,19 +45,19 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.parse.ParserException;
 
 public abstract class BaseJavaCompilerTest {
-	
+
 	final CompilationUnit compile(String fileName) throws IOException, ParserException {
-		
+
 		final JavaLexerObjectParser parser = new JavaLexerObjectParser();
-		
+
 		final List<ParseError> errors = new ArrayList<>();
 
 		final CompilationUnit compilationUnit;
 
 		final File file = new File(fileName);
-		
+
 		try (FileInputStream inputStream = new FileInputStream(file)) {
-		    
+
 			compilationUnit = parser.parse(
 			        inputStream,
 			        Charset.defaultCharset(),
@@ -68,27 +68,27 @@ public abstract class BaseJavaCompilerTest {
 
 		assertThat(errors.isEmpty()).isTrue();
 		assertThat(compilationUnit).isNotNull();
-		
+
 		return compilationUnit;
 	}
 
 	final ClassDefinition compileAndReturnClass(String fileName) throws IOException, ParserException {
-		
+
 		final CompilationUnit compilationUnit = compile(fileName);
-		
+
 		assertThat(compilationUnit.getCode().size()).isEqualTo(1);
-		
+
 		final CompilationCode code = compilationUnit.getCode().iterator().next();
-		
+
 		assertThat(code instanceof Namespace).isTrue();
-		
+
 		final Namespace nameSpace = (Namespace)code;
-		
+
 		assertThat(nameSpace.getLines()).isNotNull();
 		assertThat(nameSpace.getLines().getCode().size()).isEqualTo(1);
-		
+
 		final CompilationCode namespaceCode = nameSpace.getLines().getCode().iterator().next();
-		
+
 		assertThat(namespaceCode instanceof ClassDefinition).isTrue();
 
 		return (ClassDefinition)namespaceCode;
@@ -105,7 +105,7 @@ public abstract class BaseJavaCompilerTest {
 	private static final String SYSTEM_MODULE_ID = "system";
 
 	private static final Class<?> SYSTEM_LIB_PLACEHOLDER_CLASS = LibPlaceholder.class;
-	
+
 	private static final SourceModuleSpec SYSTEM_MODULE = new SourceModuleSpec(
 			new ModuleId(SYSTEM_MODULE_ID),
 			null,
@@ -114,40 +114,40 @@ public abstract class BaseJavaCompilerTest {
 	private static final SourceModuleSpec getSystemModule() {
 		return SYSTEM_MODULE;
 	}
-	
+
 	final Program parseProgram(List<ModuleSpec> modules) throws IOException {
-	    
+
 		final FileTypeParser javaParser = new FileTypeParser(new JavaLexerObjectParser(), ".java");
 
 		final DirectoryParser directoryParser = new DirectoryParser(javaParser);
-		
+
 		final ProgramParser programParser = new ProgramParser(directoryParser);
-		
+
 		final Program program = programParser.parseProgram(
 				modules,
 				Charset.defaultCharset(),
 				getSystemModule(),
 				systemModule -> renameSystemPackages(systemModule, SYSTEM_LIB_PLACEHOLDER_CLASS.getPackage()),
 				new ParseLogger(System.out, CastFullContextProvider.INSTANCE));
-		
+
 		assertThat(program).isNotNull();
 
 		return program;
 	}
-	
+
 	// Since we cannot override system packages, they are in a different package and we rename after compilation
 	private final void renameSystemPackages(Module systemModule, Package basePackage) {
-		
+
 		final String [] scopeToRename = Strings.split(basePackage.getName(), '.');
 
 		systemModule.iterateNodeFirst(e -> {
 			if (e instanceof UnresolvedTypeReference) {
 				final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)e;
-				
+
 				if (typeReference.getScopedName().scopeStartsWith(scopeToRename)) {
-			
+
 					final ScopedName renamedScope = typeReference.getScopedName().removeFromScope(scopeToRename);
-					
+
 					typeReference.replaceWith(
 							new UnresolvedTypeReference(
 									typeReference.getContext(),
@@ -155,13 +155,13 @@ public abstract class BaseJavaCompilerTest {
                                     typeReference.getGenericTypeParameters(),
 									typeReference.getReferenceType(),
 									typeReference.getNumPointers()));
-					
+
 				}
 			}
 			else if (e instanceof Import) {
-				
+
 				final Import importStatement = (Import)e;
-				
+
 				final ImportName importPackage = importStatement.getPackage();
 
 				if (importPackage.startsWith(scopeToRename)) {
@@ -170,7 +170,7 @@ public abstract class BaseJavaCompilerTest {
 			}
 			else if (e instanceof Namespace) {
 				final Namespace namespace = (Namespace)e;
-				
+
 				if (namespace.getReference().startsWith(scopeToRename)) {
 					namespace.replaceWith(
 							new Namespace(
@@ -184,15 +184,15 @@ public abstract class BaseJavaCompilerTest {
 			}
 		});
 	}
-	
-	
+
+
 	static <T extends MappingJavaToCConverterState<T>>
 	JavaToCDeclarations convertClassesAndInterfacesToStruct(
 			AddTypesAndMembersToCodeMapResult<ASTParsedFile, CompilationUnit> resolveResult,
 			MappingJavaToCConverterState<T> converterState) {
-		
+
 		final JavaToCDeclarations declarations = new JavaToCDeclarations();
-		
+
 		final List<ComplexTypeReference> convertLaterTypeReferences = new ArrayList<>();
 
 		/*
@@ -206,7 +206,7 @@ public abstract class BaseJavaCompilerTest {
 					converterState);
 		}
 		 */
-		
+
 		convertTypes(
 				resolveResult.getTypesInDependencyOrder(),
 				resolveResult.getCodeMap(),
@@ -216,50 +216,50 @@ public abstract class BaseJavaCompilerTest {
 
 		// References to not-yet resolved fields in types
 		for (ComplexTypeReference reference : convertLaterTypeReferences) {
-		
+
 			final ComplexType<?, ?, ?> convertedStructType = declarations.getClassStructType(reference.getTypeName());
-			
+
 			if (convertedStructType == null) {
 				throw new IllegalStateException("Non-converted type " + reference.getTypeName());
 			}
-			
-			
-			final ComplexTypeReference structReference = new ComplexTypeReference(reference.getContext(), convertedStructType.getTypeName());
+
+
+			final ComplexTypeReference structReference = new ComplexTypeReference(reference.getContext(), -1, convertedStructType.getTypeName());
 
 			reference.replaceWith(structReference);
 		}
-		
+
 		return declarations;
 	}
-	
+
 	private static <T extends MappingJavaToCConverterState<T>> void convertTypes(
 			Collection<ResolvedType> types,
 			ResolvedTypeCodeMap codeMap,
 			JavaToCDeclarations declarations,
 			List<ComplexTypeReference> convertLaterTypeReferences,
 			MappingJavaToCConverterState<T> converterState) {
-		
-		
+
+
 		for (ResolvedType resolvedType : types) {
-			
+
 			if (resolvedType.getTypeVariant() == TypeVariant.CLASS) {
-				
+
 				throw new UnsupportedOperationException();
-				
+
 				/*
 				final ClassDefinition classType = (ClassType)resolvedType.getType();
-			
+
 				final StructType classStructType = ClassToFunctionsConverter.convertClassFieldsToStruct(
 						classType,
 						declarations,
 						convertLaterTypeReferences,
 						fieldType -> converterState.convertTypeReference(fieldType),
 						converterState::classToStructName);
-				
+
 				if (classStructType == null) {
 					throw new IllegalStateException();
 				}
-				
+
 				final StructType vtableStructType = ClassToFunctionsConverter.convertClassMethodsToVTable(
 						classType,
 						declarations,
@@ -267,8 +267,8 @@ public abstract class BaseJavaCompilerTest {
 						methodType -> converterState.convertType(methodType),
 						converterState::classToStructName,
 						baseType -> converterState.getVTableBaseFieldName(baseType),
-						methodName -> converterState.getVTableFunctionFieldName(methodName)); 
-				
+						methodName -> converterState.getVTableFunctionFieldName(methodName));
+
 				declarations.add(new JavaToCClassDeclaration(classType, classStructType, vtableStructType));
 				*/
 			}
@@ -282,6 +282,6 @@ public abstract class BaseJavaCompilerTest {
 			code.visit(emitter, emitterState);
 		}
 
-		return emitterState.asString();		
+		return emitterState.asString();
 	}
 }

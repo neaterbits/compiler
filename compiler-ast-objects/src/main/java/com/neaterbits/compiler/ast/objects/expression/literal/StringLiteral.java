@@ -10,12 +10,12 @@ import com.neaterbits.compiler.util.Context;
 public final class StringLiteral extends Literal {
 
 	private final String value;
-	
-	public StringLiteral(Context context, String value, StringType type) {
-		super(context, type);
+
+	public StringLiteral(Context context, String value, StringType type, int typeNo) {
+		super(context, type, typeNo);
 
 		Objects.requireNonNull(value);
-		
+
 		this.value = value;
 	}
 

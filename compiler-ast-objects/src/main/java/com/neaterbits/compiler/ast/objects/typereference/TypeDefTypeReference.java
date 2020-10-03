@@ -12,8 +12,8 @@ public final class TypeDefTypeReference extends ResolvedNamedTypeReference {
 
 	private final TypeReference aliasedType;
 
-	public TypeDefTypeReference(Context context, TypeName type, TypeReference aliasedType) {
-		super(context, type);
+	public TypeDefTypeReference(Context context, int typeNo, TypeName type, TypeReference aliasedType) {
+		super(context, typeNo, type);
 
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(aliasedType);
@@ -37,6 +37,6 @@ public final class TypeDefTypeReference extends ResolvedNamedTypeReference {
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		
+
 	}
 }

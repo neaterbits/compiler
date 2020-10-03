@@ -8,8 +8,8 @@ import com.neaterbits.compiler.util.TypeName;
 
 public final class ScalarTypeReference extends BuiltinTypeReference {
 
-	public ScalarTypeReference(Context context, TypeName type) {
-		super(context, type);
+	public ScalarTypeReference(Context context, int typeNo, TypeName type) {
+		super(context, typeNo, type);
 	}
 
 	@Override
@@ -29,6 +29,6 @@ public final class ScalarTypeReference extends BuiltinTypeReference {
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		
+
 	}
 }

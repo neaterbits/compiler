@@ -6,6 +6,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
+import com.neaterbits.compiler.util.TypeName;
 
 public abstract class BaseReplaceTypeReferenceTest<COMPILATION_UNIT>
     extends BaseParseTreeTest<COMPILATION_UNIT> {
@@ -21,7 +22,21 @@ public abstract class BaseReplaceTypeReferenceTest<COMPILATION_UNIT>
 
         util.builder.startCompilationUnit();
 
+        util.builder.startNamespace();
+
+        util.builder.addNamespacePart("namespace");
+
+        util.builder.startClass("TestClass");
+
+        util.builder.startClassExtends();
+
         util.builder.addNonScopedTypeReference("ALanguageType");
+
+        util.builder.endClassExtends();
+
+        util.builder.endClass();
+
+        util.builder.endNamespace();
 
         final COMPILATION_UNIT compilationUnit = util.builder.endCompilationUnit();
 
@@ -43,11 +58,13 @@ public abstract class BaseReplaceTypeReferenceTest<COMPILATION_UNIT>
         Mockito.reset(visitor);
 
         final int typeNo = 351;
+        final TypeName typeName = new TypeName(null, null, "ALanguageType");
 
         util.parseTreeModel.replaceTypeReference(
                 compilationUnit,
                 parseTreeElement,
-                typeNo);
+                typeNo,
+                typeName);
 
         util.parseTreeModel.iterateTypeReferences(compilationUnit, visitor);
 

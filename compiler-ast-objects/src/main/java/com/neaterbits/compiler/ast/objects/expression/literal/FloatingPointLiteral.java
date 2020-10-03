@@ -15,8 +15,8 @@ public final class FloatingPointLiteral extends Literal {
 	private final Base base;
 	private final int bits;
 
-	public FloatingPointLiteral(Context context, BigDecimal value, Base base, int bits, FloatingPointType type) {
-		super(context, type);
+	public FloatingPointLiteral(Context context, BigDecimal value, Base base, int bits, FloatingPointType type, int typeNo) {
+		super(context, type, typeNo);
 
 		Objects.requireNonNull(value);
 		Objects.requireNonNull(base);

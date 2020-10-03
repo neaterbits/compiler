@@ -14,25 +14,26 @@ final class JavaToCTypeReferenceConverter<T extends MappingJavaToCConverterState
 	public TypeReference onScalarTypeReference(ScalarTypeReference typeReference, T param) {
 
 		final BaseType convertedType = convertBuiltinType(typeReference, param);
-		
+
 		final TypeReference converted;
-		
+
 		if (convertedType instanceof ScalarType) {
-			converted = new ScalarTypeReference(typeReference.getContext(), ((ScalarType) convertedType).getTypeName());
+			converted = new ScalarTypeReference(typeReference.getContext(), -1, ((ScalarType) convertedType).getTypeName());
 		}
 		else if (convertedType instanceof TypeDefType) {
-			
+
 			final TypeDefType typeDefType = (TypeDefType)convertedType;
-			
+
 			converted = new TypeDefTypeReference(
 					typeReference.getContext(),
+					-1,
 					typeDefType.getTypeName(),
 					null);
 		}
 		else {
 			throw new UnsupportedOperationException();
 		}
-		
+
 		return converted;
 	}
 }

@@ -65,6 +65,7 @@ import com.neaterbits.compiler.util.ArrayStack;
 import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FullContextProvider;
+import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
 import com.neaterbits.compiler.util.TypeName;
@@ -423,7 +424,7 @@ public class ObjectProgramModel
 			throw new IllegalStateException();
 		}
 
-		element.replaceWith(new ComplexTypeReference(element.getContext(), userType.getTypeName()));
+		element.replaceWith(new ComplexTypeReference(element.getContext(), -1, userType.getTypeName()));
 	}
 
 	@Override
@@ -435,7 +436,7 @@ public class ObjectProgramModel
 			throw new IllegalStateException();
 		}
 
-		element.replaceWith(new ScalarTypeReference(element.getContext(), builtinType.getTypeName()));
+		element.replaceWith(new ScalarTypeReference(element.getContext(), -1, builtinType.getTypeName()));
 	}
 
 	@Override
@@ -447,7 +448,7 @@ public class ObjectProgramModel
 			throw new IllegalStateException();
 		}
 
-		element.replaceWith(new LibraryTypeReference(element.getContext(), libraryType.getTypeName()));
+		element.replaceWith(new LibraryTypeReference(element.getContext(), -1, libraryType.getTypeName()));
 	}
 
 	@Override
@@ -684,14 +685,55 @@ public class ObjectProgramModel
 	}
 
     @Override
-    public void replaceTypeReference(CompilationUnit compilationUnit, int toReplace, int typeNo) {
-        // TODO Auto-generated method stub
+    public void replaceTypeReference(
+            CompilationUnit compilationUnit,
+            int toReplace,
+            int typeNo,
+            TypeName typeName) {
 
+        final BaseASTElement elementToReplace
+            = compilationUnit.getElementFromParseTreeRef(toReplace);
+
+        final ComplexTypeReference typeReference
+            = new ComplexTypeReference(elementToReplace.getContext(), typeNo, typeName);
+
+        compilationUnit.replace(elementToReplace, typeReference);
     }
 
     @Override
     public void iterateTypeReferences(CompilationUnit compilationUnit, TypeReferenceVisitor visitor) {
-        // TODO Auto-generated method stub
+
+        compilationUnit.iterateNodeFirst(new ASTVisitor() {
+
+            @Override
+            public void onElement(BaseASTElement element) {
+
+                if (element instanceof UnresolvedTypeReference) {
+
+                    final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)element;
+
+                    final ScopedName scopedName = typeReference.getScopedName();
+
+                    if (scopedName.hasScope()) {
+                        throw new UnsupportedOperationException();
+                    }
+                    else {
+
+                        visitor.onNonScopedTypeReference(
+                                compilationUnit.getParseTreeRefFromElement(element),
+                                scopedName.getName());
+                    }
+                }
+                else if (element instanceof ComplexTypeReference) {
+
+                    final ComplexTypeReference typeReference = (ComplexTypeReference)element;
+
+                    visitor.onResolvedTypeReference(
+                            compilationUnit.getParseTreeRefFromElement(element),
+                            typeReference.getTypeNo());
+                }
+            }
+        });
 
     }
 }

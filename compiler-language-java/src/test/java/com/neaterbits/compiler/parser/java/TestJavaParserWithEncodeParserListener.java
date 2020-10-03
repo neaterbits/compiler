@@ -21,36 +21,36 @@ public class TestJavaParserWithEncodeParserListener extends BaseJavaParserTest {
     CompilationUnit parse(String source) throws IOException, ParserException {
 
         final InputStream inputStream = new ByteArrayInputStream(source.getBytes());
-        
+
         final JavaParser<EncodedCompilationUnit> parser = new JavaParser<>(stringBuffers -> {
-            
+
             final IterativeParseTreeListener<EncodedCompilationUnit> listener
                 = new JavaEncodedParserListener("testfile", stringBuffers);
-            
+
             return listener;
         });
-        
+
         final EncodedCompilationUnit encodedCompilationUnit = parser.parse("testfile", inputStream);
-        
+
         final ParseLogger logger = new ParseLogger(System.out, encodedCompilationUnit.getFullContextProvider());
-        
-        final ASTParseTreeFactory parseTreeFactory = new ASTParseTreeFactory(JavaTypes.getBuiltinTypes());
-        
+
+        final ASTParseTreeFactory parseTreeFactory = new ASTParseTreeFactory(JavaTypes.getBuiltinTypes(), null);
+
         final StringSource stringSource = new StringSource() {
-            
+
             @Override
             public String asString(long stringRef) {
 
                 return encodedCompilationUnit.getStringFromRef((int)stringRef);
             }
         };
-        
+
         final JavaIterativeListener astListener = new JavaIterativeListener(
                 stringSource,
                 encodedCompilationUnit.getContextAccess(),
                 logger,
                 parseTreeFactory);
-        
+
         return (CompilationUnit)encodedCompilationUnit.iterate(astListener);
     }
 }

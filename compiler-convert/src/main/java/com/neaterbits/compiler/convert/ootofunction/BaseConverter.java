@@ -42,19 +42,19 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 	protected Statement convertStatement(Statement statement, T state) {
 		return state.convertStatement(statement);
 	}
-	
+
 	protected Expression convertExpression(Expression expression, T state) {
 		return state.convertExpression(expression);
 	}
 
 	protected final List<Expression> convertExpressions(ASTList<Expression> expressions, T state) {
-		
+
 		final List<Expression> converted = new ArrayList<>(expressions.size());
 
 		for (Expression expression : expressions) {
 			converted.add(convertExpression(expression, state));
 		}
-		
+
 		return converted;
 	}
 
@@ -64,22 +64,23 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 				index,
 				false,
 				32,
-				state.getIntType());
-		
+				state.getIntType(),
+				-1);
+
 		final ArrayAccessExpression arrayAccessExpression = new ArrayAccessExpression(
 				context,
 				new NameReference(
-						context, 
+						context,
 						arrayName),
 				indexLiteral);
 
 		return arrayAccessExpression;
 	}
-	
+
 	protected VariableModifiers convertModifiers(VariableModifiers modifiers) {
 
 		final List<VariableModifierHolder> list = new ArrayList<>(modifiers.getModifiers().size());
-		
+
 		for (VariableModifierHolder modifierHolder : modifiers.getModifiers()) {
 			list.add(new VariableModifierHolder(modifierHolder.getContext(), modifierHolder.getModifier()));
 		}
@@ -94,24 +95,24 @@ public abstract class BaseConverter<T extends ConverterState<T>> {
 	protected final Block convertBlock(Block block, T state) {
 
 		final List<Statement> convertedStatements = new ArrayList<>(block.getStatements().size());
-		
+
 		for (Statement statement : block.getStatements()) {
 			final Statement convertedStatement = convertStatement(statement, state);
-			
+
 			System.out.println("## converted statement " + statement + " to " + convertedStatement);
-			
+
 			if (convertedStatement != null) {
 				convertedStatements.add(convertedStatement);
 			}
 		}
-		
+
 		return new Block(block.getContext(), convertedStatements);
 	}
-	
+
 	protected final List<Parameter> convertParameters(ASTList<Parameter> parameters, java.util.function.Function<TypeReference, TypeReference> convertType) {
-		
+
 		final List<Parameter> result = new ArrayList<>(parameters.size());
-		
+
 		for (Parameter parameter : parameters) {
 			result.add(new Parameter(
 					parameter.getContext(),

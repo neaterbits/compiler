@@ -28,30 +28,30 @@ public class MethodInvocationExpressionResolver {
 			UserDefinedTypeRef type,
 			TypeResolveMode resolveMode,
 			MethodInvocationExpression methodInvocationExpression) {
-		
-		
+
+
 		final ScopedName typeScopedName = type.getTypeName().toScopedName();
-		
+
 		final String [] toResolveParts = toResolve.getParts();
 		final String [] typeScopedNameParts = typeScopedName.getParts();
 
 		final String [] expressionPart = findExpressionPart(resolveMode, toResolveParts, typeScopedNameParts);
-		
+
 		final ParameterList parameters = methodInvocationExpression.getParameters();
-		
+
 		if (parameters == null) {
 			throw new IllegalStateException();
 		}
-		
+
 		parameters.take();
-		
+
 		final MethodInvocationExpression updatedExpression;
-		
+
 		if (expressionPart != null && expressionPart.length != 0) {
 			updatedExpression = new MethodInvocationExpression(
 				methodInvocationExpression.getContext(),
 				MethodInvocationType.PRIMARY,
-				new ComplexTypeReference(methodInvocationExpression.getContext(), type.getTypeName()),
+				new ComplexTypeReference(methodInvocationExpression.getContext(), -1, type.getTypeName()),
 				makePrimary(methodInvocationExpression.getContext(), type.getTypeName(), expressionPart),
 				methodInvocationExpression.getCallable(),
 				parameters);
@@ -60,71 +60,71 @@ public class MethodInvocationExpressionResolver {
 			updatedExpression = new MethodInvocationExpression(
 					methodInvocationExpression.getContext(),
 					MethodInvocationType.NAMED_CLASS_STATIC,
-					new ComplexTypeReference(methodInvocationExpression.getContext(), type.getTypeName()),
+					new ComplexTypeReference(methodInvocationExpression.getContext(), -1, type.getTypeName()),
 					null,
 					methodInvocationExpression.getCallable(),
 					parameters);
 		}
-		
+
 		methodInvocationExpression.replaceWith(updatedExpression);
-		
+
 	}
 
 	private static Primary makePrimary(Context context, TypeName type, String [] expressionPart) {
-		
+
 		final Primary primary;
-		
+
 		if (expressionPart.length == 1) {
 			primary = new StaticMemberReference(
 					context,
-					new ComplexTypeReference(context, type),
+					new ComplexTypeReference(context, -1, type),
 					expressionPart[0],
 					context);
 		}
 		else {
-			
+
 			final List<Primary> primaries = new ArrayList<>(expressionPart.length);
-			
+
 			primaries.add(new StaticMemberReference(
 					context,
-					new ComplexTypeReference(context, type),
+					new ComplexTypeReference(context, -1, type),
 					expressionPart[0],
 					context));
-			
+
 			TypeName fieldHolderType = type;
-			
+
 			for (int i = 1; i < expressionPart.length; ++ i) {
-				
+
 				final String fieldNameString = expressionPart[i];
-				
+
 				final FieldName fieldName = new FieldName(fieldNameString);
-				
+
 				primaries.add(new FieldAccess(
 						context,
 						FieldAccessType.FIELD,
-						new ComplexTypeReference(context, fieldHolderType),
+						new ComplexTypeReference(context, -1, fieldHolderType),
 						fieldName));
 
 				if (i < expressionPart.length - 1) {
 					fieldHolderType = null; // (ComplexType<?, ?, ?>)fieldHolderType.getFieldType(fieldName);
-					
+
 					throw new UnsupportedOperationException();
 				}
 			}
-			
+
 			primary = new PrimaryList(context, primaries);
 		}
-		
+
 		return primary;
 	}
-	
+
 	static String [] findExpressionPart(TypeResolveMode resolveMode, String [] toResolveParts, String [] typeScopedNameParts) {
-		
+
 		final String [] expressionPart;
 
 		switch (resolveMode) {
-		case CLASSNAME_TO_COMPLETE: 
-			
+		case CLASSNAME_TO_COMPLETE:
+
 			if (typeScopedNameParts.length < toResolveParts.length) {
 				throw new IllegalStateException();
 			}
@@ -140,16 +140,16 @@ public class MethodInvocationExpressionResolver {
 				String [] foundExpressionPart = null;
 
 				for (int i = typeScopedNameParts.length - 1; i >= 0; -- i) {
-					
+
 					final int numParts = typeScopedNameParts.length - i;
-					
-					
+
+
 					final String [] lastOfType = Strings.lastOf(typeScopedNameParts, numParts);
 					final String [] firstOfToResolve = Arrays.copyOf(toResolveParts, numParts);
-					
+
 					if (Arrays.equals(lastOfType, firstOfToResolve)) {
 						final int remainingOfToResolve = toResolveParts.length - firstOfToResolve.length;
-					
+
 						if (remainingOfToResolve == 0) {
 							foundExpressionPart = null;
 						}
@@ -163,7 +163,7 @@ public class MethodInvocationExpressionResolver {
 				expressionPart = foundExpressionPart;
 			}
 			break;
-			
+
 		case COMPLETE_TO_COMPLETE:
 			if (typeScopedNameParts.length > toResolveParts.length) {
 				throw new IllegalStateException("Length mismatch: "
@@ -177,7 +177,7 @@ public class MethodInvocationExpressionResolver {
 				expressionPart = Strings.lastOf(toResolveParts, toResolveParts.length - typeScopedNameParts.length);
 			}
 			break;
-			
+
 		default:
 			throw new UnsupportedOperationException();
 		}

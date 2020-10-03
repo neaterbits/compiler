@@ -44,7 +44,7 @@ import com.neaterbits.compiler.util.TypeName;
 public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>>
 	extends IterativeConverter<T> {
 
-	
+
 	private TypeReference convertTypeReference(TypeReference toConvert, T state) {
 		return state.convertTypeReference(toConvert);
 	}
@@ -57,36 +57,36 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 			java.util.function.Function<CompleteName, StructName> classToStructName) {
 
 		final ClassDefinition classDefinition = classType.getDefinition();
-		
+
 		final int numMembers = classDefinition.getMembers().size();
 		final List<ComplexMemberDefinition> structMembers = new ArrayList<>(numMembers);
 
 		for (ComplexMemberDefinition memberDefinition : classDefinition.getMembers()) {
-		
+
 			if (memberDefinition instanceof ClassDataFieldMember) {
-				
+
 				final ClassDataFieldMember field = (ClassDataFieldMember)memberDefinition;
-				
+
 				final TypeReference fieldType = field.getType();
-				
+
 				final TypeReference convertedTypeReference;
-				
+
 				if (fieldType instanceof BuiltinTypeReference) {
 					 convertedTypeReference = convertFieldType.apply(fieldType);
-					
+
 				}
 				else if (fieldType instanceof ComplexTypeReference) {
 
 					throw new UnsupportedOperationException();
-					
+
 					/*
 					final ComplexTypeReference complexTypeReference = (ComplexTypeReference)fieldType;
 
 					final TypeName type = complexTypeReference.getTypeName();
-					
+
 					if (type instanceof ClassType) {
 						final StructType alreadyConverted = alreadyConvertedMap.getClassStructType(type);
-						
+
 						if (alreadyConverted != null) {
 							convertedTypeReference = new ComplexTypeReference(
 									fieldType.getContext(),
@@ -94,13 +94,13 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 						}
 						else {
 							// Must swap this later, when we have converted the reference class
-							
+
 							final ComplexTypeReference convertLaterReference = new ComplexTypeReference(
 									fieldType.getContext(),
 									(ClassType)type);
-							
+
 							convertedTypeReference = convertLaterReference;
-							
+
 							convertLaterList.add(convertLaterReference);
 						}
 					}
@@ -112,36 +112,36 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 				else {
 					throw new UnsupportedOperationException("Unknown field type " + fieldType);
 				}
-				
+
 				final List<FieldNameDeclaration> fieldNameDeclarations = new ArrayList<>(field.getInitializers().size());
-				
+
 				for (InitializerVariableDeclarationElement initializer : field.getInitializers()) {
-				    
+
 				    final FieldNameDeclaration declaration = new FieldNameDeclaration(initializer.getNameDeclaration());
-				    
+
 				    fieldNameDeclarations.add(declaration);
 				}
-				
+
 				final StructDataFieldMember structField = new StructDataFieldMember(
 						field.getContext(),
 						convertedTypeReference,
 						fieldNameDeclarations);
-				
+
 				structMembers.add(structField);
 			}
 		}
 
 		final StructName structName = classToStructName.apply(classType.getCompleteName());
-		
+
 		final StructDefinition struct = new StructDefinition(
 				classDefinition.getContext(),
 				new Keyword(classDefinition.getTypeKeyword().getContext(), "struct"),
 				new StructDeclarationName(classDefinition.getName().getContext(), structName),
 				structMembers);
-		
+
 		return new StructType(struct);
 	}
-	
+
 	public static StructType convertClassMethodsToVTable(
 			ClassType classType,
 			OOToProceduralDeclarations<?> alreadyConvertedMap,
@@ -150,48 +150,51 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 			java.util.function.Function<CompleteName, StructName> classToStructName,
 			java.util.function.Function<TypeName, FieldNameDeclaration> classToFieldName,
 			java.util.function.Function<MethodName, FieldNameDeclaration> methodToFieldName) {
-		
+
 		final ClassDefinition classDefinition = classType.getDefinition();
-		
+
 		final int numMembers = classDefinition.getMembers().size();
 		final List<ComplexMemberDefinition> structMembers = new ArrayList<>(numMembers);
 
 		final TypeInfo extendsFromTypeInfo = codeMap.getClassExtendsFromTypeInfo(classType.getCompleteName().toTypeName());
-		
+
 		if (extendsFromTypeInfo != null) {
-			
+
 			final UserDefinedTypeRef extendsFromType = codeMap.getType(extendsFromTypeInfo.getTypeNo());
-			
+
 			final StructType baseStructType = alreadyConvertedMap.getClassStructType(extendsFromType.getTypeName());
-			
+
 			if (baseStructType == null) {
 				throw new IllegalStateException("No struct type for " + extendsFromType.getTypeName());
 			}
-			
+
 			// Add a class member for the base type
 			final StructDataFieldMember structDataFieldMember = new StructDataFieldMember(
 					classDefinition.getContext(),
-					new ComplexTypeReference(classDefinition.getContext(), baseStructType.getTypeName()),
+					new ComplexTypeReference(
+					        classDefinition.getContext(),
+					        -1,
+					        baseStructType.getTypeName()),
 					Arrays.asList(classToFieldName.apply(extendsFromType.getTypeName())));
-			
+
 			structMembers.add(structDataFieldMember);
 		}
-		
+
 		for (ComplexMemberDefinition memberDefinition : classDefinition.getMembers()) {
-			
+
 			if (memberDefinition instanceof ClassMethodMember) {
-				
+
 				final ClassMethodMember methodMember = (ClassMethodMember)memberDefinition;
-				
+
 				final ClassMethod method = methodMember.getMethod();
-				
+
 				final FunctionPointerType functionPointerType = OOToProceduralConverterUtil.makeFunctionPointerType(method, convertMethodType);
-				
+
 				final StructDataFieldMember structMember = new StructDataFieldMember(
 						methodMember.getContext(),
-						new FunctionPointerTypeReference(methodMember.getContext(), functionPointerType),
+						new FunctionPointerTypeReference(methodMember.getContext(), -1, functionPointerType),
 						Arrays.asList(methodToFieldName.apply(methodMember.getMethod().getName())));
-				
+
 				structMembers.add(structMember);
 			}
 		}
@@ -203,30 +206,30 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 				new Keyword(classDefinition.getTypeKeyword().getContext(), "struct"),
 				new StructDeclarationName(classDefinition.getName().getContext(), structName),
 				structMembers);
-		
+
 		return new StructType(struct);
 	}
-	
+
 	List<CompilationCode> convertClass(CompleteName completeTypeName, ClassDefinition classDefinition, T state) {
-		
+
 
 		final int numMembers = classDefinition.getMembers().size();
 		final List<Function> functions = new ArrayList<>(numMembers);
 
 		System.out.println("### convert class " + classDefinition.getName());
-		
+
 		for (ComplexMemberDefinition memberDefinition : classDefinition.getMembers()) {
-			
+
 			if (memberDefinition instanceof ClassMethodMember) {
-				
+
 				// TODO dispatch tables
-				
+
 				final ClassMethodMember methodMember = (ClassMethodMember)memberDefinition;
-				
+
 				final ClassMethod method = methodMember.getMethod();
-				
+
 				final FunctionName functionName = state.methodToFunctionName(completeTypeName, method.getName());
-				
+
 				final Function function = new Function(
 						methodMember.getContext(),
 						null,
@@ -236,7 +239,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 						convertParameters(method.getParameters(), typeReference -> convertTypeReference(typeReference, state)),
 						null,
 						convertBlock(method.getBlock(), state));
-				
+
 				functions.add(function);
 			}
 			else if (memberDefinition instanceof ClassDataFieldMember) {
@@ -246,13 +249,13 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 				throw new UnsupportedOperationException("Unknown class member type " + memberDefinition.getClass());
 			}
 		}
-		
+
 		final List<CompilationCode> result = new ArrayList<>(1 + functions.size());
-		
+
 		result.addAll(functions);
-		
+
 		System.out.println("## return functions " + result);
-		
+
 		return result;
 	}
 }

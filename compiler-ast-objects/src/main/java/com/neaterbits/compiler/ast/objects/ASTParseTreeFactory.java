@@ -53,8 +53,8 @@ import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
-import com.neaterbits.compiler.ast.objects.generics.ReferenceTypeArgument;
 import com.neaterbits.compiler.ast.objects.generics.NamedGenericTypeParameter;
+import com.neaterbits.compiler.ast.objects.generics.ReferenceTypeArgument;
 import com.neaterbits.compiler.ast.objects.generics.TypeArgument;
 import com.neaterbits.compiler.ast.objects.generics.TypeBound;
 import com.neaterbits.compiler.ast.objects.generics.WildcardTypeArgument;
@@ -70,9 +70,9 @@ import com.neaterbits.compiler.ast.objects.statement.ElseIfConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.EnumConstant;
 import com.neaterbits.compiler.ast.objects.statement.EnumSwitchCaseLabel;
 import com.neaterbits.compiler.ast.objects.statement.ExpressionStatement;
-import com.neaterbits.compiler.ast.objects.statement.ForUpdateExpressionList;
 import com.neaterbits.compiler.ast.objects.statement.ForInit;
 import com.neaterbits.compiler.ast.objects.statement.ForStatement;
+import com.neaterbits.compiler.ast.objects.statement.ForUpdateExpressionList;
 import com.neaterbits.compiler.ast.objects.statement.IfConditionBlock;
 import com.neaterbits.compiler.ast.objects.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.ast.objects.statement.IteratorForStatement;
@@ -89,6 +89,8 @@ import com.neaterbits.compiler.ast.objects.statement.WhileStatement;
 import com.neaterbits.compiler.ast.objects.type.primitive.BooleanType;
 import com.neaterbits.compiler.ast.objects.type.primitive.BuiltinType;
 import com.neaterbits.compiler.ast.objects.type.primitive.Char16Type;
+import com.neaterbits.compiler.ast.objects.type.primitive.FloatingPointType;
+import com.neaterbits.compiler.ast.objects.type.primitive.IntegerType;
 import com.neaterbits.compiler.ast.objects.type.primitive.NumericType;
 import com.neaterbits.compiler.ast.objects.type.primitive.StringType;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
@@ -122,9 +124,9 @@ import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceModifiers;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceName;
 import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifierHolder;
 import com.neaterbits.compiler.ast.objects.typedefinition.VariableModifiers;
-import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.variables.ArrayAccessReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.ModifiersVariableDeclarationElement;
@@ -227,38 +229,38 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	CharacterLiteral,
 	StringLiteral,
 	NullLiteral,
-	
+
 	ParameterModifierHolder,
 	Parameter,
-	
+
 	InitializerVariableDeclarationElement,
 	VariableDeclarationStatement,
-	
+
 	ExpressionStatement,
 	AssignmentStatement,
-	
+
 	ForInit,
 	ForStatement,
-	
+
 	IteratorForStatement,
-	
+
 	WhileStatement,
 	DoWhileStatement,
-	
+
 	Resource,
 	CatchBlock,
 	TryCatchFinallyStatement,
 	TryWithResourcesStatement,
-	
+
 	ReturnStatement,
 	ThrowStatement,
-	
+
 	IfElseIfElseStatement,
 	ConditionBlock,
     IfConditionBlock,
     ElseIfConditionBlock,
     ElseBlock,
-	
+
 	SwitchCaseLabel,
 	ConstantSwitchCaseLabel,
 	EnumConstant,
@@ -269,39 +271,47 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	BreakStatement> {
 
 	private final Collection<BuiltinType> builtinTypes;
+	private final GetBuiltinTypeNo getBuiltinTypeNo;
 
-	public ASTParseTreeFactory(Collection<BuiltinType> builtinTypes) {
+	@FunctionalInterface
+	public interface GetBuiltinTypeNo {
+
+	    int getTypeNo(TypeName typeName);
+	}
+
+	public ASTParseTreeFactory(Collection<BuiltinType> builtinTypes, GetBuiltinTypeNo getBuiltinTypeNo) {
 
 		Objects.requireNonNull(builtinTypes);
-		
+
 		this.builtinTypes = builtinTypes;
+		this.getBuiltinTypeNo = getBuiltinTypeNo;
 	}
 
 	@Override
 	public CompilationUnit createCompilationUnit(Context context, List<Import> imports, List<CompilationCode> code) {
 		return new CompilationUnit(context, imports, code);
 	}
-	
+
 	private static String [] getIdentifierArray(List<Name> identifiers, int length) {
-		
+
 		if (length <= 0) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		final String [] parts = new String[length];
-		
+
 		for (int i = 0; i < length; ++ i) {
 			parts[i] = identifiers.get(i).getText();
 		}
 
 		return parts;
 	}
-	
+
 	private static NamespaceReference getNamespaceReference(List<Name> identifiers, int length) {
-		
+
 		return new NamespaceReference(getIdentifierArray(identifiers, length));
 	}
-	
+
 	@Override
 	public Import createImport(
 			Context context,
@@ -309,20 +319,20 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 			Keyword staticKeyword,
 			List<Name> identifiers,
 			boolean ondemand) {
-	    
+
 		final ImportName importName;
-		
+
 		if (ondemand) {
-			
+
 			if (staticKeyword != null) {
-				
+
 				if (identifiers.size() <= 1) {
 					throw new IllegalArgumentException();
 				}
-				
+
 				final NamespaceReference namespaceOrTypeName = getNamespaceReference(identifiers, identifiers.size() - 1);
 				final String classOrInterfaceName = identifiers.get(identifiers.size() - 1).getText();
-				
+
 				importName = new ImportName(context, namespaceOrTypeName, new ClassOrInterfaceName(classOrInterfaceName), null);
 			}
 			else {
@@ -336,7 +346,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				if (identifiers.size() <= 2) {
 					throw new IllegalArgumentException();
 				}
-				
+
 				final NamespaceReference namespaceOrTypeName = getNamespaceReference(identifiers, identifiers.size() - 2);
 				final String classOrInterfaceName = identifiers.get(identifiers.size() - 2).getText();
 
@@ -347,7 +357,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 						namespaceOrTypeName,
 						new ClassOrInterfaceName(classOrInterfaceName),
 						new MethodName(methodName.getContext(), methodName.getText()));
-				
+
 			}
 			else {
 				final NamespaceReference namespaceOrTypeName = getNamespaceReference(identifiers, identifiers.size() - 1);
@@ -359,7 +369,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 						new ClassOrInterfaceName(classOrInterfaceName));
 			}
 		}
-		
+
 		return new Import(context, importKeyword, importName);
 	}
 
@@ -381,9 +391,12 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
     @Override
     public TypeReference createScalarTypeReference(Context context, String name) {
-        return new ScalarTypeReference(context, new TypeName(null, null, name));
+
+        final TypeName typeName = new TypeName(null, null, name);
+
+        return new ScalarTypeReference(context, getBuiltinTypeNo.getTypeNo(typeName), typeName);
     }
-    
+
     @Override
     public TypeReference createUnresolvedTypeReference(Context context, ScopedName name,
             Collection<TypeArgument> genericTypeParameters, ReferenceType type) {
@@ -461,7 +474,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				parameters != null
 					? parameters
 					: Collections.emptyList());
-		
+
 		final ConstructorInvocationStatement statement = new ConstructorInvocationStatement(
 				context,
 				type,
@@ -486,12 +499,12 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				parameters,
 				thrownExceptions,
 				new Block(context, statements));
-		
+
 		final ConstructorMember constructorMember = new ConstructorMember(
 				context,
 				new ConstructorModifiers(annotations, modifiers),
 				constructor);
-		
+
 		return constructorMember;
 	}
 
@@ -566,7 +579,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	@Override
 	public ClassDataFieldMember createClassFieldMember(Context context, List<Annotation> annotations, List<FieldModifierHolder> modifiers,
 			TypeReference type, List<InitializerVariableDeclarationElement> initializers) {
-		
+
 		return new ClassDataFieldMember(
 				context,
 				new FieldModifiers(annotations, modifiers),
@@ -578,7 +591,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	public FieldModifierHolder createFieldModifierHolder(Context context, FieldModifier modifier) {
 		return new FieldModifierHolder(context, modifier);
 	}
-	
+
 	@Override
 	public InterfaceModifierHolder createInterfaceModifierHolder(Context context, InterfaceModifier modifier) {
 		return new InterfaceModifierHolder(context, modifier);
@@ -588,7 +601,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	public InterfaceDefinition createInterfaceDefinition(Context context, List<Annotation> annotations, List<InterfaceModifierHolder> modifiers,
 			Keyword interfaceKeyword, String name, Context nameContext, Keyword extendsKeyword,
 			List<TypeReference> extendsInterfaces, List<ComplexMemberDefinition> members) {
-		
+
 		final InterfaceModifiers interfaceModifiers = new InterfaceModifiers(annotations, modifiers);
 
 		final InterfaceDefinition classDefinition = new InterfaceDefinition(
@@ -642,7 +655,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				enumKeyword,
 				new ClassDeclarationName(nameContext, new ClassName(name)),
 				implementsInterfaces, enumConstants, members);
-		
+
 		return enumDefinition;
 	}
 
@@ -657,7 +670,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				parameters != null ? new ParameterList(parameters) : null,
 				members);
 	}
-	
+
 	@Override
 	public Block createBlock(Context context, List<Statement> statements) {
 		return new Block(context, statements);
@@ -670,7 +683,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	        TypeReference type,
 	        String name, Context nameContext,
 	        boolean varArgs) {
-	    
+
 		return new Parameter(
 		        nameContext,
 		        new ParameterModifiers(annotations, modifiers),
@@ -776,14 +789,14 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
 	@Override
 	public FieldAccess createFieldAccess(Context context, FieldAccessType type, TypeReference classType, String fieldName) {
-		
+
 		return new FieldAccess(context, type, classType, new FieldName(fieldName));
 	}
 
 	@Override
 	public ClassInstanceCreationExpression createClassInstanceCreationExpression(Context context, TypeReference type,
 			ConstructorName name, List<Expression> parameters, List<ClassMethodMember> anonymousClassMethods) {
-		
+
 		return new ClassInstanceCreationExpression(context, type, name, new ParameterList(parameters), anonymousClassMethods);
 	}
 
@@ -791,7 +804,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	public MethodInvocationExpression createMethodInvocationExpression(Context context, MethodInvocationType type,
 			TypeReference classType, Expression object, String methodName, Context methodNameContext,
 			List<Expression> parameters) {
-		
+
 		return new MethodInvocationExpression(
 				context,
 				type,
@@ -807,7 +820,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 			TypeReference type,
 			List<Expression> dimExpressions,
 			int numDims) {
-		
+
 		return new ArrayCreationExpression(context, type, dimExpressions, numDims);
 	}
 
@@ -828,7 +841,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 				.findFirst()
 				.orElseThrow(IllegalArgumentException::new);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private <T extends NumericType> T getNumericalType(boolean isInteger, int bits) {
 		return (T)builtinTypes.stream()
@@ -841,27 +854,47 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
 	@Override
 	public IntegerLiteral createIntegerLiteral(Context context, long value, Base base, boolean signed, int bits) {
-		return new IntegerLiteral(context, value, base, signed, bits, getNumericalType(true, bits));
+
+	    final IntegerType type = getNumericalType(true, bits);
+	    final int typeNo = getBuiltinTypeNo.getTypeNo(type.getTypeName());
+
+		return new IntegerLiteral(context, value, base, signed, bits, type, typeNo);
 	}
 
 	@Override
 	public FloatingPointLiteral createFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits) {
-		return new FloatingPointLiteral(context, value, base, bits, getNumericalType(false, bits));
+
+	    final FloatingPointType type = getNumericalType(false, bits);
+	    final int typeNo = getBuiltinTypeNo.getTypeNo(type.getTypeName());
+
+		return new FloatingPointLiteral(context, value, base, bits, type, typeNo);
 	}
 
 	@Override
 	public BooleanLiteral createBooleanLiteral(Context context, boolean value) {
-		return new BooleanLiteral(context, value, getType(BooleanType.class));
+
+	    final BooleanType type = getType(BooleanType.class);
+	    final int typeNo = getBuiltinTypeNo.getTypeNo(type.getTypeName());
+
+		return new BooleanLiteral(context, value, type, typeNo);
 	}
 
 	@Override
 	public CharacterLiteral createCharacterLiteral(Context context, char value) {
-		return new CharacterLiteral(context, value, getType(Char16Type.class));
+
+	    final Char16Type type = getType(Char16Type.class);
+	    final int typeNo = getBuiltinTypeNo.getTypeNo(type.getTypeName());
+
+		return new CharacterLiteral(context, value, type, typeNo);
 	}
 
 	@Override
 	public StringLiteral createStringLiteral(Context context, String value) {
-		return new StringLiteral(context, value, getType(StringType.class));
+
+	    final StringType type = getType(StringType.class);
+	    final int typeNo = getBuiltinTypeNo.getTypeNo(type.getTypeName());
+
+		return new StringLiteral(context, value, type, typeNo);
 	}
 
 	@Override
@@ -916,7 +949,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	@Override
 	public ForStatement createForStatement(Context context, Keyword keyword, ForInit forInit, Expression condition,
 			List<Expression> forUpdateExpressionList, List<Statement> statements) {
-	    
+
 		return new ForStatement(
 		        context,
 		        keyword,
@@ -960,7 +993,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	@Override
 	public Resource createResource(Context context, List<Annotation> annotations, List<VariableModifierHolder> modifiers, TypeReference type,
 			String varName, Context varNameContext, int numDims, Expression initializer) {
-	    
+
 		return new Resource(
 		        context,
 				new VariableModifiers(annotations, modifiers),
@@ -1009,7 +1042,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	public ThrowStatement createThrowStatement(Context context, Expression expression) {
 		return new ThrowStatement(context, expression);
 	}
-	
+
 	@Override
 	public IfElseIfElseStatement createIfElseIfElseStatement(Context context, List<ConditionBlock> conditions,
 			Keyword elseKeyword, Block elseBlock) {
@@ -1068,13 +1101,13 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	public VariableReference makeVariableReference(Context context, List<Primary> primaries) {
 
 		final VariableReference variableReference;
-		
+
 		if (primaries.isEmpty()) {
 			throw new IllegalStateException("No primaries");
 		}
 		else if (primaries.size() == 1) {
 			final Primary primary = primaries.get(0);
-			
+
 			if (primary instanceof VariableReference) {
 				variableReference = (VariableReference)primary;
 			}

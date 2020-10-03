@@ -16,7 +16,7 @@ public final class ArrayAccessExpression extends Primary {
 
 	private final ASTSingle<Primary> array;
 	private final ASTSingle<Expression> index;
-	
+
 	public ArrayAccessExpression(Context context, Primary array, Expression index) {
 		super(context);
 
@@ -35,12 +35,12 @@ public final class ArrayAccessExpression extends Primary {
 	@SuppressWarnings("null")
 	@Override
 	public TypeReference getType() {
-				
+
 		@SuppressWarnings("unused")
 		final ResolvedNamedTypeReference typeRef = (ResolvedNamedTypeReference)array.get().getType();
 		final ArrayType arrayType = null; // (ArrayType)typeRef.getNamedType();
 
-		return new ComplexTypeReference(getContext(), ((NamedType)arrayType.getElementType()).getTypeName());
+		return new ComplexTypeReference(getContext(), -1, ((NamedType)arrayType.getElementType()).getTypeName());
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public final class ArrayAccessExpression extends Primary {
 	public <T, R> R visit(ExpressionVisitor<T, R> visitor, T param) {
 
 		visitor.onArrayAccessExpression(this, param);
-		
+
 		return null;
 	}
 

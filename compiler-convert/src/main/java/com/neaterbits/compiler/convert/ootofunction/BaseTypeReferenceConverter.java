@@ -5,11 +5,11 @@ import com.neaterbits.compiler.ast.objects.type.PointerType;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.FunctionPointerTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.PointerTypeReference;
-import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeDefTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.UnnamedVoidTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.convert.ConverterState;
 import com.neaterbits.compiler.convert.TypeReferenceConverter;
 
@@ -21,25 +21,31 @@ public abstract class BaseTypeReferenceConverter<T extends ConverterState<T>>
 	public TypeReference onScalarTypeReference(ScalarTypeReference typeReference, T param) {
 		return new ScalarTypeReference(
 				typeReference.getContext(),
+				typeReference.getTypeNo(),
 				convertType(typeReference, param).getTypeName());
 	}
 
 	@Override
 	public TypeReference onComplexTypeReference(ComplexTypeReference typeReference, T param) {
-		return new ComplexTypeReference(typeReference.getContext(), typeReference.getTypeName());
+		return new ComplexTypeReference(
+		        typeReference.getContext(),
+		        typeReference.getTypeNo(),
+		        typeReference.getTypeName());
 	}
 
 	@Override
 	public TypeReference onPointerTypeReference(PointerTypeReference typeReference, T param) {
 		return new PointerTypeReference(
 				typeReference.getContext(),
+				typeReference.getTypeNo(),
 				(PointerType)convertType(typeReference.getType(), param));
 	}
-	
+
 	@Override
 	public TypeReference onFunctionPointerTypeReference(FunctionPointerTypeReference typeReference, T param) {
 		return new FunctionPointerTypeReference(
 				typeReference.getContext(),
+				typeReference.getTypeNo(),
 				(FunctionPointerType)convertType(typeReference.getType(), param));
 	}
 
@@ -47,6 +53,7 @@ public abstract class BaseTypeReferenceConverter<T extends ConverterState<T>>
 	public TypeReference onTypeDefTypeReference(TypeDefTypeReference typeReference, T param) {
 		return new TypeDefTypeReference(
 				typeReference.getContext(),
+				typeReference.getTypeNo(),
 				typeReference.getTypeName(),
 				typeReference.getAliasedType());
 	}

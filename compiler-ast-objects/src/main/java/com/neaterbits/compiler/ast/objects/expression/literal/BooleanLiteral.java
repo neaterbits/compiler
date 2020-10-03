@@ -8,9 +8,9 @@ import com.neaterbits.compiler.util.Context;
 public final class BooleanLiteral extends Literal {
 
 	private final boolean value;
-	
-	public BooleanLiteral(Context context, boolean value, BooleanType booleanType) {
-		super(context, booleanType);
+
+	public BooleanLiteral(Context context, boolean value, BooleanType booleanType, int typeNo) {
+		super(context, booleanType, typeNo);
 
 		this.value = value;
 	}

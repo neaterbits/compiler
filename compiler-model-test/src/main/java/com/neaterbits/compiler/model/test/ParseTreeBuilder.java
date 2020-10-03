@@ -78,6 +78,19 @@ public final class ParseTreeBuilder<COMPILATION_UNIT> {
                 addTokenContext());
     }
 
+    public final void startClassExtends() {
+
+        listener.onClassExtendsStart(
+                addStartContext(),
+                testTokenizer.addString("extends"),
+                addTokenContext());
+    }
+
+    public final void endClassExtends() {
+
+        listener.onClassExtendsEnd(getStartContext(), getEndContext());
+    }
+
     public final void endClass() {
 
         listener.onClassEnd(getStartContext(), getEndContext());

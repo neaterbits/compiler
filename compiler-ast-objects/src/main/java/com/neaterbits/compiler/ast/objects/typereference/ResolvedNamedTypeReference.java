@@ -8,12 +8,12 @@ import com.neaterbits.compiler.util.TypeName;
 public abstract class ResolvedNamedTypeReference extends ResolvedTypeReference {
 
 	private final TypeName typeName;
-	
-	public ResolvedNamedTypeReference(Context context, TypeName typeName) {
-		super(context);
-		
+
+	public ResolvedNamedTypeReference(Context context, int typeNo, TypeName typeName) {
+		super(context, typeNo);
+
 		Objects.requireNonNull(typeName);
-		
+
 		this.typeName = typeName;
 	}
 

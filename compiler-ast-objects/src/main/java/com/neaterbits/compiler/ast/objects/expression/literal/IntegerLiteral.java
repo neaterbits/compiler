@@ -15,16 +15,16 @@ public final class IntegerLiteral extends Literal {
 	private final boolean signed;
 	private final int bits;
 
-	public IntegerLiteral(Context context, long value, boolean signed, int bits, IntegerType type) {
-		this(context, value, Base.DECIMAL, signed, bits, type);
+	public IntegerLiteral(Context context, long value, boolean signed, int bits, IntegerType type, int typeNo) {
+		this(context, value, Base.DECIMAL, signed, bits, type, typeNo);
 	}
 
-	public IntegerLiteral(Context context, long value, Base base, boolean signed, int bits, IntegerType type) {
-		super(context, type);
+	public IntegerLiteral(Context context, long value, Base base, boolean signed, int bits, IntegerType type, int typeNo) {
+		super(context, type, typeNo);
 
 		Objects.requireNonNull(value);
 		Objects.requireNonNull(base);
-		
+
 		if (bits != type.getNumBits()) {
 			throw new IllegalArgumentException("Bits mismatch");
 		}
@@ -51,7 +51,7 @@ public final class IntegerLiteral extends Literal {
 		return bits;
 	}
 
-	
+
 	@Override
 	public ParseTreeElement getParseTreeElement() {
 		return ParseTreeElement.INTEGER_LITERAL;

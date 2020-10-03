@@ -17,24 +17,24 @@ public final class FunctionPointerInvocationExpression extends Expression {
 	private final FunctionPointerType type;
 	private final ASTSingle<Primary> functionPointer;
 	private final ASTSingle<ParameterList> parameterList;
-	
+
 	public FunctionPointerInvocationExpression(Context context, FunctionPointerType type, Primary functionPointer, ParameterList parameterList) {
 		super(context);
-	
+
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(functionPointer);
 		Objects.requireNonNull(parameterList);
-		
+
 		this.type = type;
 		this.functionPointer = makeSingle(functionPointer);
 		this.parameterList = makeSingle(parameterList);
 	}
 
-	
+
 	public Primary getFunctionPointer() {
 		return functionPointer.get();
 	}
-	
+
 	public ParameterList getParameters() {
 		return parameterList.get();
 	}
@@ -46,7 +46,7 @@ public final class FunctionPointerInvocationExpression extends Expression {
 
 	@Override
 	public TypeReference getType() {
-		return new FunctionPointerTypeReference(getContext(), type);
+		return new FunctionPointerTypeReference(getContext(), -1, type);
 	}
 
 	@Override

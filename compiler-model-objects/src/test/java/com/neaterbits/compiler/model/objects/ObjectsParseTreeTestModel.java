@@ -14,7 +14,7 @@ final class ObjectsParseTreeTestModel extends ParseTreeTestModel<CompilationUnit
     @Override
     protected ParseTreeListener<CompilationUnit> makeParseTreeListener(String fileName, TestTokenizer testTokenizer) {
 
-        return new ObjectsParserListener(testTokenizer, Collections.emptyList());
+        return new ObjectsParserListener(testTokenizer, Collections.emptyList(), null);
     }
 
     @Override

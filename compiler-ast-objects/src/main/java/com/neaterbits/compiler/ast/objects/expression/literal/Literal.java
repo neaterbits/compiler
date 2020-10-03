@@ -12,22 +12,24 @@ import com.neaterbits.compiler.util.Context;
 public abstract class Literal extends Primary {
 
 	private final ScalarType type;
-	
-	public Literal(Context context, ScalarType type) {
+    private final int typeNo;
+
+	public Literal(Context context, ScalarType type, int typeNo) {
 		super(context);
-		
+
 		Objects.requireNonNull(type);
-		
+
 		this.type = type;
+		this.typeNo = typeNo;
 	}
-	
+
 	@Override
 	public final TypeReference getType() {
-		return new ScalarTypeReference(getContext(), type.getTypeName());
+		return new ScalarTypeReference(getContext(), typeNo, type.getTypeName());
 	}
 
 	@Override
 	public final void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		
+
 	}
 }

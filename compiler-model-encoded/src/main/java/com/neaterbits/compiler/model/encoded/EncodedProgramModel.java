@@ -22,6 +22,7 @@ import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.parse.ScopesListener;
 
 public final class EncodedProgramModel
@@ -250,7 +251,7 @@ public final class EncodedProgramModel
 
 
     @Override
-    public void replaceTypeReference(EncodedCompilationUnit compilationUnit, int toReplace, int typeNo) {
+    public void replaceTypeReference(EncodedCompilationUnit compilationUnit, int toReplace, int typeNo, TypeName typeName) {
 
         compilationUnit.replaceTypeReference(toReplace, typeNo);
     }

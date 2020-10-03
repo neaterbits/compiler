@@ -37,9 +37,9 @@ public final class ObjectsParserListener extends UntypedIterativeOOParserListene
 
     public ObjectsParserListener(
             StringSource stringSource,
-            Collection<BuiltinType> builtinTypes) {
+            Collection<BuiltinType> builtinTypes,
+            ASTParseTreeFactory.GetBuiltinTypeNo getBuiltinTypeNo) {
 
-
-        super(stringSource, makeContextAccess(), null, new ASTParseTreeFactory(builtinTypes));
+        super(stringSource, makeContextAccess(), null, new ASTParseTreeFactory(builtinTypes, getBuiltinTypeNo));
     }
 }

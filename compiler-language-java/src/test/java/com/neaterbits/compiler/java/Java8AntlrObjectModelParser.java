@@ -23,7 +23,7 @@ public class Java8AntlrObjectModelParser extends Java8AntlrParser<CompilationUni
             ParseLogger parseLogger,
             String file) {
 
-        final ASTParseTreeFactory parseTreeFactory = new ASTParseTreeFactory(JavaTypes.getBuiltinTypes());
+        final ASTParseTreeFactory parseTreeFactory = new ASTParseTreeFactory(JavaTypes.getBuiltinTypes(), null);
 
         final JavaIterativeListener delegate = new JavaIterativeListener(
                 stringSource,

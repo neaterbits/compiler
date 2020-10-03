@@ -12,12 +12,12 @@ import com.neaterbits.compiler.util.TypeName;
 public final class FunctionPointerTypeReference extends ResolvedTypeReference {
 
 	private final FunctionPointerType type;
-	
-	public FunctionPointerTypeReference(Context context, FunctionPointerType type) {
-		super(context);
+
+	public FunctionPointerTypeReference(Context context, int typeNo, FunctionPointerType type) {
+		super(context, typeNo);
 
 		Objects.requireNonNull(type);
-		
+
 		this.type = type;
 	}
 
@@ -47,6 +47,6 @@ public final class FunctionPointerTypeReference extends ResolvedTypeReference {
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		
+
 	}
 }

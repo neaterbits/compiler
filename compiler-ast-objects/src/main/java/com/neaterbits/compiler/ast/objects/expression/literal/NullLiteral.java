@@ -8,7 +8,7 @@ import com.neaterbits.compiler.util.Context;
 public final class NullLiteral extends Literal {
 
 	public NullLiteral(Context context) {
-		super(context, NullType.INSTANCE);
+		super(context, NullType.INSTANCE, -1);
 	}
 
 	@Override

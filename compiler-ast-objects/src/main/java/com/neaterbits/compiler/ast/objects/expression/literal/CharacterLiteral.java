@@ -9,16 +9,16 @@ public final class CharacterLiteral extends Literal {
 
 	private final char value;
 
-	public CharacterLiteral(Context context, char value, CharacterType type) {
-		super(context, type);
-		
+	public CharacterLiteral(Context context, char value, CharacterType type, int typeNo) {
+		super(context, type, typeNo);
+
 		this.value = value;
 	}
 
 	public char getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public ParseTreeElement getParseTreeElement() {
 		return ParseTreeElement.CHARACTER_LITERAL;

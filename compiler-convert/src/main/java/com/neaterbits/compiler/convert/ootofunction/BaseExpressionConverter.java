@@ -37,17 +37,18 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 	extends BaseConverter<T>
 	implements ExpressionConverter<T> {
 
-	protected final Expression convertExpression(Expression expression, T param) {
+	@Override
+    protected final Expression convertExpression(Expression expression, T param) {
 		return expression.visit(this, param);
 	}
-	
+
 	private Primary convertPrimary(Primary primary, T param) {
 		return (Primary)convertExpression(primary, param);
 	}
-	
+
 	@Override
 	public final Expression onAssignment(AssignmentExpression expression, T param) {
-		
+
 		return new AssignmentExpression(
 				expression.getContext(),
 				convertVariableReference(expression.getVariable(), param),
@@ -58,7 +59,7 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 	public final Expression onExpressionList(ExpressionList expressionList, T param) {
 
 		final List<Expression> convertedList = new ArrayList<>(expressionList.getExpressions().size());
-		
+
 		for (Expression expression : expressionList.getExpressions()) {
 			convertedList.add(convertExpression(expression, param));
 		}
@@ -73,19 +74,19 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 
     @Override
 	public final Expression onPrimaryList(PrimaryList primaryList, T param) {
-		
+
 		final List<Primary> convertedList = new ArrayList<>(primaryList.getPrimaries().size());
-		
+
 		for (Primary primary : primaryList.getPrimaries()) {
 			convertedList.add(convertPrimary(primary, param));
 		}
-		
+
 		return new PrimaryList(primaryList.getContext(), convertedList);
 	}
 
 	@Override
 	public final Expression onArrayAccessExpression(ArrayAccessExpression expression, T param) {
-		
+
 		return new ArrayAccessExpression(
 				expression.getContext(),
 				convertPrimary(expression.getArray(), param),
@@ -103,9 +104,9 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 
 	@Override
 	public final Expression onVariableReference(VariableReference expression, T param) {
-		
+
 		final VariableReference convertedVariableReference = convertVariableReference(expression, param);
-		
+
 		return convertedVariableReference;
 	}
 
@@ -127,7 +128,8 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 				expression.getBase(),
 				expression.isSigned(),
 				expression.getBits(),
-				(IntegerType)convertBuiltinType(expression.getType(), param));
+				(IntegerType)convertBuiltinType(expression.getType(), param),
+				-1);
 	}
 
 	@Override
@@ -136,7 +138,8 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 		return new StringLiteral(
 				expression.getContext(),
 				expression.getValue(),
-				(StringType)convertBuiltinType(expression.getType(), param));
+				(StringType)convertBuiltinType(expression.getType(), param),
+				-1);
 	}
 
 	@Override
@@ -146,7 +149,8 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 				expression.getValue(),
 				expression.getBase(),
 				expression.getBits(),
-				(FloatingPointType)convertBuiltinType(expression.getType(), param));
+				(FloatingPointType)convertBuiltinType(expression.getType(), param),
+				-1);
 	}
 
 	@Override
@@ -154,7 +158,8 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 		return new BooleanLiteral(
 				expression.getContext(),
 				expression.getValue(),
-				(BooleanType)convertBuiltinType(expression.getType(), param));
+				(BooleanType)convertBuiltinType(expression.getType(), param),
+				-1);
 	}
 
 	@Override
@@ -162,7 +167,8 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 		return new CharacterLiteral(
 				expression.getContext(),
 				expression.getValue(),
-				(CharacterType)convertBuiltinType(expression.getType(), param));
+				(CharacterType)convertBuiltinType(expression.getType(), param),
+				-1);
 	}
 
 	@Override

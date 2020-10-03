@@ -8,8 +8,8 @@ import com.neaterbits.compiler.util.TypeName;
 
 public final class ComplexTypeReference extends ResolvedNamedTypeReference {
 
-	public ComplexTypeReference(Context context, TypeName typeName) {
-		super(context, typeName);
+	public ComplexTypeReference(Context context, int typeNo, TypeName typeName) {
+		super(context, typeNo, typeName);
 	}
 
 	@Override
@@ -17,12 +17,13 @@ public final class ComplexTypeReference extends ResolvedNamedTypeReference {
 		return ParseTreeElement.COMPLEX_TYPE_REFERENCE;
 	}
 
-	public <T, R> R visit(TypeReferenceVisitor<T, R> visitor, T param) {
+	@Override
+    public <T, R> R visit(TypeReferenceVisitor<T, R> visitor, T param) {
 		return visitor.onComplexTypeReference(this, param);
 	}
 
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
-		
+
 	}
 }
