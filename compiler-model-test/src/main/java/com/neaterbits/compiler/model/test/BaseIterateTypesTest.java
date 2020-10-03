@@ -3,56 +3,45 @@ package com.neaterbits.compiler.model.test;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.neaterbits.compiler.model.common.ParseTreeModel;
 import com.neaterbits.compiler.model.common.TypeVisitor;
-import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
 
-public abstract class BaseIterateTypesTest<COMPILATION_UNIT> {
+public abstract class BaseIterateTypesTest<COMPILATION_UNIT> extends BaseParseTreeTest<COMPILATION_UNIT> {
 
-    protected abstract ParseTreeListener<COMPILATION_UNIT>
-        makeParseTreeListener(String fileName, TestTokenizer testTokenizer);
-
-    protected abstract ParseTreeModel<COMPILATION_UNIT> makeParseTreeModel();
+    public BaseIterateTypesTest(ParseTreeTestModel<COMPILATION_UNIT> testModel) {
+        super(testModel);
+    }
 
     @Test
     public void testIterateTypes() {
 
-        final TestTokenizer testTokenizer = new TestTokenizer();
+        final Util<COMPILATION_UNIT> util = makeUtil();
 
-        final ParseTreeListener<COMPILATION_UNIT> parserListener
-            = makeParseTreeListener("file", testTokenizer);
+        util.builder.startCompilationUnit();
 
-        final ParseTreeBuilder<COMPILATION_UNIT> builder
-            = new ParseTreeBuilder<>(parserListener, testTokenizer);
+        util.builder.startNamespace();
 
-        builder.startCompilationUnit();
+        util.builder.addNamespacePart("namespace");
 
-        builder.startNamespace();
+        util.builder.startClass("TestClass");
 
-        builder.addNamespacePart("namespace");
+        util.builder.endClass();
 
-        builder.startClass("TestClass");
+        util.builder.startInterface("TestInterface");
 
-        builder.endClass();
+        util.builder.endInterface();
 
-        builder.startInterface("TestInterface");
+        util.builder.startEnum("TestEnum");
 
-        builder.endInterface();
+        util.builder.endEnum();
 
-        builder.startEnum("TestEnum");
+        util.builder.endNamespace();
 
-        builder.endEnum();
-
-        builder.endNamespace();
-
-        final COMPILATION_UNIT compilationUnit = builder.endCompilationUnit();
-
-        final ParseTreeModel<COMPILATION_UNIT> parseTreeModel = makeParseTreeModel();
+        final COMPILATION_UNIT compilationUnit = util.builder.endCompilationUnit();
 
         final TypeVisitor typeVisitor = Mockito.mock(TypeVisitor.class);
         Mockito.inOrder(typeVisitor);
 
-        parseTreeModel.iterateTypes(compilationUnit, typeVisitor);
+        util.parseTreeModel.iterateTypes(compilationUnit, typeVisitor);
 
         Mockito.verify(typeVisitor).onNamespaceStart();
 
