@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.neaterbits.compiler.ast.encoded.AST;
+import com.neaterbits.compiler.ast.encoded.ASTBuffer;
+import com.neaterbits.compiler.ast.encoded.ASTBufferImpl;
+import com.neaterbits.compiler.ast.encoded.ASTBufferRead;
+import com.neaterbits.compiler.ast.encoded.StringASTBuffer;
 import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.ReferenceType;

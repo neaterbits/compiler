@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.parser.listener.encoded;
+package com.neaterbits.compiler.ast.encoded;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class AST {
 
     private static final int CONTEXT_SIZE = 8;
 
-    static int writeContext(ASTBuffer contextBuffer, Context context) {
+    public static int writeContext(ASTBuffer contextBuffer, Context context) {
 
         if (context.getStartOffset() > 100000) {
             throw new IllegalArgumentException();
@@ -64,7 +64,7 @@ public class AST {
         return writePos;
     }
 
-    static int writeContext(ASTBuffer contextBuffer, int otherContext) {
+    public static int writeContext(ASTBuffer contextBuffer, int otherContext) {
 
         final int writePos = contextBuffer.getWritePos();
 
@@ -310,12 +310,16 @@ public class AST {
                 : 1 + 1); // enum + start/end boolean
     }
 
+    public static int sizeLeaf(ParseTreeElement element, ASTBufferRead astBuffer, int index) {
+
+        return sizeStart(element, astBuffer, index);
+    }
 
     private static final int IMPORT_START_SIZE = 2 * (STRING_REF_SIZE + CONTEXT_REF_SIZE);
     private static final int IMPORT_END_SIZE = 1;
     private static final int IMPORT_PART_SIZE = STRING_REF_SIZE;
 
-    static void encodeImportStart(
+    public static void encodeImportStart(
             StringASTBuffer astBuffer,
             long importKeyword, int importKeywordContext,
             long staticKeyword, int staticKeywordContext) {
@@ -365,7 +369,7 @@ public class AST {
                 staticKeywordContext);
     }
 
-    static void encodeImportNamePart(StringASTBuffer astBuffer, long identifier) {
+    public static void encodeImportNamePart(StringASTBuffer astBuffer, long identifier) {
 
         astBuffer.writeLeafElement(ParseTreeElement.IMPORT_NAME_PART);
 
@@ -381,7 +385,7 @@ public class AST {
         listener.onImportName(leafContext, astBuffer.getStringRef(index));
     }
 
-    static void encodeImportEnd(StringASTBuffer astBuffer, boolean onDemand) {
+    public static void encodeImportEnd(StringASTBuffer astBuffer, boolean onDemand) {
 
         astBuffer.writeElementEnd(ParseTreeElement.IMPORT);
 
@@ -398,7 +402,7 @@ public class AST {
         listener.onImportEnd(importStartContext, endContext, astBuffer.getBoolean(index));
     }
 
-    static void encodeNamespaceStart(StringASTBuffer astBuffer, long namespaceKeyword, int namespaceKeywordContext) {
+    public static void encodeNamespaceStart(StringASTBuffer astBuffer, long namespaceKeyword, int namespaceKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.NAMESPACE);
 
@@ -431,7 +435,7 @@ public class AST {
     private static final int NAMESPACE_START_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
     private static final int NAMESPACE_PART_SIZE = STRING_REF_SIZE;
 
-    static void encodeNamespacePart(StringASTBuffer astBuffer, long part) {
+    public static void encodeNamespacePart(StringASTBuffer astBuffer, long part) {
 
         astBuffer.writeLeafElement(ParseTreeElement.NAMESPACE_PART);
 
@@ -452,7 +456,7 @@ public class AST {
         listener.onNamespacePart(leafContext, decodeNamespacePart(astBuffer, index));
     }
 
-    static void encodeNamespaceEnd(StringASTBuffer astBuffer) {
+    public static void encodeNamespaceEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.NAMESPACE);
     }
@@ -465,7 +469,7 @@ public class AST {
         listener.onNameSpaceEnd(namespaceStartContext, endContext);
     }
 
-    static void encodeTypeDefinitionStart(StringASTBuffer astBuffer) {
+    public static void encodeTypeDefinitionStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.TYPE_DEFINITION);
     }
@@ -478,7 +482,7 @@ public class AST {
         listener.onTypeDefinitionStart(typeDefinitionStartContext);
     }
 
-    static void encodeTypeDefinitionEnd(StringASTBuffer astBuffer) {
+    public static void encodeTypeDefinitionEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.TYPE_DEFINITION);
     }
@@ -493,7 +497,7 @@ public class AST {
 
     private static final int CLASS_START_SIZE = 2 * (STRING_REF_SIZE + CONTEXT_REF_SIZE);
 
-    static void encodeClassStart(StringASTBuffer astBuffer, long classKeyword, int classKeywordContext, long name, int nameContext) {
+    public static void encodeClassStart(StringASTBuffer astBuffer, long classKeyword, int classKeywordContext, long name, int nameContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.CLASS_DEFINITION);
 
@@ -536,7 +540,7 @@ public class AST {
                 nameContext);
     }
 
-    static void encodeClassEnd(StringASTBuffer astBuffer) {
+    public static void encodeClassEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.CLASS_DEFINITION);
     }
@@ -552,14 +556,14 @@ public class AST {
 
     private static final int CLASS_MODIFIER_SIZE = 1 + 1;
 
-    static void encodeVisibilityClassModifier(StringASTBuffer astBuffer, ClassVisibility classVisibility) {
+    public static void encodeVisibilityClassModifier(StringASTBuffer astBuffer, ClassVisibility classVisibility) {
 
         astBuffer.writeLeafElement(ParseTreeElement.CLASS_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(ClassModifier.Type.VISIBILITY);
         astBuffer.writeEnumByte(classVisibility);
     }
 
-    static void encodeSubclassingModifier(StringASTBuffer astBuffer, Subclassing subclassing) {
+    public static void encodeSubclassingModifier(StringASTBuffer astBuffer, Subclassing subclassing) {
 
         astBuffer.writeLeafElement(ParseTreeElement.CLASS_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(ClassModifier.Type.SUBCLASSING);
@@ -590,7 +594,7 @@ public class AST {
 
     private static final int CLASS_EXTENDS_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeClassExtendsStart(StringASTBuffer astBuffer, long extendsKeyword, int extendsKeywordContext) {
+    public static void encodeClassExtendsStart(StringASTBuffer astBuffer, long extendsKeyword, int extendsKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.CLASS_EXTENDS);
         astBuffer.writeStringRef(extendsKeyword);
@@ -619,7 +623,7 @@ public class AST {
                 extendsKeywordContext);
     }
 
-    static void encodeClassExtendsEnd(StringASTBuffer astBuffer) {
+    public static void encodeClassExtendsEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.CLASS_EXTENDS);
     }
@@ -635,7 +639,7 @@ public class AST {
 
     private static final int CLASS_IMPLEMENTS_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeImplementsStart(StringASTBuffer astBuffer, long implementsKeyword, int implementsKeywordContext) {
+    public static void encodeImplementsStart(StringASTBuffer astBuffer, long implementsKeyword, int implementsKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.IMPLEMENTS);
         astBuffer.writeStringRef(implementsKeyword);
@@ -664,13 +668,13 @@ public class AST {
                 implementsKeywordContext);
     }
 
-    static void encodeImplementsTypeStart(StringASTBuffer astBuffer) {
+    public static void encodeImplementsTypeStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.IMPLEMENTS_TYPE);
 
     }
 
-    static void encodeImplementsTypeEnd(StringASTBuffer astBuffer) {
+    public static void encodeImplementsTypeEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.IMPLEMENTS_TYPE);
 
@@ -678,7 +682,7 @@ public class AST {
 
     private static final int IMPLEMENTS_NAME_PART_SIZE = STRING_REF_SIZE;
 
-    static void encodeImplementsNamePart(StringASTBuffer astBuffer, long identifier) {
+    public static void encodeImplementsNamePart(StringASTBuffer astBuffer, long identifier) {
 
         astBuffer.writeLeafElement(ParseTreeElement.IMPLEMENTS_NAME_PART);
 
@@ -694,7 +698,7 @@ public class AST {
         listener.onImplementsNamePart(leafContext, astBuffer.getStringRef(index));
     }
 
-    static void encodeImplementsEnd(StringASTBuffer astBuffer) {
+    public static void encodeImplementsEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.IMPLEMENTS);
     }
@@ -725,7 +729,7 @@ public class AST {
         listener.onImplementsTypeEnd(classImplementsTypeStartContext, endContext);
     }
 
-    static void encodeFieldDeclarationStart(StringASTBuffer astBuffer) {
+    public static void encodeFieldDeclarationStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.CLASS_DATA_FIELD_MEMBER);
     }
@@ -738,7 +742,7 @@ public class AST {
         listener.onFieldDeclarationStart(fieldDeclarationStartContext);
     }
 
-    static void encodeFieldDeclarationEnd(StringASTBuffer astBuffer) {
+    public static void encodeFieldDeclarationEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.CLASS_DATA_FIELD_MEMBER);
     }
@@ -754,7 +758,7 @@ public class AST {
 
     private static final int SCALAR_TYPE_REFERENCE_SIZE = STRING_REF_SIZE;
 
-    static void encodeScalarTypeReference(StringASTBuffer astBuffer, long typeName) {
+    public static void encodeScalarTypeReference(StringASTBuffer astBuffer, long typeName) {
 
         astBuffer.writeElementStart(ParseTreeElement.SCALAR_TYPE_REFERENCE);
 
@@ -772,7 +776,7 @@ public class AST {
 
     private static final int IDENTIFIER_TYPE_REFERENCE_SIZE = STRING_REF_SIZE;
 
-    static void encodeIdentifierTypeReferenceStart(StringASTBuffer astBuffer, long typeName) {
+    public static void encodeIdentifierTypeReferenceStart(StringASTBuffer astBuffer, long typeName) {
 
         astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_IDENTIFIER_TYPE_REFERENCE);
 
@@ -788,7 +792,7 @@ public class AST {
         listener.onNonScopedTypeReferenceStart(leafContext, astBuffer.getStringRef(index), ReferenceType.REFERENCE);
     }
 
-    static void encodeIdentifierTypeReferenceEnd(StringASTBuffer astBuffer) {
+    public static void encodeIdentifierTypeReferenceEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.UNRESOLVED_IDENTIFIER_TYPE_REFERENCE);
     }
@@ -801,7 +805,7 @@ public class AST {
         listener.onNonScopedTypeReferenceEnd(leafContext, endContext);
     }
 
-    static void encodeVariableDeclaratorStart(StringASTBuffer astBuffer) {
+    public static void encodeVariableDeclaratorStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.VARIABLE_DECLARATION_ELEMENT);
     }
@@ -814,7 +818,7 @@ public class AST {
         listener.onVariableDeclaratorStart(variableDeclaratorStartContext);
     }
 
-    static void encodeVariableDeclaratorEnd(StringASTBuffer astBuffer) {
+    public static void encodeVariableDeclaratorEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.VARIABLE_DECLARATION_ELEMENT);
     }
@@ -830,7 +834,7 @@ public class AST {
 
     private static final int VARIABLE_NAME_SIZE = STRING_REF_SIZE + 4;
 
-    static void encodeVariableName(StringASTBuffer astBuffer, long name, int numDims) {
+    public static void encodeVariableName(StringASTBuffer astBuffer, long name, int numDims) {
 
         astBuffer.writeLeafElement(ParseTreeElement.VAR_NAME_DECLARATION);
 
@@ -850,7 +854,7 @@ public class AST {
                 astBuffer.getInt(index + 4));
     }
 
-    static void encodeConstructorStart(StringASTBuffer astBuffer) {
+    public static void encodeConstructorStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.CONSTRUCTOR_MEMBER);
     }
@@ -865,7 +869,7 @@ public class AST {
 
     private static final int CONSTRUCTOR_NAME_SIZE = STRING_REF_SIZE;
 
-    static void encodeConstructorName(StringASTBuffer astBuffer, long constructorName) {
+    public static void encodeConstructorName(StringASTBuffer astBuffer, long constructorName) {
 
         astBuffer.writeLeafElement(ParseTreeElement.METHOD_NAME);
 
@@ -881,7 +885,7 @@ public class AST {
         listener.onConstructorName(leafContext, astBuffer.getStringRef(index));
     }
 
-    static void encodeConstructorEnd(StringASTBuffer astBuffer) {
+    public static void encodeConstructorEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.CONSTRUCTOR_MEMBER);
     }
@@ -894,7 +898,7 @@ public class AST {
         listener.onConstructorEnd(constructorStartContext, endContext);
     }
 
-    static void encodeClassMethodStart(StringASTBuffer astBuffer) {
+    public static void encodeClassMethodStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.CLASS_METHOD_MEMBER);
     }
@@ -929,20 +933,20 @@ public class AST {
         return result;
     }
 
-    static void encodeVisibilityClassMethodModifier(StringASTBuffer astBuffer, ClassMethodVisibility classMethodVisibility) {
+    public static void encodeVisibilityClassMethodModifier(StringASTBuffer astBuffer, ClassMethodVisibility classMethodVisibility) {
 
         astBuffer.writeLeafElement(ParseTreeElement.CLASS_METHOD_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(ClassMethodModifier.Type.VISIBILITY);
         astBuffer.writeEnumByte(classMethodVisibility);
     }
 
-    static void encodeStaticClassMethodModifier(StringASTBuffer astBuffer) {
+    public static void encodeStaticClassMethodModifier(StringASTBuffer astBuffer) {
 
         astBuffer.writeLeafElement(ParseTreeElement.CLASS_METHOD_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(ClassMethodModifier.Type.STATIC);
     }
 
-    static void encodeOverrideClassMethodModifier(StringASTBuffer astBuffer, ClassMethodOverride classMethodOverride) {
+    public static void encodeOverrideClassMethodModifier(StringASTBuffer astBuffer, ClassMethodOverride classMethodOverride) {
 
         astBuffer.writeLeafElement(ParseTreeElement.CLASS_METHOD_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(ClassMethodModifier.Type.OVERRIDE);
@@ -976,7 +980,7 @@ public class AST {
     }
 
 
-    static void encodeMethodReturnTypeStart(StringASTBuffer astBuffer) {
+    public static void encodeMethodReturnTypeStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.METHOD_RETURN_TYPE);
 
@@ -990,7 +994,7 @@ public class AST {
         listener.onMethodReturnTypeStart(methodReturnTypeContext);
     }
 
-    static void encodeMethodReturnTypeEnd(StringASTBuffer astBuffer) {
+    public static void encodeMethodReturnTypeEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.METHOD_RETURN_TYPE);
     }
@@ -1006,7 +1010,7 @@ public class AST {
 
     private static final int METHOD_NAME_SIZE = STRING_REF_SIZE;
 
-    static void encodeMethodName(StringASTBuffer astBuffer, long methodName) {
+    public static void encodeMethodName(StringASTBuffer astBuffer, long methodName) {
 
         astBuffer.writeLeafElement(ParseTreeElement.METHOD_NAME);
 
@@ -1022,7 +1026,7 @@ public class AST {
         listener.onMethodName(leafContext, astBuffer.getStringRef(index));
     }
 
-    static void encodeClassMethodEnd(StringASTBuffer astBuffer) {
+    public static void encodeClassMethodEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.CLASS_METHOD_MEMBER);
     }
@@ -1036,7 +1040,7 @@ public class AST {
         listener.onClassMethodEnd(classMethodStartContext, endContext);
     }
 
-    static void encodeSignatureParametersStart(StringASTBuffer astBuffer) {
+    public static void encodeSignatureParametersStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.SIGNATURE_PARAMETERS);
     }
@@ -1050,7 +1054,7 @@ public class AST {
         listener.onMethodSignatureParametersStart(signatureParametersStartContext);
     }
 
-    static void encodeSignatureParametersEnd(StringASTBuffer astBuffer) {
+    public static void encodeSignatureParametersEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.SIGNATURE_PARAMETERS);
     }
@@ -1067,7 +1071,7 @@ public class AST {
 
     private static final int SIGNATURE_PARAMETER_SIZE = 1;
 
-    static void encodeSignatureParameterStart(StringASTBuffer astBuffer, boolean varArgs) {
+    public static void encodeSignatureParameterStart(StringASTBuffer astBuffer, boolean varArgs) {
 
         astBuffer.writeElementStart(ParseTreeElement.SIGNATURE_PARAMETER);
 
@@ -1083,7 +1087,7 @@ public class AST {
         listener.onMethodSignatureParameterStart(signatureParameterStartContext, astBuffer.getBoolean(index));
     }
 
-    static void encodeSignatureParameterVarargs(StringASTBuffer astBuffer) {
+    public static void encodeSignatureParameterVarargs(StringASTBuffer astBuffer) {
 
         astBuffer.writeLeafElement(ParseTreeElement.SIGNATURE_PARAMETER_VARARGS);
     }
@@ -1096,7 +1100,7 @@ public class AST {
         listener.onMethodSignatureParameterVarargs(signatureParameterVarargsContext);
     }
 
-    static void encodeSignatureParameterEnd(StringASTBuffer astBuffer) {
+    public static void encodeSignatureParameterEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.SIGNATURE_PARAMETER);
     }
@@ -1111,7 +1115,7 @@ public class AST {
         listener.onMethodSignatureParameterEnd(signatureParameterStartContext, endContext);
     }
 
-    static void encodeThrowsStart(StringASTBuffer astBuffer) {
+    public static void encodeThrowsStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.THROWS);
     }
@@ -1123,7 +1127,7 @@ public class AST {
         listener.onThrowsStart(throwsStartContext);
     }
 
-    static void encodeThrowsEnd(StringASTBuffer astBuffer) {
+    public static void encodeThrowsEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.THROWS);
     }
@@ -1138,7 +1142,7 @@ public class AST {
 
     private static final int ENUM_DEFINITION_SIZE = 2 * (STRING_REF_SIZE + CONTEXT_REF_SIZE);
 
-    static void encodeEnumStart(StringASTBuffer astBuffer, long enumKeyword, int enumKeywordContext, long name, int nameContext) {
+    public static void encodeEnumStart(StringASTBuffer astBuffer, long enumKeyword, int enumKeywordContext, long name, int nameContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.ENUM_DEFINITION);
 
@@ -1183,7 +1187,7 @@ public class AST {
 
     private static final int ENUM_CONSTANT_DEFINITION_SIZE = STRING_REF_SIZE;
 
-    static void encodeEnumConstantStart(StringASTBuffer astBuffer, long name) {
+    public static void encodeEnumConstantStart(StringASTBuffer astBuffer, long name) {
 
         astBuffer.writeElementStart(ParseTreeElement.ENUM_CONSTANT_DEFINITION);
 
@@ -1200,7 +1204,7 @@ public class AST {
         listener.onEnumConstantStart(enumConstantStartContext, astBuffer.getStringRef(index));
     }
 
-    static void encodeEnumConstantEnd(StringASTBuffer astBuffer) {
+    public static void encodeEnumConstantEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ENUM_CONSTANT_DEFINITION);
     }
@@ -1215,7 +1219,7 @@ public class AST {
     }
 
 
-    static void encodeEnumEnd(StringASTBuffer astBuffer) {
+    public static void encodeEnumEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ENUM_DEFINITION);
     }
@@ -1232,7 +1236,7 @@ public class AST {
 
     private static final int INTERFACE_START_SIZE = 2 * (STRING_REF_SIZE + CONTEXT_REF_SIZE);
 
-    static void encodeInterfaceStart(
+    public static void encodeInterfaceStart(
             StringASTBuffer astBuffer,
             long interfaceKeyword, int interfaceKeywordContext,
             long name, int nameContext) {
@@ -1278,7 +1282,7 @@ public class AST {
                 nameContext);
     }
 
-    static void encodeInterfaceEnd(StringASTBuffer astBuffer) {
+    public static void encodeInterfaceEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.INTERFACE_DEFINITION);
     }
@@ -1292,7 +1296,7 @@ public class AST {
         listener.onInterfaceEnd(interfaceStartContext, endContext);
     }
 
-    static void encodeScopedTypeReferenceStart(StringASTBuffer astBuffer) {
+    public static void encodeScopedTypeReferenceStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE);
     }
@@ -1306,7 +1310,7 @@ public class AST {
         listener.onScopedTypeReferenceStart(scopedTypeReferenceStartContext, ReferenceType.REFERENCE);
     }
 
-    static void encodeScopedTypeReferenceNameStart(StringASTBuffer astBuffer) {
+    public static void encodeScopedTypeReferenceNameStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE_NAME);
     }
@@ -1322,7 +1326,7 @@ public class AST {
     private static final int SCOPED_TYPE_REFERENCE_PART_SIZE = STRING_REF_SIZE;
 
 
-    static void encodeScopedTypeReferencePart(StringASTBuffer astBuffer, long part) {
+    public static void encodeScopedTypeReferencePart(StringASTBuffer astBuffer, long part) {
 
         astBuffer.writeLeafElement(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE_NAME_PART);
 
@@ -1338,7 +1342,7 @@ public class AST {
         listener.onScopedTypeReferenceNamePart(leafContext, astBuffer.getStringRef(index));
     }
 
-    static void encodeScopedTypeReferenceNameEnd(StringASTBuffer astBuffer) {
+    public static void encodeScopedTypeReferenceNameEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE_NAME);
     }
@@ -1353,7 +1357,7 @@ public class AST {
         listener.onScopedTypeReferenceNameEnd(scopedTypeReferenceNameEndContext, endContext);
     }
 
-    static void encodeScopedTypeReferenceEnd(StringASTBuffer astBuffer) {
+    public static void encodeScopedTypeReferenceEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.UNRESOLVED_SCOPED_TYPE_REFERENCE);
     }
@@ -1386,7 +1390,7 @@ public class AST {
         return size;
     }
 
-    static void encodeMutabilityVariableModifier(StringASTBuffer astBuffer, ASTMutability mutability) {
+    public static void encodeMutabilityVariableModifier(StringASTBuffer astBuffer, ASTMutability mutability) {
 
         astBuffer.writeLeafElement(ParseTreeElement.VARIABLE_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(VariableModifier.Type.MUTABILITY);
@@ -1413,7 +1417,7 @@ public class AST {
         }
     }
 
-    static void encodeVariableDeclarationStatementStart(StringASTBuffer astBuffer) {
+    public static void encodeVariableDeclarationStatementStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.VARIABLE_DECLARATION_STATEMENT);
     }
@@ -1426,7 +1430,7 @@ public class AST {
         listener.onVariableDeclarationStatementStart(variableDeclarationStatementStartContext);
     }
 
-    static void encodeVariableDeclarationStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeVariableDeclarationStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.VARIABLE_DECLARATION_STATEMENT);
     }
@@ -1442,7 +1446,7 @@ public class AST {
 
     private static final int IF_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeIfElseIfElseStatementStart(StringASTBuffer astBuffer, long ifKeyword, int ifKeywordContext) {
+    public static void encodeIfElseIfElseStatementStart(StringASTBuffer astBuffer, long ifKeyword, int ifKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.IF_ELSE_IF_ELSE_STATEMENT);
 
@@ -1469,7 +1473,7 @@ public class AST {
         listener.onIfStatementStart(ifStartContext, astBuffer.getStringRef(index), ifKeywordContext);
     }
 
-    static void encodeIfElseIfElseStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeIfElseIfElseStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.IF_ELSE_IF_ELSE_STATEMENT);
     }
@@ -1483,7 +1487,7 @@ public class AST {
         listener.onEndIfStatement(ifStatementStartContext, endContext);
     }
 
-    static void encodeIfConditionBlockStart(StringASTBuffer astBuffer) {
+    public static void encodeIfConditionBlockStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.IF_CONDITION_BLOCK);
     }
@@ -1496,7 +1500,7 @@ public class AST {
         listener.onIfStatementInitialBlockStart(conditionBlockStartContext);
     }
 
-    static void encodeIfConditionBlockEnd(StringASTBuffer astBuffer) {
+    public static void encodeIfConditionBlockEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.IF_CONDITION_BLOCK);
     }
@@ -1514,7 +1518,7 @@ public class AST {
         =    STRING_REF_SIZE + CONTEXT_REF_SIZE
            + STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeElseIfConditionBlockStart(
+    public static void encodeElseIfConditionBlockStart(
             StringASTBuffer astBuffer,
             long elseKeyword, int elseKeywordContext,
             long ifKeyword, int ifKeywordContext) {
@@ -1554,7 +1558,7 @@ public class AST {
                 astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE), ifKeywordContext);
     }
 
-    static void encodeElseIfConditionBlockEnd(StringASTBuffer astBuffer) {
+    public static void encodeElseIfConditionBlockEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ELSE_IF_CONDITION_BLOCK);
     }
@@ -1570,7 +1574,7 @@ public class AST {
 
     private static final int ELSE_BLOCK_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeElseBlockStart(StringASTBuffer astBuffer, long elseKeyword, int elseKeywordContext) {
+    public static void encodeElseBlockStart(StringASTBuffer astBuffer, long elseKeyword, int elseKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.ELSE_BLOCK);
         astBuffer.writeStringRef(elseKeyword);
@@ -1597,7 +1601,7 @@ public class AST {
         listener.onElseStatementStart(elseStartContext, astBuffer.getStringRef(index), elseKeywordContext);
     }
 
-    static void encodeElseBlockEnd(StringASTBuffer astBuffer) {
+    public static void encodeElseBlockEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ELSE_BLOCK);
     }
@@ -1613,7 +1617,7 @@ public class AST {
 
     private static final int VARIABLE_REFERENCE_SIZE = STRING_REF_SIZE;
 
-    static void encodeVariableReference(StringASTBuffer astBuffer, long name) {
+    public static void encodeVariableReference(StringASTBuffer astBuffer, long name) {
 
         astBuffer.writeLeafElement(ParseTreeElement.SIMPLE_VARIABLE_REFERENCE);
 
@@ -1631,7 +1635,7 @@ public class AST {
 
     private static final int UNARY_EXPRESSION_SIZE = 1 + 1;
 
-    static void encodeUnaryExpressionStart(StringASTBuffer astBuffer, Operator operator) {
+    public static void encodeUnaryExpressionStart(StringASTBuffer astBuffer, Operator operator) {
 
         astBuffer.writeElementStart(ParseTreeElement.UNARY_EXPRESSION);
 
@@ -1666,7 +1670,7 @@ public class AST {
         listener.onUnaryExpressionStart(startContext, operator);
     }
 
-    static void encodeUnaryExpressionEnd(StringASTBuffer astBuffer) {
+    public static void encodeUnaryExpressionEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.UNARY_EXPRESSION);
     }
@@ -1682,7 +1686,7 @@ public class AST {
 
     private static final int EXPRESSION_BINARY_OPERATOR_SIZE = 1 + 1;
 
-    static void encodeExpressionBinaryOperator(StringASTBuffer astBuffer, Operator operator) {
+    public static void encodeExpressionBinaryOperator(StringASTBuffer astBuffer, Operator operator) {
 
         astBuffer.writeLeafElement(ParseTreeElement.EXPRESSION_BINARY_OPERATOR);
 
@@ -1728,7 +1732,7 @@ public class AST {
         listener.onExpressionBinaryOperator(leafContext, operator);
     }
 
-    static void encodeIntegerLiteral(StringASTBuffer astBuffer, long value, Base base, boolean signed, int bits) {
+    public static void encodeIntegerLiteral(StringASTBuffer astBuffer, long value, Base base, boolean signed, int bits) {
 
         astBuffer.writeLeafElement(ParseTreeElement.INTEGER_LITERAL);
 
@@ -1759,7 +1763,7 @@ public class AST {
        astBuffer.writeByte((byte)bits);
     }
 
-    static void encodeExpressionListStart(StringASTBuffer astBuffer) {
+    public static void encodeExpressionListStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.EXPRESSION_LIST);
     }
@@ -1771,7 +1775,7 @@ public class AST {
         listener.onExpressionListStart(expressionListStartContext);
     }
 
-    static void encodeExpressionListEnd(StringASTBuffer astBuffer) {
+    public static void encodeExpressionListEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.EXPRESSION_LIST);
     }
@@ -1833,7 +1837,7 @@ public class AST {
 
     private static final int STRING_LITERAL_SIZE = STRING_REF_SIZE;
 
-    static void encodeStringLiteral(StringASTBuffer astBuffer, long value) {
+    public static void encodeStringLiteral(StringASTBuffer astBuffer, long value) {
 
         astBuffer.writeLeafElement(ParseTreeElement.STRING_LITERAL);
 
@@ -1851,7 +1855,7 @@ public class AST {
 
     private static final int CHARACTER_LITERAL_SIZE = 4;
 
-    static void encodeCharacterLiteral(StringASTBuffer astBuffer, char value) {
+    public static void encodeCharacterLiteral(StringASTBuffer astBuffer, char value) {
 
         astBuffer.writeLeafElement(ParseTreeElement.CHARACTER_LITERAL);
 
@@ -1871,7 +1875,7 @@ public class AST {
 
     private static final int BOOLEAN_LITERAL_SIZE = 1;
 
-    static void encodeBooleanLiteral(StringASTBuffer astBuffer, boolean value) {
+    public static void encodeBooleanLiteral(StringASTBuffer astBuffer, boolean value) {
 
         astBuffer.writeLeafElement(ParseTreeElement.BOOLEAN_LITERAL);
 
@@ -1891,7 +1895,7 @@ public class AST {
 
     private static final int WHILE_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeWhileStatementStart(StringASTBuffer astBuffer, long whileKeyword, int whileKeywordContext) {
+    public static void encodeWhileStatementStart(StringASTBuffer astBuffer, long whileKeyword, int whileKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.WHILE_STATEMENT);
 
@@ -1922,7 +1926,7 @@ public class AST {
                 whileKeywordContext);
     }
 
-    static void encodeWhileStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeWhileStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.WHILE_STATEMENT);
     }
@@ -1938,7 +1942,7 @@ public class AST {
 
     private static final int FOR_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeForStatementStart(StringASTBuffer astBuffer, long forKeyword, int forKeywordContext) {
+    public static void encodeForStatementStart(StringASTBuffer astBuffer, long forKeyword, int forKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.FOR_STATEMENT);
 
@@ -1969,7 +1973,7 @@ public class AST {
                 iteratorForKeywordContext);
     }
 
-    static void encodeForInitStart(StringASTBuffer astBuffer) {
+    public static void encodeForInitStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.FOR_INIT);
     }
@@ -1979,7 +1983,7 @@ public class AST {
         listener.onForInitStart(forInitStartContext);
     }
 
-    static void encodeForInitEnd(StringASTBuffer astBuffer) {
+    public static void encodeForInitEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.FOR_INIT);
     }
@@ -1992,7 +1996,7 @@ public class AST {
         listener.onForInitEnd(forInitStartContext, endContext);
     }
 
-    static void encodeForExpressionStart(StringASTBuffer astBuffer) {
+    public static void encodeForExpressionStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.FOR_EXPRESSION_LIST);
     }
@@ -2002,7 +2006,7 @@ public class AST {
         listener.onForExpressionStart(forInitStartContext);
     }
 
-    static void encodeForExpressionEnd(StringASTBuffer astBuffer) {
+    public static void encodeForExpressionEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.FOR_EXPRESSION_LIST);
     }
@@ -2015,7 +2019,7 @@ public class AST {
         listener.onForExpressionEnd(forExpressionStartContext, endContext);
     }
 
-    static void encodeForUpdateStart(StringASTBuffer astBuffer) {
+    public static void encodeForUpdateStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.FOR_UPDATE);
     }
@@ -2025,7 +2029,7 @@ public class AST {
         listener.onForUpdateStart(forUpdateStartContext);
     }
 
-    static void encodeForUpdateEnd(StringASTBuffer astBuffer) {
+    public static void encodeForUpdateEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.FOR_UPDATE);
     }
@@ -2038,7 +2042,7 @@ public class AST {
         listener.onForUpdateEnd(forUpdateStartContext, endContext);
     }
 
-    static void encodeForStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeForStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.FOR_STATEMENT);
     }
@@ -2053,7 +2057,7 @@ public class AST {
 
     private static final int ITERATOR_FOR_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeIteratorForStatementStart(StringASTBuffer astBuffer, long forKeyword, int forKeywordContext) {
+    public static void encodeIteratorForStatementStart(StringASTBuffer astBuffer, long forKeyword, int forKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.ITERATOR_FOR_STATEMENT);
 
@@ -2084,7 +2088,7 @@ public class AST {
                 iteratorForKeywordContext);
     }
 
-    static void encodeIteratorForTestStart(StringASTBuffer astBuffer) {
+    public static void encodeIteratorForTestStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.ITERATOR_FOR_TEST);
     }
@@ -2097,7 +2101,7 @@ public class AST {
         listener.onIteratorForTestStart(iteratorForTestStartContext);
     }
 
-    static void encodeIteratorForTestEnd(StringASTBuffer astBuffer) {
+    public static void encodeIteratorForTestEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ITERATOR_FOR_TEST);
     }
@@ -2111,7 +2115,7 @@ public class AST {
         listener.onIteratorForTestEnd(iteratorForTestStartContext, endContext);
     }
 
-    static void encodeIteratorForStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeIteratorForStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ITERATOR_FOR_STATEMENT);
     }
@@ -2127,7 +2131,7 @@ public class AST {
 
     private static final int TRY_CATCH_FINALLY_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeTryCatchFinallyStatementStart(StringASTBuffer astBuffer, long tryKeyword, int tryKeywordContext) {
+    public static void encodeTryCatchFinallyStatementStart(StringASTBuffer astBuffer, long tryKeyword, int tryKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.TRY_CATCH_FINALLY_STATEMENT);
 
@@ -2158,7 +2162,7 @@ public class AST {
                 tryKeywordContext);
     }
 
-    static void encodeTryBlockEnd(StringASTBuffer astBuffer) {
+    public static void encodeTryBlockEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeLeafElement(ParseTreeElement.TRY_BLOCK_END);
     }
@@ -2173,7 +2177,7 @@ public class AST {
 
     private static final int CATCH_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeCatchStart(StringASTBuffer astBuffer, long catchKeyword, int catchKeywordContext) {
+    public static void encodeCatchStart(StringASTBuffer astBuffer, long catchKeyword, int catchKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.CATCH);
 
@@ -2201,7 +2205,7 @@ public class AST {
         listener.onCatchStart(catchStartContext, astBuffer.getStringRef(index), catchKeywordContext);
     }
 
-    static void encodeCatchEnd(StringASTBuffer astBuffer) {
+    public static void encodeCatchEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.CATCH);
     }
@@ -2217,7 +2221,7 @@ public class AST {
 
     private static final int FINALLY_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeFinallyStart(StringASTBuffer astBuffer, long finallyKeyword, int finallyKeywordContext) {
+    public static void encodeFinallyStart(StringASTBuffer astBuffer, long finallyKeyword, int finallyKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.FINALLY);
 
@@ -2245,7 +2249,7 @@ public class AST {
         listener.onFinallyStart(finallyStartContext, astBuffer.getStringRef(index), finallyKeywordContext);
     }
 
-    static void encodeFinallyEnd(StringASTBuffer astBuffer) {
+    public static void encodeFinallyEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.FINALLY);
     }
@@ -2259,7 +2263,7 @@ public class AST {
         listener.onFinallyEnd(finallyStartContext, endContext);
     }
 
-    static void encodeTryCatchFinallyStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeTryCatchFinallyStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.TRY_CATCH_FINALLY_STATEMENT);
     }
@@ -2275,7 +2279,7 @@ public class AST {
 
     private static final int RETURN_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeReturnStatementStart(StringASTBuffer astBuffer, long returnKeyword, int returnKeywordContext) {
+    public static void encodeReturnStatementStart(StringASTBuffer astBuffer, long returnKeyword, int returnKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.RETURN_STATEMENT);
 
@@ -2308,7 +2312,7 @@ public class AST {
 
     private static final int TRY_WITH_RESOURCES_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeTryWithResourcesStatementStart(StringASTBuffer astBuffer, long tryKeyword, int tryKeywordContext) {
+    public static void encodeTryWithResourcesStatementStart(StringASTBuffer astBuffer, long tryKeyword, int tryKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.TRY_WITH_RESOURCES_STATEMENT);
 
@@ -2339,7 +2343,7 @@ public class AST {
                 tryKeywordContext);
     }
 
-    static void encodeTryWithResourcesSpecificationStart(StringASTBuffer astBuffer) {
+    public static void encodeTryWithResourcesSpecificationStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.RESOURCES_LIST);
     }
@@ -2351,7 +2355,7 @@ public class AST {
         listener.onTryWithResourcesSpecificationStart(resourcesSpecificationStartContext);
     }
 
-    static void encodeTryWithResourcesSpecificationEnd(StringASTBuffer astBuffer) {
+    public static void encodeTryWithResourcesSpecificationEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.RESOURCES_LIST);
     }
@@ -2364,7 +2368,7 @@ public class AST {
         listener.onTryWithResourcesSpecificationEnd(resourcesSpecificationStartContext, endContext);
     }
 
-    static void encodeTryResourceStart(StringASTBuffer astBuffer) {
+    public static void encodeTryResourceStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.RESOURCE);
     }
@@ -2376,7 +2380,7 @@ public class AST {
         listener.onResourceStart(resourceStartContext);
     }
 
-    static void encodeTryResourceEnd(StringASTBuffer astBuffer) {
+    public static void encodeTryResourceEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.RESOURCE);
     }
@@ -2389,12 +2393,12 @@ public class AST {
         listener.onResourceEnd(resourceStartContext, endContext);
     }
 
-    static void encodeReturnStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeReturnStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.RETURN_STATEMENT);
     }
 
-    static void encodeTryWithResourcesStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeTryWithResourcesStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.TRY_WITH_RESOURCES_STATEMENT);
     }
@@ -2419,7 +2423,7 @@ public class AST {
 
     private static final int THROW_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeThrowStatementStart(StringASTBuffer astBuffer, long throwKeyword, int throwKeywordContext) {
+    public static void encodeThrowStatementStart(StringASTBuffer astBuffer, long throwKeyword, int throwKeywordContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.THROW_STATEMENT);
 
@@ -2450,7 +2454,7 @@ public class AST {
                 throwKeywordContext);
     }
 
-    static void encodeThrowStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeThrowStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.THROW_STATEMENT);
     }
@@ -2464,7 +2468,7 @@ public class AST {
         listener.onThrowStatementEnd(throwStatementStartContext, endContext);
     }
 
-    static void encodeAssignmentStatementStart(StringASTBuffer astBuffer) {
+    public static void encodeAssignmentStatementStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.ASSIGNMENT_STATEMENT);
     }
@@ -2477,7 +2481,7 @@ public class AST {
         listener.onAssignmentStatementStart(assignmentStatementStartContext);
     }
 
-    static void encodeAssignmentStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeAssignmentStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ASSIGNMENT_STATEMENT);
     }
@@ -2491,7 +2495,7 @@ public class AST {
         listener.onAssignmentStatementEnd(assignmentStatementStartContext, endContext);
     }
 
-    static void encodeAssignmentExpressionStart(StringASTBuffer astBuffer) {
+    public static void encodeAssignmentExpressionStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.ASSIGNMENT_EXPRESSION);
     }
@@ -2504,7 +2508,7 @@ public class AST {
         listener.onEnterAssignmentExpression(assignmentExpressionStartContext);
     }
 
-    static void encodeAssignmentExpressionEnd(StringASTBuffer astBuffer) {
+    public static void encodeAssignmentExpressionEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ASSIGNMENT_EXPRESSION);
     }
@@ -2518,7 +2522,7 @@ public class AST {
         listener.onExitAssignmentExpression(assignmentStatementStartContext, endContext);
     }
 
-    static void encodeAssignmentLHSStart(StringASTBuffer astBuffer) {
+    public static void encodeAssignmentLHSStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.ASSIGNMENT_EXPRESSION_LHS);
     }
@@ -2531,7 +2535,7 @@ public class AST {
         listener.onEnterAssignmentLHS(assignmentLHSStartContext);
     }
 
-    static void encodeAssignmentLHSEnd(StringASTBuffer astBuffer) {
+    public static void encodeAssignmentLHSEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ASSIGNMENT_EXPRESSION_LHS);
     }
@@ -2545,7 +2549,7 @@ public class AST {
         listener.onExitAssignmentLHS(assignmentLHSStartContext, endContext);
     }
 
-    static void encodeExpressionStatementStart(StringASTBuffer astBuffer) {
+    public static void encodeExpressionStatementStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.EXPRESSION_STATEMENT);
     }
@@ -2559,7 +2563,7 @@ public class AST {
         listener.onExpressionStatementStart(expressionStatementStartContext);
     }
 
-    static void encodeExpressionStatementEnd(StringASTBuffer astBuffer) {
+    public static void encodeExpressionStatementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.EXPRESSION_STATEMENT);
     }
@@ -2668,7 +2672,7 @@ public class AST {
 
     private static final int METHOD_INVOCATION_SIZE = 1 + STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeMethodInvocationStart(
+    public static void encodeMethodInvocationStart(
             StringASTBuffer astBuffer,
             MethodInvocationType type,
             long methodName,
@@ -2697,7 +2701,7 @@ public class AST {
                 methodNameContext);
     }
 
-    static void encodeMethodInvocationEnd(StringASTBuffer astBuffer) {
+    public static void encodeMethodInvocationEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.METHOD_INVOCATION_EXPRESSION);
     }
@@ -2711,7 +2715,7 @@ public class AST {
         listener.onMethodInvocationEnd(methodInvocationStartContext, endContext);
     }
 
-    static void encodeParametersStart(StringASTBuffer astBuffer) {
+    public static void encodeParametersStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.PARAMETER_LIST);
     }
@@ -2725,7 +2729,7 @@ public class AST {
         listener.onParametersStart(parametersStartContext);
     }
 
-    static void encodeParametersEnd(StringASTBuffer astBuffer) {
+    public static void encodeParametersEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.PARAMETER_LIST);
     }
@@ -2738,7 +2742,7 @@ public class AST {
         listener.onParametersEnd(parameterStartContext, endContext);
     }
 
-    static void encodeParameterStart(StringASTBuffer astBuffer) {
+    public static void encodeParameterStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.PARAMETER);
     }
@@ -2752,7 +2756,7 @@ public class AST {
         listener.onParameterStart(parameterStartContext);
     }
 
-    static void encodeParameterEnd(StringASTBuffer astBuffer) {
+    public static void encodeParameterEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.PARAMETER);
     }
@@ -2765,7 +2769,7 @@ public class AST {
         listener.onParameterEnd(parameterStartContext, endContext);
     }
 
-    static void encodeNestedExpressionStart(StringASTBuffer astBuffer) {
+    public static void encodeNestedExpressionStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.NESTED_EXPRESSION);
     }
@@ -2779,7 +2783,7 @@ public class AST {
         listener.onNestedExpressionStart(nestedExpressionStartContext);
     }
 
-    static void encodeNestedExpressionEnd(StringASTBuffer astBuffer) {
+    public static void encodeNestedExpressionEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.NESTED_EXPRESSION);
     }
@@ -2792,7 +2796,7 @@ public class AST {
         listener.onNestedExpressionEnd(nestedExpressionStartContext, endContext);
     }
 
-    static void encodePrimariesStart(StringASTBuffer astBuffer) {
+    public static void encodePrimariesStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.PRIMARY_LIST);
     }
@@ -2805,7 +2809,7 @@ public class AST {
         listener.onPrimaryStart(primariesStartContext);
     }
 
-    static void encodePrimariesEnd(StringASTBuffer astBuffer) {
+    public static void encodePrimariesEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.PRIMARY_LIST);
     }
@@ -2821,7 +2825,7 @@ public class AST {
 
     private static final int FIELD_ACCESS_SIZE = STRING_REF_SIZE;
 
-    static void encodeFieldAccess(StringASTBuffer astBuffer, long fieldName) {
+    public static void encodeFieldAccess(StringASTBuffer astBuffer, long fieldName) {
 
         astBuffer.writeElementStart(ParseTreeElement.FIELD_ACCESS);
         astBuffer.writeStringRef(fieldName);
@@ -2842,7 +2846,7 @@ public class AST {
                 fieldAccessStartContext);
     }
 
-    static void encodeAnnotationStart(StringASTBuffer astBuffer, Names names) {
+    public static void encodeAnnotationStart(StringASTBuffer astBuffer, Names names) {
 
         astBuffer.writeElementStart(ParseTreeElement.ANNOTATION);
 
@@ -2860,7 +2864,7 @@ public class AST {
         listener.onAnnotationStart(annotationStartContext, names);
     }
 
-    static void encodeAnnotationEnd(StringASTBuffer astBuffer) {
+    public static void encodeAnnotationEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ANNOTATION);
     }
@@ -2875,7 +2879,7 @@ public class AST {
 
     private static final int ANNOTATION_ELEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeAnnotationElementStart(StringASTBuffer astBuffer, long name, int nameContext) {
+    public static void encodeAnnotationElementStart(StringASTBuffer astBuffer, long name, int nameContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.ANNOTATION_ELEMENT);
 
@@ -2901,7 +2905,7 @@ public class AST {
                 astBuffer.getContextRef(index + STRING_REF_SIZE));
     }
 
-    static void encodeAnnotationElementEnd(StringASTBuffer astBuffer) {
+    public static void encodeAnnotationElementEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.ANNOTATION_ELEMENT);
     }
@@ -2916,7 +2920,7 @@ public class AST {
 
     private static final int NAME_PRIMARY_SIZE = STRING_REF_SIZE;
 
-    static void encodeNamePrimary(StringASTBuffer astBuffer, long name, int nameContext) {
+    public static void encodeNamePrimary(StringASTBuffer astBuffer, long name, int nameContext) {
 
         astBuffer.writeLeafElement(ParseTreeElement.NAME_PRIMARY);
 
@@ -2940,7 +2944,7 @@ public class AST {
 
     private static final int NAME_REFERENCE_SIZE = STRING_REF_SIZE;
 
-    static void encodeNameReference(StringASTBuffer astBuffer, long name, int nameContext) {
+    public static void encodeNameReference(StringASTBuffer astBuffer, long name, int nameContext) {
 
         astBuffer.writeLeafElement(ParseTreeElement.NAME_REFERENCE);
 
@@ -2962,7 +2966,7 @@ public class AST {
                 astBuffer.getStringRef(index));
     }
 
-    static void encodeTypeArgumentListStart(StringASTBuffer astBuffer) {
+    public static void encodeTypeArgumentListStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.TYPE_ARGUMENT_LIST);
     }
@@ -2975,7 +2979,7 @@ public class AST {
         listener.onGenericTypeArgumentsStart(typeArgumentListStartContext);
     }
 
-    static void encodeTypeArgumentListEnd(StringASTBuffer astBuffer) {
+    public static void encodeTypeArgumentListEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.TYPE_ARGUMENT_LIST);
     }
@@ -2988,7 +2992,7 @@ public class AST {
         listener.onGenericTypeArgumentsEnd(typeArgumentListStartContext, endContext);
     }
 
-    static void encodeReferenceTypeArgumentStart(StringASTBuffer astBuffer) {
+    public static void encodeReferenceTypeArgumentStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.REFERENCE_GENERIC_TYPE_ARGUMENT);
     }
@@ -3003,7 +3007,7 @@ public class AST {
         listener.onGenericReferenceTypeArgumentStart(referenceTypeArgumentStartContext);
     }
 
-    static void encodeReferenceTypeArgumentEnd(StringASTBuffer astBuffer) {
+    public static void encodeReferenceTypeArgumentEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.REFERENCE_GENERIC_TYPE_ARGUMENT);
     }
@@ -3016,7 +3020,7 @@ public class AST {
         listener.onGenericReferenceTypeArgumentEnd(referenceTypeArgumentStartContext, endContext);
     }
 
-    static void encodeWildcardTypeArgumentStart(StringASTBuffer astBuffer) {
+    public static void encodeWildcardTypeArgumentStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.WILDCARD_GENERIC_TYPE_ARGUMENT);
     }
@@ -3031,7 +3035,7 @@ public class AST {
         listener.onGenericWildcardTypeArgumentStart(wildcardTypeArgumentStartContext);
     }
 
-    static void encodeWildcardTypeArgumentEnd(StringASTBuffer astBuffer) {
+    public static void encodeWildcardTypeArgumentEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.WILDCARD_GENERIC_TYPE_ARGUMENT);
     }
@@ -3046,7 +3050,7 @@ public class AST {
 
     private static final int TYPE_BOUND_SIZE = 1;
 
-    static void encodeTypeBoundStart(StringASTBuffer astBuffer, TypeBoundType type) {
+    public static void encodeTypeBoundStart(StringASTBuffer astBuffer, TypeBoundType type) {
 
         astBuffer.writeElementStart(ParseTreeElement.TYPE_BOUND);
         astBuffer.writeEnumByte(type);
@@ -3063,7 +3067,7 @@ public class AST {
         listener.onTypeBoundStart(typeBoundStartContext, type);
     }
 
-    static void encodeTypeBoundEnd(StringASTBuffer astBuffer) {
+    public static void encodeTypeBoundEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.TYPE_BOUND);
     }
@@ -3076,7 +3080,7 @@ public class AST {
         listener.onTypeBoundEnd(typeBoundStartContext, endContext);
     }
 
-    static void encodeGenericTypeParametersStart(StringASTBuffer astBuffer) {
+    public static void encodeGenericTypeParametersStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.GENERIC_TYPE_PARAMETERS);
     }
@@ -3092,7 +3096,7 @@ public class AST {
 
     private static final int NAMED_GENERIC_TYPE_PARAMETER_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    static void encodeNamedGenericTypeParameterStart(StringASTBuffer astBuffer, long name, int nameContext) {
+    public static void encodeNamedGenericTypeParameterStart(StringASTBuffer astBuffer, long name, int nameContext) {
 
         astBuffer.writeElementStart(ParseTreeElement.NAMED_GENERIC_TYPE_PARAMETER);
         astBuffer.writeStringRef(name);
@@ -3122,7 +3126,7 @@ public class AST {
                 extendsKeywordContext);
     }
 
-    static void encodeNamedGenericTypeParameterEnd(StringASTBuffer astBuffer) {
+    public static void encodeNamedGenericTypeParameterEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.NAMED_GENERIC_TYPE_PARAMETER);
     }
@@ -3135,7 +3139,7 @@ public class AST {
         listener.onNamedGenericTypeParameterEnd(parameterStartContext, endContext);
     }
 
-    static void encodeGenericTypeParametersEnd(StringASTBuffer astBuffer) {
+    public static void encodeGenericTypeParametersEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.GENERIC_TYPE_PARAMETERS);
     }
@@ -3173,33 +3177,33 @@ public class AST {
         return size;
     }
 
-    static void encodeVisibilityFieldModifier(StringASTBuffer astBuffer, FieldVisibility fieldVisibility) {
+    public static void encodeVisibilityFieldModifier(StringASTBuffer astBuffer, FieldVisibility fieldVisibility) {
 
         astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(FieldModifier.Type.VISIBILITY);
         astBuffer.writeEnumByte(fieldVisibility.getVisibility());
     }
 
-    static void encodeMutabilityModifier(StringASTBuffer astBuffer, ASTMutability mutability) {
+    public static void encodeMutabilityModifier(StringASTBuffer astBuffer, ASTMutability mutability) {
 
         astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(FieldModifier.Type.MUTABILITY);
         astBuffer.writeEnumByte(mutability.getMutability());
     }
 
-    static void encodeStaticFieldModifier(StringASTBuffer astBuffer) {
+    public static void encodeStaticFieldModifier(StringASTBuffer astBuffer) {
 
         astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(FieldModifier.Type.STATIC);
     }
 
-    static void encodeVolatileFieldModifier(StringASTBuffer astBuffer) {
+    public static void encodeVolatileFieldModifier(StringASTBuffer astBuffer) {
 
         astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(FieldModifier.Type.VOLATILE);
     }
 
-    static void encodeTransientFieldModifier(StringASTBuffer astBuffer) {
+    public static void encodeTransientFieldModifier(StringASTBuffer astBuffer) {
 
         astBuffer.writeLeafElement(ParseTreeElement.FIELD_MODIFIER_HOLDER);
         astBuffer.writeEnumByte(FieldModifier.Type.TRANSIENT);
@@ -3243,7 +3247,7 @@ public class AST {
         }
     }
 
-    static void encodeClassInstanceCreationExpressionStart(StringASTBuffer astBuffer) {
+    public static void encodeClassInstanceCreationExpressionStart(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementStart(ParseTreeElement.CLASS_INSTANCE_CREATION_EXPRESSION);
     }
@@ -3256,7 +3260,7 @@ public class AST {
     }
 
 
-    static void encodeClassInstanceCreationTypeAndConstructorName(StringASTBuffer astBuffer, long name, int nameContext) {
+    public static void encodeClassInstanceCreationTypeAndConstructorName(StringASTBuffer astBuffer, long name, int nameContext) {
 
         astBuffer.writeLeafElement(ParseTreeElement.CLASS_INSTANCE_CREATION_EXPRESSION_NAME);
 
@@ -3272,7 +3276,7 @@ public class AST {
         listener.onClassInstanceCreationTypeAndConstructorName(startContext, decodeNames(astBuffer, index));
     }
 
-    static void encodeClassInstanceCreationExpressionEnd(StringASTBuffer astBuffer) {
+    public static void encodeClassInstanceCreationExpressionEnd(StringASTBuffer astBuffer) {
 
         astBuffer.writeElementEnd(ParseTreeElement.CLASS_INSTANCE_CREATION_EXPRESSION);
     }

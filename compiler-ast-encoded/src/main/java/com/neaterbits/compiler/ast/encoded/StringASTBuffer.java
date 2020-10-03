@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.parser.listener.encoded;
+package com.neaterbits.compiler.ast.encoded;
 
 import java.util.Objects;
 
@@ -6,7 +6,7 @@ import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.util.io.strings.StringBufferAdder;
 
-final class StringASTBuffer {
+public final class StringASTBuffer {
 
     private final StringBufferAdder stringBufferAdder;
 
@@ -50,17 +50,17 @@ final class StringASTBuffer {
         astBuffer.writeInt(-1);
     }
 
-    int getParseTreeRef() {
+    public int getParseTreeRef() {
 
         return astBuffer.getWritePos();
     }
 
-    void writeElementStart(ParseTreeElement element) {
+    public void writeElementStart(ParseTreeElement element) {
 
         astBuffer.writeElementStart(element);
     }
 
-    void writeElementEnd(ParseTreeElement element) {
+    public void writeElementEnd(ParseTreeElement element) {
 
         astBuffer.writeElementEnd(element);
     }
@@ -101,11 +101,11 @@ final class StringASTBuffer {
         astBuffer.writeByte((byte)ordinal);
     }
 
-    ASTBufferRead getASTReadBuffer() {
+    public ASTBufferRead getASTReadBuffer() {
         return astBuffer;
     }
 
-    MapStringStorageBuffer getStringBuffer() {
+    public MapStringStorageBuffer getStringBuffer() {
         return stringBuffer;
     }
 

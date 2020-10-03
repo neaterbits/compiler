@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.parser.listener.encoded;
+package com.neaterbits.compiler.ast.encoded;
 
 import com.neaterbits.compiler.types.ParseTreeElement;
 

@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.parser.listener.encoded;
 
 import com.neaterbits.compiler.util.Context;
+import com.neaterbits.compiler.ast.encoded.AST;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.util.io.strings.Tokenizer;
 

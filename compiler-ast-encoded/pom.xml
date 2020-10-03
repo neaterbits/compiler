@@ -12,7 +12,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>compiler-parser-listener-encoded</artifactId>
+			<artifactId>compiler-parser-listener-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

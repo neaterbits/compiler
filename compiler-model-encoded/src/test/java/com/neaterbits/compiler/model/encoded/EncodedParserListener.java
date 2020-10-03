@@ -2,8 +2,8 @@ package com.neaterbits.compiler.model.encoded;
 
 import java.util.Map;
 
+import com.neaterbits.compiler.ast.encoded.ASTBufferRead;
 import com.neaterbits.compiler.ast.encoded.EncodedCompilationUnit;
-import com.neaterbits.compiler.parser.listener.encoded.ASTBufferRead;
 import com.neaterbits.compiler.parser.listener.encoded.BaseEncodedIterativeParserListener;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.IntKeyIntValueHash;
