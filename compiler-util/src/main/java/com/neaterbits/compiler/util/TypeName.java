@@ -11,21 +11,30 @@ public class TypeName {
 	private final String [] namespace;
 	private final String [] outerTypes;
 	private final String name;
-	
+
 	public static TypeName fromNamespace(Collection<String> namespace, String name) {
 		return new TypeName(namespace.toArray(new String[namespace.size()]), null, name);
 	}
-	
+
 	public TypeName(String[] namespace, String[] outerTypes, String name) {
 
 		Objects.requireNonNull(name);
-		
+
 		this.namespace = namespace;
 		this.outerTypes = outerTypes;
 		this.name = name;
 	}
 
-	
+	public TypeName(String name) {
+
+	    Objects.requireNonNull(name);
+
+	    this.namespace = null;
+	    this.outerTypes = null;
+	    this.name = name;
+	}
+
+
 	public final String[] getNamespace() {
 		return namespace;
 	}
@@ -39,19 +48,19 @@ public class TypeName {
 	}
 
 	public final ScopedName toScopedName() {
-		
+
 		final List<String> scope;
-		
+
 		if (namespace == null && outerTypes == null) {
 			scope = null;
 		}
 		else if (namespace != null && outerTypes != null) {
 			scope = new ArrayList<>(namespace.length + outerTypes.length);
-			
+
 			for (int i = 0; i < namespace.length; ++ i) {
 				scope.add(namespace[i]);
 			}
-			
+
 			for (int i = 0; i < outerTypes.length; ++ i) {
 				scope.add(outerTypes[i]);
 			}
@@ -65,10 +74,10 @@ public class TypeName {
 
 		return new ScopedName(scope, name);
 	}
-	
+
 	public String join(char separator) {
 		final StringBuilder sb = new StringBuilder();
-		
+
 		if (namespace != null) {
 			sb.append(Strings.join(namespace, separator));
 		}
@@ -76,20 +85,20 @@ public class TypeName {
 		if (outerTypes != null) {
 			sb.append(Strings.join(outerTypes, separator));
 		}
-		
+
 		if (sb.length() != 0) {
 			sb.append(separator);
 		}
-		
+
 		sb.append(name);
-		
+
 		return sb.toString();
 	}
-	
+
 	public String toDebugString() {
 		return join('.');
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

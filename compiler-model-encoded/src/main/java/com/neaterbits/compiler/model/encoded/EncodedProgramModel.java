@@ -260,7 +260,7 @@ public final class EncodedProgramModel
     @Override
     public void iterateTypeReferences(
             EncodedCompilationUnit compilationUnit,
-            TypeReferenceVisitor visitor) {
+            TypeReferenceVisitor<EncodedCompilationUnit> visitor) {
 
         iterateTypeReferences(compilationUnit.getBuffer(), 0, compilationUnit, visitor);
     }
@@ -269,7 +269,7 @@ public final class EncodedProgramModel
             ASTBufferRead astBuffer,
             int parseTreeRef,
             EncodedCompilationUnit compilationUnit,
-            TypeReferenceVisitor visitor) {
+            TypeReferenceVisitor<EncodedCompilationUnit> visitor) {
 
         final ParseTreeElementRef ref = new ParseTreeElementRef();
 
@@ -290,6 +290,7 @@ public final class EncodedProgramModel
                         = AST.decodeIdentifierTypeReferenceName(astBuffer, ref.index);
 
                     visitor.onNonScopedTypeReference(
+                            compilationUnit,
                             parseTreeRef,
                             compilationUnit.getStringFromRef(typeReferenceName));
                 }
@@ -298,7 +299,7 @@ public final class EncodedProgramModel
             case COMPLEX_TYPE_REFERENCE:
                 final int typeNo = AST.decodeResolvedTypeReferenceTypeNo(astBuffer, ref.index);
 
-                visitor.onResolvedTypeReference(parseTreeRef, typeNo);
+                visitor.onResolvedTypeReference(compilationUnit, parseTreeRef, typeNo);
                 break;
 
             case COMPILATION_UNIT:

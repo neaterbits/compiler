@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.model.common.util;
 
+@Deprecated
 public enum ReferenceLocation {
 
 	EXTENDS_FROM,
@@ -10,5 +11,5 @@ public enum ReferenceLocation {
 	VARIABLE_INITIALIZER,
 	CATCH_EXCEPTION,
 	CLASS_INSTANCE_CREATION;
-	
+
 }

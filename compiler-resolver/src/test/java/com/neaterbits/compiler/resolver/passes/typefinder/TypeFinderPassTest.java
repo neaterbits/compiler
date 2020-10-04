@@ -15,6 +15,7 @@ import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.model.common.ParseTreeModel;
 import com.neaterbits.compiler.model.common.TypeVisitor;
 import com.neaterbits.compiler.resolver.passes.ParsedFilesAndCodeMap;
+import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.util.parse.ParserException;
@@ -39,7 +40,7 @@ public class TypeFinderPassTest {
 
         Mockito.when(parsedFile.getCompilationUnit()).thenReturn(compilationUnit);
 
-        typeFinderPass.execute(input);
+        final FoundTypeFiles<ParsedFile> found = typeFinderPass.execute(input);
 
         Mockito.verify(parsedFile).getCompilationUnit();
 
@@ -77,6 +78,9 @@ public class TypeFinderPassTest {
                 "TestClass");
 
         assertThat(codeMap.getTypeNoByTypeName(testClassTypeName)).isEqualTo(0);
+        assertThat(found.lookupByScopedName(
+                        ScopedName.makeScopedName(new String [] { "com", "test", "TestClass" })))
+            .isEqualTo(testClassTypeName);
 
         final TypeName testInnerClassTypeName = new TypeName(
                 new String [] { "com", "test" },
@@ -84,6 +88,9 @@ public class TypeFinderPassTest {
                 "TestInnerClass");
 
         assertThat(codeMap.getTypeNoByTypeName(testInnerClassTypeName)).isEqualTo(1);
+        assertThat(found.lookupByScopedName(
+                        ScopedName.makeScopedName(new String [] { "com", "test", "TestClass", "TestInnerClass" })))
+            .isEqualTo(testInnerClassTypeName);
 
         final TypeName testInterfaceTypeName = new TypeName(
                 new String [] { "com", "test" },
@@ -91,6 +98,9 @@ public class TypeFinderPassTest {
                 "TestInterface");
 
         assertThat(codeMap.getTypeNoByTypeName(testInterfaceTypeName)).isEqualTo(2);
+        assertThat(found.lookupByScopedName(
+                        ScopedName.makeScopedName(new String [] { "com", "test", "TestInterface" })))
+            .isEqualTo(testInterfaceTypeName);
 
         final TypeName testEnumTypeName = new TypeName(
                 new String [] { "com", "test" },
@@ -98,6 +108,9 @@ public class TypeFinderPassTest {
                 "TestEnum");
 
         assertThat(codeMap.getTypeNoByTypeName(testEnumTypeName)).isEqualTo(3);
+        assertThat(found.lookupByScopedName(
+                        ScopedName.makeScopedName(new String [] { "com", "test", "TestEnum" })))
+            .isEqualTo(testEnumTypeName);
 
         Mockito.verifyNoMoreInteractions(compilationUnit, parsedFile, parseTreeModel);
     }

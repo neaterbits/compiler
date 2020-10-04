@@ -1,8 +1,12 @@
 package com.neaterbits.compiler.model.common;
 
-public interface TypeReferenceVisitor {
+import com.neaterbits.compiler.util.ScopedName;
 
-    void onNonScopedTypeReference(int parseTreeElement, CharSequence name);
+public interface TypeReferenceVisitor<COMPILATION_UNIT> extends NamespaceVisitor {
 
-    void onResolvedTypeReference(int parseTreeElement, int typeNo);
+    void onNonScopedTypeReference(COMPILATION_UNIT compilationUnit, int parseTreeElement, CharSequence name);
+
+    void onScopedTypeReference(COMPILATION_UNIT compilationUnit, int parseTreeElement, ScopedName scopeName);
+
+    void onResolvedTypeReference(COMPILATION_UNIT compilationUnit, int parseTreeElement, int typeNo);
 }

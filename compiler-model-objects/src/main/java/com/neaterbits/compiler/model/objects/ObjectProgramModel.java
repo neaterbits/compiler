@@ -701,7 +701,7 @@ public class ObjectProgramModel
     }
 
     @Override
-    public void iterateTypeReferences(CompilationUnit compilationUnit, TypeReferenceVisitor visitor) {
+    public void iterateTypeReferences(CompilationUnit compilationUnit, TypeReferenceVisitor<CompilationUnit> visitor) {
 
         compilationUnit.iterateNodeFirst(new ASTVisitor() {
 
@@ -720,6 +720,7 @@ public class ObjectProgramModel
                     else {
 
                         visitor.onNonScopedTypeReference(
+                                compilationUnit,
                                 compilationUnit.getParseTreeRefFromElement(element),
                                 scopedName.getName());
                     }
@@ -729,6 +730,7 @@ public class ObjectProgramModel
                     final ComplexTypeReference typeReference = (ComplexTypeReference)element;
 
                     visitor.onResolvedTypeReference(
+                            compilationUnit,
                             compilationUnit.getParseTreeRefFromElement(element),
                             typeReference.getTypeNo());
                 }

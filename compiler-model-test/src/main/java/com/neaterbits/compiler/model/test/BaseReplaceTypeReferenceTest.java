@@ -15,6 +15,7 @@ public abstract class BaseReplaceTypeReferenceTest<COMPILATION_UNIT>
         super(testModel);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testReplaceReference() {
 
@@ -40,7 +41,7 @@ public abstract class BaseReplaceTypeReferenceTest<COMPILATION_UNIT>
 
         final COMPILATION_UNIT compilationUnit = util.builder.endCompilationUnit();
 
-        final TypeReferenceVisitor visitor
+        final TypeReferenceVisitor<COMPILATION_UNIT> visitor
             = Mockito.mock(TypeReferenceVisitor.class);
 
         util.parseTreeModel.iterateTypeReferences(compilationUnit, visitor);
@@ -49,6 +50,7 @@ public abstract class BaseReplaceTypeReferenceTest<COMPILATION_UNIT>
             = ArgumentCaptor.forClass(Integer.class);
 
         Mockito.verify(visitor).onNonScopedTypeReference(
+                ArgumentMatchers.same(compilationUnit),
                 parseTreeElementCaptor.capture(),
                 ArgumentMatchers.eq("ALanguageType"));
 
@@ -69,6 +71,7 @@ public abstract class BaseReplaceTypeReferenceTest<COMPILATION_UNIT>
         util.parseTreeModel.iterateTypeReferences(compilationUnit, visitor);
 
         Mockito.verify(visitor).onResolvedTypeReference(
+                ArgumentMatchers.same(compilationUnit),
                 ArgumentMatchers.anyInt(),
                 ArgumentMatchers.eq(typeNo));
 

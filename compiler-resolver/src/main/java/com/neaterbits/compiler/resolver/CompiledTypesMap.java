@@ -10,36 +10,37 @@ import com.neaterbits.compiler.resolver.types.CompiledFile;
 import com.neaterbits.compiler.resolver.types.CompiledType;
 import com.neaterbits.compiler.util.ScopedName;
 
+@Deprecated
 final class CompiledTypesMap implements TypesMap<CompiledType> {
 
 	private final Map<ScopedName, CompiledType> map;
-	
+
 	<COMPILATION_UNIT> CompiledTypesMap(Collection<CompiledFile<COMPILATION_UNIT>> files) {
-		
+
 		this.map = new HashMap<>();
 
 		for (CompiledFile<COMPILATION_UNIT> file : files) {
 			addTypes(file.getTypes());
 		}
 	}
-	
+
 	private void addTypes(Collection<CompiledType> types) {
-		
+
 		for (CompiledType type : types) {
-			
+
 			map.put(type.getScopedName(), type);
-			
+
 			if (type.getNestedTypes() != null) {
 				addTypes(type.getNestedTypes());
 			}
 		}
 	}
-	
+
 	@Override
 	public CompiledType lookupByScopedName(ScopedName scopedName) {
-		
+
 		Objects.requireNonNull(scopedName);
-		
+
 		return map.get(scopedName);
 	}
 }

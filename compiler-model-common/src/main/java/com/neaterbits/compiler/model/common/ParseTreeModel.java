@@ -27,5 +27,5 @@ public interface ParseTreeModel<COMPILATION_UNIT> {
 
     void replaceTypeReference(COMPILATION_UNIT compilationUnit, int toReplace, int typeNo, TypeName typeName);
 
-    void iterateTypeReferences(COMPILATION_UNIT compilationUnit, TypeReferenceVisitor visitor);
+    void iterateTypeReferences(COMPILATION_UNIT compilationUnit, TypeReferenceVisitor<COMPILATION_UNIT> visitor);
 }

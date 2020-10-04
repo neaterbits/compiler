@@ -10,17 +10,17 @@ public interface CompilerCodeMap extends CodeMap, CrossReferenceUpdater, CrossRe
 	int addFile(String file, int [] types);
 
 	void addTypeMapping(TypeName name, int typeNo);
-	
-	Integer getTypeNoByTypeName(TypeName typeName);
-	
+
+    Integer getTypeNoByTypeName(TypeName typeName);
+
 	void removeFile(String file);
 
 	default int addType(TypeVariant typeVariant, int numMethods, int [] thisExtendsFromClasses, int [] thisExtendsFromInterfaces) {
-		
+
 		final int typeNo = addType(typeVariant, thisExtendsFromClasses, thisExtendsFromInterfaces);
-		
+
 		setMethodCount(typeNo, numMethods);
-		
+
 		return typeNo;
 	}
 

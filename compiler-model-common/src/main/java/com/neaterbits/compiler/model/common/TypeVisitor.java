@@ -1,12 +1,6 @@
 package com.neaterbits.compiler.model.common;
 
-public interface TypeVisitor {
-
-    void onNamespaceStart();
-
-    void onNamespacePart(CharSequence part);
-
-    void onNamespaceEnd();
+public interface TypeVisitor extends NamespaceVisitor {
 
     void onClassStart(CharSequence name);
 

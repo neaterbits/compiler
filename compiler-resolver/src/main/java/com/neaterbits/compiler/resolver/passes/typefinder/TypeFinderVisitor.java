@@ -1,23 +1,29 @@
 package com.neaterbits.compiler.resolver.passes.typefinder;
 
+import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.TypeVisitor;
 import com.neaterbits.compiler.util.ArrayStack;
+import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.TypeName;
 
 final class TypeFinderVisitor implements TypeVisitor {
 
     private final CompilerCodeMap codeMap;
+    private final Map<ScopedName, TypeName> typeNameByScopedName;
     private final ArrayStack<TypeFinderScope> stack;
 
-    public TypeFinderVisitor(CompilerCodeMap codeMap) {
+    public TypeFinderVisitor(CompilerCodeMap codeMap, Map<ScopedName, TypeName> typeNameByScopedName) {
 
         Objects.requireNonNull(codeMap);
+        Objects.requireNonNull(typeNameByScopedName);
 
         this.codeMap = codeMap;
+        this.typeNameByScopedName = typeNameByScopedName;
+
         this.stack = new ArrayStack<>();
     }
 
@@ -77,6 +83,10 @@ final class TypeFinderVisitor implements TypeVisitor {
                 namespace.getParts(),
                 outerTypes,
                 nameString);
+
+        if (typeNameByScopedName.put(typeName.toScopedName(), typeName) != null) {
+            throw new IllegalStateException("Already added " + typeName.toScopedName());
+        }
 
         // Map for later resolving of types
         codeMap.addTypeMapping(typeName, typeNo);
