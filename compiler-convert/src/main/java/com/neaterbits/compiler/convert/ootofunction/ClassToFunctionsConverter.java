@@ -31,10 +31,9 @@ import com.neaterbits.compiler.ast.objects.typereference.FunctionPointerTypeRefe
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.codemap.TypeInfo;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.convert.OOToProceduralConverterUtil;
-import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
-import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
 import com.neaterbits.compiler.util.TypeName;
 
 /**
@@ -145,7 +144,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 	public static StructType convertClassMethodsToVTable(
 			ClassType classType,
 			OOToProceduralDeclarations<?> alreadyConvertedMap,
-			ResolvedTypeCodeMap codeMap,
+			CompilerCodeMap codeMap,
 			java.util.function.Function<BaseType, BaseType> convertMethodType,
 			java.util.function.Function<CompleteName, StructName> classToStructName,
 			java.util.function.Function<TypeName, FieldNameDeclaration> classToFieldName,
@@ -160,12 +159,12 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 
 		if (extendsFromTypeInfo != null) {
 
-			final UserDefinedTypeRef extendsFromType = codeMap.getType(extendsFromTypeInfo.getTypeNo());
+			final TypeName extendsFromType = codeMap.getTypeName(extendsFromTypeInfo.getTypeNo());
 
-			final StructType baseStructType = alreadyConvertedMap.getClassStructType(extendsFromType.getTypeName());
+			final StructType baseStructType = alreadyConvertedMap.getClassStructType(extendsFromType);
 
 			if (baseStructType == null) {
-				throw new IllegalStateException("No struct type for " + extendsFromType.getTypeName());
+				throw new IllegalStateException("No struct type for " + extendsFromType);
 			}
 
 			// Add a class member for the base type
@@ -175,7 +174,7 @@ public class ClassToFunctionsConverter<T extends OOToProceduralConverterState<T>
 					        classDefinition.getContext(),
 					        -1,
 					        baseStructType.getTypeName()),
-					Arrays.asList(classToFieldName.apply(extendsFromType.getTypeName())));
+					Arrays.asList(classToFieldName.apply(extendsFromType)));
 
 			structMembers.add(structDataFieldMember);
 		}

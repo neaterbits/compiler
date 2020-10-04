@@ -18,7 +18,6 @@ import com.neaterbits.compiler.ast.objects.Module;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.NamespaceDeclaration;
 import com.neaterbits.compiler.ast.objects.Program;
-import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.objects.parser.DirectoryParser;
 import com.neaterbits.compiler.ast.objects.parser.FileTypeParser;
 import com.neaterbits.compiler.ast.objects.parser.ProgramParser;
@@ -26,17 +25,15 @@ import com.neaterbits.compiler.ast.objects.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
-import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ProgramEmitter;
 import com.neaterbits.compiler.java.JavaLexerObjectParser;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
-import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
-import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
-import com.neaterbits.compiler.resolver.types.ResolvedType;
 import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.modules.ModuleId;
 import com.neaterbits.compiler.util.modules.ModuleSpec;
 import com.neaterbits.compiler.util.modules.SourceModuleSpec;
@@ -188,7 +185,7 @@ public abstract class BaseJavaCompilerTest {
 
 	static <T extends MappingJavaToCConverterState<T>>
 	JavaToCDeclarations convertClassesAndInterfacesToStruct(
-			AddTypesAndMembersToCodeMapResult<ASTParsedFile, CompilationUnit> resolveResult,
+			CompilerCodeMap codeMap,
 			MappingJavaToCConverterState<T> converterState) {
 
 		final JavaToCDeclarations declarations = new JavaToCDeclarations();
@@ -208,8 +205,9 @@ public abstract class BaseJavaCompilerTest {
 		 */
 
 		convertTypes(
-				resolveResult.getTypesInDependencyOrder(),
-				resolveResult.getCodeMap(),
+		        null,
+				// resolveResult.getTypesInDependencyOrder(),
+				codeMap,
 				declarations,
 				convertLaterTypeReferences,
 				converterState);
@@ -233,16 +231,16 @@ public abstract class BaseJavaCompilerTest {
 	}
 
 	private static <T extends MappingJavaToCConverterState<T>> void convertTypes(
-			Collection<ResolvedType> types,
-			ResolvedTypeCodeMap codeMap,
+			Collection<TypeName> types,
+			CompilerCodeMap codeMap,
 			JavaToCDeclarations declarations,
 			List<ComplexTypeReference> convertLaterTypeReferences,
 			MappingJavaToCConverterState<T> converterState) {
 
 
-		for (ResolvedType resolvedType : types) {
+		for (TypeName resolvedType : types) {
 
-			if (resolvedType.getTypeVariant() == TypeVariant.CLASS) {
+			// if (resolvedType.getTypeVariant() == TypeVariant.CLASS) {
 
 				throw new UnsupportedOperationException();
 
@@ -271,7 +269,7 @@ public abstract class BaseJavaCompilerTest {
 
 				declarations.add(new JavaToCClassDeclaration(classType, classStructType, vtableStructType));
 				*/
-			}
+			// }
 		}
 	}
 

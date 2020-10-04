@@ -1,56 +1,8 @@
 package com.neaterbits.compiler.main;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import org.junit.Test;
-
-import com.neaterbits.compiler.ast.objects.BaseASTElement;
-import com.neaterbits.compiler.ast.objects.CompilationCode;
-import com.neaterbits.compiler.ast.objects.CompilationUnit;
-import com.neaterbits.compiler.ast.objects.Module;
-import com.neaterbits.compiler.ast.objects.Program;
-import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
-import com.neaterbits.compiler.c.emit.CCompilationUnitEmitter;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
-import com.neaterbits.compiler.emit.EmitterState;
-import com.neaterbits.compiler.emit.base.BaseCompilationUnitEmitter;
-import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
-import com.neaterbits.compiler.language.java.JavaTypes;
-import com.neaterbits.compiler.main.convert.ConvertClass;
-import com.neaterbits.compiler.model.common.ResolveTypesModel;
-import com.neaterbits.compiler.model.common.passes.ParsedFiles;
-import com.neaterbits.compiler.model.objects.ObjectImportsModel;
-import com.neaterbits.compiler.model.objects.ObjectProgramModel;
-import com.neaterbits.compiler.resolver.AddTypesAndMembersToCodeMapResult;
-import com.neaterbits.compiler.resolver.FilesResolver;
-import com.neaterbits.compiler.resolver.ResolveFilesResult;
-import com.neaterbits.compiler.resolver.ResolveLogger;
-import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
-import com.neaterbits.compiler.resolver.ResolverLibraryTypes;
-import com.neaterbits.compiler.resolver.UnresolvedDependencies;
-import com.neaterbits.compiler.resolver.ast.objects.ProgramLoader;
-import com.neaterbits.compiler.resolver.passes.AddTypesAndMembersToCodeMapPass;
-import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass;
-import com.neaterbits.compiler.resolver.passes.ResolvedTypeDependencies;
-import com.neaterbits.compiler.resolver.types.CompiledFile;
-import com.neaterbits.compiler.resolver.types.ResolvedType;
-import com.neaterbits.compiler.util.FullContext;
-import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.modules.ModuleId;
-import com.neaterbits.compiler.util.modules.SourceModuleSpec;
-import com.neaterbits.util.parse.ParserException;
-
 public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
+    /*
 	@Test
 	public void testIfStatements() throws IOException, ParserException {
 
@@ -229,6 +181,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 				common,
 				Collections.emptyList(),
 				new File(baseDirectory, "common/src/main/java"));
+				*/
 
 		/*
 		final SourceModuleSpec javaModuleSpec = new SourceModuleSpec(
@@ -237,11 +190,13 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 				new File(baseDirectory, "java/src/main/java"));
 		*/
 
+    /*
 		final Program program = parseProgram(Arrays.asList(commonModuleSpec));
 
 		final ObjectProgramModel astModel = new ObjectProgramModel();
 
 		resolveFiles(program, null, astModel);
+		*/
 
 	/*
 		final PrintStream logOutput = new PrintStream(new ByteArrayOutputStream());
@@ -251,10 +206,11 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 				new ParseLogger(logOutput));
 
 		assertThat(parsedFiles.size()).isGreaterThan(0);
-		*/
 	}
+        */
 
 
+    /*
 	private CompilationUnit convert(
 			CompilationUnit javaCompilationUnit,
 			JavaToCDeclarations declarations,
@@ -276,4 +232,6 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 			System.out.println(Strings.indent(stack.size()) + element.getClass().getSimpleName());
 		});
 	}
+	*/
 }
+

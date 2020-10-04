@@ -6,7 +6,7 @@ import com.neaterbits.compiler.ast.objects.block.MethodName;
 import com.neaterbits.compiler.ast.objects.type.CompleteName;
 import com.neaterbits.compiler.ast.objects.typedefinition.StructName;
 import com.neaterbits.compiler.codemap.TypeInfo;
-import com.neaterbits.compiler.resolver.ResolvedTypeCodeMap;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.types.MethodInfo;
 import com.neaterbits.compiler.util.TypeName;
 
@@ -16,62 +16,62 @@ public abstract class OOToProceduralConverterState<T extends OOToProceduralConve
 	public abstract FunctionName methodToFunctionName(CompleteName type, MethodName methodName);
 
 	public abstract StructName classToStructName(CompleteName type);
-	
+
 	public abstract FieldNameDeclaration getVTableBaseFieldName(CompleteName type);
-	
+
 	public abstract FieldNameDeclaration getVTableFunctionFieldName(MethodName methodName);
 
 	public abstract String getClassStaticMembersArrayName();
-	
+
 	public abstract String getClassStaticVTableArrayName();
-	
-	private final ResolvedTypeCodeMap codeMap;
-	
-	protected OOToProceduralConverterState(Converters<T> converters, ResolvedTypeCodeMap codeMap) {
-		
+
+	private final CompilerCodeMap codeMap;
+
+	protected OOToProceduralConverterState(Converters<T> converters, CompilerCodeMap codeMap) {
+
 		super(converters);
-		
+
 		this.codeMap = codeMap;
 	}
-	
+
 	public int getTypeNo(TypeName type) {
-		
+
 		final TypeInfo typeInfo = codeMap.getTypeInfo(type);
-		
+
 		return typeInfo != null ? typeInfo.getTypeNo() : -1;
 	}
-	
-	
+
+
 	public MethodInfo getMethodInfo(TypeName classType, String methodName, TypeName [] parameterTypes) {
 		final MethodInfo methodInfo = codeMap.getMethodInfo(classType, methodName, parameterTypes);
 
 		return methodInfo;
 	}
-	
+
 	public MethodDispatch getMethodDispatch(MethodInfo methodInfo) {
-		
+
 		final MethodDispatch methodDispatch;
-		
+
 		switch (methodInfo.getMethodVariant()) {
 		case ABSTRACT:
 			methodDispatch = MethodDispatch.VTABLE;
 			break;
-			
+
 		case FINAL_IMPLEMENTATION:
 			methodDispatch = MethodDispatch.NON_OVERRIDABLE;
 			break;
-			
+
 		case OVERRIDABLE_IMPLEMENTATION:
 			// Might optimize if few implementations
 			methodDispatch = MethodDispatch.VTABLE;
 			break;
-			
+
 		case STATIC:
 		default:
 			throw new UnsupportedOperationException();
 		}
-		
+
 		return methodDispatch;
 	}
-	
+
 }

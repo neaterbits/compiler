@@ -10,13 +10,8 @@ import com.neaterbits.compiler.model.common.passes.CompilerModel;
 import com.neaterbits.compiler.model.common.passes.FileParsePassInput;
 import com.neaterbits.compiler.model.common.passes.LanguageCompiler;
 import com.neaterbits.compiler.resolver.LanguageSpec;
-import com.neaterbits.compiler.resolver.passes.AddTypesAndMembersToCodeMapPass;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
-import com.neaterbits.compiler.resolver.passes.FindTypeDependenciesPass;
 import com.neaterbits.compiler.resolver.passes.LibraryTypes;
-import com.neaterbits.compiler.resolver.passes.ReplaceResolvedTypeReferencesPass;
-import com.neaterbits.compiler.resolver.passes.ResolveTypeDependenciesPass;
-import com.neaterbits.compiler.resolver.passes.namereferenceresolve.NameReferenceResolvePass;
 import com.neaterbits.compiler.types.FieldModifiers;
 import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.Visibility;
@@ -33,12 +28,12 @@ public final class JavaLanguageSpec implements LanguageSpec {
     private static final FullContextProvider FULL_CONTEXT_PROVIDER = CastFullContextProvider.INSTANCE;
 
     private JavaLanguageSpec() {
-        
+
     }
-    
+
     @Override
     public List<TypeImport> getImplicitImports() {
-        
+
         return JavaTypes.getImplicitImports();
     }
 
@@ -69,31 +64,36 @@ public final class JavaLanguageSpec implements LanguageSpec {
                         CompilerModel<COMPILATION_UNIT, PARSED_FILE> model,
                         ResolvedTypes resolvedTypes,
                         CompilerCodeMap codeMap) {
-        
+
         // final JavaProgramModel compilationUnitModel = new JavaProgramModel(FULL_CONTEXT_PROVIDER);
-        
+
         // final CompilationUnitModel<CompilationUnit> model = compilationUnitModel;
-        
+
         final LibraryTypes libraryTypes = scopedName -> {
             final TypeName typeName = resolvedTypes.lookup(scopedName, TypeSources.LIBRARY);
-            
+
             return typeName != null ? new LibraryTypeRef(typeName) : null;
         };
-        
-        return buildCompilerParsePass(model)
-        
+
+        return null
+
+                /*
+                buildCompilerParsePass(model)
+
                 .addSingleToMultiPass(new FindTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE>())
-                
+
                 .addMultiPass(new ResolveTypeDependenciesPass<COMPILATION_UNIT, PARSED_FILE>(
                             model.getImportsModel(),
                             JavaTypes.getBuiltinTypeRefs(),
                             libraryTypes,
                             model.getResolveTypesModel()))
-                
+
                 .addMultiPass(new ReplaceResolvedTypeReferencesPass<>(libraryTypes, model.getResolveTypesModel()))
                 .addMultiPass(new AddTypesAndMembersToCodeMapPass<>(codeMap, model.getResolveTypesModel()))
                 .addMultiPass(new NameReferenceResolvePass<>(model.getCompilationUnitModel()))
-                
-                .build();
+
+                .build()
+                */
+                ;
     }
 }
