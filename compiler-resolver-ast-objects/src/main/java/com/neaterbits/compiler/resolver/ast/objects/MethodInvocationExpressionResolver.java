@@ -21,6 +21,7 @@ import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 
+@Deprecated
 public class MethodInvocationExpressionResolver {
 
 	public static void updateOnResolve(
