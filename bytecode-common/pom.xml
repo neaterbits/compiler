@@ -22,5 +22,11 @@
   		<version>${project.version}</version>
   	</dependency>
   	 -->
+
+  	<dependency>
+  		<groupId>${buildGroupId}</groupId>
+  		<artifactId>build-types</artifactId>
+  		<version>${buildVersion}</version>
+  	</dependency>
   </dependencies>
 </project>

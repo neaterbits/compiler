@@ -2,6 +2,7 @@ package com.neaterbits.compiler.util.model;
 
 import java.util.Collection;
 
+import com.neaterbits.build.types.TypeSource;
 import com.neaterbits.compiler.util.EnumMask;
 
 public class TypeSources extends EnumMask<TypeSource> {

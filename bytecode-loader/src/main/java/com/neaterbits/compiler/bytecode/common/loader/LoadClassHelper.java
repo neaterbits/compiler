@@ -2,12 +2,12 @@ package com.neaterbits.compiler.bytecode.common.loader;
 
 import java.io.IOException;
 
+import com.neaterbits.build.types.ClassLibs;
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassByteCodeWithTypeSource;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
-import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.codemap.CodeMap.TypeResult;
 
 public class LoadClassHelper {

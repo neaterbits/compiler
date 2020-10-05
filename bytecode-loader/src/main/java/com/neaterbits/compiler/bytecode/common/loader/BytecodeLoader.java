@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import com.neaterbits.build.types.ClassLibs;
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
-import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.loader.codemap.LoaderCodeMap;
 import com.neaterbits.compiler.util.FieldType;
 

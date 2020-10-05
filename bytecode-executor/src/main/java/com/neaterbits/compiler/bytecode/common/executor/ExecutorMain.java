@@ -3,9 +3,9 @@ package com.neaterbits.compiler.bytecode.common.executor;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.types.ClassLibs;
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
-import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.loader.BytecodeCompiler;
 import com.neaterbits.compiler.bytecode.common.loader.BytecodeLoader;
 import com.neaterbits.compiler.bytecode.common.loader.ThreadData;

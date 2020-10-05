@@ -9,9 +9,9 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.neaterbits.build.types.DependencyFile;
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.bytecode.common.DependencyFile;
-import com.neaterbits.compiler.util.model.TypeSource;
+import com.neaterbits.build.types.TypeSource;
 
 public abstract class BaseZipFileClassLib<FILE extends ZipFile, ENTRY extends ZipEntry> extends JavaClassLib {
 

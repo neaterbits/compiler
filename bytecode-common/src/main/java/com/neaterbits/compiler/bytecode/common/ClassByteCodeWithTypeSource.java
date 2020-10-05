@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.bytecode.common;
 
-import com.neaterbits.compiler.util.model.TypeSource;
+import com.neaterbits.build.types.TypeSource;
 
 // Separate interface for source information
 // this is metadata, not really part of the class format

@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.types.ClassLibs;
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
-import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.MethodClassReferenceScanner;
 import com.neaterbits.compiler.bytecode.common.MethodType;
 import com.neaterbits.compiler.codemap.CodeMap;

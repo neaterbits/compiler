@@ -2,8 +2,8 @@ package com.neaterbits.compiler.java.bytecode;
 
 import java.util.Objects;
 
+import com.neaterbits.build.types.TypeSource;
 import com.neaterbits.compiler.bytecode.common.ClassByteCodeWithTypeSource;
-import com.neaterbits.compiler.util.model.TypeSource;
 
 public class ClassFileWithTypeSource extends ClassFile implements ClassByteCodeWithTypeSource {
 

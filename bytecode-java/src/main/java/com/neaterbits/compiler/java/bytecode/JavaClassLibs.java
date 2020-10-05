@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.neaterbits.build.types.ClassLibs;
+import com.neaterbits.build.types.DependencyFile;
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.bytecode.common.ClassLibs;
-import com.neaterbits.compiler.bytecode.common.DependencyFile;
 
 public final class JavaClassLibs implements ClassLibs {
 
