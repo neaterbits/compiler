@@ -3,10 +3,10 @@ package com.neaterbits.compiler.model.common.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.model.common.ImportsModel;
 import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.types.imports.TypeImportVisitor;
-import com.neaterbits.compiler.util.ScopedName;
 
 class FileImports {
 

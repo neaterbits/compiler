@@ -4,8 +4,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.ListStackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.TypeBoundSetter;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class StackTypeBoundTypeArgument<TYPE_BOUND>
     extends ListStackEntry<TYPE_BOUND>

@@ -11,6 +11,11 @@
   
   <dependencies>
   	<dependency>
+  		<groupId>${buildGroupId}</groupId>
+  		<artifactId>build-types</artifactId>
+  		<version>${buildVersion}</version>
+  	</dependency>
+  	<dependency>
   		<groupId>${utilGroupId}</groupId>
   		<artifactId>util-io-common</artifactId>
   		<version>${utilVersion}</version>

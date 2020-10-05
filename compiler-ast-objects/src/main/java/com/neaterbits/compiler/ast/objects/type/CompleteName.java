@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.ScopedName;
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.util.name.BaseTypeName;
 import com.neaterbits.compiler.util.name.DefinitionName;
 import com.neaterbits.compiler.util.name.NamespaceReference;

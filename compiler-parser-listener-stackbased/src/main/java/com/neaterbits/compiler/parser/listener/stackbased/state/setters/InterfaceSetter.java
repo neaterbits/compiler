@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.parser.listener.stackbased.state.setters;
 
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public interface InterfaceSetter<TYPE_REFERENCE> {
 

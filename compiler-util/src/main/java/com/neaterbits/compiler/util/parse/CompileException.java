@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.util.parse;
 
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public class CompileException extends RuntimeException {
 

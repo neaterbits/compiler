@@ -4,10 +4,10 @@ import static com.neaterbits.compiler.java.bytecode.JavaBytecodes.*;
 
 import java.util.Objects;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.BytecodeInstructions;
 import com.neaterbits.compiler.bytecode.common.BytecodeSwitchCase;
 import com.neaterbits.compiler.bytecode.common.TypeMap;
-import com.neaterbits.compiler.util.TypeName;
 
 public final class JavaBytecodeSwitchCase extends BytecodeSwitchCase {
 

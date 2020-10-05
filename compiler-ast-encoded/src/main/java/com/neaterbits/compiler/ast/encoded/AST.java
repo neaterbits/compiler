@@ -31,12 +31,12 @@ import com.neaterbits.compiler.types.typedefinition.Subclassing;
 import com.neaterbits.compiler.types.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.types.typedefinition.VariableModifier;
 import com.neaterbits.compiler.util.Base;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.NamePart;
 import com.neaterbits.util.io.strings.StringRef;
+import com.neaterbits.util.parse.context.Context;
 
 public class AST {
 

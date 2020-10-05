@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
@@ -15,7 +16,6 @@ import com.neaterbits.compiler.codemap.VTableScratchArea;
 import com.neaterbits.compiler.codemap.CodeMap.MethodRefStatus;
 import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.util.FieldType;
-import com.neaterbits.compiler.util.TypeName;
 
 final class MethodLoaderThread<CLASS, METHOD> extends Thread {
 

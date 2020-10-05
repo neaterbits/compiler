@@ -4,8 +4,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.util.io.strings.OffsetLengthStringRef;
+import com.neaterbits.util.parse.context.Context;
 
 public class AntlrStringRefs {
 

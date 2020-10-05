@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.util;
 
+import com.neaterbits.util.parse.context.Context;
+
 public final class ContextNamePart {
     
     private final Context context;

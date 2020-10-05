@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.parser.recursive.cached.types;
 
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 // Interface for getting type arguments, either generic type or reference type
 // eg. Function<SOME_GENERIC_TYPE, Map<String, SOME_OTHER_GENERIC_TYPE>

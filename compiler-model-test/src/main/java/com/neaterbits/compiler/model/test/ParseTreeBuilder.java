@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
 import com.neaterbits.compiler.types.ReferenceType;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class ParseTreeBuilder<COMPILATION_UNIT> {
 

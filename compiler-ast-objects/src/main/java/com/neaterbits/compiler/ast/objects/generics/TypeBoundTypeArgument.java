@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class TypeBoundTypeArgument extends TypeArgument {
 

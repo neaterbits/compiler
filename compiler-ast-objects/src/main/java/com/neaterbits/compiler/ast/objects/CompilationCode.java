@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.ast.objects;
 
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class CompilationCode extends BaseASTElement {
 

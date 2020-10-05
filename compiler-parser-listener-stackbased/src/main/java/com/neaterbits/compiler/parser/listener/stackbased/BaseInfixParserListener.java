@@ -8,9 +8,9 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Expressi
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.operator.IncrementDecrement;
 import com.neaterbits.compiler.types.operator.Operator;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class BaseInfixParserListener<
 

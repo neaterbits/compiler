@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
+import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
@@ -18,9 +19,8 @@ import com.neaterbits.compiler.types.typedefinition.InterfaceModifier;
 import com.neaterbits.compiler.types.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.types.typedefinition.VariableModifier;
 import com.neaterbits.compiler.util.Base;
-import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.util.parse.context.Context;
 
 public interface ParseTreeFactory<
 	KEYWORD,

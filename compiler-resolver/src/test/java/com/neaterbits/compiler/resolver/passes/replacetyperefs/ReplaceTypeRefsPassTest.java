@@ -13,14 +13,14 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.neaterbits.build.types.ScopedName;
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
 import com.neaterbits.compiler.resolver.passes.ParsedFilesAndCodeMap;
 import com.neaterbits.compiler.resolver.passes.typefinder.FoundTypeFiles;
-import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.util.parse.ParserException;
 

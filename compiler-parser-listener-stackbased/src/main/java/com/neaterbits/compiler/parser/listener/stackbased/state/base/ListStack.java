@@ -3,7 +3,7 @@ package com.neaterbits.compiler.parser.listener.stackbased.state.base;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.ArrayStack;
+import com.neaterbits.util.ArrayStack;
 
 public final class ListStack extends ArrayStack<StackEntry> {
 

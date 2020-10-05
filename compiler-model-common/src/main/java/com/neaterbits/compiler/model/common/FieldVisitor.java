@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.model.common;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.Visibility;
-import com.neaterbits.compiler.util.TypeName;
 
 @FunctionalInterface
 public interface FieldVisitor {

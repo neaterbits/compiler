@@ -6,8 +6,8 @@ import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.Keyword;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.name.BaseTypeName;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class ComplexTypeDefinition<T extends BaseTypeName, DECLARATION_NAME extends DeclarationName<T>>
 		extends TypeDefinition<T, DECLARATION_NAME> {

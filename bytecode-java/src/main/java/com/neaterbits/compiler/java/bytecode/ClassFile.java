@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.BaseClassFile;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.MethodClassReferenceScanner;
@@ -20,7 +21,6 @@ import com.neaterbits.compiler.java.bytecode.reader.ConstantPoolTag;
 import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.util.FieldType;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.ValueMap;
 
 import static com.neaterbits.compiler.java.bytecode.JavaBytecodes.*;

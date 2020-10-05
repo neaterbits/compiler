@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassByteCodeWithTypeSource;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
@@ -17,7 +18,6 @@ import com.neaterbits.compiler.bytecode.common.DependencyFile;
 import com.neaterbits.compiler.java.bytecode.reader.ClassFileReader;
 import com.neaterbits.compiler.java.bytecode.reader.ClassFileReaderListener;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.TypeSource;
 
 public class JavaBytecodeFormat implements BytecodeFormat {

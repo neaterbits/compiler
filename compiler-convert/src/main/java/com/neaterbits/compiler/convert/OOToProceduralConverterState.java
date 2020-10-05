@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.convert;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.objects.block.FunctionName;
 import com.neaterbits.compiler.ast.objects.block.MethodName;
@@ -8,7 +9,6 @@ import com.neaterbits.compiler.ast.objects.typedefinition.StructName;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.types.MethodInfo;
-import com.neaterbits.compiler.util.TypeName;
 
 public abstract class OOToProceduralConverterState<T extends OOToProceduralConverterState<T>>
 			extends ConverterState<T> {

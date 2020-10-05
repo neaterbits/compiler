@@ -5,7 +5,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.TypeName;
 
 public class IntCompilerCodeMapTest {
 

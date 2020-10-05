@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.types.ModuleId;
+
 public final class ByteCodeModuleSpec extends ModuleSpec {
 
 	private final File byteCodeFile;

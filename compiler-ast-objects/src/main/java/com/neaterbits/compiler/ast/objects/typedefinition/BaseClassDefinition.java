@@ -8,8 +8,8 @@ import com.neaterbits.compiler.ast.objects.Keyword;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.name.ClassName;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class BaseClassDefinition extends ComplexTypeDefinition<ClassName, ClassDeclarationName> {
 

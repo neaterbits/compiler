@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.ast.objects.typereference;
 
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class ResolvedTypeReference extends TypeReference {
 

@@ -4,7 +4,7 @@ import com.neaterbits.compiler.ast.objects.block.ASTName;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.objects.variables.VarNameDeclaration;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class FieldNameDeclaration extends ASTName {
 

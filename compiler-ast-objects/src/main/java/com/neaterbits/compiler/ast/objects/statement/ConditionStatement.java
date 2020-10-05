@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.ast.objects.statement;
 
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class ConditionStatement extends Statement {
 

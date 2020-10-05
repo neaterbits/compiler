@@ -4,8 +4,8 @@ import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotat
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ContextWriter;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ExpressionCache;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.LanguageOperatorPrecedence;
-import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.MutableContext;
+import com.neaterbits.util.parse.context.Context;
+import com.neaterbits.util.parse.context.MutableContext;
 
 public final class CachedAnnotationElement {
 

@@ -7,12 +7,12 @@ import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotat
 import com.neaterbits.compiler.parser.recursive.cached.keywords.CachedKeywordsList;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
 import com.neaterbits.compiler.types.ReferenceType;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.util.ArrayUtils;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
+import com.neaterbits.util.parse.context.Context;
 
 abstract class JavaMemberLexerParser<COMPILATION_UNIT> extends JavaStatementsLexerParser<COMPILATION_UNIT> {
 

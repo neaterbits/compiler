@@ -5,7 +5,7 @@ import java.util.List;
 import com.neaterbits.compiler.ast.objects.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.objects.Keyword;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public class StructDefinition extends ComplexTypeDefinition<StructName, StructDeclarationName> {
 

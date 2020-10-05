@@ -8,7 +8,7 @@ import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class ClassExpression extends Primary {
 

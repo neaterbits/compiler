@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.antlr.v4.runtime.Token;
 
+import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.antlr4.Antlr4;
 import com.neaterbits.compiler.antlr4.ModelParserListener;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
@@ -21,17 +22,16 @@ import com.neaterbits.compiler.types.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.types.typedefinition.InterfaceVisibility;import com.neaterbits.compiler.types.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.types.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.types.typedefinition.Subclassing;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextNamePart;
-import com.neaterbits.compiler.util.FullContext;
-import com.neaterbits.compiler.util.ImmutableFullContext;
-import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.OffsetLengthStringRef;
 import com.neaterbits.util.io.strings.StringSource;
+import com.neaterbits.util.parse.context.Context;
+import com.neaterbits.util.parse.context.FullContext;
+import com.neaterbits.util.parse.context.ImmutableFullContext;
 
 import static com.neaterbits.compiler.antlr4.AntlrStringRefs.stringRef;
 

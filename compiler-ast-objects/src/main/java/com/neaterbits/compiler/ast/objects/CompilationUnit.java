@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.list.ASTList;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.util.IdentityKey;
+import com.neaterbits.util.parse.context.Context;
 
 public class CompilationUnit extends CompilationCodeLines {
 

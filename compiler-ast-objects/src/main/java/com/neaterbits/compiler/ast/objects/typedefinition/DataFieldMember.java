@@ -6,7 +6,7 @@ import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class DataFieldMember extends ComplexMemberDefinition {
 

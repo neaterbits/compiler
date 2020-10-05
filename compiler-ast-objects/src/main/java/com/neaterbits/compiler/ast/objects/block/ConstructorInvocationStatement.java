@@ -11,7 +11,7 @@ import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.statement.StatementVisitor;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class ConstructorInvocationStatement extends Statement {
 

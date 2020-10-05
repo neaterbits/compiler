@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.parser.listener.stackbased.state;
 
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.context.Context;
 
 public class StackConstantSwitchLabel<EXPRESSION, VARIABLE_REFERENCE extends EXPRESSION, PRIMARY extends EXPRESSION>
 		extends StackExpression<EXPRESSION, VARIABLE_REFERENCE, PRIMARY> {

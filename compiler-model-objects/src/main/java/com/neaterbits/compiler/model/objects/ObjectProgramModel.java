@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import com.neaterbits.build.types.ScopedName;
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.ASTVisitor;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.BaseASTIterator;
@@ -61,16 +63,14 @@ import com.neaterbits.compiler.types.typedefinition.FieldTransient;
 import com.neaterbits.compiler.types.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.types.typedefinition.FieldVolatile;
 import com.neaterbits.compiler.types.typedefinition.Subclassing;
-import com.neaterbits.compiler.util.ArrayStack;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FullContextProvider;
-import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.Stack;
 import com.neaterbits.compiler.util.StackDelegator;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.util.parse.ScopesListener;
+import com.neaterbits.util.ArrayStack;
+import com.neaterbits.util.Stack;
+import com.neaterbits.util.parse.context.Context;
 
 public class ObjectProgramModel
 	extends ObjectImportsModel

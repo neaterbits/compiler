@@ -2,8 +2,8 @@ package com.neaterbits.compiler.parser.listener.stackbased.state;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.context.Context;
 
 public final class StackVariableDeclaration<EXPRESSION, NESTED_EXPRESSION extends EXPRESSION, PRIMARY extends EXPRESSION, VARIABLE_REFERENCE extends PRIMARY>
 	extends StackExpressionList<EXPRESSION, NESTED_EXPRESSION, PRIMARY, VARIABLE_REFERENCE>

@@ -2,7 +2,7 @@ package com.neaterbits.compiler.ast.objects.variables;
 
 import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class VariableReference extends Primary {
 

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.TypeName;
 
 public class NameToTypeNoMapTest {
 

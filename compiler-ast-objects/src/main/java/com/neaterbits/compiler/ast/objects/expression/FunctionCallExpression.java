@@ -2,7 +2,7 @@ package com.neaterbits.compiler.ast.objects.expression;
 
 import com.neaterbits.compiler.ast.objects.block.FunctionName;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class FunctionCallExpression extends Call<FunctionName> {
 

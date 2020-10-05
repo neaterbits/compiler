@@ -8,7 +8,7 @@ import com.neaterbits.compiler.ast.objects.CompilationCodeVisitor;
 import com.neaterbits.compiler.ast.objects.generics.NamedGenericTypeParameter;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class ClassMethod extends CallableCode<MethodName> {
 

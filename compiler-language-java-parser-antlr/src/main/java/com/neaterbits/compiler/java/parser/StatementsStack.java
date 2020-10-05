@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.antlr.v4.runtime.Token;
 
-import com.neaterbits.compiler.util.ArrayStack;
+import com.neaterbits.util.ArrayStack;
 
 final class StatementsStack {
 

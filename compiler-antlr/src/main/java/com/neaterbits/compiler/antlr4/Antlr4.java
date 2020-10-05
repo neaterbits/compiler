@@ -3,9 +3,9 @@ package com.neaterbits.compiler.antlr4;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
-import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.FullContext;
-import com.neaterbits.compiler.util.ImmutableFullContext;
+import com.neaterbits.util.parse.context.Context;
+import com.neaterbits.util.parse.context.FullContext;
+import com.neaterbits.util.parse.context.ImmutableFullContext;
 
 public class Antlr4 {
 

@@ -5,8 +5,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
-import com.neaterbits.compiler.util.TypeName;
 
 public abstract class BaseReplaceTypeReferenceTest<COMPILATION_UNIT>
     extends BaseParseTreeTest<COMPILATION_UNIT> {

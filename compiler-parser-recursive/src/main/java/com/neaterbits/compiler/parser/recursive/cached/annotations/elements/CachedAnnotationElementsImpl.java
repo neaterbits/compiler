@@ -5,7 +5,7 @@ import com.neaterbits.compiler.parser.recursive.cached.ScratchEntity;
 import com.neaterbits.compiler.parser.recursive.cached.annotations.CachedAnnotationsList;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.ContextWriter;
 import com.neaterbits.compiler.parser.recursive.cached.expressions.LanguageOperatorPrecedence;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class CachedAnnotationElementsImpl
     extends ScratchEntity<

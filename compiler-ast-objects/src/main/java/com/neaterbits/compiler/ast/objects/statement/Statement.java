@@ -2,7 +2,7 @@ package com.neaterbits.compiler.ast.objects.statement;
 
 import com.neaterbits.compiler.ast.objects.CompilationCode;
 import com.neaterbits.compiler.ast.objects.CompilationCodeVisitor;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class Statement extends CompilationCode {
 

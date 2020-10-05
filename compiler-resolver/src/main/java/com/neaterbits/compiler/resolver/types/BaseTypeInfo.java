@@ -2,8 +2,8 @@ package com.neaterbits.compiler.resolver.types;
 
 import java.util.Objects;
 
+import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.util.ScopedName;
 
 public abstract class BaseTypeInfo implements ResolveTypeInfo {
 

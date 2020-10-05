@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.parser.recursive.cached.types;
 
 import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public interface TypeArgument {
 

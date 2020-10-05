@@ -2,6 +2,7 @@ package com.neaterbits.compiler.language.java;
 
 import java.util.List;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.LibraryTypeRef;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
@@ -18,7 +19,6 @@ import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.FullContextProvider;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.TypeSources;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 

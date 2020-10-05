@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.parser.recursive.cached.ScratchBuf;
 import com.neaterbits.compiler.parser.recursive.cached.ScratchEntity;
 import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class TypeArgumentsImpl
     extends ScratchEntity<TypeArgumentImpl, TypeArguments, TypeArgumentsList> 

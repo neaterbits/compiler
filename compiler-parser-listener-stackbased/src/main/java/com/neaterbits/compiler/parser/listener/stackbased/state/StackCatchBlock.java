@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.TypeReferenceSetter;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.context.Context;
 
 public class StackCatchBlock<STATEMENT, TYPE_REFERENCE>
 		extends StackStatements<STATEMENT>

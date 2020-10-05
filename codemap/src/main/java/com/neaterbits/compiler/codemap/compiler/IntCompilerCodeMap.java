@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.codemap.ArrayAllocation;
 import com.neaterbits.compiler.codemap.IntCodeMap;
 import com.neaterbits.compiler.codemap.NameToTypeNoMap;
 import com.neaterbits.compiler.codemap.StaticMethodOverrideMap;
-import com.neaterbits.compiler.util.TypeName;
 
 public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 

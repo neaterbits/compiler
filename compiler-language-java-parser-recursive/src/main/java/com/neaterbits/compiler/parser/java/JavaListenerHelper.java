@@ -19,12 +19,12 @@ import com.neaterbits.compiler.types.statement.ASTMutability;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.types.typedefinition.FieldVisibility;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.parse.IToken;
 import com.neaterbits.util.parse.ParserException;
+import com.neaterbits.util.parse.context.Context;
 
 final class JavaListenerHelper<COMPILATION_UNIT> {
     

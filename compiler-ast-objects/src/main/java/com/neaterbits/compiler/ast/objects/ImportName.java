@@ -7,8 +7,8 @@ import com.neaterbits.compiler.ast.objects.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.types.imports.TypeImportVisitor;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.name.NamespaceReference;
+import com.neaterbits.util.parse.context.Context;
 
 public final class ImportName extends BaseASTElement {
 

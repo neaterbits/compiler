@@ -7,8 +7,8 @@ import java.util.Objects;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.InterfaceSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NamedGenericParametersSetter;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.context.Context;
 
 public final class StackNamedClass<
 		COMPLEX_MEMBER_DEFINITION,

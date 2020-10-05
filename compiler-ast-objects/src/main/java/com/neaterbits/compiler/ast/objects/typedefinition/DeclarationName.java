@@ -5,8 +5,8 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.name.BaseTypeName;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class DeclarationName<T extends BaseTypeName> extends BaseASTElement {
 

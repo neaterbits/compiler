@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.types.ScopedName;
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
 import com.neaterbits.compiler.model.common.TypesMap;
 import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
-import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.TypeName;
 
 final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT> implements TypeReferenceVisitor<COMPILATION_UNIT> {
 

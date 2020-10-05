@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.resolver.passes.namereferenceresolve;
 
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.TypeName;
 
 class VariableDeclaration {
 	private final int tokenNo;

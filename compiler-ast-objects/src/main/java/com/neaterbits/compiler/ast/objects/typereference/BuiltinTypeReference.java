@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.ast.objects.typereference;
 
-import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.TypeName;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class BuiltinTypeReference extends ResolvedNamedTypeReference {
 

@@ -11,8 +11,8 @@ import com.neaterbits.compiler.ast.objects.variables.PrimaryListVariableReferenc
 import com.neaterbits.compiler.ast.objects.variables.StaticMemberReference;
 import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.convert.ootofunction.BaseVariableReferenceConverter;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.util.parse.context.Context;
 
 final class JavaToCVariableReferenceConverter<T extends MappingJavaToCConverterState<T>> extends BaseVariableReferenceConverter<T> {
 

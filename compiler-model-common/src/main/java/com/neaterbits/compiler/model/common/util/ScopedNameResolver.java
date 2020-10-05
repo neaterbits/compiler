@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.model.common.ImportsModel;
 import com.neaterbits.compiler.model.common.TypesMap;
-import com.neaterbits.compiler.util.ScopedName;
 
 public final class ScopedNameResolver {
 

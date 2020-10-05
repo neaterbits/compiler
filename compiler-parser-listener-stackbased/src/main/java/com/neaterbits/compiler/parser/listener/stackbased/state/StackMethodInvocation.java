@@ -4,8 +4,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.PrimarySetter;
 import com.neaterbits.compiler.types.method.MethodInvocationType;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.context.Context;
 
 public final class StackMethodInvocation<EXPRESSION, PRIMARY extends EXPRESSION, TYPE_REFERENCE>
 	extends CallStackEntry<EXPRESSION>

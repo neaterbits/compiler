@@ -6,8 +6,8 @@ import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.name.Name;
+import com.neaterbits.util.parse.context.Context;
 
 public final class VarNameDeclaration extends BaseASTElement {
 

@@ -6,8 +6,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.NamedGenericParametersSetter;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.context.Context;
 
 public final class StackClassMethod<STATEMENT, PARAMETER, TYPE_REFERENCE, ANNOTATION, MODIFIER_HOLDER, NAMED_GENERIC_TYPE_PARAMETERS>
 	extends CallableStackEntry<STATEMENT, PARAMETER, TYPE_REFERENCE>

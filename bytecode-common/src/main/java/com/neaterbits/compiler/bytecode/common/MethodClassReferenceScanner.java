@@ -2,8 +2,8 @@ package com.neaterbits.compiler.bytecode.common;
 
 import java.util.List;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.util.FieldType;
-import com.neaterbits.compiler.util.TypeName;
 
 public interface MethodClassReferenceScanner<T> {
 

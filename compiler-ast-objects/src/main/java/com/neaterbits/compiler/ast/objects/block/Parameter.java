@@ -8,8 +8,8 @@ import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.name.Name;
+import com.neaterbits.util.parse.context.Context;
 
 public final class Parameter extends BaseASTElement {
 

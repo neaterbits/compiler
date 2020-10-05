@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Parameter;
 import com.neaterbits.compiler.ast.objects.block.ParameterName;
@@ -39,12 +40,11 @@ import com.neaterbits.compiler.java.bytecode.ClassFile;
 import com.neaterbits.compiler.java.bytecode.Field;
 import com.neaterbits.compiler.java.bytecode.Method;
 import com.neaterbits.compiler.types.ReferenceType;
-import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.name.BaseTypeName;
 import com.neaterbits.compiler.util.name.ClassName;
 import com.neaterbits.compiler.util.name.DefinitionName;
 import com.neaterbits.compiler.util.name.NamespaceReference;
+import com.neaterbits.util.parse.context.Context;
 
 final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 

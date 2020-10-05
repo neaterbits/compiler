@@ -2,7 +2,7 @@ package com.neaterbits.compiler.ast.objects.typedefinition;
 
 import com.neaterbits.compiler.ast.objects.block.CallableName;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class InterfaceMethodName extends CallableName {
 

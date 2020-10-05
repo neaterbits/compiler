@@ -2,9 +2,9 @@ package com.neaterbits.compiler.parser.recursive;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.FullContext;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
+import com.neaterbits.util.parse.context.FullContext;
 
 final class LexerContext implements FullContext {
 

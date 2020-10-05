@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.codemap.compiler.CrossReferenceUpdater;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.model.common.CompiledAndResolvedFile;
 import com.neaterbits.compiler.model.common.passes.MultiPass;
 import com.neaterbits.compiler.resolver.UnknownReferenceError;
 import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.parse.ScopesListener;

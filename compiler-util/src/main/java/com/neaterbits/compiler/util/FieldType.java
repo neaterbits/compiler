@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.util;
 
+import com.neaterbits.build.types.TypeName;
+
 public final class FieldType extends TypeName {
 
 	private final boolean builtin;

@@ -2,7 +2,7 @@ package com.neaterbits.compiler.ast.objects.expression;
 
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class Expression extends BaseASTElement {
 

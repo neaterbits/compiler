@@ -6,9 +6,9 @@ import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory;
 import com.neaterbits.compiler.ast.objects.parser.iterative.UntypedIterativeOOParserListener;
 import com.neaterbits.compiler.ast.objects.type.primitive.BuiltinType;
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
-import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.ImmutableContext;
 import com.neaterbits.util.io.strings.StringSource;
+import com.neaterbits.util.parse.context.Context;
+import com.neaterbits.util.parse.context.ImmutableContext;
 
 public final class ObjectsParserListener extends UntypedIterativeOOParserListener {
 

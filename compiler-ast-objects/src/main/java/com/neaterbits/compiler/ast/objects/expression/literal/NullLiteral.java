@@ -3,7 +3,7 @@ package com.neaterbits.compiler.ast.objects.expression.literal;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.objects.type.primitive.NullType;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class NullLiteral extends Literal {
 

@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.loader.HashTypeMap;
@@ -19,7 +20,6 @@ import com.neaterbits.compiler.codemap.IntCodeMap;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.java.bytecode.reader.BaseClassFileReaderTest;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.TypeSource;
 
 public class ReadToClassFileTest extends BaseClassFileReaderTest {

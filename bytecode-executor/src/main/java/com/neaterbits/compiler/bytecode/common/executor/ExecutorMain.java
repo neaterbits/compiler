@@ -3,6 +3,7 @@ package com.neaterbits.compiler.bytecode.common.executor;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
 import com.neaterbits.compiler.bytecode.common.ClassLibs;
 import com.neaterbits.compiler.bytecode.common.loader.BytecodeCompiler;
@@ -14,7 +15,6 @@ import com.neaterbits.compiler.codegen.common.CodeGenerator;
 import com.neaterbits.compiler.codemap.DynamicMethodOverrideMap;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.util.FieldType;
-import com.neaterbits.compiler.util.TypeName;
 
 public class ExecutorMain<CLASS, METHOD> {
 	

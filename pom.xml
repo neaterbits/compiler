@@ -12,8 +12,13 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<buildGroupId>com.neaterbits.build</buildGroupId>
+		<buildVersion>0.0.1-SNAPSHOT</buildVersion>
+
 		<utilGroupId>com.neaterbits.util</utilGroupId>
 		<utilVersion>0.0.1-SNAPSHOT</utilVersion>
+
 		<assertjVersion>1.7.1</assertjVersion>
 		<mockitoVersion>2.21.0</mockitoVersion>
 	</properties>

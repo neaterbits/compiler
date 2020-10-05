@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.ast.objects.typedefinition;
 
 import com.neaterbits.compiler.ast.objects.CompilationCode;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class ComplexMemberDefinition extends CompilationCode {
 

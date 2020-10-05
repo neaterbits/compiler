@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.parser.listener.stackbased.state;
 
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public interface VariableNameSetter {
 

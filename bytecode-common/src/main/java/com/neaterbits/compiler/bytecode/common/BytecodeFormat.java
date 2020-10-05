@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
 
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.util.model.TypeSource;
 
 public interface BytecodeFormat {

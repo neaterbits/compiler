@@ -2,8 +2,8 @@ package com.neaterbits.compiler.resolver.passes.namereferenceresolve;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.ArrayStack;
-import com.neaterbits.compiler.util.Stack;
+import com.neaterbits.util.ArrayStack;
+import com.neaterbits.util.Stack;
 
 class Primaries {
 

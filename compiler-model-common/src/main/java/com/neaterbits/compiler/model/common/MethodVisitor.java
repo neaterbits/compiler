@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.model.common;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.types.MethodVariant;
-import com.neaterbits.compiler.util.TypeName;
 
 @FunctionalInterface
 public interface MethodVisitor {

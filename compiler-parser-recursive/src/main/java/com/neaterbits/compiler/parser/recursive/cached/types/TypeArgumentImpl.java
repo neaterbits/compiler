@@ -3,8 +3,8 @@ package com.neaterbits.compiler.parser.recursive.cached.types;
 import java.util.Objects;
 
 import com.neaterbits.compiler.parser.recursive.cached.names.NamesList;
-import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.MutableContext;
+import com.neaterbits.util.parse.context.Context;
+import com.neaterbits.util.parse.context.MutableContext;
 
 public final class TypeArgumentImpl implements TypeArgument {
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.CompilationCode;
 import com.neaterbits.compiler.ast.objects.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.objects.Keyword;
@@ -34,7 +35,6 @@ import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.convert.OOToProceduralConverterUtil;
-import com.neaterbits.compiler.util.TypeName;
 
 /**
  * Converts a class to C code

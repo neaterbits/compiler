@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.operator.Arity;
 import com.neaterbits.compiler.types.operator.Operator;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class GenericUnaryExpression extends UnaryExpression {
 

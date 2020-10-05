@@ -3,8 +3,8 @@ package com.neaterbits.compiler.resolver;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.model.common.TypesMap;
-import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.Strings;
 
 final class TestTypesMap implements TypesMap<String> {

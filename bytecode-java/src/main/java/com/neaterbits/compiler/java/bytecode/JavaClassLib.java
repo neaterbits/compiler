@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.DependencyFile;
-import com.neaterbits.compiler.util.TypeName;
 
 abstract class JavaClassLib {
 

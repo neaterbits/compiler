@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.model.common;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.types.FieldInfo;
 import com.neaterbits.compiler.types.MethodInfo;
 import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.TypeName;
 
 public interface CompiledAndMappedFiles extends CompiledAndResolvedFiles {
 

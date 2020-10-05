@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.encoded.AST;
 import com.neaterbits.compiler.ast.encoded.ASTBufferRead;
 import com.neaterbits.compiler.ast.encoded.ASTBufferRead.ParseTreeElementRef;
@@ -22,7 +23,6 @@ import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.parse.ScopesListener;
 
 public final class EncodedProgramModel

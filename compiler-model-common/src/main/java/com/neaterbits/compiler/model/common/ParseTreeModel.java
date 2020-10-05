@@ -2,7 +2,7 @@ package com.neaterbits.compiler.model.common;
 
 import java.io.PrintStream;
 
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.util.parse.ScopesListener;
 
 public interface ParseTreeModel<COMPILATION_UNIT> {

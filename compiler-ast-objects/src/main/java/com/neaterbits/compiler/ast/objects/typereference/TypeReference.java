@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.ast.objects.typereference;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
-import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.util.parse.context.Context;
 
 /**
  * For resolving types later, eg. when referencing a class that has not been parsed yet

@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.util.ArrayStack;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.util.ArrayStack;
+import com.neaterbits.util.parse.context.Context;
 
 public final class ParseLogger {
 	

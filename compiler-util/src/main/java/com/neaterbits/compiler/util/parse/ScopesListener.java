@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.util.parse;
 
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.TypeName;
 
 // For building a model of a files cross references
 // Refs are references to the names

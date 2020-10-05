@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.build.types.ScopedName;
 
 public enum JavaPrimitiveType {
 	

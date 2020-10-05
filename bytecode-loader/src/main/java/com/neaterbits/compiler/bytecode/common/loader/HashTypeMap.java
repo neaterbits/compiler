@@ -6,13 +6,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.ClassByteCodeWithTypeSource;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassFileException;
 import com.neaterbits.compiler.bytecode.common.TypeMap;
 import com.neaterbits.compiler.codemap.CodeMap;
 import com.neaterbits.compiler.codemap.CodeMap.TypeResult;
-import com.neaterbits.compiler.util.TypeName;
 import com.neaterbits.compiler.util.model.TypeSource;
 import com.neaterbits.compiler.util.model.TypeSources;
 

@@ -2,8 +2,8 @@ package com.neaterbits.compiler.model.common;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.ScopedName;
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.ScopedName;
+import com.neaterbits.build.types.TypeName;
 
 public abstract class BaseTypeRef {
 

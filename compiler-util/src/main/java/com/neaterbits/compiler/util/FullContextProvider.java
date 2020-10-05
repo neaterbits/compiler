@@ -1,5 +1,8 @@
 package com.neaterbits.compiler.util;
 
+import com.neaterbits.util.parse.context.Context;
+import com.neaterbits.util.parse.context.FullContext;
+
 public interface FullContextProvider {
 
     FullContext makeFullContext(Context context);

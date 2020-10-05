@@ -3,13 +3,13 @@ package com.neaterbits.compiler.parser.java;
 import java.io.IOException;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class JavaVariablesLexerParser<COMPILATION_UNIT>
     extends JavaTypeParametersLexerParser<COMPILATION_UNIT> {

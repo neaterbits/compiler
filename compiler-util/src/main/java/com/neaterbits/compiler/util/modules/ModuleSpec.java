@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.types.ModuleId;
+
 public abstract class ModuleSpec {
 
 	private final ModuleId moduleId;

@@ -6,7 +6,7 @@ import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.objects.type.primitive.IntegerType;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.Base;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class IntegerLiteral extends Literal {
 

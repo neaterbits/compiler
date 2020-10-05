@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.BaseStackVariableDeclaration;
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.VariablesMap;
-import com.neaterbits.compiler.util.ArrayStack;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.ArrayStack;
+import com.neaterbits.util.parse.context.Context;
 
 @Deprecated // moved out of parser listener
 final class VariableScopesListener<VARIABLE_DECLARATION, ANNOTATION, VARIABLE_MODIFIER_HOLDER, TYPE_REFERENCE> {

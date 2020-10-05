@@ -9,7 +9,7 @@ import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexMemberDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexMemberType;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class StaticInitializer extends ComplexMemberDefinition {
 

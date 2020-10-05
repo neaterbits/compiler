@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.parser.listener.common;
 
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public class IterativeParseTreeAdapter<COMPILATION_UNIT>
     extends InfixParseTreeAdapter<COMPILATION_UNIT> 

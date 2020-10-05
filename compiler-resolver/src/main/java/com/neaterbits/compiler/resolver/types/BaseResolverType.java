@@ -3,7 +3,7 @@ package com.neaterbits.compiler.resolver.types;
 import java.util.Objects;
 
 import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.ScopedName;
+import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.codemap.TypeVariant;
 
 public abstract class BaseResolverType {

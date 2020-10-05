@@ -4,10 +4,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.neaterbits.compiler.util.Base;
-import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.ScopedName;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.util.parse.context.Context;
+import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
 import com.neaterbits.compiler.types.method.MethodInvocationType;

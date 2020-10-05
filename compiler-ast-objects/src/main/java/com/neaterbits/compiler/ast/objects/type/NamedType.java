@@ -2,7 +2,7 @@ package com.neaterbits.compiler.ast.objects.type;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.TypeName;
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.util.name.BaseTypeName;
 import com.neaterbits.compiler.util.name.NamespaceReference;
 

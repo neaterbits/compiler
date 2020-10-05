@@ -9,7 +9,7 @@ import com.neaterbits.compiler.ast.objects.generics.NamedGenericTypeParameter;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class CallableCode<NAME extends CallableName> extends Callable<NAME>  {
 

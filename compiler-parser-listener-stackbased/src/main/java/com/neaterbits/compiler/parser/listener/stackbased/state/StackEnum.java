@@ -11,8 +11,8 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassMet
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ClassModifierSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ConstructorMemberSetter;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.InterfaceSetter;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.context.Context;
 
 public final class StackEnum<
 			COMPLEX_MEMBER_DEFINITION,

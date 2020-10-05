@@ -2,6 +2,8 @@ package com.neaterbits.compiler.util;
 
 import java.util.Objects;
 
+import com.neaterbits.util.Stack;
+
 public class StackDelegator<T> implements Stack<T> {
 
 	private final Stack<T> delegate;

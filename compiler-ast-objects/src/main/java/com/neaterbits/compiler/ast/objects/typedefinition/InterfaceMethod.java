@@ -7,7 +7,7 @@ import com.neaterbits.compiler.ast.objects.block.Callable;
 import com.neaterbits.compiler.ast.objects.block.Parameter;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
+import com.neaterbits.util.parse.context.Context;
 
 public final class InterfaceMethod extends Callable<InterfaceMethodName> {
 

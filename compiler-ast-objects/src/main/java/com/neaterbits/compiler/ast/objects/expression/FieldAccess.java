@@ -9,8 +9,8 @@ import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.util.parse.context.Context;
 
 public final class FieldAccess extends Primary {
 

@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.StackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ParametersSetter;
-import com.neaterbits.compiler.util.Context;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.parse.context.Context;
 
 public abstract class CallStackEntry<EXPRESSION> extends StackEntry implements ParametersSetter<EXPRESSION> {
 

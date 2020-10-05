@@ -2,9 +2,9 @@ package com.neaterbits.compiler.convert.ootofunction;
 
 import java.util.Objects;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.type.complex.ClassType;
 import com.neaterbits.compiler.ast.objects.type.complex.StructType;
-import com.neaterbits.compiler.util.TypeName;
 
 public class OOToProceduralClassDeclaration {
 

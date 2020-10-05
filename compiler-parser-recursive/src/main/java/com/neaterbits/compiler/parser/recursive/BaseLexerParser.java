@@ -24,14 +24,14 @@ import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentImpl;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArguments;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsImpl;
 import com.neaterbits.compiler.parser.recursive.cached.types.TypeArgumentsList;
-import com.neaterbits.compiler.util.Context;
-import com.neaterbits.compiler.util.MutableContext;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.NamePart;
 import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.IToken;
 import com.neaterbits.util.parse.Lexer;
+import com.neaterbits.util.parse.context.Context;
+import com.neaterbits.util.parse.context.MutableContext;
 
 public abstract class BaseLexerParser<TOKEN extends Enum<TOKEN> & IToken> {
 

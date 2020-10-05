@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.bytecode.common.BaseClassFile;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassMethod;
@@ -11,7 +12,6 @@ import com.neaterbits.compiler.bytecode.common.MethodClassReferenceScanner;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.util.FieldType;
-import com.neaterbits.compiler.util.TypeName;
 
 public abstract class BuiltinClass extends BaseClassFile implements ClassBytecode {
 
