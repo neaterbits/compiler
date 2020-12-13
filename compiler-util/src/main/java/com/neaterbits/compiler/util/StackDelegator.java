@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.util;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import com.neaterbits.util.Stack;
 
@@ -54,4 +55,9 @@ public class StackDelegator<T> implements Stack<T> {
 	public int size() {
 		return delegate.size();
 	}
+
+    @Override
+    public String toString(Function<T, String> entryToString) {
+        return delegate.toString(entryToString);
+    }
 }
