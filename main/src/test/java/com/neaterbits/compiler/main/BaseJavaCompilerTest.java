@@ -10,20 +10,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.neaterbits.build.types.ModuleId;
 import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.CompilationCode;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.ImportName;
-import com.neaterbits.compiler.ast.objects.Module;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.NamespaceDeclaration;
-import com.neaterbits.compiler.ast.objects.Program;
-import com.neaterbits.compiler.ast.objects.parser.DirectoryParser;
-import com.neaterbits.compiler.ast.objects.parser.FileTypeParser;
-import com.neaterbits.compiler.ast.objects.parser.ProgramParser;
+import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.objects.type.complex.ComplexType;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
@@ -34,11 +29,16 @@ import com.neaterbits.compiler.emit.ProgramEmitter;
 import com.neaterbits.compiler.java.JavaLexerObjectParser;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
 import com.neaterbits.compiler.util.CastFullContextProvider;
+import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.Strings;
-import com.neaterbits.compiler.util.modules.ModuleSpec;
-import com.neaterbits.compiler.util.modules.SourceModuleSpec;
+import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.parse.parsers.DirectoryParser;
+import com.neaterbits.compiler.util.parse.parsers.FileTypeParser;
+import com.neaterbits.compiler.util.parse.parsers.ProgramParser;
+import com.neaterbits.compiler.util.parse.parsers.ProgramParser.Program;
+import com.neaterbits.util.coll.MapOfList;
 import com.neaterbits.util.parse.ParserException;
 
 public abstract class BaseJavaCompilerTest {
@@ -99,28 +99,38 @@ public abstract class BaseJavaCompilerTest {
 		return baseDir;
 	}
 
-	private static final String SYSTEM_MODULE_ID = "system";
-
 	private static final Class<?> SYSTEM_LIB_PLACEHOLDER_CLASS = LibPlaceholder.class;
 
-	private static final SourceModuleSpec SYSTEM_MODULE = new SourceModuleSpec(
-			new ModuleId(SYSTEM_MODULE_ID),
-			null,
-			new File("src/main/java/" + getPackageDir(SYSTEM_LIB_PLACEHOLDER_CLASS)));
+	private static final File SYSTEM_MODULE = 
+			new File("src/main/java/" + getPackageDir(SYSTEM_LIB_PLACEHOLDER_CLASS));
 
-	private static final SourceModuleSpec getSystemModule() {
+	private static final File getSystemModule() {
 		return SYSTEM_MODULE;
 	}
 
-	final Program parseProgram(List<ModuleSpec> modules) throws IOException {
+	final Program<CompilationUnit, ASTParsedFile>
+	parseProgram(MapOfList<File, File> modules) throws IOException {
 
-		final FileTypeParser javaParser = new FileTypeParser(new JavaLexerObjectParser(), ".java");
+		final FileTypeParser<CompilationUnit> javaParser = new FileTypeParser<>(new JavaLexerObjectParser(), ".java");
 
-		final DirectoryParser directoryParser = new DirectoryParser(javaParser);
+		final DirectoryParser<CompilationUnit, ASTParsedFile> directoryParser
+		        = new DirectoryParser<CompilationUnit, ASTParsedFile>(javaParser) {
 
-		final ProgramParser programParser = new ProgramParser(directoryParser);
+                    @Override
+                    protected ASTParsedFile createParsedFile(
+                            FileSpec file,
+                            List<CompileError> errors,
+                            String log,
+                            CompilationUnit parsed) {
 
-		final Program program = programParser.parseProgram(
+                        return new ASTParsedFile(file, errors, log, parsed);
+                    }
+		};
+
+		final ProgramParser<CompilationUnit, ASTParsedFile> programParser
+		    = new ProgramParser<>(directoryParser);
+
+		final Program<CompilationUnit, ASTParsedFile> program = programParser.parseProgram(
 				modules,
 				Charset.defaultCharset(),
 				getSystemModule(),
@@ -133,11 +143,18 @@ public abstract class BaseJavaCompilerTest {
 	}
 
 	// Since we cannot override system packages, they are in a different package and we rename after compilation
-	private final void renameSystemPackages(Module systemModule, Package basePackage) {
+	private void renameSystemPackages(Collection<ASTParsedFile> systemModule, Package basePackage) {
+	    
+	    for (ASTParsedFile systemModuleFile : systemModule) {
+	        renameSystemPackages(systemModuleFile, basePackage);
+	    }
+	}
+
+    private void renameSystemPackages(ASTParsedFile systemModuleFile, Package basePackage) {
 
 		final String [] scopeToRename = Strings.split(basePackage.getName(), '.');
 
-		systemModule.iterateNodeFirst(e -> {
+		systemModuleFile.iterateNodeFirst(e -> {
 			if (e instanceof UnresolvedTypeReference) {
 				final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)e;
 
@@ -180,8 +197,8 @@ public abstract class BaseJavaCompilerTest {
 				}
 			}
 		});
-	}
-
+        
+    }
 
 	static <T extends MappingJavaToCConverterState<T>>
 	JavaToCDeclarations convertClassesAndInterfacesToStruct(

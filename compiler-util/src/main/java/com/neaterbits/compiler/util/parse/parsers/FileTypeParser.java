@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.ast.objects.parser;
+package com.neaterbits.compiler.util.parse.parsers;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
@@ -17,12 +16,12 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.compiler.util.parse.Parser;
 import com.neaterbits.util.parse.ParserException;
 
-public final class FileTypeParser implements LanguageParser {
+public final class FileTypeParser<COMPILATION_UNIT> implements LanguageParser<COMPILATION_UNIT> {
 
-	private final Parser<CompilationUnit> parser;
+	private final Parser<COMPILATION_UNIT> parser;
 	private final String [] fileExtensions;
 
-	public FileTypeParser(Parser<CompilationUnit> parser, String ... fileExtensions) {
+	public FileTypeParser(Parser<COMPILATION_UNIT> parser, String ... fileExtensions) {
 
 		Objects.requireNonNull(parser);
 
@@ -48,7 +47,7 @@ public final class FileTypeParser implements LanguageParser {
 	}
 	
 	@Override
-	public CompilationUnit parse(
+	public COMPILATION_UNIT parse(
 	        InputStream inputStream,
 	        Charset charset,
 	        Collection<ParseError> errors,
@@ -57,7 +56,7 @@ public final class FileTypeParser implements LanguageParser {
 		
 		final Collection<ParseError> compileErrors = new ArrayList<>();
 		        
-        final CompilationUnit result = parser.parse(inputStream, charset, compileErrors, file, parseLogger);
+        final COMPILATION_UNIT result = parser.parse(inputStream, charset, compileErrors, file, parseLogger);
 
 		errors.addAll(compileErrors);
 		

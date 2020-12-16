@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.ast.objects.parser;
+package com.neaterbits.compiler.util.parse.parsers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.ast.objects.CompilationUnit;
+import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.IOError;
@@ -21,24 +21,27 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.Files;
 import com.neaterbits.util.parse.ParserException;
 
-public class DirectoryParser {
+public abstract class DirectoryParser<COMPILATION_UNIT, PARSED_FILE> {
 
-	private final List<LanguageParser> parsers;
+	private final List<LanguageParser<COMPILATION_UNIT>> parsers;
+	
+	protected abstract PARSED_FILE createParsedFile(FileSpec file, List<CompileError> errors, String log, COMPILATION_UNIT parsed);
 
-	public DirectoryParser(LanguageParser ... parsers) {
+	@SafeVarargs
+    public DirectoryParser(LanguageParser<COMPILATION_UNIT> ... parsers) {
 		this(Arrays.asList(parsers));
 	}
 
-	public DirectoryParser(List<LanguageParser> parsers) {
+	public DirectoryParser(List<LanguageParser<COMPILATION_UNIT>> parsers) {
 
 		Objects.requireNonNull(parsers);
 
 		this.parsers = parsers;
 	}
 	
-	private LanguageParser findParser(File file) {
+	private LanguageParser<COMPILATION_UNIT> findParser(File file) {
 
-		for (LanguageParser parser : parsers) {
+		for (LanguageParser<COMPILATION_UNIT> parser : parsers) {
 			if (parser.canParseFile(file)) {
 				return parser;
 			}
@@ -47,22 +50,22 @@ public class DirectoryParser {
 		return null;
 	}
 	
-	public List<ASTParsedFile> parseDirectory(File directory, Charset charset) {
+	public final List<PARSED_FILE> parseDirectory(File directory, Charset charset) {
 		return parseDirectory(directory, charset, null);
 	}
 
-	public List<ASTParsedFile> parseDirectory(File directory, Charset charset, ParseLogger debugParseLogger) {
+	public final List<PARSED_FILE> parseDirectory(File directory, Charset charset, ParseLogger debugParseLogger) {
 
-		final List<ASTParsedFile> parsedFiles = new ArrayList<>();
+		final List<PARSED_FILE> parsedFiles = new ArrayList<>();
 		
 		Files.recurseDirectories(directory, file -> {
 
-			final LanguageParser parser = findParser(file);
+			final LanguageParser<COMPILATION_UNIT> parser = findParser(file);
 			if (parser != null) {
 
 				final List<CompileError> allFileerrors = new ArrayList<>();
 
-				CompilationUnit compilationUnit = null;
+				COMPILATION_UNIT compilationUnit = null;
 				
 				String log = null;
 
@@ -90,7 +93,7 @@ public class DirectoryParser {
 					allFileerrors.add(new IOError(file, "Failed to load file", ex));
 				}
 				
-				final ASTParsedFile parsedFile = new ASTParsedFile(
+				final PARSED_FILE parsedFile = createParsedFile(
 						new FileSystemFileSpec(file),
 						allFileerrors,
 						log,
