@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.model.objects;
 
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +14,6 @@ import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.BaseASTIterator;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Namespace;
-import com.neaterbits.compiler.ast.objects.Program;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Parameter;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
@@ -74,7 +74,7 @@ import com.neaterbits.util.parse.context.Context;
 
 public class ObjectProgramModel
 	extends ObjectImportsModel
-	implements ProgramModel<Program, ASTParsedFile, CompilationUnit>,
+	implements ProgramModel<ASTParsedFile, CompilationUnit>,
 				ResolveTypesModel<CompilationUnit> {
 
     private static final ObjectASTAccess AST_ACCESS = new ObjectASTAccess();
@@ -101,20 +101,12 @@ public class ObjectProgramModel
 	}
 
 	@Override
-	public ASTParsedFile getParsedFile(Program program, FileSpec path) {
+	public ASTParsedFile getParsedFile(Collection<ASTParsedFile> module, FileSpec path) {
 
-		return (ASTParsedFile)program.findElement(false, element -> {
-
-			if (element instanceof ASTParsedFile) {
-				final ASTParsedFile parsedFile = (ASTParsedFile)element;
-
-				if (parsedFile.getFileSpec().equals(path)) {
-					return true;
-				}
-			}
-
-			return false;
-		});
+	    return module.stream()
+	            .filter(pf -> pf.getFileSpec().equals(path))
+	            .findFirst()
+	            .orElse(null);
 	}
 
 	private static class Element {

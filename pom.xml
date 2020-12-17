@@ -34,7 +34,6 @@
 		<module>compiler-model-encoded</module>
 		<module>compiler-resolver</module>
 		<module>compiler-resolver-ast-objects</module>
-		<module>compiler-resolver-ast-encoded</module>
 		<module>compiler-antlr</module>
 		<module>compiler-util</module>
 		<module>codemap</module>

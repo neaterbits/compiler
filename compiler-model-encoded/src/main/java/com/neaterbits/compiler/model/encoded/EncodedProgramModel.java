@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.model.encoded;
 
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,7 +28,7 @@ import com.neaterbits.compiler.util.parse.ScopesListener;
 
 public final class EncodedProgramModel
     extends EncodedImportsModel
-    implements ProgramModel<EncodedModule, EncodedParsedFile, EncodedCompilationUnit> {
+    implements ProgramModel<EncodedParsedFile, EncodedCompilationUnit> {
 
     private static final ASTAccess<Integer, EncodedCompilationUnit> AST_ACCESS = new EncodedASTAccess();
 
@@ -235,9 +236,9 @@ public final class EncodedProgramModel
     }
 
     @Override
-    public EncodedParsedFile getParsedFile(EncodedModule module, FileSpec path) {
+    public EncodedParsedFile getParsedFile(Collection<EncodedParsedFile> module, FileSpec path) {
 
-        return module.getParsedFiles().stream()
+        return module.stream()
                 .filter(pf -> pf.getFileSpec().equals(path))
                 .findFirst()
                 .orElse(null);
