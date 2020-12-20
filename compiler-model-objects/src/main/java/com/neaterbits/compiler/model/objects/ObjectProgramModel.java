@@ -120,7 +120,7 @@ public class ObjectProgramModel
 	}
 
 	@Override
-	public void iterate(CompilationUnit sourceFile, SourceTokenVisitor visitor, ResolvedTypes resolvedTypes, boolean visitPlaceholderElements) {
+	public void iterate(CompilationUnit compilationUnit, SourceTokenVisitor visitor, ResolvedTypes resolvedTypes, boolean visitPlaceholderElements) {
 
 		final ArrayStack<Element> stack = new ArrayStack<>();
 
@@ -149,14 +149,14 @@ public class ObjectProgramModel
 			}
 		};
 
-		sourceFile.iterateNodeFirstWithStack(
+		compilationUnit.iterateNodeFirstWithStack(
 				stackWrapper,
 
 				baseASTElement -> new Element(
 						baseASTElement,
 					 	baseASTElement.isPlaceholderElement() && !visitPlaceholderElements
 								? null
-								: makeSourceToken(baseASTElement, sourceFile, resolvedTypes)),
+								: makeSourceToken(baseASTElement, compilationUnit, resolvedTypes)),
 
 				new ASTVisitor() {
 
@@ -169,7 +169,7 @@ public class ObjectProgramModel
 						throw new IllegalStateException();
 					}
 
-					visitor.onToken(makeSourceToken(element, sourceFile, resolvedTypes));
+					visitor.onToken(makeSourceToken(element, compilationUnit, resolvedTypes));
 				}
 				else {
 
@@ -190,8 +190,8 @@ public class ObjectProgramModel
 
 
 	@Override
-	public CompilationUnit getCompilationUnit(ASTParsedFile sourceFile) {
-		return sourceFile.getParsed();
+	public CompilationUnit getCompilationUnit(ASTParsedFile compilationUnit) {
+		return compilationUnit.getParsed();
 	}
 
 	@Override
@@ -227,7 +227,7 @@ public class ObjectProgramModel
 	}
 
 	@Override
-	public void iterateScopesAndVariables(CompilationUnit sourceFile, ScopesListener scopesListener) {
+	public void iterateScopesAndVariables(CompilationUnit compilationUnit, ScopesListener scopesListener) {
 
 		final ArrayStack<BaseASTElement> stack = new ArrayStack<>();
 
@@ -237,7 +237,7 @@ public class ObjectProgramModel
 			public void push(BaseASTElement element) {
 
 				if (element instanceof ClassDefinition) {
-					scopesListener.onClassStart(sourceFile.getParseTreeRefFromElement(element));
+					scopesListener.onClassStart(compilationUnit.getParseTreeRefFromElement(element));
 				}
 				else if (element instanceof PrimaryList) {
 
@@ -245,7 +245,7 @@ public class ObjectProgramModel
 
 					scopesListener.onPrimaryListStart(
 							null,
-							sourceFile.getParseTreeRefFromElement(element),
+							compilationUnit.getParseTreeRefFromElement(element),
 							primaryList.getPrimaries().size());
 				}
 
@@ -258,18 +258,18 @@ public class ObjectProgramModel
 				final BaseASTElement element = super.pop();
 
 				if (element instanceof ClassDefinition) {
-					scopesListener.onClassEnd(sourceFile.getParseTreeRefFromElement(element));
+					scopesListener.onClassEnd(compilationUnit.getParseTreeRefFromElement(element));
 				}
 				else if (element instanceof PrimaryList) {
 
-					scopesListener.onPrimaryListEnd(null, sourceFile.getParseTreeRefFromElement(element));
+					scopesListener.onPrimaryListEnd(null, compilationUnit.getParseTreeRefFromElement(element));
 				}
 
 				return element;
 			}
 		};
 
-		sourceFile.iterateNodeFirstWithStack(
+		compilationUnit.iterateNodeFirstWithStack(
 				stackWrapper,
 				Function.identity(),
 
@@ -283,7 +283,7 @@ public class ObjectProgramModel
 					final InitializerVariableDeclarationElement declaration = (InitializerVariableDeclarationElement)element;
 
 					scopesListener.onScopeVariableDeclaration(
-							sourceFile.getParseTreeRefFromElement(declaration.getNameDeclaration()),
+							compilationUnit.getParseTreeRefFromElement(declaration.getNameDeclaration()),
 							declaration.getVarName().getName(),
 							declaration.getTypeReference().getTypeName());
 					*/
@@ -291,7 +291,7 @@ public class ObjectProgramModel
 				else if (element instanceof NameReference) {
 
 					final NameReference nameReference = (NameReference)element;
-					final int parseTreeRef = sourceFile.getParseTreeRefFromElement(element);
+					final int parseTreeRef = compilationUnit.getParseTreeRefFromElement(element);
 
 					final BaseASTElement stackElement = stack.get();
 
@@ -312,63 +312,63 @@ public class ObjectProgramModel
 	}
 
 	@Override
-	public String getMethodName(CompilationUnit sourceFile, int parseTreemethodDeclarationRef) {
+	public String getMethodName(CompilationUnit compilationUnit, int parseTreemethodDeclarationRef) {
 
-		final ClassMethodMember classmethodMember = (ClassMethodMember)sourceFile.getElementFromParseTreeRef(parseTreemethodDeclarationRef);
+		final ClassMethodMember classmethodMember = (ClassMethodMember)compilationUnit.getElementFromParseTreeRef(parseTreemethodDeclarationRef);
 
 		return classmethodMember.getMethod().getName().getName();
 	}
 
 	@Override
-	public String getVariableName(CompilationUnit sourceFile, int parseTreeVariableDeclarationRef) {
+	public String getVariableName(CompilationUnit compilationUnit, int parseTreeVariableDeclarationRef) {
 
 		final InitializerVariableDeclarationElement variable
-				= (InitializerVariableDeclarationElement)sourceFile.getElementFromParseTreeRef(parseTreeVariableDeclarationRef);
+				= (InitializerVariableDeclarationElement)compilationUnit.getElementFromParseTreeRef(parseTreeVariableDeclarationRef);
 
 		return variable.getNameDeclaration().getVarName().getName();
 	}
 
 	@Override
-	public String getClassDataFieldMemberName(CompilationUnit sourceFile, int parseTreeDataMemberDeclarationRef) {
+	public String getClassDataFieldMemberName(CompilationUnit compilationUnit, int parseTreeDataMemberDeclarationRef) {
 
-		final ClassDataFieldMember member = (ClassDataFieldMember)sourceFile.getElementFromParseTreeRef(parseTreeDataMemberDeclarationRef);
+		final ClassDataFieldMember member = (ClassDataFieldMember)compilationUnit.getElementFromParseTreeRef(parseTreeDataMemberDeclarationRef);
 
 		return member.getInitializer(0).getNameString();
 	}
 
 	@Override
-	public String getClassName(CompilationUnit sourceFile, int parseTreetypeDeclarationRef) {
+	public String getClassName(CompilationUnit compilationUnit, int parseTreetypeDeclarationRef) {
 
-		final ClassDefinition classDefinition = (ClassDefinition)sourceFile.getElementFromParseTreeRef(parseTreetypeDeclarationRef);
+		final ClassDefinition classDefinition = (ClassDefinition)compilationUnit.getElementFromParseTreeRef(parseTreetypeDeclarationRef);
 
 		return classDefinition.getNameString();
 	}
 
 	@Override
-	public String getTokenString(CompilationUnit sourceFile, int parseTreeTokenRef) {
+	public String getTokenString(CompilationUnit compilationUnit, int parseTreeTokenRef) {
 
-	    final Context context = sourceFile.getElementFromParseTreeRef(parseTreeTokenRef).getContext();
+	    final Context context = compilationUnit.getElementFromParseTreeRef(parseTreeTokenRef).getContext();
 
 	    return fullContextProvider.getText(context);
 	}
 
 	@Override
-	public int getTokenOffset(CompilationUnit sourceFile, int parseTreeTokenRef) {
-		return sourceFile.getElementFromParseTreeRef(parseTreeTokenRef).getContext().getStartOffset();
+	public int getTokenOffset(CompilationUnit compilationUnit, int parseTreeTokenRef) {
+		return compilationUnit.getElementFromParseTreeRef(parseTreeTokenRef).getContext().getStartOffset();
 	}
 
 	@Override
-	public int getTokenLength(CompilationUnit sourceFile, int parseTreeTokenRef) {
+	public int getTokenLength(CompilationUnit compilationUnit, int parseTreeTokenRef) {
 
-		final Context context = sourceFile.getElementFromParseTreeRef(parseTreeTokenRef).getContext();
+		final Context context = compilationUnit.getElementFromParseTreeRef(parseTreeTokenRef).getContext();
 
 		return fullContextProvider.getLength(context);
 	}
 
 	@Override
-	public void print(CompilationUnit sourceFile, PrintStream out) {
+	public void print(CompilationUnit compilationUnit, PrintStream out) {
 
-		sourceFile.iterateNodeFirstWithStack((element, stack) -> {
+		compilationUnit.iterateNodeFirstWithStack((element, stack) -> {
 			for (int i = 0; i < stack.size(); ++ i) {
 				out.append("  ");
 			}

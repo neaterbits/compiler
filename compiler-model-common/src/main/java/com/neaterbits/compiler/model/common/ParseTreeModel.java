@@ -7,17 +7,17 @@ import com.neaterbits.compiler.util.parse.ScopesListener;
 
 public interface ParseTreeModel<COMPILATION_UNIT> {
 
-	void iterateScopesAndVariables(COMPILATION_UNIT sourceFile, ScopesListener scopesListener);
+	void iterateScopesAndVariables(COMPILATION_UNIT compilationUnit, ScopesListener scopesListener);
 
-	String getMethodName(COMPILATION_UNIT sourceFile, int parseTreeMethodDeclarationRef);
+	String getMethodName(COMPILATION_UNIT compilationUnit, int parseTreeMethodDeclarationRef);
 
-	String getVariableName(COMPILATION_UNIT sourceFile, int parseTreeVariableDeclarationRef);
+	String getVariableName(COMPILATION_UNIT compilationUnit, int parseTreeVariableDeclarationRef);
 
-	String getClassDataFieldMemberName(COMPILATION_UNIT sourceFile, int parseTreeDataMemberDeclarationRef);
+	String getClassDataFieldMemberName(COMPILATION_UNIT compilationUnit, int parseTreeDataMemberDeclarationRef);
 
-	String getClassName(COMPILATION_UNIT sourceFile, int parseTreeTypeDeclarationRef);
+	String getClassName(COMPILATION_UNIT compilationUnit, int parseTreeTypeDeclarationRef);
 
-	void print(COMPILATION_UNIT sourceFile, PrintStream out);
+	void print(COMPILATION_UNIT compilationUnit, PrintStream out);
 
 	int getNumMethods(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef complextype);
 

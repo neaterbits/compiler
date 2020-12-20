@@ -39,7 +39,7 @@ public final class EncodedProgramModel
 
     @Override
     public void iterate(
-            EncodedCompilationUnit sourceFile,
+            EncodedCompilationUnit compilationUnit,
             SourceTokenVisitor iterator,
             ResolvedTypes resolvedTypes,
             boolean visitPlaceholderElements) {
@@ -48,7 +48,7 @@ public final class EncodedProgramModel
 
     @Override
     public ISourceToken getTokenAtOffset(
-            EncodedCompilationUnit sourceFile,
+            EncodedCompilationUnit compilationUnit,
             long offset,
             ResolvedTypes resolvedTypes) {
 
@@ -58,74 +58,74 @@ public final class EncodedProgramModel
 
     @Override
     public ISourceToken getTokenAtParseTreeRef(
-            EncodedCompilationUnit sourceFile,
+            EncodedCompilationUnit compilationUnit,
             int parseTreeRef,
             ResolvedTypes resolvedTypes) {
 
         return SourceTokenUtil.makeSourceToken(
                 parseTreeRef,
-                sourceFile,
+                compilationUnit,
                 resolvedTypes,
                 this,
                 AST_ACCESS);
     }
 
     @Override
-    public int getTokenOffset(EncodedCompilationUnit sourceFile, int parseTreeTokenRef) {
+    public int getTokenOffset(EncodedCompilationUnit compilationUnit, int parseTreeTokenRef) {
 
-        return sourceFile.getTokenOffset(parseTreeTokenRef);
+        return compilationUnit.getTokenOffset(parseTreeTokenRef);
     }
 
     @Override
-    public int getTokenLength(EncodedCompilationUnit sourceFile, int parseTreeTokenRef) {
+    public int getTokenLength(EncodedCompilationUnit compilationUnit, int parseTreeTokenRef) {
 
-        return sourceFile.getTokenLength(parseTreeTokenRef);
+        return compilationUnit.getTokenLength(parseTreeTokenRef);
     }
 
     @Override
-    public String getTokenString(EncodedCompilationUnit sourceFile, int parseTreeTokenRef) {
+    public String getTokenString(EncodedCompilationUnit compilationUnit, int parseTreeTokenRef) {
 
-        return sourceFile.getTokenString(parseTreeTokenRef);
+        return compilationUnit.getTokenString(parseTreeTokenRef);
     }
 
     @Override
-    public void iterateScopesAndVariables(EncodedCompilationUnit sourceFile, ScopesListener scopesListener) {
+    public void iterateScopesAndVariables(EncodedCompilationUnit compilationUnit, ScopesListener scopesListener) {
         // FIXME Auto-generated method stub
 
     }
 
     @Override
-    public String getMethodName(EncodedCompilationUnit sourceFile, int parseTreeMethodDeclarationRef) {
+    public String getMethodName(EncodedCompilationUnit compilationUnit, int parseTreeMethodDeclarationRef) {
         // FIXME Auto-generated method stub
         return null;
     }
 
     @Override
     public String getVariableName(
-            EncodedCompilationUnit sourceFile,
+            EncodedCompilationUnit compilationUnit,
             int parseTreeVariableDeclarationRef) {
 
-        return sourceFile.getStringFromASTBufferOffset(parseTreeVariableDeclarationRef + 1);
+        return compilationUnit.getStringFromASTBufferOffset(parseTreeVariableDeclarationRef + 1);
     }
 
     @Override
     public String getClassDataFieldMemberName(
-            EncodedCompilationUnit sourceFile,
+            EncodedCompilationUnit compilationUnit,
             int parseTreeDataMemberDeclarationRef) {
 
-        return sourceFile.getStringFromASTBufferOffset(parseTreeDataMemberDeclarationRef + 1);
+        return compilationUnit.getStringFromASTBufferOffset(parseTreeDataMemberDeclarationRef + 1);
     }
 
     @Override
     public String getClassName(
-            EncodedCompilationUnit sourceFile,
+            EncodedCompilationUnit compilationUnit,
             int parseTreeTypeDeclarationRef) {
         // FIXME Auto-generated method stub
         return null;
     }
 
     @Override
-    public void print(EncodedCompilationUnit sourceFile, PrintStream out) {
+    public void print(EncodedCompilationUnit compilationUnit, PrintStream out) {
         throw new UnsupportedOperationException();
     }
 
@@ -245,9 +245,9 @@ public final class EncodedProgramModel
     }
 
     @Override
-    public EncodedCompilationUnit getCompilationUnit(EncodedParsedFile sourceFile) {
+    public EncodedCompilationUnit getCompilationUnit(EncodedParsedFile compilationUnit) {
 
-        return sourceFile.getCompilationUnit();
+        return compilationUnit.getCompilationUnit();
     }
 
 
