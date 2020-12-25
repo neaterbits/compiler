@@ -25,5 +25,12 @@
   		<artifactId>compiler-util</artifactId>
   		<version>${project.version}</version>
   	</dependency>
+  	
+  	<dependency>
+  		<groupId>${buildGroupId}</groupId>
+  		<artifactId>build-strategies</artifactId>
+  		<version>${buildVersion}</version>
+  	</dependency>
+  
   </dependencies>
 </project>

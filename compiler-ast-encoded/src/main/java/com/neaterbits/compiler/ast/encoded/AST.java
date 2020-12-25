@@ -72,6 +72,10 @@ public class AST {
 
         return writePos;
     }
+    
+    public static int index(int parseTreeRef) {
+        return parseTreeRef + 1;
+    }
 
     public static int sizeStart(ParseTreeElement element, ASTBufferRead astBuffer, int index) {
 
@@ -515,7 +519,7 @@ public class AST {
         astBuffer.writeStringRef(name);
         astBuffer.writeContextRef(nameContext);
     }
-
+    
     public static int decodeClassName(ASTBufferRead astBuffer, int index) {
         return astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE);
     }

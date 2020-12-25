@@ -24,10 +24,14 @@ import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ProgramEmitter;
 import com.neaterbits.compiler.java.JavaLexerObjectParser;
+import com.neaterbits.compiler.java.ObjectJavaParser;
+import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
+import com.neaterbits.compiler.resolver.build.LanguageCompiler;
 import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.Strings;
@@ -43,9 +47,24 @@ import com.neaterbits.util.parse.ParserException;
 
 public abstract class BaseJavaCompilerTest {
 
+    private final CompilerCodeMap codeMap;
+    
+    BaseJavaCompilerTest() {
+
+        this.codeMap = new IntCompilerCodeMap();
+        
+        LanguageCompiler.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
+    }
+    
+    private JavaLexerObjectParser<CompilationUnit> createParser() {
+        
+        return new JavaLexerObjectParser<>(
+                ObjectJavaParser.createListener(codeMap::getTypeNoByTypeName));
+    }
+
 	final CompilationUnit compile(String fileName) throws IOException, ParserException {
 
-		final JavaLexerObjectParser parser = new JavaLexerObjectParser();
+		final JavaLexerObjectParser<CompilationUnit> parser = createParser();
 
 		final List<ParseError> errors = new ArrayList<>();
 
@@ -111,7 +130,7 @@ public abstract class BaseJavaCompilerTest {
 	final Program<CompilationUnit, ASTParsedFile>
 	parseProgram(MapOfList<File, File> modules) throws IOException {
 
-		final FileTypeParser<CompilationUnit> javaParser = new FileTypeParser<>(new JavaLexerObjectParser(), ".java");
+		final FileTypeParser<CompilationUnit> javaParser = new FileTypeParser<>(createParser(), ".java");
 
 		final DirectoryParser<CompilationUnit, ASTParsedFile> directoryParser
 		        = new DirectoryParser<CompilationUnit, ASTParsedFile>(javaParser) {

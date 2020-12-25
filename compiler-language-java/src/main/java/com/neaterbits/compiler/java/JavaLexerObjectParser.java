@@ -2,8 +2,9 @@ package com.neaterbits.compiler.java;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Objects;
 
-import com.neaterbits.compiler.ast.objects.CompilationUnit;
+import com.neaterbits.compiler.parser.java.JavaParser;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.recursive.InputLexerParser;
 import com.neaterbits.compiler.util.parse.ParseError;
@@ -11,17 +12,26 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSourceInputStream;
 import com.neaterbits.util.parse.ParserException;
 
-public class JavaLexerObjectParser
-    extends InputLexerParser<CompilationUnit, IterativeParseTreeListener<CompilationUnit>> {
+public final class JavaLexerObjectParser<COMPILATION_UNIT>
+    extends InputLexerParser<COMPILATION_UNIT, IterativeParseTreeListener<COMPILATION_UNIT>> {
+
+    private final CreateParserListener<COMPILATION_UNIT> createListener;
+        
+    public JavaLexerObjectParser(CreateParserListener<COMPILATION_UNIT> createListener) {
+
+        Objects.requireNonNull(createListener);
+        
+        this.createListener = createListener;
+    }
 
     @Override
-    protected CompilationUnit parse(
+    protected final COMPILATION_UNIT parse(
             StringSourceInputStream stream,
             Collection<ParseError> errors,
             String file,
             ParseLogger parseLogger) throws IOException, ParserException {
 
-        final ObjectJavaParser parser = new ObjectJavaParser();
+        final JavaParser<COMPILATION_UNIT> parser = new JavaParser<>(createListener);
         
         return parser.parse(file, stream);
     }

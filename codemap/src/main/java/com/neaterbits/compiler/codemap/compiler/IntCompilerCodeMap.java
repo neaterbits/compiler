@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.build.types.TypeName;
+import com.neaterbits.build.types.TypesMap;
 import com.neaterbits.compiler.codemap.ArrayAllocation;
 import com.neaterbits.compiler.codemap.IntCodeMap;
 import com.neaterbits.compiler.codemap.NameToTypeNoMap;
@@ -103,6 +104,12 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 	}
 
 	@Override
+    public TypesMap<TypeName> makeTypesMap() {
+
+	    return nameToTypeNoMap.makeTypesMap();
+    }
+
+    @Override
 	public int addToken(int sourceFile, int parseTreeRef) {
 
 		if (    sourceFiles == null
@@ -138,5 +145,10 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
     @Override
     public int getMethodDeclarationTokenReferencedFrom(int fromReferenceToken) {
         return crossReference.getMethodDeclarationTokenReferencedFrom(fromReferenceToken);
+    }
+
+    @Override
+    public String toString() {
+        return "IntCompilerCodeMap [nameToTypeNoMap=" + nameToTypeNoMap + "]";
     }
 }

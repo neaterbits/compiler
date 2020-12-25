@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.model.common;
+package com.neaterbits.compiler.java;
 
 import java.util.List;
 

@@ -1,21 +1,19 @@
-package com.neaterbits.compiler.resolver.passes;
+package com.neaterbits.compiler.java;
 
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.compiler.model.common.CompiledAndResolvedFile;
 import com.neaterbits.compiler.model.common.passes.ParsedFiles;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 
-@Deprecated
 public abstract class MappedFiles<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>
 		extends ParsedFiles<PARSED_FILE>
 		implements CodeMapCompiledAndMappedFiles<COMPILATION_UNIT> {
 
 	private final Map<FileSpec, Integer> sourceFileNos;
 
-	protected MappedFiles(
+	public MappedFiles(
 			ParsedFiles<PARSED_FILE> other,
 			Map<FileSpec, Integer> sourceFileNos) {
 
@@ -26,12 +24,14 @@ public abstract class MappedFiles<PARSED_FILE extends ParsedFile, COMPILATION_UN
 		this.sourceFileNos = sourceFileNos;
 	}
 
+	/*
 	@Override
 	public final int getSourceFileNo(CompiledAndResolvedFile file) {
 
 		System.out.println("## get file " + file.getParsedFile().getFileSpec() + " from " + sourceFileNos);
 		return sourceFileNos.get(file.getParsedFile().getFileSpec());
 	}
+	*/
 
 	@Override
 	public final int getSourceFileNo(FileSpec fileSpec) {

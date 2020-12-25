@@ -11,6 +11,7 @@ import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
+import com.neaterbits.util.parse.context.Context;
 
 final class JavaLexerParser<COMPILATION_UNIT> extends JavaEnumLexerParser<COMPILATION_UNIT> {
 
@@ -61,13 +62,18 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaEnumLexerParser<COMPIL
 
         JavaToken token = lexer.lexSkipWS(JavaToken.PACKAGE);
 
+        final int packageContext;
+        
         if (token != JavaToken.NONE) {
             
-            final int packageContext = writeCurContext();
+            packageContext = writeCurContext();
             
             final int packageKeywordContext = writeCurContext();
 
             parsePackageNameAndSemiColon(packageContext, getStringRef(), packageKeywordContext);
+        }
+        else {
+            packageContext = ContextRef.NONE;
         }
         
         // Either import or class
@@ -177,7 +183,11 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaEnumLexerParser<COMPIL
         if (token != JavaToken.EOF) {
             listener.onTypeDefinitionEnd(typeStartContext, getLexerContext());
         }
-        
+
+        if (packageContext != ContextRef.NONE) {
+            listener.onNameSpaceEnd(packageContext, getLexerContext());
+        }
+
         return listener.onCompilationUnitEnd(compilationUnitStartContext, getLexerContext());
     }
     
@@ -222,8 +232,6 @@ final class JavaLexerParser<COMPILATION_UNIT> extends JavaEnumLexerParser<COMPIL
                 }
             }
         }
-
-        listener.onNameSpaceEnd(namespaceStartContext, getLexerContext());
     }
     
     private static final JavaToken [] IMPORT_STATIC_OR_IDENTIFIER = new JavaToken [] {

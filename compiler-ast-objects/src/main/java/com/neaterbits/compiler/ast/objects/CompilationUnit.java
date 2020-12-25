@@ -29,7 +29,6 @@ public class CompilationUnit extends CompilationCodeLines {
 
 			if (!e.isPlaceholderElement()) {
 
-
 				final int tokenSequenceNo = gen.getNextTokenSequenceNo();
 
 				elementsByParseTreeRef.put(tokenSequenceNo, e);
@@ -55,7 +54,9 @@ public class CompilationUnit extends CompilationCodeLines {
 	}
 
 	public int getParseTreeRefFromElement(BaseASTElement element) {
-
+	    
+	    Objects.requireNonNull(element);
+	    
 	    final int parseTreeRef = parseTreeRefsByElement.get(new IdentityKey<>(element));
 
 		return parseTreeRef;

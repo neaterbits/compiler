@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.codemap.compiler;
 
 import com.neaterbits.build.types.TypeName;
+import com.neaterbits.build.types.TypesMap;
 import com.neaterbits.compiler.codemap.CodeMap;
 import com.neaterbits.compiler.codemap.TypeInfo;
 import com.neaterbits.compiler.codemap.TypeVariant;
@@ -14,6 +15,8 @@ public interface CompilerCodeMap extends CodeMap, CrossReferenceUpdater, CrossRe
 	void addTypeMapping(TypeName name, int typeNo);
 
     Integer getTypeNoByTypeName(TypeName typeName);
+    
+    TypesMap<TypeName> makeTypesMap();
 
     default TypeName getTypeName(int typeNo) {
 

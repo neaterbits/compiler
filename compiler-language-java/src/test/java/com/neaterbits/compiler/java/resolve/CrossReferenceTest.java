@@ -9,12 +9,11 @@ import org.junit.Test;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.BaseCompilerTest;
+import com.neaterbits.compiler.java.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.java.CompileFileCollector;
 import com.neaterbits.compiler.java.JavaProgramModel;
 import com.neaterbits.compiler.model.common.ISourceToken;
-import com.neaterbits.compiler.model.common.ResolvedTypes;
 import com.neaterbits.compiler.model.common.SourceTokenType;
-import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.util.parse.ParserException;
 
@@ -38,7 +37,7 @@ public class CrossReferenceTest extends BaseCompilerTest {
 		
 		final IntCompilerCodeMap codeMap = new IntCompilerCodeMap();
 		
-		final ResolvedTypes resolvedTypes = new TestResolvedTypes();
+		final TestResolvedTypes resolvedTypes = new TestResolvedTypes();
 		
 		final CodeMapCompiledAndMappedFiles<CompilationUnit> compiledAndMapped
 				= compileAndMap(spec, source, resolvedTypes, codeMap);
@@ -94,7 +93,7 @@ public class CrossReferenceTest extends BaseCompilerTest {
 		
 		final IntCompilerCodeMap codeMap = new IntCompilerCodeMap();
 		
-		final ResolvedTypes resolvedTypes = new TestResolvedTypes();
+		final TestResolvedTypes resolvedTypes = new TestResolvedTypes();
 		
 		final CodeMapCompiledAndMappedFiles<CompilationUnit> compiledAndMapped
 				= compileAndMap(spec, source, resolvedTypes, codeMap);
@@ -159,7 +158,7 @@ public class CrossReferenceTest extends BaseCompilerTest {
 
 		final IntCompilerCodeMap codeMap = new IntCompilerCodeMap();
 		
-		final ResolvedTypes resolvedTypes = new TestResolvedTypes();
+		final TestResolvedTypes resolvedTypes = new TestResolvedTypes();
 		
 		final CodeMapCompiledAndMappedFiles<CompilationUnit> compiledAndMapped
 				= new CompileFileCollector<>(this::compileFiles)

@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.neaterbits.build.types.ScopedName;
+import com.neaterbits.build.types.TypesMap;
 import com.neaterbits.compiler.model.common.ImportsModel;
-import com.neaterbits.compiler.model.common.TypesMap;
 
 public final class ScopedNameResolver {
 

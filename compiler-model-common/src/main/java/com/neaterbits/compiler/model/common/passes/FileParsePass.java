@@ -34,7 +34,6 @@ public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
 
 	@Override
 	public PARSED_FILE execute(FileParsePassInput<COMPILATION_UNIT> input) throws IOException, ParserException {
-
 		
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final PrintStream printStream = new PrintStream(baos);

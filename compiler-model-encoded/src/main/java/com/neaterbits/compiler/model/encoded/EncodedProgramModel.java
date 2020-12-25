@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.model.encoded;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +11,7 @@ import com.neaterbits.compiler.ast.encoded.AST;
 import com.neaterbits.compiler.ast.encoded.ASTBufferRead;
 import com.neaterbits.compiler.ast.encoded.ASTBufferRead.ParseTreeElementRef;
 import com.neaterbits.compiler.ast.encoded.EncodedCompilationUnit;
+import com.neaterbits.compiler.model.common.ElementVisitor;
 import com.neaterbits.compiler.model.common.FieldVisitor;
 import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.model.common.MethodVisitor;
@@ -95,6 +97,35 @@ public final class EncodedProgramModel
     }
 
     @Override
+    public List<String> getNamespace(EncodedCompilationUnit compilationUnit, int parseTreeRef) {
+
+        final ASTBufferRead astBuffer = compilationUnit.getBuffer();
+
+        int curParseTreeRef = parseTreeRef + AST.sizeStart(ParseTreeElement.NAMESPACE, astBuffer, -1);
+
+        boolean done = false;
+
+        final List<String> parts = new ArrayList<>();
+        
+        do {
+            if (astBuffer.getParseTreeElement(curParseTreeRef) != ParseTreeElement.NAMESPACE_PART) {
+                
+                if (parts.isEmpty()) {
+                    throw new IllegalStateException();
+                }
+                
+                done = true;
+            }
+
+            curParseTreeRef += AST.sizeLeaf(ParseTreeElement.NAMESPACE_PART, astBuffer, -1);
+
+        } while (!done);
+        
+        return parts;
+    }
+
+
+    @Override
     public String getMethodName(EncodedCompilationUnit compilationUnit, int parseTreeMethodDeclarationRef) {
         // FIXME Auto-generated method stub
         return null;
@@ -120,8 +151,29 @@ public final class EncodedProgramModel
     public String getClassName(
             EncodedCompilationUnit compilationUnit,
             int parseTreeTypeDeclarationRef) {
-        // FIXME Auto-generated method stub
-        return null;
+
+        return compilationUnit.getStringFromRef(
+                AST.decodeClassName(
+                        compilationUnit.getBuffer(),
+                        AST.index(parseTreeTypeDeclarationRef)));
+    }
+
+    @Override
+    public String getEnumName(EncodedCompilationUnit compilationUnit, int parseTreeTypeDeclarationRef) {
+        
+        return compilationUnit.getStringFromRef(
+                AST.decodeEnumName(
+                        compilationUnit.getBuffer(),
+                        AST.index(parseTreeTypeDeclarationRef)));
+    }
+
+
+    @Override
+    public String getInterfaceName(EncodedCompilationUnit compilationUnit, int parseTreeTypeDeclarationRef) {
+        return compilationUnit.getStringFromRef(
+                AST.decodeInterfaceName(
+                        compilationUnit.getBuffer(),
+                        AST.index(parseTreeTypeDeclarationRef)));
     }
 
     @Override
@@ -145,6 +197,40 @@ public final class EncodedProgramModel
 
         return numMethods;
     }
+
+    @Override
+    public void iterateElements(EncodedCompilationUnit compilationUnit,
+            ElementVisitor<EncodedCompilationUnit> visitor) {
+        
+        final ASTBufferRead astBuffer = compilationUnit.getBuffer();
+
+        final ParseTreeElementRef ref = new ParseTreeElementRef();
+
+        int parseTreeRef = 0;
+
+        boolean done = false;
+
+        do {
+            astBuffer.getParseTreeElement(parseTreeRef, ref);
+            
+            if (ref.isStart) {
+                visitor.onElementStart(compilationUnit, parseTreeRef, ref.element);
+            }
+            else {
+                visitor.onElementEnd(compilationUnit, parseTreeRef, ref.element);
+                
+                if (ref.element == ParseTreeElement.COMPILATION_UNIT) {
+                    done = true;
+                }
+            }
+            
+            parseTreeRef += ref.isStart
+                    ? AST.sizeStart(ref.element, astBuffer, ref.index)
+                    : AST.sizeEnd(ref.element);
+                    
+        } while (!done);
+    }
+
 
     @Override
     public void iterateTypes(EncodedCompilationUnit compilationUnit, TypeVisitor visitor) {

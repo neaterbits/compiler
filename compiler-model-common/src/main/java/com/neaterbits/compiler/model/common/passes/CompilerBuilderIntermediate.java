@@ -3,6 +3,7 @@ package com.neaterbits.compiler.model.common.passes;
 import java.util.List;
 import java.util.Objects;
 
+@Deprecated
 public class CompilerBuilderIntermediate<INPUT, INITIAL_INPUT> {
 
 	private final List<Pass<?, ?>> passes;
@@ -44,7 +45,7 @@ public class CompilerBuilderIntermediate<INPUT, INITIAL_INPUT> {
 		return (CompilerBuilderIntermediate<OUTPUT, INITIAL_INPUT>)this;
 	}
 
-	public LanguageCompiler<INITIAL_INPUT, INPUT> build() {
-		return new LanguageCompiler<>(passes);
+	public LanguageCompilerPasses<INITIAL_INPUT, INPUT> build() {
+		return new LanguageCompilerPasses<>(passes);
 	}
 }

@@ -1,13 +1,13 @@
-package com.neaterbits.compiler.model.common;
-
-import java.util.List;
+package com.neaterbits.compiler.java;
 
 import com.neaterbits.compiler.util.FileSpec;
 
-public interface CompiledAndResolvedFiles {
+interface CompiledAndResolvedFiles {
 
 	CompiledAndResolvedFile getFile(FileSpec fileSpec);
 
+    /*
 	List<CompiledAndResolvedFile> getFiles();
+	*/
 	
 }

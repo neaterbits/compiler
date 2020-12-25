@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.build.types.TypeName;
+import com.neaterbits.build.types.TypesMap;
 import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.model.TypeSources;

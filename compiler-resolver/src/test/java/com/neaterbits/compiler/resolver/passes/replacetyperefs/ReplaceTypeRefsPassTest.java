@@ -19,8 +19,7 @@ import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
-import com.neaterbits.compiler.resolver.passes.ParsedFilesAndCodeMap;
-import com.neaterbits.compiler.resolver.passes.typefinder.FoundTypeFiles;
+import com.neaterbits.compiler.resolver.passes.ParsedModuleAndCodeMap;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.util.parse.ParserException;
 
@@ -28,7 +27,7 @@ public class ReplaceTypeRefsPassTest {
 
     private ParsedFile parsedFile;
     private CompilationUnitModel<Object> compilationUnitModel;
-    private ParsedFilesAndCodeMap<ParsedFile> parsedFilesAndCodeMap;
+    private ParsedModuleAndCodeMap<ParsedFile> parsedModuleAndCodeMap;
     private Map<ScopedName, TypeName> typeNameByScopedName;
     private CompilerCodeMap codeMap;
 
@@ -48,8 +47,8 @@ public class ReplaceTypeRefsPassTest {
         this.typeNameByScopedName = new HashMap<>();
 
         this.codeMap = new IntCompilerCodeMap();
-
-        this.parsedFilesAndCodeMap = new ParsedFilesAndCodeMap<>(Arrays.asList(parsedFile), codeMap);
+        
+        this.parsedModuleAndCodeMap = new ParsedModuleAndCodeMap<>(Arrays.asList(parsedFile), -1, codeMap);
 
         this.replaceTypeRefsPass = new ReplaceTypeRefsPass<>(compilationUnitModel);
     }
@@ -69,18 +68,13 @@ public class ReplaceTypeRefsPassTest {
         final int parseTreeRef = 123;
 
         codeMap.addTypeMapping(typeName, typeNo);
-        typeNameByScopedName.put(scopedName, typeName);
-
-        final FoundTypeFiles<ParsedFile> found = new FoundTypeFiles<>(
-                parsedFilesAndCodeMap,
-                typeNameByScopedName);
 
         final Object compilationUnit = new Object();
 
         Mockito.when(parsedFile.getCompilationUnit())
             .thenReturn(compilationUnit);
 
-        replaceTypeRefsPass.execute(found);
+        replaceTypeRefsPass.execute(parsedModuleAndCodeMap);
 
         Mockito.verify(parsedFile).getCompilationUnit();
 
@@ -131,16 +125,12 @@ public class ReplaceTypeRefsPassTest {
         codeMap.addTypeMapping(typeName, typeNo);
         typeNameByScopedName.put(scopedName, typeName);
 
-        final FoundTypeFiles<ParsedFile> found = new FoundTypeFiles<>(
-                parsedFilesAndCodeMap,
-                typeNameByScopedName);
-
         final Object compilationUnit = new Object();
 
         Mockito.when(parsedFile.getCompilationUnit())
             .thenReturn(compilationUnit);
 
-        replaceTypeRefsPass.execute(found);
+        replaceTypeRefsPass.execute(parsedModuleAndCodeMap);
 
         Mockito.verify(parsedFile).getCompilationUnit();
 

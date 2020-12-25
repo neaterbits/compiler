@@ -1,25 +1,24 @@
 package com.neaterbits.compiler.resolver.passes.namereferenceresolve;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.build.strategies.compilemodules.ParsedWithCachedRefs;
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.codemap.compiler.CrossReferenceUpdater;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
-import com.neaterbits.compiler.model.common.CompiledAndResolvedFile;
 import com.neaterbits.compiler.model.common.passes.MultiPass;
+import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.UnknownReferenceError;
-import com.neaterbits.compiler.resolver.passes.CodeMapCompiledAndMappedFiles;
-import com.neaterbits.compiler.util.parse.CompileError;
+import com.neaterbits.compiler.resolver.passes.ParsedModuleAndCodeMap;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.parse.ScopesListener;
 
-public class NameReferenceResolvePass<PARSED_FILE extends ParsedFile, COMPILATION_UNIT, BUILTINTYPE, COMPLEXTYPE, LIBRARYTYPE>
+public class NameReferenceResolvePass<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>
 		extends MultiPass<
-			CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>,
-			CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>> {
+			ParsedModuleAndCodeMap<PARSED_FILE>,
+			ParsedModuleAndCodeMap<PARSED_FILE>> {
 
 	
 	private final CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel;
@@ -32,38 +31,33 @@ public class NameReferenceResolvePass<PARSED_FILE extends ParsedFile, COMPILATIO
 	}
 
 	@Override
-	public CodeMapCompiledAndMappedFiles<COMPILATION_UNIT> execute(CodeMapCompiledAndMappedFiles<COMPILATION_UNIT> input) throws IOException {
+	public ParsedModuleAndCodeMap<PARSED_FILE> execute(ParsedModuleAndCodeMap<PARSED_FILE> input) {
 
-		final List<CompileError> errors = new ArrayList<>();
+		final List<ResolveError> errors = new ArrayList<>();
 		
-		for (CompiledAndResolvedFile file : input.getFiles()) {
+		for (ParsedWithCachedRefs<PARSED_FILE> file : input.getParsed()) {
 			
-			final int sourceFileNo = input.getSourceFileNo(file);
+			final int sourceFileNo = file.getCodeMapFileNo();
 			
-			resolveFile(file.getParsedFile(), input.getCrossReferenceUpdater(), sourceFileNo, errors);
+			resolveFile(file.getParsedFile(), input.getCodeMap(), sourceFileNo, errors);
 		}
 		
 		return input;
 	}
 
-	private void resolveFile(ParsedFile parsedFile, CrossReferenceUpdater crossReference, int sourceFile, List<CompileError> errors) {
+	private void resolveFile(ParsedFile parsedFile, CrossReferenceUpdater crossReference, int sourceFile, List<ResolveError> errors) {
 		
 		final Scopes scopes = new Scopes();
 		final Primaries primaries = new Primaries();
 		
 		final COMPILATION_UNIT compilationUnit = parsedFile.getCompilationUnit();
-
 		
-		System.out.println("## resolveFile");
-
-		
-		final ScopesListener scopesLiestener = new ScopesListener() {
+		final ScopesListener scopesListener = new ScopesListener() {
 
 			@Override
 			public void onClassStart(int classParseTreeRef) {
 
 				scopes.push();
-				
 			}
 
 			@Override
@@ -200,6 +194,6 @@ public class NameReferenceResolvePass<PARSED_FILE extends ParsedFile, COMPILATIO
 			}
 		};
 		
-		compilationUnitModel.iterateScopesAndVariables(compilationUnit, scopesLiestener);
+		compilationUnitModel.iterateScopesAndVariables(compilationUnit, scopesListener);
 	}
 }

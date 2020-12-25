@@ -1,21 +1,18 @@
-package com.neaterbits.compiler.bytecode.common.executor;
+package com.neaterbits.compiler.codemap;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.codemap.CodeMap;
-import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.codemap.VTableScratchArea;
 import com.neaterbits.compiler.types.FieldInfo;
 import com.neaterbits.compiler.types.MethodInfo;
 import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.Visibility;
 
-class SynchronizedCodeMap implements CodeMap {
+public class SynchronizedCodeMap implements CodeMap {
 
 	private final CodeMap delegate;
 
-	SynchronizedCodeMap(CodeMap delegate) {
+	protected SynchronizedCodeMap(CodeMap delegate) {
 
 		Objects.requireNonNull(delegate);
 		

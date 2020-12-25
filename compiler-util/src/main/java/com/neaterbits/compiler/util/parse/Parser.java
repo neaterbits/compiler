@@ -13,7 +13,7 @@ public interface Parser<T> {
 
 	T parse(String string, boolean log) throws ParserException;
 
-	T parse(InputStream stream, Charset charset, String file)
+	T parse(InputStream stream, Charset charSet, String file)
 	            throws IOException, ParserException;
 
 	T parse(String string, Collection<ParseError> errors, ParseLogger parseLogger)

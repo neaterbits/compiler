@@ -28,7 +28,6 @@ public final class TestTokenizer implements Tokenizer {
         return stringRef;
     }
 
-
     @Override
     public int addToBuffer(MapStringStorageBuffer buffer, long stringRef) {
 

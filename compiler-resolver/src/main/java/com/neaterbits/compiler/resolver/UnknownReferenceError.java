@@ -1,8 +1,6 @@
 package com.neaterbits.compiler.resolver;
 
-import com.neaterbits.compiler.util.parse.CompileError;
-
-public class UnknownReferenceError extends CompileError {
+public class UnknownReferenceError extends ResolveError {
 
 	private final String message;
 

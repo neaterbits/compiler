@@ -24,7 +24,7 @@ import com.neaterbits.compiler.ast.objects.typedefinition.FieldModifiers;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompileFileCollector;
-import com.neaterbits.compiler.model.common.CompiledAndResolvedFile;
+import com.neaterbits.compiler.java.CompiledAndResolvedFile;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.types.typedefinition.FieldVisibility;

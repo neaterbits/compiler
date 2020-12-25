@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.bytecode.common.executor;
 
 import com.neaterbits.compiler.bytecode.common.loader.codemap.LoaderCodeMap;
+import com.neaterbits.compiler.codemap.SynchronizedCodeMap;
 
 final class SynchronizedLoaderCodeMap extends SynchronizedCodeMap implements LoaderCodeMap {
 

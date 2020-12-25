@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.model.objects;
 
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -35,6 +36,7 @@ import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
 import com.neaterbits.compiler.model.common.BuiltinTypeRef;
+import com.neaterbits.compiler.model.common.ElementVisitor;
 import com.neaterbits.compiler.model.common.FieldVisitor;
 import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.model.common.LibraryTypeRef;
@@ -312,7 +314,15 @@ public class ObjectProgramModel
 	}
 
 	@Override
-	public String getMethodName(CompilationUnit compilationUnit, int parseTreemethodDeclarationRef) {
+    public List<String> getNamespace(CompilationUnit compilationUnit, int parseTreeRef) {
+
+	    final Namespace namespace = (Namespace)compilationUnit.getElementFromParseTreeRef(parseTreeRef);
+	    
+	    return Arrays.asList(namespace.getParts());
+    }
+
+    @Override
+    public String getMethodName(CompilationUnit compilationUnit, int parseTreemethodDeclarationRef) {
 
 		final ClassMethodMember classmethodMember = (ClassMethodMember)compilationUnit.getElementFromParseTreeRef(parseTreemethodDeclarationRef);
 
@@ -345,7 +355,23 @@ public class ObjectProgramModel
 	}
 
 	@Override
-	public String getTokenString(CompilationUnit compilationUnit, int parseTreeTokenRef) {
+    public String getEnumName(CompilationUnit compilationUnit, int parseTreeTypeDeclarationRef) {
+
+        final EnumDefinition enumDefinition = (EnumDefinition)compilationUnit.getElementFromParseTreeRef(parseTreeTypeDeclarationRef);
+
+        return enumDefinition.getNameString();
+    }
+
+    @Override
+    public String getInterfaceName(CompilationUnit compilationUnit, int parseTreeTypeDeclarationRef) {
+
+        final InterfaceDefinition interfaceDefinition = (InterfaceDefinition)compilationUnit.getElementFromParseTreeRef(parseTreeTypeDeclarationRef);
+
+        return interfaceDefinition.getNameString();
+    }
+
+    @Override
+    public String getTokenString(CompilationUnit compilationUnit, int parseTreeTokenRef) {
 
 	    final Context context = compilationUnit.getElementFromParseTreeRef(parseTreeTokenRef).getContext();
 
@@ -451,7 +477,8 @@ public class ObjectProgramModel
 
 		int numMethods = 0;
 
-		final ComplexTypeDefinition<?, ?> complexType = (ComplexTypeDefinition<?, ?>)compilationUnit.getElementFromParseTreeRef(userDefinedType.getParseTreeRef());
+		final ComplexTypeDefinition<?, ?> complexType
+		    = (ComplexTypeDefinition<?, ?>)compilationUnit.getElementFromParseTreeRef(userDefinedType.getParseTreeRef());
 
 		if (complexType != null && complexType.getMembers() != null) {
 
@@ -466,6 +493,41 @@ public class ObjectProgramModel
 	}
 
 	@Override
+    public void iterateElements(CompilationUnit compilationUnit, ElementVisitor<CompilationUnit> visitor) {
+	    
+        compilationUnit.iterateNodeFirst(new BaseASTIterator() {
+
+            @Override
+            public void onPush(BaseASTElement element) {
+                
+                if (!element.isPlaceholderElement()) {
+                    
+                    visitor.onElementStart(
+                            compilationUnit,
+                            compilationUnit.getParseTreeRefFromElement(element),
+                            element.getParseTreeElement());
+                }
+            }
+
+            @Override
+            public boolean onPop(BaseASTElement element) {
+                
+                if (!element.isPlaceholderElement()) {
+    
+                    visitor.onElementEnd(
+                            compilationUnit,
+                            compilationUnit.getParseTreeRefFromElement(element),
+                            element.getParseTreeElement());
+                }
+
+                return true;
+            }
+
+        });
+
+    }
+
+    @Override
     public void iterateTypes(CompilationUnit compilationUnit, TypeVisitor visitor) {
 
 	    compilationUnit.iterateNodeFirst(new BaseASTIterator() {

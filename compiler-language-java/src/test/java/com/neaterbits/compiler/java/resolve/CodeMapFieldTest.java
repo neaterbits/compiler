@@ -8,8 +8,8 @@ import org.junit.Test;
 
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.java.BaseCompilerTest;
+import com.neaterbits.compiler.java.CompiledAndMappedFiles;
 import com.neaterbits.compiler.java.JavaUtil;
-import com.neaterbits.compiler.model.common.CompiledAndMappedFiles;
 import com.neaterbits.compiler.types.FieldInfo;
 import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.Visibility;

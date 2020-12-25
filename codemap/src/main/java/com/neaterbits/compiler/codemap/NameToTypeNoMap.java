@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.build.types.TypeName;
+import com.neaterbits.build.types.TypesMap;
 
 public final class NameToTypeNoMap {
 	
@@ -23,6 +25,17 @@ public final class NameToTypeNoMap {
 		Objects.requireNonNull(typeName);
 
 		return typesByTypeName.get(typeName);
+	}
+	
+	public TypesMap<TypeName> makeTypesMap() {
+	    
+	    final Map<ScopedName, TypeName> map = new HashMap<>(typesByTypeName.size());
+	    
+	    for (TypeName typeName : typesByTypeName.keySet()) {
+	        map.put(typeName.toScopedName(), typeName);
+	    }
+	    
+	    return scopedName -> map.get(scopedName);
 	}
 
 	@Override

@@ -6,10 +6,10 @@ import java.util.Objects;
 
 import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.build.types.TypeName;
+import com.neaterbits.build.types.TypesMap;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
-import com.neaterbits.compiler.model.common.TypesMap;
 import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
 
 final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT> implements TypeReferenceVisitor<COMPILATION_UNIT> {

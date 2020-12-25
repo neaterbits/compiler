@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.model.common.TypesMap;
+import com.neaterbits.build.types.TypesMap;
 import com.neaterbits.compiler.resolver.passes.ParsedFilesAndCodeMap;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 

@@ -39,8 +39,8 @@ public abstract class BaseParser<T, LISTENER> implements Parser<T> {
     }
 
     @Override
-    public final T parse(InputStream stream, Charset charset, String file) throws IOException, ParserException {
-        return parse(new StringSourceInputStream(stream, charset), new ArrayList<>(), file, makeParseLogger());
+    public final T parse(InputStream stream, Charset charSet, String file) throws IOException, ParserException {
+        return parse(new StringSourceInputStream(stream, charSet), new ArrayList<>(), file, makeParseLogger());
     }
 
     @Override

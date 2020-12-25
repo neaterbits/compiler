@@ -2,6 +2,7 @@ package com.neaterbits.compiler.java;
 
 import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
+import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory.GetBuiltinTypeNo;
 import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
 import com.neaterbits.compiler.parser.java.JavaParser;
@@ -15,15 +16,20 @@ import com.neaterbits.util.io.strings.StringSource;
 public final class ObjectJavaParser extends JavaParser<CompilationUnit> {
 
     public ObjectJavaParser() {
-        this(
-                new ASTParseTreeFactory(JavaTypes.getBuiltinTypes(), null),
-                new ParseLogger(System.out, CastFullContextProvider.INSTANCE));
+        super(createListener(null));
     }
 
-    public ObjectJavaParser(ASTParseTreeFactory parseTreeFactory, ParseLogger logger) {
-        super(stringBuffers -> makeListener(stringBuffers, parseTreeFactory, logger));
-    }
+    public static CreateParserListener<CompilationUnit>
+    createListener(GetBuiltinTypeNo getBuiltinTypeNo) {
 
+        final ASTParseTreeFactory parseTreeFactory
+            = new ASTParseTreeFactory(JavaTypes.getBuiltinTypes(), getBuiltinTypeNo);
+        
+        final ParseLogger parseLogger = new ParseLogger(System.out, CastFullContextProvider.INSTANCE);
+    
+        return stringBuffers -> makeListener(stringBuffers, parseTreeFactory, parseLogger);
+    }
+    
     private static IterativeParseTreeListener<CompilationUnit> makeListener(
             StringBuffers stringBuffers,
             ASTParseTreeFactory parseTreeFactory,
