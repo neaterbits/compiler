@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.compiler.util.parse.ParsedFile;
@@ -19,17 +18,12 @@ public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
 		extends FilePass<FileParsePassInput<COMPILATION_UNIT>, PARSED_FILE> {
 
 	private final CompilerModel<COMPILATION_UNIT, PARSED_FILE> model;
-	private final FullContextProvider fullContextProvider;
 
-	public FileParsePass(
-	        CompilerModel<COMPILATION_UNIT, PARSED_FILE> model,
-			FullContextProvider fullContextProvider) {
+	public FileParsePass(CompilerModel<COMPILATION_UNIT, PARSED_FILE> model) {
 
 		Objects.requireNonNull(model);
-		Objects.requireNonNull(fullContextProvider);
 		
 		this.model = model;
-		this.fullContextProvider = fullContextProvider;
 	}
 
 	@Override
@@ -37,7 +31,6 @@ public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
 		
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final PrintStream printStream = new PrintStream(baos);
-		final ParseLogger parseLogger = new ParseLogger(printStream, fullContextProvider);
 		
 		final List<ParseError> errors = new ArrayList<>();
 		
@@ -46,7 +39,7 @@ public final class FileParsePass<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
 				input.getCharset(),
 				errors,
 				input.getFile().getParseContextName(),
-				parseLogger);
+				fullContextProvider -> new ParseLogger(printStream, fullContextProvider));
 		
 		final PARSED_FILE parsedFile = model.createParsedFile(
 				input.getFile(),

@@ -6,6 +6,7 @@ import com.neaterbits.compiler.ast.objects.variables.VarNameDeclaration;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
+@Deprecated
 public final class FieldNameDeclaration extends ASTName {
 
 	public FieldNameDeclaration(VarNameDeclaration varNameDeclaration) {

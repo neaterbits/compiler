@@ -11,6 +11,8 @@ import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
 import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
+import com.neaterbits.compiler.resolver.ResolveError;
+import com.neaterbits.compiler.resolver.UnknownReferenceError;
 
 final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT> implements TypeReferenceVisitor<COMPILATION_UNIT> {
 
@@ -18,28 +20,32 @@ final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT> implements TypeReferen
     private final CompilerCodeMap codeMap;
 
     private final TypesMap<TypeName> compiledTypesMap;
+    private final List<ResolveError> errors;
 
     private final List<String> currentNamespace;
 
     ReplaceTypeReferenceVisitor(
             CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel,
             CompilerCodeMap codeMap,
-            TypesMap<TypeName> compiledTypesMap) {
+            TypesMap<TypeName> compiledTypesMap,
+            List<ResolveError> errors) {
 
         Objects.requireNonNull(compilationUnitModel);
         Objects.requireNonNull(codeMap);
         Objects.requireNonNull(compiledTypesMap);
+        Objects.requireNonNull(errors);
 
         this.compilationUnitModel = compilationUnitModel;
         this.codeMap = codeMap;
         this.compiledTypesMap = compiledTypesMap;
+        this.errors = errors;
 
         this.currentNamespace = new ArrayList<>();
     }
 
     @Override
     public void onNamespaceStart() {
-
+        
         if (!currentNamespace.isEmpty()) {
             throw new IllegalStateException();
         }
@@ -86,7 +92,8 @@ final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT> implements TypeReferen
                 compilationUnitModel,
                 currentNamespace,
                 compiledTypesMap);
-
+        
+        System.out.println("## replace from " + compiledTypesMap);
 
         if (typeName == null) {
             unresolvedReference(scopedName);
@@ -106,6 +113,7 @@ final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT> implements TypeReferen
             unresolvedReference(typeName);
         }
         else {
+            
             // Non-scoped reference, replace with type
             compilationUnitModel.replaceTypeReference(compilationUnit, parseTreeElement, typeNo, typeName);
         }
@@ -113,9 +121,14 @@ final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT> implements TypeReferen
 
     private void unresolvedReference(ScopedName scopedName) {
 
+        System.out.println("## unresolved ScopedName " + scopedName);
+        
+        errors.add(new UnknownReferenceError("No matching class for name " + scopedName.getDebugString()));
     }
 
     private void unresolvedReference(TypeName typeName) {
 
+        errors.add(new UnknownReferenceError("Matching class not found in code map for name "
+                + typeName.toDebugString()));
     }
 }

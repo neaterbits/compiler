@@ -113,7 +113,11 @@ public class ScopedNameResolverTest {
 
 		final Context context = FullContext.makeTestContext();
 
-		final CompilationUnit compilationUnit = new CompilationUnit(context, Arrays.asList(imports), new ArrayList<>());
+		final CompilationUnit compilationUnit = new CompilationUnit(
+		                                                context,
+		                                                Arrays.asList(imports),
+		                                                new ArrayList<>(),
+		                                                null);
 
 		return compilationUnit;
 	}

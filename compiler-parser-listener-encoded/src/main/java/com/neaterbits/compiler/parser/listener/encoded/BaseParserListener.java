@@ -30,13 +30,12 @@ import com.neaterbits.compiler.types.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.IntKeyIntValueHash;
+import com.neaterbits.compiler.util.StringSourceFullContextProvider;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.FullContext;
-import com.neaterbits.util.parse.context.ImmutableFullContext;
 
 abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener<COMPILATION_UNIT> {
 
@@ -65,18 +64,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener
 
         this.contextBuffer = new ASTBufferImpl();
 
-        this.fullContextProvider = new FullContextProvider() {
-
-            @Override
-            public FullContext makeFullContext(Context context) {
-                return new ImmutableFullContext(file, -1, -1, context.getStartOffset(), -1, -1, context.getEndOffset(), getText(context));
-            }
-
-            @Override
-            public String getText(Context context) {
-                return tokenizer.asStringFromOffset(context.getStartOffset(), context.getEndOffset());
-            }
-        };
+        this.fullContextProvider = new StringSourceFullContextProvider(file, tokenizer);
 
         this.parseTreeRefToStartContextHash = new IntKeyIntValueHash(100);
         this.parseTreeRefToEndContextHash = new IntKeyIntValueHash(100);

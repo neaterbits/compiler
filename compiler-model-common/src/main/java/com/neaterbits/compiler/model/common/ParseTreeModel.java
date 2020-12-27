@@ -4,6 +4,9 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.neaterbits.build.types.TypeName;
+import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.util.parse.ScopesListener;
 
 public interface ParseTreeModel<COMPILATION_UNIT> {
@@ -32,9 +35,83 @@ public interface ParseTreeModel<COMPILATION_UNIT> {
 
 	int getNumMethods(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef complextype);
 
-    void iterateTypes(COMPILATION_UNIT compilationUnit, TypeVisitor visitor);
+    void iterateTypesAndMembers(
+            COMPILATION_UNIT compilationUnit,
+            TypeMemberVisitor visitor,
+            boolean fields,
+            boolean methods);
+    
+    default void iterateTypes(COMPILATION_UNIT compilationUnit, TypeVisitor visitor) {
+        
+        final TypeMemberVisitor fieldVisitor = new TypeMemberVisitor() {
+            
+            @Override
+            public void onNamespaceStart() {
+                visitor.onNamespaceStart();
+            }
+            
+            @Override
+            public void onNamespacePart(CharSequence part) {
+                visitor.onNamespacePart(part);
+            }
+            
+            @Override
+            public void onNamespaceEnd() {
+                visitor.onNamespaceEnd();
+            }
+            
+            @Override
+            public void onInterfaceStart(CharSequence name) {
+                visitor.onInterfaceStart(name);
+            }
+            
+            @Override
+            public void onInterfaceEnd() {
+                visitor.onInterfaceEnd();
+            }
+            
+            @Override
+            public void onEnumStart(CharSequence name) {
+                visitor.onEnumStart(name);
+            }
+            
+            @Override
+            public void onEnumEnd() {
+                visitor.onEnumEnd();
+            }
+            
+            @Override
+            public void onClassStart(CharSequence name) {
+                visitor.onClassStart(name);
+            }
+            
+            @Override
+            public void onClassEnd() {
+                visitor.onClassEnd();
+            }
+            
+            @Override
+            public void onField(CharSequence name, TypeName type, int numArrayDimensions, boolean isStatic,
+                    Visibility visibility, Mutability mutability, boolean isVolatile, boolean isTransient, int indexInType) {
 
-    void iterateClassMembers(COMPILATION_UNIT compilationUnit, UserDefinedTypeRef complexType, FieldVisitor fieldVisitor, MethodVisitor methodVisitor);
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public void onMethod(String name, MethodVariant methodVariant, TypeName returnType,
+                    TypeName[] parameterTypes, int indexInType) {
+                
+                throw new UnsupportedOperationException();
+            }
+        };
+        
+        iterateTypesAndMembers(compilationUnit, fieldVisitor, false, false);
+    }
+
+    default void iterateTypeMembers(COMPILATION_UNIT compilationUnit, TypeMemberVisitor memberVisitor) {
+        
+        iterateTypesAndMembers(compilationUnit, memberVisitor, true, true);
+    }
 
     void replaceTypeReference(COMPILATION_UNIT compilationUnit, int toReplace, int typeNo, TypeName typeName);
 

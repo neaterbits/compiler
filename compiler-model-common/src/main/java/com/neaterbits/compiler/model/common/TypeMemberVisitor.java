@@ -1,14 +1,14 @@
 package com.neaterbits.compiler.model.common;
 
 import com.neaterbits.build.types.TypeName;
+import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.Visibility;
 
-@FunctionalInterface
-public interface FieldVisitor {
+public interface TypeMemberVisitor extends TypeVisitor {
 
 	void onField(
-			String name,
+			CharSequence name,
 			TypeName type,
 			int numArrayDimensions,
 			boolean isStatic,
@@ -18,4 +18,10 @@ public interface FieldVisitor {
 			boolean isTransient,
 			int indexInType);
 	
+    void onMethod(
+            String name,
+            MethodVariant methodVariant,
+            TypeName returnType,
+            TypeName [] parameterTypes,
+            int indexInType);
 }

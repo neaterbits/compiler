@@ -4,22 +4,25 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.model.common.passes.ParsedFiles;
-import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 
 public abstract class MappedFiles<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>
 		extends ParsedFiles<PARSED_FILE>
 		implements CodeMapCompiledAndMappedFiles<COMPILATION_UNIT> {
 
-	private final Map<FileSpec, Integer> sourceFileNos;
+	private final Map<String, Integer> sourceFileNos;
 
 	public MappedFiles(
 			ParsedFiles<PARSED_FILE> other,
-			Map<FileSpec, Integer> sourceFileNos) {
+			Map<String, Integer> sourceFileNos) {
 
 		super(other);
 
 		Objects.requireNonNull(sourceFileNos);
+		
+		if (other.getParsedFiles().size() != sourceFileNos.size()) {
+		    throw new IllegalArgumentException();
+		}
 
 		this.sourceFileNos = sourceFileNos;
 	}
@@ -34,15 +37,15 @@ public abstract class MappedFiles<PARSED_FILE extends ParsedFile, COMPILATION_UN
 	*/
 
 	@Override
-	public final int getSourceFileNo(FileSpec fileSpec) {
+	public final int getSourceFileNo(String name) {
 
-		Objects.requireNonNull(fileSpec);
-
-		return sourceFileNos.get(fileSpec);
+		Objects.requireNonNull(name);
+		
+		return sourceFileNos.get(name);
 	}
 
 	@Override
-	public final COMPILATION_UNIT getCompilationUnit(FileSpec fileSpec) {
-		return getFile(fileSpec).getParsedFile().getCompilationUnit();
+	public final COMPILATION_UNIT getCompilationUnit(String name) {
+		return getFile(name).getParsedFile().getCompilationUnit();
 	}
 }

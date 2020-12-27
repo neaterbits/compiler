@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.parse.Parser.CreateParseLogger;
 import com.neaterbits.util.coll.MapOfList;
 
 final class ModuleParser<COMPILATION_UNIT, PARSED_FILE> {
@@ -30,7 +31,7 @@ final class ModuleParser<COMPILATION_UNIT, PARSED_FILE> {
 			Charset charset,
 			File systemModule,
 			Consumer<Collection<PARSED_FILE>> postProcessSystemModule,
-			ParseLogger debugParseLogger) throws IOException {
+			CreateParseLogger debugParseLogger) throws IOException {
 
 		final Set<File> parsedModules = new HashSet<>();
 		final Set<File> toParse = new HashSet<>(modulesAndDependencies.keys());

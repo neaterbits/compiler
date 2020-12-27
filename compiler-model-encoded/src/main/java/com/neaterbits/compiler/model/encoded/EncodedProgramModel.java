@@ -12,18 +12,19 @@ import com.neaterbits.compiler.ast.encoded.ASTBufferRead;
 import com.neaterbits.compiler.ast.encoded.ASTBufferRead.ParseTreeElementRef;
 import com.neaterbits.compiler.ast.encoded.EncodedCompilationUnit;
 import com.neaterbits.compiler.model.common.ElementVisitor;
-import com.neaterbits.compiler.model.common.FieldVisitor;
+import com.neaterbits.compiler.model.common.TypeMemberVisitor;
 import com.neaterbits.compiler.model.common.ISourceToken;
-import com.neaterbits.compiler.model.common.MethodVisitor;
 import com.neaterbits.compiler.model.common.ProgramModel;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
 import com.neaterbits.compiler.model.common.SourceTokenUtil;
 import com.neaterbits.compiler.model.common.SourceTokenUtil.ASTAccess;
 import com.neaterbits.compiler.model.common.SourceTokenVisitor;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
-import com.neaterbits.compiler.model.common.TypeVisitor;
 import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
+import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.parse.ScopesListener;
@@ -37,7 +38,6 @@ public final class EncodedProgramModel
     public EncodedProgramModel(List<TypeImport> implicitImports) {
         super(implicitImports);
     }
-
 
     @Override
     public void iterate(
@@ -233,7 +233,11 @@ public final class EncodedProgramModel
 
 
     @Override
-    public void iterateTypes(EncodedCompilationUnit compilationUnit, TypeVisitor visitor) {
+    public void iterateTypesAndMembers(
+            EncodedCompilationUnit compilationUnit,
+            TypeMemberVisitor visitor,
+            boolean fields,
+            boolean methods) {
 
         // Iterate through the parse tree
         final ASTBufferRead astBuffer = compilationUnit.getBuffer();
@@ -244,8 +248,13 @@ public final class EncodedProgramModel
 
         boolean done = false;
 
+        int fieldIndex = 0;
+        int methodIndex = 0;
+        
         do {
             astBuffer.getParseTreeElement(parseTreeRef, ref);
+            
+            boolean updateSize = true;
 
             switch (ref.element) {
             case NAMESPACE:
@@ -271,6 +280,9 @@ public final class EncodedProgramModel
                     visitor.onClassStart(compilationUnit.getStringFromRef(classNameStringRef));
                 }
                 else {
+                    fieldIndex = 0;
+                    methodIndex = 0;
+
                     visitor.onClassEnd();
                 }
                 break;
@@ -282,6 +294,9 @@ public final class EncodedProgramModel
                     visitor.onInterfaceStart(compilationUnit.getStringFromRef(interfaceNameStringRef));
                 }
                 else {
+                    fieldIndex = 0;
+                    methodIndex = 0;
+
                     visitor.onInterfaceEnd();
                 }
                 break;
@@ -293,34 +308,182 @@ public final class EncodedProgramModel
                     visitor.onEnumStart(compilationUnit.getStringFromRef(enumNameStringRef));
                 }
                 else {
+                    fieldIndex = 0;
+                    methodIndex = 0;
+
                     visitor.onEnumEnd();
                 }
                 break;
 
+            case FIELD_DECLARATION:
+
+                if (fields && ref.isStart) {
+
+                    parseTreeRef = processField(
+                            compilationUnit,
+                            visitor,
+                            ref,
+                            astBuffer,
+                            fieldIndex ++,
+                            parseTreeRef + AST.sizeStart(ref, astBuffer));
+                    
+                    updateSize = false;
+                }
+                break;
+
+            case CLASS_METHOD_MEMBER:
+            case INTERFACE_METHOD_MEMBER:
+
+                if (methods && ref.isStart) {
+
+                    parseTreeRef = processMethod(
+                                        compilationUnit,
+                                        visitor,
+                                        ref,
+                                        astBuffer,
+                                        methodIndex ++,
+                                        parseTreeRef + AST.sizeStart(ref, astBuffer));
+
+                    updateSize = false;
+                }
+                break;
+                
             default:
                 break;
             }
 
-            parseTreeRef += ref.isStart
-                ? AST.sizeStart(ref.element, astBuffer, ref.index)
-                : AST.sizeEnd(ref.element);
+            if (updateSize) {
+                parseTreeRef += ref.isStart
+                    ? AST.sizeStart(ref, astBuffer)
+                    : AST.sizeEnd(ref.element);
+            }
 
         } while (!done);
     }
-
-    @Override
-    public void iterateClassMembers(
+    
+    private int processField(
             EncodedCompilationUnit compilationUnit,
-            UserDefinedTypeRef complexType,
-            FieldVisitor fieldVisitor,
-            MethodVisitor methodVisitor) {
-
-        // Iterate all elements since they are in sequence. Must use a stack to keep track of level
-
-        // FIXME Auto-generated method stub
-
+            TypeMemberVisitor visitor,
+            ParseTreeElementRef ref,
+            ASTBufferRead astBuffer,
+            final int indexInType,
+            final int startParseTreeRef) {
+        
+        boolean done = false;
+        
+        int parseTreeRef = startParseTreeRef;
+        
+        String name = null;
+        TypeName type = null;
+        int numArrayDimensions = 0;
+        boolean isStatic = false;
+        Visibility visibility = null;
+        Mutability mutability = null;
+        boolean isVolatile = false;
+        boolean isTransient = false;
+        
+        do {
+            astBuffer.getParseTreeElement(parseTreeRef, ref);
+            
+            switch (ref.element) {
+            case FIELD_MODIFIER_HOLDER:
+                break;
+                
+            default:
+                throw new IllegalStateException("Unknown element " + ref.element);
+            }
+            
+            parseTreeRef += ref.isStart
+                    ? AST.sizeStart(ref, astBuffer)
+                    : AST.sizeEnd(ref.element);
+            
+        } while (!done);
+        
+        
+        visitor.onField(
+                name,
+                type,
+                numArrayDimensions,
+                isStatic,
+                visibility,
+                mutability,
+                isVolatile,
+                isTransient,
+                indexInType);
+        
+        return parseTreeRef;
     }
 
+    private int processMethod(
+            EncodedCompilationUnit compilationUnit,
+            TypeMemberVisitor visitor,
+            ParseTreeElementRef ref,
+            ASTBufferRead astBuffer,
+            final int indexInType,
+            final int startParseTreeRef) {
+        
+        boolean done = false;
+        
+        int parseTreeRef = startParseTreeRef;
+        
+        String name = null;
+        MethodVariant methodVariant = MethodVariant.OVERRIDABLE_IMPLEMENTATION;
+        TypeName returnType = null;
+        TypeName [] parameterTypes = null;
+        
+        do {
+            astBuffer.getParseTreeElement(parseTreeRef, ref);
+            
+            switch (ref.element) {
+            case CLASS_METHOD_MODIFIER_HOLDER:
+                switch (AST.decodeClassMethodModifierType(astBuffer, ref.index)) {
+                case STATIC:
+                    methodVariant = MethodVariant.STATIC;
+                    break;
+                    
+                case OVERRIDE:
+                    switch (AST.decodeClassMethodOverride(astBuffer, ref.index)) {
+                    case ABSTRACT:
+                        methodVariant = MethodVariant.ABSTRACT;
+                        break;
+                        
+                    case FINAL:
+                        methodVariant = MethodVariant.FINAL_IMPLEMENTATION;
+                        break;
+
+                    default:
+                        throw new IllegalStateException();
+                    }
+                    break;
+                    
+                case VISIBILITY:
+                    break;
+                    
+                default:
+                    throw new IllegalStateException();
+                }
+                break;
+                
+            default:
+                throw new IllegalStateException("Unknown element " + ref.element);
+            }
+            
+            parseTreeRef += ref.isStart
+                    ? AST.sizeStart(ref, astBuffer)
+                    : AST.sizeEnd(ref.element);
+            
+        } while (!done);
+        
+        visitor.onMethod(
+                name,
+                methodVariant,
+                returnType,
+                parameterTypes,
+                indexInType);
+        
+        return parseTreeRef;
+    }
+    
     @Override
     public EncodedParsedFile getParsedFile(Collection<EncodedParsedFile> module, FileSpec path) {
 

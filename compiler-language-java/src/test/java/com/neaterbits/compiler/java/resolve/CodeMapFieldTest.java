@@ -10,10 +10,10 @@ import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompiledAndMappedFiles;
 import com.neaterbits.compiler.java.JavaUtil;
+import com.neaterbits.compiler.java.TestFile;
 import com.neaterbits.compiler.types.FieldInfo;
 import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.Visibility;
-import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.util.parse.ParserException;
 
 public class CodeMapFieldTest extends BaseCompilerTest {
@@ -30,9 +30,9 @@ public class CodeMapFieldTest extends BaseCompilerTest {
 			+   "}\n";
 
 		
-		final NameFileSpec spec = new NameFileSpec("FieldsTest.java");
+		final TestFile spec = new TestFile("FieldsTest.java", source);
 		
-		final CompiledAndMappedFiles compiledAndMapped = compileAndMap(spec, source, new TestResolvedTypes());
+		final CompiledAndMappedFiles compiledAndMapped = compileAndMap(spec, new TestResolvedTypes());
 		
 		final TypeName type = JavaUtil.parseToTypeName("com.test.FieldsTest");
 		

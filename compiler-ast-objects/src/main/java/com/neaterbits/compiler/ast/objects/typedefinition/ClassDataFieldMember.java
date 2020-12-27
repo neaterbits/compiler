@@ -62,9 +62,10 @@ public final class ClassDataFieldMember extends DataFieldMember {
 	@Override
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
-		doIterate(modifiers, recurseMode, iterator);
-        doIterate(initializers, recurseMode, iterator);
+	    doIterate(modifiers, recurseMode, iterator);
 
-		super.doRecurse(recurseMode, iterator);
+	    super.doRecurse(recurseMode, iterator);
+
+        doIterate(initializers, recurseMode, iterator);
 	}
 }

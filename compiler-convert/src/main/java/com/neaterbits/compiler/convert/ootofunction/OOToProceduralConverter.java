@@ -34,7 +34,7 @@ public abstract class OOToProceduralConverter<T extends OOToProceduralConverterS
 		
 		System.out.println("### converted code list " + convertedCode);
 
-		return new CompilationUnit(compilationUnit.getContext(), Collections.emptyList(), convertedCode);
+		return new CompilationUnit(compilationUnit.getContext(), Collections.emptyList(), convertedCode, null);
 	}
 
 	private void convertCode(CompilationCodeLines codeLines, T converterState, List<CompilationCode> allCode) {

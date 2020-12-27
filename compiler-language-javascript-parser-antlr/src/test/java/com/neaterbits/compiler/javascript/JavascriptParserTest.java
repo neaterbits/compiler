@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.Test;
 
 import com.neaterbits.compiler.javascript.parser.antlr4.JavascriptAntlrParser;
-import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.parse.ParserException;
@@ -25,7 +24,10 @@ public class JavascriptParserTest {
 
 		final List<ParseError> errors = new ArrayList<>();
 		
-		parser.parse(source, errors, new ParseLogger(System.out, CastFullContextProvider.INSTANCE));
+		parser.parse(
+		        source,
+		        errors,
+		        fullContextProvider -> new ParseLogger(System.out, fullContextProvider));
 		
 		assertThat(errors.isEmpty()).isTrue();
 	}

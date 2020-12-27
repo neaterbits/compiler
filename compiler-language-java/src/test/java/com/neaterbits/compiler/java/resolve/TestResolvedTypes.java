@@ -25,6 +25,10 @@ public class TestResolvedTypes implements ResolvedTypes {
 		
 		return this;
 	}
+	
+	public Iterable<TypeName> getTypeNames() {
+	    return typeNames;
+	}
 
 	@Override
 	public boolean hasType(TypeName typeName, TypeSources sources) {

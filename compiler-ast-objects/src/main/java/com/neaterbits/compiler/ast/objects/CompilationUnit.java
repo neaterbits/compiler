@@ -6,22 +6,31 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.list.ASTList;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.TokenSequenceNoGenerator;
 import com.neaterbits.util.IdentityKey;
 import com.neaterbits.util.parse.context.Context;
+import com.neaterbits.util.parse.context.FullContext;
 
 public class CompilationUnit extends CompilationCodeLines {
 
 	private final ASTList<Import> imports;
 	private final Map<Integer, BaseASTElement> elementsByParseTreeRef;
 	private final Map<IdentityKey<BaseASTElement>, Integer> parseTreeRefsByElement;
+	private final FullContextProvider fullContextProvider;
 
-	public CompilationUnit(Context context, List<Import> imports, List<CompilationCode> code) {
+	public CompilationUnit(
+	        Context context,
+	        List<Import> imports,
+	        List<CompilationCode> code,
+	        FullContextProvider fullContextProvider) {
+	    
 		super(context, code);
 
 		this.imports = makeList(imports);
 		this.elementsByParseTreeRef = new HashMap<>();
 		this.parseTreeRefsByElement = new HashMap<>();
+		this.fullContextProvider = fullContextProvider;
 
 		final TokenSequenceNoGenerator gen = new TokenSequenceNoGenerator();
 
@@ -39,6 +48,29 @@ public class CompilationUnit extends CompilationCodeLines {
 
 	public ASTList<Import> getImports() {
 		return imports;
+	}
+	
+	public FullContext makeFullContext(Context context) {
+	    return fullContextProvider.makeFullContext(context);
+	}
+	
+	public String getTokenString(int parseTreeTokenRef) {
+	    
+       final Context context = getElementFromParseTreeRef(parseTreeTokenRef).getContext();
+     
+       return getTokenString(context);
+	}
+
+    public String getTokenString(Context context) {
+
+       return fullContextProvider.getText(context);
+	}
+	
+	public int getTokenLength(int parseTreeTokenRef) {
+
+	    final Context context = getElementFromParseTreeRef(parseTreeTokenRef).getContext();
+	    
+	    return fullContextProvider.getLength(context);
 	}
 
 	@Override

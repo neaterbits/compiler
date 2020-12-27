@@ -19,6 +19,7 @@ import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Parameter;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
+import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassMethodMember;
@@ -30,6 +31,7 @@ import com.neaterbits.compiler.ast.objects.typedefinition.FieldModifierHolder;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.LibraryTypeReference;
+import com.neaterbits.compiler.ast.objects.typereference.ResolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
@@ -37,10 +39,10 @@ import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarat
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
 import com.neaterbits.compiler.model.common.BuiltinTypeRef;
 import com.neaterbits.compiler.model.common.ElementVisitor;
-import com.neaterbits.compiler.model.common.FieldVisitor;
+import com.neaterbits.compiler.model.common.TypeMemberVisitor;
 import com.neaterbits.compiler.model.common.ISourceToken;
+import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.LibraryTypeRef;
-import com.neaterbits.compiler.model.common.MethodVisitor;
 import com.neaterbits.compiler.model.common.ProgramModel;
 import com.neaterbits.compiler.model.common.ResolveTypesModel;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
@@ -48,7 +50,6 @@ import com.neaterbits.compiler.model.common.SourceToken;
 import com.neaterbits.compiler.model.common.SourceTokenUtil;
 import com.neaterbits.compiler.model.common.SourceTokenVisitor;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
-import com.neaterbits.compiler.model.common.TypeVisitor;
 import com.neaterbits.compiler.model.common.UpdateOnResolve;
 import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.types.FieldModifiers;
@@ -66,7 +67,6 @@ import com.neaterbits.compiler.types.typedefinition.FieldVisibility;
 import com.neaterbits.compiler.types.typedefinition.FieldVolatile;
 import com.neaterbits.compiler.types.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.StackDelegator;
 import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.util.parse.ScopesListener;
@@ -81,24 +81,24 @@ public class ObjectProgramModel
 
     private static final ObjectASTAccess AST_ACCESS = new ObjectASTAccess();
 
-    private final FullContextProvider fullContextProvider;
 	private final FieldModifiers dataFieldDefaultModifiers;
 
-	public ObjectProgramModel() {
-	    this(null);
+    public ObjectProgramModel() {
+        this(
+                Collections.emptyList(),
+                new FieldModifiers(false, Visibility.NAMESPACE, Mutability.MUTABLE, false, false));
+    }
+	
+	public ObjectProgramModel(LanguageSpec languageSpec) {
+	    this(languageSpec.getImplicitImports(), languageSpec.getDefaultModifiers());
 	}
 
-	public ObjectProgramModel(FullContextProvider fullContextProvider) {
-		this(
-		        fullContextProvider,
-		        Collections.emptyList(),
-		        new FieldModifiers(false, Visibility.NAMESPACE, Mutability.MUTABLE, false, false));
-	}
-
-	public ObjectProgramModel(FullContextProvider fullContextProvider, List<TypeImport> implicitImports, FieldModifiers dataFieldDefaultModifiers) {
+	public ObjectProgramModel(
+	        List<TypeImport> implicitImports,
+	        FieldModifiers dataFieldDefaultModifiers) {
+	    
 		super(implicitImports);
-
-		this.fullContextProvider = fullContextProvider;
+		
 		this.dataFieldDefaultModifiers = dataFieldDefaultModifiers;
 	}
 
@@ -190,7 +190,6 @@ public class ObjectProgramModel
 		});
 	}
 
-
 	@Override
 	public CompilationUnit getCompilationUnit(ASTParsedFile compilationUnit) {
 		return compilationUnit.getParsed();
@@ -202,7 +201,7 @@ public class ObjectProgramModel
 		final BaseASTElement found = compilationUnit.findElement(true, element -> {
 
 			final Context context = element.getContext();
-
+			
 			return     !element.isPlaceholderElement()
 					&& offset >= context.getStartOffset()
 					&& offset <= context.getEndOffset();
@@ -237,7 +236,7 @@ public class ObjectProgramModel
 
 			@Override
 			public void push(BaseASTElement element) {
-
+			    
 				if (element instanceof ClassDefinition) {
 					scopesListener.onClassStart(compilationUnit.getParseTreeRefFromElement(element));
 				}
@@ -280,15 +279,22 @@ public class ObjectProgramModel
 			public void onElement(BaseASTElement element) {
 
 				if (element instanceof InitializerVariableDeclarationElement) {
+				    
+				    final BaseASTElement last = stack.getFromTop(1);
+				    
+				    if (last instanceof VariableDeclarationStatement) {
 
-                    /*
-					final InitializerVariableDeclarationElement declaration = (InitializerVariableDeclarationElement)element;
-
-					scopesListener.onScopeVariableDeclaration(
-							compilationUnit.getParseTreeRefFromElement(declaration.getNameDeclaration()),
-							declaration.getVarName().getName(),
-							declaration.getTypeReference().getTypeName());
-					*/
+                        final VariableDeclarationStatement declaration
+    	                        = (VariableDeclarationStatement)last;
+    
+    					final InitializerVariableDeclarationElement initializer
+    					    = (InitializerVariableDeclarationElement)element;
+    
+    					scopesListener.onScopeVariableDeclaration(
+    							compilationUnit.getParseTreeRefFromElement(initializer.getNameDeclaration()),
+    							initializer.getVarName().getName(),
+    							declaration.getTypeReference().getTypeName());
+				    }
 				}
 				else if (element instanceof NameReference) {
 
@@ -373,9 +379,7 @@ public class ObjectProgramModel
     @Override
     public String getTokenString(CompilationUnit compilationUnit, int parseTreeTokenRef) {
 
-	    final Context context = compilationUnit.getElementFromParseTreeRef(parseTreeTokenRef).getContext();
-
-	    return fullContextProvider.getText(context);
+	    return compilationUnit.getTokenString(parseTreeTokenRef);
 	}
 
 	@Override
@@ -386,9 +390,7 @@ public class ObjectProgramModel
 	@Override
 	public int getTokenLength(CompilationUnit compilationUnit, int parseTreeTokenRef) {
 
-		final Context context = compilationUnit.getElementFromParseTreeRef(parseTreeTokenRef).getContext();
-
-		return fullContextProvider.getLength(context);
+	    return compilationUnit.getTokenLength(parseTreeTokenRef);
 	}
 
 	@Override
@@ -403,7 +405,7 @@ public class ObjectProgramModel
 
 			if (element.getContext() != null) {
 
-			    final String text = fullContextProvider.getText(element.getContext());
+			    final String text = compilationUnit.getTokenString(element.getContext());
 
 				out.append(" \"").append(text).append("\"");
 			}
@@ -528,9 +530,13 @@ public class ObjectProgramModel
     }
 
     @Override
-    public void iterateTypes(CompilationUnit compilationUnit, TypeVisitor visitor) {
+	public void iterateTypesAndMembers(
+	        CompilationUnit compilationUnit,
+	        TypeMemberVisitor visitor,
+	        boolean fields,
+	        boolean methods) {
 
-	    compilationUnit.iterateNodeFirst(new BaseASTIterator() {
+        compilationUnit.iterateNodeFirst(new BaseASTIterator() {
 
             @Override
             public void onPush(BaseASTElement element) {
@@ -567,6 +573,13 @@ public class ObjectProgramModel
 
             @Override
             public boolean onElement(BaseASTElement element) {
+                
+                if ((fields || methods) && element instanceof ComplexTypeDefinition<?, ?>) {
+                    
+                    final ComplexTypeDefinition<?, ?> complexType = (ComplexTypeDefinition<?, ?>)element;
+                    
+                    iterateClassMembers(complexType, visitor, fields, methods);
+                }
 
                 return true;
             }
@@ -591,48 +604,50 @@ public class ObjectProgramModel
             }
 
         });
-
 	}
 
-    @Override
-	public void iterateClassMembers(CompilationUnit compilationUnit, UserDefinedTypeRef userDefinedType, FieldVisitor fieldVisitor, MethodVisitor methodVisitor) {
+	private void iterateClassMembers(
+	        ComplexTypeDefinition<?, ?> complexType,
+	        TypeMemberVisitor memberVisitor,
+	        boolean fields,
+	        boolean methods) {
 
-		final ClassDefinition complexType = (ClassDefinition)compilationUnit.getElementFromParseTreeRef(userDefinedType.getParseTreeRef());
-
-		iterateClassMembers(complexType, fieldVisitor, methodVisitor);
-	}
-
-	private void iterateClassMembers(ClassDefinition complexType, FieldVisitor fieldVisitor, MethodVisitor methodVisitor) {
-
-		final Subclassing subclassing = complexType.getModifiers().getModifier(Subclassing.class);
+		final Subclassing subclassing;
+		
+		if (complexType instanceof ClassDefinition) {
+		    subclassing = ((ClassDefinition)complexType).getModifiers().getModifier(Subclassing.class);
+		}
+		else {
+		    subclassing = null;
+		}
 
 		int fieldIdx = 0;
 		int methodIdx = 0;
 
 		for (ComplexMemberDefinition memberDefinition : complexType.getMembers()) {
 
-			if (memberDefinition instanceof ClassDataFieldMember) {
+			if (fields && memberDefinition instanceof ClassDataFieldMember) {
 
 				final ClassDataFieldMember classDataFieldMember = (ClassDataFieldMember)memberDefinition;
 
-				visitDataField(classDataFieldMember, fieldIdx, fieldVisitor);
+				visitDataField(classDataFieldMember, fieldIdx, memberVisitor);
 
 				fieldIdx ++;
 			}
-			else if (memberDefinition instanceof ClassMethodMember) {
+			else if (methods && memberDefinition instanceof ClassMethodMember) {
 
 				final ClassMethodMember classMethodMember = (ClassMethodMember)memberDefinition;
 
 				final MethodVariant methodVariant = findMethodVariant(classMethodMember, subclassing);
 
-				visitClassMethod(classMethodMember, methodVariant, methodIdx, methodVisitor);
+				visitClassMethod(classMethodMember, methodVariant, methodIdx, memberVisitor);
 
 				++ methodIdx;
 			}
 		}
 	}
 
-	private void visitDataField(ClassDataFieldMember dataField, int indexInType, FieldVisitor visitor) {
+	private void visitDataField(ClassDataFieldMember dataField, int indexInType, TypeMemberVisitor visitor) {
 
 		boolean isStatic = dataFieldDefaultModifiers.isStatic();
 		boolean isTransient = dataFieldDefaultModifiers.isTransient();
@@ -668,7 +683,9 @@ public class ObjectProgramModel
 
     		visitor.onField(
     				element.getNameString(),
-    				dataField.getType().getTypeName(),
+    				dataField.getType() instanceof ResolvedTypeReference
+    				    ? dataField.getType().getTypeName()
+			            : null,
     				0,
     				isStatic,
     				visibility,
@@ -712,7 +729,11 @@ public class ObjectProgramModel
 		return methodVariant;
 	}
 
-	private void visitClassMethod(ClassMethodMember classMethodMember, MethodVariant methodVariant, int indexInType, MethodVisitor visitor) {
+	private void visitClassMethod(
+	        ClassMethodMember classMethodMember,
+	        MethodVariant methodVariant,
+	        int indexInType,
+	        TypeMemberVisitor visitor) {
 
 		final ClassMethod classMethod = classMethodMember.getMethod();
 
@@ -757,11 +778,26 @@ public class ObjectProgramModel
     @Override
     public void iterateTypeReferences(CompilationUnit compilationUnit, TypeReferenceVisitor<CompilationUnit> visitor) {
 
-        compilationUnit.iterateNodeFirst(new ASTVisitor() {
+        compilationUnit.iterateNodeFirst(new BaseASTIterator() {
 
             @Override
-            public void onElement(BaseASTElement element) {
+            public void onPush(BaseASTElement element) {
 
+                if (element instanceof Namespace) {
+
+                    visitor.onNamespaceStart();
+                    
+                    final Namespace namespace = (Namespace)element;
+                    
+                    for (String part : namespace.getParts()) {
+                        visitor.onNamespacePart(part);
+                    }
+                }
+            }
+
+            @Override
+            public boolean onElement(BaseASTElement element) {
+                
                 if (element instanceof UnresolvedTypeReference) {
 
                     final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)element;
@@ -788,6 +824,18 @@ public class ObjectProgramModel
                             compilationUnit.getParseTreeRefFromElement(element),
                             typeReference.getTypeNo());
                 }
+                
+                return true;
+            }
+
+            @Override
+            public boolean onPop(BaseASTElement element) {
+
+                if (element instanceof Namespace) {
+                    visitor.onNamespaceEnd();
+                }
+                
+                return true;
             }
         });
 

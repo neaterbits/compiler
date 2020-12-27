@@ -32,6 +32,8 @@ class VariableScope {
 		
 		Objects.requireNonNull(name);
 		
-		return scopeVariableDeclarations.get(name);
+		return scopeVariableDeclarations != null
+		        ? scopeVariableDeclarations.get(name)
+                : null;
 	}
 }

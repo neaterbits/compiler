@@ -9,11 +9,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.CastFullContextProvider;
-import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
-import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.compiler.util.parse.Parser;
+import com.neaterbits.compiler.util.parse.Parser.CreateParseLogger;
 import com.neaterbits.util.parse.ParserException;
 
 public final class FileTypeParser<COMPILATION_UNIT> implements LanguageParser<COMPILATION_UNIT> {
@@ -52,19 +50,19 @@ public final class FileTypeParser<COMPILATION_UNIT> implements LanguageParser<CO
 	        Charset charset,
 	        Collection<ParseError> errors,
 	        String file,
-	        ParseLogger parseLogger) throws IOException, ParserException {
+	        CreateParseLogger createParseLogger) throws IOException, ParserException {
 		
 		final Collection<ParseError> compileErrors = new ArrayList<>();
 		        
-        final COMPILATION_UNIT result = parser.parse(inputStream, charset, compileErrors, file, parseLogger);
+        final COMPILATION_UNIT result = parser.parse(
+                inputStream,
+                charset,
+                compileErrors,
+                file,
+                createParseLogger);
 
 		errors.addAll(compileErrors);
 		
 		return result;
 	}
-
-    @Override
-    public FullContextProvider getFullContextProvider() {
-        return CastFullContextProvider.INSTANCE;
-    }
 }

@@ -54,6 +54,7 @@ public final class FileSystemFileSpec implements FileSpec {
 		return true;
 	}
 
+	@Override
 	public File getFile() {
 		return file;
 	}

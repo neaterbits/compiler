@@ -62,7 +62,7 @@ public final class ScopedNameResolver {
 
 		final T result;
 		final T inSameNamespace;
-
+		
 		if (scopedName.hasScope()) {
 			result = compiledTypesMap.lookupByScopedName(scopedName);
 		}

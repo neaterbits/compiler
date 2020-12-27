@@ -1,30 +1,14 @@
 package com.neaterbits.compiler.java;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import com.neaterbits.build.strategies.compilemodules.CompileModule;
-import com.neaterbits.build.types.ModuleId;
-import com.neaterbits.build.types.language.Language;
-import com.neaterbits.build.types.resource.ModuleResource;
-import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
-import com.neaterbits.build.types.resource.SourceFileHolderResourcePath;
-import com.neaterbits.build.types.resource.SourceFileResource;
-import com.neaterbits.build.types.resource.SourceFileResourcePath;
-import com.neaterbits.build.types.resource.SourceFolderResource;
-import com.neaterbits.build.types.resource.SourceFolderResourcePath;
+import com.neaterbits.build.types.TypeName;
+import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.resolve.TestResolvedTypes;
-import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.NameFileSpec;
-import com.neaterbits.util.IOUtils;
 import com.neaterbits.util.parse.ParserException;
 
 public class CompileFileCollector<COMPILATION_UNIT> {
@@ -33,16 +17,27 @@ public class CompileFileCollector<COMPILATION_UNIT> {
     public interface Compiler<COMPILED_AND_MAPPED_FILES> {
         
         COMPILED_AND_MAPPED_FILES compile(
-                    CompileModule parseInputs,
+                    List<CompileFile> parseInputs,
                     IntCompilerCodeMap codeMap) throws IOException, ParserException;
     }
 
-	private static class CompileFile {
+	public static class CompileFile {
+
+	    private final String name;
 		private final String text;
 		
-		CompileFile(String text) {
+		private CompileFile(String name, String text) {
+		    this.name = name;
 			this.text = text;
 		}
+
+        public String getName() {
+            return name;
+        }
+
+        public String getText() {
+            return text;
+        }
 	}
 	
 	private final Compiler<CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>> compiler;
@@ -57,17 +52,17 @@ public class CompileFileCollector<COMPILATION_UNIT> {
 	    
 		this.files = new ArrayList<>();
 	}
-	
-	public CompileFileCollector<COMPILATION_UNIT> add(FileSpec name, String text) {
 
-		files.add(new CompileFile(text));
-		
-		return this;
+	public CompileFileCollector<COMPILATION_UNIT> add(TestFile testFile) {
+
+	    return add(testFile.getName(), testFile.getText());
 	}
 
 	public CompileFileCollector<COMPILATION_UNIT> add(String name, String text) {
 
-		return add(new NameFileSpec(name), text);
+		files.add(new CompileFile(name, text));
+		
+		return this;
 	}
 
 	public CompiledAndMappedFiles compile(TestResolvedTypes resolvedTypes) throws IOException, ParserException {
@@ -77,48 +72,14 @@ public class CompileFileCollector<COMPILATION_UNIT> {
 	public CodeMapCompiledAndMappedFiles<COMPILATION_UNIT>
 		compile(TestResolvedTypes resolvedTypes, IntCompilerCodeMap codeMap)
 		        throws IOException, ParserException {
-		    
-		final List<File> f = new ArrayList<>(files.size());
-		
-		for (CompileFile compileFile : files) {
 
-		    final File file = File.createTempFile("sourcefile", "test");
+        for (TypeName typeName : resolvedTypes.getTypeNames()) {
 
-		    file.deleteOnExit();
+            final int typeNo = codeMap.addType(TypeVariant.CLASS);
 
-		    IOUtils.write(file, compileFile.text);
-		    
-		    f.add(file);
-		}
-		
-		final File directory = f.get(0).getParentFile();
+            codeMap.addTypeMapping(typeName, typeNo);
+        }
 
-		final ModuleId moduleId = new ModuleId("test-module");
-
-		final ProjectModuleResourcePath projectModuleResourcePath
-		    = new ProjectModuleResourcePath(
-		            Arrays.asList(
-		                    new ModuleResource(moduleId, directory)));
-		
-		final SourceFolderResource sourceFolderResource
-		    = new SourceFolderResource(directory, directory.getName(), Language.JAVA);
-		
-		final SourceFileHolderResourcePath sourceHolderResourcePath
-		    = new SourceFolderResourcePath(
-		            projectModuleResourcePath,
-		            sourceFolderResource);
-		
-		final CompileModule compileModule = new CompileModule(
-		        projectModuleResourcePath,
-		        Charset.defaultCharset(),
-		        f.stream()
-		            .map(path -> new SourceFileResourcePath(
-		                    sourceHolderResourcePath,
-		                    new SourceFileResource(path)))
-		            .collect(Collectors.toList()),
-		        Collections.emptyList(),
-		        Collections.emptyList());
-		
-		return compiler.compile(compileModule, codeMap);
+		return compiler.compile(files, codeMap);
 	}
 }

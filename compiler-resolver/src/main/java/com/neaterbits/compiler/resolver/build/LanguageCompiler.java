@@ -21,7 +21,6 @@ import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.passes.CompilerModel;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.build.strategies.compilemodules.AllModulesCompilerImpl;
-import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.parse.Parser;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
@@ -34,14 +33,20 @@ public final class LanguageCompiler<COMPILATION_UNIT, PARSED_FILE extends Parsed
 
     private final Parser<COMPILATION_UNIT> parser;
     private final CompilerModel<COMPILATION_UNIT, PARSED_FILE> compilerModel;
+    private final CompilerOptions options;
     
-	public LanguageCompiler(Parser<COMPILATION_UNIT> parser, CompilerModel<COMPILATION_UNIT, PARSED_FILE> compilerModel) {
+	public LanguageCompiler(
+	        Parser<COMPILATION_UNIT> parser,
+	        CompilerModel<COMPILATION_UNIT, PARSED_FILE> compilerModel,
+	        CompilerOptions options) {
 		
 	    Objects.requireNonNull(parser);
 	    Objects.requireNonNull(compilerModel);
+	    Objects.requireNonNull(options);
 	    
 	    this.parser = parser;
 	    this.compilerModel = compilerModel;
+	    this.options = options;
 	}
 
 	public ResolvedModule<PARSED_FILE, ResolveError> compile(
@@ -68,7 +73,7 @@ public final class LanguageCompiler<COMPILATION_UNIT, PARSED_FILE extends Parsed
 		        = new TargetBuilderAllModules<>();
 		
 		final AllModulesCompiler<PARSED_FILE, SynchronizedCompilerCodeMap, ResolveError> allModulesCompiler
-		    = new AllModulesCompilerImpl<>(parser, CastFullContextProvider.INSTANCE, compilerModel);
+		    = new AllModulesCompilerImpl<>(parser, compilerModel, options);
 		
 		final AllModulesBuildContext<PARSED_FILE, SynchronizedCompilerCodeMap, ResolveError> context
 		    = new AllModulesBuildContext<>(allModulesCompiler, inputs, codeMap);
@@ -123,7 +128,5 @@ public final class LanguageCompiler<COMPILATION_UNIT, PARSED_FILE extends Parsed
 
             codeMap.addTypeMapping(builtinTypeName, typeNo);
         }
-
-        System.out.println("--- added to codemap " + codeMap);
     }
 }

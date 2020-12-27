@@ -27,7 +27,7 @@ public class ListContextAccess extends ContextAccess {
         
         final int index = writtenContexts.size();
         
-        writtenContexts.add(context);
+        writtenContexts.add(context.makeImmutable());
                 
         return index;
     }

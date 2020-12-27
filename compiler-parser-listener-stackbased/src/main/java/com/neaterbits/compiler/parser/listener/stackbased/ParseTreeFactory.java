@@ -10,6 +10,7 @@ import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
 import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.types.operator.Operator;
+import com.neaterbits.compiler.types.operator.UnaryOperator;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodModifier;
 import com.neaterbits.compiler.types.typedefinition.ClassModifier;
 import com.neaterbits.compiler.types.typedefinition.ConstructorModifier;
@@ -19,6 +20,7 @@ import com.neaterbits.compiler.types.typedefinition.InterfaceModifier;
 import com.neaterbits.compiler.types.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.types.typedefinition.VariableModifier;
 import com.neaterbits.compiler.util.Base;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.util.parse.context.Context;
 
@@ -177,7 +179,11 @@ public interface ParseTreeFactory<
 	        Collection<GENERIC_TYPE_ARGUMENT> genericTypeParameters,
 	        ReferenceType type);
 		
-	COMPILATION_UNIT createCompilationUnit(Context context, List<IMPORT> imports, List<COMPILATION_CODE> code);
+	COMPILATION_UNIT createCompilationUnit(
+	        Context context,
+	        List<IMPORT> imports,
+	        List<COMPILATION_CODE> code,
+	        FullContextProvider fullContextProvider);
 	
 	IMPORT createImport(Context context, KEYWORD importKeyword, KEYWORD staticKeyword, List<NAME> identifiers, boolean ondemand);
 	
@@ -319,7 +325,7 @@ public interface ParseTreeFactory<
 	
 	CONDITIONAL_EXPRESSION createConditionalExpression(Context context, EXPRESSION part1, EXPRESSION part2, EXPRESSION part3);
 
-	UNARY_EXPRESSION createUnaryExpression(Context context, Operator operator, ParseTreeElement parseTreeElement, EXPRESSION expression);
+	UNARY_EXPRESSION createUnaryExpression(Context context, UnaryOperator operator, ParseTreeElement parseTreeElement, EXPRESSION expression);
 	
 	PRE_INCREMENT_EXPRESSION createPreIncrementExpression(Context context, EXPRESSION expression);
 	POST_INCREMENT_EXPRESSION createPostIncrementExpression(Context context, EXPRESSION expression);

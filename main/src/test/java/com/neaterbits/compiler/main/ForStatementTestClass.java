@@ -16,9 +16,10 @@ public class ForStatementTestClass {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public void testMethod3() {
 		
-		for (@SuppressWarnings("unused") int i = 0;;) {
+		for (int i = 0;;) {
 			
 		}
 	}

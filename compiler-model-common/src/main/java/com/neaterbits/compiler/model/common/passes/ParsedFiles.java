@@ -36,4 +36,9 @@ public class ParsedFiles<PARSED_FILE extends ParsedFile> extends MultiFileInputO
 
 		return parsedFile;
 	}
+
+    @Override
+    public String toString() {
+        return "ParsedFiles [parsedFiles=" + parsedFiles + "]";
+    }
 }

@@ -1,9 +1,11 @@
 package com.neaterbits.compiler.emit.base;
 
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.block.Block;
 import com.neaterbits.compiler.ast.objects.statement.Statement;
 import com.neaterbits.compiler.ast.objects.type.NamedType;
+import com.neaterbits.compiler.ast.objects.typereference.ResolvedNamedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.emit.EmitterState;
 

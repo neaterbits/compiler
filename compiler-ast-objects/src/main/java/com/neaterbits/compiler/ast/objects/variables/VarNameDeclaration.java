@@ -26,6 +26,10 @@ public final class VarNameDeclaration extends BaseASTElement {
 	public VarName getVarName() {
 		return varName;
 	}
+	
+	public String getName() {
+	    return varName.getName();
+	}
 
 	@Override
 	public ParseTreeElement getParseTreeElement() {

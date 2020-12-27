@@ -8,6 +8,8 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Expressi
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.operator.IncrementDecrement;
 import com.neaterbits.compiler.types.operator.Operator;
+import com.neaterbits.compiler.types.operator.UnaryOperator;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 import com.neaterbits.util.parse.context.Context;
@@ -299,10 +301,11 @@ public abstract class BaseInfixParserListener<
 	protected BaseInfixParserListener(
 	        StringSource stringSource,
 	        ContextAccess contextAccess,
+            FullContextProvider fullContextProvider,
 	        ParseLogger logger,
 	        @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
 
-		super(stringSource, contextAccess, logger, parseTreeFactory);
+		super(stringSource, contextAccess, fullContextProvider, logger, parseTreeFactory);
 	}
 
 	
@@ -339,7 +342,7 @@ public abstract class BaseInfixParserListener<
         
         final UNARY_EXPRESSION expression = parseTreeFactory.createUnaryExpression(
                 context,
-                expressionList.getOperators().get(0),
+                (UnaryOperator)expressionList.getOperators().get(0),
                 ParseTreeElement.UNARY_EXPRESSION,
                 expressionList.getList().get(0));
         

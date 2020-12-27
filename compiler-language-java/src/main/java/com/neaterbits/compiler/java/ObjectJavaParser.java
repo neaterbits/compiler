@@ -6,11 +6,12 @@ import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory.GetBuiltinTypeNo;
 import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
 import com.neaterbits.compiler.parser.java.JavaParser;
+import com.neaterbits.compiler.parser.listener.common.CreateParserListener;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
-import com.neaterbits.compiler.util.CastFullContextProvider;
+import com.neaterbits.compiler.util.FullContextProvider;
+import com.neaterbits.compiler.util.StringSourceFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
-import com.neaterbits.util.io.buffers.StringBuffers;
 import com.neaterbits.util.io.strings.StringSource;
 
 public final class ObjectJavaParser extends JavaParser<CompilationUnit> {
@@ -25,29 +26,24 @@ public final class ObjectJavaParser extends JavaParser<CompilationUnit> {
         final ASTParseTreeFactory parseTreeFactory
             = new ASTParseTreeFactory(JavaTypes.getBuiltinTypes(), getBuiltinTypeNo);
         
-        final ParseLogger parseLogger = new ParseLogger(System.out, CastFullContextProvider.INSTANCE);
-    
-        return stringBuffers -> makeListener(stringBuffers, parseTreeFactory, parseLogger);
+        return (file, stringBuffers) -> makeListener(file, stringBuffers, parseTreeFactory);
     }
     
     private static IterativeParseTreeListener<CompilationUnit> makeListener(
-            StringBuffers stringBuffers,
-            ASTParseTreeFactory parseTreeFactory,
-            ParseLogger logger) {
+            String file,
+            StringSource stringSource,
+            ASTParseTreeFactory parseTreeFactory) {
 
-        final StringSource stringSource = new StringSource() {
-
-            @Override
-            public String asString(long stringRef) {
-                return stringBuffers.getString(stringRef);
-            }
-        };
+        final FullContextProvider fullContextProvider = new StringSourceFullContextProvider(file, stringSource);
+        
+        final ParseLogger parseLogger = new ParseLogger(System.out, fullContextProvider);
 
         @SuppressWarnings("unchecked")
         final IterativeParseTreeListener<CompilationUnit> listener = new JavaIterativeListener(
                 stringSource,
                 new ListContextAccess(),
-                logger,
+                fullContextProvider,
+                parseLogger,
                 parseTreeFactory);
 
         return listener;

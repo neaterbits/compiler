@@ -1,6 +1,10 @@
 package com.neaterbits.compiler.util;
 
+import java.io.File;
+
 public interface FileSpec {
+    
+    File getFile();
 
 	String getParseContextName();
 	

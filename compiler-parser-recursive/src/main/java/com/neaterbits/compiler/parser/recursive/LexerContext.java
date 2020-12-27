@@ -4,7 +4,9 @@ import java.util.Objects;
 
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
+import com.neaterbits.util.parse.context.Context;
 import com.neaterbits.util.parse.context.FullContext;
+import com.neaterbits.util.parse.context.ImmutableFullContext;
 
 final class LexerContext implements FullContext {
 
@@ -66,5 +68,15 @@ final class LexerContext implements FullContext {
     @Override
     public String getText() {
         return tokenizer.asString(lexer.getStringRef());
+    }
+
+    @Override
+    public Context makeImmutable() {
+        return new ImmutableFullContext(this);
+    }
+
+    @Override
+    public String toString() {
+        return "LexerContext [getStartOffset()=" + getStartOffset() + ", getEndOffset()=" + getEndOffset() + "]";
     }
 }

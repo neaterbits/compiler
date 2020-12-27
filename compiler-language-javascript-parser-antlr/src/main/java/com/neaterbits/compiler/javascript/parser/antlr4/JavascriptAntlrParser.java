@@ -25,7 +25,7 @@ public class JavascriptAntlrParser extends BaseAntlrParser<
 
 	@Override
 	protected JSParserListener createListener(StringSource stringSource, ParseLogger logger, String file) {
-		return new JSParserListener(stringSource, new ListContextAccess(), logger, null);
+		return new JSParserListener(stringSource, new ListContextAccess(), null, logger, null);
 	}
 
 	@Override

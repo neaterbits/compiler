@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.ast.encoded.ASTBufferRead.ParseTreeElementRef;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
 import com.neaterbits.compiler.types.Mutability;
@@ -75,6 +76,11 @@ public class AST {
     
     public static int index(int parseTreeRef) {
         return parseTreeRef + 1;
+    }
+
+    public static int sizeStart(ParseTreeElementRef ref, ASTBufferRead astBuffer) {
+        
+        return sizeStart(ref.element, astBuffer, ref.index);
     }
 
     public static int sizeStart(ParseTreeElement element, ASTBufferRead astBuffer, int index) {
@@ -971,18 +977,33 @@ public class AST {
         astBuffer.writeEnumByte(ClassMethodModifier.Type.OVERRIDE);
         astBuffer.writeEnumByte(classMethodOverride);
     }
+    
+    public static ClassMethodModifier.Type decodeClassMethodModifierType(ASTBufferRead astBuffer, int index) {
 
+        return astBuffer.getEnumByte(index, ClassMethodModifier.Type.class);
+    }
+
+    public static ClassMethodVisibility decodeClassMethodVisibility(ASTBufferRead astBuffer, int index) {
+        
+        return astBuffer.getEnumByte(index + 1, ClassMethodVisibility.class);
+    }
+    
+    public static ClassMethodOverride decodeClassMethodOverride(ASTBufferRead astBuffer, int index) {
+        
+        return astBuffer.getEnumByte(index + 1, ClassMethodOverride.class);
+    }
+    
     public static <COMPILATION_UNIT> void decodeClassMethodModifierHolder(
             ASTBufferRead astBuffer,
             int leafContext,
             int index,
             ParseTreeListener<COMPILATION_UNIT> listener) {
 
-        final ClassMethodModifier.Type type = astBuffer.getEnumByte(index, ClassMethodModifier.Type.class);
+        final ClassMethodModifier.Type type = decodeClassMethodModifierType(astBuffer, index);
 
         switch (type) {
         case VISIBILITY:
-            listener.onVisibilityClassMethodModifier(leafContext, astBuffer.getEnumByte(index + 1, ClassMethodVisibility.class));
+            listener.onVisibilityClassMethodModifier(leafContext, decodeClassMethodVisibility(astBuffer, index));
             break;
 
         case STATIC:
@@ -990,7 +1011,7 @@ public class AST {
             break;
 
         case OVERRIDE:
-            listener.onOverrideClassMethodModifier(leafContext, astBuffer.getEnumByte(index + 1, ClassMethodOverride.class));
+            listener.onOverrideClassMethodModifier(leafContext, decodeClassMethodOverride(astBuffer, index));
             break;
 
          default:

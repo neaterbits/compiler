@@ -2,7 +2,6 @@ package com.neaterbits.compiler.java;
 
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.types.FieldInfo;
-import com.neaterbits.compiler.util.FileSpec;
 
 public interface CompiledAndMappedFiles extends CompiledAndResolvedFiles {
 
@@ -16,7 +15,12 @@ public interface CompiledAndMappedFiles extends CompiledAndResolvedFiles {
 	int getSourceFileNo(CompiledAndResolvedFile file);
 	*/
 
-	int getSourceFileNo(FileSpec fileSpec);
+	int getSourceFileNo(String name);
+	
+	default int getSourceFileNo(TestFile testFile) {
+	    
+	    return getSourceFileNo(testFile.getName());
+	}
 	
 	/*
 	int addToken(int sourceFile, int parseTreeRef);

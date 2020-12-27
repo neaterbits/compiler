@@ -68,7 +68,7 @@ public final class UnresolvedTypeReference extends TypeReference {
 
 	@Override
 	public TypeName getTypeName() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("No typename for " + scopedName);
 	}
 
 	@Override

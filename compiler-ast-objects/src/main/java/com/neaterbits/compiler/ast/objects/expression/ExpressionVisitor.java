@@ -73,4 +73,6 @@ public interface ExpressionVisitor<T, R> {
 	R onPostDecrement(PostDecrementExpression expression, T param);
 
 	R onArithmeticBinary(ArithmeticBinaryExpression expression, T param);
+	
+	R onGenericUnaryExpression(GenericUnaryExpression expression, T param);
 }

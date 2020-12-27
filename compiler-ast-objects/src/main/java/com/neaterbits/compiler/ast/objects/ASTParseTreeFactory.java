@@ -143,6 +143,7 @@ import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
 import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.types.operator.Operator;
+import com.neaterbits.compiler.types.operator.UnaryOperator;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodModifier;
 import com.neaterbits.compiler.types.typedefinition.ClassModifier;
 import com.neaterbits.compiler.types.typedefinition.ConstructorModifier;
@@ -152,6 +153,7 @@ import com.neaterbits.compiler.types.typedefinition.InterfaceModifier;
 import com.neaterbits.compiler.types.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.types.typedefinition.VariableModifier;
 import com.neaterbits.compiler.util.Base;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.name.ClassName;
 import com.neaterbits.compiler.util.name.NamespaceReference;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
@@ -288,8 +290,13 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-	public CompilationUnit createCompilationUnit(Context context, List<Import> imports, List<CompilationCode> code) {
-		return new CompilationUnit(context, imports, code);
+	public CompilationUnit createCompilationUnit(
+	        Context context,
+	        List<Import> imports,
+	        List<CompilationCode> code,
+	        FullContextProvider fullContextProvider) {
+	    
+		return new CompilationUnit(context, imports, code, fullContextProvider);
 	}
 
 	private static String [] getIdentifierArray(List<Name> identifiers, int length) {
@@ -723,7 +730,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-    public UnaryExpression createUnaryExpression(Context context, Operator operator, ParseTreeElement parseTreeElement, Expression expression) {
+    public UnaryExpression createUnaryExpression(Context context, UnaryOperator operator, ParseTreeElement parseTreeElement, Expression expression) {
 	    return new GenericUnaryExpression(context, operator, parseTreeElement, expression);
     }
 

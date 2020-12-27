@@ -22,13 +22,14 @@ import com.neaterbits.compiler.ast.objects.typedefinition.ClassModifiers;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldModifierHolder;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldModifiers;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
+import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
+import com.neaterbits.compiler.ast.objects.variables.VarNameDeclaration;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompileFileCollector;
 import com.neaterbits.compiler.java.CompiledAndResolvedFile;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.types.typedefinition.FieldVisibility;
-import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.util.parse.ParserException;
 
 public class ResolveSamePackageTest extends BaseCompilerTest {
@@ -40,7 +41,7 @@ public class ResolveSamePackageTest extends BaseCompilerTest {
 		+   " private Refered refered;\n"
 		+   "}\n";
 
-	final NameFileSpec refererSpec = new NameFileSpec("Referer.java");
+	final String refererName = "Referer.java";
 	
 	final String referedSource =
 			
@@ -51,13 +52,16 @@ public class ResolveSamePackageTest extends BaseCompilerTest {
 	@Test
 	public void testResolveUnknownClassSamePackage() throws IOException, ParserException {
 		
-		final CompiledAndResolvedFile referer = compile(refererSpec, refererSource, new TestResolvedTypes());
+		final CompiledAndResolvedFile referer = compile(refererName, refererSource, new TestResolvedTypes());
 				
 		assertThat(referer).isNotNull();
 		assertThat(referer.getErrors().isEmpty()).isFalse();
 		
 		assertThat(referer.getErrors().size()).isEqualTo(1);
 		assertThat(referer.getErrors().iterator().next() instanceof ResolveError).isTrue();
+		
+		System.out.println("## message '" + referer.getErrors().iterator().next().getMessage() + "'");
+		
 		assertThat(referer.getErrors().iterator().next().getMessage().contains("Refered")).isTrue();
 	}
 		
@@ -65,10 +69,10 @@ public class ResolveSamePackageTest extends BaseCompilerTest {
 	public void testResolveOtherClassSamePackage() throws IOException, ParserException {
 						
 		final CompiledAndResolvedFile referer = new CompileFileCollector<>(this::compileFiles)
-				.add(refererSpec, refererSource)
+				.add(refererName, refererSource)
 				.add("Refered.java", referedSource)
 				.compile(new TestResolvedTypes())
-				.getFile(refererSpec);
+				.getFile(refererName);
 
 		assertThat(referer).isNotNull();
 		assertThat(referer.getErrors().isEmpty()).isTrue();
@@ -89,11 +93,16 @@ public class ResolveSamePackageTest extends BaseCompilerTest {
 		assertThat(fieldModifierHolder.getModifier() instanceof FieldVisibility).isTrue();
 		
 		final ComplexTypeReference typeReference = get(iter);
+		
 		assertThat(typeReference.getTypeName().getNamespace()).isEqualTo(new String [] { "com", "test" });
 		assertThat(typeReference.getTypeName().getOuterTypes()).isNull();
 		assertThat(typeReference.getTypeName().getName()).isEqualTo("Refered");
 		
-		final FieldNameDeclaration fieldName = get(iter);
+		final InitializerVariableDeclarationElement initializerVariableDeclarationElement = get(iter);
+		assertThat(initializerVariableDeclarationElement.getNumDims()).isEqualTo(0);
+        assertThat(initializerVariableDeclarationElement.getInitializer()).isNull();
+		
+		final VarNameDeclaration fieldName = get(iter);
 		assertThat(fieldName.getName()).isEqualTo("refered");
 	}
 

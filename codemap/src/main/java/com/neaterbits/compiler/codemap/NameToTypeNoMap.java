@@ -34,8 +34,20 @@ public final class NameToTypeNoMap {
 	    for (TypeName typeName : typesByTypeName.keySet()) {
 	        map.put(typeName.toScopedName(), typeName);
 	    }
-	    
-	    return scopedName -> map.get(scopedName);
+
+	    return new TypesMap<TypeName>() {
+
+            @Override
+            public TypeName lookupByScopedName(ScopedName scopedName) {
+                return map.get(scopedName);
+            }
+
+            @Override
+            public String toString() {
+                return "NameToTypeNoMap.makeTypesMap() [ map=" 
+                        + typesByTypeName + " ]";
+            }
+        };
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackIfElseIfEls
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackSwitchCase;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackSwitchCaseGroup;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.StatementSetter;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 import com.neaterbits.util.parse.context.Context;
@@ -302,9 +303,10 @@ public abstract class BaseIterativeParserListener<
 	protected BaseIterativeParserListener(
 	        StringSource stringSource,
             ContextAccess contextAccess,
+            FullContextProvider fullContextProvider,
 	        ParseLogger logger,
 	        @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
-		super(stringSource, contextAccess, logger, parseTreeFactory);
+		super(stringSource, contextAccess, fullContextProvider, logger, parseTreeFactory);
 	}
 
 	@Override

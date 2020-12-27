@@ -5,9 +5,16 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.util.parse.ParserException;
 
 public interface Parser<T> {
+
+    @FunctionalInterface
+    public interface CreateParseLogger {
+
+        ParseLogger create(FullContextProvider fullContextProvider);
+    }
 
 	T parse(String string) throws ParserException;
 
@@ -16,7 +23,7 @@ public interface Parser<T> {
 	T parse(InputStream stream, Charset charSet, String file)
 	            throws IOException, ParserException;
 
-	T parse(String string, Collection<ParseError> errors, ParseLogger parseLogger)
+	T parse(String string, Collection<ParseError> errors, CreateParseLogger createParseLogger)
 	            throws ParserException;
 
 	T parse(
@@ -24,7 +31,7 @@ public interface Parser<T> {
 	        Charset charset,
 	        Collection<ParseError> errors,
 	        String file,
-	        ParseLogger parseLogger)
+	        CreateParseLogger createParseLogger)
 	                
                 throws IOException, ParserException;
 

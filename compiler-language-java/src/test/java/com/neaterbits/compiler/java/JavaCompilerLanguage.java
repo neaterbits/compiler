@@ -10,6 +10,8 @@ import com.neaterbits.compiler.resolver.util.CompilerLanguage;
 public class JavaCompilerLanguage extends CompilerLanguage<CompilationUnit, ASTParsedFile> {
 
     public JavaCompilerLanguage() {
-        super(JavaLanguageSpec.INSTANCE, new ObjectsCompilerModel());
+        super(
+                JavaLanguageSpec.INSTANCE,
+                new ObjectsCompilerModel(JavaLanguageSpec.INSTANCE));
     }
 }

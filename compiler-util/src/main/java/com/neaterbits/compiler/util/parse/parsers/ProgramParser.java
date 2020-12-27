@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.parse.Parser.CreateParseLogger;
 import com.neaterbits.util.coll.MapOfList;
 
 public final class ProgramParser<COMPILATION_UNIT, PARSED_FILE> {
@@ -40,7 +41,7 @@ public final class ProgramParser<COMPILATION_UNIT, PARSED_FILE> {
 	        Charset charset,
 	        File systemModule,
 	        Consumer<Collection<PARSED_FILE>> postProcessSystemModule,
-	        ParseLogger debugParseLogger) throws IOException {
+	        CreateParseLogger debugParseLogger) throws IOException {
 
 		final MapOfList<File, PARSED_FILE> parsedModules
 		                    = moduleParser.parseModules(

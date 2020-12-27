@@ -6,18 +6,29 @@ import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.model.common.ImportsModel;
+import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.ResolveTypesModel;
 import com.neaterbits.compiler.model.common.passes.CompilerModel;
+import com.neaterbits.compiler.types.FieldModifiers;
+import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.CompileError;
 
 public final class ObjectsCompilerModel implements CompilerModel<CompilationUnit, ASTParsedFile> {
 
     private final ObjectProgramModel programModel;
-    
-    public ObjectsCompilerModel() {
 
-        this.programModel = new ObjectProgramModel();
+    public ObjectsCompilerModel(LanguageSpec languageSpec) {
+
+        this.programModel = new ObjectProgramModel(languageSpec.getImplicitImports(), languageSpec.getDefaultModifiers());
+    }
+
+    private ObjectsCompilerModel(
+            List<TypeImport> implicitImports,
+            FieldModifiers dataFieldDefaultModifiers) {
+
+        this.programModel = new ObjectProgramModel(implicitImports, dataFieldDefaultModifiers);
     }
 
     @Override

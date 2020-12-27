@@ -6,9 +6,8 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
-import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
-import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.parse.Parser.CreateParseLogger;
 import com.neaterbits.util.parse.ParserException;
 
 public interface LanguageParser<COMPILATION_UNIT> {
@@ -20,8 +19,6 @@ public interface LanguageParser<COMPILATION_UNIT> {
 	        Charset charset,
 	        Collection<ParseError> errors,
 	        String file,
-	        ParseLogger parseLogger)
+	        CreateParseLogger createParseLogger)
 	                throws IOException, ParserException;
-	
-	FullContextProvider getFullContextProvider();
 }

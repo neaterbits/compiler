@@ -140,6 +140,7 @@ import com.neaterbits.compiler.types.typedefinition.VariableModifier;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.ContextRef;
 import com.neaterbits.compiler.util.ContextScopedName;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -295,6 +296,8 @@ public abstract class BaseParserListener<
 	final StringSource stringSource;
 	final ContextAccess contextAccess;
 	
+	private final FullContextProvider fullContextProvider;
+	
 	private final ParseLogger logger;
 
 	final ParseTreeFactory<
@@ -447,11 +450,13 @@ public abstract class BaseParserListener<
 	protected BaseParserListener(
 	        StringSource stringSource,
 	        ContextAccess contextAccess,
+	        FullContextProvider fullContextProvider,
 	        ParseLogger logger,
 			@SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
 
 		this.stringSource = stringSource;
 		this.contextAccess = contextAccess;
+		this.fullContextProvider = fullContextProvider;
 		this.logger = logger;
 		this.parseTreeFactory = parseTreeFactory;
 
@@ -537,8 +542,11 @@ public abstract class BaseParserListener<
 
 		final StackCompilationUnit<COMPILATION_CODE, IMPORT> stackCompilationUnit = pop();
 
-		final COMPILATION_UNIT compilationUnit = parseTreeFactory.createCompilationUnit(context,
-				stackCompilationUnit.getImports(), stackCompilationUnit.getList());
+		final COMPILATION_UNIT compilationUnit = parseTreeFactory.createCompilationUnit(
+		        context,
+				stackCompilationUnit.getImports(),
+				stackCompilationUnit.getList(),
+				fullContextProvider);
 
 		logExit(context);
 

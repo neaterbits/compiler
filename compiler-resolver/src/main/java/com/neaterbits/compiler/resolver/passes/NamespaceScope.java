@@ -1,10 +1,10 @@
-package com.neaterbits.compiler.resolver.passes.typefinder;
+package com.neaterbits.compiler.resolver.passes;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-final class NamespaceScope extends TypeFinderScope {
+final class NamespaceScope extends TypeVisitorScope {
 
     private final List<String> parts;
 

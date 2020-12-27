@@ -15,12 +15,12 @@ import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompileFileCollector;
 import com.neaterbits.compiler.java.CompiledAndMappedFiles;
 import com.neaterbits.compiler.java.CompiledAndResolvedFile;
-import com.neaterbits.compiler.util.NameFileSpec;
+import com.neaterbits.compiler.java.TestFile;
 import com.neaterbits.util.parse.ParserException;
 
 public class ResolveImportedTypesTest extends BaseCompilerTest {
 
-	final NameFileSpec refererSpec = new NameFileSpec("Referer.java");
+	final String refererFileName = "Referer.java";
 	
 	final String referedSource =
 			
@@ -43,10 +43,10 @@ public class ResolveImportedTypesTest extends BaseCompilerTest {
 	private CompiledAndResolvedFile compile(String refererSource) throws IOException, ParserException {
 
 		final CompiledAndResolvedFile referer = new CompileFileCollector<>(this::compileFiles)
-				.add(refererSpec, refererSource)
+				.add(refererFileName, refererSource)
 				.add("Refered.java", referedSource)
 				.compile(new TestResolvedTypes())
-				.getFile(refererSpec);
+				.getFile(refererFileName);
 
 		assertThat(referer).isNotNull();
 		assertThat(referer.getErrors().isEmpty()).isTrue();
@@ -71,11 +71,10 @@ public class ResolveImportedTypesTest extends BaseCompilerTest {
 		
 		codeMap.addTypeMapping(integerType, integerTypeNo);
 		
-		final NameFileSpec fileSpec = new NameFileSpec("JavaLangTestClass.java");
+		final TestFile fileSpec = new TestFile("JavaLangTestClass.java", source);
 		
 		final CompiledAndMappedFiles compiledAndMapped = compileAndMap(
 				fileSpec,
-				source,
 				new TestResolvedTypes()
 					.addType("java.lang.Integer"),
 				codeMap);

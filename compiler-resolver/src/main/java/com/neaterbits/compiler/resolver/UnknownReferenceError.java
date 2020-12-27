@@ -1,10 +1,15 @@
 package com.neaterbits.compiler.resolver;
 
-public class UnknownReferenceError extends ResolveError {
+import java.util.Objects;
+
+public final class UnknownReferenceError extends ResolveError {
 
 	private final String message;
 
 	public UnknownReferenceError(String message) {
+	    
+	    Objects.requireNonNull(message);
+	    
 		this.message = message;
 	}
 

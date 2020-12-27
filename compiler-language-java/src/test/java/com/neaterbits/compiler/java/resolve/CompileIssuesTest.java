@@ -9,8 +9,9 @@ import org.junit.Test;
 
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
+import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
 import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
-import com.neaterbits.compiler.ast.objects.variables.NameReference;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompiledAndResolvedFile;
 import com.neaterbits.compiler.types.method.MethodInvocationType;
@@ -38,7 +39,8 @@ public class CompileIssuesTest extends BaseCompilerTest {
 				"ClassForTest.java",
 				source,
 				new TestResolvedTypes()
-					.addType("java.lang.Integer"));
+					.addType("java.lang.Integer")
+					.addType("java.lang.String"));
 		
 		final Iterator<BaseASTElement> iterator = compiled.getASTElements(BaseASTElement.class).iterator();
 		
@@ -46,17 +48,17 @@ public class CompileIssuesTest extends BaseCompilerTest {
 		
 		assertThat(returnStatement).isNotNull();
 		
-		System.out.println("## expression " + returnStatement.getExpression());
+		final PrimaryList primaryList = (PrimaryList)get(iterator);
+		assertThat(primaryList).isNotNull();
 		
+		final NamePrimary namePrimary = get(iterator);
+		assertThat(namePrimary.getName()).isEqualTo("integer");
+
 		final MethodInvocationExpression expression = get(iterator);
 		
-		assertThat(expression.getInvocationType()).isEqualTo(MethodInvocationType.VARIABLE_REFERENCE);
+		assertThat(expression.getInvocationType()).isEqualTo(MethodInvocationType.UNRESOLVED);
 		assertThat(expression.getCallable().getName()).isEqualTo("toString");
 		
-		final NameReference nameReference = get(iterator);
-		assertThat(nameReference).isNotNull();
-		
 		assertThat(compiled.getErrors().isEmpty()).isTrue();
-		
 	}
 }

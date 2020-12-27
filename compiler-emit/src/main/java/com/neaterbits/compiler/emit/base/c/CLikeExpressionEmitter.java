@@ -4,6 +4,7 @@ import com.neaterbits.compiler.ast.objects.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.ast.objects.expression.AssignmentExpression;
 import com.neaterbits.compiler.ast.objects.expression.CastExpression;
 import com.neaterbits.compiler.ast.objects.expression.ConditionalExpression;
+import com.neaterbits.compiler.ast.objects.expression.GenericUnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.binary.ArithmeticBinaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostDecrementExpression;
@@ -24,7 +25,6 @@ import com.neaterbits.compiler.types.operator.Relational;
 import com.neaterbits.compiler.types.operator.Scope;
 
 public abstract class CLikeExpressionEmitter<T extends EmitterState> extends BaseInfixExpressionEmitter<T> {
-
 
 	@Override
 	public final Void onPreIncrement(PreIncrementExpression expression, T param) {
@@ -65,8 +65,31 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 		
 		return null;
 	}
-	
-	private static final char getCArithmeticOperator(Arithmetic arithmetic) {
+
+	@Override
+    public Void onGenericUnaryExpression(GenericUnaryExpression unaryExpression, T param) {
+
+	    switch (unaryExpression.getOperator().getNotation()) {
+	    case PREFIX:
+	        param.append(getOperatorString(unaryExpression.getOperator()));
+	        param.append(' ');
+	        emitExpression(unaryExpression.getExpression(), param);
+	        break;
+
+	    case POSTFIX:
+            emitExpression(unaryExpression.getExpression(), param);
+            param.append(' ');
+            param.append(getOperatorString(unaryExpression.getOperator()));
+            break;
+
+        default:
+            throw new UnsupportedOperationException();
+	    }
+	    
+	    return null;
+    }
+
+    private static final char getCArithmeticOperator(Arithmetic arithmetic) {
 		final char operator;
 		
 		switch (arithmetic) {
@@ -135,6 +158,28 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 		return operator;
 	}
 
+	private static final String getCIncrementDecrementOperator(IncrementDecrement incrementDecrement) {
+	    
+        final String operator;
+        
+        switch (incrementDecrement) {
+        case PRE_INCREMENT:
+        case POST_INCREMENT:
+            operator = "++";
+            break;
+            
+        case PRE_DECREMENT:
+        case POST_DECREMENT:
+            operator = "--";
+            break;
+        
+        default:
+            throw new UnsupportedOperationException("Not a IncrementDecrement operator: " + incrementDecrement);
+        }
+
+        return operator;
+    }
+
 	private static final OperatorVisitor<Void, String> OPERATOR_TO_STRING_VISITOR = new OperatorVisitor<Void, String>() {
 		
 		@Override
@@ -154,7 +199,7 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 
 		@Override
         public String onIncrementDecrement(IncrementDecrement incrementDecrement, Void param) {
-		    throw new UnsupportedOperationException();
+		    return getCIncrementDecrementOperator(incrementDecrement);
 		}
 
         @Override
@@ -174,7 +219,7 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 
         @Override
         public String onAssignment(Assignment assignment, Void param) {
-            throw new UnsupportedOperationException();
+            return "=";
         }
 	};
 	

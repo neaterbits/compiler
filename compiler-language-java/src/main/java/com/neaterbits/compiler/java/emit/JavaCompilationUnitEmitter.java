@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.java.emit;
 
+import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Constructor;
@@ -16,13 +17,19 @@ import com.neaterbits.compiler.ast.objects.typedefinition.ConstructorMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.ConstructorModifierHolder;
 import com.neaterbits.compiler.ast.objects.typedefinition.EnumConstantDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.EnumDefinition;
+import com.neaterbits.compiler.ast.objects.typedefinition.FieldModifierHolder;
+import com.neaterbits.compiler.ast.objects.typedefinition.FieldModifiers;
 import com.neaterbits.compiler.ast.objects.typedefinition.InnerClassMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceMethod;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceMethodMember;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceMethodModifierHolder;
+import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
+import com.neaterbits.compiler.ast.objects.variables.VariableDeclarationElement;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseOOCompilationUnitEmitter;
+import com.neaterbits.compiler.types.statement.ASTMutability;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodModifierVisitor;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodNative;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodOverride;
@@ -37,6 +44,11 @@ import com.neaterbits.compiler.types.typedefinition.ClassStrictfp;
 import com.neaterbits.compiler.types.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.types.typedefinition.ConstructorModifierVisitor;
 import com.neaterbits.compiler.types.typedefinition.ConstructorVisibility;
+import com.neaterbits.compiler.types.typedefinition.FieldModifierVisitor;
+import com.neaterbits.compiler.types.typedefinition.FieldStatic;
+import com.neaterbits.compiler.types.typedefinition.FieldTransient;
+import com.neaterbits.compiler.types.typedefinition.FieldVisibility;
+import com.neaterbits.compiler.types.typedefinition.FieldVolatile;
 import com.neaterbits.compiler.types.typedefinition.InterfaceAbstract;
 import com.neaterbits.compiler.types.typedefinition.InterfaceMethodAbstract;
 import com.neaterbits.compiler.types.typedefinition.InterfaceMethodDefault;
@@ -50,6 +62,7 @@ import com.neaterbits.compiler.types.typedefinition.InterfaceStatic;
 import com.neaterbits.compiler.types.typedefinition.InterfaceStrictfp;
 import com.neaterbits.compiler.types.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.types.typedefinition.Subclassing;
+import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.Strings;
 
 public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<EmitterState> {
@@ -57,7 +70,14 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 	private static final JavaStatementEmitter STATEMENT_EMITTER = new JavaStatementEmitter();	
 	private static final JavaExpressionEmitter EXPRESSION_EMITTER = new JavaExpressionEmitter();
 	
-	@Override
+    private final void emitType(TypeReference typeReference, EmitterState state) {
+        
+        final TypeName typeName = typeReference.getTypeName();
+        
+        typeName.join('.', state::append);
+    }
+
+    @Override
 	protected void emitStatement(Statement statement, EmitterState state) {
 		statement.visit(STATEMENT_EMITTER, state);
 	}
@@ -131,60 +151,116 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 		}
 	}; 
 
-	private static final ClassMethodModifierVisitor<Void, String> CLASSMETHODMODIFIER_TO_NAME = new ClassMethodModifierVisitor<Void, String>() {
-		
-		@Override
-		public String onOverride(ClassMethodOverride methodOverride, Void param) {
-			
-			final String s;
-			
-			switch (methodOverride) {
-			case ABSTRACT: 	s = "abstract"; break;
-			case FINAL:		s = "final";	break;
+    private static final ClassMethodModifierVisitor<Void, String> CLASSMETHODMODIFIER_TO_NAME = new ClassMethodModifierVisitor<Void, String>() {
+        
+        @Override
+        public String onOverride(ClassMethodOverride methodOverride, Void param) {
+            
+            final String s;
+            
+            switch (methodOverride) {
+            case ABSTRACT:  s = "abstract"; break;
+            case FINAL:     s = "final";    break;
 
-			default:
-				throw new UnsupportedOperationException("Unknown subclassing " + methodOverride);
-			}
-			
-			return s;
-		}
-		
-		@Override
-		public String onStrictFp(ClassMethodStrictfp methodStrictfp, Void param) {
-			return "strictfp";
-		}
-		
-		@Override
-		public String onStatic(ClassMethodStatic methodStatic, Void param) {
-			return "static";
-		}
-		
-		@Override
-		public String onVisibility(ClassMethodVisibility visibility, Void param) {
-			final String s;
-			
-			switch (visibility) {
-			case PUBLIC: 					s = "public"; 		break;
-			case NAMESPACE_AND_SUBCLASSES:	s = "protected";	break;
-			case PRIVATE: 					s = "private"; 		break;
+            default:
+                throw new UnsupportedOperationException("Unknown subclassing " + methodOverride);
+            }
+            
+            return s;
+        }
+        
+        @Override
+        public String onStrictFp(ClassMethodStrictfp methodStrictfp, Void param) {
+            return "strictfp";
+        }
+        
+        @Override
+        public String onStatic(ClassMethodStatic methodStatic, Void param) {
+            return "static";
+        }
+        
+        @Override
+        public String onVisibility(ClassMethodVisibility visibility, Void param) {
+            final String s;
+            
+            switch (visibility) {
+            case PUBLIC:                    s = "public";       break;
+            case NAMESPACE_AND_SUBCLASSES:  s = "protected";    break;
+            case PRIVATE:                   s = "private";      break;
 
-			default:
-				throw new UnsupportedOperationException("Unknown class visibility " + visibility);
-			}
-			
-			return s;
-		}
+            default:
+                throw new UnsupportedOperationException("Unknown class visibility " + visibility);
+            }
+            
+            return s;
+        }
 
-		@Override
-		public String onSynchronized(ClassMethodSynchronized methodSynchronized, Void param) {
-			return "synchronized";
-		}
+        @Override
+        public String onSynchronized(ClassMethodSynchronized methodSynchronized, Void param) {
+            return "synchronized";
+        }
 
-		@Override
-		public String onNative(ClassMethodNative methodNative, Void param) {
-			return "native";
-		}
-	};
+        @Override
+        public String onNative(ClassMethodNative methodNative, Void param) {
+            return "native";
+        }
+    };
+    
+    private static final FieldModifierVisitor<Void, String> CLASSFIELDMODIFIER_TO_NAME = new FieldModifierVisitor<Void, String>() {
+        
+        
+        @Override
+        public String onFieldVisibility(FieldVisibility fieldVisibility, Void param) {
+
+            final String s;
+            
+            switch (fieldVisibility.getVisibility()) {
+            case PUBLIC:                    s = "public";       break;
+            case NAMESPACE_AND_SUBCLASSES:  s = "protected";    break;
+            case PRIVATE:                   s = "private";      break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown field visibility " + fieldVisibility);
+            }
+            
+            return s;
+        }
+
+        @Override
+        public String onFieldMutability(ASTMutability fieldMutability, Void param) {
+            
+            final String s;
+            
+            switch (fieldMutability.getMutability()) {
+            case VALUE_OR_REF_IMMUTABLE:
+                s = "final";
+                break;
+                
+            default:
+                throw new UnsupportedOperationException("Unknown field mutability " + fieldMutability);
+            }
+            
+            return s;
+        }
+
+        @Override
+        public String onStatic(FieldStatic fieldStatic, Void param) {
+
+            return "static";
+        }
+
+        @Override
+        public String onTransient(FieldTransient fieldTransient, Void param) {
+
+            return "transient";
+        }
+
+        @Override
+        public String onVolatile(FieldVolatile fieldVolatile, Void param) {
+
+            return "volatile";
+        }
+    };
 
 	private static final InterfaceModifierVisitor<Void, String> INTERFACEMODIFIER_TO_NAME = new InterfaceModifierVisitor<Void, String>() {
 		
@@ -392,9 +468,52 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 		return null;
 	}
 
+    private void emitFieldModifiers(FieldModifiers fieldModifiers, EmitterState param) {
+        final ASTList<? extends FieldModifierHolder> modifiers = fieldModifiers.getModifiers();
+        
+        emitList(param, modifiers, " ", modifier -> modifier.getModifier().visit(CLASSFIELDMODIFIER_TO_NAME, null));
+        
+        if (!modifiers.isEmpty()) {
+            param.append(' ');
+        }
+    }
+    
+    private void emitVarNameDeclaration(VariableDeclarationElement declaration, EmitterState state) {
+        
+        state.append(declaration.getNameString());
+        
+        if (declaration.getNumDims() > 0) {
+
+            state.append('[');
+
+            state.append(declaration.getNumDims(), Base.DECIMAL);
+            
+            state.append(']');
+        }
+    }
+    
+    private void emitInitializer(InitializerVariableDeclarationElement initializerElement, EmitterState state) {
+        
+        emitVarNameDeclaration(initializerElement, state);
+        
+        if (initializerElement.getInitializer() != null) {
+            
+            state.append(' ');
+
+            emitExpression(initializerElement.getInitializer(), state);
+        }
+    }
+	
 	@Override
 	public Void onClassDataFieldMember(ClassDataFieldMember field, EmitterState param) {
-		throw new UnsupportedOperationException();
+	    
+	    emitFieldModifiers(field.getModifiers(), param);
+	    
+	    emitType(field.getType(), param);
+	    
+	    emitListTo(param, field.getInitializers(), ",", initializer -> emitInitializer(initializer, param));
+	    
+	    return null;
 	}
 
 	@Override

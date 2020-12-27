@@ -39,7 +39,6 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		param.append(varName.getName());
 	}
 
-	
 	protected final void emitVariableDeclarationElement(InitializerVariableDeclarationElement element, T param) {
 		
 		emitVariableDeclaration(element.getVarName(), param);
@@ -62,11 +61,17 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		param.append(';');
 	}
 	
+	private void emitVariableDeclarationStatement(VariableDeclarationStatement statement, T state) {
+
+	    emitVariableModifiers(statement.getModifiers(), state);
+
+	    emitVariableDeclarationElements(statement.getDeclarations(), state);
+	}
+	
 	@Override
 	public final Void onVariableDeclaration(VariableDeclarationStatement statement, T param) {
 
-		emitVariableModifiers(statement.getModifiers(), param);
-		emitVariableDeclarationElements(statement.getDeclarations(), param);
+	    emitVariableDeclarationStatement(statement, param);
 		
 		return null;
 	}
@@ -175,8 +180,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 			param.append(' ');
 			
 			if (statement.getForInit().getLocalVariableDeclaration() != null) {
-			    throw new UnsupportedOperationException();
-				// emitVariableDeclarationElement(statement.getForInit().getLocalVariableDeclaration(), param);
+				emitVariableDeclarationStatement(statement.getForInit().getLocalVariableDeclaration(), param);
 			}
 			else if (statement.getForInit().getExpressionList() != null) {
 				emitForExpressionList(statement.getForInit().getExpressionList(), param);

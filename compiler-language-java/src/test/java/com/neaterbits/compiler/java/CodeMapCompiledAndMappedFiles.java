@@ -1,7 +1,5 @@
 package com.neaterbits.compiler.java;
 
-import com.neaterbits.compiler.util.FileSpec;
-
 public interface CodeMapCompiledAndMappedFiles<COMPILATION_UNIT> extends CompiledAndMappedFiles {
 
     /*
@@ -10,5 +8,10 @@ public interface CodeMapCompiledAndMappedFiles<COMPILATION_UNIT> extends Compile
 	CrossReferenceUpdater getCrossReferenceUpdater();
     */
 	
-	COMPILATION_UNIT getCompilationUnit(FileSpec fileSpec);
+ 	COMPILATION_UNIT getCompilationUnit(String name);
+
+ 	default COMPILATION_UNIT getCompilationUnit(TestFile testFile) {
+ 	    
+ 	    return getCompilationUnit(testFile.getName());
+ 	}
 }

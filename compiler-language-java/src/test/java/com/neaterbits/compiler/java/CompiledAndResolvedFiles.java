@@ -1,10 +1,13 @@
 package com.neaterbits.compiler.java;
 
-import com.neaterbits.compiler.util.FileSpec;
-
 interface CompiledAndResolvedFiles {
 
-	CompiledAndResolvedFile getFile(FileSpec fileSpec);
+	CompiledAndResolvedFile getFile(String name);
+	
+	default CompiledAndResolvedFile getFile(TestFile testFile) {
+	    
+	    return getFile(testFile.getName());
+	}
 
     /*
 	List<CompiledAndResolvedFile> getFiles();

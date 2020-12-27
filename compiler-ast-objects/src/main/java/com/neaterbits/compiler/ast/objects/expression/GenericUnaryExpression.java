@@ -4,15 +4,20 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.operator.Arity;
-import com.neaterbits.compiler.types.operator.Operator;
+import com.neaterbits.compiler.types.operator.UnaryOperator;
 import com.neaterbits.util.parse.context.Context;
 
 public final class GenericUnaryExpression extends UnaryExpression {
 
-    private final Operator operator;
+    private final UnaryOperator operator;
     private final ParseTreeElement parseTreeElement;
 
-    public GenericUnaryExpression(Context context, Operator operator, ParseTreeElement parseTreeElement, Expression expression) {
+    public GenericUnaryExpression(
+            Context context,
+            UnaryOperator operator,
+            ParseTreeElement parseTreeElement,
+            Expression expression) {
+        
         super(context, expression);
 
         Objects.requireNonNull(operator);
@@ -26,7 +31,7 @@ public final class GenericUnaryExpression extends UnaryExpression {
         this.parseTreeElement = parseTreeElement;
     }
 
-    public final Operator getOperator() {
+    public final UnaryOperator getOperator() {
         return operator;
     }
 
@@ -37,6 +42,6 @@ public final class GenericUnaryExpression extends UnaryExpression {
 
     @Override
     public <T, R> R visit(ExpressionVisitor<T, R> visitor, T param) {
-        throw new UnsupportedOperationException();
+        return visitor.onGenericUnaryExpression(this, param);
     }
 }

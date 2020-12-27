@@ -32,7 +32,6 @@ import com.neaterbits.compiler.java.ObjectJavaParser;
 import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
 import com.neaterbits.compiler.resolver.build.LanguageCompiler;
-import com.neaterbits.compiler.util.CastFullContextProvider;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.parse.CompileError;
@@ -79,7 +78,7 @@ public abstract class BaseJavaCompilerTest {
 			        Charset.defaultCharset(),
 			        errors,
 			        file.getName(),
-			        new ParseLogger(System.out, CastFullContextProvider.INSTANCE));
+			        fullContextProvider -> new ParseLogger(System.out, fullContextProvider));
 		}
 
 		assertThat(errors.isEmpty()).isTrue();
@@ -154,7 +153,7 @@ public abstract class BaseJavaCompilerTest {
 				Charset.defaultCharset(),
 				getSystemModule(),
 				systemModule -> renameSystemPackages(systemModule, SYSTEM_LIB_PLACEHOLDER_CLASS.getPackage()),
-				new ParseLogger(System.out, CastFullContextProvider.INSTANCE));
+				fullContextProvider -> new ParseLogger(System.out, fullContextProvider));
 
 		assertThat(program).isNotNull();
 

@@ -18,6 +18,7 @@ import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.IOError;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.parse.Parser.CreateParseLogger;
 import com.neaterbits.util.Files;
 import com.neaterbits.util.parse.ParserException;
 
@@ -54,7 +55,7 @@ public abstract class DirectoryParser<COMPILATION_UNIT, PARSED_FILE> {
 		return parseDirectory(directory, charset, null);
 	}
 
-	public final List<PARSED_FILE> parseDirectory(File directory, Charset charset, ParseLogger debugParseLogger) {
+	public final List<PARSED_FILE> parseDirectory(File directory, Charset charset, CreateParseLogger debugParseLogger) {
 
 		final List<PARSED_FILE> parsedFiles = new ArrayList<>();
 		
@@ -79,9 +80,14 @@ public abstract class DirectoryParser<COMPILATION_UNIT, PARSED_FILE> {
 					
 					final PrintStream printStream = new PrintStream(baos);
 					
-					final ParseLogger parseLogger = new ParseLogger(printStream, parser.getFullContextProvider());
-					
-					compilationUnit = parser.parse(fileInputStream, charset, parseErrors, file.getName(), debugParseLogger != null ? debugParseLogger : parseLogger);
+					compilationUnit = parser.parse(
+					        fileInputStream,
+					        charset,
+					        parseErrors,
+					        file.getName(),
+				            debugParseLogger != null
+				                ? debugParseLogger
+		                        : fullContextProvider -> new ParseLogger(System.out, fullContextProvider));
 					
 					printStream.flush();
 					

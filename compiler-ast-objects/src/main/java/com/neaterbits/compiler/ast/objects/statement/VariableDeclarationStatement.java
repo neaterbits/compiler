@@ -62,6 +62,7 @@ public final class VariableDeclarationStatement extends Statement {
 	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 		doIterate(modifiers, recurseMode, iterator);
+		doIterate(typeReference, recurseMode, iterator);
 		doIterate(declarations, recurseMode, iterator);
 	}
 }

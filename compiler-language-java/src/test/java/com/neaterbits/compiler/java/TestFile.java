@@ -1,29 +1,30 @@
-package com.neaterbits.compiler.util;
+package com.neaterbits.compiler.java;
 
 import java.util.Objects;
 
-public final class NameFileSpec implements FileSpec {
+public final class TestFile {
 
 	private final String name;
+	private final String text;
 
-	public NameFileSpec(String name) {
+	public TestFile(String name, String text) {
 
 		Objects.requireNonNull(name);
+		Objects.requireNonNull(text);
 		
 		this.name = name;
+		this.text = text;
 	}
 	
-	@Override
-	public String getDistinctName() {
-		return name;
-	}
+	public String getName() {
+        return name;
+    }
 
-	@Override
-	public String getParseContextName() {
-		return name;
-	}
-	
-	@Override
+    public String getText() {
+        return text;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -39,7 +40,7 @@ public final class NameFileSpec implements FileSpec {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		NameFileSpec other = (NameFileSpec) obj;
+		TestFile other = (TestFile) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;

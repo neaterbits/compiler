@@ -3,6 +3,7 @@ package com.neaterbits.compiler.ast.objects.parser.iterative;
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.stackbased.BaseIterativeParserListener;
 import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 
@@ -290,8 +291,9 @@ public abstract class BaseIterativeOOParserListener<
 	protected BaseIterativeOOParserListener(
 	        StringSource stringSource,
 	        ContextAccess contextAccess,
+            FullContextProvider fullContextProvider,
 	        ParseLogger logger,
 	        @SuppressWarnings("rawtypes") ParseTreeFactory parseTreeFactory) {
-		super(stringSource, contextAccess, logger, parseTreeFactory);
+		super(stringSource, contextAccess, fullContextProvider, logger, parseTreeFactory);
 	}
 }

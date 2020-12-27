@@ -12,15 +12,16 @@ import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.java.CompileFileCollector;
 import com.neaterbits.compiler.java.JavaProgramModel;
+import com.neaterbits.compiler.java.TestFile;
 import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.model.common.SourceTokenType;
-import com.neaterbits.compiler.util.NameFileSpec;
 import com.neaterbits.util.parse.ParserException;
 
 public class CrossReferenceTest extends BaseCompilerTest {
 
 	@Test
 	public void testLocalVariableNameReference() throws IOException, ParserException {
+
 		final String source =
 				
 				"package com.test;\n"
@@ -32,15 +33,14 @@ public class CrossReferenceTest extends BaseCompilerTest {
 			+   "  }\n"
 			+   "}\n";
 
-		
-		final NameFileSpec spec = new NameFileSpec("FieldsTest.java");
+		final TestFile spec = new TestFile("FieldsTest.java", source);
 		
 		final IntCompilerCodeMap codeMap = new IntCompilerCodeMap();
 		
 		final TestResolvedTypes resolvedTypes = new TestResolvedTypes();
 		
 		final CodeMapCompiledAndMappedFiles<CompilationUnit> compiledAndMapped
-				= compileAndMap(spec, source, resolvedTypes, codeMap);
+				= compileAndMap(spec, resolvedTypes, codeMap);
 		
 		// final TypeName type = JavaUtil.parseToTypeName("com.test.FieldsTest");
 		
@@ -62,14 +62,13 @@ public class CrossReferenceTest extends BaseCompilerTest {
 		final ISourceToken varReferenceSourceToken = programModel.getTokenAtOffset(compilationUnit, variableReferenceOffset, resolvedTypes);
 		assertThat(varReferenceSourceToken).isNotNull();
 		assertThat(varReferenceSourceToken.getTokenType()).isEqualTo(SourceTokenType.VARIABLE_REFERENCE);
-
 		
 		// Cross reference tests
 		final int sourceFile = compiledAndMapped.getSourceFileNo(spec);
-		assertThat(sourceFile).isGreaterThan(0);
+		assertThat(sourceFile).isGreaterThanOrEqualTo(0);
 		
 		final int varDeclarationToken = codeMap.getTokenForParseTreeRef(sourceFile, varDeclarationSourceToken.getParseTreeReference());
-		assertThat(varDeclarationToken).isGreaterThan(0);
+		assertThat(varDeclarationToken).isGreaterThanOrEqualTo(0);
 		
 		final int varReferenceToken = codeMap.getTokenForParseTreeRef(sourceFile, varReferenceSourceToken.getParseTreeReference());
 		
@@ -78,6 +77,7 @@ public class CrossReferenceTest extends BaseCompilerTest {
 
 	@Test
 	public void testLocalVariableNameAssignmentReference() throws IOException, ParserException {
+
 		final String source =
 				
 				"package com.test;\n"
@@ -89,14 +89,14 @@ public class CrossReferenceTest extends BaseCompilerTest {
 			+   "}\n";
 
 		
-		final NameFileSpec spec = new NameFileSpec("FieldsTest.java");
+		final TestFile spec = new TestFile("FieldsTest.java", source);
 		
 		final IntCompilerCodeMap codeMap = new IntCompilerCodeMap();
 		
 		final TestResolvedTypes resolvedTypes = new TestResolvedTypes();
 		
 		final CodeMapCompiledAndMappedFiles<CompilationUnit> compiledAndMapped
-				= compileAndMap(spec, source, resolvedTypes, codeMap);
+				= compileAndMap(spec, resolvedTypes, codeMap);
 		
 		// final TypeName type = JavaUtil.parseToTypeName("com.test.FieldsTest");
 		
@@ -153,8 +153,8 @@ public class CrossReferenceTest extends BaseCompilerTest {
 			+   "}\n";
 
 		
-		final NameFileSpec mainClass = new NameFileSpec("LocalVarNameTest.java");
-		final NameFileSpec fieldClass = new NameFileSpec("TestField.java");
+		final TestFile mainClass = new TestFile("LocalVarNameTest.java", mainClassSource);
+		final TestFile fieldClass = new TestFile("TestField.java", fieldClassSource);
 
 		final IntCompilerCodeMap codeMap = new IntCompilerCodeMap();
 		
@@ -162,8 +162,8 @@ public class CrossReferenceTest extends BaseCompilerTest {
 		
 		final CodeMapCompiledAndMappedFiles<CompilationUnit> compiledAndMapped
 				= new CompileFileCollector<>(this::compileFiles)
-				.add(mainClass, mainClassSource)
-				.add(fieldClass, fieldClassSource)
+				.add(mainClass)
+				.add(fieldClass)
 				.compile(resolvedTypes, codeMap);
 		
 		// final TypeName type = JavaUtil.parseToTypeName("com.test.FieldsTest");
@@ -181,14 +181,14 @@ public class CrossReferenceTest extends BaseCompilerTest {
 		final ISourceToken varDeclarationSourceToken = programModel.getTokenAtOffset(compilationUnit, variableDeclarationOffset, resolvedTypes);
 		assertThat(varDeclarationSourceToken).isNotNull();
 
-		assertThat(varDeclarationSourceToken.getTokenType()).isEqualTo(SourceTokenType.LOCAL_VARIABLE_DECLARATION_NAME);
+		assertThat(varDeclarationSourceToken.getTokenType())
+		    .isEqualTo(SourceTokenType.LOCAL_VARIABLE_DECLARATION_NAME);
 
 		final int variableReferenceOffset = mainClassSource.indexOf("fieldTest", variableDeclarationOffset + 1);
 		
 		final ISourceToken varReferenceSourceToken = programModel.getTokenAtOffset(compilationUnit, variableReferenceOffset, resolvedTypes);
 		assertThat(varReferenceSourceToken).isNotNull();
 		assertThat(varReferenceSourceToken.getTokenType()).isEqualTo(SourceTokenType.VARIABLE_REFERENCE);
-
 		
 		// Cross reference tests
 		final int sourceFile = compiledAndMapped.getSourceFileNo(mainClass);

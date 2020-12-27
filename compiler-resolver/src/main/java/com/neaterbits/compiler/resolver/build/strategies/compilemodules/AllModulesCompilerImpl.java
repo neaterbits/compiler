@@ -26,12 +26,13 @@ import com.neaterbits.compiler.model.common.ElementVisitor;
 import com.neaterbits.compiler.model.common.ParseTreeModel;
 import com.neaterbits.compiler.model.common.passes.CompilerModel;
 import com.neaterbits.compiler.resolver.ResolveError;
+import com.neaterbits.compiler.resolver.build.CompilerOptions;
 import com.neaterbits.compiler.resolver.passes.ParsedModuleAndCodeMap;
+import com.neaterbits.compiler.resolver.passes.addfieldspass.AddFieldsPass;
 import com.neaterbits.compiler.resolver.passes.namereferenceresolve.NameReferenceResolvePass;
 import com.neaterbits.compiler.resolver.passes.replacetyperefs.ReplaceTypeRefsPass;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.FileSystemFileSpec;
-import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.compiler.util.parse.ParsedFile;
@@ -45,25 +46,25 @@ public final class AllModulesCompilerImpl<PARSED_FILE extends ParsedFile, COMPIL
     implements AllModulesCompiler<PARSED_FILE, SynchronizedCompilerCodeMap, ResolveError> {
         
     private final Parser<COMPILATION_UNIT> parser;
-    private final FullContextProvider fullContextProvider;
     private final CompilerModel<COMPILATION_UNIT, PARSED_FILE> compilerModel;
+    private final CompilerOptions options;
     
     public AllModulesCompilerImpl(
             Parser<COMPILATION_UNIT> parser,
-            FullContextProvider fullContextProvider,
-            CompilerModel<COMPILATION_UNIT, PARSED_FILE> compilerModel) {
+            CompilerModel<COMPILATION_UNIT, PARSED_FILE> compilerModel,
+            CompilerOptions options) {
         
         Objects.requireNonNull(parser);
-        Objects.requireNonNull(fullContextProvider);
         Objects.requireNonNull(compilerModel);
+        Objects.requireNonNull(options);
         
         this.parser = parser;
-        this.fullContextProvider = fullContextProvider;
         this.compilerModel = compilerModel;
+        this.options = options;
     }
 
     @Override
-    public ParsedWithCachedRefs<PARSED_FILE> parseFile(
+    public ParsedWithCachedRefs<PARSED_FILE, ResolveError> parseFile(
             SourceFileResourcePath sourceFile,
             Charset charset,
             SynchronizedCompilerCodeMap codeMap)
@@ -73,13 +74,12 @@ public final class AllModulesCompilerImpl<PARSED_FILE extends ParsedFile, COMPIL
         
         final IntList types = new IntList();
         
-        final ParsedWithCachedRefs<PARSED_FILE> parsed;
+        final ParsedWithCachedRefs<PARSED_FILE, ResolveError> parsed;
         
         try (FileInputStream stream = new FileInputStream(file)) {
             
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             final PrintStream printStream = new PrintStream(baos);
-            final ParseLogger parseLogger = new ParseLogger(printStream, fullContextProvider);
             
             final List<ParseError> errors = new ArrayList<>();
             
@@ -88,7 +88,7 @@ public final class AllModulesCompilerImpl<PARSED_FILE extends ParsedFile, COMPIL
                     charset,
                     errors,
                     file.getName(),
-                    parseLogger);
+                    fullContextProvider -> new ParseLogger(printStream, fullContextProvider));
             
             final PARSED_FILE parsedFile = compilerModel.createParsedFile(
                     new FileSystemFileSpec(file),
@@ -292,24 +292,31 @@ public final class AllModulesCompilerImpl<PARSED_FILE extends ParsedFile, COMPIL
     
     @Override
     public List<ResolveError> resolveParseTreeInPlaceFromCodeMap(
-                                            ParsedModule<PARSED_FILE> module,
+                                            ParsedModule<PARSED_FILE, ResolveError> module,
                                             SynchronizedCompilerCodeMap codeMap) {
 
-        final List<ResolveError> resolveErrors = new ArrayList<>();
-        
-        final NameReferenceResolvePass<PARSED_FILE, COMPILATION_UNIT> nameReferenceResolvePass
-            = new NameReferenceResolvePass<>(compilerModel.getCompilationUnitModel());
-        
         final ParsedModuleAndCodeMap<PARSED_FILE> parsedModuleAndCodeMap
             = new ParsedModuleAndCodeMap<>(module, codeMap);
-        
-        nameReferenceResolvePass.execute(parsedModuleAndCodeMap);
-        
+
         final ReplaceTypeRefsPass<PARSED_FILE, COMPILATION_UNIT> replaceTypeRefsPass
             = new ReplaceTypeRefsPass<>(compilerModel.getCompilationUnitModel());
         
         replaceTypeRefsPass.execute(parsedModuleAndCodeMap);
         
-        return resolveErrors;
+        final AddFieldsPass<PARSED_FILE, COMPILATION_UNIT> addFieldsPass
+            = new AddFieldsPass<>(compilerModel.getCompilationUnitModel());
+    
+        addFieldsPass.execute(parsedModuleAndCodeMap);
+
+        final NameReferenceResolvePass<PARSED_FILE, COMPILATION_UNIT> nameReferenceResolvePass
+            = new NameReferenceResolvePass<>(
+                compilerModel.getCompilationUnitModel(),
+                options.isAddTokenRefsEnabled());
+    
+        nameReferenceResolvePass.execute(parsedModuleAndCodeMap);
+        
+        return parsedModuleAndCodeMap.getParsed().stream()
+                .flatMap(p -> p.getResolveErrorsList().stream())
+                .collect(Collectors.toList());
     }
 }

@@ -5,6 +5,7 @@ import com.neaterbits.compiler.ast.objects.parser.iterative.BaseIterativeOOParse
 import com.neaterbits.compiler.javascript.ast.JavascriptProgram;
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
+import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 
@@ -15,9 +16,10 @@ public class JSParserListener extends BaseIterativeOOParserListener
 	public JSParserListener(
 	        StringSource stringSource,
 	        ContextAccess contextAccess,
+            FullContextProvider fullContextProvider,
 	        ParseLogger logger,
 	        ParseTreeFactory parseTreeFactory) {
-		super(stringSource, contextAccess, logger, parseTreeFactory);
+		super(stringSource, contextAccess, fullContextProvider, logger, parseTreeFactory);
 	}
 
 	@Override

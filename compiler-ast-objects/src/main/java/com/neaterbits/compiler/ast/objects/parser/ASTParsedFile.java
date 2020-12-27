@@ -75,4 +75,9 @@ public final class ASTParsedFile extends BasePlaceholderASTElement implements Pa
 	public <COMPILATION_UNIT> COMPILATION_UNIT getCompilationUnit() {
 		return (COMPILATION_UNIT)parsed.get();
 	}
+
+    @Override
+    public String toString() {
+        return "ASTParsedFile [file=" + file + ", errors=" + errors + ", log=" + log + ", parsed=" + parsed + "]";
+    }
 }

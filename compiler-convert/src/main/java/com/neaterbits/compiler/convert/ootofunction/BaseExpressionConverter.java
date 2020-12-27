@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.objects.expression.ConditionalExpression;
 import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
+import com.neaterbits.compiler.ast.objects.expression.GenericUnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.binary.ArithmeticBinaryExpression;
@@ -197,6 +198,16 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 	}
 
 	@Override
+    public Expression onGenericUnaryExpression(GenericUnaryExpression expression, T param) {
+	    
+        return new GenericUnaryExpression(
+                            expression.getContext(),
+                            expression.getOperator(),
+                            expression.getParseTreeElement(),
+                            expression.getExpression());
+    }
+
+    @Override
 	public final Expression onArithmeticBinary(ArithmeticBinaryExpression expression, T param) {
 
 		return new ArithmeticBinaryExpression(

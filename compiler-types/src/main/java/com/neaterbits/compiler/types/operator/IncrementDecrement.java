@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.types.operator;
 
-public enum IncrementDecrement implements Operator {
+public enum IncrementDecrement implements UnaryOperator {
 
     PRE_INCREMENT(Arity.UNARY, Notation.PREFIX),
     PRE_DECREMENT(Arity.UNARY, Notation.PREFIX),
@@ -30,6 +30,7 @@ public enum IncrementDecrement implements Operator {
         return arity;
     }
 
+    @Override
     public Notation getNotation() {
         return notation;
     }

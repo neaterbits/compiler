@@ -3,8 +3,8 @@ package com.neaterbits.compiler.parser.java;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.function.Function;
 
+import com.neaterbits.compiler.parser.listener.common.CreateParserListener;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.util.io.buffers.StringBuffers;
 import com.neaterbits.util.io.loadstream.SimpleLoadStream;
@@ -14,9 +14,9 @@ import com.neaterbits.util.parse.ParserException;
 
 public class JavaParser<COMPILATION_UNIT> {
     
-    private final Function<StringBuffers, IterativeParseTreeListener<COMPILATION_UNIT>> createListener;
+    private final CreateParserListener<COMPILATION_UNIT> createListener;
     
-    public JavaParser(Function<StringBuffers, IterativeParseTreeListener<COMPILATION_UNIT>> createListener) {
+    public JavaParser(CreateParserListener<COMPILATION_UNIT> createListener) {
         
         Objects.requireNonNull(createListener);
         
@@ -29,7 +29,7 @@ public class JavaParser<COMPILATION_UNIT> {
         
         final StringBuffers stringBuffers = new StringBuffers(new SimpleLoadStream(inputStream));
         
-        final IterativeParseTreeListener<COMPILATION_UNIT> listener = createListener.apply(stringBuffers);
+        final IterativeParseTreeListener<COMPILATION_UNIT> listener = createListener.create(file, stringBuffers);
 
         final Lexer<JavaToken, CharInput> lexer = new Lexer<>(
                 stringBuffers,

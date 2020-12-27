@@ -7,6 +7,8 @@ import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
 import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
 import com.neaterbits.compiler.parser.listener.common.ListContextAccess;
+import com.neaterbits.compiler.util.FullContextProvider;
+import com.neaterbits.compiler.util.StringSourceFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSource;
 
@@ -25,9 +27,12 @@ public class Java8AntlrObjectModelParser extends Java8AntlrParser<CompilationUni
 
         final ASTParseTreeFactory parseTreeFactory = new ASTParseTreeFactory(JavaTypes.getBuiltinTypes(), null);
 
+        final FullContextProvider fullContextProvider = new StringSourceFullContextProvider(file, stringSource);
+        
         final JavaIterativeListener delegate = new JavaIterativeListener(
                 stringSource,
                 new ListContextAccess(),
+                fullContextProvider,
                 parseLogger,
                 parseTreeFactory);
 
