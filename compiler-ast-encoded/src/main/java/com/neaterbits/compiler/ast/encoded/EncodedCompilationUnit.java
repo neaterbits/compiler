@@ -28,7 +28,7 @@ public final class EncodedCompilationUnit {
     private final boolean passContextToDecode;
 
     private final int replaceSize;
-    private ASTBuffer replaceBuffer;
+    private StringASTBuffer replaceBuffer;
 
     public EncodedCompilationUnit(
             ASTBuffer astBuffer,
@@ -67,7 +67,7 @@ public final class EncodedCompilationUnit {
         }
 
         this.replaceSize = AST.sizeLeaf(ParseTreeElement.REPLACE, astBuffer, 0);
-        this.replaceBuffer = new ASTBufferImpl();
+        this.replaceBuffer = new StringASTBuffer(stringBuffer);
     }
 
     public ASTBufferRead getBuffer() {
@@ -1250,11 +1250,11 @@ public final class EncodedCompilationUnit {
         return compUnit;
     }
 
-    public ASTBuffer getReplaceBuffer() {
+    public StringASTBuffer getReplaceBuffer() {
         return replaceBuffer;
     }
 
-    public void replaceTypeReference(int toReplaceParseTreeRef, int typeNo) {
+    private int prepareReplace(int toReplaceParseTreeRef) {
 
         final ParseTreeElement toReplace = astBuffer.getParseTreeElement(toReplaceParseTreeRef);
 
@@ -1265,12 +1265,20 @@ public final class EncodedCompilationUnit {
         }
 
         if (replaceBuffer == null) {
-            this.replaceBuffer = new ASTBufferImpl();
+            this.replaceBuffer = new StringASTBuffer(stringBuffer);
         }
 
-        final int replacementIndex = replaceBuffer.getWritePos();
+        return toReplaceSize;
+    }
+    
+    
+    public void replace(int toReplaceParseTreeRef, Runnable encodeInReplaceBuffer) {
 
-        AST.encodeResolvedTypeReference(replaceBuffer, typeNo);
+        final int toReplaceSize = prepareReplace(toReplaceParseTreeRef);
+        
+        final int replacementIndex = replaceBuffer.getASTBuffer().getWritePos();
+
+        encodeInReplaceBuffer.run();
 
         replaceBuffer.writeLeafElement(ParseTreeElement.REPLACE_END);
 
@@ -1278,5 +1286,35 @@ public final class EncodedCompilationUnit {
                 toReplaceParseTreeRef,
                 replacementIndex,
                 toReplaceSize);
+    }
+
+    public void replaceTypeReference(int toReplaceParseTreeRef, int typeNo) {
+
+        replace(toReplaceParseTreeRef, () -> AST.encodeResolvedTypeReference(replaceBuffer.getASTBuffer(), typeNo));
+    }
+
+    public void replaceNamePrimaryWithNameReference(int namePrimaryParseTreeRef, String name) {
+        
+        final int nameRef = AST.decodeNamePrimaryName(astBuffer, namePrimaryParseTreeRef);
+
+        replace(namePrimaryParseTreeRef, () -> AST.encodeNameReference(replaceBuffer, nameRef));
+    }
+
+    public void replaceNamePrimaryWithFieldAccess(
+            int namePrimaryParseTreeRef,
+            int classTypeParseTreeRef,
+            String name) {
+
+        final int nameRef = AST.decodeNamePrimaryName(astBuffer, namePrimaryParseTreeRef);
+
+        replace(namePrimaryParseTreeRef, () -> AST.encodeFieldAccess(replaceBuffer, nameRef));
+    }
+
+    public void replaceNamePrimaryWithStaticReference(
+            int namePrimaryParseTreeRef,
+            int classTypeParseTreeRef,
+            String name) {
+
+        throw new UnsupportedOperationException();
     }
 }

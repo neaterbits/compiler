@@ -17,6 +17,11 @@ public abstract class ResolvedNamedTypeReference extends ResolvedTypeReference {
 		this.typeName = typeName;
 	}
 
+	protected ResolvedNamedTypeReference(ResolvedNamedTypeReference other) {
+	    super(other);
+	    
+	    this.typeName = other.typeName;
+	}
 
 	@Override
 	public final TypeName getTypeName() {
@@ -27,7 +32,6 @@ public abstract class ResolvedNamedTypeReference extends ResolvedTypeReference {
 	public String getDebugName() {
 		return typeName.getName();
 	}
-
 
 	@Override
 	public final int hashCode() {

@@ -29,7 +29,9 @@ public final class AddTokenRefsPass<PARSED_FILE extends ParsedFile, COMPILATION_
             final AddTokenRefsVisitor<COMPILATION_UNIT> visitor
                 = new AddTokenRefsVisitor<>(input.getCodeMap(), parsed.getCodeMapFileNo());
 
-            compilationUnitModel.iterateScopesAndVariables(parsed.getParsedFile().getCompilationUnit(), visitor);
+            compilationUnitModel.iterateResolvedScopesAndVariables(
+                    parsed.getParsedFile().getCompilationUnit(),
+                    visitor);
         }
 
         return input;

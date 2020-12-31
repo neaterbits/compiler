@@ -105,6 +105,8 @@ public class CrossReferenceTest extends BaseCompilerTest {
 		final JavaProgramModel programModel = new JavaProgramModel();
 		
 		final CompilationUnit compilationUnit = compiledAndMapped.getCompilationUnit(spec);
+
+		programModel.print(compilationUnit, System.out);
 		
 		assertThat(compilationUnit).isNotNull();
 
@@ -115,7 +117,11 @@ public class CrossReferenceTest extends BaseCompilerTest {
 
 		final int variableReferenceOffset = source.indexOf("integerVariable", variableDeclarationOffset + 1);
 		
-		final ISourceToken varReferenceSourceToken = programModel.getTokenAtOffset(compilationUnit, variableReferenceOffset, resolvedTypes);
+		final ISourceToken varReferenceSourceToken = programModel.getTokenAtOffset(
+		                                                                compilationUnit,
+		                                                                variableReferenceOffset,
+		                                                                resolvedTypes);
+
 		assertThat(varReferenceSourceToken).isNotNull();
 		assertThat(varReferenceSourceToken.getTokenType()).isEqualTo(SourceTokenType.VARIABLE_REFERENCE);
 		
@@ -192,10 +198,10 @@ public class CrossReferenceTest extends BaseCompilerTest {
 		
 		// Cross reference tests
 		final int sourceFile = compiledAndMapped.getSourceFileNo(mainClass);
-		assertThat(sourceFile).isGreaterThan(0);
+		assertThat(sourceFile).isGreaterThanOrEqualTo(0);
 		
 		final int varDeclarationToken = codeMap.getTokenForParseTreeRef(sourceFile, varDeclarationSourceToken.getParseTreeReference());
-		assertThat(varDeclarationToken).isGreaterThan(0);
+		assertThat(varDeclarationToken).isGreaterThanOrEqualTo(0);
 		
 		final int varReferenceToken = codeMap.getTokenForParseTreeRef(sourceFile, varReferenceSourceToken.getParseTreeReference());
 		

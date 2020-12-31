@@ -19,8 +19,19 @@ public final class TypeDefTypeReference extends ResolvedNamedTypeReference {
 
 		this.aliasedType = aliasedType;
 	}
+	
+	private TypeDefTypeReference(TypeDefTypeReference other) {
+	    super(other);
+	    
+	    this.aliasedType = other.aliasedType;
+	}
 
-	public TypeReference getAliasedType() {
+	@Override
+    public ResolvedTypeReference makeCopy() {
+        return new TypeDefTypeReference(this);
+    }
+
+    public TypeReference getAliasedType() {
 		return aliasedType;
 	}
 

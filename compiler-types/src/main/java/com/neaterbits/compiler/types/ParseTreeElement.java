@@ -28,7 +28,6 @@ public enum ParseTreeElement {
 	TYPE_BOUND(false),
 
 	GENERIC_TYPE_PARAMETERS(false),
-
 	NAMED_GENERIC_TYPE_PARAMETER(false),
 
 	CLASS_DEFINITION(false, false),

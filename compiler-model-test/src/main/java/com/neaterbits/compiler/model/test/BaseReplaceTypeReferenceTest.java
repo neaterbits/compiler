@@ -45,6 +45,10 @@ public abstract class BaseReplaceTypeReferenceTest<COMPILATION_UNIT>
             = Mockito.mock(TypeReferenceVisitor.class);
 
         util.parseTreeModel.iterateTypeReferences(compilationUnit, visitor);
+        
+        Mockito.verify(visitor).onNamespaceStart();
+        Mockito.verify(visitor).onNamespacePart("namespace");
+        Mockito.verify(visitor).onNamespaceEnd();
 
         final ArgumentCaptor<Integer> parseTreeElementCaptor
             = ArgumentCaptor.forClass(Integer.class);
@@ -69,6 +73,10 @@ public abstract class BaseReplaceTypeReferenceTest<COMPILATION_UNIT>
                 typeName);
 
         util.parseTreeModel.iterateTypeReferences(compilationUnit, visitor);
+
+        Mockito.verify(visitor).onNamespaceStart();
+        Mockito.verify(visitor).onNamespacePart("namespace");
+        Mockito.verify(visitor).onNamespaceEnd();
 
         Mockito.verify(visitor).onResolvedTypeReference(
                 ArgumentMatchers.same(compilationUnit),

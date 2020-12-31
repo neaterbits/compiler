@@ -11,13 +11,20 @@ import com.neaterbits.build.types.TypesMap;
 public final class NameToTypeNoMap {
 	
 	private final Map<TypeName, Integer> typesByTypeName;
+	
+	private TypeName [] byTypeNo;
 
 	public NameToTypeNoMap() {
 		this.typesByTypeName = new HashMap<>();
+		this.byTypeNo = null;
 	}
 
 	public void addMapping(TypeName name, int typeNo) {
+
 		typesByTypeName.put(name, typeNo);
+
+		this.byTypeNo = ArrayAllocation.allocateArray(byTypeNo, typeNo, TypeName[]::new);
+		byTypeNo[typeNo] = name;
 	}
 
 	public Integer getType(TypeName typeName) {
@@ -25,6 +32,11 @@ public final class NameToTypeNoMap {
 		Objects.requireNonNull(typeName);
 
 		return typesByTypeName.get(typeName);
+	}
+	
+	public TypeName getTypeName(int typeNo) {
+
+	    return byTypeNo[typeNo];
 	}
 	
 	public TypesMap<TypeName> makeTypesMap() {

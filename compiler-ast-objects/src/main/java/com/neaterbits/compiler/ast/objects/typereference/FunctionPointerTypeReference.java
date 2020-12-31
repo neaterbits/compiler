@@ -19,8 +19,19 @@ public final class FunctionPointerTypeReference extends ResolvedTypeReference {
 
 		this.type = type;
 	}
+	
+	private FunctionPointerTypeReference(FunctionPointerTypeReference other) {
+	    super(other);
+	    
+	    this.type = other.type;
+	}
+	
+	@Override
+    public ResolvedTypeReference makeCopy() {
+        return new FunctionPointerTypeReference(this);
+    }
 
-	public FunctionPointerType getType() {
+    public FunctionPointerType getType() {
 		return type;
 	}
 

@@ -21,7 +21,18 @@ public final class PointerTypeReference extends ResolvedTypeReference {
 		this.pointerType = pointerType;
 	}
 
+	private PointerTypeReference(PointerTypeReference other) {
+	    super(other);
+	    
+	    this.pointerType = other.pointerType;
+	}
+	
 	@Override
+    public ResolvedTypeReference makeCopy() {
+        return new PointerTypeReference(this);
+    }
+
+    @Override
 	public String getDebugName() {
 		return getTypeName().getName() + "_ptr";
 	}

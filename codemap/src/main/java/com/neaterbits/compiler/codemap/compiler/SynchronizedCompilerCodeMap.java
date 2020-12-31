@@ -71,6 +71,12 @@ public final class SynchronizedCompilerCodeMap
     }
 
     @Override
+    public synchronized TypeName getTypeName(int typeNo) {
+        
+        return delegate.getTypeName(typeNo);
+    }
+
+    @Override
     public synchronized TypesMap<TypeName> makeTypesMap() {
         
         return delegate.makeTypesMap();

@@ -861,6 +861,11 @@ public class AST {
         astBuffer.writeStringRef(name);
         astBuffer.writeInt(numDims);
     }
+    
+    public static int decodeVariable(ASTBufferRead astBuffer, int index) {
+        
+        return astBuffer.getStringRef(index);
+    }
 
     public static <COMPILATION_UNIT> void decodeVariableName(
             ASTBufferRead astBuffer,
@@ -870,7 +875,7 @@ public class AST {
 
         listener.onVariableName(
                 leafContext,
-                astBuffer.getStringRef(index),
+                decodeVariable(astBuffer, index),
                 astBuffer.getInt(index + 4));
     }
 
@@ -2935,6 +2940,11 @@ public class AST {
 
         astBuffer.writeStringRef(name);
     }
+    
+    public static int decodeNamePrimaryName(ASTBufferRead astBuffer, int index) {
+        
+        return astBuffer.getStringRef(index);
+    }
 
     public static <COMPILATION_UNIT> void decodeUnresolvedNamePrimary(
             ASTBufferRead astBuffer,
@@ -2944,12 +2954,12 @@ public class AST {
 
         listener.onUnresolvedNamePrimary(
                 unresolvedNamePrimaryStartContext,
-                astBuffer.getStringRef(index));
+                AST.decodeNamePrimaryName(astBuffer, index));
     }
 
     private static final int NAME_REFERENCE_SIZE = STRING_REF_SIZE;
 
-    public static void encodeNameReference(StringASTBuffer astBuffer, long name, int nameContext) {
+    public static void encodeNameReference(StringASTBuffer astBuffer, long name) {
 
         astBuffer.writeLeafElement(ParseTreeElement.NAME_REFERENCE);
 

@@ -1,6 +1,5 @@
 package com.neaterbits.compiler.resolver.passes.replacetyperefs;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,16 +12,17 @@ import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
 import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.UnknownReferenceError;
+import com.neaterbits.compiler.resolver.passes.BaseNamespaceVisitor;
 
-final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT> implements TypeReferenceVisitor<COMPILATION_UNIT> {
+final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT>
+        extends BaseNamespaceVisitor
+        implements TypeReferenceVisitor<COMPILATION_UNIT> {
 
     private final CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel;
     private final CompilerCodeMap codeMap;
 
     private final TypesMap<TypeName> compiledTypesMap;
     private final List<ResolveError> errors;
-
-    private final List<String> currentNamespace;
 
     ReplaceTypeReferenceVisitor(
             CompilationUnitModel<COMPILATION_UNIT> compilationUnitModel,
@@ -39,28 +39,6 @@ final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT> implements TypeReferen
         this.codeMap = codeMap;
         this.compiledTypesMap = compiledTypesMap;
         this.errors = errors;
-
-        this.currentNamespace = new ArrayList<>();
-    }
-
-    @Override
-    public void onNamespaceStart() {
-        
-        if (!currentNamespace.isEmpty()) {
-            throw new IllegalStateException();
-        }
-    }
-
-    @Override
-    public void onNamespacePart(CharSequence part) {
-
-        currentNamespace.add(part.toString());
-    }
-
-    @Override
-    public void onNamespaceEnd() {
-
-        currentNamespace.clear();
     }
 
     @Override
@@ -90,11 +68,9 @@ final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT> implements TypeReferen
                 scopedName,
                 compilationUnit,
                 compilationUnitModel,
-                currentNamespace,
+                getCurrentNamespace(),
                 compiledTypesMap);
         
-        System.out.println("## replace from " + compiledTypesMap);
-
         if (typeName == null) {
             unresolvedReference(scopedName);
         }

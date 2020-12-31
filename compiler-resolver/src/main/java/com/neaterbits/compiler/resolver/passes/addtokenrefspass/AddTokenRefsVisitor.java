@@ -4,17 +4,19 @@ import java.util.Objects;
 
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.resolver.passes.BaseScopesVisitor;
-import com.neaterbits.compiler.resolver.passes.VariableScope;
+import com.neaterbits.compiler.model.common.ResolvedScopesListener;
+import com.neaterbits.compiler.resolver.passes.BaseVariableDeclaratorVisitor;
 
-final class AddTokenRefsVisitor<COMPILATION_UNIT> extends BaseScopesVisitor<TokenScopeVariableDeclaration> {
+final class AddTokenRefsVisitor<COMPILATION_UNIT>
+    extends BaseVariableDeclaratorVisitor<TokenScopeVariableDeclaration>
+    implements ResolvedScopesListener {
 
     private final CompilerCodeMap codeMap;
     private final int sourceFile;
 
-    AddTokenRefsVisitor(
-            CompilerCodeMap codeMap,
-            int sourceFile) {
+    AddTokenRefsVisitor(CompilerCodeMap codeMap, int sourceFile) {
+        
+        super(codeMap);
 
         Objects.requireNonNull(codeMap);
         
@@ -31,18 +33,16 @@ final class AddTokenRefsVisitor<COMPILATION_UNIT> extends BaseScopesVisitor<Toke
     }
 
     @Override
-    public void onScopeVariableDeclaration(int variableDeclarationParseTreeRef, String name, TypeName type) {
-
-        final VariableScope<TokenScopeVariableDeclaration> scope = getCurrentScope();
-
+    protected TokenScopeVariableDeclaration createVariableDeclaration(
+            int variableDeclarationParseTreeRef,
+            TypeName type,
+            int typeReferenceParseTreeRef) {
+        
         final int declarationCrossReferenceToken = codeMap.addToken(sourceFile, variableDeclarationParseTreeRef);
-            
-        scope.addVariableDeclaration(
-                variableDeclarationParseTreeRef,
-                name,
-                new TokenScopeVariableDeclaration(type, declarationCrossReferenceToken));
+               
+        return new TokenScopeVariableDeclaration(type, typeReferenceParseTreeRef, declarationCrossReferenceToken);
     }
-    
+
     @Override
     public <T> void onNonPrimaryListNameReference(int nameParseTreeRef, String name) {
 
@@ -69,12 +69,6 @@ final class AddTokenRefsVisitor<COMPILATION_UNIT> extends BaseScopesVisitor<Toke
 
     @Override
     public <T> void onPrimaryListNameReference(T primaryList, int nameParseTreeRef, String name) {
-        
-    }
-
-    @Override
-    public <T> void onSimpleVariableReference(T primaryList, int variableParseTreeRef) {
-        // TODO Auto-generated method stub
         
     }
 

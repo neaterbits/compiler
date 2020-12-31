@@ -33,7 +33,7 @@ public final class ReplaceTypeRefsPass<PARSED_FILE extends ParsedFile, COMPILATI
                 = new ReplaceTypeReferenceVisitor<>(
                         compilationUnitModel,
                         input.getCodeMap(),
-                        input.getCodeMap().makeTypesMap(),
+                        input.getTypesMap(),
                         parsed.getResolveErrorsList());
 
             final COMPILATION_UNIT compilationUnit = parsed.getParsedFile().getCompilationUnit();

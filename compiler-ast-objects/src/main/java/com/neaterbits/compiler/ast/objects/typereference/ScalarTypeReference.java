@@ -11,7 +11,16 @@ public final class ScalarTypeReference extends BuiltinTypeReference {
 		super(context, typeNo, type);
 	}
 
+	private ScalarTypeReference(ScalarTypeReference other) {
+	    super(other);
+	}
+
 	@Override
+    public ResolvedTypeReference makeCopy() {
+        return new ScalarTypeReference(this);
+    }
+
+    @Override
 	public boolean isScalar() {
 		return true;
 	}

@@ -15,13 +15,10 @@ public interface CompilerCodeMap extends CodeMap, CrossReferenceUpdater, CrossRe
 	void addTypeMapping(TypeName name, int typeNo);
 
     Integer getTypeNoByTypeName(TypeName typeName);
+
+    TypeName getTypeName(int typeNo);
     
     TypesMap<TypeName> makeTypesMap();
-
-    default TypeName getTypeName(int typeNo) {
-
-        throw new UnsupportedOperationException();
-    }
 
     void removeFile(String file);
 

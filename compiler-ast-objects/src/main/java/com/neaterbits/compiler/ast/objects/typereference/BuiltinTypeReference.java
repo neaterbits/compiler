@@ -10,4 +10,8 @@ public abstract class BuiltinTypeReference extends ResolvedNamedTypeReference {
 	public BuiltinTypeReference(Context context, int typeNo, TypeName type) {
 		super(context, typeNo, type);
 	}
+
+    protected BuiltinTypeReference(ResolvedNamedTypeReference other) {
+        super(other);
+    }
 }

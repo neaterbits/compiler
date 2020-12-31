@@ -50,7 +50,12 @@ public final class ScopedNameResolver {
 			ScopedName referencedFrom,
 			TypesMap<T> compiledTypesMap) {
 
-	    return resolveScopedName(scopedName, compilationUnit, importsModel, referencedFrom.getScope(), compiledTypesMap);
+	    return resolveScopedName(
+	            scopedName,
+	            compilationUnit,
+	            importsModel,
+	            referencedFrom.getScope(),
+	            compiledTypesMap);
 	}
 
     public static <T, COMPILATION_UNIT> T resolveScopedName(
@@ -68,7 +73,11 @@ public final class ScopedNameResolver {
 		}
 		// Check same namespace as reference from
 		else if (  referencedFrom != null && !referencedFrom.isEmpty()
-		        && (null != (inSameNamespace = compiledTypesMap.lookupByScopedName(new ScopedName(referencedFrom, scopedName.getName()))))) {
+		        
+		        && (null != (inSameNamespace = compiledTypesMap.lookupByScopedName(
+		                                                            new ScopedName(
+		                                                                    referencedFrom,
+		                                                                    scopedName.getName()))))) {
 			result = inSameNamespace;
 		}
 		// Try imports

@@ -27,11 +27,8 @@ public class ReplaceTypeRefsPassTest {
 
     private ParsedFile parsedFile;
     private CompilationUnitModel<Object> compilationUnitModel;
-    private ParsedModuleAndCodeMap<ParsedFile> parsedModuleAndCodeMap;
     private Map<ScopedName, TypeName> typeNameByScopedName;
     private CompilerCodeMap codeMap;
-
-    private ReplaceTypeRefsPass<ParsedFile, Object> replaceTypeRefsPass;
 
     @Before
     public void init() {
@@ -48,9 +45,6 @@ public class ReplaceTypeRefsPassTest {
 
         this.codeMap = new IntCompilerCodeMap();
         
-        this.parsedModuleAndCodeMap = new ParsedModuleAndCodeMap<>(Arrays.asList(parsedFile), -1, codeMap);
-
-        this.replaceTypeRefsPass = new ReplaceTypeRefsPass<>(compilationUnitModel);
     }
 
     @Test
@@ -73,6 +67,12 @@ public class ReplaceTypeRefsPassTest {
 
         Mockito.when(parsedFile.getCompilationUnit())
             .thenReturn(compilationUnit);
+
+        final ParsedModuleAndCodeMap<ParsedFile> parsedModuleAndCodeMap
+            = new ParsedModuleAndCodeMap<>(Arrays.asList(parsedFile), -1, codeMap);
+
+        final ReplaceTypeRefsPass<ParsedFile, Object> replaceTypeRefsPass
+            = new ReplaceTypeRefsPass<>(compilationUnitModel);
 
         replaceTypeRefsPass.execute(parsedModuleAndCodeMap);
 
@@ -129,6 +129,14 @@ public class ReplaceTypeRefsPassTest {
 
         Mockito.when(parsedFile.getCompilationUnit())
             .thenReturn(compilationUnit);
+        
+        final ParsedModuleAndCodeMap<ParsedFile> parsedModuleAndCodeMap
+            = new ParsedModuleAndCodeMap<>(
+                    new ParsedModuleAndCodeMap<>(Arrays.asList(parsedFile), -1, codeMap),
+                    codeMap);
+        
+        final ReplaceTypeRefsPass<ParsedFile, Object> replaceTypeRefsPass
+            = new ReplaceTypeRefsPass<>(compilationUnitModel);
 
         replaceTypeRefsPass.execute(parsedModuleAndCodeMap);
 

@@ -7,8 +7,8 @@ final class TokenScopeVariableDeclaration extends ScopeVariableDeclaration {
 
     private final int tokenNo;
 
-    TokenScopeVariableDeclaration(TypeName type, int tokenNo) {
-        super(type);
+    TokenScopeVariableDeclaration(TypeName type, int typeReferenceParseTreeRef, int tokenNo) {
+        super(type, typeReferenceParseTreeRef);
     
         this.tokenNo = tokenNo;
     }

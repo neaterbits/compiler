@@ -15,11 +15,13 @@ import com.neaterbits.compiler.model.common.ElementVisitor;
 import com.neaterbits.compiler.model.common.TypeMemberVisitor;
 import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.model.common.ProgramModel;
+import com.neaterbits.compiler.model.common.ResolvedScopesListener;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
 import com.neaterbits.compiler.model.common.SourceTokenUtil;
 import com.neaterbits.compiler.model.common.SourceTokenUtil.ASTAccess;
 import com.neaterbits.compiler.model.common.SourceTokenVisitor;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
+import com.neaterbits.compiler.model.common.UnresolvedScopesListener;
 import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.types.Mutability;
@@ -27,7 +29,6 @@ import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.types.imports.TypeImport;
 import com.neaterbits.compiler.util.FileSpec;
-import com.neaterbits.compiler.util.parse.ScopesListener;
 
 public final class EncodedProgramModel
     extends EncodedImportsModel
@@ -91,9 +92,131 @@ public final class EncodedProgramModel
     }
 
     @Override
-    public void iterateScopesAndVariables(EncodedCompilationUnit compilationUnit, ScopesListener scopesListener) {
-        // FIXME Auto-generated method stub
+    public void iterateUnresolvedScopesAndVariables(
+            EncodedCompilationUnit compilationUnit,
+            UnresolvedScopesListener scopesListener) {
 
+        final ASTBufferRead astBuffer = compilationUnit.getBuffer();
+
+        final ParseTreeElementRef ref = new ParseTreeElementRef();
+
+        final ParseTreeElementRef nextRef = new ParseTreeElementRef();
+
+        int parseTreeRef = 0;
+
+        boolean done = false;
+
+        do {
+            astBuffer.getParseTreeElement(parseTreeRef, ref);
+            
+            switch (ref.element) {
+            case NAMESPACE:
+                if (ref.isStart) {
+                    scopesListener.onNamespaceStart();
+                }
+                else {
+                    scopesListener.onNamespaceEnd();
+                }
+                break;
+                
+            case VARIABLE_DECLARATION_STATEMENT:
+                if (ref.isStart) {
+                    final int typeElementParseTreeRef
+                        = parseTreeRef + AST.sizeStart(ref, astBuffer);
+
+                    astBuffer.getParseTreeElement(typeElementParseTreeRef, nextRef);
+                
+                    final int typeNo = AST.decodeResolvedTypeReferenceTypeNo(astBuffer, nextRef.index);
+                    
+                    scopesListener.onScopeVariableDeclarationStatementStart(parseTreeRef, typeNo, typeElementParseTreeRef);
+                }
+                else {
+                    scopesListener.onScopeVariableDeclarationStatementEnd(parseTreeRef);
+                }
+                break;
+                
+            case VARIABLE_DECLARATOR:
+                if (ref.isStart) {
+                    
+                    final int nameElementParseTreeRef
+                        = parseTreeRef + AST.sizeStart(ref, astBuffer);
+
+                    astBuffer.getParseTreeElement(nameElementParseTreeRef, nextRef);
+                    
+                    final int nameRef = AST.decodeVariable(astBuffer, nextRef.index);
+                    
+                    scopesListener.onScopeVariableDeclarator(
+                            parseTreeRef,
+                            compilationUnit.getStringFromRef(nameRef));
+                }
+                break;
+                
+            case NAMESPACE_PART:
+                final int namespacePartRef = AST.decodeNamespacePart(astBuffer, ref.index);
+                
+                scopesListener.onNamespacePart(compilationUnit.getStringFromRef(namespacePartRef));
+                break;
+                
+            case UNRESOLVED_NAME_PRIMARY:
+                
+                final int nameRef = AST.decodeNamePrimaryName(astBuffer, ref.index);
+                
+                scopesListener.onUnresolvedNamePrimary(
+                        parseTreeRef,
+                        compilationUnit.getStringFromRef(nameRef));
+                break;
+                
+            default:
+                break;
+            }
+            
+            parseTreeRef += ref.isStart
+                    ? AST.sizeStart(ref.element, astBuffer, ref.index)
+                    : AST.sizeEnd(ref.element);
+                    
+        } while (!done);
+    }
+
+    @Override
+    public void iterateResolvedScopesAndVariables(EncodedCompilationUnit compilationUnit,
+            ResolvedScopesListener scopesListener) {
+
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void replaceNamePrimaryWithNameReference(
+            EncodedCompilationUnit compilationUnit,
+            int namePrimaryParseTreeRef,
+            String name) {
+        
+        compilationUnit.replaceNamePrimaryWithNameReference(namePrimaryParseTreeRef, name);
+    }
+
+    @Override
+    public void replaceNamePrimaryWithFieldAccess(
+            EncodedCompilationUnit compilationUnit,
+            int namePrimaryParseTreeRef,
+            int classTypeParseTreeRef,
+            String name) {
+
+        compilationUnit.replaceNamePrimaryWithFieldAccess(
+                namePrimaryParseTreeRef,
+                classTypeParseTreeRef,
+                name);
+    }
+
+    @Override
+    public void replaceNamePrimaryWithStaticReference(
+            EncodedCompilationUnit compilationUnit,
+            int namePrimaryParseTreeRef,
+            int classTypeParseTreeRef,
+            String name) {
+
+        compilationUnit.replaceNamePrimaryWithStaticReference(
+                namePrimaryParseTreeRef,
+                classTypeParseTreeRef,
+                name);
     }
 
     @Override
@@ -534,6 +657,22 @@ public final class EncodedProgramModel
 
             switch (ref.element) {
 
+            case NAMESPACE:
+                if (ref.isStart) {
+                    visitor.onNamespaceStart();
+                }
+                else {
+                    visitor.onNamespaceEnd();
+
+                    done = true;
+                }
+                break;
+
+            case NAMESPACE_PART:
+                final int partStringRef = AST.decodeNamespacePart(astBuffer, ref.index);
+                visitor.onNamespacePart(compilationUnit.getStringFromRef(partStringRef));
+                break;
+
             case UNRESOLVED_IDENTIFIER_TYPE_REFERENCE:
                 if (ref.isStart) {
                     final int typeReferenceName
@@ -563,7 +702,7 @@ public final class EncodedProgramModel
                 final int originalSize = astBuffer.getOriginalSize(parseTreeRef);
 
                 iterateTypeReferences(
-                        compilationUnit.getReplaceBuffer(),
+                        compilationUnit.getReplaceBuffer().getASTReadBuffer(),
                         replacementIndex,
                         compilationUnit,
                         visitor);

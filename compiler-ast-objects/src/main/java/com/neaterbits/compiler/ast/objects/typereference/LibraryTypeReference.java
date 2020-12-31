@@ -11,7 +11,16 @@ public class LibraryTypeReference extends ResolvedNamedTypeReference {
 		super(context, typeNo, typeName);
 	}
 
+	private LibraryTypeReference(LibraryTypeReference other) {
+	    super(other);
+	}
+	
 	@Override
+    public ResolvedTypeReference makeCopy() {
+        return new LibraryTypeReference(this);
+    }
+
+    @Override
 	public <T, R> R visit(TypeReferenceVisitor<T, R> visitor, T param) {
 		throw new UnsupportedOperationException();
 	}

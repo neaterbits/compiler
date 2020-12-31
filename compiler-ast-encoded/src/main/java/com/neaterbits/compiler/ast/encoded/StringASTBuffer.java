@@ -15,13 +15,26 @@ public final class StringASTBuffer {
     private final MapStringStorageBuffer stringBuffer;
 
     public StringASTBuffer(StringBufferAdder stringBufferAdder) {
+        
+        this(stringBufferAdder, new MapStringStorageBuffer(), false);
 
         Objects.requireNonNull(stringBufferAdder);
+    }
 
+    private StringASTBuffer(StringBufferAdder stringBufferAdder, MapStringStorageBuffer stringBuffer, boolean disambiguate) {
+
+        Objects.requireNonNull(stringBuffer);
+        
         this.stringBufferAdder = stringBufferAdder;
+        this.stringBuffer = stringBuffer;
 
         this.astBuffer = new ASTBufferImpl();
-        this.stringBuffer = new MapStringStorageBuffer();
+
+    }
+
+    public StringASTBuffer(MapStringStorageBuffer stringBuffer) {
+        
+        this(null, stringBuffer, false);
     }
 
     private int getStringIndex(long stringRef) {

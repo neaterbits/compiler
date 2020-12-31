@@ -855,7 +855,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener
 
         writeLeafElementContextRef(leafContext);
 
-        AST.encodeNameReference(astBuffer, name, leafContext);
+        AST.encodeNameReference(astBuffer, name);
     }
 
     @Override

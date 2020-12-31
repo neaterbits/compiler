@@ -104,6 +104,11 @@ public class IntCompilerCodeMap extends IntCodeMap implements CompilerCodeMap {
 	}
 
 	@Override
+    public TypeName getTypeName(int typeNo) {
+        return nameToTypeNoMap.getTypeName(typeNo);
+    }
+
+    @Override
     public TypesMap<TypeName> makeTypesMap() {
 
 	    return nameToTypeNoMap.makeTypesMap();

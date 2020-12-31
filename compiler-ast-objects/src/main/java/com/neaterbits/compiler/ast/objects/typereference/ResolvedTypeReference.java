@@ -16,6 +16,12 @@ public abstract class ResolvedTypeReference extends TypeReference {
 
 		this.typeNo = typeNo;
 	}
+	
+	protected ResolvedTypeReference(ResolvedTypeReference other) {
+	    this(other.getContext(), other.typeNo);
+	}
+	
+	public abstract ResolvedTypeReference makeCopy();
 
     public final int getTypeNo() {
         return typeNo;

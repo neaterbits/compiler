@@ -7,7 +7,6 @@ import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.Visibility;
-import com.neaterbits.compiler.util.parse.ScopesListener;
 
 public interface ParseTreeModel<COMPILATION_UNIT> {
     
@@ -15,7 +14,9 @@ public interface ParseTreeModel<COMPILATION_UNIT> {
             COMPILATION_UNIT compilationUnit,
             ElementVisitor<COMPILATION_UNIT> visitor);
 
-	void iterateScopesAndVariables(COMPILATION_UNIT compilationUnit, ScopesListener scopesListener);
+	void iterateUnresolvedScopesAndVariables(COMPILATION_UNIT compilationUnit, UnresolvedScopesListener scopesListener);
+
+    void iterateResolvedScopesAndVariables(COMPILATION_UNIT compilationUnit, ResolvedScopesListener scopesListener);
 	
     List<String> getNamespace(COMPILATION_UNIT compilationUnit, int parseTreeRef);
 
@@ -116,4 +117,21 @@ public interface ParseTreeModel<COMPILATION_UNIT> {
     void replaceTypeReference(COMPILATION_UNIT compilationUnit, int toReplace, int typeNo, TypeName typeName);
 
     void iterateTypeReferences(COMPILATION_UNIT compilationUnit, TypeReferenceVisitor<COMPILATION_UNIT> visitor);
+    
+    void replaceNamePrimaryWithNameReference(
+                            COMPILATION_UNIT compilationUnit,
+                            int namePrimaryParseTreeRef,
+                            String name);
+    
+    void replaceNamePrimaryWithFieldAccess(
+                            COMPILATION_UNIT compilationUnit,
+                            int namePrimaryParseTreeRef,
+                            int classTypeParseTreeRef,
+                            String name);
+    
+    void replaceNamePrimaryWithStaticReference(
+                            COMPILATION_UNIT compilationUnit,
+                            int namePrimaryParseTreeRef,
+                            int classTypeParseTreeRef,
+                            String name);
 }

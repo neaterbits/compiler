@@ -17,7 +17,9 @@ import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Parameter;
+import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
+import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedNamePrimary;
 import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
 import com.neaterbits.compiler.ast.objects.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
@@ -28,6 +30,7 @@ import com.neaterbits.compiler.ast.objects.typedefinition.ComplexMemberDefinitio
 import com.neaterbits.compiler.ast.objects.typedefinition.ComplexTypeDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldModifierHolder;
+import com.neaterbits.compiler.ast.objects.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.objects.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.LibraryTypeReference;
@@ -37,6 +40,7 @@ import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
+import com.neaterbits.compiler.ast.objects.variables.StaticMemberReference;
 import com.neaterbits.compiler.model.common.BuiltinTypeRef;
 import com.neaterbits.compiler.model.common.ElementVisitor;
 import com.neaterbits.compiler.model.common.TypeMemberVisitor;
@@ -45,11 +49,14 @@ import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.LibraryTypeRef;
 import com.neaterbits.compiler.model.common.ProgramModel;
 import com.neaterbits.compiler.model.common.ResolveTypesModel;
+import com.neaterbits.compiler.model.common.ResolvedScopesListener;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
+import com.neaterbits.compiler.model.common.ScopesListener;
 import com.neaterbits.compiler.model.common.SourceToken;
 import com.neaterbits.compiler.model.common.SourceTokenUtil;
 import com.neaterbits.compiler.model.common.SourceTokenVisitor;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
+import com.neaterbits.compiler.model.common.UnresolvedScopesListener;
 import com.neaterbits.compiler.model.common.UpdateOnResolve;
 import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
 import com.neaterbits.compiler.types.FieldModifiers;
@@ -69,7 +76,7 @@ import com.neaterbits.compiler.types.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.StackDelegator;
 import com.neaterbits.compiler.util.TypeResolveMode;
-import com.neaterbits.compiler.util.parse.ScopesListener;
+import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.util.ArrayStack;
 import com.neaterbits.util.Stack;
 import com.neaterbits.util.parse.context.Context;
@@ -226,49 +233,115 @@ public class ObjectProgramModel
 
 	    return SourceTokenUtil.makeSourceToken(element, compilationUnit, resolvedTypes, this, AST_ACCESS);
 	}
+	
+	private static class ScopesStackDelegator extends StackDelegator<BaseASTElement> {
+	    
+	    private final ScopesListener scopesListener;
+	    private final CompilationUnit compilationUnit;
+	    
+        ScopesStackDelegator(
+                Stack<BaseASTElement> delegate,
+                CompilationUnit compilationUnit,
+                ScopesListener scopesListener) {
+
+            super(delegate);
+
+            Objects.requireNonNull(compilationUnit);
+            Objects.requireNonNull(scopesListener);
+            
+            this.compilationUnit = compilationUnit;
+            this.scopesListener = scopesListener;
+        }
+
+        @Override
+        public void push(BaseASTElement element) {
+            
+            if (element instanceof ClassDefinition) {
+                scopesListener.onClassStart(compilationUnit.getParseTreeRefFromElement(element));
+            }
+            else if (element instanceof PrimaryList) {
+
+                final PrimaryList primaryList = (PrimaryList)element;
+
+                scopesListener.onPrimaryListStart(
+                        null,
+                        compilationUnit.getParseTreeRefFromElement(element),
+                        primaryList.getPrimaries().size());
+            }
+
+            super.push(element);
+        }
+
+        @Override
+        public BaseASTElement pop() {
+
+            final BaseASTElement element = super.pop();
+
+            if (element instanceof ClassDefinition) {
+                scopesListener.onClassEnd(compilationUnit.getParseTreeRefFromElement(element));
+            }
+            else if (element instanceof PrimaryList) {
+
+                scopesListener.onPrimaryListEnd(null, compilationUnit.getParseTreeRefFromElement(element));
+            }
+
+            return element;
+        }
+	}
+	
+	private boolean processScopeElement(
+	        BaseASTElement element,
+	        Stack<BaseASTElement> stack,
+	        CompilationUnit compilationUnit,
+	        ScopesListener scopesListener) {
+
+	    final boolean processed;
+	    
+	    if (element instanceof VariableDeclarationStatement) {
+            
+	        final VariableDeclarationStatement declaration
+                = (VariableDeclarationStatement)element;
+	        
+	        final ResolvedTypeReference resolvedTypeReference
+	            = (ResolvedTypeReference)declaration.getTypeReference();
+	        
+	        scopesListener.onScopeVariableDeclarationStatementStart(
+	                compilationUnit.getParseTreeRefFromElement(element),
+	                resolvedTypeReference.getTypeNo(),
+                    compilationUnit.getParseTreeRefFromElement(declaration.getTypeReference()));
+
+	        processed = true;
+	    }
+	    else if (element instanceof InitializerVariableDeclarationElement) {
+            
+            final BaseASTElement last = stack.getFromTop(1);
+            
+            if (last instanceof VariableDeclarationStatement) {
+
+                final InitializerVariableDeclarationElement initializer
+                    = (InitializerVariableDeclarationElement)element;
+
+                scopesListener.onScopeVariableDeclarator(
+                        compilationUnit.getParseTreeRefFromElement(initializer.getNameDeclaration()),
+                        initializer.getVarName().getName());
+            }
+            
+            processed = true;
+        }
+	    else {
+	        processed = false;
+	    }
+	    
+	    return processed;
+	}
 
 	@Override
-	public void iterateScopesAndVariables(CompilationUnit compilationUnit, ScopesListener scopesListener) {
+	public void iterateUnresolvedScopesAndVariables(CompilationUnit compilationUnit, UnresolvedScopesListener scopesListener) {
 
 		final ArrayStack<BaseASTElement> stack = new ArrayStack<>();
 
-		final Stack<BaseASTElement> stackWrapper = new StackDelegator<BaseASTElement>(stack) {
-
-			@Override
-			public void push(BaseASTElement element) {
-			    
-				if (element instanceof ClassDefinition) {
-					scopesListener.onClassStart(compilationUnit.getParseTreeRefFromElement(element));
-				}
-				else if (element instanceof PrimaryList) {
-
-					final PrimaryList primaryList = (PrimaryList)element;
-
-					scopesListener.onPrimaryListStart(
-							null,
-							compilationUnit.getParseTreeRefFromElement(element),
-							primaryList.getPrimaries().size());
-				}
-
-				super.push(element);
-			}
-
-			@Override
-			public BaseASTElement pop() {
-
-				final BaseASTElement element = super.pop();
-
-				if (element instanceof ClassDefinition) {
-					scopesListener.onClassEnd(compilationUnit.getParseTreeRefFromElement(element));
-				}
-				else if (element instanceof PrimaryList) {
-
-					scopesListener.onPrimaryListEnd(null, compilationUnit.getParseTreeRefFromElement(element));
-				}
-
-				return element;
-			}
-		};
+		final Stack<BaseASTElement> stackWrapper
+		    = new ScopesStackDelegator(stack, compilationUnit, scopesListener);
 
 		compilationUnit.iterateNodeFirstWithStack(
 				stackWrapper,
@@ -278,48 +351,64 @@ public class ObjectProgramModel
 			@Override
 			public void onElement(BaseASTElement element) {
 
-				if (element instanceof InitializerVariableDeclarationElement) {
+			    if (processScopeElement(element, stackWrapper, compilationUnit, scopesListener)) {
+			        // already processed
+			    }
+				else if (element instanceof UnresolvedNamePrimary) {
 				    
-				    final BaseASTElement last = stack.getFromTop(1);
+				    final UnresolvedNamePrimary namePrimary = (UnresolvedNamePrimary)element;
+				    final int parseTreeRef = compilationUnit.getParseTreeRefFromElement(namePrimary);
 				    
-				    if (last instanceof VariableDeclarationStatement) {
-
-                        final VariableDeclarationStatement declaration
-    	                        = (VariableDeclarationStatement)last;
-    
-    					final InitializerVariableDeclarationElement initializer
-    					    = (InitializerVariableDeclarationElement)element;
-    
-    					scopesListener.onScopeVariableDeclaration(
-    							compilationUnit.getParseTreeRefFromElement(initializer.getNameDeclaration()),
-    							initializer.getVarName().getName(),
-    							declaration.getTypeReference().getTypeName());
-				    }
-				}
-				else if (element instanceof NameReference) {
-
-					final NameReference nameReference = (NameReference)element;
-					final int parseTreeRef = compilationUnit.getParseTreeRefFromElement(element);
-
-					final BaseASTElement stackElement = stack.get();
-
-					if (!stack.isEmpty() && stackElement instanceof PrimaryList) {
-
-						scopesListener.onPrimaryListNameReference(
-								null,
-								parseTreeRef,
-								nameReference.getName());
-
-					}
-					else {
-						scopesListener.onNonPrimaryListNameReference(parseTreeRef, nameReference.getName());
-					}
+				    scopesListener.onUnresolvedNamePrimary(parseTreeRef, namePrimary.getName());
 				}
 			}
 		});
 	}
 
 	@Override
+    public void iterateResolvedScopesAndVariables(CompilationUnit compilationUnit,
+            ResolvedScopesListener scopesListener) {
+
+        final ArrayStack<BaseASTElement> stack = new ArrayStack<>();
+
+        final Stack<BaseASTElement> stackWrapper
+            = new ScopesStackDelegator(stack, compilationUnit, scopesListener);
+
+        compilationUnit.iterateNodeFirstWithStack(
+                stackWrapper,
+                Function.identity(),
+
+                new ASTVisitor() {
+            @Override
+            public void onElement(BaseASTElement element) {
+
+                if (processScopeElement(element, stackWrapper, compilationUnit, scopesListener)) {
+                    // already processed
+                }
+                else if (element instanceof NameReference) {
+
+                    final NameReference nameReference = (NameReference)element;
+                    final int parseTreeRef = compilationUnit.getParseTreeRefFromElement(element);
+
+                    final BaseASTElement stackElement = stack.get();
+
+                    if (!stack.isEmpty() && stackElement instanceof PrimaryList) {
+
+                        scopesListener.onPrimaryListNameReference(
+                                null,
+                                parseTreeRef,
+                                nameReference.getName());
+
+                    }
+                    else {
+                        scopesListener.onNonPrimaryListNameReference(parseTreeRef, nameReference.getName());
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
     public List<String> getNamespace(CompilationUnit compilationUnit, int parseTreeRef) {
 
 	    final Namespace namespace = (Namespace)compilationUnit.getElementFromParseTreeRef(parseTreeRef);
@@ -411,8 +500,6 @@ public class ObjectProgramModel
 			}
 			out.println();
 		});
-
-
 	}
 
 	@Override
@@ -838,6 +925,68 @@ public class ObjectProgramModel
                 return true;
             }
         });
-
     }
+
+    @Override
+    public void replaceNamePrimaryWithNameReference(
+            CompilationUnit compilationUnit,
+            int namePrimaryParseTreeRef,
+            String name) {
+
+        final BaseASTElement elementToReplace
+            = compilationUnit.getElementFromParseTreeRef(namePrimaryParseTreeRef);
+
+        final NameReference nameReference = new NameReference(
+                                                elementToReplace.getContext(),
+                                                name);
+
+        compilationUnit.replace(elementToReplace, nameReference);
+    }
+
+    @Override
+    public void replaceNamePrimaryWithFieldAccess(
+            CompilationUnit compilationUnit,
+            int namePrimaryParseTreeRef,
+            int classTypeParseTreeRef,
+            String name) {
+
+        final BaseASTElement elementToReplace
+            = compilationUnit.getElementFromParseTreeRef(namePrimaryParseTreeRef);
+        
+        final ResolvedTypeReference typeReference
+            = (ResolvedTypeReference)compilationUnit.getElementFromParseTreeRef(classTypeParseTreeRef);
+
+        final FieldAccess fieldAccess = new FieldAccess(
+                                                elementToReplace.getContext(),
+                                                FieldAccessType.FIELD,
+                                                typeReference.makeCopy(),
+                                                new FieldName(name));
+
+        compilationUnit.replace(elementToReplace, fieldAccess);
+    }
+
+    @Override
+    public void replaceNamePrimaryWithStaticReference(
+            CompilationUnit compilationUnit,
+            int namePrimaryParseTreeRef,
+            int classTypeParseTreeRef,
+            String name) {
+        
+        final BaseASTElement elementToReplace
+            = compilationUnit.getElementFromParseTreeRef(namePrimaryParseTreeRef);
+    
+        final TypeReference typeReference
+            = (TypeReference)compilationUnit.getElementFromParseTreeRef(classTypeParseTreeRef);
+        
+        final StaticMemberReference staticMemberReference
+            = new StaticMemberReference(
+                    elementToReplace.getContext(),
+                    typeReference,
+                    name,
+                    null);
+            
+
+        compilationUnit.replace(elementToReplace, staticMemberReference);
+    }
+
 }

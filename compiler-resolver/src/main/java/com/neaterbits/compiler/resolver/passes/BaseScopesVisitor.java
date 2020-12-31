@@ -1,8 +1,10 @@
 package com.neaterbits.compiler.resolver.passes;
 
-import com.neaterbits.compiler.util.parse.ScopesListener;
+import com.neaterbits.compiler.model.common.ScopesListener;
 
-public abstract class BaseScopesVisitor<T extends ScopeVariableDeclaration> implements ScopesListener {
+public abstract class BaseScopesVisitor<T extends ScopeVariableDeclaration>
+        extends BaseNamespaceVisitor
+        implements ScopesListener {
 
     private final Scopes<T> scopes;
 

@@ -11,7 +11,6 @@ import org.junit.Test;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.CompilationCodeLines;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
-import com.neaterbits.compiler.ast.objects.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.objects.Keyword;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.NamespaceDeclaration;
