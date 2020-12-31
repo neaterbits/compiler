@@ -19,16 +19,12 @@ public final class NameReferenceResolvePass<PARSED_FILE extends ParsedFile, COMP
 			ParsedModuleAndCodeMap<PARSED_FILE>> {
 	
 	private final ParseTreeModel<COMPILATION_UNIT> parseTreeModel;
-	private final boolean addTokenRefs;
 	
-	public NameReferenceResolvePass(
-	        ParseTreeModel<COMPILATION_UNIT> parseTreeModel,
-	        boolean addTokenRefs) {
+	public NameReferenceResolvePass(ParseTreeModel<COMPILATION_UNIT> parseTreeModel) {
 
 		Objects.requireNonNull(parseTreeModel);
 		
 		this.parseTreeModel = parseTreeModel;
-		this.addTokenRefs = addTokenRefs;
 	}
 
 	@Override
@@ -50,11 +46,7 @@ public final class NameReferenceResolvePass<PARSED_FILE extends ParsedFile, COMP
 		
 		final COMPILATION_UNIT compilationUnit = parsedFile.getCompilationUnit();
 		
-		final ScopesListener scopesListener = new NameReferenceResolveVisitor(
-		                                                        crossReference,
-		                                                        sourceFile,
-		                                                        addTokenRefs,
-		                                                        errors);   
+		final ScopesListener scopesListener = new NameReferenceResolveVisitor(errors);   
 		        
 		parseTreeModel.iterateScopesAndVariables(compilationUnit, scopesListener);
 	}

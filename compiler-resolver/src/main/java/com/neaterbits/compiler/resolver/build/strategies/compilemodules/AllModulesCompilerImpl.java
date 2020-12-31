@@ -29,6 +29,7 @@ import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.build.CompilerOptions;
 import com.neaterbits.compiler.resolver.passes.ParsedModuleAndCodeMap;
 import com.neaterbits.compiler.resolver.passes.addfieldspass.AddFieldsPass;
+import com.neaterbits.compiler.resolver.passes.addtokenrefspass.AddTokenRefsPass;
 import com.neaterbits.compiler.resolver.passes.namereferenceresolve.NameReferenceResolvePass;
 import com.neaterbits.compiler.resolver.passes.replacetyperefs.ReplaceTypeRefsPass;
 import com.neaterbits.compiler.types.ParseTreeElement;
@@ -309,11 +310,16 @@ public final class AllModulesCompilerImpl<PARSED_FILE extends ParsedFile, COMPIL
         addFieldsPass.execute(parsedModuleAndCodeMap);
 
         final NameReferenceResolvePass<PARSED_FILE, COMPILATION_UNIT> nameReferenceResolvePass
-            = new NameReferenceResolvePass<>(
-                compilerModel.getCompilationUnitModel(),
-                options.isAddTokenRefsEnabled());
+            = new NameReferenceResolvePass<>(compilerModel.getCompilationUnitModel());
     
         nameReferenceResolvePass.execute(parsedModuleAndCodeMap);
+        
+        if (options.isAddTokenRefsEnabled()) {
+            final AddTokenRefsPass<PARSED_FILE, COMPILATION_UNIT> addTokenRefsPass
+                = new AddTokenRefsPass<>(compilerModel.getCompilationUnitModel());
+            
+            addTokenRefsPass.execute(parsedModuleAndCodeMap);
+        }
         
         return parsedModuleAndCodeMap.getParsed().stream()
                 .flatMap(p -> p.getResolveErrorsList().stream())
