@@ -193,7 +193,7 @@ public final class ExpressionCache {
         
         final CachedPrimary methodInvocation = get().getLast();
         
-        if (methodInvocation.getType() != ParseTreeElement.METHOD_INVOCATION_EXPRESSION) {
+        if (methodInvocation.getType() != ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION) {
             throw new IllegalStateException();
         }
         

@@ -11,7 +11,6 @@ import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.Visibility;
-import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.types.operator.Arithmetic;
 import com.neaterbits.compiler.types.operator.Assignment;
 import com.neaterbits.compiler.types.operator.Bitwise;
@@ -246,8 +245,8 @@ public class AST {
             size = THROW_STATEMENT_SIZE;
             break;
 
-        case METHOD_INVOCATION_EXPRESSION:
-            size = METHOD_INVOCATION_SIZE;
+        case UNRESOLVED_METHOD_INVOCATION_EXPRESSION:
+            size = UNRESOLVED_METHOD_INVOCATION_SIZE;
             break;
 
         case FIELD_ACCESS:
@@ -2658,28 +2657,6 @@ public class AST {
         }
     }
 
-    public static <COMPILATION_UNIT> void decodeUnresolvedMethodInvocationStart(
-            ASTBufferRead astBuffer,
-            int methodInvocationStartContext,
-            int index,
-            ParseTreeListener<COMPILATION_UNIT> listener) {
-
-        final MethodInvocationType type = astBuffer.getEnumByte(index, MethodInvocationType.class);
-
-        final Names names = decodeNames(astBuffer, index + 1);
-
-        final int idx = index + 1 + namesSize(names.count());
-
-        final long methodName = astBuffer.getStringRef(idx);
-        final int methodNameContext = astBuffer.getContextRef(idx + STRING_REF_SIZE);
-
-        listener.onMethodInvocationStart(
-                methodInvocationStartContext,
-                type,
-                methodName,
-                methodNameContext);
-    }
-
     private static int namesSize(int count) {
         return 1 + (count * (STRING_REF_SIZE + CONTEXT_REF_SIZE));
     }
@@ -2724,43 +2701,39 @@ public class AST {
         return names;
     }
 
-    private static final int METHOD_INVOCATION_SIZE = 1 + STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    private static final int UNRESOLVED_METHOD_INVOCATION_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
 
-    public static void encodeMethodInvocationStart(
+    public static void encodeUnresolvedMethodInvocationStart(
             StringASTBuffer astBuffer,
-            MethodInvocationType type,
             long methodName,
             int methodNameContext) {
 
-        astBuffer.writeElementStart(ParseTreeElement.METHOD_INVOCATION_EXPRESSION);
-        astBuffer.writeEnumByte(type);
+        astBuffer.writeElementStart(ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION);
         astBuffer.writeStringRef(methodName);
         astBuffer.writeContextRef(methodNameContext);
     }
 
-    public static <COMPILATION_UNIT> void decodeMethodInvocationStart(
+    public static <COMPILATION_UNIT> void decodeUnresolvedMethodInvocationStart(
             ASTBufferRead astBuffer,
             int methodInvocationStartContext,
             int index,
             ParseTreeListener<COMPILATION_UNIT> listener) {
 
-        final MethodInvocationType type = astBuffer.getEnumByte(index, MethodInvocationType.class);
-        final long methodName = astBuffer.getStringRef(index + 1);
-        final int methodNameContext = astBuffer.getContextRef(index + 1 + STRING_REF_SIZE);
+        final long methodName = astBuffer.getStringRef(index);
+        final int methodNameContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
 
         listener.onMethodInvocationStart(
                 methodInvocationStartContext,
-                type,
                 methodName,
                 methodNameContext);
     }
 
-    public static void encodeMethodInvocationEnd(StringASTBuffer astBuffer) {
+    public static void encodeUnresolvedMethodInvocationEnd(StringASTBuffer astBuffer) {
 
-        astBuffer.writeElementEnd(ParseTreeElement.METHOD_INVOCATION_EXPRESSION);
+        astBuffer.writeElementEnd(ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION);
     }
 
-    public static <COMPILATION_UNIT> void decodeMethodInvocationEnd(
+    public static <COMPILATION_UNIT> void decodeUnresolvedMethodInvocationEnd(
             ASTBufferRead astBuffer,
             int methodInvocationStartContext,
             Context endContext,

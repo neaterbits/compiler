@@ -9,10 +9,11 @@ import com.neaterbits.compiler.ast.objects.type.primitive.ArrayType;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.ResolvedNamedTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.UnresolvedPrimary;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
-public final class ArrayAccessExpression extends Primary {
+public final class ArrayAccessExpression extends UnresolvedPrimary {
 
 	private final ASTSingle<Primary> array;
 	private final ASTSingle<Expression> index;

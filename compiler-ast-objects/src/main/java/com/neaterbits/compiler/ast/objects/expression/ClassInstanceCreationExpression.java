@@ -13,7 +13,7 @@ import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
-public final class ClassInstanceCreationExpression extends Call<ConstructorName> {
+public final class ClassInstanceCreationExpression extends ResolvedCall<ConstructorName> {
 
 	private final ASTSingle<TypeReference> type;
 	private final ASTList<ClassMethodMember> anonymousClassMethods;

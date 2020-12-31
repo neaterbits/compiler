@@ -16,7 +16,6 @@ import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
-import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.types.statement.ASTMutability;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodVisibility;
@@ -1117,11 +1116,10 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener
     @Override
     public final void onMethodInvocationStart(
             int context,
-            MethodInvocationType type,
             long methodName,
             int methodNameContext) {
 
-        AST.encodeMethodInvocationStart(astBuffer, type, methodName, methodNameContext);
+        AST.encodeUnresolvedMethodInvocationStart(astBuffer, methodName, methodNameContext);
     }
 
     @Override
@@ -1161,7 +1159,7 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener
 
         writeEndElementContext(methodInvocationStartContext, endContext);
 
-        AST.encodeMethodInvocationEnd(astBuffer);
+        AST.encodeUnresolvedMethodInvocationEnd(astBuffer);
     }
 
     @Override

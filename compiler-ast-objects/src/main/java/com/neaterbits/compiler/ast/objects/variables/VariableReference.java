@@ -1,10 +1,9 @@
 package com.neaterbits.compiler.ast.objects.variables;
 
 import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
-import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.util.parse.context.Context;
 
-public abstract class VariableReference extends Primary {
+public abstract class VariableReference extends ResolvedPrimary {
 
 	public abstract <T, R> R visit(VariableReferenceVisitor<T, R> visitor, T param);
 	

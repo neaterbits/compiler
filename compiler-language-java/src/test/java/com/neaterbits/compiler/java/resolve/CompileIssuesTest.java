@@ -8,13 +8,12 @@ import java.util.Iterator;
 import org.junit.Test;
 
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
-import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
 import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompiledAndResolvedFile;
-import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.util.parse.ParserException;
 
 // Test various compile and resolve issues
@@ -54,9 +53,7 @@ public class CompileIssuesTest extends BaseCompilerTest {
 		final NamePrimary namePrimary = get(iterator);
 		assertThat(namePrimary.getName()).isEqualTo("integer");
 
-		final MethodInvocationExpression expression = get(iterator);
-		
-		assertThat(expression.getInvocationType()).isEqualTo(MethodInvocationType.UNRESOLVED);
+		final UnresolvedMethodInvocationExpression expression = get(iterator);
 		assertThat(expression.getCallable().getName()).isEqualTo("toString");
 		
 		assertThat(compiled.getErrors().isEmpty()).isTrue();

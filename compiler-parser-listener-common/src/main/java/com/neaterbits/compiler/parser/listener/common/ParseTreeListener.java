@@ -10,7 +10,6 @@ import com.neaterbits.util.parse.context.Context;
 import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
-import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.types.statement.ASTMutability;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodVisibility;
@@ -293,7 +292,7 @@ public interface ParseTreeListener<COMPILATION_UNIT> extends ContextWriteAccess 
 	
 	void onMethodInvocationStart(
 			int startContext,
-			MethodInvocationType type,
+			// MethodInvocationType type,
 			long methodName,
 			int methodNameContext);
 	
@@ -315,6 +314,7 @@ public interface ParseTreeListener<COMPILATION_UNIT> extends ContextWriteAccess 
 
 	void onArrayCreationExpressionEnd(int startContext, Context endContext);
 
+	@Deprecated
 	void onClassExpression(int context, long className, int numArrayDims);
 	
 	void onLambdaExpressionStart(int startContext);

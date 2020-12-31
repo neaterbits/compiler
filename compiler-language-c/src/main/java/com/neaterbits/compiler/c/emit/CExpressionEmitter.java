@@ -6,7 +6,7 @@ import com.neaterbits.compiler.ast.objects.expression.ClassInstanceCreationExpre
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.FunctionCallExpression;
 import com.neaterbits.compiler.ast.objects.expression.FunctionPointerInvocationExpression;
-import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.ResolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
@@ -72,7 +72,7 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	}
 
 	@Override
-	public Void onMethodInvocation(MethodInvocationExpression expression, EmitterState param) {
+	public Void onMethodInvocation(ResolvedMethodInvocationExpression expression, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 

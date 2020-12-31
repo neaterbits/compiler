@@ -7,9 +7,10 @@ import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.type.primitive.ScalarType;
 import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.ResolvedPrimary;
 import com.neaterbits.util.parse.context.Context;
 
-public abstract class Literal extends Primary {
+public abstract class Literal extends ResolvedPrimary {
 
 	private final ScalarType type;
     private final int typeNo;

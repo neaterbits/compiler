@@ -8,7 +8,6 @@ import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
-import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.types.operator.UnaryOperator;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodModifier;
@@ -355,11 +354,11 @@ public interface ParseTreeFactory<
 			List<EXPRESSION> parameters,
 			List<CLASS_METHOD_MEMBER> anonymousClassMethods);
 
-	METHOD_INVOCATION_EXPRESSION createMethodInvocationExpression(
+	METHOD_INVOCATION_EXPRESSION createUnresolvedMethodInvocationExpression(
 			Context context,
-			MethodInvocationType type,
-			TYPE_REFERENCE classType,
-			EXPRESSION object,
+			// MethodInvocationType type,
+			// TYPE_REFERENCE classType,
+			// EXPRESSION object,
 			String methodName,
 			Context methodNameContext,
 			List<EXPRESSION> parameters);
@@ -368,6 +367,7 @@ public interface ParseTreeFactory<
 	
 	ARRAY_ACCESS_EXPRESSION createArrayAccessExpression(Context context, PRIMARY primary, EXPRESSION expression);
 	
+	@Deprecated
 	CLASS_EXPRESSION createClassExpression(Context context, String className, int numArrayDims);
 	
 	INTEGER_LITERAL createIntegerLiteral(Context context, long value, Base base, boolean signed, int bits);

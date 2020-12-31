@@ -82,7 +82,7 @@ final class CachedPrimary {
     
     void initMethodInvocation(int context, long methodName, int methodNameContext, ParametersList parametersList) {
         
-        init(ParseTreeElement.METHOD_INVOCATION_EXPRESSION, context);
+        init(ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION, context);
         
         this.methodName = methodName;
         this.parametersList = parametersList;

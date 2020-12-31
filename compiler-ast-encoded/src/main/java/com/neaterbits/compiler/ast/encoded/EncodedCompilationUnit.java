@@ -1020,14 +1020,14 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
-            case METHOD_INVOCATION_EXPRESSION: {
+            case UNRESOLVED_METHOD_INVOCATION_EXPRESSION: {
                 final int startContext = getStartContext(parseTreeRef);
 
                 if (ref.isStart) {
-                    AST.decodeMethodInvocationStart(astBuffer, startContext, ref.index, listener);
+                    AST.decodeUnresolvedMethodInvocationStart(astBuffer, startContext, ref.index, listener);
                 }
                 else {
-                    AST.decodeMethodInvocationEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                    AST.decodeUnresolvedMethodInvocationEnd(astBuffer, startContext, getEndContext(startContext), listener);
                 }
                 break;
             }

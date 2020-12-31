@@ -7,8 +7,10 @@ import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.FunctionCallExpression;
 import com.neaterbits.compiler.ast.objects.expression.FunctionPointerInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.LambdaExpressionParameters;
-import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.PrimaryMethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.ResolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
+import com.neaterbits.compiler.ast.objects.expression.StaticMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
@@ -92,20 +94,24 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	
 	@Override
-	public Void onMethodInvocation(MethodInvocationExpression expression, EmitterState param) {
+	public Void onMethodInvocation(ResolvedMethodInvocationExpression expression, EmitterState param) {
 		
 		switch (expression.getInvocationType()) {
 		case NO_OBJECT:
 			break;
 			
 		case NAMED_CLASS_STATIC:
-			emitTypeReference(expression.getClassType(), param);
+		    final StaticMethodInvocationExpression staticMethodInvocationExpression
+		        = (StaticMethodInvocationExpression)expression;
+			emitTypeReference(staticMethodInvocationExpression.getClassType(), param);
 			param.append('.');
 			break;
 
 		case VARIABLE_REFERENCE:
 		case PRIMARY:
-			emitExpression(expression.getObject(), param);
+		    final PrimaryMethodInvocationExpression primaryMethodInvocationExpression
+		        = (PrimaryMethodInvocationExpression)expression;
+			emitExpression(primaryMethodInvocationExpression.getObject(), param);
 			param.append('.');
 			break;
 			
@@ -114,10 +120,13 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 			break;
 			
 		case TYPED_SUPER:
+		    /*
 			emitTypeReference(expression.getClassType(), param);
 			param.append('.');
 			param.append("super").append('.');
 			break;
+			*/
+		    throw new UnsupportedOperationException();
 			
 		default:
 			throw new UnsupportedOperationException("Unknown method invocation type " + expression.getInvocationType());

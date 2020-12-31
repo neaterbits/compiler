@@ -6,7 +6,6 @@ import java.util.List;
 import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
-import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.types.statement.ASTMutability;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodOverride;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodVisibility;
@@ -685,7 +684,7 @@ public class ParseTreeAdapter<COMPILATION_UNIT> implements ParseTreeListener<COM
     }
 
     @Override
-    public void onMethodInvocationStart(int startContext, MethodInvocationType type, long methodName, int methodNameContext) {
+    public void onMethodInvocationStart(int startContext, long methodName, int methodNameContext) {
         
     }
 

@@ -33,7 +33,6 @@ import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.GenericUnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.LambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.LambdaExpressionParameters;
-import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
 import com.neaterbits.compiler.ast.objects.expression.ParameterList;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
@@ -41,6 +40,7 @@ import com.neaterbits.compiler.ast.objects.expression.Resource;
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
 import com.neaterbits.compiler.ast.objects.expression.UnaryExpression;
+import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostDecrementExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostIncrementExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreDecrementExpression;
@@ -141,7 +141,6 @@ import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
-import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.types.operator.UnaryOperator;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodModifier;
@@ -220,7 +219,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	FieldAccess,
 	ThisPrimary,
 	ClassInstanceCreationExpression,
-	MethodInvocationExpression,
+	UnresolvedMethodInvocationExpression,
 	ArrayCreationExpression,
 	ArrayAccessExpression,
 	ClassExpression,
@@ -808,15 +807,20 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
     @Override
-	public MethodInvocationExpression createMethodInvocationExpression(Context context, MethodInvocationType type,
-			TypeReference classType, Expression object, String methodName, Context methodNameContext,
+	public UnresolvedMethodInvocationExpression createUnresolvedMethodInvocationExpression(
+	        Context context,
+	        // MethodInvocationType type,
+			// TypeReference classType,
+			// Expression object,
+			String methodName,
+			Context methodNameContext,
 			List<Expression> parameters) {
 
-		return new MethodInvocationExpression(
+		return new UnresolvedMethodInvocationExpression(
 				context,
-				type,
-				classType,
-				object,
+				// type,
+				// classType,
+				// object,
 				new MethodName(methodNameContext, methodName),
 				new ParameterList(parameters));
 	}
@@ -831,6 +835,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 		return new ArrayCreationExpression(context, type, dimExpressions, numDims);
 	}
 
+	@Deprecated
 	@Override
 	public ClassExpression createClassExpression(Context context, String className, int numArrayDims) {
 		return new ClassExpression(context, new ClassOrInterfaceName(className), numArrayDims);

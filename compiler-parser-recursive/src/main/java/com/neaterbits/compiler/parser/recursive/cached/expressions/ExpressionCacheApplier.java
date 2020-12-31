@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.types.operator.Arity;
 import com.neaterbits.compiler.types.operator.Instantiation;
 import com.neaterbits.compiler.types.operator.OperatorType;
@@ -61,7 +60,7 @@ public final class ExpressionCacheApplier {
             
             final CachedPrimary methodInvocation = cacheList.getCachedPrimary(0);
             
-            if (methodInvocation.getType() != ParseTreeElement.METHOD_INVOCATION_EXPRESSION) {
+            if (methodInvocation.getType() != ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION) {
                 throw new IllegalStateException();
             }
             
@@ -127,7 +126,7 @@ public final class ExpressionCacheApplier {
                 else {
                     applyPrimaryToListener(primary, listener);
                     
-                    if (primary.getType() == ParseTreeElement.METHOD_INVOCATION_EXPRESSION) {
+                    if (primary.getType() == ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION) {
                         // Anything after this is field access
                         atObject = true;
                     }
@@ -208,11 +207,11 @@ public final class ExpressionCacheApplier {
             listener.onNameReference(primary.getContext(), primary.getName());
             break;
             
-        case METHOD_INVOCATION_EXPRESSION: {
+        case UNRESOLVED_METHOD_INVOCATION_EXPRESSION: {
             
             listener.onMethodInvocationStart(
                     primary.getContext(),
-                    MethodInvocationType.UNRESOLVED,
+                    // MethodInvocationType.UNRESOLVED,
                     primary.getMethodName(),
                     primary.getMethodNameContext());
             
@@ -259,6 +258,6 @@ public final class ExpressionCacheApplier {
 
     static boolean isScopedFieldType(ParseTreeElement type) {
         
-        return type == ParseTreeElement.NAME || type == ParseTreeElement.METHOD_INVOCATION_EXPRESSION;
+        return type == ParseTreeElement.NAME || type == ParseTreeElement.UNRESOLVED_METHOD_INVOCATION_EXPRESSION;
     }
 }

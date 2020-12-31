@@ -694,7 +694,7 @@ public class JavaParserListener<COMPILATION_UNIT> implements ModelParserListener
 
 		delegate.onMethodInvocationStart(
 		        writeStartContext(context),
-		        type,
+		        // type,
 		        methodName,
 		        writeOtherContext(methodNameContext));
 	}

@@ -4,7 +4,7 @@ import com.neaterbits.compiler.ast.objects.block.FunctionName;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
-public final class FunctionCallExpression extends Call<FunctionName> {
+public final class FunctionCallExpression extends ResolvedCall<FunctionName> {
 
 	public FunctionCallExpression(Context context, FunctionName function, ParameterList parameters) {
 		super(context, function, parameters);

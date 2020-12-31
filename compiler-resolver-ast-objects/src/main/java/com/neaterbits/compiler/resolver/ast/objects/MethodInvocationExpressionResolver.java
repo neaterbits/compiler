@@ -7,15 +7,16 @@ import java.util.List;
 import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
-import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.ResolvedMethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.StaticMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.ParameterList;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
+import com.neaterbits.compiler.ast.objects.expression.PrimaryMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.compiler.ast.objects.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.variables.StaticMemberReference;
 import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
-import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
@@ -28,7 +29,7 @@ public class MethodInvocationExpressionResolver {
 			ScopedName toResolve,
 			UserDefinedTypeRef type,
 			TypeResolveMode resolveMode,
-			MethodInvocationExpression methodInvocationExpression) {
+			ResolvedMethodInvocationExpression methodInvocationExpression) {
 
 
 		final ScopedName typeScopedName = type.getTypeName().toScopedName();
@@ -46,23 +47,23 @@ public class MethodInvocationExpressionResolver {
 
 		parameters.take();
 
-		final MethodInvocationExpression updatedExpression;
+		final ResolvedMethodInvocationExpression updatedExpression;
 
 		if (expressionPart != null && expressionPart.length != 0) {
-			updatedExpression = new MethodInvocationExpression(
+			updatedExpression = new PrimaryMethodInvocationExpression(
 				methodInvocationExpression.getContext(),
-				MethodInvocationType.PRIMARY,
-				new ComplexTypeReference(methodInvocationExpression.getContext(), -1, type.getTypeName()),
+				// MethodInvocationType.PRIMARY,
+				// new ComplexTypeReference(methodInvocationExpression.getContext(), -1, type.getTypeName()),
 				makePrimary(methodInvocationExpression.getContext(), type.getTypeName(), expressionPart),
 				methodInvocationExpression.getCallable(),
 				parameters);
 		}
 		else {
-			updatedExpression = new MethodInvocationExpression(
+			updatedExpression = new StaticMethodInvocationExpression(
 					methodInvocationExpression.getContext(),
-					MethodInvocationType.NAMED_CLASS_STATIC,
+					// MethodInvocationType.NAMED_CLASS_STATIC,
 					new ComplexTypeReference(methodInvocationExpression.getContext(), -1, type.getTypeName()),
-					null,
+					// null,
 					methodInvocationExpression.getCallable(),
 					parameters);
 		}

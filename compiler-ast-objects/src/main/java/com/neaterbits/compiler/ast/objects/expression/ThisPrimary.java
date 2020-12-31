@@ -4,13 +4,13 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
-import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.ResolvedPrimary;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
-public final class ThisPrimary extends Primary {
+public final class ThisPrimary extends ResolvedPrimary {
 
 	private final ASTSingle<TypeReference> type;
 	

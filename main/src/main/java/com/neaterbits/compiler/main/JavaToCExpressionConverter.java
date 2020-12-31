@@ -14,10 +14,12 @@ import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.FunctionCallExpression;
 import com.neaterbits.compiler.ast.objects.expression.FunctionPointerInvocationExpression;
-import com.neaterbits.compiler.ast.objects.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.ResolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.ParameterList;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
+import com.neaterbits.compiler.ast.objects.expression.PrimaryMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
+import com.neaterbits.compiler.ast.objects.expression.StaticMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.ClassExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
@@ -56,7 +58,7 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 	}
 
 	@Override
-	public Expression onMethodInvocation(MethodInvocationExpression expression, T param) {
+	public Expression onMethodInvocation(ResolvedMethodInvocationExpression expression, T param) {
 
 		final Expression converted;
 
@@ -64,15 +66,12 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 
 		case PRIMARY:
 		case VARIABLE_REFERENCE:
-			if (expression.getObject() == null) {
+		    final PrimaryMethodInvocationExpression primaryMethodInvocationExpression
+		        = (PrimaryMethodInvocationExpression)expression;
+			if (primaryMethodInvocationExpression.getObject() == null) {
 				throw new IllegalStateException();
 			}
-			break;
-
-		case NAMED_CLASS_STATIC_OR_STATIC_VAR:
-
-			System.out.println("## typeReference: " + expression.getClassType().getDebugName());
-
+            converted = convertInstanceInvocation(primaryMethodInvocationExpression, param);
 			break;
 
 		default:
@@ -80,19 +79,10 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 						+ " for " + expression.getCallable().getName());
 		}
 
-
-		if (expression.getObject() != null) {
-			converted = convertInstanceInvocation(expression, param);
-		}
-		else {
-			// static invocation
-			throw new UnsupportedOperationException();
-		}
-
 		return converted;
 	}
 
-	private Expression convertInstanceInvocation(MethodInvocationExpression expression, T param) {
+	private Expression convertInstanceInvocation(PrimaryMethodInvocationExpression expression, T param) {
 
 		final Expression object = convertExpression(expression.getObject(), param);
 

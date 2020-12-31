@@ -5,18 +5,17 @@ import java.util.Objects;
 import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.block.CallableName;
-import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.ResolvedPrimary;
 import com.neaterbits.util.parse.context.Context;
 
-public abstract class Call<N extends CallableName>
-		extends Primary {
+public abstract class ResolvedCall<N extends CallableName> extends ResolvedPrimary {
 
 	private final ASTSingle<N> callable;
 	private final ASTSingle<ParameterList> parameters;
 
-	public Call(Context context, N callable, ParameterList parameters) {
+	protected ResolvedCall(Context context, N callable, ParameterList parameters) {
 		super(context);
 
 		Objects.requireNonNull(callable);
@@ -45,6 +44,5 @@ public abstract class Call<N extends CallableName>
 		doIterate(callable, recurseMode, iterator);
 		
 		doIterate(parameters, recurseMode, iterator);
-		
 	}
 }

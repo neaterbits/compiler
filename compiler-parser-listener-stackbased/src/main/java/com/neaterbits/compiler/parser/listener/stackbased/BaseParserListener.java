@@ -50,7 +50,7 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.StackInterfaceMe
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackIteratorForStatement;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackLambdaExpression;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackLambdaFormalParameters;
-import com.neaterbits.compiler.parser.listener.stackbased.state.StackMethodInvocation;
+import com.neaterbits.compiler.parser.listener.stackbased.state.StackUnresolvedMethodInvocation;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackNamedClass;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackReferenceTypeArgument;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackNamespace;
@@ -103,7 +103,6 @@ import com.neaterbits.compiler.parser.listener.stackbased.state.setters.Variable
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.VariableReferenceSetter;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
-import com.neaterbits.compiler.types.method.MethodInvocationType;
 import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.types.statement.ASTMutability;
 import com.neaterbits.compiler.types.typedefinition.ClassMethodModifier;
@@ -2624,7 +2623,7 @@ public abstract class BaseParserListener<
 	@Override
 	public final void onMethodInvocationStart(
 			int startContext,
-			MethodInvocationType type,
+			// MethodInvocationType type,
 			long methodName,
 			int methodNameContextRef) {
 	    
@@ -2637,10 +2636,10 @@ public abstract class BaseParserListener<
 		final String methodNameString = stringSource.asString(methodName);
 		final Context methodNameContext = getOtherContext(methodNameContextRef);
 		
-	    methodInvocation = new StackMethodInvocation<>(
+	    methodInvocation = new StackUnresolvedMethodInvocation<>(
                 logger,
-                type,
-                null,
+                // type,
+                // null,
                 methodNameString,
                 methodNameContext);
 
@@ -2712,13 +2711,13 @@ public abstract class BaseParserListener<
 	    
 		logEnter(context);
 
-        final StackMethodInvocation<EXPRESSION, PRIMARY, TYPE_REFERENCE> stackMethodInvocation = pop(); 
+        final StackUnresolvedMethodInvocation<EXPRESSION, PRIMARY, TYPE_REFERENCE> stackMethodInvocation = pop(); 
 
-        final METHOD_INVOCATION_EXPRESSION methodInvocation = parseTreeFactory.createMethodInvocationExpression(
+        final METHOD_INVOCATION_EXPRESSION methodInvocation = parseTreeFactory.createUnresolvedMethodInvocationExpression(
                 context,
-                stackMethodInvocation.getType(),
-                stackMethodInvocation.getClassType(),
-                stackMethodInvocation.getObject(),
+                // stackMethodInvocation.getType(),
+                // stackMethodInvocation.getClassType(),
+                // stackMethodInvocation.getObject(),
                 stackMethodInvocation.getName(),
                 stackMethodInvocation.getNameContext(),
                 stackMethodInvocation.getParameters() != null
@@ -2801,6 +2800,7 @@ public abstract class BaseParserListener<
 	}
 
 	// Class expressions
+	@Deprecated
 	@Override
 	public final void onClassExpression(int leafContext, long className, int numArrayDims) {
 

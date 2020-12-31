@@ -7,13 +7,16 @@ import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionVisitor;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.ast.objects.variables.UnresolvedPrimary;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
-public final class ClassExpression extends Primary {
+@Deprecated
+public final class ClassExpression extends UnresolvedPrimary {
 
 	private final ClassOrInterfaceName name;
 	private final int numArrayDims;
+	
 	public ClassExpression(Context context, ClassOrInterfaceName name, int numArrayDims) {
 
 		super(context);
