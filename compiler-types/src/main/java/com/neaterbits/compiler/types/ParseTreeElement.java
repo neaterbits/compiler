@@ -219,11 +219,11 @@ public enum ParseTreeElement {
 	
 	LAST_ENCODED(true),
 	
-	CLASS_MODIFIERS(true, true),
+	CLASS_MODIFIERS(false, true),
     FIELD_MODIFIERS(false, true),
     CONSTRUCTOR_MODIFIERS(false, true),
     CLASS_METHOD_MODIFIERS(false, true),
-    PARAMETER_MODIFIERS(true, true),
+    PARAMETER_MODIFIERS(false, true),
     INTERFACE_MODIFIERS(false, true),
     INTERFACE_METHOD_MODIFIERS(false, true),
     VARIABLE_MODIFIERS(false, true);
