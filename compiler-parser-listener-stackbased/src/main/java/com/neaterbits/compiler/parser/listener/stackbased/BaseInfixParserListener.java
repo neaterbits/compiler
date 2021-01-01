@@ -76,12 +76,6 @@ public abstract class BaseInfixParserListener<
 		CONDITIONAL_EXPRESSION extends EXPRESSION,
 		
 		UNARY_EXPRESSION extends EXPRESSION,
-		
-		PRE_INCREMENT_EXPRESSION extends EXPRESSION,
-		POST_INCREMENT_EXPRESSION extends EXPRESSION,
-		
-		PRE_DECREMENT_EXPRESSION extends EXPRESSION,
-		POST_DECREMENT_EXPRESSION extends EXPRESSION,
 
 		LAMBDA_EXPRESSION extends EXPRESSION,
 		SINGLE_LAMBDA_EXPRESSION extends LAMBDA_EXPRESSION,
@@ -218,12 +212,6 @@ public abstract class BaseInfixParserListener<
 		
 		UNARY_EXPRESSION,
 	
-		PRE_INCREMENT_EXPRESSION,
-		POST_INCREMENT_EXPRESSION,
-		
-		PRE_DECREMENT_EXPRESSION,
-		POST_DECREMENT_EXPRESSION,
-
 		LAMBDA_EXPRESSION,
 		SINGLE_LAMBDA_EXPRESSION,
 		BLOCK_LAMBDA_EXPRESSION,
@@ -384,28 +372,12 @@ public abstract class BaseInfixParserListener<
 
 		final StackIncrementDecrementExpression<EXPRESSION, PRIMARY, VARIABLE_REFERENCE> stackIncrementDecrementExpression = pop();
 		
-		final EXPRESSION expression;
+		final UNARY_EXPRESSION expression;
 		
-		switch (stackIncrementDecrementExpression.getOperator()) {
-		case POST_INCREMENT:
-			expression = parseTreeFactory.createPostIncrementExpression(context, stackIncrementDecrementExpression.getExpression());
-			break;
-				
-		case PRE_INCREMENT:
-			expression = parseTreeFactory.createPreIncrementExpression(context, stackIncrementDecrementExpression.getExpression());
-			break;
-			
-		case POST_DECREMENT:
-			expression = parseTreeFactory.createPostDecrementExpression(context, stackIncrementDecrementExpression.getExpression());
-			break;
-				
-		case PRE_DECREMENT:
-			expression = parseTreeFactory.createPreDecrementExpression(context, stackIncrementDecrementExpression.getExpression());
-			break;
-				
-		default:
-			throw new UnsupportedOperationException("Unknown operator " + stackIncrementDecrementExpression.getOperator());
-		}
+		expression = parseTreeFactory.createUnaryExpression(
+		        context,
+		        stackIncrementDecrementExpression.getOperator(),
+		        stackIncrementDecrementExpression.getExpression());
 		
 		final ExpressionSetter<EXPRESSION> expressionSetter = get();
 		

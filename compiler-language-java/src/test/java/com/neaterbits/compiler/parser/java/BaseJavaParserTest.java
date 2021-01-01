@@ -26,8 +26,8 @@ import com.neaterbits.compiler.ast.objects.expression.ResolvedMethodInvocationEx
 import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
 import com.neaterbits.compiler.ast.objects.expression.ParameterList;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
-import com.neaterbits.compiler.ast.objects.expression.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
+import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;

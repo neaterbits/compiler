@@ -9,14 +9,10 @@ import com.neaterbits.compiler.ast.objects.expression.ConditionalExpression;
 import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
-import com.neaterbits.compiler.ast.objects.expression.GenericUnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.binary.ArithmeticBinaryExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostDecrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostIncrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreDecrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreIncrementExpression;
+import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.FloatingPointLiteral;
@@ -178,29 +174,9 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
 	}
 
 	@Override
-	public final Expression onPreIncrement(PreIncrementExpression expression, T param) {
-		return new PreIncrementExpression(expression.getContext(), convertExpression(expression.getExpression(), param));
-	}
-
-	@Override
-	public final Expression onPreDecrement(PreDecrementExpression expression, T param) {
-		return new PreDecrementExpression(expression.getContext(), convertExpression(expression.getExpression(), param));
-	}
-
-	@Override
-	public final Expression onPostIncrement(PostIncrementExpression expression, T param) {
-		return new PostIncrementExpression(expression.getContext(), convertExpression(expression.getExpression(), param));
-	}
-
-	@Override
-	public final Expression onPostDecrement(PostDecrementExpression expression, T param) {
-		return new PostDecrementExpression(expression.getContext(), expression.getExpression());
-	}
-
-	@Override
-    public Expression onGenericUnaryExpression(GenericUnaryExpression expression, T param) {
+    public Expression onUnaryExpression(UnaryExpression expression, T param) {
 	    
-        return new GenericUnaryExpression(
+        return new UnaryExpression(
                             expression.getContext(),
                             expression.getOperator(),
                             expression.getExpression());

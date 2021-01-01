@@ -84,12 +84,6 @@ public interface ParseTreeFactory<
 	
 	UNARY_EXPRESSION extends EXPRESSION,
 	
-	PRE_INCREMENT_EXPRESSION extends EXPRESSION,
-	POST_INCREMENT_EXPRESSION extends EXPRESSION,
-	
-	PRE_DECREMENT_EXPRESSION extends EXPRESSION,
-	POST_DECREMENT_EXPRESSION extends EXPRESSION,
-	
 	LAMBDA_EXPRESSION extends EXPRESSION,
 	SINGLE_LAMBDA_EXPRESSION extends LAMBDA_EXPRESSION,
 	BLOCK_LAMBDA_EXPRESSION extends LAMBDA_EXPRESSION,
@@ -325,11 +319,6 @@ public interface ParseTreeFactory<
 
 	UNARY_EXPRESSION createUnaryExpression(Context context, UnaryOperator operator, EXPRESSION expression);
 	
-	PRE_INCREMENT_EXPRESSION createPreIncrementExpression(Context context, EXPRESSION expression);
-	POST_INCREMENT_EXPRESSION createPostIncrementExpression(Context context, EXPRESSION expression);
-	PRE_DECREMENT_EXPRESSION createPreDecrementExpression(Context context, EXPRESSION expression);
-	POST_DECREMENT_EXPRESSION createPostDecrementExpression(Context context, EXPRESSION expression);
-
 	LAMBDA_EXPRESSION_PARAMETERS createLambdaExpressionParameters(Context context, String singleParameter);
 	LAMBDA_EXPRESSION_PARAMETERS createLambdaExpressionParameters(Context context, List<String> inferredParameters);
 	

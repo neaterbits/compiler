@@ -1,10 +1,7 @@
 package com.neaterbits.compiler.ast.objects.expression;
 
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.binary.ArithmeticBinaryExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostDecrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostIncrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreDecrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreIncrementExpression;
+import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.ClassExpression;
@@ -64,15 +61,7 @@ public interface ExpressionVisitor<T, R> {
 	R onNullLiteral(NullLiteral expression, T param);
 	
 	// Arithmetic expressions
-	R onPreIncrement(PreIncrementExpression expression, T param);
-
-	R onPreDecrement(PreDecrementExpression expression, T param);
-
-	R onPostIncrement(PostIncrementExpression expression, T param);
-
-	R onPostDecrement(PostDecrementExpression expression, T param);
-
 	R onArithmeticBinary(ArithmeticBinaryExpression expression, T param);
 	
-	R onGenericUnaryExpression(GenericUnaryExpression expression, T param);
+	R onUnaryExpression(UnaryExpression expression, T param);
 }

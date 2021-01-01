@@ -4,13 +4,9 @@ import com.neaterbits.compiler.ast.objects.expression.ArrayAccessExpression;
 import com.neaterbits.compiler.ast.objects.expression.AssignmentExpression;
 import com.neaterbits.compiler.ast.objects.expression.CastExpression;
 import com.neaterbits.compiler.ast.objects.expression.ConditionalExpression;
-import com.neaterbits.compiler.ast.objects.expression.GenericUnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.binary.ArithmeticBinaryExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostDecrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostIncrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreDecrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreIncrementExpression;
+import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.UnaryExpression;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.base.BaseInfixExpressionEmitter;
 import com.neaterbits.compiler.types.operator.Arithmetic;
@@ -27,47 +23,7 @@ import com.neaterbits.compiler.types.operator.Scope;
 public abstract class CLikeExpressionEmitter<T extends EmitterState> extends BaseInfixExpressionEmitter<T> {
 
 	@Override
-	public final Void onPreIncrement(PreIncrementExpression expression, T param) {
-
-		param.append("++");
-		
-		emitExpression(expression.getExpression(), param);
-		
-		return null;
-	}
-
-	@Override
-	public final Void onPreDecrement(PreDecrementExpression expression, T param) {
-
-		param.append("--");
-
-		emitExpression(expression.getExpression(), param);
-		
-		return null;
-	}
-
-	@Override
-	public final Void onPostIncrement(PostIncrementExpression expression, T param) {
-
-		emitExpression(expression.getExpression(), param);
-		
-		param.append("++");
-		
-		return null;
-	}
-
-	@Override
-	public final Void onPostDecrement(PostDecrementExpression expression, T param) {
-
-		emitExpression(expression.getExpression(), param);
-		
-		param.append("--");
-		
-		return null;
-	}
-
-	@Override
-    public Void onGenericUnaryExpression(GenericUnaryExpression unaryExpression, T param) {
+    public Void onUnaryExpression(UnaryExpression unaryExpression, T param) {
 
 	    switch (unaryExpression.getOperator().getNotation()) {
 	    case PREFIX:

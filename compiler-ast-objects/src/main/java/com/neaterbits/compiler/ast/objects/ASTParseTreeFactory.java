@@ -30,7 +30,6 @@ import com.neaterbits.compiler.ast.objects.expression.ConditionalExpression;
 import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
-import com.neaterbits.compiler.ast.objects.expression.GenericUnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.LambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.LambdaExpressionParameters;
 import com.neaterbits.compiler.ast.objects.expression.NestedExpression;
@@ -39,12 +38,8 @@ import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.Resource;
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
-import com.neaterbits.compiler.ast.objects.expression.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostDecrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PostIncrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreDecrementExpression;
-import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.PreIncrementExpression;
+import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.ClassExpression;
@@ -204,10 +199,6 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	CastExpression,
 	ConditionalExpression,
 	UnaryExpression,
-	PreIncrementExpression,
-	PostIncrementExpression,
-	PreDecrementExpression,
-	PostDecrementExpression,
 	LambdaExpression,
 	SingleLambdaExpression,
 	BlockLambdaExpression,
@@ -729,28 +720,8 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
 	@Override
     public UnaryExpression createUnaryExpression(Context context, UnaryOperator operator, Expression expression) {
-	    return new GenericUnaryExpression(context, operator, expression);
+	    return new UnaryExpression(context, operator, expression);
     }
-
-    @Override
-	public PreIncrementExpression createPreIncrementExpression(Context context, Expression expression) {
-		return new PreIncrementExpression(context, expression);
-	}
-
-	@Override
-	public PostIncrementExpression createPostIncrementExpression(Context context, Expression expression) {
-		return new PostIncrementExpression(context, expression);
-	}
-
-	@Override
-	public PreDecrementExpression createPreDecrementExpression(Context context, Expression expression) {
-		return new PreDecrementExpression(context, expression);
-	}
-
-	@Override
-	public PostDecrementExpression createPostDecrementExpression(Context context, Expression expression) {
-		return new PostDecrementExpression(context, expression);
-	}
 
 	@Override
 	public LambdaExpressionParameters createLambdaExpressionParameters(Context context, String singleParameter) {
