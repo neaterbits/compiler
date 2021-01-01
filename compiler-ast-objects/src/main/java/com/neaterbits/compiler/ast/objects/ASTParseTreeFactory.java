@@ -138,7 +138,6 @@ import com.neaterbits.compiler.ast.objects.variables.VarName;
 import com.neaterbits.compiler.ast.objects.variables.VarNameDeclaration;
 import com.neaterbits.compiler.ast.objects.variables.VariableReference;
 import com.neaterbits.compiler.parser.listener.stackbased.ParseTreeFactory;
-import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
 import com.neaterbits.compiler.types.operator.Operator;
@@ -729,8 +728,8 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-    public UnaryExpression createUnaryExpression(Context context, UnaryOperator operator, ParseTreeElement parseTreeElement, Expression expression) {
-	    return new GenericUnaryExpression(context, operator, parseTreeElement, expression);
+    public UnaryExpression createUnaryExpression(Context context, UnaryOperator operator, Expression expression) {
+	    return new GenericUnaryExpression(context, operator, expression);
     }
 
     @Override

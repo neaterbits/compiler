@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.types.block.ConstructorInvocation;
 import com.neaterbits.compiler.types.operator.Operator;
@@ -324,7 +323,7 @@ public interface ParseTreeFactory<
 	
 	CONDITIONAL_EXPRESSION createConditionalExpression(Context context, EXPRESSION part1, EXPRESSION part2, EXPRESSION part3);
 
-	UNARY_EXPRESSION createUnaryExpression(Context context, UnaryOperator operator, ParseTreeElement parseTreeElement, EXPRESSION expression);
+	UNARY_EXPRESSION createUnaryExpression(Context context, UnaryOperator operator, EXPRESSION expression);
 	
 	PRE_INCREMENT_EXPRESSION createPreIncrementExpression(Context context, EXPRESSION expression);
 	POST_INCREMENT_EXPRESSION createPostIncrementExpression(Context context, EXPRESSION expression);

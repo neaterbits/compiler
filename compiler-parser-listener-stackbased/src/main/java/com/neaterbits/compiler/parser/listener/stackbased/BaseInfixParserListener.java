@@ -5,7 +5,6 @@ import com.neaterbits.compiler.parser.listener.common.InfixParseTreeListener;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackExpressionList;
 import com.neaterbits.compiler.parser.listener.stackbased.state.StackIncrementDecrementExpression;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.ExpressionSetter;
-import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.operator.IncrementDecrement;
 import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.types.operator.UnaryOperator;
@@ -343,7 +342,6 @@ public abstract class BaseInfixParserListener<
         final UNARY_EXPRESSION expression = parseTreeFactory.createUnaryExpression(
                 context,
                 (UnaryOperator)expressionList.getOperators().get(0),
-                ParseTreeElement.UNARY_EXPRESSION,
                 expressionList.getList().get(0));
         
         final ExpressionSetter<EXPRESSION> expressionSetter = get();

@@ -141,10 +141,6 @@ public enum ParseTreeElement {
 	NAME_REFERENCE(true),
 	NESTED_EXPRESSION(false),
 	UNARY_EXPRESSION(false),
-	POST_DECREMENT_EXPRESSION(false),
-	POST_INCREMENT_EXPRESSION(false),
-	PRE_DECREMENT_EXPRESSION(false),
-	PRE_INCREMENT_EXPRESSION(false),
 
 	NAME_PRIMARY(true), // unresolved name
 	PRIMARY_LIST(false),

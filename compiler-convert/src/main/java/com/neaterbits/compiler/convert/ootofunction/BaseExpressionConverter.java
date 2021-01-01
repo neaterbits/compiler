@@ -203,7 +203,6 @@ public abstract class BaseExpressionConverter<T extends ConverterState<T>>
         return new GenericUnaryExpression(
                             expression.getContext(),
                             expression.getOperator(),
-                            expression.getParseTreeElement(),
                             expression.getExpression());
     }
 

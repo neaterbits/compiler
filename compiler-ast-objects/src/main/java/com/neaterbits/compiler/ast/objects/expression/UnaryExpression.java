@@ -5,6 +5,7 @@ import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.list.ASTSingle;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.util.parse.context.Context;
 
@@ -25,6 +26,11 @@ public abstract class UnaryExpression extends Expression {
 	}
 	
 	@Override
+    public final ParseTreeElement getParseTreeElement() {
+        return ParseTreeElement.UNARY_EXPRESSION;
+    }
+
+    @Override
 	public final TypeReference getType() {
 		return expression.get().getType();
 	}
