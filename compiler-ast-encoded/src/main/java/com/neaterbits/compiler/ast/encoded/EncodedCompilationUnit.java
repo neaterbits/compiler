@@ -397,7 +397,7 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
-            case VARIABLE_DECLARATION_ELEMENT: {
+            case VARIABLE_DECLARATOR: {
                 final int startContext = getStartContext(parseTreeRef);
 
                 if (ref.isStart) {

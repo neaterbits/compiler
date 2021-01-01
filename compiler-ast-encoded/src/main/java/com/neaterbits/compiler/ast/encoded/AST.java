@@ -831,7 +831,7 @@ public class AST {
 
     public static void encodeVariableDeclaratorStart(StringASTBuffer astBuffer) {
 
-        astBuffer.writeElementStart(ParseTreeElement.VARIABLE_DECLARATION_ELEMENT);
+        astBuffer.writeElementStart(ParseTreeElement.VARIABLE_DECLARATOR);
     }
 
     public static <COMPILATION_UNIT> void decodeVariableDeclaratorStart(
@@ -844,7 +844,7 @@ public class AST {
 
     public static void encodeVariableDeclaratorEnd(StringASTBuffer astBuffer) {
 
-        astBuffer.writeElementEnd(ParseTreeElement.VARIABLE_DECLARATION_ELEMENT);
+        astBuffer.writeElementEnd(ParseTreeElement.VARIABLE_DECLARATOR);
     }
 
     public static <COMPILATION_UNIT> void decodeVariableDeclaratorEnd(
