@@ -212,7 +212,6 @@ public enum ParseTreeElement {
 	VARIABLE_MODIFIER_HOLDER(true),
     VARIABLE_DECLARATOR(false),
 	VAR_NAME_DECLARATION(true),
-	INITIALIZER_VARIABLE_DECLARATION_ELEMENT(false),
 
 	REPLACE(true),
 	REPLACE_END(true),
@@ -226,7 +225,9 @@ public enum ParseTreeElement {
     PARAMETER_MODIFIERS(false, true),
     INTERFACE_MODIFIERS(false, true),
     INTERFACE_METHOD_MODIFIERS(false, true),
-    VARIABLE_MODIFIERS(false, true);
+    VARIABLE_MODIFIERS(false, true),
+
+    INITIALIZER_VARIABLE_DECLARATION_ELEMENT(false, true);
 
     private final boolean leaf;
     private final boolean placeholder;
