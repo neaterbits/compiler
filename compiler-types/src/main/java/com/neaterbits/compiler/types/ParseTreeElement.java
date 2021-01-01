@@ -225,9 +225,7 @@ public enum ParseTreeElement {
 	REPLACE(true),
 	REPLACE_END(true),
 	
-	LAST_ENCODED(true),
-
-    FILE(true);
+	LAST_ENCODED(true);
 
     private final boolean leaf;
     private final boolean placeholder;

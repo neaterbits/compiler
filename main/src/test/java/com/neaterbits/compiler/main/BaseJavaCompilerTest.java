@@ -172,7 +172,7 @@ public abstract class BaseJavaCompilerTest {
 
 		final String [] scopeToRename = Strings.split(basePackage.getName(), '.');
 
-		systemModuleFile.iterateNodeFirst(e -> {
+		systemModuleFile.getParsed().iterateNodeFirst(e -> {
 			if (e instanceof UnresolvedTypeReference) {
 				final UnresolvedTypeReference typeReference = (UnresolvedTypeReference)e;
 
