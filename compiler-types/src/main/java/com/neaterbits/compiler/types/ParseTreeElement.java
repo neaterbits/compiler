@@ -32,7 +32,6 @@ public enum ParseTreeElement {
 	NAMED_GENERIC_TYPE_PARAMETER(false),
 
 	CLASS_DEFINITION(false, false),
-	CLASS_MODIFIERS(true, true),
 	CLASS_MODIFIER_HOLDER(true),
 	CLASS_DECLARATION_NAME(true),
 
@@ -45,11 +44,9 @@ public enum ParseTreeElement {
 	CONSTRUCTOR_MEMBER(false),
 	CONSTRUCTOR(false),
 	CONSTRUCTOR_NAME(true),
-	CONSTRUCTOR_MODIFIERS(false, true),
 	CONSTRUCTOR_MODIFIER_HOLDER(true),
 
 	CLASS_METHOD_MEMBER(false),
-	CLASS_METHOD_MODIFIERS(false, true),
 	CLASS_METHOD_MODIFIER_HOLDER(true),
 	CLASS_METHOD(false),
     METHOD_RETURN_TYPE(false),
@@ -63,7 +60,6 @@ public enum ParseTreeElement {
 
 	THROWS(false),
 
-	PARAMETER_MODIFIERS(true, true),
     PARAMETER_MODIFIER_HOLDER(true),
 
 	PARAMETER_LIST(false, true),
@@ -71,7 +67,6 @@ public enum ParseTreeElement {
 	PARAMETER_NAME(true),
 
 	CLASS_DATA_FIELD_MEMBER(false),
-	FIELD_MODIFIERS(false, true),
 	FIELD_MODIFIER_HOLDER(true),
     FIELD_DECLARATION(false),
 	FIELD_NAME_DECLARATION(true),
@@ -83,13 +78,11 @@ public enum ParseTreeElement {
 	FUNCTION(false),
 
 	INTERFACE_DEFINITION(false, false),
-	INTERFACE_MODIFIERS(false, true),
 	INTERFACE_MODIFIER_HOLDER(true),
 	INTERFACE_DECLARATION_NAME(true),
 
 	INTERFACE_METHOD_MEMBER(false),
 	INTERFACE_METHOD(false),
-	INTERFACE_METHOD_MODIFIERS(false, true),
 	INTERFACE_METHOD_MODIFIER_HOLDER(true),
 	INTERFACE_METHOD_NAME(true),
 
@@ -216,7 +209,6 @@ public enum ParseTreeElement {
 
 	MODIFIERS_VARIABLE_DECLARATION_ELEMENT(false),
 	VARIABLE_DECLARATION_STATEMENT(false),
-	VARIABLE_MODIFIERS(false, true),
 	VARIABLE_MODIFIER_HOLDER(true),
     VARIABLE_DECLARATION_ELEMENT(false),
 	VAR_NAME_DECLARATION(true),
@@ -225,7 +217,16 @@ public enum ParseTreeElement {
 	REPLACE(true),
 	REPLACE_END(true),
 	
-	LAST_ENCODED(true);
+	LAST_ENCODED(true),
+	
+	CLASS_MODIFIERS(true, true),
+    FIELD_MODIFIERS(false, true),
+    CONSTRUCTOR_MODIFIERS(false, true),
+    CLASS_METHOD_MODIFIERS(false, true),
+    PARAMETER_MODIFIERS(true, true),
+    INTERFACE_MODIFIERS(false, true),
+    INTERFACE_METHOD_MODIFIERS(false, true),
+    VARIABLE_MODIFIERS(false, true);
 
     private final boolean leaf;
     private final boolean placeholder;
