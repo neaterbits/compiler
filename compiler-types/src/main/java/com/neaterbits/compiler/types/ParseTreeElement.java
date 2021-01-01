@@ -2,9 +2,6 @@ package com.neaterbits.compiler.types;
 
 public enum ParseTreeElement {
 
-	PROGRAM(false),
-	MODULE(false),
-	FILE(false),
 	COMPILATION_UNIT(false),
 	COMPILATION_CODE_LINES(false),
 	NAMESPACE(false),
@@ -226,7 +223,11 @@ public enum ParseTreeElement {
 	INITIALIZER_VARIABLE_DECLARATION_ELEMENT(false),
 
 	REPLACE(true),
-	REPLACE_END(true);
+	REPLACE_END(true),
+	
+	LAST_ENCODED(true),
+
+    FILE(true);
 
     private final boolean leaf;
     private final boolean placeholder;
