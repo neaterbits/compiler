@@ -859,14 +859,6 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener
     }
 
     @Override
-    public final void onVariableReference(int leafContext, long name) {
-
-        writeLeafElementContextRef(leafContext);
-
-        AST.encodeVariableReference(astBuffer, name);
-    }
-
-    @Override
     public final void onPrimaryStart(int primaryStartContext) {
 
         writeStartElementContextRef(primaryStartContext);

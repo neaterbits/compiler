@@ -2084,21 +2084,6 @@ public abstract class BaseParserListener<
 		logExit(context);
 	}
 
-	// Resolved as variable
-	@Override
-	public final void onVariableReference(int leafContext, long name) {
-
-	    final Context context = getLeafContext(leafContext);
-	    
-		logEnter(context);
-
-		final VariableReferenceSetter<VARIABLE_REFERENCE> variableReferenceSetter = get();
-
-		variableReferenceSetter.setVariableReference(parseTreeFactory.createNameReference(context, stringSource.asString(name)));
-
-		logExit(context);
-	}
-
 	// Field access
 
 	@Override

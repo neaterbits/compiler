@@ -661,19 +661,6 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
-            case SIMPLE_VARIABLE_REFERENCE: {
-
-                final int leafContext = getLeafContext(parseTreeRef);
-
-                if (ref.isStart) {
-                    AST.decodeVariableReference(astBuffer, leafContext, ref.index, listener);
-                }
-                else {
-                    throw new IllegalStateException();
-                }
-                break;
-            }
-
             case EXPRESSION_BINARY_OPERATOR: {
 
                 final int leafContext = getLeafContext(parseTreeRef);

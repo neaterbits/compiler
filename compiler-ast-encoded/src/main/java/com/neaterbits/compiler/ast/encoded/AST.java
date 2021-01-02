@@ -180,8 +180,8 @@ public class AST {
             size = ELSE_BLOCK_SIZE;
             break;
 
-        case SIMPLE_VARIABLE_REFERENCE:
-            size = VARIABLE_REFERENCE_SIZE;
+        case NAME_REFERENCE:
+            size = NAME_REFERENCE_SIZE;
             break;
 
         case INTEGER_LITERAL:
@@ -259,10 +259,6 @@ public class AST {
 
         case ANNOTATION_ELEMENT:
             size = ANNOTATION_ELEMENT_SIZE;
-            break;
-
-        case NAME_REFERENCE:
-            size = NAME_REFERENCE_SIZE;
             break;
 
         case NAME_PRIMARY:
@@ -1666,24 +1662,6 @@ public class AST {
             IterativeParseTreeListener<COMPILATION_UNIT> listener) {
 
         listener.onElseStatementEnd(elseStartContext, endContext);
-    }
-
-    private static final int VARIABLE_REFERENCE_SIZE = STRING_REF_SIZE;
-
-    public static void encodeVariableReference(StringASTBuffer astBuffer, long name) {
-
-        astBuffer.writeLeafElement(ParseTreeElement.SIMPLE_VARIABLE_REFERENCE);
-
-        astBuffer.writeStringRef(name);
-    }
-
-    public static <COMPILATION_UNIT> void decodeVariableReference(
-            ASTBufferRead astBuffer,
-            int leafContext,
-            int index,
-            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
-
-        listener.onVariableReference(leafContext, astBuffer.getStringRef(index));
     }
 
     private static final int UNARY_EXPRESSION_SIZE = 1 + 1;

@@ -523,11 +523,6 @@ public class ParseTreeAdapter<COMPILATION_UNIT> implements ParseTreeListener<COM
     }
 
     @Override
-    public void onVariableReference(int leafContext, long name) {
-        
-    }
-
-    @Override
     public void onPrimaryStart(int startContext) {
         
     }

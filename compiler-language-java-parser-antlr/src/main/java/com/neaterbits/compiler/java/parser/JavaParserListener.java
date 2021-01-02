@@ -462,10 +462,6 @@ public class JavaParserListener<COMPILATION_UNIT> implements ModelParserListener
 		delegate.onNameReference(writeLeafContext(context), name);
 	}
 
-	public void onVariableReference(Context context, long name) {
-		delegate.onVariableReference(writeLeafContext(context), name);
-	}
-
 	public void onEnterAssignmentLHS(Context context) {
 		delegate.onEnterAssignmentLHS(writeStartContext(context));
 	}
@@ -742,7 +738,6 @@ public class JavaParserListener<COMPILATION_UNIT> implements ModelParserListener
 	public void onClassExpression(Context context, long className, int numArrayDims) {
 		delegate.onClassExpression(writeLeafContext(context), className, numArrayDims);
 	}
-	
 	
 	public void onLambdaExpressionStart(Context context) {
 		delegate.onLambdaExpressionStart(writeStartContext(context));
