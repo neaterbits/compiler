@@ -143,7 +143,6 @@ public enum ParseTreeElement {
 	NAME_PRIMARY(true), // unresolved name
 
 	PRIMARY_LIST(false),
-	PRIMARY_LIST_VARIABLE_REFERENCE(false),
 	SINGLE_LAMBDA_EXPRESSION(false),
 	STATIC_MEMBER_REFERENCE(true),
 	THIS_PRIMARY(true),
@@ -225,6 +224,7 @@ public enum ParseTreeElement {
     INTERFACE_METHOD_MODIFIERS(false, true),
     VARIABLE_MODIFIERS(false, true),
 
+    PRIMARY_LIST_VARIABLE_REFERENCE(false, true),
     INITIALIZER_VARIABLE_DECLARATION_ELEMENT(false, true);
 
     private final boolean leaf;
