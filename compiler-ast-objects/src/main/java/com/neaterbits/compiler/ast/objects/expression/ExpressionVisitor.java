@@ -7,7 +7,7 @@ import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedClassExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
-import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
+import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedNamePrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.objects.variables.VariableReference;
@@ -28,7 +28,7 @@ public interface ExpressionVisitor<T, R> {
 	
 	R onExpressionList(ExpressionList expression, T param);
 	
-	R onNamePrimary(NamePrimary primary, T param);
+	R onUnresolvedNamePrimary(UnresolvedNamePrimary primary, T param);
 	
 	R onPrimaryList(PrimaryList expression, T param);
 	

@@ -120,7 +120,7 @@ public final class ExpressionCacheApplier {
                                 contextWriter.writeContext(primary.getContext()));
                     }
                     else {
-                        listener.onNamePrimary(primary.getContext(), primary.getName());
+                        listener.onUnresolvedNamePrimary(primary.getContext(), primary.getName());
                     }
                 }
                 else {

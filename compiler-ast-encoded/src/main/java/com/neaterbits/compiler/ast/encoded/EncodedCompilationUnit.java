@@ -1080,12 +1080,12 @@ public final class EncodedCompilationUnit {
                 break;
             }
 
-            case NAME_PRIMARY: {
+            case UNRESOLVED_NAME_PRIMARY: {
 
                 final int leafContext = getLeafContext(parseTreeRef);
 
                 if (ref.isStart) {
-                    AST.decodeNamePrimary(astBuffer, leafContext, ref.index, listener);
+                    AST.decodeUnresolvedNamePrimary(astBuffer, leafContext, ref.index, listener);
                 }
                 else {
                     throw new IllegalStateException();

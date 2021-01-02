@@ -227,7 +227,7 @@ public interface ParseTreeListener<COMPILATION_UNIT> extends ContextWriteAccess 
 	
 	void onPrimaryStart(int startContext);
 	
-	void onNamePrimary(int leafContext, long name);
+	void onUnresolvedNamePrimary(int leafContext, long name);
 	
 	void onArrayAccessStart(int startContext);
 	

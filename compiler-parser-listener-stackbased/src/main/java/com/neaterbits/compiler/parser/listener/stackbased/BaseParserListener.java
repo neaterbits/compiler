@@ -2101,7 +2101,7 @@ public abstract class BaseParserListener<
 	}
 
 	@Override
-    public void onNamePrimary(int leafContext, long name) {
+    public void onUnresolvedNamePrimary(int leafContext, long name) {
 
         final Context context = getLeafContext(leafContext);
 

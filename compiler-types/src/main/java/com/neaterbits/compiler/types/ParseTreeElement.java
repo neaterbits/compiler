@@ -132,7 +132,7 @@ public enum ParseTreeElement {
 	EXPRESSION_BINARY_OPERATOR(true),
 
 	// Unresolved primaries
-	NAME_PRIMARY(true),
+	UNRESOLVED_NAME_PRIMARY(true),
     UNRESOLVED_CLASS_EXPRESSION(false),
     UNRESOLVED_METHOD_INVOCATION_EXPRESSION(false),
 

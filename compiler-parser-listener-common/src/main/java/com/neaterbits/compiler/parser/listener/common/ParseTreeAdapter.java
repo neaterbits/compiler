@@ -528,7 +528,7 @@ public class ParseTreeAdapter<COMPILATION_UNIT> implements ParseTreeListener<COM
     }
 
     @Override
-    public void onNamePrimary(int leafContext, long name) {
+    public void onUnresolvedNamePrimary(int leafContext, long name) {
         
     }
 

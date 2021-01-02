@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
-import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
+import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedNamePrimary;
 import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
 import com.neaterbits.compiler.java.BaseCompilerTest;
 import com.neaterbits.compiler.java.CompiledAndResolvedFile;
@@ -50,7 +50,7 @@ public class CompileIssuesTest extends BaseCompilerTest {
 		final PrimaryList primaryList = (PrimaryList)get(iterator);
 		assertThat(primaryList).isNotNull();
 		
-		final NamePrimary namePrimary = get(iterator);
+		final UnresolvedNamePrimary namePrimary = get(iterator);
 		assertThat(namePrimary.getName()).isEqualTo("integer");
 
 		final UnresolvedMethodInvocationExpression expression = get(iterator);

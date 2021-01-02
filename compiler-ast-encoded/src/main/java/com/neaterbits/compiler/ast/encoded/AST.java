@@ -261,8 +261,8 @@ public class AST {
             size = ANNOTATION_ELEMENT_SIZE;
             break;
 
-        case NAME_PRIMARY:
-            size = NAME_PRIMARY_SIZE;
+        case UNRESOLVED_NAME_PRIMARY:
+            size = UNRESOLVED_NAME_PRIMARY_SIZE;
             break;
 
         case TYPE_BOUND:
@@ -2923,11 +2923,11 @@ public class AST {
         listener.onAnnotationElementEnd(annotationElementStartContext, endContext);
     }
 
-    private static final int NAME_PRIMARY_SIZE = STRING_REF_SIZE;
+    private static final int UNRESOLVED_NAME_PRIMARY_SIZE = STRING_REF_SIZE;
 
-    public static void encodeNamePrimary(StringASTBuffer astBuffer, long name, int nameContext) {
+    public static void encodeUnresolvedNamePrimary(StringASTBuffer astBuffer, long name, int nameContext) {
 
-        astBuffer.writeLeafElement(ParseTreeElement.NAME_PRIMARY);
+        astBuffer.writeLeafElement(ParseTreeElement.UNRESOLVED_NAME_PRIMARY);
 
         if (name == StringRef.STRING_NONE) {
             throw new IllegalArgumentException();
@@ -2936,14 +2936,14 @@ public class AST {
         astBuffer.writeStringRef(name);
     }
 
-    public static <COMPILATION_UNIT> void decodeNamePrimary(
+    public static <COMPILATION_UNIT> void decodeUnresolvedNamePrimary(
             ASTBufferRead astBuffer,
-            int namePrimaryStartContext,
+            int unresolvedNamePrimaryStartContext,
             int index,
             ParseTreeListener<COMPILATION_UNIT> listener) {
 
-        listener.onNamePrimary(
-                namePrimaryStartContext,
+        listener.onUnresolvedNamePrimary(
+                unresolvedNamePrimaryStartContext,
                 astBuffer.getStringRef(index));
     }
 

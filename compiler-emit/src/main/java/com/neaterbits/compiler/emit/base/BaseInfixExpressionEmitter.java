@@ -4,7 +4,7 @@ package com.neaterbits.compiler.emit.base;
 import com.neaterbits.compiler.ast.objects.expression.Expression;
 import com.neaterbits.compiler.ast.objects.expression.ExpressionList;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
-import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
+import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedNamePrimary;
 import com.neaterbits.compiler.ast.objects.list.ASTList;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.VariableReference;
@@ -43,7 +43,7 @@ public abstract class BaseInfixExpressionEmitter<T extends EmitterState> extends
 	}
 	
 	@Override
-    public final Void onNamePrimary(NamePrimary primary, T param) {
+    public final Void onUnresolvedNamePrimary(UnresolvedNamePrimary primary, T param) {
 	    throw new UnsupportedOperationException("Resolve in earlier pass");
 	}
 

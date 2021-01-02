@@ -10,11 +10,11 @@ import com.neaterbits.compiler.ast.objects.variables.UnresolvedPrimary;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
-public final class NamePrimary extends UnresolvedPrimary {
+public final class UnresolvedNamePrimary extends UnresolvedPrimary {
 
     private final String name;
     
-    public NamePrimary(Context context, String name) {
+    public UnresolvedNamePrimary(Context context, String name) {
         super(context);
         
         Objects.requireNonNull(name);
@@ -28,7 +28,7 @@ public final class NamePrimary extends UnresolvedPrimary {
 
     @Override
     public <T, R> R visit(ExpressionVisitor<T, R> visitor, T param) {
-        return visitor.onNamePrimary(this, param);
+        return visitor.onUnresolvedNamePrimary(this, param);
     }
 
     @Override
@@ -38,12 +38,11 @@ public final class NamePrimary extends UnresolvedPrimary {
 
     @Override
     public ParseTreeElement getParseTreeElement() {
-        return ParseTreeElement.NAME_PRIMARY;
+        return ParseTreeElement.UNRESOLVED_NAME_PRIMARY;
     }
 
     @Override
     protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
         
     }
-    
 }

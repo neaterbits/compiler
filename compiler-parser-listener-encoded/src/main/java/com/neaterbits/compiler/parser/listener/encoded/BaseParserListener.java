@@ -867,11 +867,11 @@ abstract class BaseParserListener<COMPILATION_UNIT> implements ParseTreeListener
     }
 
     @Override
-    public void onNamePrimary(int leafContext, long name) {
+    public void onUnresolvedNamePrimary(int leafContext, long name) {
 
         writeLeafElementContextRef(leafContext);
 
-        AST.encodeNamePrimary(astBuffer, name, leafContext);
+        AST.encodeUnresolvedNamePrimary(astBuffer, name, leafContext);
     }
 
     @Override

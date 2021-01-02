@@ -46,7 +46,7 @@ import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedClassExp
 import com.neaterbits.compiler.ast.objects.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.Literal;
-import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
+import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedNamePrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.NullLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.Primary;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
@@ -204,7 +204,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	BlockLambdaExpression,
 	LambdaExpressionParameters,
 	PrimaryList,
-	NamePrimary,
+	UnresolvedNamePrimary,
 	NestedExpression,
 	FieldAccess,
 	ThisPrimary,
@@ -754,8 +754,8 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	}
 
 	@Override
-    public NamePrimary createNamePrimary(Context context, String name) {
-        return new NamePrimary(context, name);
+    public UnresolvedNamePrimary createNamePrimary(Context context, String name) {
+        return new UnresolvedNamePrimary(context, name);
     }
 
     @Override

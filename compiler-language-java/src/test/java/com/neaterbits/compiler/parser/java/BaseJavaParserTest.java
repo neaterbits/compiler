@@ -31,7 +31,7 @@ import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.UnaryExp
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
-import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
+import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedNamePrimary;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.objects.generics.ReferenceTypeArgument;
 import com.neaterbits.compiler.ast.objects.generics.NamedGenericTypeParameter;
@@ -2586,7 +2586,7 @@ public abstract class BaseJavaParserTest {
         
         final PrimaryList primaryList = (PrimaryList)expressionStatement.getExpression();
 
-        final NamePrimary namePrimary = (NamePrimary)primaryList.getPrimaries().get(0);
+        final UnresolvedNamePrimary namePrimary = (UnresolvedNamePrimary)primaryList.getPrimaries().get(0);
         assertThat(namePrimary.getName()).isEqualTo("SomeClass");
 
         final ResolvedMethodInvocationExpression methodInvocation = (ResolvedMethodInvocationExpression)primaryList.getPrimaries().get(1);
@@ -2616,7 +2616,7 @@ public abstract class BaseJavaParserTest {
 
         assertThat(primaryList.getPrimaries().size()).isEqualTo(2);
         
-        final NamePrimary namePrimary = (NamePrimary)primaryList.getPrimaries().get(0);
+        final UnresolvedNamePrimary namePrimary = (UnresolvedNamePrimary)primaryList.getPrimaries().get(0);
         assertThat(namePrimary.getName()).isEqualTo("object");
 
         final ResolvedMethodInvocationExpression methodInvocation = (ResolvedMethodInvocationExpression)primaryList.getPrimaries().get(1);
@@ -3073,7 +3073,7 @@ public abstract class BaseJavaParserTest {
 
         final PrimaryList primaryList = (PrimaryList)expressionStatement.getExpression();
 
-        final NamePrimary namePrimary = (NamePrimary)primaryList.getPrimaries().get(0);
+        final UnresolvedNamePrimary namePrimary = (UnresolvedNamePrimary)primaryList.getPrimaries().get(0);
         
         assertThat(namePrimary.getName()).isEqualTo("SomeClass");
 
