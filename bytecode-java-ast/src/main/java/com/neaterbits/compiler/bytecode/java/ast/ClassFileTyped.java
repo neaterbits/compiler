@@ -34,7 +34,7 @@ import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.VarNameDeclaration;
 import com.neaterbits.compiler.bytecode.ast.ClassBytecodeTyped;
-import com.neaterbits.compiler.bytecode.ast.EncodedTypeReference;
+import com.neaterbits.compiler.bytecode.ast.BytecodeEncodedTypeReference;
 import com.neaterbits.compiler.java.bytecode.AccessFlags;
 import com.neaterbits.compiler.java.bytecode.ClassFile;
 import com.neaterbits.compiler.java.bytecode.Field;
@@ -130,7 +130,7 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 		return new ClassDataFieldMember(
 				context,
 				modifiers,
-				new EncodedTypeReference(context, descriptor),
+				new BytecodeEncodedTypeReference(context, descriptor),
 				Arrays.asList(initializer));
 	}
 
@@ -171,9 +171,9 @@ final class ClassFileTyped extends ClassFile implements ClassBytecodeTyped {
 
 		final String returnTypeDescriptor = getMethodDescriptorTypes(
 				method.getDescriptorIndex(),
-				encodedType -> paramTypes.add(new EncodedTypeReference(context, encodedType)));
+				encodedType -> paramTypes.add(new BytecodeEncodedTypeReference(context, encodedType)));
 		
-		final EncodedTypeReference returnType = new EncodedTypeReference(context, returnTypeDescriptor);
+		final BytecodeEncodedTypeReference returnType = new BytecodeEncodedTypeReference(context, returnTypeDescriptor);
 		
 		final List<Parameter> params = new ArrayList<>(paramTypes.size());
 		

@@ -10,11 +10,11 @@ import com.neaterbits.compiler.ast.objects.typereference.TypeReferenceVisitor;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
-public final class EncodedTypeReference extends TypeReference {
+public final class BytecodeEncodedTypeReference extends TypeReference {
 
 	private final String typeName;
 
-	public EncodedTypeReference(Context context, String typeName) {
+	public BytecodeEncodedTypeReference(Context context, String typeName) {
 		super(context);
 	
 		Objects.requireNonNull(typeName);
@@ -45,7 +45,7 @@ public final class EncodedTypeReference extends TypeReference {
 
 	@Override
 	public ParseTreeElement getParseTreeElement() {
-		return ParseTreeElement.ENCODED_TYPE_REFERENCE;
+		return ParseTreeElement.BYTECODE_ENCODED_TYPE_REFERENCE;
 	}
 
 	@Override

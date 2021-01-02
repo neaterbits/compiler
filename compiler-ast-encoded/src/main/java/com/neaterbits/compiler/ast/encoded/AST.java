@@ -285,7 +285,7 @@ public class AST {
             size = NAMED_GENERIC_TYPE_PARAMETER_SIZE;
             break;
 
-        case COMPLEX_TYPE_REFERENCE:
+        case RESOLVED_TYPE_REFERENCE:
             size = RESOLVED_TYPE_REFERENCE_SIZE;
             break;
 
@@ -1411,7 +1411,7 @@ public class AST {
 
     public static void encodeResolvedTypeReference(ASTBuffer astBuffer, int typeNo) {
 
-        astBuffer.writeLeafElement(ParseTreeElement.COMPLEX_TYPE_REFERENCE);
+        astBuffer.writeLeafElement(ParseTreeElement.RESOLVED_TYPE_REFERENCE);
 
         astBuffer.writeInt(typeNo);
     }

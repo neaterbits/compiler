@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.ast.objects.typereference;
 
+import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
 public abstract class ResolvedTypeReference extends TypeReference {
@@ -18,5 +19,11 @@ public abstract class ResolvedTypeReference extends TypeReference {
 
     public final int getTypeNo() {
         return typeNo;
+    }
+
+    @Override
+    public final ParseTreeElement getParseTreeElement() {
+
+        return ParseTreeElement.RESOLVED_TYPE_REFERENCE;
     }
 }

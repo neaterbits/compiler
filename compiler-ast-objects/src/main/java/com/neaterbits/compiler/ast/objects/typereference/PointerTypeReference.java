@@ -7,7 +7,6 @@ import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.type.NamedType;
 import com.neaterbits.compiler.ast.objects.type.PointerType;
-import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
 public final class PointerTypeReference extends ResolvedTypeReference {
@@ -34,11 +33,6 @@ public final class PointerTypeReference extends ResolvedTypeReference {
 	@Override
 	public TypeName getTypeName() {
 		return ((NamedType)pointerType.getDelegate()).getTypeName();
-	}
-
-	@Override
-	public ParseTreeElement getParseTreeElement() {
-		return ParseTreeElement.POINTER_TYPE_REFERENCE;
 	}
 
 	@Override

@@ -546,7 +546,7 @@ public final class EncodedProgramModel
                 }
                 break;
 
-            case COMPLEX_TYPE_REFERENCE:
+            case RESOLVED_TYPE_REFERENCE:
                 final int typeNo = AST.decodeResolvedTypeReferenceTypeNo(astBuffer, ref.index);
 
                 visitor.onResolvedTypeReference(compilationUnit, parseTreeRef, typeNo);

@@ -3,18 +3,12 @@ package com.neaterbits.compiler.ast.objects.typereference;
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
-import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
 public final class ComplexTypeReference extends ResolvedNamedTypeReference {
 
 	public ComplexTypeReference(Context context, int typeNo, TypeName typeName) {
 		super(context, typeNo, typeName);
-	}
-
-	@Override
-	public ParseTreeElement getParseTreeElement() {
-		return ParseTreeElement.COMPLEX_TYPE_REFERENCE;
 	}
 
 	@Override
