@@ -4,7 +4,7 @@ import com.neaterbits.compiler.ast.objects.expression.arithemetic.binary.Arithme
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
-import com.neaterbits.compiler.ast.objects.expression.literal.ClassExpression;
+import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedClassExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.NamePrimary;
@@ -34,7 +34,7 @@ public interface ExpressionVisitor<T, R> {
 	
 	R onArrayAccessExpression(ArrayAccessExpression expression, T param);
 	
-	R onClassExpression(ClassExpression expression, T param);
+	R onClassExpression(UnresolvedClassExpression expression, T param);
 	
 	R onFieldAccess(FieldAccess expression, T param);
 	

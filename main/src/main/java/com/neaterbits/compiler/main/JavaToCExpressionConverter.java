@@ -21,7 +21,7 @@ import com.neaterbits.compiler.ast.objects.expression.PrimaryMethodInvocationExp
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.StaticMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
-import com.neaterbits.compiler.ast.objects.expression.literal.ClassExpression;
+import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedClassExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.objects.type.FunctionPointerType;
 import com.neaterbits.compiler.ast.objects.typereference.FunctionPointerTypeReference;
@@ -47,7 +47,7 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 	}
 
 	@Override
-	public Expression onClassExpression(ClassExpression expression, T param) {
+	public Expression onClassExpression(UnresolvedClassExpression expression, T param) {
 		// TODO Auto-generated method stub
 		return null;
 	}

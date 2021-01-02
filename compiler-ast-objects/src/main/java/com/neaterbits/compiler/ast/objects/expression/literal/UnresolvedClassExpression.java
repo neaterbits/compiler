@@ -11,13 +11,12 @@ import com.neaterbits.compiler.ast.objects.variables.UnresolvedPrimary;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.util.parse.context.Context;
 
-@Deprecated
-public final class ClassExpression extends UnresolvedPrimary {
+public final class UnresolvedClassExpression extends UnresolvedPrimary {
 
 	private final ClassOrInterfaceName name;
 	private final int numArrayDims;
 	
-	public ClassExpression(Context context, ClassOrInterfaceName name, int numArrayDims) {
+	public UnresolvedClassExpression(Context context, ClassOrInterfaceName name, int numArrayDims) {
 
 		super(context);
 
@@ -42,7 +41,7 @@ public final class ClassExpression extends UnresolvedPrimary {
 
 	@Override
 	public ParseTreeElement getParseTreeElement() {
-		return ParseTreeElement.CLASS_EXPRESSION;
+		return ParseTreeElement.UNRESOLVED_CLASS_EXPRESSION;
 	}
 
 	@Override

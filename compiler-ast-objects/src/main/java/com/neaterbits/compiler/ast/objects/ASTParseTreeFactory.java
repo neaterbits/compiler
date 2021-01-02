@@ -42,7 +42,7 @@ import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocation
 import com.neaterbits.compiler.ast.objects.expression.arithemetic.unary.UnaryExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
-import com.neaterbits.compiler.ast.objects.expression.literal.ClassExpression;
+import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedClassExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.Literal;
@@ -212,7 +212,7 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 	UnresolvedMethodInvocationExpression,
 	ArrayCreationExpression,
 	ArrayAccessExpression,
-	ClassExpression,
+	UnresolvedClassExpression,
 	NameReference,
 	IntegerLiteral,
 	FloatingPointLiteral,
@@ -807,8 +807,8 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
 
 	@Deprecated
 	@Override
-	public ClassExpression createClassExpression(Context context, String className, int numArrayDims) {
-		return new ClassExpression(context, new ClassOrInterfaceName(className), numArrayDims);
+	public UnresolvedClassExpression createClassExpression(Context context, String className, int numArrayDims) {
+		return new UnresolvedClassExpression(context, new ClassOrInterfaceName(className), numArrayDims);
 	}
 
 	@Override
