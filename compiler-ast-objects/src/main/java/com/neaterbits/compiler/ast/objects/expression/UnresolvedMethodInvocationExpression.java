@@ -13,7 +13,7 @@ public final class UnresolvedMethodInvocationExpression
 
     @Override
     public <T, R> R visit(ExpressionVisitor<T, R> visitor, T param) {
-        throw new UnsupportedOperationException();
+        return visitor.onUnresolvedMethodInvocation(this, param);
     }
 
     @Override

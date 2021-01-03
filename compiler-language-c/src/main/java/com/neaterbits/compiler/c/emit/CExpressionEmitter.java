@@ -9,6 +9,7 @@ import com.neaterbits.compiler.ast.objects.expression.FunctionPointerInvocationE
 import com.neaterbits.compiler.ast.objects.expression.ResolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
+import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedClassExpression;
@@ -72,6 +73,11 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	}
 
 	@Override
+    public Void onUnresolvedMethodInvocation(UnresolvedMethodInvocationExpression expression, EmitterState param) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
 	public Void onMethodInvocation(ResolvedMethodInvocationExpression expression, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}

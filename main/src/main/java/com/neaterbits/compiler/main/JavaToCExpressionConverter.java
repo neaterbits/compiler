@@ -19,8 +19,8 @@ import com.neaterbits.compiler.ast.objects.expression.ParameterList;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.PrimaryMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
-import com.neaterbits.compiler.ast.objects.expression.StaticMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
+import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedClassExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.StringLiteral;
 import com.neaterbits.compiler.ast.objects.type.FunctionPointerType;
@@ -58,6 +58,11 @@ final class JavaToCExpressionConverter<T extends MappingJavaToCConverterState<T>
 	}
 
 	@Override
+    public Expression onUnresolvedMethodInvocation(UnresolvedMethodInvocationExpression expression, T param) {
+	    throw new UnsupportedOperationException();
+	}
+
+    @Override
 	public Expression onMethodInvocation(ResolvedMethodInvocationExpression expression, T param) {
 
 		final Expression converted;

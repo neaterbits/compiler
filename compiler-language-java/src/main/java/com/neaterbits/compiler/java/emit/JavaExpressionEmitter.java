@@ -12,6 +12,7 @@ import com.neaterbits.compiler.ast.objects.expression.ResolvedMethodInvocationEx
 import com.neaterbits.compiler.ast.objects.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.ast.objects.expression.StaticMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.ThisPrimary;
+import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.CharacterLiteral;
 import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedClassExpression;
@@ -94,6 +95,14 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	
 	@Override
+    public Void onUnresolvedMethodInvocation(UnresolvedMethodInvocationExpression expression, EmitterState param) {
+        
+	    param.append('.').append(expression.getCallable().getName());
+
+        return null;
+    }
+
+    @Override
 	public Void onMethodInvocation(ResolvedMethodInvocationExpression expression, EmitterState param) {
 		
 		switch (expression.getInvocationType()) {
