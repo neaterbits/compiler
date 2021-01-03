@@ -2447,7 +2447,7 @@ public abstract class BaseJavaParserTest {
         
         final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
         
-        final ResolvedMethodInvocationExpression methodInvocation = (ResolvedMethodInvocationExpression)expressionStatement.getExpression();
+        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)expressionStatement.getExpression();
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
     }
@@ -2474,7 +2474,7 @@ public abstract class BaseJavaParserTest {
         final UnresolvedNamePrimary namePrimary = (UnresolvedNamePrimary)primaryList.getPrimaries().get(0);
         assertThat(namePrimary.getName()).isEqualTo("SomeClass");
 
-        final ResolvedMethodInvocationExpression methodInvocation = (ResolvedMethodInvocationExpression)primaryList.getPrimaries().get(1);
+        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)primaryList.getPrimaries().get(1);
         
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
@@ -2504,7 +2504,7 @@ public abstract class BaseJavaParserTest {
         final UnresolvedNamePrimary namePrimary = (UnresolvedNamePrimary)primaryList.getPrimaries().get(0);
         assertThat(namePrimary.getName()).isEqualTo("object");
 
-        final ResolvedMethodInvocationExpression methodInvocation = (ResolvedMethodInvocationExpression)primaryList.getPrimaries().get(1);
+        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)primaryList.getPrimaries().get(1);
         
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
@@ -2527,7 +2527,7 @@ public abstract class BaseJavaParserTest {
         
         final ExpressionStatement expressionStatement = (ExpressionStatement)method.getBlock().getStatements().get(0);
         
-        final ResolvedMethodInvocationExpression methodInvocation = (ResolvedMethodInvocationExpression)expressionStatement.getExpression();
+        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)expressionStatement.getExpression();
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().size()).isEqualTo(2);
         
@@ -2563,7 +2563,7 @@ public abstract class BaseJavaParserTest {
         final PrimaryList primaryList = (PrimaryList)expressionStatement.getExpression();
         assertThat(primaryList.getPrimaries().size()).isEqualTo(2);
         
-        final ResolvedMethodInvocationExpression methodInvocation = (ResolvedMethodInvocationExpression)primaryList.getPrimaries().get(0);
+        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)primaryList.getPrimaries().get(0);
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
         
@@ -2592,7 +2592,7 @@ public abstract class BaseJavaParserTest {
         final PrimaryList primaryList = (PrimaryList)expressionStatement.getExpression();
         assertThat(primaryList.getPrimaries().size()).isEqualTo(3);
         
-        final ResolvedMethodInvocationExpression methodInvocation = (ResolvedMethodInvocationExpression)primaryList.getPrimaries().get(0);
+        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)primaryList.getPrimaries().get(0);
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
         
@@ -2600,7 +2600,7 @@ public abstract class BaseJavaParserTest {
         assertThat(fieldAccess.getFieldAccessType()).isEqualTo(FieldAccessType.FIELD);
         assertThat(fieldAccess.getFieldName().getName()).isEqualTo("someField");
 
-        final ResolvedMethodInvocationExpression anotherMethodInvocation = (ResolvedMethodInvocationExpression)primaryList.getPrimaries().get(2);
+        final UnresolvedMethodInvocationExpression anotherMethodInvocation = (UnresolvedMethodInvocationExpression)primaryList.getPrimaries().get(2);
         assertThat(anotherMethodInvocation.getCallable().getName()).isEqualTo("callAnotherMethod");
         assertThat(anotherMethodInvocation.getParameters().getList().isEmpty()).isTrue();
     }
@@ -2625,11 +2625,11 @@ public abstract class BaseJavaParserTest {
         final PrimaryList primaryList = (PrimaryList)expressionStatement.getExpression();
         assertThat(primaryList.getPrimaries().size()).isEqualTo(2);
         
-        final ResolvedMethodInvocationExpression methodInvocation = (ResolvedMethodInvocationExpression)primaryList.getPrimaries().get(0);
+        final UnresolvedMethodInvocationExpression methodInvocation = (UnresolvedMethodInvocationExpression)primaryList.getPrimaries().get(0);
         assertThat(methodInvocation.getCallable().getName()).isEqualTo("callAMethod");
         assertThat(methodInvocation.getParameters().getList().isEmpty()).isTrue();
         
-        final ResolvedMethodInvocationExpression anotherMethodInvocation = (ResolvedMethodInvocationExpression)primaryList.getPrimaries().get(1);
+        final UnresolvedMethodInvocationExpression anotherMethodInvocation = (UnresolvedMethodInvocationExpression)primaryList.getPrimaries().get(1);
         assertThat(anotherMethodInvocation.getCallable().getName()).isEqualTo("callAnotherMethod");
         assertThat(anotherMethodInvocation.getParameters().getList().isEmpty()).isTrue();
     }
