@@ -7,9 +7,12 @@ import java.io.InputStream;
 import com.neaterbits.compiler.ast.encoded.EncodedCompilationUnit;
 import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
+import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
+import com.neaterbits.compiler.resolver.build.LanguageCompiler;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.StringSourceFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -37,8 +40,14 @@ public class TestJavaParserWithEncodeParserListener extends BaseJavaParserTest {
         final EncodedCompilationUnit encodedCompilationUnit = parser.parse(fileName, inputStream);
 
         final ParseLogger logger = new ParseLogger(System.out, encodedCompilationUnit.getFullContextProvider());
+        
+        final IntCompilerCodeMap codeMap = new IntCompilerCodeMap();
+        
+        LanguageCompiler.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
 
-        final ASTParseTreeFactory parseTreeFactory = new ASTParseTreeFactory(JavaTypes.getBuiltinTypes(), null);
+        final ASTParseTreeFactory parseTreeFactory = new ASTParseTreeFactory(
+                JavaTypes.getBuiltinTypes(),
+                codeMap::getTypeNoByTypeName);
 
         final StringSource stringSource = new StringSource() {
 

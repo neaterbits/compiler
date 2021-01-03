@@ -17,7 +17,11 @@ import com.neaterbits.util.io.strings.StringSource;
 public final class ObjectJavaParser extends JavaParser<CompilationUnit> {
 
     public ObjectJavaParser() {
-        super(createListener(null));
+        this(null);
+    }
+
+    public ObjectJavaParser(GetBuiltinTypeNo getBuiltinTypeNo) {
+        super(createListener(getBuiltinTypeNo));
     }
 
     public static CreateParserListener<CompilationUnit>
