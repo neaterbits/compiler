@@ -27,7 +27,7 @@ import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ProgramEmitter;
-import com.neaterbits.compiler.java.JavaLexerObjectParser;
+import com.neaterbits.compiler.java.JavaRecursiveParser;
 import com.neaterbits.compiler.java.JavaUtil;
 import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
@@ -55,15 +55,15 @@ public abstract class BaseJavaCompilerTest {
         LanguageCompiler.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
     }
     
-    private JavaLexerObjectParser<CompilationUnit> createParser() {
+    private JavaRecursiveParser<CompilationUnit> createParser() {
         
-        return new JavaLexerObjectParser<>(
+        return new JavaRecursiveParser<>(
                 JavaUtil.createListener(codeMap::getTypeNoByTypeName));
     }
 
 	final CompilationUnit compile(String fileName) throws IOException, ParserException {
 
-		final JavaLexerObjectParser<CompilationUnit> parser = createParser();
+		final JavaRecursiveParser<CompilationUnit> parser = createParser();
 
 		final List<ParseError> errors = new ArrayList<>();
 

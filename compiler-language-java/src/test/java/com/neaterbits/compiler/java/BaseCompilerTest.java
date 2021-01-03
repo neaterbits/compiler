@@ -23,7 +23,7 @@ public abstract class BaseCompilerTest extends BaseGenericCompilerTest<Compilati
         final CreateParserListener<CompilationUnit> createParserListener
             = JavaUtil.createListener(codeMap::getTypeNoByTypeName);
         
-        return new JavaLexerObjectParser<>(createParserListener);
+        return new JavaRecursiveParser<>(createParserListener);
     }
 
     @Override

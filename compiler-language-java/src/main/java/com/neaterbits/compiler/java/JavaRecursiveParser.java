@@ -13,12 +13,12 @@ import com.neaterbits.compiler.util.parse.ParseLogger;
 import com.neaterbits.util.io.strings.StringSourceInputStream;
 import com.neaterbits.util.parse.ParserException;
 
-public final class JavaLexerObjectParser<COMPILATION_UNIT>
+public final class JavaRecursiveParser<COMPILATION_UNIT>
     extends InputLexerParser<COMPILATION_UNIT, IterativeParseTreeListener<COMPILATION_UNIT>> {
 
     private final CreateParserListener<COMPILATION_UNIT> createListener;
         
-    public JavaLexerObjectParser(CreateParserListener<COMPILATION_UNIT> createListener) {
+    public JavaRecursiveParser(CreateParserListener<COMPILATION_UNIT> createListener) {
 
         Objects.requireNonNull(createListener);
         
