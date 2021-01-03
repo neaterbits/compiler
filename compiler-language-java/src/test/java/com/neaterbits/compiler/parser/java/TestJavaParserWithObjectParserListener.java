@@ -22,7 +22,7 @@ public class TestJavaParserWithObjectParserListener extends BaseJavaParserTest {
         
         LanguageCompiler.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
 
-        final JavaParser<CompilationUnit> parser = new ObjectJavaParser(codeMap::getTypeNoByTypeName);
+        final JavaRecursiveParserHelper<CompilationUnit> parser = new ObjectJavaParser(codeMap::getTypeNoByTypeName);
         
         return parser.parse("testfile", inputStream);
     }

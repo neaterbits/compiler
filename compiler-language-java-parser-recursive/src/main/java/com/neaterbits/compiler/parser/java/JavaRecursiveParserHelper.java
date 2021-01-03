@@ -12,11 +12,11 @@ import com.neaterbits.util.io.strings.CharInput;
 import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
 
-public class JavaParser<COMPILATION_UNIT> {
+public class JavaRecursiveParserHelper<COMPILATION_UNIT> {
     
     private final CreateParserListener<COMPILATION_UNIT> createListener;
     
-    public JavaParser(CreateParserListener<COMPILATION_UNIT> createListener) {
+    public JavaRecursiveParserHelper(CreateParserListener<COMPILATION_UNIT> createListener) {
         
         Objects.requireNonNull(createListener);
         

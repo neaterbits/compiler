@@ -29,7 +29,7 @@ public class TestJavaParserWithEncodeParserListener extends BaseJavaParserTest {
         
         final InputStream inputStream = new ByteArrayInputStream(source.getBytes());
 
-        final JavaParser<EncodedCompilationUnit> parser = new JavaParser<>((file, stringBuffers) -> {
+        final JavaRecursiveParserHelper<EncodedCompilationUnit> parser = new JavaRecursiveParserHelper<>((file, stringBuffers) -> {
 
             final IterativeParseTreeListener<EncodedCompilationUnit> listener
                 = new JavaEncodedParserListener(file, stringBuffers);

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.compiler.parser.java.JavaParser;
+import com.neaterbits.compiler.parser.java.JavaRecursiveParserHelper;
 import com.neaterbits.compiler.parser.listener.common.CreateParserListener;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.parser.recursive.InputLexerParser;
@@ -32,7 +32,7 @@ public final class JavaLexerObjectParser<COMPILATION_UNIT>
             String file,
             ParseLogger parseLogger) throws IOException, ParserException {
 
-        final JavaParser<COMPILATION_UNIT> parser = new JavaParser<>(createListener);
+        final JavaRecursiveParserHelper<COMPILATION_UNIT> parser = new JavaRecursiveParserHelper<>(createListener);
         
         return parser.parse(file, stream);
     }
