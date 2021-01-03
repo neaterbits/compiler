@@ -21,7 +21,7 @@ public abstract class BaseCompilerTest extends BaseGenericCompilerTest<Compilati
         LanguageCompiler.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
 
         final CreateParserListener<CompilationUnit> createParserListener
-            = ObjectJavaParser.createListener(codeMap::getTypeNoByTypeName);
+            = JavaUtil.createListener(codeMap::getTypeNoByTypeName);
         
         return new JavaLexerObjectParser<>(createParserListener);
     }

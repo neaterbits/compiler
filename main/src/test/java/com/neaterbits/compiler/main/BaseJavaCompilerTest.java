@@ -28,7 +28,7 @@ import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ProgramEmitter;
 import com.neaterbits.compiler.java.JavaLexerObjectParser;
-import com.neaterbits.compiler.java.ObjectJavaParser;
+import com.neaterbits.compiler.java.JavaUtil;
 import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
 import com.neaterbits.compiler.resolver.build.LanguageCompiler;
@@ -58,7 +58,7 @@ public abstract class BaseJavaCompilerTest {
     private JavaLexerObjectParser<CompilationUnit> createParser() {
         
         return new JavaLexerObjectParser<>(
-                ObjectJavaParser.createListener(codeMap::getTypeNoByTypeName));
+                JavaUtil.createListener(codeMap::getTypeNoByTypeName));
     }
 
 	final CompilationUnit compile(String fileName) throws IOException, ParserException {
