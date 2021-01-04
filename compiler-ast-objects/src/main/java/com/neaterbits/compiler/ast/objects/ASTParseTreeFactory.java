@@ -389,8 +389,10 @@ public class ASTParseTreeFactory implements ParseTreeFactory<
     public TypeReference createScalarTypeReference(Context context, String name) {
 
         final TypeName typeName = new TypeName(null, null, name);
+        
+        final int typeNo = getBuiltinTypeNo.getTypeNo(typeName);
 
-        return new ScalarTypeReference(context, getBuiltinTypeNo.getTypeNo(typeName), typeName);
+        return new ScalarTypeReference(context, typeNo, typeName);
     }
 
     @Override

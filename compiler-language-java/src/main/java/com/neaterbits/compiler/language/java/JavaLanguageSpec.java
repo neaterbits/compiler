@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.neaterbits.build.types.TypeName;
+import com.neaterbits.compiler.java.JavaRecursiveParser;
 import com.neaterbits.compiler.model.common.LanguageSpec;
+import com.neaterbits.compiler.parser.listener.common.CreateParserListener;
 import com.neaterbits.compiler.types.FieldModifiers;
 import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.types.imports.TypeImport;
+import com.neaterbits.compiler.util.parse.Parser;
 
 public final class JavaLanguageSpec implements LanguageSpec {
 
@@ -45,5 +48,12 @@ public final class JavaLanguageSpec implements LanguageSpec {
     public Collection<TypeName> getBuiltinTypes() {
         
         return BUILTIN_TYPES;
+    }
+
+    @Override
+    public <COMPILATION_UNIT> Parser<COMPILATION_UNIT> createParser(
+                                CreateParserListener<COMPILATION_UNIT> createListener) {
+
+        return new JavaRecursiveParser<>(createListener);
     }
 }

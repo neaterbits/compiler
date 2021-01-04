@@ -12,9 +12,6 @@ import com.neaterbits.build.strategies.compilemodules.CompileModule;
 import com.neaterbits.build.strategies.compilemodules.ResolveModule;
 import com.neaterbits.build.strategies.compilemodules.ResolvedModule;
 import com.neaterbits.build.strategies.compilemodules.TargetBuilderAllModules;
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.TypeVariant;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.SynchronizedCompilerCodeMap;
 import com.neaterbits.compiler.model.common.LanguageSpec;
@@ -22,31 +19,21 @@ import com.neaterbits.compiler.model.common.passes.CompilerModel;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.build.strategies.compilemodules.AllModulesCompilerImpl;
 import com.neaterbits.compiler.util.parse.ParsedFile;
-import com.neaterbits.compiler.util.parse.Parser;
 import com.neaterbits.structuredlog.binary.logging.LogContext;
 import com.neaterbits.util.Value;
 import com.neaterbits.util.concurrency.dependencyresolution.executor.TargetBuildResult;
 import com.neaterbits.util.concurrency.scheduling.QueueAsyncExecutor;
 import com.neaterbits.util.parse.ParserException;
 
-public final class LanguageCompiler<COMPILATION_UNIT, PARSED_FILE extends ParsedFile> {
+public final class ModulesBuilder<COMPILATION_UNIT, PARSED_FILE extends ParsedFile>
+        extends BaseBuilder<COMPILATION_UNIT, PARSED_FILE> {
 
-    private final Parser<COMPILATION_UNIT> parser;
-    private final CompilerModel<COMPILATION_UNIT, PARSED_FILE> compilerModel;
-    private final CompilerOptions options;
-    
-	public LanguageCompiler(
-	        Parser<COMPILATION_UNIT> parser,
+	public ModulesBuilder(
+	        LanguageSpec languageSpec,
 	        CompilerModel<COMPILATION_UNIT, PARSED_FILE> compilerModel,
 	        CompilerOptions options) {
-		
-	    Objects.requireNonNull(parser);
-	    Objects.requireNonNull(compilerModel);
-	    Objects.requireNonNull(options);
 	    
-	    this.parser = parser;
-	    this.compilerModel = compilerModel;
-	    this.options = options;
+	    super(languageSpec, compilerModel, options);
 	}
 
 	public ResolvedModule<PARSED_FILE, ResolveError> compile(
@@ -73,7 +60,7 @@ public final class LanguageCompiler<COMPILATION_UNIT, PARSED_FILE extends Parsed
 		        = new TargetBuilderAllModules<>();
 		
 		final AllModulesCompiler<PARSED_FILE, SynchronizedCompilerCodeMap, ResolveError> allModulesCompiler
-		    = new AllModulesCompilerImpl<>(parser, compilerModel, options);
+		    = new AllModulesCompilerImpl<>(getParser(), getCompilerModel(), getOptions());
 		
 		final AllModulesBuildContext<PARSED_FILE, SynchronizedCompilerCodeMap, ResolveError> context
 		    = new AllModulesBuildContext<>(allModulesCompiler, inputs, codeMap);
@@ -119,14 +106,4 @@ public final class LanguageCompiler<COMPILATION_UNIT, PARSED_FILE extends Parsed
 		
 		return resolvedModules;
 	}
-
-    public static void addBuiltinTypesToCodeMap(LanguageSpec languageSpec, CompilerCodeMap codeMap) {
-        
-        for (TypeName builtinTypeName : languageSpec.getBuiltinTypes()) {
-
-            final int typeNo = codeMap.addType(TypeVariant.BUILTIN);
-
-            codeMap.addTypeMapping(builtinTypeName, typeNo);
-        }
-    }
 }

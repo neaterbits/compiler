@@ -27,16 +27,17 @@ import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.emit.EmitterState;
 import com.neaterbits.compiler.emit.ProgramEmitter;
-import com.neaterbits.compiler.java.JavaRecursiveParser;
-import com.neaterbits.compiler.java.JavaUtil;
 import com.neaterbits.compiler.language.java.JavaLanguageSpec;
+import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.main.lib.LibPlaceholder;
-import com.neaterbits.compiler.resolver.build.LanguageCompiler;
+import com.neaterbits.compiler.model.objects.ObjectsCompilerModel;
+import com.neaterbits.compiler.resolver.build.ModulesBuilder;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParseError;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.compiler.util.parse.Parser;
 import com.neaterbits.compiler.util.parse.parsers.DirectoryParser;
 import com.neaterbits.compiler.util.parse.parsers.FileTypeParser;
 import com.neaterbits.compiler.util.parse.parsers.ProgramParser;
@@ -52,19 +53,28 @@ public abstract class BaseJavaCompilerTest {
 
         this.codeMap = new IntCompilerCodeMap();
         
-        LanguageCompiler.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
+        ModulesBuilder.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
     }
     
-    private JavaRecursiveParser<CompilationUnit> createParser() {
+    private Parser<CompilationUnit> createParser() {
         
-        return new JavaRecursiveParser<>(
-                JavaUtil.createListener(codeMap::getTypeNoByTypeName));
+        final JavaLanguageSpec languageSpec = JavaLanguageSpec.INSTANCE;
+        
+        final ObjectsCompilerModel compilerModel = new ObjectsCompilerModel(
+                languageSpec,
+                JavaTypes.getBuiltinTypes(),
+                codeMap::getTypeNoByTypeName);
+
+        final Parser<CompilationUnit> parser
+            = languageSpec.createParser(compilerModel);
+        
+        return parser;
     }
-
+    
 	final CompilationUnit compile(String fileName) throws IOException, ParserException {
-
-		final JavaRecursiveParser<CompilationUnit> parser = createParser();
-
+	    
+	    final Parser<CompilationUnit> parser = createParser();
+	    
 		final List<ParseError> errors = new ArrayList<>();
 
 		final CompilationUnit compilationUnit;

@@ -6,9 +6,8 @@ import java.io.InputStream;
 
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
-import com.neaterbits.compiler.java.ObjectJavaParser;
 import com.neaterbits.compiler.language.java.JavaLanguageSpec;
-import com.neaterbits.compiler.resolver.build.LanguageCompiler;
+import com.neaterbits.compiler.resolver.build.ModulesBuilder;
 import com.neaterbits.util.parse.ParserException;
 
 public class TestJavaParserWithObjectParserListener extends BaseJavaParserTest {
@@ -20,7 +19,7 @@ public class TestJavaParserWithObjectParserListener extends BaseJavaParserTest {
         
         final IntCompilerCodeMap codeMap = new IntCompilerCodeMap();
         
-        LanguageCompiler.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
+        ModulesBuilder.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
 
         final JavaRecursiveParserHelper<CompilationUnit> parser = new ObjectJavaParser(codeMap::getTypeNoByTypeName);
         

@@ -8,8 +8,10 @@ import com.neaterbits.compiler.model.common.ImportsModel;
 import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.ResolveTypesModel;
 import com.neaterbits.compiler.model.common.passes.CompilerModel;
+import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.parse.CompileError;
+import com.neaterbits.util.io.strings.Tokenizer;
 
 public final class EncodedCompilerModel
     implements CompilerModel<EncodedCompilationUnit, EncodedParsedFile> {
@@ -47,6 +49,12 @@ public final class EncodedCompilerModel
 
     @Override
     public ResolveTypesModel<EncodedCompilationUnit> getResolveTypesModel() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IterativeParseTreeListener<EncodedCompilationUnit> createParserListener(String file, Tokenizer tokenizer) {
         // TODO Auto-generated method stub
         return null;
     }

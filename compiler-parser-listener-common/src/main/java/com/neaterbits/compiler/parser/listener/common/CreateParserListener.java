@@ -4,6 +4,6 @@ import com.neaterbits.util.io.strings.Tokenizer;
 
 public interface CreateParserListener<COMPILATION_UNIT> {
 
-    IterativeParseTreeListener<COMPILATION_UNIT> create(String file, Tokenizer tokenizer);
+    IterativeParseTreeListener<COMPILATION_UNIT> createParserListener(String file, Tokenizer tokenizer);
     
 }

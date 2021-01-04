@@ -12,7 +12,7 @@ import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
-import com.neaterbits.compiler.resolver.build.LanguageCompiler;
+import com.neaterbits.compiler.resolver.build.ModulesBuilder;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.StringSourceFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
@@ -43,7 +43,7 @@ public class TestJavaParserWithEncodeParserListener extends BaseJavaParserTest {
         
         final IntCompilerCodeMap codeMap = new IntCompilerCodeMap();
         
-        LanguageCompiler.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
+        ModulesBuilder.addBuiltinTypesToCodeMap(JavaLanguageSpec.INSTANCE, codeMap);
 
         final ASTParseTreeFactory parseTreeFactory = new ASTParseTreeFactory(
                 JavaTypes.getBuiltinTypes(),

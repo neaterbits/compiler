@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.neaterbits.compiler.java.ObjectJavaParser;
 import com.neaterbits.util.parse.ParserException;
 
 public class TestSourceFile {

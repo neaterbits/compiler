@@ -4,11 +4,12 @@ import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.model.common.ImportsModel;
 import com.neaterbits.compiler.model.common.ParsedFileCreator;
 import com.neaterbits.compiler.model.common.ResolveTypesModel;
+import com.neaterbits.compiler.parser.listener.common.CreateParserListener;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 
 public interface CompilerModel<COMPILATION_UNIT, PARSED_FILE extends ParsedFile>
-        extends ParsedFileCreator<PARSED_FILE, COMPILATION_UNIT> {
+        extends ParsedFileCreator<PARSED_FILE, COMPILATION_UNIT>, CreateParserListener<COMPILATION_UNIT> {
 
     FileSpec getFileSpec(PARSED_FILE parsedFile);
     

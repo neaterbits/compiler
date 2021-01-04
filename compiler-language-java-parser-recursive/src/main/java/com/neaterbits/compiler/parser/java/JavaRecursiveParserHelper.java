@@ -29,7 +29,8 @@ public class JavaRecursiveParserHelper<COMPILATION_UNIT> {
         
         final StringBuffers stringBuffers = new StringBuffers(new SimpleLoadStream(inputStream));
         
-        final IterativeParseTreeListener<COMPILATION_UNIT> listener = createListener.create(file, stringBuffers);
+        final IterativeParseTreeListener<COMPILATION_UNIT> listener
+            = createListener.createParserListener(file, stringBuffers);
 
         final Lexer<JavaToken, CharInput> lexer = new Lexer<>(
                 stringBuffers,
@@ -39,7 +40,8 @@ public class JavaRecursiveParserHelper<COMPILATION_UNIT> {
                 new JavaToken[] { JavaToken.WS },
                 new JavaToken[] { JavaToken.C_COMMENT, JavaToken.CPP_COMMENT });
      
-        final JavaLexerParser<COMPILATION_UNIT> lexerParser = new JavaLexerParser<>(file, lexer, stringBuffers, listener);
+        final JavaLexerParser<COMPILATION_UNIT> lexerParser
+            = new JavaLexerParser<>(file, lexer, stringBuffers, listener);
         
         return lexerParser.parse();
     }

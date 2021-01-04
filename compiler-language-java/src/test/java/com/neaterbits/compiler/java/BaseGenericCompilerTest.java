@@ -27,20 +27,20 @@ import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResource;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
+import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory.GetBuiltinTypeNo;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.CompileFileCollector.CompileFile;
 import com.neaterbits.compiler.java.resolve.TestResolvedTypes;
 import com.neaterbits.compiler.model.common.passes.ParsedFiles;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.build.CompilerOptions;
-import com.neaterbits.compiler.resolver.build.LanguageCompiler;
+import com.neaterbits.compiler.resolver.build.ModulesBuilder;
 import com.neaterbits.compiler.resolver.util.CompilerLanguage;
 import com.neaterbits.compiler.types.FieldInfo;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.parse.CompileError;
 import com.neaterbits.compiler.util.parse.ParsedFile;
-import com.neaterbits.compiler.util.parse.Parser;
 import com.neaterbits.util.IOUtils;
 import com.neaterbits.util.parse.ParserException;
 
@@ -48,10 +48,8 @@ public abstract class BaseGenericCompilerTest<
             COMPILATION_UNIT,
             PARSED_FILE extends ParsedFile> {
     
-    protected abstract Parser<COMPILATION_UNIT> createParser(IntCompilerCodeMap codeMap);
-    
     protected abstract CompilerLanguage<COMPILATION_UNIT, PARSED_FILE> 
-        createCompilerLanguage();
+        createCompilerLanguage(GetBuiltinTypeNo getBuiltinTypeNo);
 
 	protected final CompiledAndResolvedFile compile(String file, String text, TestResolvedTypes resolvedTypes) throws IOException, ParserException {
 		
@@ -139,12 +137,12 @@ public abstract class BaseGenericCompilerTest<
         
         final CompileModule compileModule = new CompileModule(
                 projectModuleResourcePath,
-                Charset.defaultCharset(),
                 f.stream()
                     .map(path -> new SourceFileResourcePath(
                             sourceHolderResourcePath,
                             new SourceFileResource(path)))
                     .collect(Collectors.toList()),
+                Charset.defaultCharset(),
                 Collections.emptyList(),
                 Collections.emptyList());
         
@@ -163,13 +161,16 @@ public abstract class BaseGenericCompilerTest<
 	    
 	    final CompileModule toCompile = makeCompileModule(files, fileSpecMap, fileToName);
 	    
-	    final Parser<COMPILATION_UNIT> parser = createParser(codeMap);
+	    final CompilerLanguage<COMPILATION_UNIT, PARSED_FILE> compilerLanguage
+	        = createCompilerLanguage(codeMap::getTypeNoByTypeName);
 
-	    final CompilerLanguage<COMPILATION_UNIT, PARSED_FILE> compilerLanguage = createCompilerLanguage();
-	    
-		final LanguageCompiler<COMPILATION_UNIT, PARSED_FILE> compiler
-				= new LanguageCompiler<>(
-				        parser,
+        ModulesBuilder.addBuiltinTypesToCodeMap(
+                compilerLanguage.getLanguageSpec(),
+                codeMap);
+
+		final ModulesBuilder<COMPILATION_UNIT, PARSED_FILE> compiler
+				= new ModulesBuilder<>(
+				        compilerLanguage.getLanguageSpec(),
 				        compilerLanguage.getModel(),
 				        new CompilerOptions(true));
 		
