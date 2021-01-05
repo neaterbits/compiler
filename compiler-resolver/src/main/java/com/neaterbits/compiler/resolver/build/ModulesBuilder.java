@@ -12,7 +12,7 @@ import com.neaterbits.build.strategies.compilemodules.CompileModule;
 import com.neaterbits.build.strategies.compilemodules.ResolveModule;
 import com.neaterbits.build.strategies.compilemodules.ResolvedModule;
 import com.neaterbits.build.strategies.compilemodules.TargetBuilderAllModules;
-import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.SynchronizedCompilerCodeMap;
 import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.passes.CompilerModel;
@@ -38,7 +38,7 @@ public final class ModulesBuilder<COMPILATION_UNIT, PARSED_FILE extends ParsedFi
 
 	public ResolvedModule<PARSED_FILE, ResolveError> compile(
 	        CompileModule module,
-	        IntCompilerCodeMap codeMap) throws IOException, ParserException {
+	        CompilerCodeMap codeMap) throws IOException, ParserException {
 	    
 	    Objects.requireNonNull(module);
 	    
@@ -46,7 +46,7 @@ public final class ModulesBuilder<COMPILATION_UNIT, PARSED_FILE extends ParsedFi
 	}
 
     public List<ResolvedModule<PARSED_FILE, ResolveError>>
-    compile(List<CompileModule> inputs, IntCompilerCodeMap intCodeMap) {
+    compile(List<CompileModule> inputs, CompilerCodeMap intCodeMap) {
 		
 		Objects.requireNonNull(inputs);
 		

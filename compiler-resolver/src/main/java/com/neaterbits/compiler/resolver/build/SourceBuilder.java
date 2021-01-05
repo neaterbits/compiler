@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 import com.neaterbits.build.strategies.compilemodules.ParsedModule;
 import com.neaterbits.build.strategies.compilemodules.ParsedWithCachedRefs;
-import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.codemap.compiler.SynchronizedCompilerCodeMap;
 import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.passes.CompilerModel;
@@ -36,7 +36,7 @@ public final class SourceBuilder<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
     public ResolvedSourceModule<PARSED_FILE>
     compile(
             SourceModule inputModule,
-            IntCompilerCodeMap intCodeMap,
+            CompilerCodeMap intCodeMap,
             Function<CompileSource, File> createFile) throws IOException, ParserException {
 
         Objects.requireNonNull(inputModule);
