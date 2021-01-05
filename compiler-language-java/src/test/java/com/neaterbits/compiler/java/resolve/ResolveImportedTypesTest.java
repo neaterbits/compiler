@@ -11,11 +11,11 @@ import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
-import com.neaterbits.compiler.java.BaseCompilerTest;
-import com.neaterbits.compiler.java.CompileFileCollector;
-import com.neaterbits.compiler.java.CompiledAndMappedFiles;
-import com.neaterbits.compiler.java.CompiledAndResolvedFile;
 import com.neaterbits.compiler.java.TestFile;
+import com.neaterbits.compiler.java.compile.BaseCompilerTest;
+import com.neaterbits.compiler.java.compile.CompileFileCollector;
+import com.neaterbits.compiler.java.compile.CompiledAndMappedFiles;
+import com.neaterbits.compiler.java.compile.CompiledAndResolvedFile;
 import com.neaterbits.util.parse.ParserException;
 
 public class ResolveImportedTypesTest extends BaseCompilerTest {

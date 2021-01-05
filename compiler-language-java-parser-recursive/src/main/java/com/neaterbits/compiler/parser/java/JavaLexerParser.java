@@ -11,7 +11,6 @@ import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.Lexer;
 import com.neaterbits.util.parse.ParserException;
-import com.neaterbits.util.parse.context.Context;
 
 final class JavaLexerParser<COMPILATION_UNIT> extends JavaEnumLexerParser<COMPILATION_UNIT> {
 

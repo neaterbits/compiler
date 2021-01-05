@@ -7,10 +7,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.java.BaseCompilerTest;
-import com.neaterbits.compiler.java.CompiledAndMappedFiles;
 import com.neaterbits.compiler.java.JavaUtil;
 import com.neaterbits.compiler.java.TestFile;
+import com.neaterbits.compiler.java.compile.BaseCompilerTest;
+import com.neaterbits.compiler.java.compile.CompiledAndMappedFiles;
 import com.neaterbits.compiler.types.FieldInfo;
 import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.Visibility;

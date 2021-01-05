@@ -7,32 +7,36 @@ import java.util.Objects;
 import com.neaterbits.build.strategies.compilemodules.BaseCompileModule;
 import com.neaterbits.build.types.dependencies.LibraryDependency;
 import com.neaterbits.build.types.dependencies.ProjectDependency;
+import com.neaterbits.util.coll.Coll;
 
-final class SourceModule extends BaseCompileModule {
+public final class SourceModule extends BaseCompileModule {
 
-    private final String source;
-    private final String fileName;
+    private final List<CompileSource> sources;
     
     public SourceModule(
-            String source,
-            String fileName,
+            List<CompileSource> sources,
             Charset charset,
             List<ProjectDependency> projectDependencies,
             List<LibraryDependency> libraryDependencies) {
     
         super(charset, projectDependencies, libraryDependencies);
     
-        Objects.requireNonNull(source);
+        Objects.requireNonNull(sources);
         
-        this.source = source;
-        this.fileName = fileName;
+        this.sources = Coll.immutable(sources);
     }
 
-    String getSource() {
-        return source;
+    public List<CompileSource> getSources() {
+        return sources;
     }
 
-    String getFileName() {
-        return fileName;
+    public CompileSource getCompileSource(String name) {
+        
+        Objects.requireNonNull(name);
+        
+        return sources.stream()
+                .filter(source -> source.getFileName().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -1,11 +1,13 @@
 package com.neaterbits.compiler.resolver.build;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 import com.neaterbits.build.strategies.compilemodules.ParsedModule;
 import com.neaterbits.build.strategies.compilemodules.ParsedWithCachedRefs;
@@ -31,43 +33,57 @@ public final class SourceBuilder<COMPILATION_UNIT, PARSED_FILE extends ParsedFil
         super(languageSpec, compilerModel, options);
     }
 
-    public ParsedWithCachedRefs<PARSED_FILE, ResolveError>
-    compile(SourceModule input, IntCompilerCodeMap intCodeMap) throws IOException, ParserException {
-        
-        Objects.requireNonNull(input);
-        
+    public ResolvedSourceModule<PARSED_FILE>
+    compile(
+            SourceModule inputModule,
+            IntCompilerCodeMap intCodeMap,
+            Function<CompileSource, File> createFile) throws IOException, ParserException {
+
+        Objects.requireNonNull(inputModule);
+        Objects.requireNonNull(intCodeMap);
+
         final SynchronizedCompilerCodeMap codeMap = new SynchronizedCompilerCodeMap(intCodeMap);
 
-        final IntList types = new IntList();
-        
-        final byte [] bytes = input.getSource().getBytes(input.getCharset());
-        
-        final InputStream stream
-            = new ByteArrayInputStream(bytes);
-        
-        final ParsedWithCachedRefs<PARSED_FILE, ResolveError> parsed
-            = ParseFileHelper.parse(
-                stream,
-                input.getCharset(),
-                input.getFileName(),
-                null,
-                getParser(),
-                types,
-                codeMap,
-                getCompilerModel());
-        
-        final ParsedModule<PARSED_FILE, ResolveError> module
-            = new ParsedModule<>(Arrays.asList(parsed));
-        
+        final List<ParsedWithCachedRefs<PARSED_FILE, ResolveError>> parsedFiles
+            = new ArrayList<>(inputModule.getSources().size());
+
+        for (CompileSource input : inputModule.getSources()) {
+
+            final IntList types = new IntList();
+            
+            final byte [] bytes = input.getSource().getBytes(inputModule.getCharset());
+            
+            final InputStream stream
+                = new ByteArrayInputStream(bytes);
+            
+            final ParsedWithCachedRefs<PARSED_FILE, ResolveError> parsed
+
+                = ParseFileHelper.parse(
+                    stream,
+                    inputModule.getCharset(),
+                    input.getFileName(),
+                    createFile.apply(input),
+                    getParser(),
+                    types,
+                    codeMap,
+                    getCompilerModel());
+
+            parsedFiles.add(parsed);
+        }
+
+        final ParsedModule<PARSED_FILE, ResolveError> parsedModule
+            = new ParsedModule<>(parsedFiles);
+
         final List<ResolveError> resolveErrors
             = ResolvePassesHelper.resolveParseTreeInPlaceFromCodeMap(
-                module,
+                parsedModule,
                 getCompilerModel().getCompilationUnitModel(),
                 codeMap,
                 getOptions());
 
-        parsed.getResolveErrorsList().addAll(resolveErrors);
-        
-        return parsed;
+        return new ResolvedSourceModule<>(
+                inputModule,
+                parsedModule,
+                resolveErrors);
     }
 }

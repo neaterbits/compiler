@@ -12,8 +12,8 @@ import com.neaterbits.compiler.ast.objects.expression.UnresolvedMethodInvocation
 import com.neaterbits.compiler.ast.objects.expression.PrimaryList;
 import com.neaterbits.compiler.ast.objects.expression.literal.UnresolvedNamePrimary;
 import com.neaterbits.compiler.ast.objects.statement.ReturnStatement;
-import com.neaterbits.compiler.java.BaseCompilerTest;
-import com.neaterbits.compiler.java.CompiledAndResolvedFile;
+import com.neaterbits.compiler.java.compile.BaseCompilerTest;
+import com.neaterbits.compiler.java.compile.CompiledAndResolvedFile;
 import com.neaterbits.util.parse.ParserException;
 
 // Test various compile and resolve issues

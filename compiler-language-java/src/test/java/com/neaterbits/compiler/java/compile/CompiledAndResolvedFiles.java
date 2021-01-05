@@ -1,4 +1,6 @@
-package com.neaterbits.compiler.java;
+package com.neaterbits.compiler.java.compile;
+
+import com.neaterbits.compiler.java.TestFile;
 
 interface CompiledAndResolvedFiles {
 

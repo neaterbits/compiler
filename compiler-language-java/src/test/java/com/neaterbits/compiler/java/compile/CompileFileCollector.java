@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.java;
+package com.neaterbits.compiler.java.compile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.Objects;
 import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.compiler.java.TestFile;
 import com.neaterbits.compiler.java.resolve.TestResolvedTypes;
 import com.neaterbits.util.parse.ParserException;
 

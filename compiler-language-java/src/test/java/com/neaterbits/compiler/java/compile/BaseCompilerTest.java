@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.java;
+package com.neaterbits.compiler.java.compile;
 
 import java.io.IOException;
 
@@ -6,6 +6,8 @@ import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory.GetBuiltinTypeNo;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.parser.ASTParsedFile;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.compiler.java.JavaCompilerLanguage;
+import com.neaterbits.compiler.java.TestFile;
 import com.neaterbits.compiler.java.resolve.TestResolvedTypes;
 import com.neaterbits.compiler.resolver.util.CompilerLanguage;
 import com.neaterbits.util.parse.ParserException;
