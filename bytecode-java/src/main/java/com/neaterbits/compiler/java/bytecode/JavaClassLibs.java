@@ -18,6 +18,7 @@ public final class JavaClassLibs implements ClassLibs {
 		this.classpath = new ArrayList<>(classpath.size());
 		
 		for (String path : classpath) {
+		    
 			final File file = new File(path);
 
 			final JavaClassLib classLib;

@@ -30,9 +30,11 @@ public final class JavaRecursiveParser<COMPILATION_UNIT>
             StringSourceInputStream stream,
             Collection<ParseError> errors,
             String file,
-            ParseLogger parseLogger) throws IOException, ParserException {
+            ParseLogger parseLogger)
+                        throws IOException, ParserException {
 
-        final JavaRecursiveParserHelper<COMPILATION_UNIT> parser = new JavaRecursiveParserHelper<>(createListener);
+        final JavaRecursiveParserHelper<COMPILATION_UNIT> parser
+            = new JavaRecursiveParserHelper<>(createListener);
         
         return parser.parse(file, stream);
     }
