@@ -2,6 +2,7 @@ package com.neaterbits.compiler.codemap;
 
 import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.util.Bits;
 

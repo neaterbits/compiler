@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.resolver.passes.typefinder;
 
-import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.resolver.passes.TypeScope;
+import com.neaterbits.compiler.types.TypeVariant;
 
 final class FoundTypeScope extends TypeScope {
 

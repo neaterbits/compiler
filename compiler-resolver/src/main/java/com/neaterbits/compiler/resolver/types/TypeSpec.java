@@ -2,7 +2,7 @@ package com.neaterbits.compiler.resolver.types;
 
 import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.types.TypeVariant;
 
 public final class TypeSpec extends BaseTypeInfo {
 

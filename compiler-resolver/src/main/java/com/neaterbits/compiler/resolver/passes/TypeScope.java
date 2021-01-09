@@ -2,7 +2,7 @@ package com.neaterbits.compiler.resolver.passes;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.types.TypeVariant;
 
 public class TypeScope extends TypeVisitorScope {
 

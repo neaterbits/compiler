@@ -10,6 +10,7 @@ import static com.neaterbits.compiler.codemap.Encode.encodeType;
 import java.util.Objects;
 
 import com.neaterbits.compiler.codemap.Encode.TypeTest;
+import com.neaterbits.compiler.types.TypeVariant;
 
 final class TypeHierarchy {
 

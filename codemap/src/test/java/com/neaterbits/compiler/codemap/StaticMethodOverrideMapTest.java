@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import com.neaterbits.compiler.codemap.MethodOverrideMap.GetExtendedTypesEncoded;
 import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.TypeVariant;
 
 public class StaticMethodOverrideMapTest {
 

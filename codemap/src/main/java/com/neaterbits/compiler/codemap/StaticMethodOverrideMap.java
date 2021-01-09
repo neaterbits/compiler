@@ -7,6 +7,8 @@ import static com.neaterbits.compiler.codemap.Encode.decodeTypeNo;
 import static com.neaterbits.compiler.codemap.Encode.encodeMethodWithMethodVariant;
 import static com.neaterbits.compiler.codemap.Encode.getTypeVariant;
 
+import com.neaterbits.compiler.types.TypeVariant;
+
 public final class StaticMethodOverrideMap extends MethodOverrideMap {
 
 	@Override

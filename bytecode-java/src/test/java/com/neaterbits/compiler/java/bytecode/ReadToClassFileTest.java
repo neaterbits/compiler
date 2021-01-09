@@ -18,8 +18,8 @@ import com.neaterbits.compiler.bytecode.common.loader.LoadClassParameters;
 import com.neaterbits.compiler.codemap.CodeMap;
 import com.neaterbits.compiler.codemap.DynamicMethodOverrideMap;
 import com.neaterbits.compiler.codemap.IntCodeMap;
-import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.java.bytecode.reader.BaseClassFileReaderTest;
+import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.compiler.util.Strings;
 
 public class ReadToClassFileTest extends BaseClassFileReaderTest {

@@ -8,6 +8,7 @@ import com.neaterbits.compiler.codemap.CodeMap.MethodFilter;
 import com.neaterbits.compiler.codemap.MethodMap.GetSuperType;
 import com.neaterbits.compiler.types.MethodInfo;
 import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.TypeVariant;
 
 public class MethodMapTest {
 

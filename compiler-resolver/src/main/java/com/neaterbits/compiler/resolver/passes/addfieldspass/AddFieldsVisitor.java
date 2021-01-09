@@ -3,12 +3,12 @@ package com.neaterbits.compiler.resolver.passes.addfieldspass;
 import java.util.Objects;
 
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.TypeMemberVisitor;
 import com.neaterbits.compiler.resolver.passes.BaseTypeVisitor;
 import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.compiler.types.Visibility;
 
 final class AddFieldsVisitor extends BaseTypeVisitor implements TypeMemberVisitor {

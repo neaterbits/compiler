@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.codemap;
+package com.neaterbits.compiler.types;
 
 public enum TypeVariant {
 

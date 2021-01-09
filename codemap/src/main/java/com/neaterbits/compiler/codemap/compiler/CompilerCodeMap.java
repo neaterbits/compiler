@@ -4,8 +4,8 @@ import com.neaterbits.build.types.TypeName;
 import com.neaterbits.build.types.TypesMap;
 import com.neaterbits.compiler.codemap.CodeMap;
 import com.neaterbits.compiler.codemap.TypeInfo;
-import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.types.MethodInfo;
+import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.compiler.util.model.CrossReferenceGetters;
 
 public interface CompilerCodeMap extends CodeMap, CrossReferenceUpdater, CrossReferenceGetters, CompilerCodeMapGetters {

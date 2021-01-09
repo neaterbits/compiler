@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.TestFile;
 import com.neaterbits.compiler.java.resolve.TestResolvedTypes;
+import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.util.parse.ParserException;
 
 public class CompileFileCollector<COMPILATION_UNIT> {

@@ -3,10 +3,10 @@ package com.neaterbits.compiler.resolver.build;
 import java.util.Objects;
 
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.passes.CompilerModel;
+import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.compiler.util.parse.ParsedFile;
 import com.neaterbits.compiler.util.parse.Parser;
 

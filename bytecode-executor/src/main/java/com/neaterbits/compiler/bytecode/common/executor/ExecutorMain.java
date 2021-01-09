@@ -13,7 +13,7 @@ import com.neaterbits.compiler.bytecode.common.loader.codemap.IntLoaderCodeMap;
 import com.neaterbits.compiler.bytecode.common.loader.codemap.LoaderCodeMap;
 import com.neaterbits.compiler.codegen.common.CodeGenerator;
 import com.neaterbits.compiler.codemap.DynamicMethodOverrideMap;
-import com.neaterbits.compiler.codemap.TypeVariant;
+import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.compiler.util.FieldType;
 
 public class ExecutorMain<CLASS, METHOD> {

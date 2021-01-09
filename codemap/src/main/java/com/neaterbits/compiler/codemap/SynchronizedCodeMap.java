@@ -6,6 +6,7 @@ import com.neaterbits.compiler.types.FieldInfo;
 import com.neaterbits.compiler.types.MethodInfo;
 import com.neaterbits.compiler.types.MethodVariant;
 import com.neaterbits.compiler.types.Mutability;
+import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.compiler.types.Visibility;
 
 public class SynchronizedCodeMap implements CodeMap {

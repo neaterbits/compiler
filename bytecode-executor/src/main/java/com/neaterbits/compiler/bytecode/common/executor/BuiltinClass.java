@@ -9,8 +9,8 @@ import com.neaterbits.compiler.bytecode.common.BaseClassFile;
 import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 import com.neaterbits.compiler.bytecode.common.ClassMethod;
 import com.neaterbits.compiler.bytecode.common.MethodClassReferenceScanner;
-import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.compiler.util.FieldType;
 
 public abstract class BuiltinClass extends BaseClassFile implements ClassBytecode {

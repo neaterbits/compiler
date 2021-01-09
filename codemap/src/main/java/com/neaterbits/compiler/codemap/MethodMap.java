@@ -14,6 +14,7 @@ import java.util.Objects;
 import com.neaterbits.compiler.codemap.CodeMap.MethodFilter;
 import com.neaterbits.compiler.types.MethodInfo;
 import com.neaterbits.compiler.types.MethodVariant;
+import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.compiler.util.Hash;
 import com.neaterbits.compiler.util.Hash.GetCompareValue;
 

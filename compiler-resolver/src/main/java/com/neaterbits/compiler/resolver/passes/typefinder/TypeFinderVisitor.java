@@ -5,10 +5,10 @@ import java.util.Objects;
 
 import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.TypeVariant;
 import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.TypeVisitor;
 import com.neaterbits.compiler.resolver.passes.BaseTypeVisitor;
+import com.neaterbits.compiler.types.TypeVariant;
 
 public class TypeFinderVisitor extends BaseTypeVisitor implements TypeVisitor {
 
