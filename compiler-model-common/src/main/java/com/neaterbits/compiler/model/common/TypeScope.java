@@ -1,4 +1,4 @@
-package com.neaterbits.compiler.resolver.passes;
+package com.neaterbits.compiler.model.common;
 
 import java.util.Objects;
 

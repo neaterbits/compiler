@@ -1,9 +1,8 @@
-package com.neaterbits.compiler.resolver.passes;
+package com.neaterbits.compiler.model.common;
 
 import java.util.Objects;
 
 import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.model.common.TypeVisitor;
 import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.util.ArrayStack;
 
