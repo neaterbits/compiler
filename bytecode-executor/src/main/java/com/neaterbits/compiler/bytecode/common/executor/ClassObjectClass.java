@@ -4,7 +4,7 @@ import com.neaterbits.compiler.bytecode.common.ClassBytecode;
 
 final class ClassObjectClass extends BuiltinClass implements ClassBytecode {
 
-	ClassObjectClass(LanguageClassTypes languageClassTypes) {
+    ClassObjectClass(LanguageClassTypes languageClassTypes) {
 
 		super(languageClassTypes.getClassTypeMethods());
 		

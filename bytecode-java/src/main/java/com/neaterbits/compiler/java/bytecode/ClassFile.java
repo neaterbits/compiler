@@ -22,6 +22,7 @@ import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.compiler.util.FieldType;
 import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.ValueMap;
+import com.neaterbits.util.Counter;
 
 import static com.neaterbits.compiler.java.bytecode.JavaBytecodes.*;
 
@@ -41,7 +42,12 @@ public class ClassFile extends BaseClassFile implements ClassBytecode, ClassFile
 	private Field [] fields;
 	private Method [] methods;
 	
-	protected final String getUTF8(int index) {
+    @Override
+    public final TypeName getTypeName() {
+        return getTypeName(thisClass);
+    }
+
+    protected final String getUTF8(int index) {
 		return constantPoolStrings[(int)getValueInConstantPool(index, ConstantPoolTag.UTF8)];
 	}
 	
@@ -155,11 +161,12 @@ public class ClassFile extends BaseClassFile implements ClassBytecode, ClassFile
 			if (classNameEndIndex < 0) {
 				throw new IllegalArgumentException();
 			}
-			encodedTypeLength = classNameEndIndex + 1;
+
+			encodedTypeLength = classNameEndIndex - index + 1;
 			break;
 			
 		case '[':
-			encodedTypeLength = getEncodedTypeLength(encodedTypes, index + 1);
+			encodedTypeLength = getEncodedTypeLength(encodedTypes, index + 1) + 1;
 			break;
 			
 		default:
@@ -243,6 +250,18 @@ public class ClassFile extends BaseClassFile implements ClassBytecode, ClassFile
 	}
 	
 	@Override
+    public int getMethodParameterCount(int methodIdx) {
+
+	    final Counter counter = new Counter(0);
+
+	    getMethodDescriptorTypes(
+	            methods[methodIdx].getDescriptorIndex(),
+	            parameterType -> counter.increase());
+
+	    return counter.get();
+    }
+
+    @Override
 	public FieldType getMethodReturnType(int methodIdx) {
 		final String descriptor = getUTF8(methods[methodIdx].getDescriptorIndex());
 		
@@ -527,7 +546,7 @@ public class ClassFile extends BaseClassFile implements ClassBytecode, ClassFile
 		return descriptor.substring(paramsEndIndex + 1);
 	}
 
-	private static void getReferenceList(String encodedTypes, Consumer<String> onParameter) {
+	static void getReferenceList(String encodedTypes, Consumer<String> onParameter) {
 		
 		int index = 0;
 		

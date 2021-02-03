@@ -95,6 +95,14 @@ public abstract class BuiltinClass extends BaseClassFile implements ClassBytecod
 	}
 
 	@Override
+    public final int getMethodParameterCount(int methodIdx) {
+
+	    final ClassMethod method = methods.get(methodIdx);
+
+	    return method.getParameterTypes().size();
+    }
+
+    @Override
 	public final MethodVariant getMethodVariant(int methodIdx) {
 		return methods.get(methodIdx).getVariant();
 	}
@@ -141,4 +149,9 @@ public abstract class BuiltinClass extends BaseClassFile implements ClassBytecod
 	public final <T> void scanMethodClassReferences(int methodIdx, MethodClassReferenceScanner<T> scanner, T param) {
 		throw new UnsupportedOperationException();
 	}
+
+    @Override
+    public final TypeName getTypeName() {
+        throw new UnsupportedOperationException();
+    }
 }

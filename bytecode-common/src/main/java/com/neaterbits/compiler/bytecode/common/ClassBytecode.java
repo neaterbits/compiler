@@ -9,6 +9,8 @@ import com.neaterbits.compiler.util.FieldType;
 
 public interface ClassBytecode extends ClassStatics, ClassFields {
 
+    TypeName getTypeName();
+
 	TypeName getSuperClass();
 	
 	int getImplementedInterfacesCount();
@@ -24,6 +26,8 @@ public interface ClassBytecode extends ClassStatics, ClassFields {
 	String getMethodName(int methodIdx);
 	
 	FieldType getMethodSignature(int methodIdx, List<FieldType> parameterTypes);
+
+	int getMethodParameterCount(int methodIdx);
 
 	MethodVariant getMethodVariant(int methodIdx);
 	
