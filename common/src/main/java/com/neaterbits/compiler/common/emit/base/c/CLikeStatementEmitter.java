@@ -5,9 +5,10 @@ import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.AssignmentStatement;
-import com.neaterbits.compiler.common.ast.statement.CForStatement;
 import com.neaterbits.compiler.common.ast.statement.DoWhileStatement;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
+import com.neaterbits.compiler.common.ast.statement.ForExpressionList;
+import com.neaterbits.compiler.common.ast.statement.ForStatement;
 import com.neaterbits.compiler.common.ast.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.common.ast.statement.ReturnStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
@@ -116,29 +117,42 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		
 		return null;
 	}
+	
+	private void emitForExpressionList(ForExpressionList forExpressionList, T param) {
+		
+		emitListTo(param, forExpressionList.getExpressions(), ", ", expression -> {
+			emitExpression(expression, param);
+		});
+	}
 
 	@Override
-	public final Void onCFor(CForStatement statement, T param) {
+	public final Void onCFor(ForStatement statement, T param) {
 
 		param.append("for (");
 		
-		if (statement.getInitialStatement() != null) {
+		if (statement.getForInit() != null) {
 			param.append(' ');
-			emitStatement(statement.getInitialStatement(), param);
+			
+			if (statement.getForInit().getLocalVariableDeclaration() != null) {
+				emitVariableDeclarationElement(statement.getForInit().getLocalVariableDeclaration(), param);
+			}
+			else if (statement.getForInit().getExpressionList() != null) {
+				emitForExpressionList(statement.getForInit().getExpressionList(), param);
+			}
 		}
 		
 		param.append(';');
 		
 		if (statement.getCondition() != null) {
 			param.append(' ');
-			emitCondition(statement.getCondition(), param);
+			emitExpression(statement.getCondition(), param);
 		}
 		
 		param.append(';');
 		
-		if (statement.getEachStatement() != null) {
+		if (statement.getForUpdate() != null) {
 			param.append(' ');
-			emitStatement(statement.getEachStatement(), param);
+			emitForExpressionList(statement.getForUpdate(), param);
 		}
 		
 		param.append(") {").newline();

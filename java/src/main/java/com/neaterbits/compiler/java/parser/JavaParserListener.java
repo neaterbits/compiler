@@ -906,26 +906,32 @@ System.out.println("-- matched enhanced for");
 		
 		statementsStack.add(JavaStatement.FOR);
 		
+		delegate.onForStatementStart(context);
 	}
 	
 	public void onForInitStart(Context context) {
 		
+		delegate.onForInitStart(context);
 	}
 	
 	public void onForInitEnd(Context context) {
 		
+		delegate.onForInitEnd(context);
 	}
 	
 	public void onForUpdateStart(Context context) {
 		
+		delegate.onForUpdateStart(context);
 	}
 	
 	public void onForUpdateEnd(Context context) {
 		
+		delegate.onForUpdateEnd(context);
 	}
 	
 	public void onForStatementEnd(Context context) {
 		
+		delegate.onForStatementEnd(context);
 	}
 	
 	public void onIteratorForStatementStart(Context context) {

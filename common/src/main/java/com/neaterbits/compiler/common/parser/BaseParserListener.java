@@ -43,6 +43,9 @@ import com.neaterbits.compiler.common.ast.statement.CatchBlock;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
 import com.neaterbits.compiler.common.ast.statement.FieldTransient;
 import com.neaterbits.compiler.common.ast.statement.FieldVolatile;
+import com.neaterbits.compiler.common.ast.statement.ForExpressionList;
+import com.neaterbits.compiler.common.ast.statement.ForInit;
+import com.neaterbits.compiler.common.ast.statement.ForStatement;
 import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
 import com.neaterbits.compiler.common.ast.statement.ReturnStatement;
 import com.neaterbits.compiler.common.ast.statement.ThrowStatement;
@@ -125,6 +128,9 @@ import com.neaterbits.compiler.common.parser.stackstate.StackExpressionList;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackFieldDeclarationList;
 import com.neaterbits.compiler.common.parser.stackstate.StackFinallyBlock;
+import com.neaterbits.compiler.common.parser.stackstate.StackForInit;
+import com.neaterbits.compiler.common.parser.stackstate.StackForStatement;
+import com.neaterbits.compiler.common.parser.stackstate.StackForUpdate;
 import com.neaterbits.compiler.common.parser.stackstate.StackInterface;
 import com.neaterbits.compiler.common.parser.stackstate.StackInterfaceMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackIteratorForStatement;
@@ -1321,7 +1327,7 @@ public abstract class BaseParserListener {
 		
 		final StackVariableDeclaration stackDeclaration = pop();
 		
-		final Expression initializer = stackDeclaration.makeExpressionOrNull(context);
+		final Expression initializer = stackDeclaration.getExpression();
 		
 		final BaseStackVariableDeclarationList declarationList = get();
 		
@@ -1384,6 +1390,107 @@ public abstract class BaseParserListener {
 		final StatementSetter statementSetter = get();
 		
 		statementSetter.addStatement(expressionStatement);
+		
+		logExit(context);
+	}
+	
+	public final void onForStatementStart(Context context) {
+		
+		logEnter(context);
+
+		push(new StackForStatement(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onForInitStart(Context context) {
+		
+		logEnter(context);
+		
+		push(new StackForInit(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onForInitEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackForInit stackForInit = pop();
+		
+		final ForInit forInit;
+		
+		if (!stackForInit.getList().isEmpty()) {
+			
+			final InitializerVariableDeclarationElement element = stackForInit.getList().get(0);
+			
+			if (stackForInit.getExpressions().size() > 1) {
+				throw new IllegalStateException("More than one initializer expression");
+			}
+
+			forInit = new ForInit(context, element);
+		}
+		else if (!stackForInit.getExpressions().isEmpty()) {
+			forInit = new ForInit(context, new ForExpressionList(context, stackForInit.getExpressions()));
+		}
+		else {
+			forInit = null;
+		}
+		
+		if (forInit != null) {
+			final StackForStatement forStatement = get();
+			
+			forStatement.setForInit(forInit);
+		}
+		
+		
+		logExit(context);
+	}
+	
+	public final void onForUpdateStart(Context context) {
+
+		logEnter(context);
+
+		push(new StackForUpdate(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onForUpdateEnd(Context context) {
+
+		logEnter(context);
+		
+		final StackForUpdate stackForUpdate = pop();
+		
+		if (!stackForUpdate.getList().isEmpty()) {
+			final StackForStatement stackForStatement = get();
+			
+			final ForExpressionList forExpressionList = new ForExpressionList(
+					context,
+					stackForUpdate.getList());
+			
+			stackForStatement.setForUpdate(forExpressionList);
+		}
+		
+		logExit(context);
+	}
+	
+	public final void onForStatementEnd(Context context) {
+
+		logEnter(context);
+		
+		final StackForStatement stackForStatement = pop();
+		
+		final ForStatement statement = new ForStatement(
+				context,
+				stackForStatement.getForInit(),
+				stackForStatement.makeExpressionOrNull(context),
+				stackForStatement.getForUpdate(),
+				new Block(context, stackForStatement.getStatements()));
+		
+		final StatementSetter statementSetter = get();
+		
+		statementSetter.addStatement(statement);
 		
 		logExit(context);
 	}
