@@ -44,6 +44,7 @@ import com.neaterbits.compiler.common.ast.statement.FieldTransient;
 import com.neaterbits.compiler.common.ast.statement.FieldVolatile;
 import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
 import com.neaterbits.compiler.common.ast.statement.ReturnStatement;
+import com.neaterbits.compiler.common.ast.statement.ThrowStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
@@ -132,6 +133,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackParameterSignature;
 import com.neaterbits.compiler.common.parser.stackstate.StackPrimaryList;
 import com.neaterbits.compiler.common.parser.stackstate.StackResource;
 import com.neaterbits.compiler.common.parser.stackstate.StackReturnType;
+import com.neaterbits.compiler.common.parser.stackstate.StackThrowStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryBlock;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryCatchFinallyStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackTryWithResourcesStatement;
@@ -1628,6 +1630,30 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
+	public void onThrowStatementStart(Context context) {
+		
+		logEnter(context);
+		
+		push(new StackThrowStatement(logger));
+		
+		logExit(context);
+	}
+	
+	public void onThrowStatementEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackThrowStatement stackThrowStatement = pop();
+		
+		final ThrowStatement throwStatement = new ThrowStatement(context, stackThrowStatement.getExpression());
+	
+		final StatementSetter statementSetter = get();
+
+		statementSetter.addStatement(throwStatement);
+
+		logExit(context);
+	}
+	
 	// Stack methods
 	
 	protected final void push(StackEntry element) {

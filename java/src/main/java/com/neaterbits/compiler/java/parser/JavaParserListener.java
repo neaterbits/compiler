@@ -963,11 +963,11 @@ System.out.println("-- matched enhanced for");
 	}
 	
 	public void onThrowStatementStart(Context context) {
-		
+		delegate.onThrowStatementStart(context);
 	}
 	
 	public void onThrowStatementEnd(Context context) {
-		
+		delegate.onThrowStatementEnd(context);
 	}
 
 	public void onTryStatementStart(Context context) {

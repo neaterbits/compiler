@@ -10,6 +10,7 @@ import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
 import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
+import com.neaterbits.compiler.common.ast.statement.ThrowStatement;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.emit.EmitterState;
@@ -138,6 +139,18 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 		param.append(") {").newline();
 		
 		emitTryCatchAndFinallyBlocks(statement, param);
+		
+		return null;
+	}
+
+	@Override
+	public Void onThrowStatement(ThrowStatement statement, EmitterState param) {
+		
+		param.append("throw ");
+		
+		emitExpression(statement.getExpression(), param);
+		
+		param.append(';');
 		
 		return null;
 	}

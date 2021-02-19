@@ -16,6 +16,8 @@ public interface StatementVisitor<T, R> {
 	
 	R onTryWithResourcesStatement(TryWithResourcesStatement statement, T param);
 	
+	R onThrowStatement(ThrowStatement statement, T param);
+	
 	R onAssignment(AssignmentStatement statement, T param);
 
 	R onVariableDeclaration(VariableDeclarationStatement statement, T param);

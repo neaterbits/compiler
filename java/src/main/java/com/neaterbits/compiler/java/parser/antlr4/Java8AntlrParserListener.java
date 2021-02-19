@@ -1289,5 +1289,15 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitCatchClause(CatchClauseContext ctx) {
 		delegate.onCatchEnd(context(ctx));
 	}
+
+	@Override
+	public void enterThrowStatement(ThrowStatementContext ctx) {
+		delegate.onThrowStatementStart(context(ctx));
+	}
+
+	@Override
+	public void exitThrowStatement(ThrowStatementContext ctx) {
+		delegate.onThrowStatementEnd(context(ctx));
+	}
 }
 

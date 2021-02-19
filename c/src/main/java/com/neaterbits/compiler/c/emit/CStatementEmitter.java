@@ -5,6 +5,7 @@ import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
+import com.neaterbits.compiler.common.ast.statement.ThrowStatement;
 import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
@@ -52,6 +53,11 @@ final class CStatementEmitter extends CLikeStatementEmitter<EmitterState> implem
 
 	@Override
 	public Void onTryWithResourcesStatement(TryWithResourcesStatement statement, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onThrowStatement(ThrowStatement statement, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 }
