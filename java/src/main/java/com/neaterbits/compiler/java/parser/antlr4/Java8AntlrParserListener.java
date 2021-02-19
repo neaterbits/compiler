@@ -493,6 +493,26 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 	
 	@Override
+	public void exitLessThanOrEqualExpression(LessThanOrEqualExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Relational.LESS_THAN_OR_EQUALS);
+	}
+
+	@Override
+	public void exitLessThanExpression(LessThanExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Relational.LESS_THAN);
+	}
+
+	@Override
+	public void exitGreaterThanExpression(GreaterThanExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Relational.GREATER_THAN);
+	}
+
+	@Override
+	public void exitGreaterThanOrEqualExpression(GreaterThanOrEqualExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Relational.GREATER_THAN_OR_EQUALS);
+	}
+
+	@Override
 	public void enterPreIncrementExpression(PreIncrementExpressionContext ctx) {
 		delegate.onIncrementDecrementExpressionStart(context(ctx), Arithmetic.INCREMENT, Notation.PREFIX);
 	}

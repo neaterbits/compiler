@@ -1258,12 +1258,12 @@ equalityExpression
 	;
 
 relationalExpression
-	:	shiftExpression
-	|	relationalExpression '<' shiftExpression
-	|	relationalExpression '>' shiftExpression
-	|	relationalExpression '<=' shiftExpression
-	|	relationalExpression '>=' shiftExpression
-	|	relationalExpression 'instanceof' referenceType
+	:	shiftExpression									# shiftExpressionToken
+	|	relationalExpression '<' shiftExpression		# lessThanExpression
+	|	relationalExpression '>' shiftExpression		# greaterThanExpression
+	|	relationalExpression '<=' shiftExpression		# lessThanOrEqualExpression
+	|	relationalExpression '>=' shiftExpression		# greaterThanOrEqualExpression
+	|	relationalExpression 'instanceof' referenceType	# instanceOfExpression
 	;
 
 shiftExpression
