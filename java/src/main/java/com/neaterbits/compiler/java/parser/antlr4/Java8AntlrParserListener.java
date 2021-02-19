@@ -725,6 +725,16 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitExpressionMethodInvocation(ExpressionMethodInvocationContext ctx) {
 		delegate.onMethodInvocationEnd(context(ctx));
 	}
+	
+	@Override
+	public void enterSubMethodInvocation_lf_primary(SubMethodInvocation_lf_primaryContext ctx) {
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.SUB, null, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitSubMethodInvocation_lf_primary(SubMethodInvocation_lf_primaryContext ctx) {
+		delegate.onMethodInvocationEnd(context(ctx));
+	}
 
 	@Override
 	public void enterSuperMethodInvocation(SuperMethodInvocationContext ctx) {
@@ -753,6 +763,16 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void enterArgumentList(ArgumentListContext ctx) {
 		delegate.onParametersStart(context(ctx));
+	}
+	
+	@Override
+	public void enterArgument(ArgumentContext ctx) {
+		delegate.onParameterStart(context(ctx));
+	}
+
+	@Override
+	public void exitArgument(ArgumentContext ctx) {
+		delegate.onParameterEnd(context(ctx));
 	}
 
 	@Override

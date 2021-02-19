@@ -1107,7 +1107,7 @@ methodInvocation
 	;
 
 methodInvocation_lf_primary
-	:	'.' typeArguments? Identifier '(' argumentList? ')'
+	:	'.' typeArguments? Identifier '(' argumentList? ')'					# subMethodInvocation_lf_primary
 	;
 
 methodInvocation_lfno_primary
@@ -1119,8 +1119,10 @@ methodInvocation_lfno_primary
 	;
 
 argumentList
-	:	expression (',' expression)*
+	:	argument (',' argument)*
 	;
+	
+argument : expression;
 
 methodReference
 	:	expressionName '::' typeArguments? Identifier

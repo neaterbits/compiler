@@ -484,6 +484,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onParametersStart(context);
 	}
 	
+	public void onParameterStart(Context context) {
+		delegate.onParameterStart(context);
+	}
+	
+	public void onParameterEnd(Context context) {
+		delegate.onParameterEnd(context);
+	}
+	
 	public void onParametersEnd(Context context) {
 		delegate.onParametersEnd(context);
 	}

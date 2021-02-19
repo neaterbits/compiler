@@ -137,6 +137,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackIteratorForStatemen
 import com.neaterbits.compiler.common.parser.stackstate.StackClassMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethodInvocation;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
+import com.neaterbits.compiler.common.parser.stackstate.StackParameter;
 import com.neaterbits.compiler.common.parser.stackstate.StackParameterList;
 import com.neaterbits.compiler.common.parser.stackstate.StackParameterSignature;
 import com.neaterbits.compiler.common.parser.stackstate.StackPrimaryList;
@@ -1213,6 +1214,28 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
+	public final void onParameterStart(Context context) {
+		
+		logEnter(context);
+		
+		push(new StackParameter(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onParameterEnd(Context context) {
+
+		logEnter(context);
+		
+		final StackParameter stackParameter = pop();
+		
+		final StackParameterList stackParameterList = get();
+		
+		stackParameterList.addExpression(stackParameter.makeExpression(context));
+		
+		logExit(context);
+	}
+
 	public final void onParametersEnd(Context context) {
 
 		logEnter(context);

@@ -6,7 +6,9 @@ public enum MethodInvocationType {
 	VARIABLE_REFERENCE(false),
 	PRIMARY(false),
 	SUPER(false),
-	TYPED_SUPER(true);
+	TYPED_SUPER(true),
+	
+	SUB(false);
 
 	private final boolean requiresClassName;
 
