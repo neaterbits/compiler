@@ -1279,7 +1279,15 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitTryWithResources(TryWithResourcesContext ctx) {
 		delegate.onJavaTryWithResourcesEnd(context(ctx));
 	}
-	
-	
+
+	@Override
+	public void enterCatchClause(CatchClauseContext ctx) {
+		delegate.onCatchStart(context(ctx));
+	}
+
+	@Override
+	public void exitCatchClause(CatchClauseContext ctx) {
+		delegate.onCatchEnd(context(ctx));
+	}
 }
 

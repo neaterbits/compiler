@@ -8,7 +8,7 @@ import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.variables.VarName;
 import com.neaterbits.compiler.common.log.ParseLogger;
 
-public class StackCatchBlock extends StackStatements {
+public class StackCatchBlock extends StackStatements implements VariableNameSetter {
 
 	private final List<TypeReference> exceptionTypes;
 	private VarName exceptionVarName;
@@ -36,5 +36,10 @@ public class StackCatchBlock extends StackStatements {
 		Objects.requireNonNull(exceptionVarName);
 
 		this.exceptionVarName = exceptionVarName;
+	}
+
+	@Override
+	public void init(String name, int numDims) {
+		setExceptionVarName(new VarName(name));
 	}
 }

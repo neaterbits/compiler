@@ -1011,18 +1011,18 @@ System.out.println("-- matched enhanced for");
 	}
 	
 	public void onCatchStart(Context context) {
-		
+		delegate.onCatchStart(context);
 	}
 
 	public void onCatchEnd(Context context) {
-		
+		delegate.onCatchEnd(context);
 	}
 
 	public void onFinallyStart(Context context) {
-		
+		delegate.onFinallyStart(context);
 	}
 
 	public void onFinallyEnd(Context context) {
-		
+		delegate.onFinallyEnd(context);
 	}
 }
