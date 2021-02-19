@@ -21,6 +21,7 @@ import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.operator.Arithmetic;
 import com.neaterbits.compiler.common.ast.operator.Bitwise;
 import com.neaterbits.compiler.common.ast.operator.Logical;
+import com.neaterbits.compiler.common.ast.operator.Notation;
 import com.neaterbits.compiler.common.ast.operator.Relational;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
@@ -489,6 +490,46 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void exitMultiplicativeModulusExpression(MultiplicativeModulusExpressionContext ctx) {
 		delegate.onExpressionBinaryOperator(context(ctx), Arithmetic.MODULUS);
+	}
+	
+	@Override
+	public void enterPreIncrementExpression(PreIncrementExpressionContext ctx) {
+		delegate.onIncrementDecrementExpressionStart(context(ctx), Arithmetic.INCREMENT, Notation.PREFIX);
+	}
+
+	@Override
+	public void exitPreIncrementExpression(PreIncrementExpressionContext ctx) {
+		delegate.onIncrementDecrementExpressionEnd(context(ctx));
+	}
+
+	@Override
+	public void enterPreDecrementExpression(PreDecrementExpressionContext ctx) {
+		delegate.onIncrementDecrementExpressionStart(context(ctx), Arithmetic.DECREMENT, Notation.PREFIX);
+	}
+
+	@Override
+	public void exitPreDecrementExpression(PreDecrementExpressionContext ctx) {
+		delegate.onIncrementDecrementExpressionEnd(context(ctx));
+	}
+
+	@Override
+	public void enterPostIncrementExpression(PostIncrementExpressionContext ctx) {
+		delegate.onIncrementDecrementExpressionStart(context(ctx), Arithmetic.INCREMENT, Notation.POSTFIX);
+	}
+
+	@Override
+	public void exitPostIncrementExpression(PostIncrementExpressionContext ctx) {
+		delegate.onIncrementDecrementExpressionEnd(context(ctx));
+	}
+
+	@Override
+	public void enterPostDecrementExpression(PostDecrementExpressionContext ctx) {
+		delegate.onIncrementDecrementExpressionStart(context(ctx), Arithmetic.DECREMENT, Notation.POSTFIX);
+	}
+
+	@Override
+	public void exitPostDecrementExpression(PostDecrementExpressionContext ctx) {
+		delegate.onIncrementDecrementExpressionEnd(context(ctx));
 	}
 
 	@Override

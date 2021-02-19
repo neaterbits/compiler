@@ -11,6 +11,8 @@ import com.neaterbits.compiler.common.TypeReferenceType;
 import com.neaterbits.compiler.common.antlr4.ModelParserListener;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
+import com.neaterbits.compiler.common.ast.operator.Arithmetic;
+import com.neaterbits.compiler.common.ast.operator.Notation;
 import com.neaterbits.compiler.common.ast.operator.Operator;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.type.TypeName;
@@ -333,6 +335,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 	public void onExpressionBinaryOperator(Context context, Operator operator) {
 		delegate.onExpressionBinaryOperator(context, operator);
+	}
+
+	public void onIncrementDecrementExpressionStart(Context context, Arithmetic operator, Notation notation) {
+		delegate.onIncrementDecrementExpressionStart(context, operator, notation);
+	}
+
+	public void onIncrementDecrementExpressionEnd(Context context) {
+		delegate.onIncrementDecrementExpressionEnd(context);
 	}
 	
 	// Primary
