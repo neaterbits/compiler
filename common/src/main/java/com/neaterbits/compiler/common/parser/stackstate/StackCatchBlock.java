@@ -7,8 +7,9 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.variables.VarName;
 import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.common.parser.TypeReferenceSetter;
 
-public class StackCatchBlock extends StackStatements implements VariableNameSetter {
+public class StackCatchBlock extends StackStatements implements VariableNameSetter, TypeReferenceSetter {
 
 	private final List<TypeReference> exceptionTypes;
 	private VarName exceptionVarName;
@@ -21,6 +22,8 @@ public class StackCatchBlock extends StackStatements implements VariableNameSett
 	
 	public void addExceptionType(TypeReference exceptionType) {
 		Objects.requireNonNull(exceptionType);
+		
+		exceptionTypes.add(exceptionType);
 	}
 	
 	public List<TypeReference> getExceptionTypes() {
@@ -36,6 +39,11 @@ public class StackCatchBlock extends StackStatements implements VariableNameSett
 		Objects.requireNonNull(exceptionVarName);
 
 		this.exceptionVarName = exceptionVarName;
+	}
+
+	@Override
+	public void setTypeReference(TypeReference typeReference) {
+		addExceptionType(typeReference);
 	}
 
 	@Override

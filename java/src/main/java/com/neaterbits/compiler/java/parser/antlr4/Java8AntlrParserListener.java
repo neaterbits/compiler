@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
+import com.neaterbits.compiler.common.TypeReferenceType;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.NamespaceName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
@@ -933,17 +934,32 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 
 	@Override
-	public void exitClassOrInterfaceReferenceType(ClassOrInterfaceReferenceTypeContext ctx) {
-		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), ctx.getText());
+	public void enterClassType_unannClassType(ClassType_unannClassTypeContext ctx) {
+		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), TypeReferenceType.CLASS, ctx.Identifier().getText());
 	}
 
 	@Override
-	public void exitTypeVariableReferenceType(TypeVariableReferenceTypeContext ctx) {
-		delegate.onJavaTypeVariableReferenceType(context(ctx), ctx.getText());
+	public void enterNestedClassType_unannClassType(NestedClassType_unannClassTypeContext ctx) {
+		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), TypeReferenceType.NESTED_CLASS, ctx.Identifier().getText());
 	}
 
+	@Override
+	public void enterSubClassType_unannClassType_lf_unannClassOrInterfaceType(
+			SubClassType_unannClassType_lf_unannClassOrInterfaceTypeContext ctx) {
+
+		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), TypeReferenceType.SUB, ctx.Identifier().getText());
+	}
+
+	@Override
+	public void enterClassType_unannClassType_lfno_unannClassOrInterfaceType(
+			ClassType_unannClassType_lfno_unannClassOrInterfaceTypeContext ctx) {
+
+		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), TypeReferenceType.CLASS, ctx.Identifier().getText());
+	}
+	
 	
 	// Statements
+
 
 	@Override
 	public void exitFinalVariableModifier(FinalVariableModifierContext ctx) {

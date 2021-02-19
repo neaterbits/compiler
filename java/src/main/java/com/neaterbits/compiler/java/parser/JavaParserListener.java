@@ -7,6 +7,7 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.ResolvedTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.TypeReferenceType;
 import com.neaterbits.compiler.common.antlr4.ModelParserListener;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
@@ -544,17 +545,17 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onTypeReference(context, new ResolvedTypeReference(context, genericType));
 	}
 
-	public void onJavaClassOrInterfaceReferenceType(Context context, String typeName) {
+	public void onJavaClassOrInterfaceReferenceType(Context context, TypeReferenceType typeReferenceType, String typeName) {
 System.out.println("## onJavaClassOrInterfaceReferenceType");		
 		
-		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName));
+		delegate.onTypeReference(context, typeReferenceType, typeName);
 	}
 	
-	public void onJavaTypeVariableReferenceType(Context context, String typeName) {
+	public void onJavaTypeVariableReferenceType(Context context, TypeReferenceType typeReferenceType, String typeName) {
 
 System.out.println("## onJavaTypeVariableReferenceType");
 		
-		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName));
+		delegate.onTypeReference(context, typeReferenceType, typeName);
 	}
 	
 	public void onJavaIfThenStatementStart(Context context) {
@@ -784,8 +785,12 @@ System.out.println("-- matched enhanced for");
 
 			switch (statementsStack.getLastFromFrame(1)) {
 				
+			case TRY_CATCH:
+			case TRY_CATCH_FINALLY:
 			case TRY_WITH_RESOURCES:
 				delegate.onTryBlockEnd(context);
+				
+				statementsStack.pop();
 				break;
 				
 			default:
@@ -972,10 +977,16 @@ System.out.println("-- matched enhanced for");
 
 	public void onTryStatementStart(Context context) {
 		
+		statementsStack.add(JavaStatement.TRY_CATCH);
+		
+		statementsStack.push();
+		
+		delegate.onTryStatementStart(context);
 	}
 
 	public void onTryStatementEnd(Context context) {
 		
+		delegate.onTryStatementEnd(context);
 	}
 	
 	public void onJavaTryWithResourcesStart(Context context) {
@@ -1011,18 +1022,34 @@ System.out.println("-- matched enhanced for");
 	}
 	
 	public void onCatchStart(Context context) {
+		
+		statementsStack.add(JavaStatement.CATCH);
+		
+		statementsStack.push();
+		
 		delegate.onCatchStart(context);
 	}
 
 	public void onCatchEnd(Context context) {
+		
+		statementsStack.pop();
+		
 		delegate.onCatchEnd(context);
 	}
 
 	public void onFinallyStart(Context context) {
+		
+		statementsStack.add(JavaStatement.FINALLY);
+		
+		statementsStack.push();
+
 		delegate.onFinallyStart(context);
 	}
 
 	public void onFinallyEnd(Context context) {
+
+		statementsStack.pop();
+		
 		delegate.onFinallyEnd(context);
 	}
 }

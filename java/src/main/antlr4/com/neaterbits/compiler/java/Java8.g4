@@ -109,7 +109,7 @@ classOrInterfaceType
 	;
 
 classType
-	:	annotation* Identifier typeArguments?
+	:	annotation* Identifier typeArguments?								
 	|	classOrInterfaceType '.' annotation* Identifier typeArguments?
 	;
 
@@ -370,9 +370,9 @@ unannPrimitiveType
 	;
 
 unannReferenceType
-	:	unannClassOrInterfaceType	# classOrInterfaceReferenceType
-	|	unannTypeVariable			# typeVariableReferenceType
-	|	unannArrayType				# arrayReferenceType
+	:	unannClassOrInterfaceType
+	|	unannTypeVariable
+	|	unannArrayType
 	;
 
 unannClassOrInterfaceType
@@ -385,16 +385,16 @@ unannClassOrInterfaceType
 	;
 
 unannClassType
-	:	Identifier typeArguments?
-	|	unannClassOrInterfaceType '.' annotation* Identifier typeArguments?
+	:	Identifier typeArguments?												# classType_unannClassType
+	|	unannClassOrInterfaceType '.' annotation* Identifier typeArguments?		# nestedClassType_unannClassType
 	;
 
 unannClassType_lf_unannClassOrInterfaceType
-	:	'.' annotation* Identifier typeArguments?
+	:	'.' annotation* Identifier typeArguments?	# subClassType_unannClassType_lf_unannClassOrInterfaceType
 	;
 
 unannClassType_lfno_unannClassOrInterfaceType
-	:	Identifier typeArguments?
+	:	Identifier typeArguments?					# classType_unannClassType_lfno_unannClassOrInterfaceType
 	;
 
 unannInterfaceType

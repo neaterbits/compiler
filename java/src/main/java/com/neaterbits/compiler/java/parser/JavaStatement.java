@@ -20,6 +20,9 @@ enum JavaStatement {
 	TRY_CATCH_FINALLY,
 	TRY_WITH_RESOURCES,
 	
+	CATCH,
+	FINALLY,
+	
 	RETURN,
 	
 	BLOCK;

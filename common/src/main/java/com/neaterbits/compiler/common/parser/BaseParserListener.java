@@ -11,6 +11,7 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.TypeReferenceType;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationCodeLines;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
@@ -45,6 +46,7 @@ import com.neaterbits.compiler.common.ast.statement.FieldVolatile;
 import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
 import com.neaterbits.compiler.common.ast.statement.ReturnStatement;
 import com.neaterbits.compiler.common.ast.statement.ThrowStatement;
+import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
@@ -1347,6 +1349,20 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
+	public final void onTypeReference(Context context, TypeReferenceType typeReferenceType, String name) {
+
+		logEnter(context);
+		
+		Objects.requireNonNull(typeReferenceType);
+		Objects.requireNonNull(name);
+	
+		final TypeReferenceSetter typeReferenceSetter = get();
+
+		typeReferenceSetter.setTypeReference(new ResolveLaterTypeReference(context, name));
+		
+		logExit(context);
+	}
+
 	public final void onExpressionStatementStart(Context context) {
 
 		logEnter(context);
@@ -1514,6 +1530,8 @@ public abstract class BaseParserListener {
 		
 		push(new StackTryCatchFinallyStatement(logger));
 		
+		push(new StackTryBlock(logger));
+		
 		logExit(context);
 	}
 	
@@ -1578,6 +1596,25 @@ public abstract class BaseParserListener {
 		final Block finallyBlock = new Block(context, stackFinallyBlock.getList());
 		
 		baseStackTryCatchFinally.setFinallyBlock(finallyBlock);
+		
+		logExit(context);
+	}
+	
+	public final void onTryStatementEnd(Context context) {
+	
+		logEnter(context);
+		
+		final StackTryCatchFinallyStatement stackTryCatchFinallyStatement = pop();
+		
+		final TryCatchFinallyStatement statement = new TryCatchFinallyStatement(
+				context,
+				stackTryCatchFinallyStatement.getTryBlock(),
+				stackTryCatchFinallyStatement.getCatchBlocks(),
+				stackTryCatchFinallyStatement.getFinallyBlock());
+		
+		final StatementSetter statementSetter = get();
+		
+		statementSetter.addStatement(statement);
 		
 		logExit(context);
 	}
