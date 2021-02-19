@@ -2,6 +2,7 @@ package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
+import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
@@ -147,6 +148,27 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	@Override
 	public Void onIntegerLiteral(IntegerLiteral expression, EmitterState param) {
 
+		switch (expression.getBase()) {
+		case BINARY:
+			param.append("0b").append(expression.getValue(), Base.BINARY);
+			break;
+		
+		case OCTAL:
+			param.append('0').append(expression.getValue(), Base.OCTAL);
+			break;
+			
+		case DECIMAL:
+			param.append(expression.getValue(), Base.DECIMAL);
+			break;
+			
+		case HEX:
+			param.append("0x").append(expression.getValue(), Base.HEX);
+			break;
+		}
+
+		if (expression.getBits() == 64) {
+			param.append('l');
+		}
 		
 		return null;
 	}

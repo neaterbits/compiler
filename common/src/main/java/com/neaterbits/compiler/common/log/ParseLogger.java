@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.util.Strings;
 
 public final class ParseLogger {
@@ -76,6 +77,14 @@ public final class ParseLogger {
 		return out;
 	}
 	
+	public void onEnterListenerFunction(String methodName, Context context) {
+		indent().append("enter " + methodName).append(' ').append(context.getText()).println();
+	}
+	
+	public void onExitListenerFunction(String methodName, Context context) {
+		indent().append("exit " + methodName).append(' ').append(context.getText()).println();
+	}
+
 	public void onStackPush(String type) {
 
 		out.append("--");

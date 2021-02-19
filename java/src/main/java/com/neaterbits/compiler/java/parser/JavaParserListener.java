@@ -92,8 +92,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onImport(importStatement);
 	}
 	
-	public void onClassStart(String name) {
-		delegate.onClassStart(name);
+	public void onClassStart(Context context, String name) {
+		delegate.onClassStart(context, name);
 	}
 	
 	public void onVisibilityClassModifier(Context context, ClassVisibility visibility) {
@@ -502,20 +502,37 @@ System.out.println("## onJavaTypeVariableReferenceType");
 		
 		printStack("javaIfThenStatementStart");
 
+		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
+
+		if (ifOrElseStatement == JavaStatement.ELSE) {
+			
+			statementsStack.pop();
+			
+			delegate.onElseIfStatementStart(context);
+		}
+		else {
+			delegate.onIfStatementStart(context);
+		}
+
 		statementsStack.add(JavaStatement.IF_THEN);
-		
+
 		statementsStack.push();
-		
-		delegate.onIfStatementStart(context);
 
 		printStack("javaIfThenStatementStart - exit");
 	}
 
 	public void onJavaIfThenStatementEnd(Context context) {
-		printStack("javaIfThenStatementStart");
+		printStack("javaIfThenStatementEnd");
 
-		delegate.onIfStatementInitialBlockEnd(context);
+		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
 		
+		if (ifOrElseStatement == JavaStatement.ELSE) {
+			delegate.onElseIfStatementEnd(context);
+		}
+		else {
+			delegate.onIfStatementInitialBlockEnd(context);
+		}
+
 		delegate.onEndIfStatement(context);
 		
 		statementsStack.pop();
@@ -527,60 +544,148 @@ System.out.println("## onJavaTypeVariableReferenceType");
 
 		printStack("javaIfThenElseStatementStart");
 
-		if (statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE) {
+
+		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
+		
+		if (ifOrElseStatement == JavaStatement.ELSE) {
+			// Previous was if-statement so this is else-statement
 			
-			// Continuation of last if-statement
-			if (statementsStack.getLastFromFrame(1, 1) == JavaStatement.IF_THEN_ELSE) {
-				// Previous was an else-if
-				delegate.onElseIfStatementEnd(context);
-			}
-			else {
-				// Previous was an if
-				delegate.onIfStatementInitialBlockEnd(context);
-			}
-					
 			statementsStack.pop();
-			
-			statementsStack.push();
-			
+
 			delegate.onElseIfStatementStart(context);
 		}
 		else {
-			// New statment
-			statementsStack.add(JavaStatement.IF_THEN_ELSE);
-			statementsStack.push();
-
 			delegate.onIfStatementStart(context);
 		}
+
+		statementsStack.add(JavaStatement.IF_THEN_ELSE_START);
+
+		statementsStack.push();
 	}
 
 	public void onJavaIfThenElseStatementEnd(Context context) {
-		
-		statementsStack.pop();
 
 		printStack("javaIfThenElseStatementEnd");
+
 	}
+	
+	final JavaStatement getIfOrElseStatement(int i) {
+
+		return 	   statementsStack.size() > 1
+				&& statementsStack.getSizeOfFrame(1) > 0 + i
+
+			? statementsStack.getLastFromFrame(1, i)
+			: null;
+	}
+
+	private void onAnyNonIfStatementStart(Context context) {
+
+		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
+
+		if (ifOrElseStatement != null && statementsStack.getSizeOfFrame(0) == 0) {
+			
+			switch (ifOrElseStatement) {
+			case IF_THEN_ELSE_START:
+				// We are at block1 of if <block1> else <block2>
+				break;
+
+			case ELSE:
+				// We are at block2 of if <block1> else <block2>
+				delegate.onElseStatementStart(context);
+				break;
+				
+			default:
+				break;
+			}
+		}
+
+		/*
+		if (   statementsStack.size() > 1
+			&& statementsStack.getSizeOfFrame(1) > 0
+			&& statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE
+			&& statementsStack.getSizeOfFrame(0) == 0) {
+
+			// Any non-else statement after if - then - else gives an else - statement 
+			delegate.onElseStatementStart(context);
+		}
+		
+		// Check current frame for any else-if where we have not called callback
+		// ie. this is first statement after if - else if nesting
+		else if (statementsStack.getSizeOfFrame(0) > 1
+			&& statementsStack.getLastFromFrame(0, 1) == JavaStatement.IF_THEN_ELSE
+			&& statementsStack.getLastFromFrame(0, 0) == JavaStatement.IF_THEN_ELSE) {
+			
+			delegate.onElseIfStatementEnd(context);
+			
+			delegate.onEndIfStatement(context);
+		}
+		else if (statementsStack.getSizeOfFrame(0) > 1
+				&& statementsStack.getLastFromFrame(0, 0) == JavaStatement.IF_THEN_ELSE) {
+			
+			throw new IllegalStateException("Handled by ifThenStatement");
+		}
+		*/
+	}
+	
+	private void onAnyNonIfStatementEnd(Context context) {
+
+		final JavaStatement ifOrElseStatement = getIfOrElseStatement(0);
+
+		if (ifOrElseStatement != null && statementsStack.getSizeOfFrame(0) == 1) {
+
+			switch (ifOrElseStatement) {
+			case IF_THEN_ELSE_START:
+				
+				final JavaStatement prevStatement = getIfOrElseStatement(1);
+				
+				if (prevStatement == JavaStatement.ELSE) {
+					delegate.onElseIfStatementEnd(context);
+				}
+				else {
+					// Initial if-statement
+					delegate.onIfStatementInitialBlockEnd(context);
+				}
+				
+				// We are at block1 of if <block1> else <block2>
+				statementsStack.pop();
+				
+				statementsStack.add(JavaStatement.ELSE);
+				
+				// else-block
+				statementsStack.push();
+				break;
+				
+			case ELSE:
+				// We are at block2 of if <block1> else <block2>
+				delegate.onElseStatementEnd(context);
+				
+				delegate.onEndIfStatement(context);
+				
+				statementsStack.pop();
+				break;
+				
+			default:
+				break;
+			}
+		}
+	}
+	
 	
 	public void onJavaBlockStart(Context context) {
 		
 		printStack("javaBlockStart");
-
+		
+		onAnyNonIfStatementStart(context);
+		
+		if (statementsStack.size() > 1) {
+			statementsStack.add(JavaStatement.BLOCK);
+		}
+		
 		if (statementsStack.size() > 1 && statementsStack.getSizeOfFrame(1) > 0) {
 			
 			System.out.println(" --- last statement in stack " + statementsStack.getLastFromFrame(1));
 			
-			
 			switch (statementsStack.getLastFromFrame(1)) {
-			case IF_THEN:
-				// delegate.onIfElseIfExpressionEnd(context);
-				break;
-
-			case IF_THEN_ELSE:
-				// delegate.onIfElseIfExpressionEnd(context);
-
-				// a block-statement after else, so this is a true else-block
-				delegate.onElseStatementStart(context);
-				break;
 				
 			case ENHANCED_FOR:
 System.out.println("-- matched enhanced for");
@@ -597,20 +702,28 @@ System.out.println("-- matched enhanced for");
 		else {
 			// Do nothing, blocks are handled separately in parser
 		}
+
+		if (statementsStack.size() > 1) {
+			statementsStack.push();
+		}
+
+		printStack("onJavaBlockStart - exit");
 	}
 	
 	public void onJavaBlockEnd(Context context) {
+
+		printStack("onJavaBlockEnd");
+
+		if (statementsStack.size() > 2) {
+			statementsStack.pop();
+		}
+		
+		onAnyNonIfStatementEnd(context);
+		
+		
 		if (statementsStack.size() > 1 && statementsStack.getSizeOfFrame(1) > 0) {
 
 			switch (statementsStack.getLastFromFrame(1)) {
-			
-			case IF_THEN_ELSE:
-			
-				// a block-statement after else, so this is a true else-block
-				delegate.onElseStatementEnd(context);
-				
-				delegate.onEndIfStatement(context);
-				break;
 				
 			case TRY_WITH_RESOURCES:
 				delegate.onTryBlockEnd(context);
@@ -624,7 +737,7 @@ System.out.println("-- matched enhanced for");
 			// Do nothing, blocks are handled separately in parser
 		}
 		
-		printStack("javaBlockEnd");
+		printStack("onJavaBlockEnd - exit");
 
 	}
 
@@ -648,13 +761,13 @@ System.out.println("-- matched enhanced for");
 	public void onJavaExpressionStatementEnd(Context context) {
 		delegate.onExpressionStatementEnd(context);
 	}
-	
+
 	public void onSwitchStatementStart(Context context) {
-		
+
 		statementsStack.add(JavaStatement.SWITCH);
-		
+
 	}
-	
+
 	public void onJavaSwitchBlockStart(Context context) {
 		
 	}

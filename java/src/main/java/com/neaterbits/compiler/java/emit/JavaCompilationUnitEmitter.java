@@ -235,9 +235,7 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 		
 		param.append(") {").newline();
 		
-		System.out.println("## emitting method at " + method.getContext());
-		
-		emitBlock(method.getBlock(), param);
+		emitIndentedBlock(method.getBlock(), param);
 		
 		param.append('}').newline();
 		

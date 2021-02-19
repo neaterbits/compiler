@@ -35,6 +35,9 @@ public abstract class CLikeVariableReferenceEmitter<T extends EmitterState> impl
 
 	@Override
 	public final Void onNameReference(NameReference nameReference, T param) {
-		throw new UnsupportedOperationException();
+		
+		param.append(nameReference.getName());
+		
+		return null;
 	}
 }

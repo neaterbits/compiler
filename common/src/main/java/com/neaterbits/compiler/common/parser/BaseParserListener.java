@@ -157,6 +157,20 @@ public abstract class BaseParserListener {
 		return null;
 	}
 	
+	private static String getMethodName() {
+		final StackTraceElement stackTraceElement [] = Thread.currentThread().getStackTrace();
+		
+		return stackTraceElement[3].getMethodName();
+	}
+	
+	protected final void logEnter(Context context) {
+		logger.onEnterListenerFunction(getMethodName(), context);
+	}
+	
+	protected final void logExit(Context context) {
+		logger.onExitListenerFunction(getMethodName(), context);
+	}
+	
 	public final void onCompilationUnitStart() {
 		
 		if (!mainStack.isEmpty()) {
@@ -182,10 +196,17 @@ public abstract class BaseParserListener {
 	}
 	
 	public final void onNamespaceStart(Context context, String name, String [] parts) {
+		
+		logEnter(context);
+		
 		push(new StackNamespace(logger, name, parts));
+		
+		logExit(context);
 	}
 	
 	public final void onNameSpaceEnd(Context context) {
+
+		logEnter(context);
 		
 		final StackNamespace stackNamespace = (StackNamespace)mainStack.pop();
 		
@@ -198,35 +219,68 @@ public abstract class BaseParserListener {
 				new CompilationCodeLines(context, namespaceCode));
 		
 		mainStack.addElement(nameSpace);
+		
+		logExit(context);
 	}
 	
-	public final void onClassStart(String name) {
+	public final void onClassStart(Context context, String name) {
+		
+		logEnter(context);
+		
 		push(new StackNamedClass(logger, name));
+		
+		logExit(context);
 	}
 
 	private void addClassModifier(Context context, ClassModifier modifier) {
+
+		logEnter(context);
+
 		final StackNamedClass stackClass = (StackNamedClass)mainStack.get();
 		
 		stackClass.addModifier(new ClassModifierHolder(context, modifier));
+		
+		logExit(context);
 	}
 	
 	public final void onVisibilityClassModifier(Context context, ClassVisibility visibility) {
+		
+		logEnter(context);
+		
 		addClassModifier(context, visibility);
+		
+		logExit(context);
 	}
 	
 	public final void onSubclassingModifier(Context context, Subclassing subclassing) {
+		logEnter(context);
+		
 		addClassModifier(context, subclassing);
+		
+		logExit(context);
 	}
 	
 	public final void onStaticClassModifier(Context context) {
+		
+		logEnter(context);
+		
 		addClassModifier(context, new ClassStatic());
+		
+		logExit(context);
 	}
 
 	public final void onStrictfpClassModifier(Context context) {
+		
+		logEnter(context);
+		
 		addClassModifier(context, new ClassStrictfp());
+		
+		logExit(context);
 	}
 	
 	public final void onClassEnd(Context context) {
+		
+		logEnter(context);
 		
 		final StackNamedClass entry = pop();
 		
@@ -237,13 +291,23 @@ public abstract class BaseParserListener {
 		final ClassDefinition classDefinition = new ClassDefinition(context, classModifiers, new ClassName(entry.getName()), classCode);
 		
 		mainStack.addElement(classDefinition);
+		
+		logExit(context);
 	}
 
 	public final void onAnonymousClassStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackAnonymousClass(logger));
+		
+		logEnter(context);
 	}
 
 	public final void onAnonymousClassEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackAnonymousClass entry = pop();
 		
 		final List<ComplexMemberDefinition> classCode = entry.getList();
@@ -251,34 +315,57 @@ public abstract class BaseParserListener {
 		final ClassDefinition classDefinition = new ClassDefinition(context, null, null, classCode);
 		
 		mainStack.addElement(classDefinition);
+		
+		logExit(context);
 	}
 	
 	public final void onConstructorStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackConstructor(logger));
 		
 		pushVariableScope();
+		
+		logExit(context);
 	}
 	
 	private void addConstructorModifier(Context context, ConstructorModifier modifier) {
+		
+		logEnter(context);
+		
 		final StackConstructor stackConstructor = get();
 		
 		stackConstructor.addModifier(new ConstructorModifierHolder(context, modifier));
+		
+		logExit(context);
 	}
 	
 	public final void onConstructorVisibilityModifier(Context context, ConstructorVisibility visibility) {
+		
+		logEnter(context);
+		
 		addConstructorModifier(context, visibility);
+		
+		logExit(context);
 	}
 
 	public final void onConstructorName(Context context, String constructorName) {
+		
+		logEnter(context);
 		
 		final StackConstructor constructor = get();
 		
 		System.out.println("Set constructorname: " + constructorName);
 		
 		constructor.setName(constructorName);
+		
+		logExit(context);
 	}
 
 	public final void onConstructorEnd(Context context) {
+		
+		logEnter(context);
 
 		popVariableScope();
 		
@@ -300,35 +387,55 @@ public abstract class BaseParserListener {
 		
 		stackClass.add(constructorMember);
 		
+		logExit(context);
 	}
 
 	public final void onMethodStart(Context context) {
+		
+		logEnter(context);
+		
 		final StackMethod method = new StackMethod(logger);
 
 		push(method);
 		
 		pushVariableScope();
+		
+		logExit(context);
 	}
 	
 	public final void onMethodReturnTypeStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackReturnType(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onMethodReturnTypeEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackReturnType stackReturnType = pop();
 		
 		final StackMethod stackMethod = get();
 		
 		stackMethod.setReturnType(stackReturnType.getType());
+		
+		logExit(context);
 	}
 	
 	public final void onMethodName(Context context, String methodName) {
+		
+		logEnter(context);
 		
 		final StackMethod method = get();
 		
 		System.out.println("Set methodname: " + methodName);
 		
 		method.setName(methodName);
+		
+		logExit(context);
 	}
 	
 	public final void onMethodSignatureParametersStart(Context context) {
@@ -336,10 +443,18 @@ public abstract class BaseParserListener {
 	}
 
 	public final void onMethodSignatureParameterStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackParameterSignature(logger));
+		
+		logExit(context);
 	}
 
 	public final void onMethodSignatureParameterEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackParameterSignature stackParameterSignature = pop();
 		
 		final CallableStackEntry stackCallable = get();
@@ -354,6 +469,8 @@ public abstract class BaseParserListener {
 		final VariableDeclaration variableDeclaration = stackParameterSignature.makeVariableDeclaration(context);
 
 		variableScopes.get().add(stackParameterSignature.getName(), variableDeclaration);
+		
+		logExit(context);
 	}
 	
 	public final void onMethodSignatureParametersEnd(Context context) {
@@ -361,36 +478,72 @@ public abstract class BaseParserListener {
 	}
 
 	private void addMethodModifier(Context context, MethodModifier modifier) {
+		
+		logEnter(context);
+		
 		final StackMethod stackMethod = get();
 		
 		stackMethod.addModifier(new MethodModifierHolder(context, modifier));
+		
+		logExit(context);
 	}
 	
 	public final void onVisibilityMethodModifier(Context context, MethodVisibility visibility) {
+		
+		logEnter(context);
+		
 		addMethodModifier(context, visibility);
+		
+		logExit(context);
 	}
 	
 	public final void onOverrideModifier(Context context, MethodOverride methodOverride) {
+		
+		logEnter(context);
+		
 		addMethodModifier(context, methodOverride);
+		
+		logExit(context);
 	}
 	
 	public final void onStaticMethodModifier(Context context) {
+		
+		logEnter(context);
+		
 		addMethodModifier(context, new MethodStatic());
+		
+		logExit(context);
 	}
 
 	public final void onStrictfpMethodModifier(Context context) {
+		logEnter(context);
+		
 		addMethodModifier(context, new MethodStrictfp());
+		
+		logExit(context);
 	}
 
 	public final void onSynchronizedMethodModifier(Context context) {
+		
+		logEnter(context);
+		
 		addMethodModifier(context, new MethodSynchronized());
+		
+		logExit(context);
 	}
 
 	public final void onNativeMethodModifier(Context context) {
+		
+		logEnter(context);
+		
 		addMethodModifier(context, new MethodNative());
+		
+		logExit(context);
 	}
 	
 	public final void onMethodEnd(Context context) {
+		
+		logEnter(context);
 		
 		popVariableScope();
 		
@@ -403,10 +556,17 @@ public abstract class BaseParserListener {
 				new MethodModifiers(context, method.getModifiers()), method.makeMethod(context));
 
 		methodMemberSetter.addMethod(methodMember);
+		
+		logExit(context);
 	}
 	
 	public final void onFieldDeclarationStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackFieldDeclarationList(logger));
+		
+		logExit(context);
 	}
 	
 	private void addFieldModifier(FieldModifier modifier) {
@@ -416,43 +576,82 @@ public abstract class BaseParserListener {
 	}
 	
 	public final void onVisibilityFieldModifier(Context context, FieldVisibility visibility) {
+		
+		logEnter(context);
+		
 		addFieldModifier(visibility);
+		
+		logExit(context);
 	}
 	
 	public final void onStaticFieldModifier(Context context) {
+		
+		logEnter(context);
+		
 		addFieldModifier(new FieldStatic());
+		
+		logExit(context);
 	}
 	
 	public final void onMutabilityFieldModifier(Context context, Mutability mutability) {
+		
+		logEnter(context);
+		
 		addFieldModifier(mutability);
+		
+		logExit(context);
 	}
 	
 	public final void onTransientFieldModifier(Context context) {
+		
+		logEnter(context);
+		
 		addFieldModifier(new FieldTransient());
+		
+		logExit(context);
 	}
 	
 	public final void onVolatileFieldModifier(Context context) {
+		
+		logEnter(context);
+		
 		addFieldModifier(new FieldVolatile());
+		
+		logExit(context);
 	}
 	
 	public final void onFieldDeclarationEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackFieldDeclarationList stackFieldDeclarationList = pop();
 
-		
+		logExit(context);
 	}
-	
 	
 	// Expressions
 	public final void onEnterAssignmentExpression(Context context) {
+
+		logEnter(context);
 		
 		push(new StackAssignmentExpression(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onEnterAssignmentLHS(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackAssignmentLHS(logger));
+		
+		logExit(context);
 	}
 
 	public final void onExitAssignmentLHS(Context context) {
+		
+		logEnter(context);
+		
 		final StackAssignmentLHS assignmentLHS = pop();
 		
 		final StackAssignmentExpression assignmentExpression = get();
@@ -460,9 +659,13 @@ public abstract class BaseParserListener {
 		assignmentExpression.setLHS(assignmentLHS.getVariableReference(context));
 		
 		push(new StackExpressionList(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onExitAssignmentExpression(Context context) {
+
+		logEnter(context);
 		
 		final StackExpressionList stackExpressionList = pop();
 		
@@ -476,13 +679,22 @@ public abstract class BaseParserListener {
 				context,
 				stackAssignmentExpression.getLHS(),
 				stackAssignmentExpression.getRHS()));
+		
+		logExit(context);
 	}
 	
 	public final void onNestedExpressionStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackExpressionList(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onNestedExpressionEnd(Context context) {
+
+		logEnter(context);
 		
 		final StackExpressionList stackExpressionList = pop();
 		
@@ -493,21 +705,30 @@ public abstract class BaseParserListener {
 		final NestedExpressionSetter nestedExpressionSetter = get();
 		
 		nestedExpressionSetter.addNestedExpression(nestedExpression);
+		
+		logExit(context);
 	}
 
 	// Variables
 	
 	// Variable or class member
 	public final void onNameReference(Context context, String name) {
+		
+		logEnter(context);
+		
 		final VariableReferenceSetter variableReferenceSetter = get();
 		
 		variableReferenceSetter.setVariableReference(new NameReference(context, name));
+		
+		logExit(context);
 	}
 	
 	
 	// Resolved as variable
 	public final void onVariableReference(Context context, String name) {
 
+		logEnter(context);
+		
 		final VariableReferenceSetter variableReferenceSetter = get();
 
 		final VariableDeclaration declaration = findVariableDeclaration(name);
@@ -519,16 +740,25 @@ public abstract class BaseParserListener {
 		final SimpleVariableReference variableReference = new SimpleVariableReference(context, declaration);
 
 		variableReferenceSetter.setVariableReference(variableReference);
+		
+		logExit(context);
 	}
 	
 	// Field access
 	public final void onPrimaryStart(Context context) {
+		
+		logEnter(context);
+		
 		// Start of any primary expression, like a literal or a linked list of field accesses
 		push(new StackPrimaryList(logger));
+		
+		logExit(context);
 	}
 	
 	
 	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, String typeName, String fieldName) {
+		
+		logEnter(context);
 		
 		final StackPrimaryList stackPrimaryList = get();
 		
@@ -539,15 +769,25 @@ public abstract class BaseParserListener {
 				new FieldName(fieldName));
 		
 		stackPrimaryList.add(fieldAccess);
+		
+		logExit(context);
 	}
 	
 	public final void onThisPrimary(Context context) {
+		
+		logEnter(context);
+		
 		final StackPrimaryList stackPrimaryList = get();
 		
 		stackPrimaryList.add(new ThisPrimary(context));
+		
+		logExit(context);
 	}
 	
 	public final void onPrimaryEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackPrimaryList stackPrimary = pop();
 		
 		final Primary primary = stackPrimary.makePrimary(context);
@@ -555,35 +795,53 @@ public abstract class BaseParserListener {
 		final PrimarySetter primarySetter = get();
 
 		primarySetter.addPrimary(primary);
+		
+		logExit(context);
 	}
 	
 	public final void onConditionalExpressionStart(Context context) {
 
+		logEnter(context);
+		
 		push(new StackConditionalExpression(logger));
 
+		logExit(context);
 	}
 	
 	public final void onConditionalExpressionPart1Start(Context context) {
 
+		logEnter(context);
+		
 		push(new StackExpressionList(logger));
 
+		logExit(context);
 	}
 	
 	public final void onConditionalExpressionPart1End(Context context) {
+		
+		logEnter(context);
+		
 		final StackExpressionList stackExpressionList = pop();
 		
 		final StackConditionalExpression stackConditionalExpression = get();
 		
 		stackConditionalExpression.setPart1(stackExpressionList.makeExpression(context));
+		
+		logExit(context);
 	}
 
 	public final void onConditionalExpressionPart2Start(Context context) {
 		
+		logEnter(context);
+		
 		push(new StackExpressionList(logger));
 
+		logExit(context);
 	}
 	
 	public final void onConditionalExpressionPart2End(Context context) {
+		
+		logEnter(context);
 		
 		final StackExpressionList stackExpressionList = pop();
 		
@@ -591,15 +849,21 @@ public abstract class BaseParserListener {
 		
 		stackConditionalExpression.setPart2(stackExpressionList.makeExpression(context));
 
+		logExit(context);
 	}
 
 	public final void onConditionalExpressionPart3Start(Context context) {
 		
+		logEnter(context);
+		
 		push(new StackExpressionList(logger));
 
+		logExit(context);
 	}
 	
 	public final void onConditionalExpressionPart3End(Context context) {
+		
+		logEnter(context);
 		
 		final StackExpressionList stackExpressionList = pop();
 		
@@ -607,10 +871,13 @@ public abstract class BaseParserListener {
 		
 		stackConditionalExpression.setPart3(stackExpressionList.makeExpression(context));
 
+		logExit(context);
 	}
 	
 	public final void onConditionalExpressionEnd(Context context) {
 
+		logEnter(context);
+		
 		final StackConditionalExpression stackConditionalExpression = pop();
 		
 		final ConditionalExpression conditionalExpression = new ConditionalExpression(
@@ -622,59 +889,103 @@ public abstract class BaseParserListener {
 		final ExpressionSetter expressionSetter = get();
 		
 		expressionSetter.addExpression(conditionalExpression);
+		
+		logExit(context);
 	}
 	
 	// Literals
 	
 	public final void onIntegerLiteral(Context context, BigInteger value, Base base, boolean signed, int bits) {
+		
+		logEnter(context);
+		
 		final PrimarySetter primarySetter = get();
 		
 		primarySetter.addPrimary(new IntegerLiteral(context, value, base, signed, bits));
+		
+		logExit(context);
 	}
 	
 	public final void onFloatingPointLiteral(Context context, BigDecimal value, Base base, int bits) {
+		
+		logEnter(context);
+		
 		final PrimarySetter primarySetter = get();
 		
 		primarySetter.addPrimary(new FloatingPointLiteral(context, value, base, bits));
+		
+		logExit(context);
 	}
 	
 	public final void onBooleanLiteral(Context context, boolean value) {
+		
+		logEnter(context);
+		
 		final PrimarySetter primarySetter = get();
 		
 		primarySetter.addPrimary(new BooleanLiteral(context, value));
+		
+		logExit(context);
 	}
 	
 	public final void onCharacterLiteral(Context context, char value) {
+		
+		logEnter(context);
+		
 		final PrimarySetter expressionSetter = get();
 		
 		expressionSetter.addPrimary(new CharacterLiteral(context, value));
+		
+		logExit(context);
 	}
 	
 	public final void onStringLiteral(Context context, String value) {
+		
+		logEnter(context);
+		
 		final PrimarySetter primarySetter = get();
 		
 		primarySetter.addPrimary(new StringLiteral(context, value));
+		
+		logExit(context);
 	}
 	
 	public final void onNullLiteral(Context context) {
+		
+		logEnter(context);
+		
 		final PrimarySetter primarySetter = get();
 		
 		primarySetter.addPrimary(new NullLiteral(context));
+		
+		logExit(context);
 	}
 	
 	public final void onClassInstanceCreationExpressionStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackClassInstanceCreationExpression(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onClassInstanceCreationTypeAndConstructorName(Context context, TypeReference type, List<String> name) {
+		
+		logEnter(context);
 		
 		final StackClassInstanceCreationExpression stackClassInstanceCreationExpression = get();
 		
 		stackClassInstanceCreationExpression.setType(type);
 		stackClassInstanceCreationExpression.setConstructorName(new ConstructorName(name));
+		
+		logExit(context);
 	}
 	
 	public final void onClassInstanceCreationExpressionEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackClassInstanceCreationExpression classInstanceCreationExpression = pop();
 		
 		final ClassInstanceCreationExpression primary = new ClassInstanceCreationExpression(
@@ -690,27 +1001,45 @@ public abstract class BaseParserListener {
 		final PrimarySetter primarySetter = get();
 		
 		primarySetter.addPrimary(primary);
+		
+		logExit(context);
 	}
 	
 	public final void onMethodInvocationStart(Context context, MethodInvocationType type, TypeReference classType, String methodName) {
+		
+		logEnter(context);
+		
 		push(new StackMethodInvocation(logger, type, classType, methodName));
+		
+		logExit(context);
 	}
 	
 	public final void onParametersStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackParameterList(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onParametersEnd(Context context) {
 
+		logEnter(context);
+		
 		final StackParameterList stackParameterList = pop();
 
 		final ParametersSetter parametersSetter = get();
 
 		parametersSetter.setParameters(stackParameterList.getList());
+		
+		logExit(context);
 	}
 	
 	public final void onMethodInvocationEnd(Context context) {
 
+		logEnter(context);
+		
 		final StackMethodInvocation stackMethodInvocation = pop();
 
 		final MethodInvocationExpression methodInvocation = new MethodInvocationExpression(
@@ -728,27 +1057,47 @@ public abstract class BaseParserListener {
 		final PrimarySetter primarySetter = get();
 		
 		primarySetter.addPrimary(methodInvocation);
+		
+		logExit(context);
 	}
 
 	// Statements
 	
 	public final void onMutabilityVariableModifier(Context context, Mutability mutability) {
+		
+		logEnter(context);
+		
 		addVariableModifier(context, mutability);
+		
+		logExit(context);
 	}
 
 	private void addVariableModifier(Context context, VariableModifier modifier) {
+		
+		logEnter(context);
+		
 		Objects.requireNonNull(modifier);
 
 		final VariableModifierSetter modifierSetter = get();
 
 		modifierSetter.addModifier(new VariableModifierHolder(context, modifier));
+		
+		logExit(context);
 	}
 	
 	public void onVariableDeclarationStatementStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackVariableDeclarationList(logger));
+		
+		logExit(context);
 	}
 	
 	public void onVariableDeclarationStatementEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackVariableDeclarationList variableDeclaration = pop();
 		
 		final StatementSetter statementSetter = get();
@@ -769,13 +1118,23 @@ public abstract class BaseParserListener {
 		});
 		
 		statementSetter.addStatement(statement);
+		
+		logExit(context);
 	}
 
-	public void onVariableDeclaratorStart(Context contex) {
+	public void onVariableDeclaratorStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackVariableDeclaration(logger));
+		
+		logExit(context);
 	}
 	
 	public void onVariableDeclaratorEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackVariableDeclaration stackDeclaration = pop();
 		
 		final Expression initializer = stackDeclaration.makeExpressionOrNull(context);
@@ -790,23 +1149,35 @@ public abstract class BaseParserListener {
 				initializer);
 		
 		declarationList.add(variableDeclarationElement);
+		
+		logExit(context);
 	}
 
 	public final void onTypeReference(Context context, TypeReference typeReference) {
 
+		logEnter(context);
+		
 		Objects.requireNonNull(typeReference);
 
 		final TypeReferenceSetter typeReferenceSetter = get();
 
 		typeReferenceSetter.setTypeReference(typeReference);
+		
+		logExit(context);
 	}
 
 	public final void onExpressionStatementStart(Context context) {
 
+		logEnter(context);
+		
 		push(new StackExpressionStatement(logger));
+		
+		logExit(context);
 	}
 
 	public final void onExpressionStatementEnd(Context context) {
+		
+		logEnter(context);
 		
 		final StackExpressionStatement statement = pop();
 		
@@ -815,16 +1186,24 @@ public abstract class BaseParserListener {
 		final StatementSetter statementSetter = get();
 		
 		statementSetter.addStatement(expressionStatement);
+		
+		logExit(context);
 	}
 	
 	public final void onIteratorForStatementStart(Context context) {
+		
+		logEnter(context);
 
 		push(new StackIteratorForStatement(logger));
 		
 		pushVariableScope();
+		
+		logExit(context);
 	}
 	
 	public final void onIteratorForTestEnd(Context context) {
+
+		logEnter(context);
 		
 		final StackIteratorForStatement stackIteratorForStatement = get();
 		
@@ -833,13 +1212,15 @@ public abstract class BaseParserListener {
 		// Must add variable declarations to scope so that can be found further down in parsing
 		final VariableDeclaration variableDeclaration = stackIteratorForStatement.makeVariableDeclaration(context);
 
-		System.out.println("## add to scope: " + varName);
-		
 		variableScopes.get().add(varName.getName(), variableDeclaration);
+		
+		logExit(context);
 	}
 
 	
 	public final void onIteratorForStatementEnd(Context context) {
+
+		logEnter(context);
 		
 		popVariableScope();
 		
@@ -861,30 +1242,54 @@ public abstract class BaseParserListener {
 		final StatementSetter statementSetter = get();
 		
 		statementSetter.addStatement(statement);
+		
+		logExit(context);
 	}
 	
 	public final void onTryWithResourcesStatementStart(Context context) {
 		
+		logEnter(context);
+		
 		push(new StackTryWithResourcesStatement(logger));
 		
 		pushVariableScope(); // for the variables in resources
+		
+		logExit(context);
 	}
 	
 	public final void onTryWithResourcesSpecificationStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackResourceList(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onResourceStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackResource(logger));
+		
+		logExit(context);
 	}
 
 	public final void onVariableName(Context context, String name, int numDims) {
+		
+		logEnter(context);
+		
 		final VariableNameSetter variableNameSetter = get();
 
 		variableNameSetter.init(name, numDims);
+		
+		logExit(context);
 	}
 	
 	public final void onResourceEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackResource stackResource = pop();
 		
 		final Resource resource = new Resource(
@@ -902,10 +1307,14 @@ public abstract class BaseParserListener {
 		final StackResourceList stackResourceList = get();
 		
 		stackResourceList.add(resource);
+		
+		logExit(context);
 	}
 	
 	public final void onTryWithResourcesSpecificationEnd(Context context) {
 
+		logEnter(context);
+		
 		final StackResourceList stackResourceList = pop();
 		
 		final StackTryWithResourcesStatement stackTryWithResourcesStatement = get();
@@ -914,25 +1323,45 @@ public abstract class BaseParserListener {
 		
 		// Must push try-block to collect statements
 		push(new StackTryBlock(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onTryStatementStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackTryCatchFinallyStatement(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onTryBlockEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackTryBlock tryBlock = pop();
 		
 		final BaseStackTryCatchFinally baseStackTryCatchFinally = get();
 		
 		baseStackTryCatchFinally.setTryBlock(new Block(context, tryBlock.getList()));
+		
+		logExit(context);
 	}
 
 	public final void onCatchStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackCatchBlock(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onCatchEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackCatchBlock stackCatchBlock = pop();
 		
 		final BaseStackTryCatchFinally baseStackTryCatchFinally = get();
@@ -944,13 +1373,23 @@ public abstract class BaseParserListener {
 				new Block(context, stackCatchBlock.getList()));
 		
 		baseStackTryCatchFinally.addCatchBlock(catchBlock);
+		
+		logExit(context);
 	}
 	
 	public final void onFinallyStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackFinallyBlock(logger));
+		
+		logExit(context);
 	}
 	
 	public final void onFinallyEnd(Context context) {
+		
+		logEnter(context);
+		
 		final StackFinallyBlock stackFinallyBlock = pop();
 		
 		final BaseStackTryCatchFinally baseStackTryCatchFinally = get();
@@ -958,9 +1397,13 @@ public abstract class BaseParserListener {
 		final Block finallyBlock = new Block(context, stackFinallyBlock.getList());
 		
 		baseStackTryCatchFinally.setFinallyBlock(finallyBlock);
+		
+		logExit(context);
 	}
 	
 	public final void onTryWithResourcesEnd(Context context) {
+		
+		logEnter(context);
 		
 		popVariableScope();
 		
@@ -976,14 +1419,23 @@ public abstract class BaseParserListener {
 		final StatementSetter statementSetter = get();
 		
 		statementSetter.addStatement(statement);
+		
+		logExit(context);
 	}
 	
 	public final void onReturnStatementStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackExpressionList(logger));
+		
+		logExit(context);
 	}
 
 	public final void onReturnStatementEnd(Context context) {
 
+		logEnter(context);
+		
 		final StackExpressionList stackExpression = pop();
 		
 		final Expression expression = stackExpression.makeExpressionOrNull(context);
@@ -993,6 +1445,8 @@ public abstract class BaseParserListener {
 		final StatementSetter statementSetter = get();
 
 		statementSetter.addStatement(returnStatement);
+		
+		logExit(context);
 	}
 
 	// Stack methods

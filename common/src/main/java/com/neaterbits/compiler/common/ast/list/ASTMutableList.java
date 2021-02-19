@@ -3,6 +3,7 @@ package com.neaterbits.compiler.common.ast.list;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public final class ASTMutableList<T extends ASTNode> extends ASTList<T> {
 
@@ -128,6 +129,22 @@ public final class ASTMutableList<T extends ASTNode> extends ASTList<T> {
 			function.each((T)node.next, i ++);
 		}
 	}
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public T find(Predicate<T> predicate) {
+		for (ASTNode node = head; node.next.next != null; node = node.next) {
+			
+			final T value = (T)node.next;
+			
+			if (predicate.test(value)) {
+				return value;
+			}
+		}
+
+		return null;
+	}
 
 	public final boolean isEmpty() {
 		return size == 0;
@@ -151,9 +168,9 @@ public final class ASTMutableList<T extends ASTNode> extends ASTList<T> {
 		foreachWithIndex((node, i) -> {
 			if (i > 0) {
 				sb.append(',');
-				
-				sb.append(node.toString());
 			}
+
+			sb.append(node.toString());
 		});
 		
 		sb.append(']');

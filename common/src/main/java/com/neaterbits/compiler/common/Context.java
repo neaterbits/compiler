@@ -7,13 +7,15 @@ public final class Context {
 	private final int startPos;
 	private final int endLine;
 	private final int endPos;
+	private final String text;
 
-	public Context(String file, int startLine, int startPos, int endLine, int endPos) {
+	public Context(String file, int startLine, int startPos, int endLine, int endPos, String text) {
 		this.file = file;
 		this.startLine = startLine;
 		this.startPos = startPos;
 		this.endLine = endLine;
 		this.endPos = endPos;
+		this.text = text;
 	}
 
 	public String getFile() {
@@ -34,6 +36,10 @@ public final class Context {
 
 	public int getEndPos() {
 		return endPos;
+	}
+
+	public String getText() {
+		return text;
 	}
 
 	@Override

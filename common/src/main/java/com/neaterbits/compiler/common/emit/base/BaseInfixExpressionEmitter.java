@@ -21,6 +21,9 @@ public abstract class BaseInfixExpressionEmitter<T extends EmitterState> extends
 		final ASTList<Expression> expressions = expressionList.getExpressions();
 		
 		expressions.foreachWithIndex((expression, i) -> {
+
+			emitExpression(expression, param);
+
 			if (i < expressions.size() - 1) {
 				final Operator operator = expressionList.getOperators().get(i);
 				

@@ -64,7 +64,6 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 	@Override
 	public final Void onIf(IfElseIfElseStatement statement, T param) {
 		
-		
 		statement.getConditions().foreachWithIndex((conditionBlock, i) -> {
 			param.append(i == 0 ? "if" : "else if");
 			
@@ -75,6 +74,8 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 			param.append(") {").newline();
 			
 			emitIndentedBlock(conditionBlock.getBlock(), param);
+			
+			param.append('}').newline();
 		});
 
 		if (statement.getElseBlock() != null) {
@@ -155,7 +156,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		emitExpression(statement.getExpression(), param);
 		
 		param.append(';');
-		
+
 		param.newline();
 
 		return null;
@@ -173,7 +174,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		
 		emitExpression(statement.getExpression(), param);
 
-		param.append(';');
+		param.append(';').newline();
 
 		return null;
 	}

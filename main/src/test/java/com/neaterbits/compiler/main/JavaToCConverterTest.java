@@ -1,9 +1,7 @@
 package com.neaterbits.compiler.main;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,8 +11,6 @@ import org.junit.Test;
 import com.neaterbits.compiler.c.emit.CCompilationUnitEmmiter;
 import com.neaterbits.compiler.common.ModuleId;
 import com.neaterbits.compiler.common.SourceModuleSpec;
-import com.neaterbits.compiler.common.antlr4.AntlrError;
-import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.block.FunctionName;
@@ -23,8 +19,6 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.common.convert.ootofunction.OOToProceduralConverter;
-import com.neaterbits.compiler.common.emit.EmitterState;
-import com.neaterbits.compiler.common.emit.ProgramEmitter;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.DirectoryParser;
 import com.neaterbits.compiler.common.parser.FileTypeParser;
@@ -36,58 +30,25 @@ import com.neaterbits.compiler.java.parser.antlr4.Java8AntlrParser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JavaToCConverterTest {
+public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
 	@Test
 	public void testJavaToC() throws IOException {
 
-		int i = 1 | 2;
-
-		if ("xyz" == "zyx" || "xyz" == "zyx" || i == "xyz".length()) {
-			++ i;
-		}
-
-		final Java8AntlrParser parser = new Java8AntlrParser(true);
-
-		final List<AntlrError> errors = new ArrayList<>();
-		
-		final CompilationUnit compilationUnit;
-
 		// final String fileName = "src/test/java/com/neaterbits/compiler/main/JavaToCConverterTest.java";
-		final String fileName = "../common/src/main/java/com/neaterbits/compiler/common/ModuleSpec.java";
+		//final String fileName = "../common/src/main/java/com/neaterbits/compiler/common/ModuleSpec.java";
 		
-		final File f = new File(fileName);
-		
-		System.out.println("## path: " + f.getCanonicalPath());
-		
-		try (FileInputStream inputStream = new FileInputStream(fileName)) {
-			compilationUnit = parser.parse(inputStream, errors, new ParseLogger(System.out));
-		}
+		final String fileName = "src/test/java/com/neaterbits/compiler/main/IfStatementTestClass.java";
 
+		final CompilationUnit compilationUnit = compile(fileName);
+		
 		final JavaCompilationUnitEmitter javaEmitter = new JavaCompilationUnitEmitter();
 		
 		final String emitted = emitCompilationUnit(compilationUnit, javaEmitter);
 		
 		System.out.println("Java code:\n" + emitted);
-		
-		assertThat(errors.isEmpty()).isTrue();
-		assertThat(compilationUnit).isNotNull();
-		
-		final OOToProceduralConverter converter = new OOToProceduralConverter();
 
-		final OOToProceduralConverterState converterState = new OOToProceduralConverterState() {
-			@Override
-			public FunctionName methodToFunctionName(Namespace namespace, MethodName methodName) {
-				return new FunctionName(Strings.join(namespace.getParts(), '_') + '_' + methodName.getName());
-			}
-
-			@Override
-			public StructName classToStructName(Namespace namespace, ClassName className) {
-				return new StructName(Strings.join(namespace.getParts(), '_') + '_' + className.getName());
-			}
-		};
-
-		final CompilationUnit cCode = converter.convertCompilationUnit(compilationUnit, converterState);
+		final CompilationUnit cCode = convert(compilationUnit);
 
 		final CCompilationUnitEmmiter cEmitter = new CCompilationUnitEmmiter();
 		
@@ -96,16 +57,6 @@ public class JavaToCConverterTest {
 		System.out.println("Emitted code:\n" + cSourceCode);
 	}
 
-	private static final String emitCompilationUnit(CompilationUnit compilationUnit, ProgramEmitter<EmitterState> emitter) {
-		final EmitterState emitterState = new EmitterState('\n');
-
-		for (CompilationCode code : compilationUnit.getCode()) {
-			code.visit(emitter, emitterState);
-		}
-
-		return emitterState.asString();		
-	}
-	
 	@Test
 	public void testConvertCompiler() throws IOException {
 		
@@ -137,5 +88,27 @@ public class JavaToCConverterTest {
 				commonModuleSpec.getBaseDirectory(),
 				new ParseLogger(System.out));
 		
+		assertThat(parsedFiles.size()).isGreaterThan(0);
+	}
+
+	
+	private CompilationUnit convert(CompilationUnit javaCompilationUnit) {
+		final OOToProceduralConverter converter = new OOToProceduralConverter();
+
+		final OOToProceduralConverterState converterState = new OOToProceduralConverterState() {
+			@Override
+			public FunctionName methodToFunctionName(Namespace namespace, MethodName methodName) {
+				return new FunctionName(Strings.join(namespace.getParts(), '_') + '_' + methodName.getName());
+			}
+
+			@Override
+			public StructName classToStructName(Namespace namespace, ClassName className) {
+				return new StructName(Strings.join(namespace.getParts(), '_') + '_' + className.getName());
+			}
+		};
+		
+		final CompilationUnit cCode = converter.convertCompilationUnit(javaCompilationUnit, converterState);
+		
+		return cCode;
 	}
 }

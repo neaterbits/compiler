@@ -45,6 +45,8 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	private final JavaParserListener delegate;
 	
 	private final ParseLogger logger;
+	
+	private int indent = 0;
 
 	public Java8AntlrParserListener(JavaParserListener delegate, ParseLogger logger) {
 		this.delegate = delegate;
@@ -56,17 +58,31 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		return Java8Parser.ruleNames[ctx.getRuleIndex()];
 	}
 	
+	private String indent() {
+		final StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < indent; ++ i) {
+			sb.append("  ");
+		}
+
+		return sb.toString();
+	}
+	
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
 		
-		System.out.println("## enter " + ruleName(ctx) + " " + ctx.getText());
+		// System.out.println("## enter " + indent() + ruleName(ctx) + " " + ctx.getText());
+		
+		++ indent;
 		
 		logger.onEnterAntlrRule(ruleName(ctx), ctx.getText());
 	}
 
 	@Override
 	public void exitEveryRule(ParserRuleContext ctx) {
-		System.out.println("## exit " + ruleName(ctx) + " " + ctx.getText());
+		// System.out.println("## exit " + indent() + ruleName(ctx) + " " + ctx.getText());
+		
+		-- indent;
 
 		logger.onExitAntlrRule(ruleName(ctx), ctx.getText());
 	}
@@ -150,7 +166,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterNormalClassDeclaration(NormalClassDeclarationContext ctx) {
-		delegate.onClassStart(ctx.Identifier().getText());
+		delegate.onClassStart(context(ctx), ctx.Identifier().getText());
 	}
 	
 	@Override

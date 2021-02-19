@@ -5,8 +5,11 @@ enum JavaStatement {
 	ASSIGNMENT,
 	EXPRESSION,
 	ASSERT,
+	
 	IF_THEN,
-	IF_THEN_ELSE,
+	IF_THEN_ELSE_START,
+	ELSE,
+	
 	SWITCH,
 	WHILE,
 	DO,
@@ -17,5 +20,7 @@ enum JavaStatement {
 	TRY_CATCH_FINALLY,
 	TRY_WITH_RESOURCES,
 	
-	RETURN;
+	RETURN,
+	
+	BLOCK;
 }

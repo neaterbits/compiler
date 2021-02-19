@@ -11,6 +11,7 @@ public class Antlr4 {
 				antlrContext.getStart().getLine(),
 				antlrContext.getStart().getCharPositionInLine(),
 				antlrContext.getStop().getLine(),
-				antlrContext.getStop().getCharPositionInLine());
+				antlrContext.getStop().getCharPositionInLine(),
+				antlrContext.getText());
 	}
 }

@@ -181,8 +181,15 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 	}
 
 	@Override
-	public final Void onAssignment(AssignmentExpression expression, EmitterState param) {
-		throw new UnsupportedOperationException();
+	public final Void onAssignment(AssignmentExpression expression, T param) {
+		
+		emitVariableReference(expression.getVariable(), param);
+
+		param.append(" = ");
+
+		emitExpression(expression.getExpression(), param);
+		
+		return null;
 	}
 
 	@Override

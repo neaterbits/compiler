@@ -20,6 +20,7 @@ public abstract class BaseIterativeParserListener
 
 	public final void onIfStatementStart(Context context) {
 		
+		
 		push(new StackIfElseIfElse(getLogger()));
 		push(new StackConditionBlock(getLogger()));
 		
@@ -43,22 +44,35 @@ public abstract class BaseIterativeParserListener
 	// End of initial if-statement and block
 	public final void onIfStatementInitialBlockEnd(Context context) {
 
+		logEnter(context);
+		
 		popAndAddConditionBlock(context);
 
 		popVariableScope();
 		
+		logExit(context);
 	}
 
 	public final void onElseIfStatementStart(Context context) {
+
+		logEnter(context);
 		
 		push(new StackConditionBlock(getLogger()));
 		
 		pushVariableScope();
+		
+		logExit(context);
 	}
 	
 	public final void onElseIfStatementEnd(Context context) {
+
+		logEnter(context);
+
+		popAndAddConditionBlock(context);
 		
 		popVariableScope();
+		
+		logExit(context);
 	}
 
 	
@@ -69,13 +83,20 @@ public abstract class BaseIterativeParserListener
 	*/
 
 	public final void onElseStatementStart(Context context) {
+		
+		logEnter(context);
+		
 		push(new StackBlock(getLogger()));
 		
 		pushVariableScope();
+		
+		logExit(context);
 	}
 	
 	public final void onElseStatementEnd(Context context) {
 
+		logEnter(context);
+		
 		final StackBlock stackBlock = pop();
 
 		popVariableScope();
@@ -83,10 +104,14 @@ public abstract class BaseIterativeParserListener
 		final StackIfElseIfElse ifElseIfElse = get();
 		
 		ifElseIfElse.setElseBlock(new Block(context, stackBlock.getList()));
+		
+		logExit(context);
 	}
 
 	// Called after last part of statement (ie end if in if-else if-else-end if)
 	public final void onEndIfStatement(Context context) {
+		
+		logEnter(context);
 		
 		final StackIfElseIfElse ifElseIfElse = pop();
 
@@ -98,5 +123,7 @@ public abstract class BaseIterativeParserListener
 				ifElseIfElse.getElseBlock());
 		
 		statementSetter.addStatement(statement);
+		
+		logExit(context);
 	}
 }

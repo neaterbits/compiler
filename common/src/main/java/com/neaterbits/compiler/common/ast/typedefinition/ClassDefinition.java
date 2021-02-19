@@ -21,6 +21,13 @@ public final class ClassDefinition extends ComplexTypeDefinition {
 	public ClassModifiers getModifiers() {
 		return modifiers.get();
 	}
+	
+	public final MethodMember findMethod(String methodName) {
+		
+		return (MethodMember)getMembers().find(member -> 
+							   member instanceof MethodMember
+							&& ((MethodMember)member).getMethod().getName().getName().equals(methodName));
+	}
 
 	@Override
 	public <T, R> R visit(CompilationCodeVisitor<T, R> visitor, T param) {
