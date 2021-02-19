@@ -975,6 +975,14 @@ System.out.println("-- matched enhanced for");
 		delegate.onThrowStatementEnd(context);
 	}
 
+	public void onAnnotationStart(Context context) {
+		delegate.onAnnotationStart(context);
+	}
+
+	public void onAnnotationEnd(Context context) {
+		delegate.onAnnotationEnd(context);
+	}
+
 	public void onTryStatementStart(Context context) {
 		
 		statementsStack.add(JavaStatement.TRY_CATCH);

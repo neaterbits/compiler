@@ -110,6 +110,7 @@ import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.stackstate.BaseStackTryCatchFinally;
 import com.neaterbits.compiler.common.parser.stackstate.BaseStackVariableDeclarationList;
 import com.neaterbits.compiler.common.parser.stackstate.CallableStackEntry;
+import com.neaterbits.compiler.common.parser.stackstate.StackAnnotation;
 import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
@@ -1667,7 +1668,7 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
-	public void onThrowStatementStart(Context context) {
+	public final void onThrowStatementStart(Context context) {
 		
 		logEnter(context);
 		
@@ -1676,7 +1677,7 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	public void onThrowStatementEnd(Context context) {
+	public final void onThrowStatementEnd(Context context) {
 		
 		logEnter(context);
 		
@@ -1688,6 +1689,24 @@ public abstract class BaseParserListener {
 
 		statementSetter.addStatement(throwStatement);
 
+		logExit(context);
+	}
+	
+	public final void onAnnotationStart(Context context) {
+		
+		logEnter(context);
+
+		push(new StackAnnotation(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onAnnotationEnd(Context context) {
+		
+		logEnter(context);
+		
+		pop();
+		
 		logExit(context);
 	}
 	

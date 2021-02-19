@@ -1315,5 +1315,15 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitThrowStatement(ThrowStatementContext ctx) {
 		delegate.onThrowStatementEnd(context(ctx));
 	}
+
+	@Override
+	public void enterAnnotation(AnnotationContext ctx) {
+		delegate.onAnnotationStart(context(ctx));
+	}
+
+	@Override
+	public void exitAnnotation(AnnotationContext ctx) {
+		delegate.onAnnotationEnd(context(ctx));
+	}
 }
 
