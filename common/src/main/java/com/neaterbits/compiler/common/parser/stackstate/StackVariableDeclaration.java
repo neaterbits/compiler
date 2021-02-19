@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.log.ParseLogger;
 
-public class StackVariableDeclaration extends StackExpression implements VariableNameSetter {
+public class StackVariableDeclaration extends StackExpressionList implements VariableNameSetter {
 
 	private String name;
 	private int numDims;

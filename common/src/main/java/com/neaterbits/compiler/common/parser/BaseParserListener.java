@@ -1327,7 +1327,7 @@ public abstract class BaseParserListener {
 		
 		final StackVariableDeclaration stackDeclaration = pop();
 		
-		final Expression initializer = stackDeclaration.getExpression();
+		final Expression initializer = stackDeclaration.makeExpressionOrNull(context);
 		
 		final BaseStackVariableDeclarationList declarationList = get();
 		
