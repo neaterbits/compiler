@@ -2,10 +2,12 @@ package com.neaterbits.compiler.c.emit;
 
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Base;
+import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.common.ast.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
@@ -14,6 +16,7 @@ import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLitera
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.c.CLikeExpressionEmitter;
@@ -22,6 +25,8 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	private static final CConditionEmitter CONDITION_EMITTER = new CConditionEmitter();
 
+	private static final CStatementEmitter STATEMENT_EMITTER = new CStatementEmitter();
+	
 	@Override
 	protected void emitCondition(Condition condition, EmitterState param) {
 		condition.visit(CONDITION_EMITTER, param);
@@ -29,6 +34,11 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	protected void emitVariableReference(VariableReference variable, EmitterState param) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected void emitStatement(Statement statement, EmitterState state) {
+		statement.visit(STATEMENT_EMITTER, state);
 	}
 
 	@Override
@@ -54,6 +64,16 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	@Override
 	public Void onMethodInvocation(MethodInvocationExpression expression, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onSingleLambdaExpression(SingleLambdaExpression expression, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onBlockLambdaExpression(BlockLambdaExpression expression, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -3,10 +3,13 @@ package com.neaterbits.compiler.java.emit;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Base;
+import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.FieldAccess;
 import com.neaterbits.compiler.common.ast.expression.FunctionCallExpression;
+import com.neaterbits.compiler.common.ast.expression.LambdaExpressionParameters;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
+import com.neaterbits.compiler.common.ast.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
@@ -15,6 +18,7 @@ import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLitera
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.c.CLikeExpressionEmitter;
@@ -23,6 +27,8 @@ import com.neaterbits.compiler.common.util.Strings;
 final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	private static final JavaConditionEmitter CONDITION_EMITTER = new JavaConditionEmitter();
+
+	private static final JavaStatementEmitter STATEMENT_EMITTER = new JavaStatementEmitter();
 	
 	private static final JavaTypeEmitter TYPE_EMITTER = new JavaTypeEmitter();
 
@@ -33,6 +39,11 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		condition.visit(CONDITION_EMITTER, param);
 	}
 
+	@Override
+	protected void emitStatement(Statement statement, EmitterState state) {
+		statement.visit(STATEMENT_EMITTER, state);
+	}
+
 	private void emitType(TypeReference type, EmitterState param) {
 		type.getType().visit(TYPE_EMITTER, param);
 	}
@@ -40,6 +51,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 	protected void emitVariableReference(VariableReference reference, EmitterState param) {
 		reference.visit(VARIABLE_REFERENCE_EMITTER, param);
 	}
+	
 	
 	@Override
 	public Void onVariable(VariableExpression expression, EmitterState param) {
@@ -133,6 +145,50 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		default:
 			throw new UnsupportedOperationException("Unknown field access type " + expression.getType());
 		}
+		
+		return null;
+	}
+
+	private void emitLambdaParameters(LambdaExpressionParameters parameters, EmitterState param) {
+		
+		if (parameters.getSingleParameter() != null) {
+			param.append(parameters.getSingleParameter());
+		}
+		else if (parameters.getInferredParameters() != null) {
+			param.append('(');
+
+			emitListTo(param, parameters.getInferredParameters(), ", ", parameter -> param.append(parameter));
+			
+			param.append(')');
+		}
+		else {
+			throw new UnsupportedOperationException("No lambda parameters");
+		}
+	}
+	
+	
+	@Override
+	public Void onSingleLambdaExpression(SingleLambdaExpression expression, EmitterState param) {
+
+		emitLambdaParameters(expression.getParameters(), param);
+		
+		param.append(" -> ");
+		
+		emitExpression(expression.getExpression(), param);
+		
+		return null;
+	}
+
+	@Override
+	public Void onBlockLambdaExpression(BlockLambdaExpression expression, EmitterState param) {
+
+		emitLambdaParameters(expression.getParameters(), param);
+		
+		param.append(" -> {").newline();
+		
+		emitIndentedBlock(expression.getBlock(), param);
+		
+		param.append('}');
 		
 		return null;
 	}

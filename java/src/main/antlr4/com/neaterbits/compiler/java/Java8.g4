@@ -1176,9 +1176,9 @@ lambdaExpression
 	;
 
 lambdaParameters
-	:	Identifier
-	|	'(' formalParameterList? ')'
-	|	'(' inferredFormalParameterList ')'
+	:	Identifier							# lambdaSingleParameter
+	|	'(' formalParameterList? ')'		# lambdaFormalParameterListToken
+	|	'(' inferredFormalParameterList ')'	# lambdaInferredFormalParameterListToken
 	;
 
 inferredFormalParameterList

@@ -780,6 +780,41 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onParametersEnd(context(ctx));
 	}
 	
+	@Override
+	public void enterLambdaExpression(LambdaExpressionContext ctx) {
+		delegate.onLambdaExpressionStart(context(ctx));
+	}
+
+
+	@Override
+	public void exitLambdaSingleParameter(LambdaSingleParameterContext ctx) {
+
+		delegate.onSingleLambdaParameter(context(ctx), ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitInferredFormalParameterList(InferredFormalParameterListContext ctx) {
+		
+		delegate.onInferredLambdaParameterList(context(ctx), ctx.Identifier().stream()
+				.map(identifier -> identifier.getText())
+				.collect(Collectors.toList()));
+	}
+
+	@Override
+	public void enterLambdaBody(LambdaBodyContext ctx) {
+		delegate.onLambdaBodyStart(context(ctx));
+	}
+
+	@Override
+	public void exitLambdaBody(LambdaBodyContext ctx) {
+		delegate.onLambdaBodyEnd(context(ctx));
+	}
+
+	@Override
+	public void exitLambdaExpression(LambdaExpressionContext ctx) {
+		delegate.onLambdaExpressionEnd(context(ctx));
+	}
+	
 	// Conditions
 	
 

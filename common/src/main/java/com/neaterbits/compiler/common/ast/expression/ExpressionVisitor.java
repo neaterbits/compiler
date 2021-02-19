@@ -41,6 +41,10 @@ public interface ExpressionVisitor<T, R> {
 	
 	R onNestedExpression(NestedExpression expression, T param);
 
+	R onSingleLambdaExpression(SingleLambdaExpression expression, T param);
+	
+	R onBlockLambdaExpression(BlockLambdaExpression expression, T param);
+	
 	// Literals
 	R onIntegerLiteral(IntegerLiteral expression, T param);
 	R onFloatingPointLiteral(FloatingPointLiteral expression, T param);

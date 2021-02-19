@@ -23,14 +23,18 @@ import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.block.ParameterName;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
+import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.ConditionalExpression;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.FieldAccess;
+import com.neaterbits.compiler.common.ast.expression.LambdaExpression;
+import com.neaterbits.compiler.common.ast.expression.LambdaExpressionParameters;
 import com.neaterbits.compiler.common.ast.expression.MethodInvocationExpression;
 import com.neaterbits.compiler.common.ast.expression.NestedExpression;
 import com.neaterbits.compiler.common.ast.expression.ParameterList;
 import com.neaterbits.compiler.common.ast.expression.Resource;
+import com.neaterbits.compiler.common.ast.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
@@ -134,6 +138,8 @@ import com.neaterbits.compiler.common.parser.stackstate.StackForUpdate;
 import com.neaterbits.compiler.common.parser.stackstate.StackInterface;
 import com.neaterbits.compiler.common.parser.stackstate.StackInterfaceMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackIteratorForStatement;
+import com.neaterbits.compiler.common.parser.stackstate.StackLambdaExpression;
+import com.neaterbits.compiler.common.parser.stackstate.StackLambdaFormalParameters;
 import com.neaterbits.compiler.common.parser.stackstate.StackClassMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethodInvocation;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
@@ -1270,6 +1276,108 @@ public abstract class BaseParserListener {
 		final PrimarySetter primarySetter = get();
 		
 		primarySetter.addPrimary(methodInvocation);
+		
+		logExit(context);
+	}
+	
+	public final void onLambdaExpressionStart(Context context) {
+		
+		logEnter(context);
+		
+		push(new StackLambdaExpression(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onSingleLambdaParameter(Context context, String varName) {
+	
+		logEnter(context);
+		
+		final StackLambdaExpression stackLambdaExpression = get();
+		
+		stackLambdaExpression.setSingleParameter(varName);
+		
+		logExit(context);
+	}
+	
+	public final void onFormalLambdaParameterListStart(Context context) {
+		
+		logEnter(context);
+		
+		push(new StackLambdaFormalParameters(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onFormalLambdaParameterListEnd(Context context) {
+		
+		logEnter(context);
+		
+		pop();
+		
+		logExit(context);
+	}
+	
+	public final void onInferredLambdaParameterList(Context context, List<String> varNames) {
+		
+		logEnter(context);
+		
+		final StackLambdaExpression stackLambdaExpression = get();
+		
+		stackLambdaExpression.setInferredParameterList(varNames);
+		
+		logExit(context);
+	}
+	
+	public final void onLambdaBodyStart(Context context) {
+		
+		logEnter(context);
+		
+		logExit(context);
+	}
+	
+	public final void onLambdaBodyEnd(Context context) {
+		
+		logEnter(context);
+		
+		logExit(context);
+	}
+	
+	public final void onLambdaExpressionEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackLambdaExpression stackLambdaExpression = pop();
+
+		final LambdaExpressionParameters parameters;
+
+		if (stackLambdaExpression.getSingleParameter() != null) {
+			parameters = new LambdaExpressionParameters(context, stackLambdaExpression.getSingleParameter());
+		}
+		else if (stackLambdaExpression.getInferredParameterList() != null) {
+			parameters = new LambdaExpressionParameters(context, stackLambdaExpression.getInferredParameterList());
+		}
+		else {
+			throw new UnsupportedOperationException();
+		}
+
+		final LambdaExpression lambdaExpression;
+		
+		final Expression expression = stackLambdaExpression.makeExpressionOrNull(context);
+		
+		if (expression != null) {
+			lambdaExpression = new SingleLambdaExpression(context, parameters, expression);
+		}
+		else {
+			lambdaExpression = new BlockLambdaExpression(
+					context,
+					parameters,
+					new Block(context, stackLambdaExpression.getStatements()));
+		}
+
+		final ExpressionSetter expressionSetter = get();
+		
+		expressionSetter.addExpression(lambdaExpression);
 		
 		logExit(context);
 	}

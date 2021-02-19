@@ -495,7 +495,39 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onParametersEnd(Context context) {
 		delegate.onParametersEnd(context);
 	}
+	
+	public void onLambdaExpressionStart(Context context) {
+		delegate.onLambdaExpressionStart(context);
+	}
+	
+	public void onSingleLambdaParameter(Context context, String varName) {
+		delegate.onSingleLambdaParameter(context, varName);
+	}
+	
+	public void onFormalLambdaParameterListStart(Context context) {
+		delegate.onFormalLambdaParameterListStart(context);
+	}
 
+	public void onFormalLambdaParameterListEnd(Context context) {
+		delegate.onFormalLambdaParameterListEnd(context);
+	}
+	
+	public void onInferredLambdaParameterList(Context context, List<String> varNames) {
+		delegate.onInferredLambdaParameterList(context, varNames);
+	}
+	
+	public void onLambdaBodyStart(Context context) {
+		delegate.onLambdaBodyStart(context);
+	}
+	
+	public void onLambdaBodyEnd(Context context) {
+		delegate.onLambdaBodyEnd(context);
+	}
+	
+	public void onLambdaExpressionEnd(Context context) {
+		delegate.onLambdaExpressionEnd(context);
+	}
+	
 	public CompilationUnit onCompilationUnitEnd(Context context) {
 		
 		// Trigger namespace end here since namespace contains code
