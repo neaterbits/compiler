@@ -1424,10 +1424,6 @@ public abstract class BaseParserListener {
 			
 			final InitializerVariableDeclarationElement element = stackForInit.getList().get(0);
 			
-			if (stackForInit.getExpressions().size() > 1) {
-				throw new IllegalStateException("More than one initializer expression");
-			}
-
 			forInit = new ForInit(context, element);
 		}
 		else if (!stackForInit.getExpressions().isEmpty()) {
