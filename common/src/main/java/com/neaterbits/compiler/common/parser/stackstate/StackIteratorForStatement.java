@@ -6,13 +6,15 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.ExpressionSetter;
+import com.neaterbits.compiler.common.parser.PrimarySetter;
 import com.neaterbits.compiler.common.parser.StatementSetter;
 
 public final class StackIteratorForStatement extends BaseStackVariableDeclaration
-		implements ExpressionSetter, StatementSetter {
+		implements ExpressionSetter, PrimarySetter, StatementSetter {
 
 	private Expression expression;
 	private final List<Statement> statements;
@@ -37,6 +39,11 @@ public final class StackIteratorForStatement extends BaseStackVariableDeclaratio
 
 	public Expression getExpression() {
 		return expression;
+	}
+
+	@Override
+	public void addPrimary(Primary primary) {
+		addExpression(primary);
 	}
 
 	@Override
