@@ -71,8 +71,8 @@ literal
  */
 
 primitiveType
-	:	annotation* numericType	# numericTypeToken
-	|	annotation* 'boolean'	# booleanType
+	:	annotation* numericType	# numericType_primitiveType
+	|	annotation* 'boolean'	# booleanType_primitiveType
 	;
 
 numericType
@@ -365,8 +365,8 @@ unannType
 	;
 
 unannPrimitiveType
-	:	numericType
-	|	'boolean'
+	:	numericType		# numericType_unannPrimitiveType
+	|	'boolean'		# booleanType_unannPrimitiveType
 	;
 
 unannReferenceType

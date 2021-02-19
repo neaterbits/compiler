@@ -923,10 +923,15 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 
 	@Override
-	public void exitBooleanType(BooleanTypeContext ctx) {
+	public void exitBooleanType_primitiveType(BooleanType_primitiveTypeContext ctx) {
 		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.BOOLEAN);
 	}
 	
+	@Override
+	public void exitBooleanType_unannPrimitiveType(BooleanType_unannPrimitiveTypeContext ctx) {
+		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.BOOLEAN);
+	}
+
 	@Override
 	public void exitClassOrInterfaceReferenceType(ClassOrInterfaceReferenceTypeContext ctx) {
 		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), ctx.getText());
