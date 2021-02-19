@@ -7,11 +7,11 @@ import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 
-public final class MethodModifierHolder extends BaseASTElement implements MethodModifier {
+public final class InterfaceMethodModifierHolder extends BaseASTElement implements InterfaceMethodModifier {
 
-	private final MethodModifier delegate;
+	private final InterfaceMethodModifier delegate;
 
-	public MethodModifierHolder(Context context, MethodModifier delegate) {
+	public InterfaceMethodModifierHolder(Context context, InterfaceMethodModifier delegate) {
 		super(context);
 
 		Objects.requireNonNull(delegate);
@@ -19,8 +19,12 @@ public final class MethodModifierHolder extends BaseASTElement implements Method
 		this.delegate = delegate;
 	}
 
+	public InterfaceMethodModifier getModifier() {
+		return delegate;
+	}
+
 	@Override
-	public <T, R> R visit(MethodModifierVisitor<T, R> visitor, T param) {
+	public <T, R> R visit(InterfaceMethodModifierVisitor<T, R> visitor, T param) {
 		return delegate.visit(visitor, param);
 	}
 

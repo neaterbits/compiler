@@ -26,8 +26,10 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodOverride;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.FieldAccessType;
@@ -214,7 +216,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		System.out.println("## enterMethodDeclaration: " + ctx.getText());
 		
-		delegate.onMethodStart(context(ctx));
+		delegate.onClassMethodStart(context(ctx));
 	}
 
 	@Override
@@ -283,55 +285,55 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 
 	@Override
-	public void exitPublicMethodMofifier(PublicMethodMofifierContext ctx) {
-		delegate.onVisibilityMethodModifier(context(ctx), MethodVisibility.PUBLIC);
+	public void exitPublicMethodModifier(PublicMethodModifierContext ctx) {
+		delegate.onVisibilityClassMethodModifier(context(ctx), ClassMethodVisibility.PUBLIC);
 	}
 
 	@Override
 	public void exitProtectedMethodModifier(ProtectedMethodModifierContext ctx) {
-		delegate.onVisibilityMethodModifier(context(ctx), MethodVisibility.NAMESPACE_AND_SUBCLASSES);
+		delegate.onVisibilityClassMethodModifier(context(ctx), ClassMethodVisibility.NAMESPACE_AND_SUBCLASSES);
 	}
 
 	@Override
 	public void exitPrivateMethodModifier(PrivateMethodModifierContext ctx) {
-		delegate.onVisibilityMethodModifier(context(ctx), MethodVisibility.PRIVATE);
+		delegate.onVisibilityClassMethodModifier(context(ctx), ClassMethodVisibility.PRIVATE);
 	}
 	
 	@Override
 	public void exitAbstractMethodModifier(AbstractMethodModifierContext ctx) {
-		delegate.onOverrideModifier(context(ctx), MethodOverride.ABSTRACT);
+		delegate.onOverrideClassMehodModifier(context(ctx), ClassMethodOverride.ABSTRACT);
 	}
 
 	@Override
 	public void exitFinalMethodModifier(FinalMethodModifierContext ctx) {
-		delegate.onOverrideModifier(context(ctx), MethodOverride.FINAL);
+		delegate.onOverrideClassMehodModifier(context(ctx), ClassMethodOverride.FINAL);
 	}
 
 	@Override
 	public void exitStaticMethodModifier(StaticMethodModifierContext ctx) {
-		delegate.onStaticMethodModifier(context(ctx));
+		delegate.onStaticClassMethodModifier(context(ctx));
 	}
 
 	@Override
 	public void exitStrictfpMethodModifier(StrictfpMethodModifierContext ctx) {
-		delegate.onStrictfpMethodModifier(context(ctx));
+		delegate.onStrictfpClassMethodModifier(context(ctx));
 	}
 	
 	@Override
 	public void exitSynchronizedMethodModifier(SynchronizedMethodModifierContext ctx) {
-		delegate.onSynchronizedMethodModifier(context(ctx));
+		delegate.onSynchronizedClassMethodModifier(context(ctx));
 	}
 	
 	@Override
 	public void exitNativeMethodModifier(NativeMethodModifierContext ctx) {
-		delegate.onNativeMethodModifier(context(ctx));
+		delegate.onNativeClassMethodModifier(context(ctx));
 	}
 
 	@Override
 	public void exitMethodDeclaration(MethodDeclarationContext ctx) {
 		System.out.println("## exitMethodDeclaration: " + ctx.getText());
 
-		delegate.onMethodEnd(context(ctx));
+		delegate.onClassMethodEnd(context(ctx));
 	}
 	
 	@Override
@@ -344,16 +346,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.PUBLIC);
 	}
 
-	@Override
-	public void exitProtectedFieldModifier(ProtectedFieldModifierContext ctx) {
-		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.NAMESPACE_AND_SUBCLASSES);
-	}
-	
-	@Override
-	public void exitPrivateFieldModifier(PrivateFieldModifierContext ctx) {
-		delegate.onVisibilityFieldModifier(context(ctx), FieldVisibility.PRIVATE);
-	}
-	
 	@Override
 	public void exitStaticFieldModifier(StaticFieldModifierContext ctx) {
 		delegate.onStaticFieldModifier(context(ctx));
@@ -377,6 +369,69 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void exitFieldDeclaration(FieldDeclarationContext ctx) {
 		delegate.onFieldDeclarationEnd(context(ctx));
+	}
+
+
+	// Interfaces
+	
+	@Override
+	public void enterNormalInterfaceDeclaration(NormalInterfaceDeclarationContext ctx) {
+		delegate.onInterfaceStart(context(ctx), ctx.Identifier().getText());
+	}
+	
+	@Override
+	public void exitPublicInterfaceModifier(PublicInterfaceModifierContext ctx) {
+		delegate.onVisibilityInterfaceModifier(context(ctx), InterfaceVisibility.PUBLIC);
+	}
+
+	@Override
+	public void exitAbstractInterfaceModifier(AbstractInterfaceModifierContext ctx) {
+		delegate.onAbstractInterfaceModifier(context(ctx));
+	}
+
+	@Override
+	public void exitStaticInterfaceModifier(StaticInterfaceModifierContext ctx) {
+		delegate.onStaticInterfaceModifier(context(ctx));
+	}
+
+	@Override
+	public void exitStrictfpInterfaceModifier(StrictfpInterfaceModifierContext ctx) {
+		delegate.onStrictfpInterfaceModifier(context(ctx));
+	}
+
+	@Override
+	public void exitNormalInterfaceDeclaration(NormalInterfaceDeclarationContext ctx) {
+		delegate.onInterfaceEnd(context(ctx));
+	}
+
+	@Override
+	public void enterInterfaceMethodDeclaration(InterfaceMethodDeclarationContext ctx) {
+		delegate.onInterfaceMethodStart(context(ctx));
+	}
+
+	@Override
+	public void exitPublicInterfaceMethodModifier(PublicInterfaceMethodModifierContext ctx) {
+		delegate.onVisibilityInterfaceMethodModifier(context(ctx), InterfaceMethodVisibility.PUBLIC);
+	}
+
+	@Override
+	public void exitAbstractInterfaceMethodModifier(AbstractInterfaceMethodModifierContext ctx) {
+		delegate.onAbstractInterfaceMethodModifier(context(ctx));
+	}
+
+	@Override
+	public void exitStaticInterfaceMethodModifier(StaticInterfaceMethodModifierContext ctx) {
+		delegate.onStaticInterfaceMethodModifier(context(ctx));
+	}
+
+	@Override
+	public void exitStrictfpInterfaceMethodModifier(StrictfpInterfaceMethodModifierContext ctx) {
+		delegate.onStrictfpInterfaceMethodModifier(context(ctx));
+	}
+
+	@Override
+	public void exitInterfaceMethodDeclaration(InterfaceMethodDeclarationContext ctx) {
+		delegate.onInterfaceMethodEnd(context(ctx));
 	}
 
 	// Expressions

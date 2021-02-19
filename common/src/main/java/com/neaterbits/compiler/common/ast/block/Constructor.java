@@ -6,7 +6,7 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorName;
 
-public final class Constructor extends Callable<ConstructorName> {
+public final class Constructor extends CallableCode<ConstructorName> {
 
 	public Constructor(
 			Context context,

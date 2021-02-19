@@ -25,8 +25,10 @@ import com.neaterbits.compiler.common.ast.type.primitive.ShortType;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodOverride;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.FieldAccessType;
@@ -145,11 +147,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		statementsStack.pop();
 	}
 
-	public void onMethodStart(Context context) {
+	public void onClassMethodStart(Context context) {
 		
 		statementsStack.push();
 		
-		delegate.onMethodStart(context);
+		delegate.onClassMethodStart(context);
 	}
 	
 	public void onMethodReturnTypeStart(Context context) {
@@ -180,32 +182,89 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onMethodSignatureParametersEnd(context);
 	}
 
-	public void onVisibilityMethodModifier(Context context, MethodVisibility visibility) {
-		delegate.onVisibilityMethodModifier(context, visibility);
+	public void onVisibilityClassMethodModifier(Context context, ClassMethodVisibility visibility) {
+		delegate.onVisibilityClassMethodModifier(context, visibility);
 	}
 	
-	public void onOverrideModifier(Context context, MethodOverride methodOverride) {
-		delegate.onOverrideModifier(context, methodOverride);
+	public void onOverrideClassMehodModifier(Context context, ClassMethodOverride methodOverride) {
+		delegate.onOverrideClassMethodModifier(context, methodOverride);
 	}
 	
-	public void onStaticMethodModifier(Context context) {
-		delegate.onStaticMethodModifier(context);
+	public void onStaticClassMethodModifier(Context context) {
+		delegate.onStaticClassMethodModifier(context);
 	}
 
-	public void onStrictfpMethodModifier(Context context) {
-		delegate.onStrictfpMethodModifier(context);
+	public void onStrictfpClassMethodModifier(Context context) {
+		delegate.onStrictfpClassMethodModifier(context);
 	}
 	
-	public void onSynchronizedMethodModifier(Context context) {
-		delegate.onSynchronizedMethodModifier(context);
+	public void onSynchronizedClassMethodModifier(Context context) {
+		delegate.onSynchronizedClassMethodModifier(context);
 	}
 
-	public void onNativeMethodModifier(Context context) {
-		delegate.onNativeMethodModifier(context);
+	public void onNativeClassMethodModifier(Context context) {
+		delegate.onNativeClassMethodModifier(context);
 	}
 	
-	public void onMethodEnd(Context context) {
-		delegate.onMethodEnd(context);
+	public void onClassMethodEnd(Context context) {
+		delegate.onClassMethodEnd(context);
+		
+		statementsStack.pop();
+	}
+
+	public void onInterfaceStart(Context context, String name) {
+		delegate.onInterfaceStart(context, name);
+	}
+	
+	public void onVisibilityInterfaceModifier(Context context, InterfaceVisibility visibility) {
+		delegate.onVisibilityInterfaceModifier(context, visibility);
+	}
+
+	public void onAbstractInterfaceModifier(Context context) {
+		delegate.onStaticInterfaceModifier(context);
+	}
+	
+	public void onStaticInterfaceModifier(Context context) {
+		delegate.onStaticInterfaceModifier(context);
+	}
+	
+	public void onStrictfpInterfaceModifier(Context context) {
+		delegate.onStrictfpInterfaceModifier(context);
+	}
+	
+	public void onInterfaceEnd(Context context) {
+		delegate.onInterfaceEnd(context);
+	}
+
+	public void onInterfaceMethodStart(Context context) {
+		
+		statementsStack.push();
+		
+		delegate.onInterfaceMethodStart(context);
+	}
+
+	public void onVisibilityInterfaceMethodModifier(Context context, InterfaceMethodVisibility visibility) {
+		delegate.onVisibilityInterfaceMethodModifier(context, visibility);
+	}
+	
+	public void onAbstractInterfaceMethodModifier(Context context) {
+		delegate.onAbstractInterfaceMethodModifier(context);
+	}
+	
+	public void onDefaultInterfaceMethodModifier(Context context) {
+		delegate.onDefaultInterfaceMethodModifier(context);
+	}
+	
+	public void onStaticInterfaceMethodModifier(Context context) {
+		delegate.onStaticInterfaceMethodModifier(context);
+	}
+
+	public void onStrictfpInterfaceMethodModifier(Context context) {
+		delegate.onStrictfpInterfaceMethodModifier(context);
+	}
+	
+	public void onInterfaceMethodEnd(Context context) {
+		delegate.onInterfaceMethodEnd(context);
 		
 		statementsStack.pop();
 	}

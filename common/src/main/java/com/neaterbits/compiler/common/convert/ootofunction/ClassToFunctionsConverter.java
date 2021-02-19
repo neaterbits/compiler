@@ -11,7 +11,7 @@ import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.block.Function;
 import com.neaterbits.compiler.common.ast.block.FunctionName;
 import com.neaterbits.compiler.common.ast.block.FunctionQualifiers;
-import com.neaterbits.compiler.common.ast.block.Method;
+import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 import com.neaterbits.compiler.common.ast.type.PointerType;
 import com.neaterbits.compiler.common.ast.type.complex.ClassType;
@@ -21,7 +21,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.ComplexMemberDefinition;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
@@ -92,13 +92,13 @@ public class ClassToFunctionsConverter extends IterativeConverter {
 				
 				structMembers.add(structField);
 			}
-			else if (memberDefinition instanceof MethodMember) {
+			else if (memberDefinition instanceof ClassMethodMember) {
 				
 				// TODO dispatch tables
 				
-				final MethodMember methodMember = (MethodMember)memberDefinition;
+				final ClassMethodMember methodMember = (ClassMethodMember)memberDefinition;
 				
-				final Method method = methodMember.getMethod();
+				final ClassMethod method = methodMember.getMethod();
 				
 				final FunctionName functionName = state.methodToFunctionName(namespace, method.getName());
 				

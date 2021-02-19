@@ -2,7 +2,7 @@ package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.block.Constructor;
-import com.neaterbits.compiler.common.ast.block.Method;
+import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
@@ -17,15 +17,31 @@ import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifierHold
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifierVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.InnerClassMember;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodModifierHolder;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodModifierVisitor;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodNative;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodStatic;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodStrictfp;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodSynchronized;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceAbstract;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethod;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodAbstract;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodDefault;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodMember;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodModifierHolder;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodModifierVisitor;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodStatic;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodStrictfp;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceModifierVisitor;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceStatic;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceStrictfp;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodModifierHolder;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodModifierVisitor;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodNative;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodOverride;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodStatic;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodStrictfp;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodSynchronized;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.emit.EmitterState;
 import com.neaterbits.compiler.common.emit.base.BaseOOCompilationUnitEmitter;
@@ -104,10 +120,10 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 		}
 	}; 
 
-	private static final MethodModifierVisitor<Void, String> METHODMODIFIER_TO_NAME = new MethodModifierVisitor<Void, String>() {
+	private static final ClassMethodModifierVisitor<Void, String> CLASSMETHODMODIFIER_TO_NAME = new ClassMethodModifierVisitor<Void, String>() {
 		
 		@Override
-		public String onOverride(MethodOverride methodOverride, Void param) {
+		public String onOverride(ClassMethodOverride methodOverride, Void param) {
 			
 			final String s;
 			
@@ -123,17 +139,17 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 		}
 		
 		@Override
-		public String onStrictFp(MethodStrictfp methodStrictfp, Void param) {
+		public String onStrictFp(ClassMethodStrictfp methodStrictfp, Void param) {
 			return "strictfp";
 		}
 		
 		@Override
-		public String onStatic(MethodStatic methodStatic, Void param) {
+		public String onStatic(ClassMethodStatic methodStatic, Void param) {
 			return "static";
 		}
 		
 		@Override
-		public String onVisibility(MethodVisibility visibility, Void param) {
+		public String onVisibility(ClassMethodVisibility visibility, Void param) {
 			final String s;
 			
 			switch (visibility) {
@@ -149,16 +165,89 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 		}
 
 		@Override
-		public String onSynchronized(MethodSynchronized methodSynchronized, Void param) {
+		public String onSynchronized(ClassMethodSynchronized methodSynchronized, Void param) {
 			return "synchronized";
 		}
 
 		@Override
-		public String onNative(MethodNative methodNative, Void param) {
+		public String onNative(ClassMethodNative methodNative, Void param) {
 			return "native";
 		}
 	};
 
+	private static final InterfaceModifierVisitor<Void, String> INTERFACEMODIFIER_TO_NAME = new InterfaceModifierVisitor<Void, String>() {
+		
+		@Override
+		public String onVisibility(InterfaceVisibility visibility, Void param) {
+
+			final String s;
+			
+			switch (visibility) {
+			case PUBLIC: s = "public"; break;
+			case NAMESPACE: s = "protected"; break;
+			case PRIVATE: s = "private"; break;
+			
+			default:
+				throw new UnsupportedOperationException("Unknown interface visibility " + visibility);
+			}
+			
+			return s;
+		}
+		
+		@Override
+		public String onStrictfp(InterfaceStrictfp interfaceStrictfp, Void param) {
+			return "strictfp";
+		}
+		
+		@Override
+		public String onStatic(InterfaceStatic interfaceStatic, Void param) {
+			return "static";
+		}
+		
+		@Override
+		public String onAbstract(InterfaceAbstract interfaceAbstract, Void param) {
+			return "abstract";
+		}
+	};
+	
+	private static final InterfaceMethodModifierVisitor<Void, String> INTERFACEMETHODMODIFIER_TO_NAME = new InterfaceMethodModifierVisitor<Void, String>() {
+		
+		@Override
+		public String onVisibility(InterfaceMethodVisibility visibility, Void param) {
+			
+			final String s;
+			
+			switch (visibility) {
+			case PUBLIC: s = "public"; break;
+			
+			default:
+				throw new UnsupportedOperationException("Unknown interface method visibility " + visibility);
+			}
+			
+			return s;
+		}
+		
+		@Override
+		public String onStrictfp(InterfaceMethodStrictfp methodStrictfp, Void param) {
+			return "strictfp";
+		}
+		
+		@Override
+		public String onStatic(InterfaceMethodStatic methodStatic, Void param) {
+			return "static";
+		}
+		
+		@Override
+		public String onDefault(InterfaceMethodDefault methodDefault, Void param) {
+			return "default";
+		}
+		
+		@Override
+		public String onAbstract(InterfaceMethodAbstract methodAbstract, Void param) {
+			return "abstract";
+		}
+	};
+	
 	@Override
 	public Void onClassDefinition(ClassDefinition classDefinition, EmitterState param) {
 
@@ -214,22 +303,22 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 
 
 	@Override
-	public Void onMethod(Method method, EmitterState param) {
+	public Void onClassMethod(ClassMethod method, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Void onMethodMember(MethodMember methodMember, EmitterState param) {
+	public Void onClassMethodMember(ClassMethodMember methodMember, EmitterState param) {
 		
-		final ASTList<MethodModifierHolder> modifiers = methodMember.getModifiers().getModifiers();
+		final ASTList<ClassMethodModifierHolder> modifiers = methodMember.getModifiers().getModifiers();
 		
-		emitList(param, modifiers, " ", modifier -> modifier.visit(METHODMODIFIER_TO_NAME, null));
+		emitList(param, modifiers, " ", modifier -> modifier.visit(CLASSMETHODMODIFIER_TO_NAME, null));
 		
 		if (!modifiers.isEmpty()) {
 			param.append(' ');
 		}
 
-		final Method method = methodMember.getMethod();
+		final ClassMethod method = methodMember.getMethod();
 
 		param.append(method.getName().getName()).append('(');
 		
@@ -245,6 +334,60 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 	@Override
 	public Void onClassDataFieldMember(ClassDataFieldMember field, EmitterState param) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onInterfaceDefinition(InterfaceDefinition interfaceDefinition, EmitterState param) {
+		final ASTList<? extends InterfaceModifier> modifiers = interfaceDefinition.getModifiers().getModifiers();
+		
+		emitList(param, modifiers, " ", modifier -> modifier.visit(INTERFACEMODIFIER_TO_NAME, null));
+		
+		if (!modifiers.isEmpty()) {
+			param.append(' ');
+		}
+		
+		param.append("interface ").append(interfaceDefinition.getName().getName()).append(" {").newline();
+		
+		param.addIndent();
+		
+		emitCode(interfaceDefinition.getMembers(), param);
+
+		param.subIndent();
+		
+		param.append('}').newline();
+		
+		return null;
+	}
+
+	@Override
+	public Void onInterfaceMethod(InterfaceMethod method, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onInterfaceMethodMember(InterfaceMethodMember methodMember, EmitterState param) {
+		final ASTList<InterfaceMethodModifierHolder> modifiers = methodMember.getModifiers().getModifiers();
+		
+		emitList(param, modifiers, " ", modifier -> modifier.visit(INTERFACEMETHODMODIFIER_TO_NAME, null));
+		
+		if (!modifiers.isEmpty()) {
+			param.append(' ');
+		}
+
+		final InterfaceMethod method = methodMember.getMethod();
+
+		param.append(method.getName().getName()).append('(');
+		
+		if (modifiers.contains(h -> h.getModifier() instanceof InterfaceMethodStatic)) {
+			throw new UnsupportedOperationException();
+		} else if (modifiers.contains(h -> h.getModifier() instanceof InterfaceMethodDefault)) {
+			throw new UnsupportedOperationException();
+		}
+		else {
+			param.append(");").newline();
+		}
+
+		return null;
 	}
 
 	@Override

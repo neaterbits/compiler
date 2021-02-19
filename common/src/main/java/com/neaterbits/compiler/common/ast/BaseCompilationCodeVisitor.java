@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.common.ast;
 
 import com.neaterbits.compiler.common.ast.block.Function;
-import com.neaterbits.compiler.common.ast.block.Method;
+import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
 
@@ -31,12 +31,12 @@ public abstract class BaseCompilationCodeVisitor<T, R> implements CompilationCod
 	}
 
 	@Override
-	public R onMethod(Method method, T param) {
+	public R onClassMethod(ClassMethod method, T param) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public R onMethodMember(MethodMember method, T param) {
+	public R onClassMethodMember(ClassMethodMember method, T param) {
 		throw new UnsupportedOperationException();
 	}
 

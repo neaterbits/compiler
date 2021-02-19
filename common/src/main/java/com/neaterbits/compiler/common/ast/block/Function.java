@@ -7,7 +7,7 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 
-public final class Function extends Callable<FunctionName> {
+public final class Function extends CallableCode<FunctionName> {
 
 	private final FunctionQualifiers qualifiers;
 	

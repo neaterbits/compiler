@@ -1,45 +1,37 @@
 package com.neaterbits.compiler.common.ast.typedefinition;
 
-import java.util.Objects;
+import java.util.List;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
-import com.neaterbits.compiler.common.ast.block.Method;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
-public final class MethodMember extends ComplexMemberDefinition {
+public final class InterfaceDefinition extends ComplexTypeDefinition {
 
-	private final ASTSingle<MethodModifiers> modifiers;
-	private final ASTSingle<Method> method;
+	private final ASTSingle<InterfaceModifiers> modifiers;
 
-	public MethodMember(Context context, MethodModifiers modifiers, Method method) {
-		super(context);
-		
-		Objects.requireNonNull(modifiers);
-		Objects.requireNonNull(method);
-		
+	public InterfaceDefinition(Context context, InterfaceModifiers modifiers, InterfaceName name, List<ComplexMemberDefinition> members) {
+		super(context, name, members);
+
 		this.modifiers = makeSingle(modifiers);
-		this.method = makeSingle(method);
 	}
 
-	public MethodModifiers getModifiers() {
+	public InterfaceModifiers getModifiers() {
 		return modifiers.get();
-	}
-
-	public Method getMethod() {
-		return method.get();
 	}
 
 	@Override
 	public <T, R> R visit(CompilationCodeVisitor<T, R> visitor, T param) {
-		return visitor.onMethodMember(this, param);
+		return visitor.onInterfaceDefinition(this, param);
 	}
 
 	@Override
 	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+
 		doIterate(modifiers, recurseMode, visitor);
-		doIterate(method, recurseMode, visitor);
+		
+		super.doRecurse(recurseMode, visitor);
 	}
 }

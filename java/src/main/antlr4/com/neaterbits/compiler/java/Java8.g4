@@ -425,7 +425,7 @@ methodDeclaration
 
 methodModifier
 	:	annotation		# methodAnnotation
-	|	'public'		# publicMethodMofifier
+	|	'public'		# publicMethodModifier
 	|	'protected'		# protectedMethodModifier
 	|	'private'		# privateMethodModifier
 	|	'abstract'		# abstractMethodModifier
@@ -573,13 +573,13 @@ normalInterfaceDeclaration
 	;
 
 interfaceModifier
-	:	annotation
-	|	'public'
-	|	'protected'
-	|	'private'
-	|	'abstract'
-	|	'static'
-	|	'strictfp'
+	:	annotation		# annotationInterfaceModifier
+	|	'public'		# publicInterfaceModifier
+	|	'protected'		# protectedInterfaceModifier
+	|	'private'		# privateInterfaceModifier
+	|	'abstract'		# abstractInterfaceModifier
+	|	'static'		# staticInterfaceModifier
+	|	'strictfp'		# strictfpInterfaceModifier
 	;
 
 extendsInterfaces
@@ -614,12 +614,12 @@ interfaceMethodDeclaration
 	;
 
 interfaceMethodModifier
-	:	annotation
-	|	'public'
-	|	'abstract'
-	|	'default'
-	|	'static'
-	|	'strictfp'
+	:	annotation		# annotationInterfaceMethodModifier
+	|	'public'		# publicInterfaceMethodModifier
+	|	'abstract'		# abstractInterfaceMethodModifier
+	|	'default'		# defaultInterfaceMethodModifier
+	|	'static'		# staticInterfaceMethodModifier
+	|	'strictfp'		# strictfpInterfaceMethodModifier
 	;
 
 annotationTypeDeclaration

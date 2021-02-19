@@ -7,20 +7,20 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorName;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.common.log.ParseLogger;
-import com.neaterbits.compiler.common.parser.MethodMemberSetter;
+import com.neaterbits.compiler.common.parser.ClassMethodMemberSetter;
 import com.neaterbits.compiler.common.parser.ParametersSetter;
 import com.neaterbits.compiler.common.parser.StackEntry;
 
-public final class StackClassInstanceCreationExpression extends StackEntry implements ParametersSetter, MethodMemberSetter {
+public final class StackClassInstanceCreationExpression extends StackEntry implements ParametersSetter, ClassMethodMemberSetter {
 
 	private TypeReference type;
 	private ConstructorName constructorName;
 	private List<Expression> parameters;
 	
 	// Anonymous classes
-	private final List<MethodMember> methods;
+	private final List<ClassMethodMember> methods;
 	
 	public StackClassInstanceCreationExpression(ParseLogger parseLogger) {
 		super(parseLogger);
@@ -66,12 +66,12 @@ public final class StackClassInstanceCreationExpression extends StackEntry imple
 		this.parameters = parameters;
 	}
 
-	public List<MethodMember> getMethods() {
+	public List<ClassMethodMember> getMethods() {
 		return methods;
 	}
 
 	@Override
-	public void addMethod(MethodMember method) {
+	public void addMethod(ClassMethodMember method) {
 		Objects.requireNonNull(method);
 
 		methods.add(method);

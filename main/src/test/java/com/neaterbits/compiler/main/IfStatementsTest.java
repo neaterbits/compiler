@@ -11,7 +11,7 @@ import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 
 public class IfStatementsTest extends BaseJavaCompilerTest {
@@ -127,7 +127,7 @@ public class IfStatementsTest extends BaseJavaCompilerTest {
 
 		final ClassDefinition classDefinition = compileAndReturnClass(FILENAME);
 		
-		final MethodMember testMethod1 = classDefinition.findMethod(methodName);
+		final ClassMethodMember testMethod1 = classDefinition.findMethod(methodName);
 		
 		assertThat(testMethod1).isNotNull();
 		

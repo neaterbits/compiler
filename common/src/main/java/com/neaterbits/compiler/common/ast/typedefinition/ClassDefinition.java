@@ -22,11 +22,11 @@ public final class ClassDefinition extends ComplexTypeDefinition {
 		return modifiers.get();
 	}
 	
-	public final MethodMember findMethod(String methodName) {
+	public final ClassMethodMember findMethod(String methodName) {
 		
-		return (MethodMember)getMembers().find(member -> 
-							   member instanceof MethodMember
-							&& ((MethodMember)member).getMethod().getName().getName().equals(methodName));
+		return (ClassMethodMember)getMembers().find(member -> 
+							   member instanceof ClassMethodMember
+							&& ((ClassMethodMember)member).getMethod().getName().getName().equals(methodName));
 	}
 
 	@Override

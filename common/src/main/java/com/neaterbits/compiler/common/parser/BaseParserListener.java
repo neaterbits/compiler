@@ -66,16 +66,33 @@ import com.neaterbits.compiler.common.ast.typedefinition.FieldModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldStatic;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldVisibility;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodMember;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodModifier;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodModifierHolder;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodModifiers;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodNative;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodOverride;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodStatic;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodStrictfp;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodSynchronized;
-import com.neaterbits.compiler.common.ast.typedefinition.MethodVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceAbstract;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodDefault;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodMember;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodModifierHolder;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodModifiers;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodStatic;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodStrictfp;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethodVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceModifierHolder;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceModifiers;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceName;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceStatic;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceStrictfp;
+import com.neaterbits.compiler.common.ast.typedefinition.InterfaceVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodMember;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodModifier;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodModifierHolder;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodModifiers;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodNative;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodOverride;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodStatic;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodStrictfp;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodSynchronized;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassMethodVisibility;
 import com.neaterbits.compiler.common.ast.typedefinition.Subclassing;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierHolder;
@@ -104,8 +121,10 @@ import com.neaterbits.compiler.common.parser.stackstate.StackExpressionList;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackFieldDeclarationList;
 import com.neaterbits.compiler.common.parser.stackstate.StackFinallyBlock;
+import com.neaterbits.compiler.common.parser.stackstate.StackInterface;
+import com.neaterbits.compiler.common.parser.stackstate.StackInterfaceMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackIteratorForStatement;
-import com.neaterbits.compiler.common.parser.stackstate.StackMethod;
+import com.neaterbits.compiler.common.parser.stackstate.StackClassMethod;
 import com.neaterbits.compiler.common.parser.stackstate.StackMethodInvocation;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamespace;
 import com.neaterbits.compiler.common.parser.stackstate.StackParameterList;
@@ -390,11 +409,11 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
-	public final void onMethodStart(Context context) {
+	public final void onClassMethodStart(Context context) {
 		
 		logEnter(context);
 		
-		final StackMethod method = new StackMethod(logger);
+		final StackClassMethod method = new StackClassMethod(logger);
 
 		push(method);
 		
@@ -418,7 +437,7 @@ public abstract class BaseParserListener {
 		
 		final StackReturnType stackReturnType = pop();
 		
-		final StackMethod stackMethod = get();
+		final CallableStackEntry stackMethod = get();
 		
 		stackMethod.setReturnType(stackReturnType.getType());
 		
@@ -429,7 +448,7 @@ public abstract class BaseParserListener {
 		
 		logEnter(context);
 		
-		final StackMethod method = get();
+		final CallableStackEntry method = get();
 		
 		System.out.println("Set methodname: " + methodName);
 		
@@ -477,83 +496,83 @@ public abstract class BaseParserListener {
 		
 	}
 
-	private void addMethodModifier(Context context, MethodModifier modifier) {
+	private void addClassMethodModifier(Context context, ClassMethodModifier modifier) {
 		
 		logEnter(context);
 		
-		final StackMethod stackMethod = get();
+		final StackClassMethod stackMethod = get();
 		
-		stackMethod.addModifier(new MethodModifierHolder(context, modifier));
+		stackMethod.addModifier(new ClassMethodModifierHolder(context, modifier));
 		
 		logExit(context);
 	}
 	
-	public final void onVisibilityMethodModifier(Context context, MethodVisibility visibility) {
+	public final void onVisibilityClassMethodModifier(Context context, ClassMethodVisibility visibility) {
 		
 		logEnter(context);
 		
-		addMethodModifier(context, visibility);
+		addClassMethodModifier(context, visibility);
 		
 		logExit(context);
 	}
 	
-	public final void onOverrideModifier(Context context, MethodOverride methodOverride) {
+	public final void onOverrideClassMethodModifier(Context context, ClassMethodOverride methodOverride) {
 		
 		logEnter(context);
 		
-		addMethodModifier(context, methodOverride);
+		addClassMethodModifier(context, methodOverride);
 		
 		logExit(context);
 	}
 	
-	public final void onStaticMethodModifier(Context context) {
+	public final void onStaticClassMethodModifier(Context context) {
 		
 		logEnter(context);
 		
-		addMethodModifier(context, new MethodStatic());
+		addClassMethodModifier(context, new ClassMethodStatic());
 		
 		logExit(context);
 	}
 
-	public final void onStrictfpMethodModifier(Context context) {
+	public final void onStrictfpClassMethodModifier(Context context) {
 		logEnter(context);
 		
-		addMethodModifier(context, new MethodStrictfp());
+		addClassMethodModifier(context, new ClassMethodStrictfp());
 		
 		logExit(context);
 	}
 
-	public final void onSynchronizedMethodModifier(Context context) {
+	public final void onSynchronizedClassMethodModifier(Context context) {
 		
 		logEnter(context);
 		
-		addMethodModifier(context, new MethodSynchronized());
+		addClassMethodModifier(context, new ClassMethodSynchronized());
 		
 		logExit(context);
 	}
 
-	public final void onNativeMethodModifier(Context context) {
+	public final void onNativeClassMethodModifier(Context context) {
 		
 		logEnter(context);
 		
-		addMethodModifier(context, new MethodNative());
+		addClassMethodModifier(context, new ClassMethodNative());
 		
 		logExit(context);
 	}
 	
-	public final void onMethodEnd(Context context) {
+	public final void onClassMethodEnd(Context context) {
 		
 		logEnter(context);
 		
 		popVariableScope();
 		
-		final StackMethod method = pop();
+		final StackClassMethod method = pop();
 
-		final MethodMemberSetter methodMemberSetter = get();
+		final ClassMethodMemberSetter methodMemberSetter = get();
 		
-		final MethodMember methodMember = new MethodMember(
+		final ClassMethodMember methodMember = new ClassMethodMember(
 				context,
-				new MethodModifiers(context, method.getModifiers()), method.makeMethod(context));
+				new ClassMethodModifiers(context, method.getModifiers()), method.makeMethod(context));
 
 		methodMemberSetter.addMethod(methodMember);
 		
@@ -626,6 +645,166 @@ public abstract class BaseParserListener {
 		
 		final StackFieldDeclarationList stackFieldDeclarationList = pop();
 
+		logExit(context);
+	}
+
+	public final void onInterfaceStart(Context context, String name) {
+		
+		logEnter(context);
+		
+		push(new StackInterface(logger, name));
+		
+		logExit(context);
+	}
+
+	private void addInterfaceModifier(Context context, InterfaceModifier modifier) {
+
+		logEnter(context);
+
+		final StackInterface stackInterface = (StackInterface)mainStack.get();
+		
+		stackInterface.addModifier(new InterfaceModifierHolder(context, modifier));
+		
+		logExit(context);
+	}
+	
+	public final void onVisibilityInterfaceModifier(Context context, InterfaceVisibility visibility) {
+		
+		logEnter(context);
+		
+		addInterfaceModifier(context, visibility);
+		
+		logExit(context);
+	}
+
+	public final void onAbstractInterfaceModifier(Context context) {
+		
+		logEnter(context);
+		
+		addInterfaceModifier(context, new InterfaceAbstract());
+		
+		logExit(context);
+	}
+
+	public final void onStaticInterfaceModifier(Context context) {
+		
+		logEnter(context);
+		
+		addInterfaceModifier(context, new InterfaceStatic());
+		
+		logExit(context);
+	}
+
+	public final void onStrictfpInterfaceModifier(Context context) {
+		
+		logEnter(context);
+		
+		addInterfaceModifier(context, new InterfaceStrictfp());
+		
+		logExit(context);
+	}
+	
+	public final void onInterfaceEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackInterface entry = pop();
+		
+		final List<ComplexMemberDefinition> interfaceCode = entry.getList();
+
+		final InterfaceModifiers interfaceModifiers = new InterfaceModifiers(context, entry.getModifiers());
+		
+		final InterfaceDefinition classDefinition = new InterfaceDefinition(context, interfaceModifiers, new InterfaceName(entry.getName()), interfaceCode);
+		
+		mainStack.addElement(classDefinition);
+		
+		logExit(context);
+	}
+
+	public final void onInterfaceMethodStart(Context context) {
+		
+		logEnter(context);
+		
+		final StackInterfaceMethod method = new StackInterfaceMethod(logger);
+
+		push(method);
+		
+		pushVariableScope();
+		
+		logExit(context);
+	}
+
+	private void addInterfaceMethodModifier(Context context, InterfaceMethodModifier modifier) {
+		
+		logEnter(context);
+		
+		final StackInterfaceMethod stackMethod = get();
+		
+		stackMethod.addModifier(new InterfaceMethodModifierHolder(context, modifier));
+		
+		logExit(context);
+	}
+
+	public final void onVisibilityInterfaceMethodModifier(Context context, InterfaceMethodVisibility visibility) {
+		
+		logEnter(context);
+		
+		addInterfaceMethodModifier(context, visibility);
+		
+		logExit(context);
+	}
+
+	public final void onAbstractInterfaceMethodModifier(Context context) {
+		
+		logEnter(context);
+		
+		addInterfaceMethodModifier(context, new InterfaceMethodStatic());
+		
+		logExit(context);
+	}
+
+	public final void onDefaultInterfaceMethodModifier(Context context) {
+		
+		logEnter(context);
+		
+		addInterfaceMethodModifier(context, new InterfaceMethodDefault());
+		
+		logExit(context);
+	}
+
+	public final void onStaticInterfaceMethodModifier(Context context) {
+		
+		logEnter(context);
+		
+		addInterfaceMethodModifier(context, new InterfaceMethodStatic());
+		
+		logExit(context);
+	}
+
+	public final void onStrictfpInterfaceMethodModifier(Context context) {
+		logEnter(context);
+		
+		addInterfaceMethodModifier(context, new InterfaceMethodStrictfp());
+		
+		logExit(context);
+	}
+	
+	public final void onInterfaceMethodEnd(Context context) {
+		
+		logEnter(context);
+		
+		popVariableScope();
+		
+		final StackInterfaceMethod method = pop();
+
+		final InterfaceMethodMemberSetter methodMemberSetter = get();
+		
+		final InterfaceMethodMember methodMember = new InterfaceMethodMember(
+				context,
+				new InterfaceMethodModifiers(context, method.getModifiers()), method.makeMethod(context));
+
+		methodMemberSetter.addMethod(methodMember);
+		
 		logExit(context);
 	}
 	
