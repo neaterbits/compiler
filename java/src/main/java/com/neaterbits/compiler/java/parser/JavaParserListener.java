@@ -668,33 +668,6 @@ System.out.println("## onJavaTypeVariableReferenceType");
 				break;
 			}
 		}
-
-		/*
-		if (   statementsStack.size() > 1
-			&& statementsStack.getSizeOfFrame(1) > 0
-			&& statementsStack.getLastFromFrame(1) == JavaStatement.IF_THEN_ELSE
-			&& statementsStack.getSizeOfFrame(0) == 0) {
-
-			// Any non-else statement after if - then - else gives an else - statement 
-			delegate.onElseStatementStart(context);
-		}
-		
-		// Check current frame for any else-if where we have not called callback
-		// ie. this is first statement after if - else if nesting
-		else if (statementsStack.getSizeOfFrame(0) > 1
-			&& statementsStack.getLastFromFrame(0, 1) == JavaStatement.IF_THEN_ELSE
-			&& statementsStack.getLastFromFrame(0, 0) == JavaStatement.IF_THEN_ELSE) {
-			
-			delegate.onElseIfStatementEnd(context);
-			
-			delegate.onEndIfStatement(context);
-		}
-		else if (statementsStack.getSizeOfFrame(0) > 1
-				&& statementsStack.getLastFromFrame(0, 0) == JavaStatement.IF_THEN_ELSE) {
-			
-			throw new IllegalStateException("Handled by ifThenStatement");
-		}
-		*/
 	}
 	
 	private void onAnyNonIfStatementEnd(Context context) {
