@@ -84,7 +84,7 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 			break;
 
 		case VARIABLE_REFERENCE:
-		case EXPRESSION:
+		case PRIMARY:
 			emitExpression(expression.getObject(), param);
 			param.append('.');
 			break;

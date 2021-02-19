@@ -5,15 +5,16 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.expression.Expression;
+import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.log.ParseLogger;
-import com.neaterbits.compiler.common.parser.ExpressionSetter;
 import com.neaterbits.compiler.common.parser.MethodInvocationType;
+import com.neaterbits.compiler.common.parser.PrimarySetter;
 
-public final class StackMethodInvocation extends CallStackEntry<MethodName> implements ExpressionSetter {
+public final class StackMethodInvocation extends CallStackEntry<MethodName> implements PrimarySetter {
 
 	private final MethodInvocationType type;
 	private final TypeReference classType;
-	private Expression object;
+	private Primary object;
 	
 	public StackMethodInvocation(ParseLogger parseLogger, MethodInvocationType type, TypeReference classType, String methodName) {
 		super(parseLogger);
@@ -39,25 +40,25 @@ public final class StackMethodInvocation extends CallStackEntry<MethodName> impl
 		return object;
 	}
 
-	private void setExpression(Expression expression) {
+	private void setExpression(Primary primary) {
 		
-		Objects.requireNonNull(expression);
+		Objects.requireNonNull(primary);
 		
 		if (this.object != null) {
-			throw new IllegalStateException("Object expression already set");
+			throw new IllegalStateException("Object primary already set");
 		}
 
-		this.object = expression;
+		this.object = primary;
 	}
 	
 	@Override
-	public void addExpression(Expression expression) {
+	public void addPrimary(Primary primary) {
 		
-		if (type != MethodInvocationType.EXPRESSION) {
-			throw new IllegalStateException("Expected " + MethodInvocationType.EXPRESSION);
+		if (type != MethodInvocationType.PRIMARY) {
+			throw new IllegalStateException("Expected " + MethodInvocationType.PRIMARY);
 		}
 
-		setExpression(expression);
+		setExpression(primary);
 	}
 }
 

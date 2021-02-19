@@ -657,7 +657,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	@Override
 	public void enterExpressionMethodInvocation(ExpressionMethodInvocationContext ctx) {
-		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.EXPRESSION, null, ctx.Identifier().getText());
+		delegate.onMethodInvocationStart(context(ctx), MethodInvocationType.PRIMARY, null, ctx.Identifier().getText());
 	}
 
 	@Override

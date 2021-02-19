@@ -4,7 +4,7 @@ public enum MethodInvocationType {
 	NO_OBJECT(false), // May be on this or on static-method if called from a static context
 	NAMED_CLASS_STATIC(true),
 	VARIABLE_REFERENCE(false),
-	EXPRESSION(false),
+	PRIMARY(false),
 	SUPER(false),
 	TYPED_SUPER(true);
 
