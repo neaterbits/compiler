@@ -224,8 +224,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void enterMethodDeclaration(MethodDeclarationContext ctx) {
 		
-		System.out.println("## enterMethodDeclaration: " + ctx.getText());
-		
 		delegate.onClassMethodStart(context(ctx));
 	}
 
@@ -395,8 +393,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitMethodDeclaration(MethodDeclarationContext ctx) {
-		System.out.println("## exitMethodDeclaration: " + ctx.getText());
-
 		delegate.onClassMethodEnd(context(ctx));
 	}
 	

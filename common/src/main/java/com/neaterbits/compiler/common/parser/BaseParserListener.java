@@ -417,8 +417,6 @@ public abstract class BaseParserListener {
 		
 		final StackConstructor constructor = get();
 		
-		System.out.println("Set constructorname: " + constructorName);
-		
 		constructor.setName(constructorName);
 		
 		logExit(context);
@@ -524,8 +522,6 @@ public abstract class BaseParserListener {
 		logEnter(context);
 		
 		final CallableStackEntry method = get();
-		
-		System.out.println("Set methodname: " + methodName);
 		
 		method.setName(methodName);
 		
@@ -1562,10 +1558,6 @@ public abstract class BaseParserListener {
 				variableDeclaration.getList());
 
 		variableDeclaration.getList().forEach(e -> {
-			
-			System.out.println("-- adding variable name " + e.getName().getName());
-			
-			
 			variableScopes.get().add(e.getName().getName(), e.makeVariableDeclaration(modifiers));
 		});
 		
@@ -1888,8 +1880,6 @@ public abstract class BaseParserListener {
 				new VarName(stackResource.getName()),
 				stackResource.getNumDims(),
 				stackResource.getInitializer());
-		
-		System.out.println("-- adding resource name " + resource.getName().getName());
 		
 		variableScopes.get().add(resource.getName().getName(), resource.makeVariableDeclaration());
 	

@@ -429,8 +429,6 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 
 		final JavaInteger javaInteger = JavaParserUtil.parseIntegerLiteral(literal);
 		
-		System.out.println("--- integer literal " + javaInteger);
-
 		delegate.onIntegerLiteral(context, BigInteger.valueOf(javaInteger.getValue()), javaInteger.getBase(), true, javaInteger.getBits());
 	}
 
@@ -631,15 +629,12 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 
 	public void onJavaClassOrInterfaceReferenceType(Context context, ScopedName typeName) {
-System.out.println("## onJavaClassOrInterfaceReferenceType");		
-		
+
 		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName));
 	}
 	
 	public void onJavaTypeVariableReferenceType(Context context, ScopedName typeName) {
 
-System.out.println("## onJavaTypeVariableReferenceType");
-		
 		delegate.onTypeReference(context, typeName);
 	}
 	
@@ -801,12 +796,9 @@ System.out.println("## onJavaTypeVariableReferenceType");
 		
 		if (statementsStack.size() > 1 && statementsStack.getSizeOfFrame(1) > 0) {
 			
-			System.out.println(" --- last statement in stack " + statementsStack.getLastFromFrame(1));
-			
 			switch (statementsStack.getLastFromFrame(1)) {
 				
 			case ENHANCED_FOR:
-System.out.println("-- matched enhanced for");
 				delegate.onIteratorForTestEnd(context);
 				break;
 				
