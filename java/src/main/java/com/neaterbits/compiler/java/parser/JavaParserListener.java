@@ -54,6 +54,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		}
 	}
 
+	private final ParseLogger logger;
+	
 	// Cache packagename
 	private String packageName;
 
@@ -68,13 +70,15 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	// We use delegation instead of subclassing to make sure that we handle all methods in this class
 
 	private final JavaIterativeListener delegate;
-	private final StatementsStack statementsStack; 
+	private final StatementsStack statementsStack;
+	
 
 	private void printStack(String statement) {
-		System.out.println("stack at " + statement + " " + statementsStack);
+		logger.println("stack at " + statement + " " + statementsStack);
 	}
 	
 	public JavaParserListener(ParseLogger logger) {
+		this.logger = logger;
 		this.delegate = new JavaIterativeListener(logger);
 		this.statementsStack = new StatementsStack();
 	}

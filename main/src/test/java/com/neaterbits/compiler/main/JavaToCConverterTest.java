@@ -1,7 +1,9 @@
 package com.neaterbits.compiler.main;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -83,10 +85,12 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 				".java");
 
 		final DirectoryParser directoryParser = new DirectoryParser(javaParser);
+	
+		final PrintStream logOutput = new PrintStream(new ByteArrayOutputStream());
 		
 		final List<ParsedFile> parsedFiles = directoryParser.parseDirectory(
 				commonModuleSpec.getBaseDirectory(),
-				new ParseLogger(System.out));
+				new ParseLogger(logOutput));
 		
 		assertThat(parsedFiles.size()).isGreaterThan(0);
 	}

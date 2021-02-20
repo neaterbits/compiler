@@ -135,6 +135,10 @@ public final class ParseLogger {
 		out.println();
 	}
 	
+	public void println(String line) {
+		out.println(line);
+	}
+	
 	private void appendLoggerStack() {
 		out.append(' ').append(loggerStack.stream().collect(Collectors.toList()).toString());
 	}
