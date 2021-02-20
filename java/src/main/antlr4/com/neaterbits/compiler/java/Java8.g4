@@ -958,7 +958,7 @@ primary
 
 primaryNoNewArray
 	:	literal							# literal_primaryNoNewArray
-	|	typeName ('[' ']')* '.' 'class'	# typeNameClassExpression_primaryNoNewArray
+	|	typeName typeNameArray '.' 'class'	# typeNameClassExpression_primaryNoNewArray
 	|	'void' '.' 'class'				# voidClassExpression_primaryNoNewArray
 	|	'this'							# thisExpression_primaryNoNewArray
 	|	typeName '.' 'this'				# typeNameThisExpression_primaryNoNewArray
@@ -976,7 +976,7 @@ primaryNoNewArray_lf_arrayAccess
 
 primaryNoNewArray_lfno_arrayAccess
 	:	literal							# literal_primaryNoNewArray_lfno_arrayAccess	
-	|	typeName ('[' ']')* '.' 'class'	# typeNameClassExpression_primaryNoNewArray_lfno_arrayAccess
+	|	typeName typeNameArray '.' 'class'	# typeNameClassExpression_primaryNoNewArray_lfno_arrayAccess
 	|	'void' '.' 'class'				# voidClassExpression_primaryNoNewArray_lfno_arrayAccess
 	|	'this'							# thisExpression_primaryNoNewArray_lfno_arrayAccess
 	|	typeName '.' 'this'				# typeNameThisExpression_primaryNoNewArray_lfno_arrayAccess
@@ -1008,8 +1008,8 @@ primaryNoNewArray_lf_primary_lfno_arrayAccess_lf_primary
 
 primaryNoNewArray_lfno_primary
 	:	literal										# literalToken_primaryNoNewArray_lfno_primary
-	|	typeName ('[' ']')* '.' 'class'				# typeNameClassExpression_primaryNoNewArray_lfno_primary
-	|	unannPrimitiveType ('[' ']')* '.' 'class'	# primitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary
+	|	typeName typeNameArray '.' 'class'				# typeNameClassExpression_primaryNoNewArray_lfno_primary
+	|	unannPrimitiveType typeNameArray '.' 'class'	# primitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary
 	|	'void' '.' 'class'							# voidClassExpression_primaryNoNewArray_lfno_primary
 	|	'this'										# thisExpression_lfno_primary_primaryNoNewArray_lfno_primary
 	|	typeName '.' 'this'							# typeNameThisExpression_primaryNoNewArray_lfno_primary
@@ -1027,8 +1027,8 @@ primaryNoNewArray_lfno_primary_lf_arrayAccess_lfno_primary
 
 primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
 	:	literal										# literalToken_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
-	|	typeName ('[' ']')* '.' 'class'				# typeName_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
-	|	unannPrimitiveType ('[' ']')* '.' 'class'	# primitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	typeName typeNameArray '.' 'class'				# typeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
+	|	unannPrimitiveType typeNameArray '.' 'class'	# primitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
 	|	'void' '.' 'class'							# voidClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
 	|	'this'										# thisExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
 	|	typeName '.' 'this'							# typeNameThisExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
@@ -1038,6 +1038,9 @@ primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
 	|	methodInvocation_lfno_primary				# methodInvocationExpressionToken_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
 	|	methodReference_lfno_primary				# methodReferenceExpressionToken_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary
 	;
+
+typeNameArray
+	: ('[' ']')*;
 
 classInstanceCreationExpression
 	:	'new' typeArguments? annotation* Identifier ('.' annotation* Identifier)* typeArgumentsOrDiamond? '(' argumentList? ')' classBody?

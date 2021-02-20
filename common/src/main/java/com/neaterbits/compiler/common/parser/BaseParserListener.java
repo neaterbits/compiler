@@ -40,6 +40,7 @@ import com.neaterbits.compiler.common.ast.expression.SingleLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
+import com.neaterbits.compiler.common.ast.expression.literal.ClassExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
@@ -64,6 +65,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassOrInterfaceName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassStatic;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassStrictfp;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
@@ -74,6 +76,9 @@ import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifierHold
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorName;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.EnumConstantDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.EnumConstantName;
+import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldStatic;
@@ -131,6 +136,8 @@ import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
 import com.neaterbits.compiler.common.parser.stackstate.StackConditionalExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackConstructor;
 import com.neaterbits.compiler.common.parser.stackstate.StackConstructorInvocation;
+import com.neaterbits.compiler.common.parser.stackstate.StackEnum;
+import com.neaterbits.compiler.common.parser.stackstate.StackEnumConstant;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionList;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackFieldDeclarationList;
@@ -289,9 +296,9 @@ public abstract class BaseParserListener {
 
 		logEnter(context);
 
-		final StackNamedClass stackClass = (StackNamedClass)mainStack.get();
+		final ClassModifierSetter stackClass = get();
 		
-		stackClass.addModifier(new ClassModifierHolder(context, modifier));
+		stackClass.addClassModifier(new ClassModifierHolder(context, modifier));
 		
 		logExit(context);
 	}
@@ -452,21 +459,20 @@ public abstract class BaseParserListener {
 		
 		final StackConstructor stackConstructor = pop();
 		
-		final StackClass stackClass = get();
-		
 		final Constructor constructor = new Constructor(
 				context,
 				new ConstructorName(stackConstructor.getName()),
 				stackConstructor.getParameters(),
 				new Block(context, stackConstructor.getList()));
-
 		
 		final ConstructorMember constructorMember = new ConstructorMember(
 				context,
 				new ConstructorModifiers(context, stackConstructor.getModifiers()),
 				constructor);
-		
-		stackClass.add(constructorMember);
+
+		final ConstructorMemberSetter constructorMemberSetter = get();
+
+		constructorMemberSetter.addConstructorMember(constructorMember);
 		
 		logExit(context);
 	}
@@ -485,7 +491,7 @@ public abstract class BaseParserListener {
 	}
 	
 	public final void onMethodReturnTypeStart(Context context) {
-		
+
 		logEnter(context);
 		
 		push(new StackReturnType(logger));
@@ -784,6 +790,64 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
+	public final void onEnumStart(Context context, String name) {
+
+		logEnter(context);
+
+		push(new StackEnum(logger, name));
+		
+		logExit(context);
+	}
+
+	public final void onEnumConstantStart(Context context, String name) {
+		
+		logEnter(context);
+
+		push(new StackEnumConstant(logger, name));
+		
+		logExit(context);
+	}
+	
+	public final void onEnumConstantEnd(Context context) {
+	
+		logEnter(context);
+
+		final StackEnumConstant stackEnumConstant = pop();
+
+		final EnumConstantDefinition enumConstant = new EnumConstantDefinition(
+				context,
+				new EnumConstantName(stackEnumConstant.getName()),
+				stackEnumConstant.getParameters() != null
+					? new ParameterList(context, stackEnumConstant.getParameters())
+					: null,
+				stackEnumConstant.getList());
+		
+		final StackEnum stackEnum = get();
+		
+		stackEnum.addConstant(enumConstant);
+		
+		logExit(context);
+	}
+	
+	
+	public final void onEnumEnd(Context context) {
+
+		logEnter(context);
+
+		final StackEnum stackEnum = pop();
+		
+		final EnumDefinition enumDefinition = new EnumDefinition(
+				context,
+				new ClassModifiers(context, stackEnum.getModifiers()),
+				new ClassName(stackEnum.getName()),
+				stackEnum.getConstants(),
+				stackEnum.getList());
+		
+		mainStack.addElement(enumDefinition);
+		
+		logExit(context);
+	}
+	
 	public final void onInterfaceMethodStart(Context context) {
 		
 		logEnter(context);
@@ -1325,6 +1389,21 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
+	// Class expressions
+	public final void onClassExpression(Context context, String className, int numArrayDims) {
+		
+		logEnter(context);
+		
+		final ClassExpression expression = new ClassExpression(context, new ClassOrInterfaceName(className), numArrayDims);
+		
+		final PrimarySetter primarySetter = get();
+		
+		primarySetter.addPrimary(expression);
+		
+		logExit(context);
+	}
+	
+	// Lambda expressions
 	public final void onLambdaExpressionStart(Context context) {
 		
 		logEnter(context);

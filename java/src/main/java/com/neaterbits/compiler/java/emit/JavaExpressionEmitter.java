@@ -14,6 +14,7 @@ import com.neaterbits.compiler.common.ast.expression.ThisPrimary;
 import com.neaterbits.compiler.common.ast.expression.VariableExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
+import com.neaterbits.compiler.common.ast.expression.literal.ClassExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
@@ -122,6 +123,20 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 		param.append(')');
 		
+		return null;
+	}
+	
+	@Override
+	public Void onClassExpression(ClassExpression expression, EmitterState param) {
+		
+		param.append(expression.getName().getName());
+		
+		param.append(".class");
+
+		for (int i = 0; i < expression.getNumArrayDims(); ++ i) {
+			param.append("[]");
+		}
+
 		return null;
 	}
 

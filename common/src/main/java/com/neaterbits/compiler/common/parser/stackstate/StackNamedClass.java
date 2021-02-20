@@ -6,8 +6,9 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierHolder;
 import com.neaterbits.compiler.common.log.ParseLogger;
+import com.neaterbits.compiler.common.parser.ClassModifierSetter;
 
-public final class StackNamedClass extends StackClass {
+public final class StackNamedClass extends StackClass implements ClassModifierSetter {
 
 	private final String name;
 	private final List<ClassModifierHolder> modifiers;
@@ -21,7 +22,8 @@ public final class StackNamedClass extends StackClass {
 		this.modifiers = new ArrayList<>();
 	}
 	
-	public void addModifier(ClassModifierHolder modifier) {
+	@Override
+	public void addClassModifier(ClassModifierHolder modifier) {
 		Objects.requireNonNull(modifiers);
 
 		modifiers.add(modifier);

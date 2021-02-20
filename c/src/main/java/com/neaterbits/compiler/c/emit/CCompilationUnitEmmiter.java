@@ -3,6 +3,8 @@ package com.neaterbits.compiler.c.emit;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.block.Function;
 import com.neaterbits.compiler.common.ast.statement.Statement;
+import com.neaterbits.compiler.common.ast.typedefinition.EnumConstantDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.StructDefinition;
 import com.neaterbits.compiler.common.emit.EmitterState;
@@ -61,6 +63,43 @@ public class CCompilationUnitEmmiter extends BaseProceduralProgramEmitter<Emitte
 	public Void onStructDefinition(StructDefinition structDefinition, EmitterState param) {
 
 		return null;
+	}
+	
+
+	@Override
+	public Void onEnumDefinition(EnumDefinition enumDefinition, EmitterState param) {
+
+		param.append("enum");
+		
+		if (enumDefinition.getName() != null) {
+			param.append(' ').append(enumDefinition.getName().getName());
+		}
+		
+		param.append(" {").newline();
+		
+		param.addIndent();
+		
+		enumDefinition.getConstants().foreachWithIndex((constant, index) -> {
+
+			if (index > 0) {
+				param.append(',').newline();
+			}
+			
+			param.append(constant.getName().getName());
+		});
+		
+		param.append(';').newline();
+		
+		param.subIndent();
+		
+		param.append('}');
+		
+		return null;
+	}
+
+	@Override
+	public Void onEnumConstantDefinition(EnumConstantDefinition enumConstantDefinition, EmitterState param) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

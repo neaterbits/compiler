@@ -2,6 +2,7 @@ package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.block.Constructor;
+import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.block.ClassMethod;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.Statement;
@@ -9,6 +10,7 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifier;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifierVisitor;
+import com.neaterbits.compiler.common.ast.typedefinition.ClassModifiers;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassStatic;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassStrictfp;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassVisibility;
@@ -16,6 +18,8 @@ import com.neaterbits.compiler.common.ast.typedefinition.ConstructorMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifierHolder;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorModifierVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorVisibility;
+import com.neaterbits.compiler.common.ast.typedefinition.EnumConstantDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InnerClassMember;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceAbstract;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
@@ -50,9 +54,15 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 
 	private static final JavaStatementEmitter STATEMENT_EMITTER = new JavaStatementEmitter();
 	
+	private static final JavaExpressionEmitter EXPRESSION_EMITTER = new JavaExpressionEmitter();
+	
 	@Override
 	protected void emitStatement(Statement statement, EmitterState state) {
 		statement.visit(STATEMENT_EMITTER, state);
+	}
+	
+	private void emitExpression(Expression expression, EmitterState state) {
+		expression.visit(EXPRESSION_EMITTER, state);
 	}
 
 	private static final ClassModifierVisitor<Void, String> CLASSMODIFIER_TO_NAME = new ClassModifierVisitor<Void, String>() {
@@ -248,16 +258,20 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 		}
 	};
 	
-	@Override
-	public Void onClassDefinition(ClassDefinition classDefinition, EmitterState param) {
-
-		final ASTList<? extends ClassModifier> modifiers = classDefinition.getModifiers().getModifiers();
+	private void emitClassModifiers(ClassModifiers classModifiers, EmitterState param) {
+		final ASTList<? extends ClassModifier> modifiers = classModifiers.getModifiers();
 		
 		emitList(param, modifiers, " ", modifier -> modifier.visit(CLASSMODIFIER_TO_NAME, null));
 		
 		if (!modifiers.isEmpty()) {
 			param.append(' ');
 		}
+	}
+	
+	@Override
+	public Void onClassDefinition(ClassDefinition classDefinition, EmitterState param) {
+
+		emitClassModifiers(classDefinition.getModifiers(), param);
 		
 		param.append("class ").append(classDefinition.getName().getName()).append(" {").newline();
 		
@@ -272,6 +286,41 @@ public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<Emi
 		return null;
 	}
 	
+	@Override
+	public Void onEnumDefinition(EnumDefinition enumDefinition, EmitterState param) {
+
+		emitClassModifiers(enumDefinition.getModifiers(), param);
+		
+		param.append("enum ").append(enumDefinition.getName().getName()).append(" {").newline();
+		
+		param.addIndent();
+		
+		param.subIndent();
+		
+		param.append('}');
+		
+		return null;
+	}
+
+
+	@Override
+	public Void onEnumConstantDefinition(EnumConstantDefinition enumConstantDefinition, EmitterState param) {
+
+		param.append(enumConstantDefinition.getName().getName());
+		
+		if (enumConstantDefinition.getParameters() != null) {
+			param.append('(');
+			
+			emitListTo(param, enumConstantDefinition.getParameters().getList(), ", ", parameter -> emitExpression(parameter, param));
+			
+			param.append(')');
+		}
+		
+		return null;
+	}
+
+
+
 	@Override
 	public Void onConstructor(Constructor constructor, EmitterState param) {
 		throw new UnsupportedOperationException();

@@ -7,6 +7,7 @@ import com.neaterbits.compiler.common.ast.expression.arithemetic.unary.PreDecrem
 import com.neaterbits.compiler.common.ast.expression.arithemetic.unary.PreIncrementExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.BooleanLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.CharacterLiteral;
+import com.neaterbits.compiler.common.ast.expression.literal.ClassExpression;
 import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
@@ -30,6 +31,8 @@ public interface ExpressionVisitor<T, R> {
 	R onExpressionList(ExpressionList expression, T param);
 	
 	R onPrimaryList(PrimaryList expression, T param);
+	
+	R onClassExpression(ClassExpression expression, T param);
 	
 	R onFieldAccess(FieldAccess expression, T param);
 	

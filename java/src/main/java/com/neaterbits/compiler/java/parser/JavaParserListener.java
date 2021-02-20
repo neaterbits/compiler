@@ -281,6 +281,27 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		statementsStack.pop();
 	}
 	
+	public void onEnumStart(Context context, String name) {
+		statementsStack.push();
+		
+		delegate.onEnumStart(context, name);
+	}
+
+	public void onEnumConstantStart(Context context, String name) {
+		delegate.onEnumConstantStart(context, name);
+	}
+	
+	public void onEnumConstantEnd(Context context) {
+		delegate.onEnumConstantEnd(context);
+	}
+	
+	public void onEnumEnd(Context context) {
+		
+		delegate.onEnumEnd(context);
+
+		statementsStack.pop();
+	}
+	
 	public final void onFieldDeclarationStart(Context context) {
 		delegate.onFieldDeclarationStart(context);
 	}
@@ -504,6 +525,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	public void onParametersEnd(Context context) {
 		delegate.onParametersEnd(context);
 	}
+	
+	public void onClassExpression(Context context, String className, int numArrayDims) {
+		delegate.onClassExpression(context, className, numArrayDims);
+	}
+	
 	
 	public void onLambdaExpressionStart(Context context) {
 		delegate.onLambdaExpressionStart(context);

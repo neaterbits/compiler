@@ -7,6 +7,8 @@ import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDataFieldMember;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ConstructorMember;
+import com.neaterbits.compiler.common.ast.typedefinition.EnumConstantDefinition;
+import com.neaterbits.compiler.common.ast.typedefinition.EnumDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InnerClassMember;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.InterfaceMethod;
@@ -25,6 +27,10 @@ public interface CompilationCodeVisitor<T, R> {
 
 	R onClassDefinition(ClassDefinition classDefinition, T param);
 
+	R onEnumDefinition(EnumDefinition enumDefinition, T param);
+	
+	R onEnumConstantDefinition(EnumConstantDefinition enumConstantDefinition, T param);
+	
 	R onConstructor(Constructor constructor, T param);
 	
 	R onConstructorMember(ConstructorMember constructor, T param);

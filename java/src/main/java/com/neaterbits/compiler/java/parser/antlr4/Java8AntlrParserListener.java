@@ -496,13 +496,37 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	public void exitInterfaceMethodDeclaration(InterfaceMethodDeclarationContext ctx) {
 		delegate.onInterfaceMethodEnd(context(ctx));
 	}
+	
+	
+	// Enums
+
+	@Override
+	public void enterEnumDeclaration(EnumDeclarationContext ctx) {
+		delegate.onEnumStart(context(ctx), ctx.Identifier().getText());
+	}
+
+	@Override
+	public void enterEnumConstant(EnumConstantContext ctx) {
+		delegate.onEnumConstantStart(context(ctx), ctx.Identifier().getText());
+	}
+
+	@Override
+	public void exitEnumConstant(EnumConstantContext ctx) {
+		delegate.onEnumConstantEnd(context(ctx));
+	}
+
+	@Override
+	public void exitEnumDeclaration(EnumDeclarationContext ctx) {
+		delegate.onEnumEnd(context(ctx));
+	}
+	
 
 	// Expressions
 	@Override
 	public void enterAssignment(AssignmentContext ctx) {
 		delegate.onEnterAssignmentExpression(context(ctx));
 	}
-	
+
 	@Override
 	public void exitExpressionName(ExpressionNameContext ctx) {
 		delegate.onNameReference(context(ctx), ctx.getText());
@@ -841,11 +865,59 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onParametersEnd(context(ctx));
 	}
 	
+	// .class literal expressions
+	
+
+	@Override
+	public void enterTypeNameClassExpression_primaryNoNewArray(TypeNameClassExpression_primaryNoNewArrayContext ctx) {
+		delegate.onClassExpression(context(ctx), ctx.typeName().getText(), countDims(ctx.typeNameArray().getText()));
+	}
+
+	@Override
+	public void enterTypeNameClassExpression_primaryNoNewArray_lfno_arrayAccess(
+			TypeNameClassExpression_primaryNoNewArray_lfno_arrayAccessContext ctx) {
+		delegate.onClassExpression(context(ctx), ctx.typeName().getText(), countDims(ctx.typeNameArray().getText()));
+	}
+	
+	@Override
+	public void enterTypeNameClassExpression_primaryNoNewArray_lfno_primary(
+			TypeNameClassExpression_primaryNoNewArray_lfno_primaryContext ctx) {
+		delegate.onClassExpression(context(ctx), ctx.typeName().getText(), countDims(ctx.typeNameArray().getText()));
+	}
+
+	@Override
+	public void enterPrimitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary(
+			PrimitiveTypeNameClassExpression_primaryNoNewArray_lfno_primaryContext ctx) {
+		delegate.onClassExpression(context(ctx), ctx.unannPrimitiveType().getText(), countDims(ctx.typeNameArray().getText()));
+	}
+	
+	
+	@Override
+	public void enterTypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
+			TypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
+		delegate.onClassExpression(context(ctx), ctx.typeName().getText(), countDims(ctx.typeNameArray().getText()));
+	}
+
+	@Override
+	public void enterPrimitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primary(
+			PrimitiveTypeNameClassExpression_primaryNoNewArray_lfno_primary_lfno_arrayAccess_lfno_primaryContext ctx) {
+		delegate.onClassExpression(context(ctx), ctx.unannPrimitiveType().getText(), countDims(ctx.typeNameArray().getText()));
+	}
+
+	void method() {
+		
+	}
+	
+	
+	
+	
+	// Lambda expressions
+	
+
 	@Override
 	public void enterLambdaExpression(LambdaExpressionContext ctx) {
 		delegate.onLambdaExpressionStart(context(ctx));
 	}
-
 
 	@Override
 	public void exitLambdaSingleParameter(LambdaSingleParameterContext ctx) {
