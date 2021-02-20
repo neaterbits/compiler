@@ -1,5 +1,6 @@
 package com.neaterbits.compiler.common;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +11,8 @@ public abstract class ModuleSpec {
 	private final ModuleId moduleId;
 	private final List<ModuleSpec> dependencies;
 
+	public abstract File getBaseDirectory();
+	
 	public ModuleSpec(ModuleId moduleId, List<ModuleSpec> dependencies) {
 		Objects.requireNonNull(moduleId);
 		

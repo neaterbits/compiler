@@ -1,12 +1,9 @@
 package com.neaterbits.compiler.main;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -15,16 +12,16 @@ import com.neaterbits.compiler.common.ModuleId;
 import com.neaterbits.compiler.common.SourceModuleSpec;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Namespace;
+import com.neaterbits.compiler.common.ast.Program;
 import com.neaterbits.compiler.common.ast.block.FunctionName;
 import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.common.convert.ootofunction.OOToProceduralConverter;
-import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.DirectoryParser;
 import com.neaterbits.compiler.common.parser.FileTypeParser;
-import com.neaterbits.compiler.common.parser.ParsedFile;
+import com.neaterbits.compiler.common.parser.ProgramParser;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
@@ -76,7 +73,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		
 		final SourceModuleSpec javaModuleSpec = new SourceModuleSpec(
 				java,
-				Arrays.asList(),
+				Arrays.asList(commonModuleSpec),
 				new File(baseDirectory, "java/src/main/java"));
 		
 		final FileTypeParser<JavaParserListener> javaParser = new FileTypeParser<>(
@@ -86,6 +83,13 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 
 		final DirectoryParser directoryParser = new DirectoryParser(javaParser);
 	
+		final ProgramParser programParser = new ProgramParser(directoryParser);
+		
+		final Program program = programParser.parseProgram(Arrays.asList(commonModuleSpec));
+		
+		assertThat(program).isNotNull();
+		
+		/*
 		final PrintStream logOutput = new PrintStream(new ByteArrayOutputStream());
 		
 		final List<ParsedFile> parsedFiles = directoryParser.parseDirectory(
@@ -93,6 +97,7 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 				new ParseLogger(logOutput));
 		
 		assertThat(parsedFiles.size()).isGreaterThan(0);
+		*/
 	}
 
 	

@@ -44,6 +44,9 @@ public class DirectoryParser {
 		return null;
 	}
 	
+	public List<ParsedFile> parseDirectory(File directory) {
+		return parseDirectory(directory, null);
+	}
 
 	public List<ParsedFile> parseDirectory(File directory, ParseLogger debugParseLogger) {
 

@@ -19,4 +19,9 @@ public final class ByteCodeModuleSpec extends ModuleSpec {
 	public File getByteCodeFile() {
 		return byteCodeFile;
 	}
+
+	@Override
+	public File getBaseDirectory() {
+		return byteCodeFile;
+	}
 }

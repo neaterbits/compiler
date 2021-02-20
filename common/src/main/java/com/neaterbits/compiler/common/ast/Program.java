@@ -21,7 +21,7 @@ public final class Program extends BaseASTElement {
 	}
 	
 	public Program(ParsedFile parsedFile) {
-		this(new Module(parsedFile));
+		this(new Module(null, parsedFile));
 	}
 
 	public ASTList<Module> getModules() {
