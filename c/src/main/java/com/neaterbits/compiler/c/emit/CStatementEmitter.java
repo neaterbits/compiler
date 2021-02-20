@@ -2,6 +2,7 @@ package com.neaterbits.compiler.c.emit;
 
 
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.block.ConstructorInvocationStatement;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
@@ -67,6 +68,11 @@ final class CStatementEmitter extends CLikeStatementEmitter<EmitterState> implem
 
 	@Override
 	public Void onThrowStatement(ThrowStatement statement, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Void onConstructorInvocation(ConstructorInvocationStatement statement, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 }

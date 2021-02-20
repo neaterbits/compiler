@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.block.ConstructorInvocationStatement;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.list.ASTList;
@@ -159,6 +160,13 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 		emitExpression(statement.getExpression(), param);
 		
 		param.append(';');
+		
+		return null;
+	}
+
+	@Override
+	public Void onConstructorInvocation(ConstructorInvocationStatement statement, EmitterState param) {
+
 		
 		return null;
 	}

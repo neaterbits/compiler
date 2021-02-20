@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.common.ast.statement;
 
+import com.neaterbits.compiler.common.ast.block.ConstructorInvocationStatement;
+
 public interface StatementVisitor<T, R> {
 
 	R onIf(IfElseIfElseStatement statement, T param);
@@ -29,4 +31,6 @@ public interface StatementVisitor<T, R> {
 	R onReturnStatement(ReturnStatement statement, T param);
 	
 	R onBreakStatement(BreakStatement statement, T param);
+	
+	R onConstructorInvocation(ConstructorInvocationStatement statement, T param);
 }

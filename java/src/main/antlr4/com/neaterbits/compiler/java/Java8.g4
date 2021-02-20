@@ -529,10 +529,10 @@ constructorBody
 	;
 
 explicitConstructorInvocation
-	:	typeArguments? 'this' '(' argumentList? ')' ';'
-	|	typeArguments? 'super' '(' argumentList? ')' ';'
-	|	expressionName '.' typeArguments? 'super' '(' argumentList? ')' ';'
-	|	primary '.' typeArguments? 'super' '(' argumentList? ')' ';'
+	:	typeArguments? 'this' '(' argumentList? ')' ';'						# this_explicitConstructorInvocation
+	|	typeArguments? 'super' '(' argumentList? ')' ';'					# super_explicitConstructorInvocation
+	|	expressionName '.' typeArguments? 'super' '(' argumentList? ')' ';'	# expressionNameSuper_explicitConstructorInvocation
+	|	primary '.' typeArguments? 'super' '(' argumentList? ')' ';'		# primarySuper_explicitConstructorInvocation
 	;
 
 enumDeclaration

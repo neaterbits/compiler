@@ -187,6 +187,7 @@ public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEX
 
 			}
 		});
+
 		
 		parser.setBuildParseTree(true);
 

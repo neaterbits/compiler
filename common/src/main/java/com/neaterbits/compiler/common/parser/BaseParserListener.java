@@ -19,6 +19,8 @@ import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.Namespace;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.block.Constructor;
+import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
+import com.neaterbits.compiler.common.ast.block.ConstructorInvocationStatement;
 import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.block.ParameterName;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
@@ -128,6 +130,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
 import com.neaterbits.compiler.common.parser.stackstate.StackConditionalExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackConstructor;
+import com.neaterbits.compiler.common.parser.stackstate.StackConstructorInvocation;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionList;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackFieldDeclarationList;
@@ -413,6 +416,34 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
+	public final void onConstructorInvocationStart(Context context, ConstructorInvocation type) {
+		
+		logEnter(context);
+		
+		push(new StackConstructorInvocation(logger, type));
+		
+		logExit(context);
+	}
+	
+	public final void onConstructorInvocationEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackConstructorInvocation stackConstructorInvocation = pop();
+		
+		final ConstructorInvocationStatement statement = new ConstructorInvocationStatement(
+				context,
+				stackConstructorInvocation.getType(),
+				stackConstructorInvocation.makeExpressionOrNull(context),
+				new ParameterList(context, stackConstructorInvocation.getParameters()));
+		
+		final StatementSetter statementSetter = get();
+
+		statementSetter.addStatement(statement);
+
+		logExit(context);
+	}
+	
 	public final void onConstructorEnd(Context context) {
 		
 		logEnter(context);

@@ -17,6 +17,7 @@ import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.TypeReferenceType;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.NamespaceName;
+import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
 import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.operator.Arithmetic;
 import com.neaterbits.compiler.common.ast.operator.Bitwise;
@@ -260,6 +261,50 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void enterConstructorDeclarator(ConstructorDeclaratorContext ctx) {
 		delegate.onConstructorName(context(ctx), ctx.simpleTypeName().getText());
+	}
+
+	@Override
+	public void enterThis_explicitConstructorInvocation(This_explicitConstructorInvocationContext ctx) {
+		delegate.onConstructorInvocationStart(context(ctx), ConstructorInvocation.THIS);
+	}
+
+	@Override
+	public void exitThis_explicitConstructorInvocation(This_explicitConstructorInvocationContext ctx) {
+		delegate.onConstructorInvocationEnd(context(ctx));
+	}
+	
+	@Override
+	public void enterSuper_explicitConstructorInvocation(Super_explicitConstructorInvocationContext ctx) {
+		delegate.onConstructorInvocationStart(context(ctx), ConstructorInvocation.SUPER);
+	}
+
+	@Override
+	public void exitSuper_explicitConstructorInvocation(Super_explicitConstructorInvocationContext ctx) {
+		delegate.onConstructorInvocationEnd(context(ctx));
+	}
+	
+	@Override
+	public void enterExpressionNameSuper_explicitConstructorInvocation(
+			ExpressionNameSuper_explicitConstructorInvocationContext ctx) {
+
+		delegate.onConstructorInvocationStart(context(ctx), ConstructorInvocation.EXPRESSIONNAME_SUPER);
+	}
+
+	@Override
+	public void exitExpressionNameSuper_explicitConstructorInvocation(
+			ExpressionNameSuper_explicitConstructorInvocationContext ctx) {
+
+		delegate.onConstructorInvocationEnd(context(ctx));
+	}
+	
+	@Override
+	public void enterPrimarySuper_explicitConstructorInvocation(PrimarySuper_explicitConstructorInvocationContext ctx) {
+		delegate.onConstructorInvocationStart(context(ctx), ConstructorInvocation.PRIMARY_SUPER);
+	}
+
+	@Override
+	public void exitPrimarySuper_explicitConstructorInvocation(PrimarySuper_explicitConstructorInvocationContext ctx) {
+		delegate.onConstructorInvocationEnd(context(ctx));
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import com.neaterbits.compiler.common.TypeReferenceType;
 import com.neaterbits.compiler.common.antlr4.ModelParserListener;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
+import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
 import com.neaterbits.compiler.common.ast.operator.Arithmetic;
 import com.neaterbits.compiler.common.ast.operator.Notation;
 import com.neaterbits.compiler.common.ast.operator.Operator;
@@ -142,6 +143,14 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	
 	public void onConstructorName(Context context, String constructorName) {
 		delegate.onConstructorName(context, constructorName);
+	}
+	
+	public void onConstructorInvocationStart(Context context, ConstructorInvocation type) {
+		delegate.onConstructorInvocationStart(context, type);
+	}
+	
+	public void onConstructorInvocationEnd(Context context) {
+		delegate.onConstructorInvocationEnd(context);
 	}
 
 	public void onConstructorEnd(Context context) {
