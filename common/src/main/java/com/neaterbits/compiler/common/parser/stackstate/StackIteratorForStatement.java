@@ -8,13 +8,15 @@ import java.util.Objects;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.statement.Statement;
+import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.ExpressionSetter;
 import com.neaterbits.compiler.common.parser.PrimarySetter;
 import com.neaterbits.compiler.common.parser.StatementSetter;
+import com.neaterbits.compiler.common.parser.VariableReferenceSetter;
 
 public final class StackIteratorForStatement extends BaseStackVariableDeclaration
-		implements ExpressionSetter, PrimarySetter, StatementSetter {
+		implements ExpressionSetter, PrimarySetter, VariableReferenceSetter, StatementSetter {
 
 	private Expression expression;
 	private final List<Statement> statements;
@@ -44,6 +46,11 @@ public final class StackIteratorForStatement extends BaseStackVariableDeclaratio
 	@Override
 	public void addPrimary(Primary primary) {
 		addExpression(primary);
+	}
+	
+	@Override
+	public void setVariableReference(VariableReference variableReference) {
+		addExpression(variableReference);
 	}
 
 	@Override

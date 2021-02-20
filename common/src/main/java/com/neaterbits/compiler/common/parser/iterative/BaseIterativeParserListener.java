@@ -2,7 +2,6 @@ package com.neaterbits.compiler.common.parser.iterative;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.block.Block;
-import com.neaterbits.compiler.common.ast.expression.literal.Literal;
 import com.neaterbits.compiler.common.ast.statement.BreakStatement;
 import com.neaterbits.compiler.common.ast.statement.ConditionBlock;
 import com.neaterbits.compiler.common.ast.statement.ConstantSwitchCaseLabel;
