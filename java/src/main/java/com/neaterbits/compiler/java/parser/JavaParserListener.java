@@ -936,11 +936,11 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 	}
 	
 	public void onWhileStatementStart(Context context) {
-		
+		delegate.onWhileStatementStart(context);
 	}
 	
 	public void onWhileStatementEnd(Context context) {
-		
+		delegate.onWhileStatementEnd(context);
 	}
 	
 	public void onForStatementStart(Context context) {

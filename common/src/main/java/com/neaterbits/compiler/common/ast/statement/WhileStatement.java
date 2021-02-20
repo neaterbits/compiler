@@ -6,14 +6,14 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.block.Block;
-import com.neaterbits.compiler.common.ast.condition.Condition;
+import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public final class WhileStatement extends LoopStatement {
 
-	private final ASTSingle<Condition> condition;
+	private final ASTSingle<Expression> condition;
 	
-	public WhileStatement(Context context, Condition condition, Block block) {
+	public WhileStatement(Context context, Expression condition, Block block) {
 		super(context, block);
 
 		Objects.requireNonNull(condition);
@@ -21,7 +21,7 @@ public final class WhileStatement extends LoopStatement {
 		this.condition = makeSingle(condition);
 	}
 
-	public Condition getCondition() {
+	public Expression getCondition() {
 		return condition.get();
 	}
 

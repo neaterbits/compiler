@@ -60,6 +60,7 @@ import com.neaterbits.compiler.common.ast.statement.ThrowStatement;
 import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
+import com.neaterbits.compiler.common.ast.statement.WhileStatement;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassDefinition;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassModifier;
@@ -166,6 +167,7 @@ import com.neaterbits.compiler.common.parser.stackstate.StackTryCatchFinallyStat
 import com.neaterbits.compiler.common.parser.stackstate.StackTryWithResourcesStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackVariableDeclaration;
 import com.neaterbits.compiler.common.parser.stackstate.StackVariableDeclarationList;
+import com.neaterbits.compiler.common.parser.stackstate.StackWhileStatement;
 import com.neaterbits.compiler.common.parser.stackstate.VariableNameSetter;
 
 public abstract class BaseParserListener {
@@ -1799,6 +1801,34 @@ public abstract class BaseParserListener {
 		
 		logExit(context);
 	}
+	
+	public final void onWhileStatementStart(Context context) {
+		
+		logEnter(context);
+		
+		push(new StackWhileStatement(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onWhileStatementEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackWhileStatement stackWhileStatement = pop();
+		
+		final WhileStatement whileStatement = new WhileStatement(
+				context,
+				stackWhileStatement.getWhileCondition(context),
+				new Block(context, stackWhileStatement.getStatements()));
+		
+		final StatementSetter statementSetter = get();
+		
+		statementSetter.addStatement(whileStatement);
+		
+		logExit(context);
+	}
+
 	
 	public final void onDoWhileStatementStart(Context context) {
 		

@@ -137,7 +137,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 	public final Void onWhile(WhileStatement statement, T param) {
 		
 		param.append("while (");
-		emitCondition(statement.getCondition(), param);
+		emitExpression(statement.getCondition(), param);
 		param.append(") {").newline();
 		
 		emitIndentedBlock(statement.getBlock(), param);
