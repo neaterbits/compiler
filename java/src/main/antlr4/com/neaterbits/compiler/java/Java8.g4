@@ -385,16 +385,16 @@ unannClassOrInterfaceType
 	;
 
 unannClassType
-	:	Identifier typeArguments?												# classType_unannClassType
-	|	unannClassOrInterfaceType '.' annotation* Identifier typeArguments?		# nestedClassType_unannClassType
+	:	Identifier typeArguments?
+	|	unannClassOrInterfaceType '.' annotation* Identifier typeArguments?
 	;
 
 unannClassType_lf_unannClassOrInterfaceType
-	:	'.' annotation* Identifier typeArguments?	# subClassType_unannClassType_lf_unannClassOrInterfaceType
+	:	'.' annotation* Identifier typeArguments?
 	;
 
 unannClassType_lfno_unannClassOrInterfaceType
-	:	Identifier typeArguments?					# classType_unannClassType_lfno_unannClassOrInterfaceType
+	:	Identifier typeArguments?
 	;
 
 unannInterfaceType

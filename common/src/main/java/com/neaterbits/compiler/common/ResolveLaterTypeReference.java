@@ -1,29 +1,22 @@
 package com.neaterbits.compiler.common;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
 import com.neaterbits.compiler.common.ast.ASTVisitor;
+import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.type.BaseType;
 
 public final class ResolveLaterTypeReference extends TypeReference {
 
-	private final List<String> typeName;
+	private final ScopedName typeName;
 	private BaseType resolved;
 
-	public ResolveLaterTypeReference(Context context, String typeName) {
-		this(context, Arrays.asList(typeName));
-	}
-
-	public ResolveLaterTypeReference(Context context, List<String> typeName) {
+	public ResolveLaterTypeReference(Context context, ScopedName typeName) {
 		super(context);
 
-		this.typeName = Collections.unmodifiableList(typeName);
+		this.typeName = typeName;
 	}
 
-	public List<String> getTypeName() {
+	public ScopedName getTypeName() {
 		return typeName;
 	}
 	

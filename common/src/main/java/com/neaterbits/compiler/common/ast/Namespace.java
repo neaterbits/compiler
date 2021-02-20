@@ -1,21 +1,19 @@
 package com.neaterbits.compiler.common.ast;
 
-import java.util.Arrays;
-
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public final class Namespace extends CompilationCode {
 
-	private final String name;
-	private final String [] parts;
+	private final NamespaceReference namespaceReference;
+	
 	private final ASTSingle<CompilationCodeLines> lines;
 	
 	public Namespace(Context context, String name, String [] parts, CompilationCodeLines lines) {
 		super(context);
-		
-		this.name = name;
-		this.parts = Arrays.copyOf(parts, parts.length);
+
+		this.namespaceReference = new NamespaceReference(name, parts);
+
 		this.lines = makeSingle(lines);
 	}
 
@@ -26,11 +24,11 @@ public final class Namespace extends CompilationCode {
 	}
 
 	public final String getName() {
-		return name;
+		return namespaceReference.getName();
 	}
 
 	public final String [] getParts() {
-		return Arrays.copyOf(parts, parts.length);
+		return namespaceReference.getParts();
 	}
 
 	public final CompilationCodeLines getLines() {

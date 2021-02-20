@@ -8,15 +8,16 @@ import com.neaterbits.compiler.java.parser.JavaPrimitiveType;
 
 import static com.neaterbits.compiler.common.antlr4.Antlr4.context;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
-import com.neaterbits.compiler.common.TypeReferenceType;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.NamespaceName;
+import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
 import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.operator.Arithmetic;
@@ -664,7 +665,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	@Override
 	public void enterClassInstanceCreationExpressionSimple(ClassInstanceCreationExpressionSimpleContext ctx) {
 		
-		delegate.onJavaClassInstanceCreationConstructorName(context(ctx), Arrays.asList(ctx.Identifier().getText()));
+		delegate.onJavaClassInstanceCreationConstructorName(context(ctx), new ScopedName(null, ctx.Identifier().getText()));
 	}
 
 	@Override
@@ -673,15 +674,16 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		delegate.onJavaClassInstanceCreationConstructorName(
 				context(ctx),
-				ctx.Identifier().stream()
-				.map(identifier -> identifier.getText())
-				.collect(Collectors.toList()));
+				makeScopedName(
+					ctx.Identifier().stream()
+					.map(identifier -> identifier.getText())
+					.collect(Collectors.toList())));
 	}
 
 	@Override
 	public void enterClassInstanceCreationExpressionWithExpressionName(
 			ClassInstanceCreationExpressionWithExpressionNameContext ctx) {
-		delegate.onJavaClassInstanceCreationConstructorName(context(ctx), Arrays.asList(ctx.Identifier().getText()));
+		delegate.onJavaClassInstanceCreationConstructorName(context(ctx), new ScopedName(null, ctx.Identifier().getText()));
 	}
 
 	@Override
@@ -724,7 +726,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.NAMED_CLASS_STATIC,
-				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), ctx.typeName().getText()),
+				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
 				ctx.Identifier().getText());
 	}
 
@@ -758,7 +760,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.TYPED_SUPER,
-				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), ctx.typeName().getText()),
+				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
 				ctx.Identifier().getText());
 	}
 
@@ -782,7 +784,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.NAMED_CLASS_STATIC,
-				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), ctx.typeName().getText()),
+				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
 				ctx.Identifier().getText());
 	}
 
@@ -836,7 +838,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onMethodInvocationStart(
 				context(ctx),
 				MethodInvocationType.TYPED_SUPER,
-				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), ctx.typeName().getText()),
+				new ResolveLaterTypeReference(context((ParserRuleContext)ctx.typeName().getRuleContext()), parseName(ctx.typeName().getText())),
 				ctx.Identifier().getText());
 	}
 
@@ -1182,33 +1184,80 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onJavaPrimitiveType(context(ctx), JavaPrimitiveType.BOOLEAN);
 	}
 
+	private static ScopedName parseName(String nameToken) {
+		
+		final String [] parts = Strings.split(nameToken, '.');
+		
+		final String [] typeParts = Strings.split(parts[parts.length - 1], '<');
+		
+		final String name = typeParts[0].trim();
+		
+		final ScopedName scopedName;
+		
+		if (parts.length == 1) {
+			scopedName = new ScopedName(null, name);
+		}
+		else {
+			final List<String> scope = new ArrayList<>(parts.length - 1);
+
+			for (int i = 0; i < parts.length - 1; ++ i) {
+				scope.add(parts[i].trim());
+			}
+
+			scopedName = new ScopedName(scope, name);
+		}
+		
+		return scopedName;
+	}
+	
+	private static ScopedName makeScopedName(List<String> names) {
+		
+		final ScopedName scopedName;
+		
+		switch (names.size()) {
+		case 0:
+			throw new IllegalArgumentException("No names given");
+
+		case 1:
+			scopedName = new ScopedName(null, names.get(0));
+			break;
+			
+		default:
+			final String name = names.get(names.size() - 1);
+			
+			final List<String> scope = names.subList(0, names.size());
+			
+			if (scope.size() == names.size()) {
+				throw new IllegalStateException();
+			}
+			
+			scopedName = new ScopedName(scope, name);
+			break;
+		}
+
+		return scopedName;
+	}
+	
 	@Override
-	public void enterClassType_unannClassType(ClassType_unannClassTypeContext ctx) {
-		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), TypeReferenceType.CLASS, ctx.Identifier().getText());
+	public void enterUnannClassType(UnannClassTypeContext ctx) {
+		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), parseName(ctx.getText()));
 	}
 
 	@Override
-	public void enterNestedClassType_unannClassType(NestedClassType_unannClassTypeContext ctx) {
-		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), TypeReferenceType.NESTED_CLASS, ctx.Identifier().getText());
+	public void enterUnannClassOrInterfaceType(UnannClassOrInterfaceTypeContext ctx) {
+		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), parseName(ctx.getText()));
 	}
 
 	@Override
-	public void enterSubClassType_unannClassType_lf_unannClassOrInterfaceType(
-			SubClassType_unannClassType_lf_unannClassOrInterfaceTypeContext ctx) {
-
-		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), TypeReferenceType.SUB, ctx.Identifier().getText());
-	}
-
-	@Override
-	public void enterClassType_unannClassType_lfno_unannClassOrInterfaceType(
-			ClassType_unannClassType_lfno_unannClassOrInterfaceTypeContext ctx) {
-
-		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), TypeReferenceType.CLASS, ctx.Identifier().getText());
+	public void enterUnannTypeVariable(UnannTypeVariableContext ctx) {
+		
+		final ScopedName scopedName = new ScopedName(null, ctx.getText());
+		
+		delegate.onJavaClassOrInterfaceReferenceType(context(ctx), scopedName);
 	}
 	
 	
 	// Statements
-
 
 	@Override
 	public void exitFinalVariableModifier(FinalVariableModifierContext ctx) {

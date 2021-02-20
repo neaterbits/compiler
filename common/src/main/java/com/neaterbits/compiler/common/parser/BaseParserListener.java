@@ -11,12 +11,12 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.TypeReference;
-import com.neaterbits.compiler.common.TypeReferenceType;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationCodeLines;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.Namespace;
+import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.block.Constructor;
 import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
@@ -1069,7 +1069,7 @@ public abstract class BaseParserListener {
 	}
 	
 	
-	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, String typeName, String fieldName) {
+	public final void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, String fieldName) {
 		
 		logEnter(context);
 		
@@ -1283,14 +1283,14 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 	
-	public final void onClassInstanceCreationTypeAndConstructorName(Context context, TypeReference type, List<String> name) {
+	public final void onClassInstanceCreationTypeAndConstructorName(Context context, TypeReference type, ScopedName name) {
 		
 		logEnter(context);
 		
 		final StackClassInstanceCreationExpression stackClassInstanceCreationExpression = get();
 		
 		stackClassInstanceCreationExpression.setType(type);
-		stackClassInstanceCreationExpression.setConstructorName(new ConstructorName(name));
+		stackClassInstanceCreationExpression.setConstructorName(new ConstructorName(name.getName()));
 		
 		logExit(context);
 	}
@@ -1618,11 +1618,10 @@ public abstract class BaseParserListener {
 		logExit(context);
 	}
 
-	public final void onTypeReference(Context context, TypeReferenceType typeReferenceType, String name) {
+	public final void onTypeReference(Context context, ScopedName name) {
 
 		logEnter(context);
 		
-		Objects.requireNonNull(typeReferenceType);
 		Objects.requireNonNull(name);
 	
 		final TypeReferenceSetter typeReferenceSetter = get();

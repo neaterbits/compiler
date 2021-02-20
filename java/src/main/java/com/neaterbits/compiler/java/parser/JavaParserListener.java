@@ -7,10 +7,10 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.ResolvedTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
-import com.neaterbits.compiler.common.TypeReferenceType;
 import com.neaterbits.compiler.common.antlr4.ModelParserListener;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.Import;
+import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
 import com.neaterbits.compiler.common.ast.operator.Arithmetic;
 import com.neaterbits.compiler.common.ast.operator.Notation;
@@ -380,7 +380,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onPrimaryStart(context);
 	}
 
-	public void onFieldAccess(Context context, FieldAccessType fieldAccessType, String typeName, String fieldName) {
+	public void onFieldAccess(Context context, FieldAccessType fieldAccessType, ScopedName typeName, String fieldName) {
 		delegate.onFieldAccess(context, fieldAccessType, typeName, fieldName);
 	}
 
@@ -490,7 +490,7 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onClassInstanceCreationExpressionStart(context);
 	}
 
-	public void onJavaClassInstanceCreationConstructorName(Context context, List<String> name) {
+	public void onJavaClassInstanceCreationConstructorName(Context context, ScopedName name) {
 
 		delegate.onClassInstanceCreationTypeAndConstructorName(
 				context,
@@ -630,17 +630,17 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onTypeReference(context, new ResolvedTypeReference(context, genericType));
 	}
 
-	public void onJavaClassOrInterfaceReferenceType(Context context, TypeReferenceType typeReferenceType, String typeName) {
+	public void onJavaClassOrInterfaceReferenceType(Context context, ScopedName typeName) {
 System.out.println("## onJavaClassOrInterfaceReferenceType");		
 		
-		delegate.onTypeReference(context, typeReferenceType, typeName);
+		delegate.onTypeReference(context, new ResolveLaterTypeReference(context, typeName));
 	}
 	
-	public void onJavaTypeVariableReferenceType(Context context, TypeReferenceType typeReferenceType, String typeName) {
+	public void onJavaTypeVariableReferenceType(Context context, ScopedName typeName) {
 
 System.out.println("## onJavaTypeVariableReferenceType");
 		
-		delegate.onTypeReference(context, typeReferenceType, typeName);
+		delegate.onTypeReference(context, typeName);
 	}
 	
 	public void onJavaIfThenStatementStart(Context context) {
