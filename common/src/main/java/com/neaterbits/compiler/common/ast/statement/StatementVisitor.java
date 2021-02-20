@@ -4,6 +4,8 @@ public interface StatementVisitor<T, R> {
 
 	R onIf(IfElseIfElseStatement statement, T param);
 
+	R onSwitchCase(SwitchCaseStatement statement, T param);
+	
 	R onWhile(WhileStatement statement, T param);
 
 	R onDoWhile(DoWhileStatement statement, T param);
@@ -25,4 +27,6 @@ public interface StatementVisitor<T, R> {
 	R onExpressionStatement(ExpressionStatement statement, T param);
 
 	R onReturnStatement(ReturnStatement statement, T param);
+	
+	R onBreakStatement(BreakStatement statement, T param);
 }

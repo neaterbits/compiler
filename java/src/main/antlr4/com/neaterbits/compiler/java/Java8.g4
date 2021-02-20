@@ -822,8 +822,8 @@ switchLabels
 	;
 
 switchLabel
-	:	'case' constantExpression ':'	# constantExpressionSwitchLabel
-	|	'case' enumConstantName ':'		# enumConstantNameSwitchLabel
+	:	'case' enumConstantName ':'		# enumConstantNameSwitchLabel
+	|	'case' constantExpression ':'	# constantExpressionSwitchLabel
 	|	'default' ':'					# defaultSwitchLabel
 	;
 

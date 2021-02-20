@@ -853,58 +853,55 @@ System.out.println("-- matched enhanced for");
 
 		statementsStack.add(JavaStatement.SWITCH);
 
+		delegate.onSwitchStatementStart(context);
 	}
 
 	public void onJavaSwitchBlockStart(Context context) {
-		
+		delegate.onJavaSwitchBlockStart(context);
 	}
 	
 	public void onJavaSwitchBlockStatementGroupStart(Context context) {
-		
+		delegate.onJavaSwitchBlockStatementGroupStart(context);
 	}
 
 	public void onSwitchLabelsStart(Context context) {
-		
+		delegate.onSwitchLabelsStart(context);
 	}
 	
 	public void onSwitchLabelsEnd(Context context) {
-		
+		delegate.onSwitchLabelsEnd(context);
 	}
 
 	public void onJavaSwitchBlockStatementGroupEnd(Context context) {
-		
+		delegate.onJavaSwitchBlockStatementGroupEnd(context);
 	}
 
 	public void onConstantSwitchLabelStart(Context context) {
-		
+		delegate.onConstantSwitchLabelStart(context);
 	}
 	
 	public void onConstantSwitchLabelEnd(Context context) {
-		
+		delegate.onConstantSwitchLabelEnd(context);
 	}
 	
-	public void onEnumSwitchLabelStart(Context context) {
-		
-	}
-	
-	public void onEnumSwitchLabelEnd(Context context) {
-		
+	public void onEnumSwitchLabel(Context context, String constantName) {
+		delegate.onEnumSwitchLabel(context, constantName);
 	}
 	
 	public void onDefaultSwitchLabel(Context context) {
-		
+		delegate.onDefaultSwitchLabel(context);
 	}
 	
 	public void onJavaSwitchBlockEnd(Context context) {
-		
+		delegate.onJavaSwitchBlockEnd(context);
 	}
 	
 	public void onSwitchStatementEnd(Context context) {
-		
+		delegate.onSwitchStatementEnd(context);
 	}
 	
 	public void onBreakStatement(Context context, String label) {
-		
+		delegate.onBreakStatement(context, label);
 	}
 	
 	public void onWhileStatementStart(Context context) {

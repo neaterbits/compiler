@@ -5,12 +5,15 @@ import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.statement.AssignmentStatement;
+import com.neaterbits.compiler.common.ast.statement.BreakStatement;
 import com.neaterbits.compiler.common.ast.statement.DoWhileStatement;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
 import com.neaterbits.compiler.common.ast.statement.ForExpressionList;
 import com.neaterbits.compiler.common.ast.statement.ForStatement;
 import com.neaterbits.compiler.common.ast.statement.IfElseIfElseStatement;
 import com.neaterbits.compiler.common.ast.statement.ReturnStatement;
+import com.neaterbits.compiler.common.ast.statement.SwitchCaseLabel;
+import com.neaterbits.compiler.common.ast.statement.SwitchCaseStatement;
 import com.neaterbits.compiler.common.ast.statement.VariableDeclarationStatement;
 import com.neaterbits.compiler.common.ast.statement.WhileStatement;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
@@ -28,7 +31,8 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 	protected abstract void emitType(TypeReference typeReference, T param);
 	
 	protected abstract void emitVariableModifiers(VariableModifiers modifiers, T param);
-	
+
+	protected abstract void emitSwitchCaseLabel(SwitchCaseLabel label, T param);
 
 	protected final void emitVariableDeclaration(TypeReference typeReference, VarName varName, T param) {
 		emitType(typeReference, param);
@@ -94,7 +98,41 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 
 		return null;
 	}
+	
+	@Override
+	public final Void onSwitchCase(SwitchCaseStatement statement, T param) {
 
+		param.append("switch (");
+		
+		emitExpression(statement.getExpression(), param);
+		
+		param.append(") {").newline();
+		
+		statement.getGroups().forEach(group -> {
+			
+			group.getLabels().foreachWithIndex((label, index) -> {
+				
+				emitSwitchCaseLabel(label, param);
+				
+				if (index < group.getLabels().size() - 1) {
+					param.newline();
+				}
+				else {
+					param.append(" {").newline();
+				}
+			});
+			
+			emitIndentedBlock(group.getBlock(), param);
+			
+			param.append('}');
+			
+		});
+		
+		
+		param.append('}');
+		
+		return null;
+	}
 	@Override
 	public final Void onWhile(WhileStatement statement, T param) {
 		
@@ -195,6 +233,13 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 
 		param.append(';').newline();
 
+		return null;
+	}
+	@Override
+	public final Void onBreakStatement(BreakStatement statement, T param) {
+		
+		param.append("break");
+		
 		return null;
 	}
 }

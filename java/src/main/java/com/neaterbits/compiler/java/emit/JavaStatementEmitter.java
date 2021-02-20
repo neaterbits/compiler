@@ -10,6 +10,7 @@ import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
 import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
 import com.neaterbits.compiler.common.ast.statement.Mutability;
+import com.neaterbits.compiler.common.ast.statement.SwitchCaseLabel;
 import com.neaterbits.compiler.common.ast.statement.ThrowStatement;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifierVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
@@ -21,6 +22,8 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 	private static final JavaConditionEmitter CONDITION_EMITTER = new JavaConditionEmitter();
 
 	private static final JavaExpressionEmitter EXPRESSION_EMITTER = new JavaExpressionEmitter();
+
+	private static final JavaSwitchCaseLabelEmitter SWITCHCASELABEL_EMITTER = new JavaSwitchCaseLabelEmitter();
 	
 	private static final JavaTypeEmitter TYPE_EMITTER = new JavaTypeEmitter();
 
@@ -32,6 +35,11 @@ public final class JavaStatementEmitter extends CLikeStatementEmitter<EmitterSta
 	@Override
 	protected void emitExpression(Expression expression, EmitterState param) {
 		expression.visit(EXPRESSION_EMITTER, param);
+	}
+
+	@Override
+	protected void emitSwitchCaseLabel(SwitchCaseLabel label, EmitterState param) {
+		label.visit(SWITCHCASELABEL_EMITTER, param);
 	}
 
 	@Override

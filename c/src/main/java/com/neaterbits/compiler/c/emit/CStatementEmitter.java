@@ -5,6 +5,7 @@ import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.statement.IteratorForStatement;
+import com.neaterbits.compiler.common.ast.statement.SwitchCaseLabel;
 import com.neaterbits.compiler.common.ast.statement.ThrowStatement;
 import com.neaterbits.compiler.common.ast.statement.TryCatchFinallyStatement;
 import com.neaterbits.compiler.common.ast.statement.TryWithResourcesStatement;
@@ -19,8 +20,11 @@ final class CStatementEmitter extends CLikeStatementEmitter<EmitterState> implem
 
 	private static final CExpressionEmitter EXPRESSION_EMITTER = new CExpressionEmitter();
 
+	private static final CSwitchCaseLabelEmitter SWITCHCASELABEL_EMITTER = new CSwitchCaseLabelEmitter();
+	
 	private static final CTypeEmitter TYPE_EMITTER = new CTypeEmitter();
 
+	
 	@Override
 	protected void emitCondition(Condition condition, EmitterState param) {
 		condition.visit(CONDITION_EMITTER, param);
@@ -29,6 +33,11 @@ final class CStatementEmitter extends CLikeStatementEmitter<EmitterState> implem
 	@Override
 	protected void emitExpression(Expression expression, EmitterState param) {
 		expression.visit(EXPRESSION_EMITTER, param);
+	}
+	
+	@Override
+	protected void emitSwitchCaseLabel(SwitchCaseLabel label, EmitterState param) {
+		label.visit(SWITCHCASELABEL_EMITTER, param);
 	}
 
 	@Override
