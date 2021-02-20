@@ -438,11 +438,17 @@ public abstract class BaseParserListener {
 		
 		final StackConstructorInvocation stackConstructorInvocation = pop();
 		
+		final ParameterList parameterList = new ParameterList(
+				context,
+				stackConstructorInvocation.getParameters() != null
+					? stackConstructorInvocation.getParameters()
+					: Collections.emptyList());
+		
 		final ConstructorInvocationStatement statement = new ConstructorInvocationStatement(
 				context,
 				stackConstructorInvocation.getType(),
 				stackConstructorInvocation.makeExpressionOrNull(context),
-				new ParameterList(context, stackConstructorInvocation.getParameters()));
+				parameterList);
 		
 		final StatementSetter statementSetter = get();
 
