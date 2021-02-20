@@ -3,8 +3,8 @@ package com.neaterbits.compiler.common.ast.typedefinition;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.common.ast.block.Constructor;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
@@ -38,8 +38,8 @@ public class ConstructorMember extends ComplexMemberDefinition {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		doIterate(modifiers, recurseMode, visitor);
-		doIterate(constructor, recurseMode, visitor);
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
+		doIterate(modifiers, recurseMode, iterator);
+		doIterate(constructor, recurseMode, iterator);
 	}
 }

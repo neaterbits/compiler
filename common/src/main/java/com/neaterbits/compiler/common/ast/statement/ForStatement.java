@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.common.ast.statement;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
@@ -39,18 +39,18 @@ public final class ForStatement extends LoopStatement {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
 		if (forInit != null) {
-			doIterate(forInit, recurseMode, visitor);
+			doIterate(forInit, recurseMode, iterator);
 		}
 		
 		if (condition != null) {
-			doIterate(condition, recurseMode, visitor);
+			doIterate(condition, recurseMode, iterator);
 		}
 		
 		if (forUpdate != null) {
-			doIterate(forUpdate, recurseMode, visitor);
+			doIterate(forUpdate, recurseMode, iterator);
 		}
 	}
 }

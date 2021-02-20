@@ -4,8 +4,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.typedefinition.FieldName;
@@ -46,7 +46,10 @@ public final class FieldAccess extends Primary {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		doIterate(classType, recurseMode, visitor);
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
+		
+		if (classType != null) {
+			doIterate(classType, recurseMode, iterator);
+		}
 	}
 }

@@ -35,7 +35,7 @@ public final class Module extends BaseASTElement {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		doIterate(parsedFiles, recurseMode, visitor);
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
+		doIterate(parsedFiles, recurseMode, iterator);
 	}
 }

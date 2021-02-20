@@ -3,8 +3,8 @@ package com.neaterbits.compiler.common.ast.variables;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
@@ -23,11 +23,11 @@ public class InitializerVariableDeclarationElement extends VariableDeclarationEl
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		super.doRecurse(recurseMode, visitor);
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
+		super.doRecurse(recurseMode, iterator);
 		
 		if (initializer != null) {
-			doIterate(initializer, recurseMode, visitor);
+			doIterate(initializer, recurseMode, iterator);
 		}
 	}
 }

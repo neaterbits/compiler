@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.CompilationCodeVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 
@@ -33,10 +33,10 @@ public final class EnumDefinition extends BaseClassDefinition {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
-		doIterate(constants, recurseMode, visitor);
+		doIterate(constants, recurseMode, iterator);
 
-		super.doRecurse(recurseMode, visitor);
+		super.doRecurse(recurseMode, iterator);
 	}
 }

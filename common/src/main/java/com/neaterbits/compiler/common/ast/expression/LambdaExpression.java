@@ -3,8 +3,8 @@ package com.neaterbits.compiler.common.ast.expression;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public abstract class LambdaExpression extends Expression {
@@ -24,9 +24,9 @@ public abstract class LambdaExpression extends Expression {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
-		doIterate(parameters, recurseMode, visitor);
+		doIterate(parameters, recurseMode, iterator);
 		
 	}
 }

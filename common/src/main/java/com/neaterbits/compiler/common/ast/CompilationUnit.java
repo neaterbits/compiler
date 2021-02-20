@@ -20,10 +20,10 @@ public class CompilationUnit extends CompilationCodeLines {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
-		doIterate(imports, recurseMode, visitor);
+		doIterate(imports, recurseMode, iterator);
 		
-		super.doRecurse(recurseMode, visitor);
+		super.doRecurse(recurseMode, iterator);
 	}
 }

@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.common.ast.expression;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 
 public final class ThisPrimary extends Primary {
@@ -17,7 +17,7 @@ public final class ThisPrimary extends Primary {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 	}
 }

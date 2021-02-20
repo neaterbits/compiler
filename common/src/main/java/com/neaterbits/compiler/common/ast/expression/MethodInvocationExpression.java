@@ -4,8 +4,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.block.MethodName;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.parser.MethodInvocationType;
@@ -48,14 +48,16 @@ public final class MethodInvocationExpression extends Call<MethodName> {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
 		if (classType != null) {
-			doIterate(classType, recurseMode, visitor);
+			doIterate(classType, recurseMode, iterator);
 		}
 		
 		if (object != null) {
-			doIterate(object, recurseMode, visitor);
+			doIterate(object, recurseMode, iterator);
 		}
+
+		super.doRecurse(recurseMode, iterator);
 	}
 }

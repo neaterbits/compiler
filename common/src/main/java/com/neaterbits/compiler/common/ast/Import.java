@@ -66,7 +66,7 @@ public final class Import extends BaseASTElement {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 	}
 }

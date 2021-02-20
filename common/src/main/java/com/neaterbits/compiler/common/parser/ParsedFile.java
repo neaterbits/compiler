@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import com.neaterbits.compiler.common.CompileError;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.CompilationUnit;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
@@ -43,7 +43,7 @@ public final class ParsedFile extends BaseASTElement {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		doIterate(parsed, recurseMode, visitor);
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
+		doIterate(parsed, recurseMode, iterator);
 	}
 }

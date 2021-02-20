@@ -3,8 +3,8 @@ package com.neaterbits.compiler.common.ast.variables;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 
 public final class SimpleVariableReference extends VariableReference {
 	
@@ -32,7 +32,7 @@ public final class SimpleVariableReference extends VariableReference {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 	}
 }

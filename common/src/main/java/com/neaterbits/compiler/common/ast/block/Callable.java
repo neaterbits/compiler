@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
@@ -41,11 +41,11 @@ public abstract class Callable<NAME extends CallableName> extends CompilationCod
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		if (returnType != null) {
-			doIterate(returnType, recurseMode, visitor);
+			doIterate(returnType, recurseMode, iterator);
 		}
 
-		doIterate(parameters, recurseMode, visitor);
+		doIterate(parameters, recurseMode, iterator);
 	}
 }

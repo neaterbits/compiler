@@ -4,8 +4,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
 import com.neaterbits.compiler.common.ast.variables.VarName;
@@ -37,10 +37,10 @@ public final class Resource extends InitializerVariableDeclarationElement {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
-		doIterate(modifiers, recurseMode, visitor);
+		doIterate(modifiers, recurseMode, iterator);
 		
-		super.doRecurse(recurseMode, visitor);
+		super.doRecurse(recurseMode, iterator);
 	}
 }

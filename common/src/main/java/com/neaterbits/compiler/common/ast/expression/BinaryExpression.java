@@ -3,8 +3,8 @@ package com.neaterbits.compiler.common.ast.expression;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public abstract class BinaryExpression extends Expression {
@@ -31,8 +31,8 @@ public abstract class BinaryExpression extends Expression {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		doIterate(lhs, recurseMode, visitor);
-		doIterate(rhs, recurseMode, visitor);
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
+		doIterate(lhs, recurseMode, iterator);
+		doIterate(rhs, recurseMode, iterator);
 	}
 }

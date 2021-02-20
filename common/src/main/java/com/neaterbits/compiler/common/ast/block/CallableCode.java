@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public abstract class CallableCode<NAME extends CallableName> extends Callable<NAME>  {
@@ -27,10 +27,10 @@ public abstract class CallableCode<NAME extends CallableName> extends Callable<N
 
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 
-		super.doRecurse(recurseMode, visitor);
+		super.doRecurse(recurseMode, iterator);
 		
-		doIterate(block, recurseMode, visitor);
+		doIterate(block, recurseMode, iterator);
 	}
 }

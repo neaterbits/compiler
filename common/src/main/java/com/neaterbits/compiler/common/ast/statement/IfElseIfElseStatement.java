@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.block.Block;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
@@ -42,11 +42,11 @@ public final class IfElseIfElseStatement extends ConditionStatement {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		doIterate(conditions, recurseMode, visitor);
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
+		doIterate(conditions, recurseMode, iterator);
 		
 		if (elseBlock != null) {
-			doIterate(elseBlock, recurseMode, visitor);
+			doIterate(elseBlock, recurseMode, iterator);
 		}
 	}
 		

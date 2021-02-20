@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.typedefinition.VariableModifiers;
@@ -44,9 +44,9 @@ public final class VariableDeclarationStatement extends Statement {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
-		doIterate(modifiers, recurseMode, visitor);
-		doIterate(declarations, recurseMode, visitor);
+		doIterate(modifiers, recurseMode, iterator);
+		doIterate(declarations, recurseMode, iterator);
 	}
 }

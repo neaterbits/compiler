@@ -22,7 +22,7 @@ public abstract class StackClass extends ListStackEntry<ComplexMemberDefinition>
 		
 		Objects.requireNonNull(method);
 		
-		super.add(method);
+		add(method);
 	}
 
 	@Override
@@ -31,6 +31,5 @@ public abstract class StackClass extends ListStackEntry<ComplexMemberDefinition>
 		Objects.requireNonNull(constructor);
 		
 		add(constructor);
-		
 	}
 }

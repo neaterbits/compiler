@@ -36,7 +36,7 @@ public final class Namespace extends CompilationCode {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		doIterate(lines, recurseMode, visitor);
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
+		doIterate(lines, recurseMode, iterator);
 	}
 }

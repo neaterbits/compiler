@@ -3,8 +3,8 @@ package com.neaterbits.compiler.common.ast.block;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.expression.Expression;
 import com.neaterbits.compiler.common.ast.expression.ParameterList;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
@@ -51,12 +51,12 @@ public final class ConstructorInvocationStatement extends Statement {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 		if (expression != null) {
-			doIterate(expression, recurseMode, visitor);
+			doIterate(expression, recurseMode, iterator);
 		}
 		
-		doIterate(parameters, recurseMode, visitor);
+		doIterate(parameters, recurseMode, iterator);
 	}
 }

@@ -23,9 +23,9 @@ public class CompilationCodeLines extends BaseASTElement {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
-		doIterate(code, recurseMode, visitor);
+		doIterate(code, recurseMode, iterator);
 
 	}
 }

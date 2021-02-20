@@ -23,23 +23,47 @@ public abstract class BaseASTElement extends ASTNode {
 		return getClass().getSimpleName();
 	}
 	
-	protected abstract void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor);
+	protected abstract void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator);
 
 	public final void iterateNodeFirst(ASTVisitor visitor) {
-	
-		visitor.onElement(this);
 		
-		doRecurse(ASTRecurseMode.VISIT_NODE_FIRST, visitor);
+		final BaseASTIterator iterator = new BaseASTIterator() {
+			@Override
+			public void onElement(BaseASTElement element) {
+				visitor.onElement(element);
+			}
+		};
+		
+		iterateNodeFirst(iterator);
+	}
+
+	private void iterateNodeFirst(ASTIterator iterator) {
+
+		iterator.onElement(this);
+		
+		doRecurse(ASTRecurseMode.VISIT_NODE_FIRST, iterator);
 	}
 	
 	public final void iterateNodeLast(ASTVisitor visitor) {
 
-		doRecurse(ASTRecurseMode.VISIT_NODE_LAST, visitor);
+		final BaseASTIterator iterator = new BaseASTIterator() {
+			@Override
+			public void onElement(BaseASTElement element) {
+				visitor.onElement(element);
+			}
+		};
+
+		iterateNodeLast(iterator);
+	}
+	
+	private void iterateNodeLast(ASTIterator iterator) {
+
+		doRecurse(ASTRecurseMode.VISIT_NODE_LAST, iterator);
 		
-		visitor.onElement(this);
+		iterator.onElement(this);
 	}
 
-	private static class ASTVisitorForStack implements ASTVisitor {
+	private static class ASTVisitorForStack implements ASTIterator {
 		
 		private final Stack<BaseASTElement> stack;
 		private final ASTStackVisitor stackVisitor;
@@ -50,8 +74,19 @@ public abstract class BaseASTElement extends ASTNode {
 		}
 
 		@Override
+		public void onPush(BaseASTElement element) {
+			stack.push(element);
+		}
+
+		@Override
 		public void onElement(BaseASTElement element) {
 			stackVisitor.onElement(element, stack);
+		}
+
+
+		@Override
+		public void onPop(BaseASTElement element) {
+			stack.pop();
 		}
 	}
 	
@@ -64,59 +99,44 @@ public abstract class BaseASTElement extends ASTNode {
 	}
 
 	
-	protected final void doIterate(ASTSingle<? extends ASTNode> single, ASTRecurseMode recurseMode, ASTVisitor visitor) {
-
-		final ASTVisitorForStack stackVisitor = visitor instanceof ASTVisitorForStack
-				? (ASTVisitorForStack)visitor
-				: null;
+	protected final void doIterate(ASTSingle<? extends ASTNode> single, ASTRecurseMode recurseMode, ASTIterator iterator) {
 
 		final BaseASTElement element = (BaseASTElement)single.get();
+
+		iterator.onPush(element);
 		
-		if (stackVisitor != null) {
-			stackVisitor.stack.push(element);
-		}
-		
-		visit(element, recurseMode, visitor);
-		
-		if (stackVisitor != null) {
-			stackVisitor.stack.pop();
-		}
+		visit(element, recurseMode, iterator);
+
+		iterator.onPop(element);
 	}
 
-	protected final void doIterate(ASTList<? extends ASTNode> list, ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		final ASTVisitorForStack stackVisitor = visitor instanceof ASTVisitorForStack
-				? (ASTVisitorForStack)visitor
-				: null;
+	protected final void doIterate(ASTList<? extends ASTNode> list, ASTRecurseMode recurseMode, ASTIterator iterator) {
 
 		for (ASTNode node : list) {
 			
 			final BaseASTElement element = (BaseASTElement)node;
-			
-			if (stackVisitor != null) {
-				stackVisitor.stack.push(element);
-			}
-			
-			visit(element, recurseMode, visitor);
 
-			if (stackVisitor != null) {
-				stackVisitor.stack.pop();
-			}
+			iterator.onPush(element);
+			
+			visit(element, recurseMode, iterator);
+
+			iterator.onPop(element);
 		}
 	}
 	
-	private void visit(BaseASTElement element, ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	private void visit(BaseASTElement element, ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 		switch (recurseMode) {
 		case VISIT_NODE_FIRST:
-			visitor.onElement(element);
+			iterator.onElement(element);
 			
-			element.doRecurse(recurseMode, visitor);
+			element.doRecurse(recurseMode, iterator);
 			break;
 			
 		case VISIT_NODE_LAST:
-			element.doRecurse(recurseMode, visitor);
+			element.doRecurse(recurseMode, iterator);
 
-			visitor.onElement(element);
+			iterator.onElement(element);
 			break;
 			
 		default:

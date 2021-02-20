@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.common.ast.variables;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 
 public class NameReference extends VariableReference {
 
@@ -24,7 +24,7 @@ public class NameReference extends VariableReference {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 	}
 }

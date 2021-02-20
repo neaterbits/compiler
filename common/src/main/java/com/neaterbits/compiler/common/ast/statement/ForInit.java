@@ -3,8 +3,8 @@ package com.neaterbits.compiler.common.ast.statement;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 import com.neaterbits.compiler.common.ast.variables.InitializerVariableDeclarationElement;
@@ -41,13 +41,13 @@ public final class ForInit extends BaseASTElement {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 		if (localVariableDeclaration != null) {
-			doIterate(localVariableDeclaration, recurseMode, visitor);
+			doIterate(localVariableDeclaration, recurseMode, iterator);
 		}
 		else if (expressionList != null) {
-			doIterate(expressionList, recurseMode, visitor);
+			doIterate(expressionList, recurseMode, iterator);
 		}
 	}
 }

@@ -3,8 +3,8 @@ package com.neaterbits.compiler.common.ast.expression.literal;
 import java.util.Objects;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.ast.ASTIterator;
 import com.neaterbits.compiler.common.ast.ASTRecurseMode;
-import com.neaterbits.compiler.common.ast.ASTVisitor;
 import com.neaterbits.compiler.common.ast.expression.ExpressionVisitor;
 import com.neaterbits.compiler.common.ast.typedefinition.ClassOrInterfaceName;
 
@@ -36,7 +36,7 @@ public final class ClassExpression extends Primary {
 	}
 
 	@Override
-	public void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor) {
+	protected void doRecurse(ASTRecurseMode recurseMode, ASTIterator iterator) {
 		
 	}
 }
