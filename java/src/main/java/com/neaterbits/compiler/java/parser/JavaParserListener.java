@@ -947,16 +947,6 @@ System.out.println("-- matched enhanced for");
 		
 	}
 	
-	public void onDoStatementStart(Context context) {
-		
-		statementsStack.add(JavaStatement.DO);
-		
-	}
-	
-	public void onDoStatementEnd(Context context) {
-		
-	}
-	
 	public void onForStatementStart(Context context) {
 		
 		statementsStack.add(JavaStatement.FOR);
@@ -1005,6 +995,22 @@ System.out.println("-- matched enhanced for");
 		delegate.onIteratorForStatementEnd(context);
 	}
 
+	public void onDoWhileStatementStart(Context context) {
+		
+		statementsStack.add(JavaStatement.DOWHILE);
+		
+		statementsStack.push();
+		
+		delegate.onDoWhileStatementStart(context);
+	}
+	
+	public void onDoWhileStatementEnd(Context context) {
+		
+		delegate.onDoWhileStatementEnd(context);
+		
+		statementsStack.pop();
+	}
+	
 	public void onContinueStatement(Context context, String label) {
 		
 	}

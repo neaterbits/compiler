@@ -1402,12 +1402,12 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterDoStatement(DoStatementContext ctx) {
-		delegate.onDoStatementStart(context(ctx));
+		delegate.onDoWhileStatementStart(context(ctx));
 	}
 
 	@Override
 	public void exitDoStatement(DoStatementContext ctx) {
-		delegate.onDoStatementEnd(context(ctx));
+		delegate.onDoWhileStatementEnd(context(ctx));
 	}
 
 	@Override

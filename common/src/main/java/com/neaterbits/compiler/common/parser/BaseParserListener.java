@@ -47,6 +47,7 @@ import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.Primary;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
 import com.neaterbits.compiler.common.ast.statement.CatchBlock;
+import com.neaterbits.compiler.common.ast.statement.DoWhileStatement;
 import com.neaterbits.compiler.common.ast.statement.ExpressionStatement;
 import com.neaterbits.compiler.common.ast.statement.FieldTransient;
 import com.neaterbits.compiler.common.ast.statement.FieldVolatile;
@@ -129,13 +130,13 @@ import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
 import com.neaterbits.compiler.common.parser.stackstate.StackCatchBlock;
-import com.neaterbits.compiler.common.parser.stackstate.StackClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackClassInstanceCreationExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackNamedClass;
 import com.neaterbits.compiler.common.parser.stackstate.StackCompilationUnit;
 import com.neaterbits.compiler.common.parser.stackstate.StackConditionalExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackConstructor;
 import com.neaterbits.compiler.common.parser.stackstate.StackConstructorInvocation;
+import com.neaterbits.compiler.common.parser.stackstate.StackDoWhileStatement;
 import com.neaterbits.compiler.common.parser.stackstate.StackEnum;
 import com.neaterbits.compiler.common.parser.stackstate.StackEnumConstant;
 import com.neaterbits.compiler.common.parser.stackstate.StackExpressionList;
@@ -1804,6 +1805,33 @@ public abstract class BaseParserListener {
 		final StatementSetter statementSetter = get();
 		
 		statementSetter.addStatement(statement);
+		
+		logExit(context);
+	}
+	
+	public final void onDoWhileStatementStart(Context context) {
+		
+		logEnter(context);
+		
+		push(new StackDoWhileStatement(logger));
+		
+		logExit(context);
+	}
+	
+	public final void onDoWhileStatementEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackDoWhileStatement stackDoWhileStatement = pop();
+		
+		final DoWhileStatement doWhileStatement = new DoWhileStatement(
+				context,
+				stackDoWhileStatement.getWhileCondition(context),
+				new Block(context, stackDoWhileStatement.getStatements()));
+		
+		final StatementSetter statementSetter = get();
+		
+		statementSetter.addStatement(doWhileStatement);
 		
 		logExit(context);
 	}

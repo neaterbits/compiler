@@ -155,7 +155,7 @@ public abstract class CLikeStatementEmitter<T extends EmitterState>
 		emitIndentedBlock(statement.getBlock(), param);
 		
 		param.append("} while(");
-		emitCondition(statement.getCondition(), param);
+		emitExpression(statement.getCondition(), param);
 		param.append(");").newline();
 		
 		return null;
