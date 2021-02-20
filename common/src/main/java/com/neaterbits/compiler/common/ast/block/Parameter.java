@@ -14,8 +14,9 @@ public final class Parameter extends BaseASTElement {
 
 	private final ASTSingle<TypeReference> type;
 	private final ParameterName name;
+	private final boolean varArgs;
 
-	public Parameter(Context context, TypeReference type, ParameterName name) {
+	public Parameter(Context context, TypeReference type, ParameterName name, boolean varArgs) {
 		super(context);
 
 		Objects.requireNonNull(type);
@@ -25,6 +26,7 @@ public final class Parameter extends BaseASTElement {
 
 		this.type = makeSingle(type);
 		this.name = name;
+		this.varArgs = varArgs;
 	}
 	
 	public TypeReference getType() {
@@ -33,6 +35,10 @@ public final class Parameter extends BaseASTElement {
 	
 	public ParameterName getName() {
 		return name;
+	}
+
+	public boolean isVarArgs() {
+		return varArgs;
 	}
 
 	@Override

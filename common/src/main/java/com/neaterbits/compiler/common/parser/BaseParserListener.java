@@ -523,11 +523,11 @@ public abstract class BaseParserListener {
 		
 	}
 
-	public final void onMethodSignatureParameterStart(Context context) {
+	public final void onMethodSignatureParameterStart(Context context, boolean varArgs) {
 		
 		logEnter(context);
 		
-		push(new StackParameterSignature(logger));
+		push(new StackParameterSignature(logger, varArgs));
 		
 		logExit(context);
 	}
@@ -543,7 +543,8 @@ public abstract class BaseParserListener {
 		final Parameter parameter = new Parameter(
 				context,
 				stackParameterSignature.getTypeReference(),
-				new ParameterName(stackParameterSignature.getName()));
+				new ParameterName(stackParameterSignature.getName()),
+				stackParameterSignature.isVarArgs());
 
 		stackCallable.addParameter(parameter);
 		

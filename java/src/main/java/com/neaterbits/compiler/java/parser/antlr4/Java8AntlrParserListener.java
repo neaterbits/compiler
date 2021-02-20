@@ -324,11 +324,21 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterFormalParameter(FormalParameterContext ctx) {
-		delegate.onMethodSignatureParameterStart(context(ctx));
+		delegate.onMethodSignatureParameterStart(context(ctx), false);
 	}
 
 	@Override
 	public void exitFormalParameter(FormalParameterContext ctx) {
+		delegate.onMethodSignatureParameterEnd(context(ctx));
+	}
+	
+	@Override
+	public void enterLastFormalParameterVarArgs(LastFormalParameterVarArgsContext ctx) {
+		delegate.onMethodSignatureParameterStart(context(ctx), true);
+	}
+
+	@Override
+	public void exitLastFormalParameterVarArgs(LastFormalParameterVarArgsContext ctx) {
 		delegate.onMethodSignatureParameterEnd(context(ctx));
 	}
 

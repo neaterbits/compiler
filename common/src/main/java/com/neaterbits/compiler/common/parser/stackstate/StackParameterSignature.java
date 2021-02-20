@@ -5,7 +5,15 @@ import com.neaterbits.compiler.common.parser.TypeReferenceSetter;
 
 public final class StackParameterSignature extends BaseStackVariableDeclaration implements TypeReferenceSetter {
 
-	public StackParameterSignature(ParseLogger parseLogger) {
+	private final boolean varArgs;
+	
+	public StackParameterSignature(ParseLogger parseLogger, boolean varArgs) {
 		super(parseLogger);
+
+		this.varArgs = varArgs;
+	}
+
+	public boolean isVarArgs() {
+		return varArgs;
 	}
 }

@@ -22,7 +22,8 @@ public abstract class IterativeConverter {
 			result.add(new Parameter(
 					parameter.getContext(),
 					convertType.apply(parameter.getType()),
-					parameter.getName()));
+					parameter.getName(),
+					parameter.isVarArgs()));
 		}
 
 		return result;
