@@ -2,6 +2,7 @@ package com.neaterbits.compiler.common.ast;
 
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTNode;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
@@ -22,7 +23,7 @@ public abstract class BaseASTElement extends ASTNode {
 		return getClass().getSimpleName();
 	}
 	
-	public abstract void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor);
+	protected abstract void doRecurse(ASTRecurseMode recurseMode, ASTVisitor visitor);
 
 	public final void iterateNodeFirst(ASTVisitor visitor) {
 	
@@ -37,19 +38,73 @@ public abstract class BaseASTElement extends ASTNode {
 		
 		visitor.onElement(this);
 	}
-	
-	public final void doIterate(ASTSingle<? extends ASTNode> single, ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		visit(single.get(), recurseMode, visitor);
-	}
 
-	public final void doIterate(ASTList<? extends ASTNode> list, ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		for (ASTNode node : list) {
-			visit(node, recurseMode, visitor);
+	private static class ASTVisitorForStack implements ASTVisitor {
+		
+		private final Stack<BaseASTElement> stack;
+		private final ASTStackVisitor stackVisitor;
+		
+		ASTVisitorForStack(ASTStackVisitor stackVisitor) {
+			this.stack = new Stack<>();
+			this.stackVisitor = stackVisitor;
+		}
+
+		@Override
+		public void onElement(BaseASTElement element) {
+			stackVisitor.onElement(element, stack);
 		}
 	}
 	
-	private void visit(ASTNode node, ASTRecurseMode recurseMode, ASTVisitor visitor) {
-		final BaseASTElement element = (BaseASTElement)node;
+	public final void iterateNodeFirstWithStack(ASTStackVisitor visitor) {
+		iterateNodeFirst(new ASTVisitorForStack(visitor));
+	}
+	
+	public final void iterateNodeLastWithStack(ASTStackVisitor visitor) {
+		iterateNodeLast(new ASTVisitorForStack(visitor));
+	}
+
+	
+	protected final void doIterate(ASTSingle<? extends ASTNode> single, ASTRecurseMode recurseMode, ASTVisitor visitor) {
+
+		final ASTVisitorForStack stackVisitor = visitor instanceof ASTVisitorForStack
+				? (ASTVisitorForStack)visitor
+				: null;
+
+		final BaseASTElement element = (BaseASTElement)single.get();
+		
+		if (stackVisitor != null) {
+			stackVisitor.stack.push(element);
+		}
+		
+		visit(element, recurseMode, visitor);
+		
+		if (stackVisitor != null) {
+			stackVisitor.stack.pop();
+		}
+	}
+
+	protected final void doIterate(ASTList<? extends ASTNode> list, ASTRecurseMode recurseMode, ASTVisitor visitor) {
+		final ASTVisitorForStack stackVisitor = visitor instanceof ASTVisitorForStack
+				? (ASTVisitorForStack)visitor
+				: null;
+
+		for (ASTNode node : list) {
+			
+			final BaseASTElement element = (BaseASTElement)node;
+			
+			if (stackVisitor != null) {
+				stackVisitor.stack.push(element);
+			}
+			
+			visit(element, recurseMode, visitor);
+
+			if (stackVisitor != null) {
+				stackVisitor.stack.pop();
+			}
+		}
+	}
+	
+	private void visit(BaseASTElement element, ASTRecurseMode recurseMode, ASTVisitor visitor) {
 		
 		switch (recurseMode) {
 		case VISIT_NODE_FIRST:

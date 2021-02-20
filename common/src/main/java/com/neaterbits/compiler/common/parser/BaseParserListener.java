@@ -2152,7 +2152,7 @@ public abstract class BaseParserListener {
 	}
 
 	private <T extends StackEntry> T get(Class<T> cl) {
-		return mainStack.get(cl);
+		return mainStack.getFromTop(cl);
 	}
 
 	protected final void pushVariableScope() {

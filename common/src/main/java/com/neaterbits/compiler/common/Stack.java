@@ -3,7 +3,7 @@ package com.neaterbits.compiler.common;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-public class Stack<T> {
+public class Stack<T> implements StackView<T> {
 
 	private final ArrayList<T> list;
 	
@@ -23,10 +23,12 @@ public class Stack<T> {
 		return list.remove(list.size() - 1);
 	}
 	
+	@Override
 	public final T get() {
 		return list.get(list.size() - 1);
 	}
 	
+	@Override
 	public final T get(int index) {
 		return list.get(index);
 	}
@@ -35,12 +37,14 @@ public class Stack<T> {
 		return list.stream();
 	}
 
+	@Override
 	public final T getFromTop(int count) {
 		return list.get(list.size() - count - 1);
 	}
 
 	@SuppressWarnings("unchecked")
-	public final <E extends T> E get(Class<E> cl) {
+	@Override
+	public final <E extends T> E getFromTop(Class<E> cl) {
 		for (int i = list.size() - 1; i >= 0; -- i) {
 			final T element = list.get(i);
 			
@@ -52,10 +56,12 @@ public class Stack<T> {
 		return null;
 	}
 
+	@Override
 	public final boolean isEmpty() {
 		return list.isEmpty();
 	}
 	
+	@Override
 	public final int size() {
 		return list.size();
 	}

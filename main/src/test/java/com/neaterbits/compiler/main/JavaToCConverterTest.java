@@ -88,6 +88,12 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 		final Program program = programParser.parseProgram(Arrays.asList(commonModuleSpec));
 		
 		assertThat(program).isNotNull();
+
+		program.iterateNodeFirstWithStack((node, stack) -> {
+			
+			System.out.println(Strings.indent(stack.size()) + node.getClass().getSimpleName());
+			
+		});
 		
 		/*
 		final PrintStream logOutput = new PrintStream(new ByteArrayOutputStream());
