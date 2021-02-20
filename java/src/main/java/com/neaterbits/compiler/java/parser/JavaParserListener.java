@@ -89,8 +89,8 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onNamespaceStart(context, name, Strings.split(packageName, '.'));
 	}
 
-	public void onCompilationUnitStart() {
-		delegate.onCompilationUnitStart();
+	public void onCompilationUnitStart(Context context) {
+		delegate.onCompilationUnitStart(context);
 	}
 	
 	public void onImport(Import importStatement) {

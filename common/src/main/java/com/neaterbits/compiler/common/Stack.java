@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.common;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 public class Stack<T> {
 
@@ -28,6 +29,10 @@ public class Stack<T> {
 	
 	public final T get(int index) {
 		return list.get(index);
+	}
+	
+	public final Stream<T> stream() {
+		return list.stream();
 	}
 
 	public final T getFromTop(int count) {

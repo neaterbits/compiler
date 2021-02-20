@@ -48,14 +48,21 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	private final JavaParserListener delegate;
 	
+	private static final Boolean DEBUG = false;
+	
+	private final boolean debug;
 	private final ParseLogger logger;
 	
 	private int indent = 0;
 
-	public Java8AntlrParserListener(JavaParserListener delegate, ParseLogger logger) {
+	public Java8AntlrParserListener(JavaParserListener delegate, boolean debug, ParseLogger logger) {
 		this.delegate = delegate;
-		
+		this.debug = debug;
 		this.logger = logger;
+	}
+	
+	private boolean isDebugEnabled() {
+		return debug && DEBUG;
 	}
 	
 	private String ruleName(ParserRuleContext ctx) {
@@ -63,19 +70,15 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 	
 	private String indent() {
-		final StringBuilder sb = new StringBuilder();
-
-		for (int i = 0; i < indent; ++ i) {
-			sb.append("  ");
-		}
-
-		return sb.toString();
+		return Strings.indent(indent);
 	}
 	
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
 		
-		// System.out.println("## enter " + indent() + ruleName(ctx) + " " + ctx.getText());
+		if (isDebugEnabled()) {
+			System.out.println("## enter " + indent() + ruleName(ctx) + " " + ctx.getText());
+		}
 		
 		++ indent;
 		
@@ -84,7 +87,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void exitEveryRule(ParserRuleContext ctx) {
-		// System.out.println("## exit " + indent() + ruleName(ctx) + " " + ctx.getText());
+		
+		if (isDebugEnabled()) {
+			System.out.println("## exit " + indent() + ruleName(ctx) + " " + ctx.getText());
+		}
 		
 		-- indent;
 
@@ -93,7 +99,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 
 	@Override
 	public void enterCompilationUnit(CompilationUnitContext ctx) {
-		delegate.onCompilationUnitStart();
+		delegate.onCompilationUnitStart(context(ctx));
 	}
 
 	@Override

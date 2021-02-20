@@ -30,7 +30,7 @@ public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEX
 
 	protected abstract ParserRuleContext getMainContext(PARSER parser);
 	
-	protected abstract ParseTreeListener makeParseTreeListener(LISTENER listener, ParseLogger parseLogger);
+	protected abstract ParseTreeListener makeParseTreeListener(LISTENER listener, boolean debug, ParseLogger parseLogger);
 
 	private final boolean debug;
 	
@@ -192,12 +192,9 @@ public abstract class BaseParser<T, LISTENER extends ModelParserListener<T>, LEX
 
 		final ParserRuleContext root = getMainContext(parser);
 
-		final int numErrors = parser.getNumberOfSyntaxErrors();
-
-		final ParseTreeListener parseTreeListener = makeParseTreeListener(listener, parseLogger);
+		final ParseTreeListener parseTreeListener = makeParseTreeListener(listener, debug, parseLogger);
 
 		new ParseTreeWalker(){
-			
 			
 		}.walk(parseTreeListener, root);
 	}

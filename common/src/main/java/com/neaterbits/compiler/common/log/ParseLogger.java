@@ -2,10 +2,13 @@ package com.neaterbits.compiler.common.log;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.common.Context;
+import com.neaterbits.compiler.common.Stack;
 import com.neaterbits.compiler.common.util.Strings;
 
 public final class ParseLogger {
@@ -18,6 +21,8 @@ public final class ParseLogger {
 	private int stackLevel;
 	
 	private final PrintStream out;
+	
+	private final Stack<String> loggerStack;
 
 	public ParseLogger(PrintStream out) {
 
@@ -26,6 +31,8 @@ public final class ParseLogger {
 		this.out = out;
 
 		this.antlrRules = new ArrayList<>();
+		
+		this.loggerStack = new Stack<>();
 	}
 	
 	public void onEnterAntlrRule(String name, String content) {
@@ -85,10 +92,19 @@ public final class ParseLogger {
 		indent().append("exit " + methodName).append(' ').append(context.getText()).println();
 	}
 
-	public void onStackPush(String type) {
+	public void onStackPush(String type, Collection<String> stack) {
 
 		out.append("--");
-		indent().append("push ").append(type).println();
+		indent().append("push ").append(type);
+		
+		
+		// out.append(' ').append(stack.toString());
+
+		appendLoggerStack();
+
+		out.println();
+		
+		loggerStack.push(type);
 	
 		++ stackLevel;
 	}
@@ -109,8 +125,18 @@ public final class ParseLogger {
 
 		-- stackLevel;
 
+		loggerStack.pop();
+		
 		out.append("--");
-		indent().append("pop ").append(type).println();
+		indent().append("pop ").append(type);
+
+		appendLoggerStack();
+		
+		out.println();
+	}
+	
+	private void appendLoggerStack() {
+		out.append(' ').append(loggerStack.stream().collect(Collectors.toList()).toString());
 	}
 	
 	private void printRulesAndClear(boolean enter, String newContent) {

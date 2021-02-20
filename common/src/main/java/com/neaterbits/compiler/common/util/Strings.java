@@ -105,6 +105,16 @@ public class Strings {
 		}
 	}
 
+	public static String indent(int indent) {
+		final StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < indent; ++ i) {
+			sb.append("  ");
+		}
+
+		return sb.toString();
+	}
+
 	
 	private static char hex(int hex) {
 		

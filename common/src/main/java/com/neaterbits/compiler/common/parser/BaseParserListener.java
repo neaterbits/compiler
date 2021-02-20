@@ -2,10 +2,10 @@ package com.neaterbits.compiler.common.parser;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
@@ -208,20 +208,33 @@ public abstract class BaseParserListener {
 		logger.onExitListenerFunction(getMethodName(), context);
 	}
 	
-	public final void onCompilationUnitStart() {
+	public final void onCompilationUnitStart(Context context) {
+		
+		logEnter(context);
 		
 		if (!mainStack.isEmpty()) {
 			throw new IllegalStateException("Expected empty stack");
 		}
 		
 		push(new StackCompilationUnit(logger));
+		
+		logExit(context);
 	}
 	
 	public CompilationUnit onCompilationUnitEnd(Context context) {
 		
+		logEnter(context);
+		
 		final StackCompilationUnit stackCompilationUnit = pop();
 		
-		return new CompilationUnit(context, stackCompilationUnit.getImports(), stackCompilationUnit.getList());
+		final CompilationUnit compilationUnit = new CompilationUnit(
+				context,
+				stackCompilationUnit.getImports(),
+				stackCompilationUnit.getList());
+		
+		logExit(context);
+		
+		return compilationUnit;
 	}
 
 	public final void onImport(Import importStatement) {
@@ -245,7 +258,7 @@ public abstract class BaseParserListener {
 
 		logEnter(context);
 		
-		final StackNamespace stackNamespace = (StackNamespace)mainStack.pop();
+		final StackNamespace stackNamespace = pop();
 		
 		final List<CompilationCode> namespaceCode = stackNamespace.getList();
 
@@ -1950,7 +1963,11 @@ public abstract class BaseParserListener {
 		
 		Objects.requireNonNull(element);
 		
-		logger.onStackPush(element.getClass().getSimpleName());
+		final List<String> stack = mainStack.stream()
+				.map(o -> o.getClass().getSimpleName())
+				.collect(Collectors.toList());
+		
+		logger.onStackPush(element.getClass().getSimpleName(), stack);
 		
 		mainStack.push(element);
 	}
@@ -1980,10 +1997,5 @@ public abstract class BaseParserListener {
 
 	protected final void popVariableScope() {
 		variableScopes.pop();
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <S, T extends S, C extends Collection<S>> List<T> cast(C collection) {
-		return (List<T>)collection;
 	}
 }
