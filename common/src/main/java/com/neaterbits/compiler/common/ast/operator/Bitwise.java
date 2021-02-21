@@ -6,7 +6,8 @@ public enum Bitwise implements NumericOperator {
 	XOR(Arity.BINARY),
 	COMPLEMENT(Arity.UNARY),
 	LEFTSHIFT(Arity.BINARY),
-	RIGHTSHIFT(Arity.BINARY);
+	RIGHTSHIFT_SIGNED(Arity.BINARY),
+	RIGHTSHIFT_UNSIGNED(Arity.BINARY);
 
 	private final Arity arity;
 	

@@ -93,11 +93,11 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 		final String operator;
 		
 		switch (bitwise) {
-		case AND: 			operator = "&"; break;
-		case OR: 			operator = "|"; break;
-		case XOR: 			operator = "^"; break;
-		case LEFTSHIFT: 	operator = "<<"; break;
-		case RIGHTSHIFT: 	operator = ">>"; break;
+		case AND: 					operator = "&"; break;
+		case OR: 					operator = "|"; break;
+		case XOR: 					operator = "^"; break;
+		case LEFTSHIFT: 			operator = "<<"; break;
+		case RIGHTSHIFT_SIGNED: 	operator = ">>"; break;
 		
 		default:
 			throw new UnsupportedOperationException("Not a bitwise operator: " + bitwise);
@@ -164,7 +164,7 @@ public abstract class CLikeExpressionEmitter<T extends EmitterState> extends Bas
 	};
 	
 	@Override
-	protected final String getOperatorString(Operator operator) {
+	protected String getOperatorString(Operator operator) {
 		return operator.visit(OPERATOR_TO_STRING_VISITOR, null);
 	}
 

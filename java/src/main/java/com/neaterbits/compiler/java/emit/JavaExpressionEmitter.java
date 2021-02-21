@@ -20,6 +20,8 @@ import com.neaterbits.compiler.common.ast.expression.literal.FloatingPointLitera
 import com.neaterbits.compiler.common.ast.expression.literal.IntegerLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.NullLiteral;
 import com.neaterbits.compiler.common.ast.expression.literal.StringLiteral;
+import com.neaterbits.compiler.common.ast.operator.Bitwise;
+import com.neaterbits.compiler.common.ast.operator.Operator;
 import com.neaterbits.compiler.common.ast.statement.Statement;
 import com.neaterbits.compiler.common.ast.variables.VariableReference;
 import com.neaterbits.compiler.common.emit.EmitterState;
@@ -54,7 +56,21 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		reference.visit(VARIABLE_REFERENCE_EMITTER, param);
 	}
 	
-	
+	@Override
+	protected String getOperatorString(Operator operator) {
+		
+		final String s;
+		
+		if (operator == Bitwise.RIGHTSHIFT_UNSIGNED) {
+			s = ">>>";
+		}
+		else {
+			s = super.getOperatorString(operator);
+		}
+
+		return s;
+	}
+
 	@Override
 	public Void onVariable(VariableExpression expression, EmitterState param) {
 		

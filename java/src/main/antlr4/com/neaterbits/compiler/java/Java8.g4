@@ -1252,8 +1252,8 @@ exclusiveOrExpression
 	;
 
 andExpression
-	:	equalityExpression
-	|	andExpression '&' equalityExpression
+	:	equalityExpression									# equalityExpressionToken
+	|	andExpression '&' equalityExpression				# bitwiseAndExpression
 	;
 
 equalityExpression
@@ -1272,10 +1272,10 @@ relationalExpression
 	;
 
 shiftExpression
-	:	additiveExpression
-	|	shiftExpression '<' '<' additiveExpression
-	|	shiftExpression '>' '>' additiveExpression
-	|	shiftExpression '>' '>' '>' additiveExpression
+	:	additiveExpression								# additiveExpressionToken
+	|	shiftExpression '<' '<' additiveExpression		# shiftLeftExpression 
+	|	shiftExpression '>' '>' additiveExpression		# shiftRightSignedExpression
+	|	shiftExpression '>' '>' '>' additiveExpression	# shiftRightUnsignedExpression
 	;
 
 additiveExpression

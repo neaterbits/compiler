@@ -553,6 +553,26 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	}
 	
 	@Override
+	public void exitBitwiseAndExpression(BitwiseAndExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Bitwise.AND);
+	}
+
+	@Override
+	public void exitShiftLeftExpression(ShiftLeftExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Bitwise.LEFTSHIFT);
+	}
+
+	@Override
+	public void exitShiftRightSignedExpression(ShiftRightSignedExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Bitwise.RIGHTSHIFT_SIGNED);
+	}
+
+	@Override
+	public void exitShiftRightUnsignedExpression(ShiftRightUnsignedExpressionContext ctx) {
+		delegate.onExpressionBinaryOperator(context(ctx), Bitwise.RIGHTSHIFT_UNSIGNED);
+	}
+
+	@Override
 	public void exitNumericAddExpression(NumericAddExpressionContext ctx) {
 		delegate.onExpressionBinaryOperator(context(ctx), Arithmetic.PLUS);
 	}
