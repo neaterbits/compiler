@@ -23,6 +23,7 @@ import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
 import com.neaterbits.compiler.common.ast.block.ConstructorInvocationStatement;
 import com.neaterbits.compiler.common.ast.block.Parameter;
 import com.neaterbits.compiler.common.ast.block.ParameterName;
+import com.neaterbits.compiler.common.ast.expression.ArrayCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.AssignmentExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
@@ -128,6 +129,7 @@ import com.neaterbits.compiler.common.parser.stackstate.BaseStackVariableDeclara
 import com.neaterbits.compiler.common.parser.stackstate.CallableStackEntry;
 import com.neaterbits.compiler.common.parser.stackstate.StackAnnotation;
 import com.neaterbits.compiler.common.parser.stackstate.StackAnonymousClass;
+import com.neaterbits.compiler.common.parser.stackstate.StackArrayCreationExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentExpression;
 import com.neaterbits.compiler.common.parser.stackstate.StackAssignmentLHS;
 import com.neaterbits.compiler.common.parser.stackstate.StackCatchBlock;
@@ -1393,6 +1395,58 @@ public abstract class BaseParserListener {
 		
 		logExit(context);
 	}
+	
+	public final void onArrayCreationExpressionStart(Context context, TypeReference type, int numDims) {
+		
+		logEnter(context);
+		
+		push(new StackArrayCreationExpression(logger, type, numDims));
+		
+		logExit(context);
+	}
+	
+	public final void onDimExpressionStart(Context context) {
+		
+		logEnter(context);
+		
+		push(new StackExpressionList(logger));
+		
+		logExit(context);
+	}
+	
+	
+	public final void onDimExpressionEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackExpressionList stackExpressionList = pop();
+		
+		final StackArrayCreationExpression stackArrayCreationExpression = get();
+		
+		stackArrayCreationExpression.addDimExpression(stackExpressionList.makeExpression(context));
+		
+		logExit(context);
+	}
+	
+	public final void onArrayCreationExpressionEnd(Context context) {
+		
+		logEnter(context);
+		
+		final StackArrayCreationExpression stackArrayCreationExpression = pop();
+		
+		final ArrayCreationExpression expression = new ArrayCreationExpression(
+				context,
+				stackArrayCreationExpression.getType(),
+				stackArrayCreationExpression.getDimExpressions(),
+				stackArrayCreationExpression.getNumDims());
+		
+		final PrimarySetter primarySetter = get();
+		
+		primarySetter.addPrimary(expression);
+
+		logExit(context);
+	}
+
 	
 	// Class expressions
 	public final void onClassExpression(Context context, String className, int numArrayDims) {

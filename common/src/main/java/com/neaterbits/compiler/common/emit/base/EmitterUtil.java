@@ -18,7 +18,7 @@ public class EmitterUtil<T extends EmitterState> {
 	protected final <V extends ASTNode> void emitListTo(T state, ASTList<V> list, String separator, Consumer<V> convert) {
 		
 		list.foreachWithIndex((node, i) ->  {
-			if (i > 0) {
+			if (i > 0 && separator != null) {
 				state.append(separator);
 			}
 

@@ -528,6 +528,22 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		delegate.onParametersEnd(context);
 	}
 	
+	public void onArrayCreationExpressionStart(Context context, TypeReference typeReference, int numDims) {
+		delegate.onArrayCreationExpressionStart(context, typeReference, numDims);
+	}
+	
+	public void onDimExpressionStart(Context context) {
+		delegate.onDimExpressionStart(context);
+	}
+	
+	public void onDimExpressionEnd(Context context) {
+		delegate.onDimExpressionEnd(context);
+	}
+
+	public void onArrayCreationExpressionEnd(Context context) {
+		delegate.onArrayCreationExpressionEnd(context);
+	}
+	
 	public void onClassExpression(Context context, String className, int numArrayDims) {
 		delegate.onClassExpression(context, className, numArrayDims);
 	}
@@ -630,6 +646,28 @@ public class JavaParserListener implements ModelParserListener<CompilationUnit> 
 		}
 
 		delegate.onTypeReference(context, new ResolvedTypeReference(context, genericType));
+	}
+	
+	public ScalarType parseJavaPrimitiveType(String typeString) {
+		
+		final ScalarType type;
+		
+		switch (typeString) {
+		
+		case "byte": 	type = BYTE_TYPE; break;
+		case "short": 	type = SHORT_TYPE; break;
+		case "int": 	type = INT_TYPE; break;
+		case "long": 	type = LONG_TYPE; break;
+		case "char": 	type = CHAR_TYPE; break;
+		case "float": 	type = FLOAT_TYPE; break;
+		case "double": 	type = DOUBLE_TYPE; break;
+		case "boolean": type = BOOLEAN_TYPE; break;
+		
+		default:
+			throw new UnsupportedOperationException("Unknown type " + typeString);
+		}
+		
+		return type;
 	}
 
 	public void onJavaClassOrInterfaceReferenceType(Context context, ScopedName typeName) {

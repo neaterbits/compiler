@@ -2,6 +2,7 @@ package com.neaterbits.compiler.java.emit;
 
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.condition.Condition;
+import com.neaterbits.compiler.common.ast.expression.ArrayCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
@@ -125,7 +126,31 @@ final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 		
 		return null;
 	}
-	
+
+	@Override
+	public Void onArrayCreationExpression(ArrayCreationExpression expression, EmitterState param) {
+
+		param.append("new ");
+		
+		emitType(expression.getType(), param);
+		
+		param.append(' ');
+		
+		emitListTo(param, expression.getDimExpressions(), null, e -> {
+			param.append('[');
+			
+			emitExpression(e, param);
+			
+			param.append(']');
+		});
+		
+		for (int i = 0; i < expression.getNumDims(); ++ i) {
+			param.append("[]");
+		}
+
+		return null;
+	}
+
 	@Override
 	public Void onClassExpression(ClassExpression expression, EmitterState param) {
 		

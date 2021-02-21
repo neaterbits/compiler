@@ -1,6 +1,7 @@
 package com.neaterbits.compiler.c.emit;
 
 import com.neaterbits.compiler.common.ast.condition.Condition;
+import com.neaterbits.compiler.common.ast.expression.ArrayCreationExpression;
 import com.neaterbits.compiler.common.ast.expression.Base;
 import com.neaterbits.compiler.common.ast.expression.BlockLambdaExpression;
 import com.neaterbits.compiler.common.ast.expression.ClassInstanceCreationExpression;
@@ -70,6 +71,11 @@ final class CExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 
 	@Override
 	public Void onClassExpression(ClassExpression expression, EmitterState param) {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public Void onArrayCreationExpression(ArrayCreationExpression expression, EmitterState param) {
 		throw new UnsupportedOperationException();
 	}
 

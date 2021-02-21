@@ -14,7 +14,10 @@ import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
+import com.neaterbits.compiler.common.ResolvedTypeReference;
+import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.NamespaceName;
 import com.neaterbits.compiler.common.ast.ScopedName;
@@ -863,13 +866,94 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onParametersEnd(context(ctx));
 	}
 	
-	// .class literal expressions
+	// Array creation
+
+	private TypeReference parsePrimitiveType(Context context, String typeString) {
+		return new ResolvedTypeReference(context, delegate.parseJavaPrimitiveType(typeString));
+	}
 	
+	@Override
+	public void enterPrimitiveType_dimExprs_arrayCreationExpression(
+			PrimitiveType_dimExprs_arrayCreationExpressionContext ctx) {
+
+		delegate.onArrayCreationExpressionStart(
+				context(ctx),
+				parsePrimitiveType(context(ctx), ctx.primitiveType().getText()),
+				ctx.dims() != null ? countDims(ctx.dims().getText()) : 0);
+	}
+
+	@Override
+	public void exitPrimitiveType_dimExprs_arrayCreationExpression(
+			PrimitiveType_dimExprs_arrayCreationExpressionContext ctx) {
+
+		delegate.onArrayCreationExpressionEnd(context(ctx));
+	}
+
+	@Override
+	public void enterClassOrInterfaceType_dimExprs_arrayCreationExpression(
+			ClassOrInterfaceType_dimExprs_arrayCreationExpressionContext ctx) {
+
+		delegate.onArrayCreationExpressionStart(
+				context(ctx),
+				new ResolveLaterTypeReference(context(ctx), parseName(ctx.classOrInterfaceType().getText())),
+				ctx.dims() != null ? countDims(ctx.dims().getText()) : 0);
+	}
+
+	@Override
+	public void exitClassOrInterfaceType_dimExprs_arrayCreationExpression(
+			ClassOrInterfaceType_dimExprs_arrayCreationExpressionContext ctx) {
+
+		delegate.onArrayCreationExpressionEnd(context(ctx));
+	}
+
+	
+	@Override
+	public void enterPrimitiveType_dims_arrayCreationExpression(PrimitiveType_dims_arrayCreationExpressionContext ctx) {
+		delegate.onArrayCreationExpressionStart(
+				context(ctx),
+				parsePrimitiveType(context(ctx), ctx.primitiveType().getText()),
+				ctx.dims() != null ? countDims(ctx.dims().getText()) : 0);
+	}
+
+	@Override
+	public void exitPrimitiveType_dims_arrayCreationExpression(PrimitiveType_dims_arrayCreationExpressionContext ctx) {
+		delegate.onArrayCreationExpressionEnd(context(ctx));
+	}
+
+	@Override
+	public void enterClassOrInterfaceType_dims_arrayCreationExpression(
+			ClassOrInterfaceType_dims_arrayCreationExpressionContext ctx) {
+		delegate.onArrayCreationExpressionStart(
+				context(ctx),
+				new ResolveLaterTypeReference(context(ctx), parseName(ctx.classOrInterfaceType().getText())),
+				ctx.dims() != null ? countDims(ctx.dims().getText()) : 0);
+	}
+
+	@Override
+	public void exitClassOrInterfaceType_dims_arrayCreationExpression(
+			ClassOrInterfaceType_dims_arrayCreationExpressionContext ctx) {
+		delegate.onArrayCreationExpressionEnd(context(ctx));
+	}
+
+	
+	@Override
+	public void enterDimExpr(DimExprContext ctx) {
+		delegate.onDimExpressionStart(context(ctx));
+	}
+
+	@Override
+	public void exitDimExpr(DimExprContext ctx) {
+		delegate.onDimExpressionEnd(context(ctx));
+	}
+
+	
+	// .class literal expressions
 
 	@Override
 	public void enterTypeNameClassExpression_primaryNoNewArray(TypeNameClassExpression_primaryNoNewArrayContext ctx) {
 		delegate.onClassExpression(context(ctx), ctx.typeName().getText(), countDims(ctx.typeNameArray().getText()));
 	}
+
 
 	@Override
 	public void enterTypeNameClassExpression_primaryNoNewArray_lfno_arrayAccess(
@@ -902,10 +986,6 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		delegate.onClassExpression(context(ctx), ctx.unannPrimitiveType().getText(), countDims(ctx.typeNameArray().getText()));
 	}
 
-	void method() {
-		
-	}
-	
 	
 	
 	

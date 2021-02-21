@@ -26,6 +26,8 @@ public interface ExpressionVisitor<T, R> {
 	
 	R onMethodInvocation(MethodInvocationExpression expression, T param);
 
+	R onArrayCreationExpression(ArrayCreationExpression expression, T param);
+	
 	R onConditionExpression(ConditionExpression expression, T param);
 	
 	R onExpressionList(ExpressionList expression, T param);
