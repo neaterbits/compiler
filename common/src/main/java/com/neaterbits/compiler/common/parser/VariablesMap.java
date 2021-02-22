@@ -19,6 +19,10 @@ public final class VariablesMap {
 
 		return variables.get(name);
 	}
+	
+	public final boolean hasVariable(String name) {
+		return findVariable(name) != null;
+	}
 
 	public final void add(String name, VariableDeclaration declaration) {
 		Objects.requireNonNull(name);

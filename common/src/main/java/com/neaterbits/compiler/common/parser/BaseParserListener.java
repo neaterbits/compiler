@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
-import com.neaterbits.compiler.common.Stack;
+import com.neaterbits.compiler.common.ArrayStack;
 import com.neaterbits.compiler.common.TypeReference;
 import com.neaterbits.compiler.common.ast.CompilationCode;
 import com.neaterbits.compiler.common.ast.CompilationCodeLines;
@@ -180,15 +180,29 @@ public abstract class BaseParserListener {
 	private final ListStack mainStack;
 
 	// Scope for variables
-	private final Stack<VariablesMap> variableScopes;
+	private final ArrayStack<VariablesMap> variableScopes;
 
+	private boolean variableScopesContain(String name) {
+		
+		boolean contains = false;
+		
+		for (int i = variableScopes.size() - 1; i >= 0; -- i) {
+			if (variableScopes.get(i).hasVariable(name)) {
+				contains = true;
+				break;
+			}
+		}
+
+		return contains;
+	}
+	
 	protected BaseParserListener(ParseLogger logger) {
 		
 		this.logger = logger;
 		
 		this.mainStack = new ListStack();
 		
-		this.variableScopes = new Stack<>();
+		this.variableScopes = new ArrayStack<>();
 	}
 	
 	protected final ParseLogger getLogger() {
@@ -1321,6 +1335,19 @@ public abstract class BaseParserListener {
 	public final void onMethodInvocationStart(Context context, MethodInvocationType type, TypeReference classType, String methodName) {
 		
 		logEnter(context);
+		
+		if (classType != null && classType instanceof ResolveLaterTypeReference) {
+			final ResolveLaterTypeReference resolveLaterTypeReference = (ResolveLaterTypeReference)classType;
+
+			if (variableScopesContain(resolveLaterTypeReference.getTypeName().getName())) {
+				// Likely a scoped variable, eg. variable.invokeMethod() instead of Class.invokeStaticMethod()
+				
+				if (type == MethodInvocationType.NAMED_CLASS_STATIC) {
+					type = MethodInvocationType.VARIABLE_REFERENCE;
+					classType = null;
+				}
+			}
+		}
 		
 		push(new StackMethodInvocation(logger, type, classType, methodName));
 		
