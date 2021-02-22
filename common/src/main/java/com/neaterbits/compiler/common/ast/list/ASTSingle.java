@@ -29,4 +29,9 @@ public final class ASTSingle<T extends ASTNode> extends ASTNodeHolder {
 	public T get() {
 		return node;
 	}
+
+	@Override
+	public String toString() {
+		return node.toString();
+	}
 }
