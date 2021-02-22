@@ -1469,6 +1469,8 @@ public abstract class BaseParserListener {
 		
 		push(new StackLambdaExpression(logger));
 		
+		pushVariableScope();
+		
 		logExit(context);
 	}
 	
@@ -1561,6 +1563,8 @@ public abstract class BaseParserListener {
 		final ExpressionSetter expressionSetter = get();
 		
 		expressionSetter.addExpression(lambdaExpression);
+		
+		popVariableScope();
 		
 		logExit(context);
 	}
