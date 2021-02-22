@@ -2,6 +2,7 @@ package com.neaterbits.compiler.main;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,8 +26,10 @@ public abstract class BaseJavaCompilerTest {
 
 		final CompilationUnit compilationUnit;
 
-		try (FileInputStream inputStream = new FileInputStream(fileName)) {
-			compilationUnit = parser.parse(inputStream, errors, new ParseLogger(System.out));
+		final File file = new File(fileName);
+		
+		try (FileInputStream inputStream = new FileInputStream(file)) {
+			compilationUnit = parser.parse(inputStream, errors, file.getName(), new ParseLogger(System.out));
 		}
 
 		assertThat(errors.isEmpty()).isTrue();

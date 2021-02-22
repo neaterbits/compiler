@@ -6,9 +6,8 @@ import com.neaterbits.compiler.java.Java8Parser.*;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
 import com.neaterbits.compiler.java.parser.JavaPrimitiveType;
 
-import static com.neaterbits.compiler.common.antlr4.Antlr4.context;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,8 +17,10 @@ import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.ResolveLaterTypeReference;
 import com.neaterbits.compiler.common.ResolvedTypeReference;
 import com.neaterbits.compiler.common.TypeReference;
+import com.neaterbits.compiler.common.antlr4.Antlr4;
 import com.neaterbits.compiler.common.ast.Import;
 import com.neaterbits.compiler.common.ast.NamespaceName;
+import com.neaterbits.compiler.common.ast.NamespaceReference;
 import com.neaterbits.compiler.common.ast.ScopedName;
 import com.neaterbits.compiler.common.ast.block.ConstructorInvocation;
 import com.neaterbits.compiler.common.ast.block.MethodName;
@@ -56,13 +57,16 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	private static final Boolean DEBUG = false;
 	
 	private final boolean debug;
+	private final String file;
 	private final ParseLogger logger;
 	
 	private int indent = 0;
 
-	public Java8AntlrParserListener(JavaParserListener delegate, boolean debug, ParseLogger logger) {
+	public Java8AntlrParserListener(JavaParserListener delegate, boolean debug, String file, ParseLogger logger) {
+
 		this.delegate = delegate;
 		this.debug = debug;
+		this.file = file;
 		this.logger = logger;
 	}
 	
@@ -76,6 +80,10 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 	
 	private String indent() {
 		return Strings.indent(indent);
+	}
+	
+	private Context context(ParserRuleContext ctx) {
+		return Antlr4.context(ctx, file);
 	}
 	
 	@Override
@@ -123,6 +131,14 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		return new NamespaceName(Strings.join(names, '.', names.length - 1));
 	}
 
+	private static NamespaceReference namespaceReference(String typeName) {
+		final String [] names = Strings.split(typeName, '.');
+
+		final String [] parts = Arrays.copyOf(names, names.length - 1);
+		
+		return new NamespaceReference(Strings.join(names, '.', names.length - 1), parts);
+	}
+
 	private static ClassName className(String typeName) {
 		final String [] names = Strings.split(typeName, '.');
 		
@@ -136,7 +152,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		final Import importStatement = new Import(
 				context(ctx),
-				namespace(typeName),
+				namespaceReference(typeName),
 				className(typeName));
 		
 		delegate.onImport(importStatement);
@@ -159,7 +175,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		final Import importStatement = new Import(
 				context(ctx),
-				namespace(typeName),
+				namespaceReference(typeName),
 				className(typeName),
 				new MethodName(ctx.Identifier().getText()));
 		
@@ -172,7 +188,7 @@ public class Java8AntlrParserListener extends Java8BaseListener {
 		
 		final Import importStatement = new Import(
 				context(ctx),
-				namespace(typeName),
+				namespaceReference(typeName),
 				className(typeName),
 				null);
 		

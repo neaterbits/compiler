@@ -10,6 +10,7 @@ public final class Context {
 	private final String text;
 
 	public Context(String file, int startLine, int startPos, int endLine, int endPos, String text) {
+		
 		this.file = file;
 		this.startLine = startLine;
 		this.startPos = startPos;

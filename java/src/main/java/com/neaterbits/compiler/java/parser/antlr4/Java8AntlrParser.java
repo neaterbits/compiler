@@ -28,7 +28,7 @@ public class Java8AntlrParser extends BaseParser<CompilationUnit, JavaParserList
 	}
 
 	@Override
-	protected ParseTreeListener makeParseTreeListener(JavaParserListener listener, boolean debug, ParseLogger parseLogger) {
-		return new Java8AntlrParserListener(listener, debug, parseLogger);
+	protected ParseTreeListener makeParseTreeListener(JavaParserListener listener, boolean debug, String file, ParseLogger parseLogger) {
+		return new Java8AntlrParserListener(listener, debug, file, parseLogger);
 	}
 }

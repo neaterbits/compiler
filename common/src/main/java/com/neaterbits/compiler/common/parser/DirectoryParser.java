@@ -75,7 +75,7 @@ public class DirectoryParser {
 					
 					final ParseLogger parseLogger = new ParseLogger(printStream);
 					
-					compilationUnit = parser.parse(fileInputStream, antlrErrors, debugParseLogger != null ? debugParseLogger : parseLogger);
+					compilationUnit = parser.parse(fileInputStream, antlrErrors, file.getName(), debugParseLogger != null ? debugParseLogger : parseLogger);
 					
 					printStream.flush();
 					

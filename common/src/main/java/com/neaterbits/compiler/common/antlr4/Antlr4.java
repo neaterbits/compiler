@@ -6,8 +6,8 @@ import com.neaterbits.compiler.common.Context;
 
 public class Antlr4 {
 
-	public static Context context(ParserRuleContext antlrContext) {
-		return new Context(null,
+	public static Context context(ParserRuleContext antlrContext, String file) {
+		return new Context(file,
 				antlrContext.getStart().getLine(),
 				antlrContext.getStart().getCharPositionInLine(),
 				antlrContext.getStop().getLine(),

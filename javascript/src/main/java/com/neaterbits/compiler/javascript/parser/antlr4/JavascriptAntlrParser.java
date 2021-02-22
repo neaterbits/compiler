@@ -32,7 +32,7 @@ public class JavascriptAntlrParser extends BaseParser<
 	}
 
 	@Override
-	protected ParseTreeListener makeParseTreeListener(JSParserListener listener, boolean debug, ParseLogger logger) {
+	protected ParseTreeListener makeParseTreeListener(JSParserListener listener, boolean debug, String file, ParseLogger logger) {
 		return new JavascriptAntlrParserListener(listener, debug, logger);
 	}
 }

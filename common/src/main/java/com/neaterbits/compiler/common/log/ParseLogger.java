@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.neaterbits.compiler.common.Context;
-import com.neaterbits.compiler.common.Stack;
+import com.neaterbits.compiler.common.ArrayStack;
 import com.neaterbits.compiler.common.util.Strings;
 
 public final class ParseLogger {
@@ -22,7 +22,7 @@ public final class ParseLogger {
 	
 	private final PrintStream out;
 	
-	private final Stack<String> loggerStack;
+	private final ArrayStack<String> loggerStack;
 
 	public ParseLogger(PrintStream out) {
 
@@ -32,7 +32,7 @@ public final class ParseLogger {
 
 		this.antlrRules = new ArrayList<>();
 		
-		this.loggerStack = new Stack<>();
+		this.loggerStack = new ArrayStack<>();
 	}
 	
 	public void onEnterAntlrRule(String name, String content) {

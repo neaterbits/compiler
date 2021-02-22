@@ -2,14 +2,14 @@ package com.neaterbits.compiler.java.parser;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.Stack;
+import com.neaterbits.compiler.common.ArrayStack;
 
 final class StatementsStack {
 
-	private final Stack<JavaStatements> stack;
+	private final ArrayStack<JavaStatements> stack;
 
 	StatementsStack() {
-		this.stack = new Stack<>();
+		this.stack = new ArrayStack<>();
 	}
 	
 	void push() {

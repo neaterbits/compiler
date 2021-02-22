@@ -8,13 +8,13 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 
 public final class Import extends BaseASTElement {
 
-	private final NamespaceName namespace;
+	private final NamespaceReference namespace;
 	private final ClassName className;
 	private final String [] packageOrTypeName;
 	private final boolean methodImport;
 	private final MethodName method;
 
-	public Import(Context context, NamespaceName namespace, ClassName className) {
+	public Import(Context context, NamespaceReference namespace, ClassName className) {
 		super(context);
 		
 		this.namespace = namespace;
@@ -33,7 +33,7 @@ public final class Import extends BaseASTElement {
 		this.method = null;
 	}
 
-	public Import(Context context, NamespaceName namespace, ClassName className, MethodName method) {
+	public Import(Context context, NamespaceReference namespace, ClassName className, MethodName method) {
 		super(context);
 		
 		Objects.requireNonNull(namespace);
@@ -45,7 +45,7 @@ public final class Import extends BaseASTElement {
 		this.method = method;
 	}
 
-	public NamespaceName getNamespace() {
+	public NamespaceReference getNamespace() {
 		return namespace;
 	}
 

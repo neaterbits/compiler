@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.neaterbits.compiler.common.ModuleSpec;
 import com.neaterbits.compiler.common.ast.Module;
+import com.neaterbits.compiler.common.log.ParseLogger;
 
 final class ModuleParser {
 
@@ -22,7 +23,7 @@ final class ModuleParser {
 		this.directoryParser = directoryParser;
 	}
 
-	List<Module> parseModules(Collection<ModuleSpec> modules) {
+	List<Module> parseModules(Collection<ModuleSpec> modules, ParseLogger debugParseLogger) {
 
 		final Set<ModuleSpec> parsedModules = new HashSet<>();
 		
@@ -41,7 +42,7 @@ final class ModuleParser {
 					iter.remove();
 				}
 				else {
-					final List<ParsedFile> parsedFiles = directoryParser.parseDirectory(moduleSpec.getBaseDirectory());
+					final List<ParsedFile> parsedFiles = directoryParser.parseDirectory(moduleSpec.getBaseDirectory(), debugParseLogger);
 					
 					final Module module = new Module(moduleSpec, parsedFiles);
 					

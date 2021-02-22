@@ -13,6 +13,6 @@ public interface LanguageParser {
 
 	boolean canParseFile(File file);
 
-	CompilationUnit parse(InputStream inputStream, Collection<AntlrError> errors, ParseLogger parseLogger) throws IOException;
+	CompilationUnit parse(InputStream inputStream, Collection<AntlrError> errors, String file, ParseLogger parseLogger) throws IOException;
 	
 }

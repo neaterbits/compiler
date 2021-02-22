@@ -3,10 +3,10 @@ package com.neaterbits.compiler.common.parser;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.compiler.common.Stack;
+import com.neaterbits.compiler.common.ArrayStack;
 import com.neaterbits.compiler.common.ast.BaseASTElement;
 
-public final class ListStack extends Stack<StackEntry> {
+public final class ListStack extends ArrayStack<StackEntry> {
 
 	public <T extends BaseASTElement> void addElement(T element) {
 		

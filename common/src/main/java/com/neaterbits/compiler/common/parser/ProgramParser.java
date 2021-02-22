@@ -5,6 +5,7 @@ import java.util.List;
 import com.neaterbits.compiler.common.ModuleSpec;
 import com.neaterbits.compiler.common.ast.Module;
 import com.neaterbits.compiler.common.ast.Program;
+import com.neaterbits.compiler.common.log.ParseLogger;
 
 public final class ProgramParser {
 
@@ -14,9 +15,9 @@ public final class ProgramParser {
 		this.moduleParser = new ModuleParser(directoryParser);
 	}
 	
-	public Program parseProgram(List<ModuleSpec> modules) {
+	public Program parseProgram(List<ModuleSpec> modules, ParseLogger debugParseLogger) {
 
-		final List<Module> parsedModules = moduleParser.parseModules(modules);
+		final List<Module> parsedModules = moduleParser.parseModules(modules, debugParseLogger);
 
 		return new Program(parsedModules);
 	}

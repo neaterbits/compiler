@@ -3,6 +3,7 @@ package com.neaterbits.compiler.main;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.junit.Test;
@@ -19,9 +20,14 @@ import com.neaterbits.compiler.common.ast.typedefinition.ClassName;
 import com.neaterbits.compiler.common.ast.typedefinition.StructName;
 import com.neaterbits.compiler.common.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.common.convert.ootofunction.OOToProceduralConverter;
+import com.neaterbits.compiler.common.loader.CompiledFile;
+import com.neaterbits.compiler.common.loader.ast.ProgramLoader;
+import com.neaterbits.compiler.common.log.ParseLogger;
 import com.neaterbits.compiler.common.parser.DirectoryParser;
 import com.neaterbits.compiler.common.parser.FileTypeParser;
 import com.neaterbits.compiler.common.parser.ProgramParser;
+import com.neaterbits.compiler.common.resolver.FilesResolver;
+import com.neaterbits.compiler.common.resolver.ResolveLogger;
 import com.neaterbits.compiler.common.util.Strings;
 import com.neaterbits.compiler.java.emit.JavaCompilationUnitEmitter;
 import com.neaterbits.compiler.java.parser.JavaParserListener;
@@ -85,15 +91,31 @@ public class JavaToCConverterTest extends BaseJavaCompilerTest {
 	
 		final ProgramParser programParser = new ProgramParser(directoryParser);
 		
-		final Program program = programParser.parseProgram(Arrays.asList(commonModuleSpec));
+		final Program program = programParser.parseProgram(Arrays.asList(commonModuleSpec), new ParseLogger(System.out));
 		
 		assertThat(program).isNotNull();
 
+		/*
 		program.iterateNodeFirstWithStack((node, stack) -> {
 			
 			System.out.println(Strings.indent(stack.size()) + node.getClass().getSimpleName());
 			
 		});
+		*/
+
+		final ProgramLoader programLoader = new ProgramLoader(program);
+		
+		final ResolveLogger logger = new ResolveLogger(System.out);
+		
+		final FilesResolver resolver = new FilesResolver(logger);
+		
+		final Collection<CompiledFile> allFiles = programLoader.getAllFiles();
+		
+		for (CompiledFile compiledFile : allFiles) {
+			System.out.println("File " + compiledFile.getSpec() + " with types " + compiledFile.getTypes());
+		}
+		
+		resolver.resolveFiles(allFiles);
 		
 		/*
 		final PrintStream logOutput = new PrintStream(new ByteArrayOutputStream());

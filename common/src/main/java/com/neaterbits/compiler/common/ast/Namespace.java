@@ -23,6 +23,10 @@ public final class Namespace extends CompilationCode {
 
 	}
 
+	public final NamespaceReference getReference() {
+		return namespaceReference;
+	}
+	
 	public final String getName() {
 		return namespaceReference.getName();
 	}

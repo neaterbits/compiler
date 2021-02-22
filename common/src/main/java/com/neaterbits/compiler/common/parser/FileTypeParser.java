@@ -53,10 +53,10 @@ public final class FileTypeParser<LISTENER extends ModelParserListener<Compilati
 
 	
 	@Override
-	public CompilationUnit parse(InputStream inputStream, Collection<AntlrError> errors, ParseLogger parseLogger) throws IOException {
+	public CompilationUnit parse(InputStream inputStream, Collection<AntlrError> errors, String file, ParseLogger parseLogger) throws IOException {
 		final LISTENER listener = makeListener.apply(parseLogger);
 		
-		final Collection<AntlrError> antlrErrors = parser.parse(inputStream, listener, parseLogger);
+		final Collection<AntlrError> antlrErrors = parser.parse(inputStream, listener, file, parseLogger);
 
 		errors.addAll(antlrErrors);
 		

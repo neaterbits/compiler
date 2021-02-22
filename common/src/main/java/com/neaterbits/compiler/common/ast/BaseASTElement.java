@@ -1,13 +1,18 @@
 package com.neaterbits.compiler.common.ast;
 
 
+import java.util.function.Function;
+
 import com.neaterbits.compiler.common.Context;
 import com.neaterbits.compiler.common.Stack;
+import com.neaterbits.compiler.common.ArrayStack;
+import com.neaterbits.compiler.common.StackView;
 import com.neaterbits.compiler.common.ast.list.ASTList;
 import com.neaterbits.compiler.common.ast.list.ASTNode;
 import com.neaterbits.compiler.common.ast.list.ASTSingle;
 
 public abstract class BaseASTElement extends ASTNode {
+	
 	private final Context context;
 
 	public BaseASTElement(Context context) {
@@ -62,27 +67,36 @@ public abstract class BaseASTElement extends ASTNode {
 		
 		iterator.onElement(this);
 	}
+	
+	
+	private static BaseASTElement returnElement(BaseASTElement element) {
+		return element;
+	}
 
-	private static class ASTVisitorForStack implements ASTIterator {
+	private static class ASTVisitorForStack<T, STACKVIEW extends StackView<T>, STACK extends Stack<T>> implements ASTIterator {
 		
-		private final Stack<BaseASTElement> stack;
-		private final ASTStackVisitor stackVisitor;
+		private final ASTStackVisitor<T, STACKVIEW> stackVisitor;
+		private final STACKVIEW stackView;
+		private final STACK stack;
+		private final Function<BaseASTElement, T> mapper;
 		
-		ASTVisitorForStack(ASTStackVisitor stackVisitor) {
-			this.stack = new Stack<>();
+		@SuppressWarnings("unchecked")
+		ASTVisitorForStack(ASTStackVisitor<T, STACKVIEW> stackVisitor, STACK stack, Function<BaseASTElement, T> mapper) {
 			this.stackVisitor = stackVisitor;
+			this.stackView = (STACKVIEW)stack;
+			this.stack = stack;
+			this.mapper = mapper;
 		}
-
+		
 		@Override
 		public void onPush(BaseASTElement element) {
-			stack.push(element);
+			stack.push(mapper.apply(element));
 		}
 
 		@Override
 		public void onElement(BaseASTElement element) {
-			stackVisitor.onElement(element, stack);
+			stackVisitor.onElement(element, stackView);
 		}
-
 
 		@Override
 		public void onPop(BaseASTElement element) {
@@ -90,14 +104,29 @@ public abstract class BaseASTElement extends ASTNode {
 		}
 	}
 	
-	public final void iterateNodeFirstWithStack(ASTStackVisitor visitor) {
-		iterateNodeFirst(new ASTVisitorForStack(visitor));
+	public final void iterateNodeFirstWithStack(ASTStackVisitor<BaseASTElement, StackView<BaseASTElement>> visitor) {
+		iterateNodeFirst(new ASTVisitorForStack<>(visitor, new ArrayStack<>(), BaseASTElement::returnElement));
 	}
 	
-	public final void iterateNodeLastWithStack(ASTStackVisitor visitor) {
-		iterateNodeLast(new ASTVisitorForStack(visitor));
+	public final void iterateNodeLastWithStack(ASTStackVisitor<BaseASTElement, StackView<BaseASTElement>> visitor) {
+		iterateNodeLast(new ASTVisitorForStack<>(visitor, new ArrayStack<>(), BaseASTElement::returnElement));
 	}
 
+	public final <STACK extends Stack<BaseASTElement>> void iterateNodeFirstWithStack(STACK stack, ASTVisitor visitor) {
+		iterateNodeFirst(new ASTVisitorForStack<>((e, s) -> visitor.onElement(e), stack, BaseASTElement::returnElement));
+	}
+	
+	public final <STACK extends Stack<BaseASTElement>> void iterateNodeLastWithStack(STACK stack, ASTVisitor visitor) {
+		iterateNodeLast(new ASTVisitorForStack<>((e, s) -> visitor.onElement(e), stack, BaseASTElement::returnElement));
+	}
+
+	public final <T, STACK extends Stack<T>> void iterateNodeFirstWithStack(STACK stack, Function<BaseASTElement, T> mapper, ASTVisitor visitor) {
+		iterateNodeFirst(new ASTVisitorForStack<>((e, s) -> visitor.onElement(e), stack, mapper));
+	}
+	
+	public final <T, STACK extends Stack<T>> void iterateNodeLastWithStack(STACK stack, Function<BaseASTElement, T> mapper, ASTVisitor visitor) {
+		iterateNodeLast(new ASTVisitorForStack<>((e, s) -> visitor.onElement(e), stack, mapper));
+	}
 	
 	protected final void doIterate(ASTSingle<? extends ASTNode> single, ASTRecurseMode recurseMode, ASTIterator iterator) {
 
