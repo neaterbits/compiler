@@ -1,0 +1,30 @@
+package dev.nimbler.compiler.language.java.parser.antlr;
+
+enum JavaStatement {
+	VARIABLE_DECLARATION,
+	ASSIGNMENT,
+	EXPRESSION,
+	ASSERT,
+	
+	IF_THEN,
+	IF_THEN_ELSE_START,
+	ELSE,
+	
+	SWITCH,
+	WHILE,
+	DOWHILE,
+	FOR,
+	ENHANCED_FOR,
+	
+	
+	TRY_CATCH,
+	TRY_CATCH_FINALLY,
+	TRY_WITH_RESOURCES,
+	
+	CATCH,
+	FINALLY,
+	
+	RETURN,
+	
+	BLOCK;
+}

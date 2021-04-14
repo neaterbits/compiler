@@ -7,21 +7,21 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-#include "com_neaterbits_runtime__native_NativeMethods.h"
+#include "dev_nimbler_runtime__native_NativeMethods.h"
 
 
-JNIEXPORT jint JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_getReferenceSizeInBytes
+JNIEXPORT jint JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_getReferenceSizeInBytes
   (JNIEnv * env, jclass cl) {
 	return 8;
 }
 
-JNIEXPORT jlong JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_alloc
+JNIEXPORT jlong JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_alloc
   (JNIEnv *env, jclass cl, jint size) {
 
 	return (long)malloc(size);
 }
 
-JNIEXPORT jlong JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_allocExecutablePages
+JNIEXPORT jlong JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_allocExecutablePages
   (JNIEnv *env, jclass cl, jint size) {
 
 	const int pageSize = sysconf(_SC_PAGE_SIZE);
@@ -45,7 +45,7 @@ JNIEXPORT jlong JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_alloc
 }
 
 
-JNIEXPORT jlong JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_realloc
+JNIEXPORT jlong JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_realloc
   (JNIEnv *env, jclass cl, jlong address, jint size, jint newSize) {
 
 	void *ptr = (void *)address;
@@ -55,14 +55,14 @@ JNIEXPORT jlong JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_reall
 	return (long)newPtr;
 }
 
-JNIEXPORT void JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_free
+JNIEXPORT void JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_free
   (JNIEnv *env, jclass cl, jlong address) {
 
 	free((void *)address);
 
 }
 
-JNIEXPORT void JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_setReference
+JNIEXPORT void JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_setReference
   (JNIEnv *env, jclass cl, jlong address, jint offset, jlong reference) {
 
 	void **mem = (void **)address;
@@ -71,7 +71,7 @@ JNIEXPORT void JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_setRef
 
 }
 
-JNIEXPORT jlong JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_getReference
+JNIEXPORT jlong JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_getReference
   (JNIEnv *env, jclass cl, jlong address, jint offset) {
 
 	void **mem = (void **)address;
@@ -79,7 +79,7 @@ JNIEXPORT jlong JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_getRe
 	return (long)mem[offset];
 }
 
-JNIEXPORT void JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_putString
+JNIEXPORT void JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_putString
   (JNIEnv *env, jclass cl, jlong address, jint offset, jstring string) {
 
 	const char *nativeString = (*env)->GetStringUTFChars(env, string, 0);
@@ -92,7 +92,7 @@ JNIEXPORT void JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_putStr
 
 }
 
-JNIEXPORT void JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_putBytes
+JNIEXPORT void JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_putBytes
   (JNIEnv *env, jclass cl, jlong dstAddress, jint dstOffset, jbyteArray srcArray, jint srcOffset, jint length) {
 
 	jboolean isCopy;
@@ -105,7 +105,7 @@ JNIEXPORT void JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_putByt
 }
 
 
-JNIEXPORT void JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_runCode
+JNIEXPORT void JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_runCode
   (JNIEnv *env, jclass cl, jlong address) {
 
 	void *ptr = (void *)address;
@@ -121,7 +121,7 @@ JNIEXPORT void JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_runCod
 	asm("call *%0" : :"r"(ptr));
 }
 
-JNIEXPORT jlong JNICALL Java_com_neaterbits_runtime__1native_NativeMethods_getFunctionAddress
+JNIEXPORT jlong JNICALL Java_dev_nimbler_runtime__1native_NativeMethods_getFunctionAddress
   (JNIEnv *env, jclass cl, jstring library, jstring function) {
 
 	const char *nativeLibraryString = (*env)->GetStringUTFChars(env, library, 0);

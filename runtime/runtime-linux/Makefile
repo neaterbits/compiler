@@ -5,7 +5,7 @@ LIBLINUX_SO := $(DEBUG_DIR)/liblinuxjni.so
 
 
 
-liblinux_bindings.c : com_neaterbits_runtime__native_NativeMethods.h
+liblinux_bindings.c : dev_nimbler_runtime__native_NativeMethods.h
 INCLUDES := \
 		-I/usr/lib/jvm/java-8-openjdk-amd64/include/ \
 		-I/usr/lib/jvm/java-8-openjdk-amd64/include/linux/
