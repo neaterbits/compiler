@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.neaterbits.exe</groupId>
+	<groupId>dev.nimbler.exe</groupId>
 	<artifactId>root</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -16,10 +16,10 @@
 		<utilGroupId>com.neaterbits.util</utilGroupId>
 		<utilVersion>0.0.1-SNAPSHOT</utilVersion>
 
-		<languageGroupId>com.neaterbits.language</languageGroupId>
+		<languageGroupId>dev.nimbler.language</languageGroupId>
 		<languageVersion>0.0.1-SNAPSHOT</languageVersion>
 
-		<runtimeGroupId>com.neaterbits.runtime</runtimeGroupId>
+		<runtimeGroupId>dev.nimbler.runtime</runtimeGroupId>
 		<runtimeVersion>0.0.1-SNAPSHOT</runtimeVersion>
 
 		<assertjVersion>1.7.1</assertjVersion>

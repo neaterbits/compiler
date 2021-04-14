@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.neaterbits.build</groupId>
+	<groupId>dev.nimbler.build</groupId>
 	<artifactId>root</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -22,7 +22,7 @@
 		<utilConcurrencyVersion>0.0.1-SNAPSHOT</utilConcurrencyVersion>
 		<utilParseVersion>0.0.1-SNAPSHOT</utilParseVersion>
 
-		<languageGroupId>com.neaterbits.language</languageGroupId>
+		<languageGroupId>dev.nimbler.language</languageGroupId>
 		<languageVersion>0.0.1-SNAPSHOT</languageVersion>
 
 	</properties>
