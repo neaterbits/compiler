@@ -1,5 +1,7 @@
 package com.neaterbits.compiler.util;
 
+import com.neaterbits.util.Hash;
+
 public final class IntKeyIntValueHash {
 
     private long [] hash;

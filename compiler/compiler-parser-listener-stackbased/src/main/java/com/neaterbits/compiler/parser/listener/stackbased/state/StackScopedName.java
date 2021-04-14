@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.ListStackEntry;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.language.common.types.ScopedName;
 import com.neaterbits.util.parse.context.Context;
 
 public final class StackScopedName extends ListStackEntry<String> {

@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.model.common;
 
-import com.neaterbits.build.types.TypeName;
+import com.neaterbits.language.common.types.TypeName;
 
 public interface ISourceToken {
 

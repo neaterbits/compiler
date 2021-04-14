@@ -2,7 +2,7 @@ package com.neaterbits.compiler.resolver.passes;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.TypeName;
+import com.neaterbits.language.common.types.TypeName;
 
 public class PrimaryType {
     

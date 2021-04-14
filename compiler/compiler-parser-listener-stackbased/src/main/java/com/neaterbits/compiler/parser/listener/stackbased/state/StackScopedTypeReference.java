@@ -2,9 +2,9 @@ package com.neaterbits.compiler.parser.listener.stackbased.state;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.types.ReferenceType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.language.common.types.ScopedName;
 
 public final class StackScopedTypeReference<TYPE_REFERENCE> extends StackTypeReference<TYPE_REFERENCE> {
 

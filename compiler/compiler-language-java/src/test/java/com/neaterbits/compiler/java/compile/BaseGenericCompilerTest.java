@@ -7,7 +7,6 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory.GetBuiltinTypeNo;
-import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.TestFile;
 import com.neaterbits.compiler.java.compile.CompileFileCollector.CompileFile;
 import com.neaterbits.compiler.java.compile.sourcebuilder.SourceTestFilesBuilder;
@@ -15,6 +14,7 @@ import com.neaterbits.compiler.java.resolve.TestResolvedTypes;
 import com.neaterbits.compiler.resolver.build.ModulesBuilder;
 import com.neaterbits.compiler.resolver.util.CompilerLanguage;
 import com.neaterbits.compiler.util.parse.ParsedFile;
+import com.neaterbits.language.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.util.parse.ParserException;
 
 public abstract class BaseGenericCompilerTest<

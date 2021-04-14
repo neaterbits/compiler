@@ -21,9 +21,9 @@
   		<version>${project.version}</version>
   	</dependency>
   	<dependency>
-  		<groupId>${project.groupId}</groupId>
-  		<artifactId>bytecode-java</artifactId>
-  		<version>${project.version}</version>
+  		<groupId>${languageGroupId}</groupId>
+  		<artifactId>language-bytecode-java</artifactId>
+  		<version>${languageVersion}</version>
   	</dependency>
   </dependencies>
 </project>

@@ -16,7 +16,6 @@ import com.neaterbits.build.types.resource.SourceFileHolderResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResource;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
-import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.ide.common.model.clipboard.Clipboard;
 import com.neaterbits.ide.common.model.codemap.CodeMapModel;
 import com.neaterbits.ide.common.ui.actions.Action;
@@ -50,6 +49,7 @@ import com.neaterbits.ide.core.ui.view.ViewMenuItem;
 import com.neaterbits.ide.util.IOUtil;
 import com.neaterbits.ide.util.Value;
 import com.neaterbits.util.PathUtil;
+import com.neaterbits.util.Strings;
 
 public final class IDEController implements ComponentIDEAccess {
 

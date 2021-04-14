@@ -2,12 +2,12 @@ package com.neaterbits.ide.core.model.codemap;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.build.types.TypeSource;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
-import com.neaterbits.compiler.bytecode.common.ClassBytecode;
-import com.neaterbits.compiler.types.TypeVariant;
 import com.neaterbits.ide.common.model.codemap.TypeSuggestion;
+import com.neaterbits.language.bytecode.common.ClassBytecode;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.types.TypeVariant;
+import com.neaterbits.language.common.typesources.TypeSource;
 
 final class ClassInfo implements TypeSuggestion {
 

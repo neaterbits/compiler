@@ -2,12 +2,12 @@ package com.neaterbits.compiler.model.common;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.build.types.TypesMap;
 import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
 import com.neaterbits.compiler.types.ParseTreeElement;
-import com.neaterbits.compiler.util.model.TypeSources;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.types.TypesMap;
+import com.neaterbits.language.common.typesources.TypeSources;
 import com.neaterbits.util.parse.context.Context;
 
 public class SourceTokenUtil {

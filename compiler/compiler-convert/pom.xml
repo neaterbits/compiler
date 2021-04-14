@@ -22,13 +22,14 @@
   	</dependency>
   	<dependency>
   		<groupId>${project.groupId}</groupId>
-  		<artifactId>codemap</artifactId>
-  		<version>${project.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>${project.groupId}</groupId>
   		<artifactId>compiler-util</artifactId>
   		<version>${project.version}</version>
   	</dependency>
+
+	<dependency>
+		<groupId>${languageGroupId}</groupId>
+		<artifactId>language-codemap</artifactId>
+		<version>${languageVersion}</version>
+	</dependency>
   </dependencies>
 </project>

@@ -2,8 +2,8 @@ package com.neaterbits.compiler.resolver.passes;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.ArrayStack;
 import com.neaterbits.util.Stack;
 

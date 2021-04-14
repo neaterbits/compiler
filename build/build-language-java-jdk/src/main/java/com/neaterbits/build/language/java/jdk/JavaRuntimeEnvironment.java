@@ -12,15 +12,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.neaterbits.build.model.runtimeenvironment.RuntimeEnvironment;
-import com.neaterbits.build.types.ClassLibs;
-import com.neaterbits.build.types.DependencyFile;
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.build.types.resource.FileSystemResourcePath;
 import com.neaterbits.build.types.resource.LibraryResourcePath;
 import com.neaterbits.build.types.resource.compile.CompiledModuleFileResourcePath;
-import com.neaterbits.compiler.bytecode.common.BytecodeFormat;
-import com.neaterbits.compiler.java.bytecode.JavaBytecodeFormat;
-import com.neaterbits.compiler.java.bytecode.JavaClassLibs;
+import com.neaterbits.language.bytecode.common.BytecodeFormat;
+import com.neaterbits.language.bytecode.java.JavaBytecodeFormat;
+import com.neaterbits.language.bytecode.java.JavaClassLibs;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.typesources.DependencyFile;
+import com.neaterbits.language.common.typesources.libs.ClassLibs;
 
 public class JavaRuntimeEnvironment implements RuntimeEnvironment {
     

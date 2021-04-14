@@ -40,20 +40,21 @@
 	  		<artifactId>ide-model-text</artifactId>
 	  		<version>${project.version}</version>
 	  	</dependency>
+	  	
 	  	<dependency>
-	  		<groupId>com.neaterbits.compiler</groupId>
-	  		<artifactId>bytecode-common</artifactId>
-	  		<version>0.0.1-SNAPSHOT</version>
+	  		<groupId>${languageGroupId}</groupId>
+	  		<artifactId>language-bytecode-common</artifactId>
+	  		<version>${languageVersion}</version>
 	  	</dependency>
 	  	<dependency>
-	  		<groupId>com.neaterbits.compiler</groupId>
-	  		<artifactId>bytecode-loader</artifactId>
-	  		<version>0.0.1-SNAPSHOT</version>
+	  		<groupId>${languageGroupId}</groupId>
+	  		<artifactId>language-codemap</artifactId>
+	  		<version>${languageVersion}</version>
 	  	</dependency>
 	  	<dependency>
-	  		<groupId>com.neaterbits.compiler</groupId>
-	  		<artifactId>codemap</artifactId>
-	  		<version>0.0.1-SNAPSHOT</version>
+	  		<groupId>${exeGroupId}</groupId>
+	  		<artifactId>exe-vm-bytecode-loader</artifactId>
+	  		<version>${exeVersion}</version>
 	  	</dependency>
 	</dependencies>
 </project>

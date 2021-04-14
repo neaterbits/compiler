@@ -27,8 +27,8 @@ import com.neaterbits.compiler.java.compile.BaseCompilerTest;
 import com.neaterbits.compiler.java.compile.CompileFileCollector;
 import com.neaterbits.compiler.java.compile.CompiledAndResolvedFile;
 import com.neaterbits.compiler.resolver.ResolveError;
-import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.types.typedefinition.FieldVisibility;
+import com.neaterbits.language.common.types.Visibility;
 import com.neaterbits.util.parse.ParserException;
 
 public class ResolveSamePackageTest extends BaseCompilerTest {

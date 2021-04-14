@@ -4,10 +4,10 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.java.JavaUtil;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
-import com.neaterbits.compiler.util.model.TypeSources;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.typesources.TypeSources;
 
 public class TestResolvedTypes implements ResolvedTypes {
 

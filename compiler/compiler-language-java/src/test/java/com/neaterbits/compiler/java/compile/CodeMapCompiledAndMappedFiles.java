@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.java.compile;
 
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.java.TestFile;
-import com.neaterbits.compiler.types.FieldInfo;
+import com.neaterbits.language.codemap.FieldInfo;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.common.types.TypeName;
 
 public interface CodeMapCompiledAndMappedFiles<COMPILATION_UNIT> extends CompiledAndMappedFiles {
 

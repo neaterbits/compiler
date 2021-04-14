@@ -15,5 +15,10 @@
 			<artifactId>util-concurrency</artifactId>
 			<version>${utilConcurrencyVersion}</version>
 		</dependency>
+		<dependency>
+			<groupId>${languageGroupId}</groupId>
+			<artifactId>language-common</artifactId>
+			<version>${languageVersion}</version>
+		</dependency>
 	</dependencies>
 </project>

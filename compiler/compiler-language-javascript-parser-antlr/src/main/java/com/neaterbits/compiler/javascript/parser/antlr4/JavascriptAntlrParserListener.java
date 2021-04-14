@@ -5,8 +5,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import com.neaterbits.compiler.javascript.JavaScriptParser;
 import com.neaterbits.compiler.javascript.JavaScriptParserBaseListener;
 import com.neaterbits.compiler.javascript.parser.JSParserListener;
-import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.util.Strings;
 
 public class JavascriptAntlrParserListener extends JavaScriptParserBaseListener {
 

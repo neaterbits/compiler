@@ -3,7 +3,7 @@ package com.neaterbits.compiler.types.imports;
 import java.util.Arrays;
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.util.Strings;
 
 public class TypeImport {
 	

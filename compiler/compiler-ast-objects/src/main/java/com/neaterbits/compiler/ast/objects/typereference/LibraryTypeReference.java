@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.ast.objects.typereference;
 
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.parse.context.Context;
 
 public class LibraryTypeReference extends ResolvedNamedTypeReference {

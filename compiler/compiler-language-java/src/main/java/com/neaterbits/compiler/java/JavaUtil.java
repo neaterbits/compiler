@@ -2,8 +2,8 @@ package com.neaterbits.compiler.java;
 
 import java.util.Arrays;
 
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.util.Strings;
 
 public class JavaUtil {
 

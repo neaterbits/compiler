@@ -9,6 +9,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.typesources.DependencyFile;
+import com.neaterbits.language.common.typesources.libs.ClassLibs;
+
 public final class TypeToDependencyFile implements ClassLibs {
 
 	private final Map<TypeName, DependencyFile> typeToDependency;

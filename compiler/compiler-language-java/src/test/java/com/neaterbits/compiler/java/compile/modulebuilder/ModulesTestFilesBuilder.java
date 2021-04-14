@@ -24,7 +24,6 @@ import com.neaterbits.build.types.resource.SourceFileResource;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceFolderResource;
 import com.neaterbits.build.types.resource.SourceFolderResourcePath;
-import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.compile.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.java.compile.CompiledAndResolvedFile;
 import com.neaterbits.compiler.java.compile.CompiledAndResolvedFileImpl;
@@ -38,6 +37,7 @@ import com.neaterbits.compiler.resolver.util.CompilerLanguage;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.parse.ParsedFile;
+import com.neaterbits.language.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.util.IOUtils;
 import com.neaterbits.util.parse.ParserException;
 

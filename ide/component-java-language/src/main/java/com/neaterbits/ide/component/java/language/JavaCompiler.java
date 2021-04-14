@@ -14,7 +14,7 @@ import com.neaterbits.build.types.compile.BuildIssue;
 import com.neaterbits.build.types.compile.BuildIssue.Type;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
 import com.neaterbits.build.types.resource.SourceLineResourcePath;
-import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.util.Strings;
 
 public final class JavaCompiler implements Compiler {
 

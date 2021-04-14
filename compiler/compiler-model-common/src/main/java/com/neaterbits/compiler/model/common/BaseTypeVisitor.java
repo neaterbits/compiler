@@ -2,8 +2,8 @@ package com.neaterbits.compiler.model.common;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.types.TypeVariant;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.types.TypeVariant;
 import com.neaterbits.util.ArrayStack;
 
 public abstract class BaseTypeVisitor implements TypeVisitor {

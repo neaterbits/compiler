@@ -1,9 +1,9 @@
 package com.neaterbits.compiler.model.common;
 
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.types.MethodVariant;
-import com.neaterbits.compiler.types.Mutability;
-import com.neaterbits.compiler.types.Visibility;
+import com.neaterbits.language.common.types.MethodVariant;
+import com.neaterbits.language.common.types.Mutability;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.types.Visibility;
 
 public interface TypeMemberVisitor extends TypeVisitor {
 

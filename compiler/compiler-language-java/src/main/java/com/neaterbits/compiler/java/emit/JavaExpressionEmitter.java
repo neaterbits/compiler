@@ -28,7 +28,7 @@ import com.neaterbits.compiler.emit.base.c.CLikeExpressionEmitter;
 import com.neaterbits.compiler.types.operator.Bitwise;
 import com.neaterbits.compiler.types.operator.Operator;
 import com.neaterbits.compiler.util.Base;
-import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.util.Strings;
 
 final class JavaExpressionEmitter extends CLikeExpressionEmitter<EmitterState> {
 

@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.util.Strings;
 
 public final class NamespaceReference {
 

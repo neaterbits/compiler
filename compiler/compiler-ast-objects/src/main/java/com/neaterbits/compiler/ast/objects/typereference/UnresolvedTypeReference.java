@@ -5,13 +5,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.ASTIterator;
 import com.neaterbits.compiler.ast.objects.ASTRecurseMode;
 import com.neaterbits.compiler.ast.objects.generics.TypeArgument;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.types.ReferenceType;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.parse.context.Context;
 
 public final class UnresolvedTypeReference extends TypeReference {

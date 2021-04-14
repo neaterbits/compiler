@@ -2,10 +2,10 @@ package com.neaterbits.compiler.resolver.passes.addtokenrefspass;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.ResolvedScopesListener;
 import com.neaterbits.compiler.resolver.passes.BaseVariableDeclaratorVisitor;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.common.types.TypeName;
 
 final class AddTokenRefsVisitor<COMPILATION_UNIT>
     extends BaseVariableDeclaratorVisitor<TokenScopeVariableDeclaration>

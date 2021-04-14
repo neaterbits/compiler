@@ -20,10 +20,11 @@
 			<artifactId>buildsystem-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+ 
 		<dependency>
-			<groupId>${compilerGroupId}</groupId>
-			<artifactId>bytecode-common</artifactId>
-			<version>${compilerVersion}</version>
-		</dependency>
+			<groupId>${languageGroupId}</groupId>
+			<artifactId>language-bytecode-common</artifactId>
+			<version>${languageVersion}</version>
+		</dependency>		
 	</dependencies>
 </project>

@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import com.neaterbits.build.strategies.compilemodules.ParsedModule;
 import com.neaterbits.build.strategies.compilemodules.ParsedWithCachedRefs;
 import com.neaterbits.build.strategies.compilemodules.PossibleTypeRefs;
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.build.types.TypesMap;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.util.parse.ParsedFile;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.types.TypesMap;
 
 public final class ParsedModuleAndCodeMap<PARSED_FILE extends ParsedFile>
                 extends ParsedModule<PARSED_FILE, ResolveError> {

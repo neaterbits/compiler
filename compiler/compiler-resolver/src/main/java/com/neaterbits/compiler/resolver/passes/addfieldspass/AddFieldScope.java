@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.resolver.passes.addfieldspass;
 
 import com.neaterbits.compiler.model.common.TypeScope;
-import com.neaterbits.compiler.types.TypeVariant;
+import com.neaterbits.language.common.types.TypeVariant;
 
 final class AddFieldScope extends TypeScope {
 

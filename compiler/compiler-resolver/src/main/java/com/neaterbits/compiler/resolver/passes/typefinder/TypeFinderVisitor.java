@@ -3,12 +3,12 @@ package com.neaterbits.compiler.resolver.passes.typefinder;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.BaseTypeVisitor;
 import com.neaterbits.compiler.model.common.TypeVisitor;
-import com.neaterbits.compiler.types.TypeVariant;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.types.TypeVariant;
 
 public class TypeFinderVisitor extends BaseTypeVisitor implements TypeVisitor {
 

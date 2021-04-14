@@ -2,7 +2,7 @@ package com.neaterbits.compiler.model.common;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.TypeName;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.parse.context.Context;
 
 public final class SourceToken implements ISourceToken {

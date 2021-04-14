@@ -3,16 +3,16 @@ package com.neaterbits.compiler.resolver.passes.replacetyperefs;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.build.types.TypesMap;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.model.common.TypeReferenceVisitor;
 import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.UnknownReferenceError;
 import com.neaterbits.compiler.resolver.passes.BaseNamespaceVisitor;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.types.TypesMap;
 
 final class ReplaceTypeReferenceVisitor<COMPILATION_UNIT>
         extends BaseNamespaceVisitor

@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
-import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.JavaProgramModel;
 import com.neaterbits.compiler.java.TestFile;
 import com.neaterbits.compiler.java.compile.BaseCompilerTest;
@@ -15,6 +14,7 @@ import com.neaterbits.compiler.java.compile.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.java.compile.CompileFileCollector;
 import com.neaterbits.compiler.model.common.ISourceToken;
 import com.neaterbits.compiler.model.common.SourceTokenType;
+import com.neaterbits.language.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.util.parse.ParserException;
 
 public class CrossReferenceTest extends BaseCompilerTest {

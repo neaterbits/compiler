@@ -61,8 +61,6 @@ import com.neaterbits.compiler.ast.objects.typereference.ScalarTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.TypeReference;
 import com.neaterbits.compiler.ast.objects.variables.InitializerVariableDeclarationElement;
 import com.neaterbits.compiler.ast.objects.variables.NameReference;
-import com.neaterbits.compiler.types.Mutability;
-import com.neaterbits.compiler.types.Visibility;
 import com.neaterbits.compiler.types.operator.Arithmetic;
 import com.neaterbits.compiler.types.operator.Assignment;
 import com.neaterbits.compiler.types.operator.IncrementDecrement;
@@ -81,6 +79,8 @@ import com.neaterbits.compiler.types.typedefinition.Subclassing;
 import com.neaterbits.compiler.types.typedefinition.TypeBoundType;
 import com.neaterbits.compiler.util.Base;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.language.common.types.Mutability;
+import com.neaterbits.language.common.types.Visibility;
 import com.neaterbits.util.parse.ParserException;
 
 public abstract class BaseJavaParserTest {

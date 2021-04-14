@@ -2,7 +2,7 @@ package com.neaterbits.compiler.model.common;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.types.TypeVariant;
+import com.neaterbits.language.common.types.TypeVariant;
 
 public class TypeScope extends TypeVisitorScope {
 

@@ -1,6 +1,5 @@
 package com.neaterbits.compiler.java.emit;
 
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.Namespace;
 import com.neaterbits.compiler.ast.objects.block.ClassMethod;
 import com.neaterbits.compiler.ast.objects.block.Constructor;
@@ -63,7 +62,8 @@ import com.neaterbits.compiler.types.typedefinition.InterfaceStrictfp;
 import com.neaterbits.compiler.types.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.types.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.Base;
-import com.neaterbits.compiler.util.Strings;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.util.Strings;
 
 public class JavaCompilationUnitEmitter extends BaseOOCompilationUnitEmitter<EmitterState> {
 

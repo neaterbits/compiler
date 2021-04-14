@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
-import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.resolver.build.ModulesBuilder;
+import com.neaterbits.language.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.util.parse.ParserException;
 
 public class TestJavaParserWithObjectParserListener extends BaseJavaParserTest {

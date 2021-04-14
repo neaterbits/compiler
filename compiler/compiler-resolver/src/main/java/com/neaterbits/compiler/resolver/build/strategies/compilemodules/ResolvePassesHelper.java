@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.neaterbits.build.strategies.compilemodules.ParsedModule;
-import com.neaterbits.compiler.codemap.compiler.SynchronizedCompilerCodeMap;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.build.CompilerOptions;
@@ -14,6 +13,7 @@ import com.neaterbits.compiler.resolver.passes.addtokenrefspass.AddTokenRefsPass
 import com.neaterbits.compiler.resolver.passes.namereferenceresolve.NameReferenceResolvePass;
 import com.neaterbits.compiler.resolver.passes.replacetyperefs.ReplaceTypeRefsPass;
 import com.neaterbits.compiler.util.parse.ParsedFile;
+import com.neaterbits.language.codemap.compiler.SynchronizedCompilerCodeMap;
 
 public class ResolvePassesHelper {
 

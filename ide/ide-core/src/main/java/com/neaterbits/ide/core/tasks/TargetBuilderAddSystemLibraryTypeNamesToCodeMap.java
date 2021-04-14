@@ -4,8 +4,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.neaterbits.build.model.runtimeenvironment.RuntimeEnvironment;
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.build.types.resource.ProjectModuleResourcePath;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
 import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.TargetBuilder;
 import com.neaterbits.util.concurrency.scheduling.Constraint;

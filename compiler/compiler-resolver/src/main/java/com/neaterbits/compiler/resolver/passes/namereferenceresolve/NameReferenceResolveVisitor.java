@@ -3,10 +3,6 @@ package com.neaterbits.compiler.resolver.passes.namereferenceresolve;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.build.types.TypesMap;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.CompilationUnitModel;
 import com.neaterbits.compiler.model.common.UnresolvedScopesListener;
 import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
@@ -15,7 +11,11 @@ import com.neaterbits.compiler.resolver.UnknownReferenceError;
 import com.neaterbits.compiler.resolver.passes.BaseVariableDeclaratorVisitor;
 import com.neaterbits.compiler.resolver.passes.ScopeVariableDeclaration;
 import com.neaterbits.compiler.resolver.passes.namereferenceresolve.PrimaryListEntryPart.PartType;
-import com.neaterbits.compiler.types.FieldInfo;
+import com.neaterbits.language.codemap.FieldInfo;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.types.TypesMap;
 
 final class NameReferenceResolveVisitor<COMPILATION_UNIT>
         extends BaseVariableDeclaratorVisitor<ScopeVariableDeclaration>

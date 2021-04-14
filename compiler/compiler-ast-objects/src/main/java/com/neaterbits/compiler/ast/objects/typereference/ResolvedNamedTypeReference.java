@@ -2,7 +2,7 @@ package com.neaterbits.compiler.ast.objects.typereference;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.TypeName;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.parse.context.Context;
 
 public abstract class ResolvedNamedTypeReference extends ResolvedTypeReference {

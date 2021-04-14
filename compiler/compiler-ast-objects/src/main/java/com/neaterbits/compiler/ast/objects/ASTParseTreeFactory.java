@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.annotation.Annotation;
 import com.neaterbits.compiler.ast.objects.annotation.AnnotationElement;
 import com.neaterbits.compiler.ast.objects.block.Block;
@@ -150,6 +148,8 @@ import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.name.ClassName;
 import com.neaterbits.compiler.util.name.NamespaceReference;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.parse.context.Context;
 
 public class ASTParseTreeFactory implements ParseTreeFactory<

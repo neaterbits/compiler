@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.resolver.passes.PrimaryType;
 import com.neaterbits.compiler.resolver.passes.namereferenceresolve.PrimaryListEntryPart.PartType;
+import com.neaterbits.language.common.types.TypeName;
 
 final class PrimaryListEntry {
     

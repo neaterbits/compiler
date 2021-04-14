@@ -2,8 +2,8 @@ package com.neaterbits.compiler.model.common;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.util.FileSpec;
+import com.neaterbits.language.common.types.TypeName;
 
 @Deprecated
 public class UserDefinedTypeRef extends BaseTypeRef {

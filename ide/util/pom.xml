@@ -13,9 +13,9 @@
   		<version>${structuredLogModelVersion}</version>
   	</dependency>
 	<dependency>
-		<groupId>com.neaterbits.compiler</groupId>
-		<artifactId>compiler-util</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+  		<groupId>${utilGroupId}</groupId>
+		<artifactId>util-base</artifactId>
+		<version>${utilVersion}</version>
 	</dependency>
   </dependencies>
 </project>

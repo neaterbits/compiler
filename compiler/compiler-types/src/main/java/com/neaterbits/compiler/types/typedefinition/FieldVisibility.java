@@ -2,7 +2,7 @@ package com.neaterbits.compiler.types.typedefinition;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.types.Visibility;
+import com.neaterbits.language.common.types.Visibility;
 
 public class FieldVisibility implements FieldModifier {
 	

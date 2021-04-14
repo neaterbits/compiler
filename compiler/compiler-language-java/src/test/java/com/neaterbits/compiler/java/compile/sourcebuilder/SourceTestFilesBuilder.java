@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.neaterbits.build.strategies.compilemodules.ParsedWithCachedRefs;
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.compile.CodeMapCompiledAndMappedFiles;
 import com.neaterbits.compiler.java.compile.CompileFileCollector.CompileFile;
 import com.neaterbits.compiler.java.compile.CompiledAndResolvedFile;
@@ -22,10 +20,12 @@ import com.neaterbits.compiler.resolver.build.ResolvedSourceModule;
 import com.neaterbits.compiler.resolver.build.SourceBuilder;
 import com.neaterbits.compiler.resolver.build.SourceModule;
 import com.neaterbits.compiler.resolver.util.CompilerLanguage;
-import com.neaterbits.compiler.types.FieldInfo;
 import com.neaterbits.compiler.util.FileSpec;
 import com.neaterbits.compiler.util.FileSystemFileSpec;
 import com.neaterbits.compiler.util.parse.ParsedFile;
+import com.neaterbits.language.codemap.FieldInfo;
+import com.neaterbits.language.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.parse.ParserException;
 
 public final class SourceTestFilesBuilder<COMPILATION_UNIT, PARSED_FILE extends ParsedFile>

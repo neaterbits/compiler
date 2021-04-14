@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 import com.neaterbits.compiler.model.common.ISourceToken;
-import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.ide.common.model.source.ISourceTokenProperties;
 import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.common.ui.SearchDirection;
@@ -29,6 +28,7 @@ import com.neaterbits.ide.model.text.TextModel;
 import com.neaterbits.ide.util.ui.text.StringText;
 import com.neaterbits.ide.util.ui.text.Text;
 import com.neaterbits.ide.util.ui.text.TextRange;
+import com.neaterbits.util.Strings;
 
 public final class EditorController implements EditorSourceActionContextProvider, EditorActions {
 

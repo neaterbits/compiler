@@ -1,7 +1,7 @@
 package com.neaterbits.ide.core.model.codemap;
 
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
+import com.neaterbits.language.common.types.TypeName;
 
 @FunctionalInterface
 interface TypeNameMatcher {

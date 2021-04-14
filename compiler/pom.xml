@@ -16,6 +16,9 @@
 		<buildGroupId>com.neaterbits.build</buildGroupId>
 		<buildVersion>0.0.1-SNAPSHOT</buildVersion>
 
+		<languageGroupId>com.neaterbits.language</languageGroupId>
+		<languageVersion>0.0.1-SNAPSHOT</languageVersion>
+
 		<utilGroupId>com.neaterbits.util</utilGroupId>
 		<utilVersion>0.0.1-SNAPSHOT</utilVersion>
 
@@ -36,16 +39,8 @@
 		<module>compiler-resolver-ast-objects</module>
 		<module>compiler-antlr</module>
 		<module>compiler-util</module>
-		<module>codemap</module>
-		<module>bytecode-common</module>
 		<module>bytecode-ast</module>
 		<module>bytecode-java-ast</module>
-		<module>bytecode-executor</module>
-		<module>bytecode-loader</module>
-		<module>bytecode-java</module>
-		<module>codegen-common</module>
-		<module>codegen-x86</module>
-		<module>runtime-native</module>
 		<module>main</module>
 		<module>compiler-language-c</module>
 		<module>compiler-language-java-parser-antlr</module>

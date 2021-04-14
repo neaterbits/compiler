@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.expression.FieldAccess;
 import com.neaterbits.compiler.ast.objects.expression.ResolvedMethodInvocationExpression;
 import com.neaterbits.compiler.ast.objects.expression.StaticMethodInvocationExpression;
@@ -17,9 +15,11 @@ import com.neaterbits.compiler.ast.objects.typedefinition.FieldName;
 import com.neaterbits.compiler.ast.objects.typereference.ComplexTypeReference;
 import com.neaterbits.compiler.ast.objects.variables.StaticMemberReference;
 import com.neaterbits.compiler.model.common.UserDefinedTypeRef;
-import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.TypeResolveMode;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.util.Strings;
 import com.neaterbits.util.parse.context.Context;
 
 @Deprecated

@@ -1,7 +1,7 @@
 package com.neaterbits.ide.common.model.codemap;
 
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
-import com.neaterbits.compiler.types.TypeVariant;
+import com.neaterbits.language.common.types.TypeVariant;
 
 public interface TypeSuggestion {
 

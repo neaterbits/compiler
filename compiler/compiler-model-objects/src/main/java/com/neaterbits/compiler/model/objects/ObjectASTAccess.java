@@ -2,8 +2,6 @@ package com.neaterbits.compiler.model.objects;
 
 import java.util.Arrays;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Namespace;
@@ -12,6 +10,8 @@ import com.neaterbits.compiler.ast.objects.typereference.BuiltinTypeReference;
 import com.neaterbits.compiler.ast.objects.typereference.UnresolvedTypeReference;
 import com.neaterbits.compiler.model.common.SourceTokenUtil.ASTAccess;
 import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.parse.context.Context;
 
 public final class ObjectASTAccess implements ASTAccess<BaseASTElement, CompilationUnit> {

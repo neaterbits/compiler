@@ -6,16 +6,16 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.BaseASTElement;
 import com.neaterbits.compiler.ast.objects.typedefinition.ClassDataFieldMember;
-import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.java.TestFile;
 import com.neaterbits.compiler.java.compile.BaseCompilerTest;
 import com.neaterbits.compiler.java.compile.CompileFileCollector;
 import com.neaterbits.compiler.java.compile.CompiledAndMappedFiles;
 import com.neaterbits.compiler.java.compile.CompiledAndResolvedFile;
-import com.neaterbits.compiler.types.TypeVariant;
+import com.neaterbits.language.codemap.compiler.IntCompilerCodeMap;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.types.TypeVariant;
 import com.neaterbits.util.parse.ParserException;
 
 public class ResolveImportedTypesTest extends BaseCompilerTest {

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.common.ParseTreeListener;
 import com.neaterbits.compiler.parser.listener.stackbased.state.BaseStackTryCatchFinally;
@@ -143,6 +142,7 @@ import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.language.common.types.ScopedName;
 import com.neaterbits.util.io.strings.StringSource;
 import com.neaterbits.util.parse.context.Context;
 import com.neaterbits.util.io.strings.StringRef;

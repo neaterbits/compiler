@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.neaterbits.build.types.ScopedName;
+import com.neaterbits.language.common.types.ScopedName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import com.neaterbits.compiler.ast.objects.type.complex.ClassType;
 import com.neaterbits.compiler.ast.objects.type.complex.StructType;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
 
 final class JavaToCConverterState extends MappingJavaToCConverterState<JavaToCConverterState> {
 

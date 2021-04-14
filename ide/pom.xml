@@ -22,6 +22,12 @@
 		<compilerGroupId>com.neaterbits.compiler</compilerGroupId>
 		<compilerVersion>0.0.1-SNAPSHOT</compilerVersion>
 
+		<languageGroupId>com.neaterbits.language</languageGroupId>
+		<languageVersion>0.0.1-SNAPSHOT</languageVersion>
+
+		<exeGroupId>com.neaterbits.exe</exeGroupId>
+		<exeVersion>0.0.1-SNAPSHOT</exeVersion>
+
 		<structuredLogModelVersion>0.0.1-SNAPSHOT</structuredLogModelVersion>
 	</properties>
 

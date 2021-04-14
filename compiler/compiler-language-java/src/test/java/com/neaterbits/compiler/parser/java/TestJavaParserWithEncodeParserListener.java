@@ -7,7 +7,6 @@ import java.io.InputStream;
 import com.neaterbits.compiler.ast.encoded.EncodedCompilationUnit;
 import com.neaterbits.compiler.ast.objects.ASTParseTreeFactory;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
-import com.neaterbits.compiler.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.compiler.language.java.JavaLanguageSpec;
 import com.neaterbits.compiler.language.java.JavaTypes;
 import com.neaterbits.compiler.language.java.parser.listener.stackbased.JavaIterativeListener;
@@ -16,6 +15,7 @@ import com.neaterbits.compiler.resolver.build.ModulesBuilder;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.StringSourceFullContextProvider;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.language.codemap.compiler.IntCompilerCodeMap;
 import com.neaterbits.util.io.strings.StringSource;
 import com.neaterbits.util.parse.ParserException;
 

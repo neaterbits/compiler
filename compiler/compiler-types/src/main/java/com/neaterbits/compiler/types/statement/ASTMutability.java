@@ -2,11 +2,11 @@ package com.neaterbits.compiler.types.statement;
 
 import java.util.Objects;
 
-import com.neaterbits.compiler.types.Mutability;
 import com.neaterbits.compiler.types.typedefinition.FieldModifier;
 import com.neaterbits.compiler.types.typedefinition.FieldModifierVisitor;
 import com.neaterbits.compiler.types.typedefinition.VariableModifier;
 import com.neaterbits.compiler.types.typedefinition.VariableModifierVisitor;
+import com.neaterbits.language.common.types.Mutability;
 
 public class ASTMutability implements VariableModifier, FieldModifier {
 

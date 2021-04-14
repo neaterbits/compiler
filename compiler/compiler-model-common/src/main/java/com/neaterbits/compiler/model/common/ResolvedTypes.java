@@ -2,9 +2,9 @@ package com.neaterbits.compiler.model.common;
 
 import java.util.Arrays;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.util.model.TypeSources;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.typesources.TypeSources;
 
 @FunctionalInterface
 public interface ResolvedTypes {

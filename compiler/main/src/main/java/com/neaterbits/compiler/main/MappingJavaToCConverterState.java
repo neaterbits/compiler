@@ -6,12 +6,12 @@ import com.neaterbits.compiler.ast.objects.block.MethodName;
 import com.neaterbits.compiler.ast.objects.type.CompleteName;
 import com.neaterbits.compiler.ast.objects.type.primitive.IntType;
 import com.neaterbits.compiler.ast.objects.typedefinition.StructName;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.convert.Converters;
 import com.neaterbits.compiler.convert.OOToProceduralConverterState;
 import com.neaterbits.compiler.language.java.JavaTypes;
-import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.name.BaseTypeName;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.util.Strings;
 
 public class MappingJavaToCConverterState<T extends MappingJavaToCConverterState<T>> extends OOToProceduralConverterState<T> {
 

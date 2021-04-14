@@ -2,8 +2,8 @@ package com.neaterbits.compiler.resolver.passes;
 
 import java.util.function.Function;
 
-import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.model.common.LibraryTypeRef;
+import com.neaterbits.language.common.types.ScopedName;
 
 public interface LibraryTypes extends Function<ScopedName, LibraryTypeRef> {
 

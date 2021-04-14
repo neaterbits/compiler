@@ -1,14 +1,14 @@
 package com.neaterbits.compiler.convert;
 
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.objects.FieldNameDeclaration;
 import com.neaterbits.compiler.ast.objects.block.FunctionName;
 import com.neaterbits.compiler.ast.objects.block.MethodName;
 import com.neaterbits.compiler.ast.objects.type.CompleteName;
 import com.neaterbits.compiler.ast.objects.typedefinition.StructName;
-import com.neaterbits.compiler.codemap.TypeInfo;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.types.MethodInfo;
+import com.neaterbits.language.codemap.MethodInfo;
+import com.neaterbits.language.codemap.TypeInfo;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.common.types.TypeName;
 
 public abstract class OOToProceduralConverterState<T extends OOToProceduralConverterState<T>>
 			extends ConverterState<T> {

@@ -1,10 +1,10 @@
 package com.neaterbits.compiler.model.encoded;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.encoded.EncodedCompilationUnit;
 import com.neaterbits.compiler.model.common.SourceTokenUtil.ASTAccess;
 import com.neaterbits.compiler.types.ParseTreeElement;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.parse.context.Context;
 
 final class EncodedASTAccess implements ASTAccess<Integer, EncodedCompilationUnit> {

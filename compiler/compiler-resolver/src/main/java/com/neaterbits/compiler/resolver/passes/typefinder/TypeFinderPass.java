@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.model.common.ParseTreeModel;
 import com.neaterbits.compiler.model.common.passes.MultiPass;
 import com.neaterbits.compiler.resolver.passes.ParsedFilesAndCodeMap;
 import com.neaterbits.compiler.util.parse.ParsedFile;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.parse.ParserException;
 
 public final class TypeFinderPass<PARSED_FILE extends ParsedFile, COMPILATION_UNIT>

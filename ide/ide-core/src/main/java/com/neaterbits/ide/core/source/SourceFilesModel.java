@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 
 import com.neaterbits.build.types.resource.ModuleResourcePath;
 import com.neaterbits.build.types.resource.SourceFileResourcePath;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.compiler.model.common.ResolvedTypes;
 import com.neaterbits.ide.common.model.source.SourceFileModel;
 import com.neaterbits.ide.common.scheduling.IDEScheduler;
@@ -17,6 +16,7 @@ import com.neaterbits.ide.component.common.language.LanguageComponent;
 import com.neaterbits.ide.component.common.language.LanguageName;
 import com.neaterbits.ide.component.common.language.Languages;
 import com.neaterbits.ide.util.ui.text.Text;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
 import com.neaterbits.util.concurrency.scheduling.Constraint;
 
 public final class SourceFilesModel {

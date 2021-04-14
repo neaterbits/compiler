@@ -14,16 +14,19 @@
 			<artifactId>ide-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>${compilerGroupId}</groupId>
 			<artifactId>compiler-model-common</artifactId>
 			<version>${compilerVersion}</version>
 		</dependency>
+
 		<dependency>
-			<groupId>${compilerGroupId}</groupId>
-			<artifactId>bytecode-common</artifactId>
-			<version>${compilerVersion}</version>
+			<groupId>${languageGroupId}</groupId>
+			<artifactId>language-bytecode-common</artifactId>
+			<version>${languageVersion}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>${buildGroupId}</groupId>
 			<artifactId>build-common</artifactId>

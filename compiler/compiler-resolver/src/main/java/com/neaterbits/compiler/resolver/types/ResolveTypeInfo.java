@@ -1,8 +1,8 @@
 package com.neaterbits.compiler.resolver.types;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
-import com.neaterbits.compiler.types.TypeVariant;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
+import com.neaterbits.language.common.types.TypeVariant;
 
 public interface ResolveTypeInfo {
 	

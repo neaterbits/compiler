@@ -2,7 +2,7 @@ package com.neaterbits.compiler.util;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.ScopedName;
+import com.neaterbits.language.common.types.ScopedName;
 import com.neaterbits.util.parse.context.Context;
 
 public final class ContextScopedName {

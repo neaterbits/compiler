@@ -23,10 +23,11 @@ import com.neaterbits.compiler.types.typedefinition.InterfaceMethodVisibility;
 import com.neaterbits.compiler.types.typedefinition.InterfaceVisibility;
 import com.neaterbits.compiler.types.typedefinition.Subclassing;
 import com.neaterbits.compiler.util.ContextNamePart;
-import com.neaterbits.compiler.util.Strings;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.util.Strings;
 import com.neaterbits.util.io.strings.StringRef;
 import com.neaterbits.util.parse.context.Context;
 import com.neaterbits.util.parse.context.FullContext;
@@ -39,7 +40,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.antlr4.Antlr4;
 
 import static com.neaterbits.compiler.antlr4.AntlrStringRefs.stringRef;

@@ -11,9 +11,9 @@
   
   <dependencies>
   	<dependency>
-  		<groupId>${buildGroupId}</groupId>
-  		<artifactId>build-types</artifactId>
-  		<version>${buildVersion}</version>
+  		<groupId>${languageGroupId}</groupId>
+  		<artifactId>language-common</artifactId>
+  		<version>${languageVersion}</version>
   	</dependency>
   	<dependency>
   		<groupId>${utilGroupId}</groupId>

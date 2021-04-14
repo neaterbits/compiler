@@ -1,7 +1,7 @@
 package com.neaterbits.compiler.resolver.passes.addtokenrefspass;
 
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.resolver.passes.ScopeVariableDeclaration;
+import com.neaterbits.language.common.types.TypeName;
 
 final class TokenScopeVariableDeclaration extends ScopeVariableDeclaration {
 

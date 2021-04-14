@@ -2,13 +2,13 @@ package com.neaterbits.compiler.ast.encoded;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.encoded.ASTBufferRead.ParseTreeElementRef;
 import com.neaterbits.compiler.parser.listener.common.ContextAccess;
 import com.neaterbits.compiler.parser.listener.common.IterativeParseTreeListener;
 import com.neaterbits.compiler.types.ParseTreeElement;
 import com.neaterbits.compiler.util.FullContextProvider;
 import com.neaterbits.compiler.util.IntKeyIntValueHash;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.util.parse.context.Context;
 import com.neaterbits.util.parse.context.ImmutableContext;

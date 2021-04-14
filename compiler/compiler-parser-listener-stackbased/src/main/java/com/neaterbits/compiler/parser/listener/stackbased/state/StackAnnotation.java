@@ -2,10 +2,10 @@ package com.neaterbits.compiler.parser.listener.stackbased.state;
 
 import java.util.Objects;
 
-import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.parser.listener.stackbased.state.base.ListStackEntry;
 import com.neaterbits.compiler.parser.listener.stackbased.state.setters.AnnotationElementSetter;
 import com.neaterbits.compiler.util.parse.ParseLogger;
+import com.neaterbits.language.common.types.ScopedName;
 
 public final class StackAnnotation<ANNOTATION_ELEMENT>
     extends ListStackEntry<ANNOTATION_ELEMENT>

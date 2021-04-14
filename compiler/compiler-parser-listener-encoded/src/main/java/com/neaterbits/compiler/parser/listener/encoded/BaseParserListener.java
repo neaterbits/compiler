@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.neaterbits.build.types.ScopedName;
-import com.neaterbits.build.types.TypeName;
 import com.neaterbits.compiler.ast.encoded.AST;
 import com.neaterbits.compiler.ast.encoded.ASTBuffer;
 import com.neaterbits.compiler.ast.encoded.ASTBufferImpl;
@@ -32,6 +30,8 @@ import com.neaterbits.compiler.util.IntKeyIntValueHash;
 import com.neaterbits.compiler.util.StringSourceFullContextProvider;
 import com.neaterbits.compiler.util.name.Names;
 import com.neaterbits.compiler.util.parse.FieldAccessType;
+import com.neaterbits.language.common.types.ScopedName;
+import com.neaterbits.language.common.types.TypeName;
 import com.neaterbits.util.buffers.MapStringStorageBuffer;
 import com.neaterbits.util.io.strings.Tokenizer;
 import com.neaterbits.util.parse.context.Context;

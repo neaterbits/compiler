@@ -25,11 +25,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.neaterbits.compiler</groupId>
-			<artifactId>bytecode-java</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.neaterbits.compiler</groupId>
 			<artifactId>compiler-resolver</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -37,6 +32,12 @@
 			<groupId>com.neaterbits.compiler</groupId>
 			<artifactId>compiler-resolver-ast-objects</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${languageGroupId}</groupId>
+			<artifactId>language-bytecode-java</artifactId>
+			<version>${languageVersion}</version>
 		</dependency>
 	</dependencies>
 </project>

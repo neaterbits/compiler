@@ -15,9 +15,9 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>${compilerGroupId}</groupId>
-			<artifactId>bytecode-java</artifactId>
-			<version>${compilerVersion}</version>
+			<groupId>${languageGroupId}</groupId>
+			<artifactId>language-bytecode-java</artifactId>
+			<version>${languageVersion}</version>
 		</dependency>
 		
 		<dependency>

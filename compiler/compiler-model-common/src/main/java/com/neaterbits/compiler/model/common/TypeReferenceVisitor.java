@@ -1,6 +1,6 @@
 package com.neaterbits.compiler.model.common;
 
-import com.neaterbits.build.types.ScopedName;
+import com.neaterbits.language.common.types.ScopedName;
 
 public interface TypeReferenceVisitor<COMPILATION_UNIT> extends NamespaceVisitor {
 

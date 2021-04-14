@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.neaterbits.build.types.ScopedName;
 import com.neaterbits.compiler.ast.objects.CompilationUnit;
 import com.neaterbits.compiler.ast.objects.Import;
 import com.neaterbits.compiler.ast.objects.ImportName;
@@ -17,6 +16,7 @@ import com.neaterbits.compiler.model.common.util.ReferenceLocation;
 import com.neaterbits.compiler.model.common.util.ScopedNameResolver;
 import com.neaterbits.compiler.model.objects.ObjectImportsModel;
 import com.neaterbits.compiler.util.name.NamespaceReference;
+import com.neaterbits.language.common.types.ScopedName;
 import com.neaterbits.util.parse.context.Context;
 import com.neaterbits.util.parse.context.FullContext;
 

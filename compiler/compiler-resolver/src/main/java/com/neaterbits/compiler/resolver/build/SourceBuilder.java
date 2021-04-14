@@ -11,14 +11,14 @@ import java.util.function.Function;
 
 import com.neaterbits.build.strategies.compilemodules.ParsedModule;
 import com.neaterbits.build.strategies.compilemodules.ParsedWithCachedRefs;
-import com.neaterbits.compiler.codemap.compiler.CompilerCodeMap;
-import com.neaterbits.compiler.codemap.compiler.SynchronizedCompilerCodeMap;
 import com.neaterbits.compiler.model.common.LanguageSpec;
 import com.neaterbits.compiler.model.common.passes.CompilerModel;
 import com.neaterbits.compiler.resolver.ResolveError;
 import com.neaterbits.compiler.resolver.build.strategies.compilemodules.ParseFileHelper;
 import com.neaterbits.compiler.resolver.build.strategies.compilemodules.ResolvePassesHelper;
 import com.neaterbits.compiler.util.parse.ParsedFile;
+import com.neaterbits.language.codemap.compiler.CompilerCodeMap;
+import com.neaterbits.language.codemap.compiler.SynchronizedCompilerCodeMap;
 import com.neaterbits.util.IntList;
 import com.neaterbits.util.parse.ParserException;
 
