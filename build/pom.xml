@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.neaterbits.build</groupId>
+	<artifactId>root</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>root</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	
+		<assertjVersion>1.7.1</assertjVersion>
+	
+		<utilGroupId>com.neaterbits.util</utilGroupId>
+		<utilBaseVersion>0.0.1-SNAPSHOT</utilBaseVersion>
+		<utilDiVersion>0.0.1-SNAPSHOT</utilDiVersion>
+		<utilConcurrencyVersion>0.0.1-SNAPSHOT</utilConcurrencyVersion>
+		<utilParseVersion>0.0.1-SNAPSHOT</utilParseVersion>
+		
+		<compilerGroupId>com.neaterbits.compiler</compilerGroupId>
+		<compilerVersion>0.0.1-SNAPSHOT</compilerVersion>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.9</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>${assertjVersion}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.21.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<modules>
+		<module>buildsystem-common</module>
+		<module>build-common</module>
+		<module>build-types</module>
+		<module>buildsystem-maven</module>
+		<module>build-language-java-jdk</module>
+		<module>build-main</module>
+		<module>build-model</module>
+		<module>build-test</module>
+		<module>buildsystem-maven-plugins-model</module>
+		<module>buildsystem-maven-plugins-parse</module>
+		<module>buildsystem-maven-plexus-model</module>
+		<module>buildsystem-maven-project-model</module>
+		<module>buildsystem-maven-project-parse</module>
+		<module>buildsystem-maven-plexus-parse</module>
+		<module>buildsystem-maven-common-parse</module>
+		<module>buildsystem-maven-common-model</module>
+		<module>buildsystem-maven-plugins-execute</module>
+		<module>buildsystem-maven-core</module>
+		<module>build-strategies</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
