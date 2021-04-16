@@ -9,7 +9,7 @@ import dev.nimbler.ide.component.common.instantiation.NewableCategoryName;
 import dev.nimbler.ide.component.common.language.Languages;
 import dev.nimbler.ide.component.common.ui.DetailsComponentUI;
 
-public interface IDEComponentsConstAccess {
+public interface IDEComponentsConstAccess extends IDEComponentsFinder {
 
 	Languages getLanguages();
 	

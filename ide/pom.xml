@@ -67,6 +67,9 @@
 		<module>ide-component-search</module>
 		<module>ide-component-build</module>
 		<module>ide-component-compiledfile-debug</module>
+		<module>ide-component-application-runner</module>
+		<module>ide-component-java-runtime-environment</module>
+		<module>ide-component-runners</module>
 	</modules>
 
 	<build>

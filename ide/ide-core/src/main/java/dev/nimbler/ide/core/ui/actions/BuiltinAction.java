@@ -1,5 +1,6 @@
 package dev.nimbler.ide.core.ui.actions;
 
+import dev.nimbler.ide.common.ui.actions.BuiltinActionAccess;
 import dev.nimbler.ide.common.ui.translation.EnumTranslateable;
 import dev.nimbler.ide.common.ui.translation.TranslationNamespaces;
 import dev.nimbler.ide.core.ui.actions.types.clipboard.CopyAction;
@@ -23,7 +24,9 @@ import dev.nimbler.ide.core.ui.actions.types.source.MoveAction;
 import dev.nimbler.ide.core.ui.actions.types.source.RenameAction;
 import dev.nimbler.ide.core.ui.actions.types.source.TypeHierarchyAction;
 
-public enum BuiltinAction implements EnumTranslateable<BuiltinAction> {
+public enum BuiltinAction
+    implements EnumTranslateable<BuiltinAction>,
+               BuiltinActionAccess {
 
 	NEW_POPUP(NewPopupAction.class),
 	NEW_DIALOG(NewDialogAction.class),

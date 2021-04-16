@@ -17,17 +17,17 @@ public final class SubMenuEntry extends MenuListEntry {
 		this.name = name;
 	}
 
-	public Translateable getName() {
+	public final Translateable getName() {
 		return name;
 	}
 
 	@Override
-	public String getTranslationNamespace() {
+	public final String getTranslationNamespace() {
 		return name.getTranslationNamespace();
 	}
 
 	@Override
-	public String getTranslationId() {
+	public final String getTranslationId() {
 		return name.getTranslationId();
 	}
 }

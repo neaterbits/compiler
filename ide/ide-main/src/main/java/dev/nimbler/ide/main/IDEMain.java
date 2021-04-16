@@ -18,12 +18,15 @@ import dev.nimbler.build.model.BuildRootImpl;
 import dev.nimbler.ide.common.scheduling.IDEScheduler;
 import dev.nimbler.ide.common.scheduling.IDESchedulerImpl;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
+import dev.nimbler.ide.component.application.runner.MainApplicationRunnerComponent;
 import dev.nimbler.ide.component.build.ui.BuildIssuesComponent;
 import dev.nimbler.ide.component.common.IDERegisteredComponents;
 import dev.nimbler.ide.component.compiledfiledebug.ui.CompiledFileViewComponent;
 import dev.nimbler.ide.component.java.language.JavaLanguage;
 import dev.nimbler.ide.component.java.language.JavaLanguageComponent;
 import dev.nimbler.ide.component.java.ui.JavaUIComponentProvider;
+import dev.nimbler.ide.component.runners.RunnersComponent;
+import dev.nimbler.ide.component.runners.ui.RunnersComponentUI;
 import dev.nimbler.ide.core.model.codemap.CodeMapGatherer;
 import dev.nimbler.ide.core.source.SourceFilesModel;
 import dev.nimbler.ide.core.tasks.InitialScanContext;
@@ -128,7 +131,9 @@ public class IDEMain {
 		components.registerComponent(new JavaLanguageComponent(), new JavaUIComponentProvider());
         components.registerComponent(null, new BuildIssuesComponent());
         components.registerComponent(null, new CompiledFileViewComponent());
-		
+		components.registerComponent(new RunnersComponent(), new RunnersComponentUI());
+		components.registerComponent(new MainApplicationRunnerComponent(), null);
+        
 		return components;
 	}
 

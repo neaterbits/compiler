@@ -3,6 +3,7 @@ package dev.nimbler.ide.common.ui.menus;
 import dev.nimbler.ide.common.ui.actions.ActionAppParameters;
 import dev.nimbler.ide.common.ui.actions.ActionContexts;
 import dev.nimbler.ide.common.ui.actions.ActionExeParameters;
+import dev.nimbler.ide.common.ui.actions.ActionExecutionException;
 import dev.nimbler.ide.common.ui.keys.KeyCombination;
 
 public abstract class MenuItemEntry<
@@ -14,7 +15,7 @@ public abstract class MenuItemEntry<
 			ActionContexts focusedViewContexts,
 			ActionContexts allContexts);
 	
-	public abstract void execute(EXECUTE_PARAMETERS parameters);
+	public abstract void execute(EXECUTE_PARAMETERS parameters) throws ActionExecutionException;
 	
 	public abstract KeyCombination getKeyCombination();
 }
