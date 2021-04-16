@@ -1,13 +1,9 @@
-package dev.nimbler.ide.model.text;
+package dev.nimbler.ide.util.ui.text;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 import org.junit.Test;
-
-import dev.nimbler.ide.util.ui.text.LineDelimiter;
-import dev.nimbler.ide.util.ui.text.StringText;
-import dev.nimbler.ide.util.ui.text.Text;
 
 public class UnixLineDelimiterTest {
 

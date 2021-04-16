@@ -1,4 +1,4 @@
-package dev.nimbler.ide.ui.view;
+package dev.nimbler.ide.common.ui.view;
 
 @FunctionalInterface
 public interface CursorPositionListener {

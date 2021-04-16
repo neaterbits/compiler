@@ -4,6 +4,7 @@ import org.eclipse.swt.widgets.Control;
 
 import dev.nimbler.ide.common.tasks.TaskName;
 import dev.nimbler.ide.common.tasks.TasksCompleteUpdate;
+import dev.nimbler.ide.component.common.ComponentIDEAccess;
 import dev.nimbler.ide.component.common.tasks.TasksComponent;
 import dev.nimbler.ide.component.common.ui.ComponentCompositeContext;
 import dev.nimbler.ide.component.common.ui.DetailsComponentUI;
@@ -14,7 +15,7 @@ public final class TasksUIComponent implements DetailsComponentUI<Control>, Task
 	private SWTTasksView tasksView;
 
 	@Override
-	public Control addCompositeComponentUI(ComponentCompositeContext context) {
+	public Control addCompositeComponentUI(ComponentCompositeContext context, ComponentIDEAccess componentIDEAccess) {
 
 		final SWTCompositeUIContext swtContext = (SWTCompositeUIContext)context;
 		

@@ -3,6 +3,7 @@ package dev.nimbler.ide.component.compiledfiledebug.ui;
 import org.eclipse.swt.widgets.Control;
 
 import dev.nimbler.ide.common.model.source.SourceFileModel;
+import dev.nimbler.ide.component.common.ComponentIDEAccess;
 import dev.nimbler.ide.component.common.editors.EditorsComponent;
 import dev.nimbler.ide.component.common.ui.ComponentCompositeContext;
 import dev.nimbler.ide.component.common.ui.DetailsComponentUI;
@@ -14,7 +15,7 @@ public final class CompiledFileViewComponent
     private SWTCompiledFileView compiledFileView;
 
     @Override
-    public Control addCompositeComponentUI(ComponentCompositeContext context) {
+    public Control addCompositeComponentUI(ComponentCompositeContext context, ComponentIDEAccess componentIDEAccess) {
         
         final SWTCompositeUIContext swtuiContext = (SWTCompositeUIContext)context;
         

@@ -6,7 +6,7 @@ import dev.nimbler.build.types.resource.ResourcePath;
 import dev.nimbler.ide.common.ui.keys.Key;
 import dev.nimbler.ide.common.ui.keys.KeyLocation;
 import dev.nimbler.ide.common.ui.keys.KeyMask;
-import dev.nimbler.ide.ui.view.KeyEventListener;
+import dev.nimbler.ide.common.ui.view.KeyEventListener;
 import dev.nimbler.ide.ui.view.ProjectView;
 
 final class ProjectViewKeyListener implements KeyEventListener {

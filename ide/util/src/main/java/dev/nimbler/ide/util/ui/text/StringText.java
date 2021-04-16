@@ -14,6 +14,7 @@ public final class StringText extends BaseText implements Text {
 	}
 
 	private int checkIndex(long index) {
+
 		if (index > Integer.MAX_VALUE) {
 			throw new IllegalArgumentException();
 		}
@@ -42,7 +43,16 @@ public final class StringText extends BaseText implements Text {
 	}
 
 	@Override
+    public Text merge(String other) {
+	    
+	    Objects.requireNonNull(other);
+	    
+        return new StringText(asString() + other);
+    }
+
+    @Override
 	public Text substring(long beginIndex) {
+
 		checkSubstringParams(beginIndex);
 
 		return new StringText(string.substring(checkIndex(beginIndex)));

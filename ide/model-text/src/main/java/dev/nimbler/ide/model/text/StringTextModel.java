@@ -60,7 +60,7 @@ public final class StringTextModel extends TextModel {
 
 	@Override
 	public long getLineCount() {
-		return text.getNumberOfLines(getLineDelimiter());
+		return text.getNumberOfLinesIncludingTrailingNonTerminated(getLineDelimiter());
 	}
 
 	@Override

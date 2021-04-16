@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import dev.nimbler.ide.util.ui.text.LineDelimiter;
 import dev.nimbler.ide.util.ui.text.StringText;
+import dev.nimbler.ide.util.ui.text.UnixLineDelimiter;
 
 public class StringTextModelTest extends BaseTextModelTest {
 

@@ -11,17 +11,20 @@ import dev.nimbler.build.buildsystem.common.BuildSystems;
 import dev.nimbler.build.buildsystem.common.ScanException;
 import dev.nimbler.build.language.java.jdk.JavaRuntimeEnvironment;
 import dev.nimbler.ide.code.CodeAccessImpl;
-import dev.nimbler.ide.common.tasks.TasksListener;
+import dev.nimbler.ide.common.config.Configuration;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
 import dev.nimbler.ide.component.build.ui.BuildIssuesComponent;
+import dev.nimbler.ide.component.common.ConfigurationAccess;
 import dev.nimbler.ide.component.common.IDERegisteredComponents;
 import dev.nimbler.ide.component.compiledfiledebug.ui.CompiledFileViewComponent;
+import dev.nimbler.ide.component.console.output.config.ConsoleConfiguration;
+import dev.nimbler.ide.component.console.output.ui.ConsoleOutputComponent;
 import dev.nimbler.ide.component.java.language.JavaLanguage;
 import dev.nimbler.ide.component.java.language.JavaLanguageComponent;
 import dev.nimbler.ide.component.java.ui.JavaUIComponentProvider;
-import dev.nimbler.ide.component.tasks.ui.TasksUIComponent;
 import dev.nimbler.ide.swt.SWTUI;
 import dev.nimbler.ide.ui.controller.IDEController;
+import dev.nimbler.ide.util.ui.text.LineDelimiter;
 
 public class IDEMain {
 
@@ -78,7 +81,8 @@ public class IDEMain {
 				        ui,
 				        config,
 				        ideComponents,
-				        new IDEMainTranslator());
+				        new IDEMainTranslator(),
+				        getConfigurationAccess());
 				
 				ideComponents.getTasksListeners().forEach(codeAccess::addTasksListener);
 				
@@ -110,12 +114,38 @@ public class IDEMain {
 
 		final IDERegisteredComponents components = new IDERegisteredComponents();
 		
-        components.registerComponent(null, new TasksUIComponent());
+        // components.registerComponent(null, new TasksUIComponent());
 		components.registerComponent(new JavaLanguageComponent(), new JavaUIComponentProvider());
         components.registerComponent(null, new BuildIssuesComponent());
         components.registerComponent(null, new CompiledFileViewComponent());
+        components.registerComponent(null, new ConsoleOutputComponent());
 		
 		return components;
+	}
+	
+	private static ConfigurationAccess getConfigurationAccess() {
+	    return new ConfigurationAccess() {
+            
+            @Override
+            public <T extends Configuration> T getConfiguration(Class<T> type) {
+
+                final Configuration configuration;
+                
+                if (type.equals(ConsoleConfiguration.class)) {
+                    configuration = new ConsoleConfiguration(
+                            LineDelimiter.getSystemLineDelimiter(),
+                            1000000);
+                }
+                else {
+                    configuration = null;
+                }
+                
+                @SuppressWarnings("unchecked")
+                final T t = (T)configuration;
+                
+                return t;
+            }
+        };
 	}
 	
 	private static void printStackTrace(StackTraceElement [] stackTrace, int num) {

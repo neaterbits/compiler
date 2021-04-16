@@ -53,6 +53,16 @@ public class CharText extends CharArray64Bit implements Text, TextBuilder  {
 	}
 
 	@Override
+    public Text merge(String other) {
+
+        final CharText result = new CharText(this);
+        
+        result.append(other);
+        
+        return result;
+    }
+
+    @Override
 	public Text substring(long beginIndex) {
 		
 		BaseText.checkSubstringParams(this, beginIndex);
@@ -119,13 +129,16 @@ public class CharText extends CharArray64Bit implements Text, TextBuilder  {
 		return this;
 	}
 
-	private void append(String string) {
+	@Override
+	public TextBuilder append(String string) {
 
 		checkMutable();
 
 		for (int i = 0; i < string.length(); ++ i) {
 			appendChar(string.charAt(i));
 		}
+		
+		return this;
 	}
 
 	@Override
