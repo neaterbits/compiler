@@ -115,11 +115,11 @@ public interface Text {
 		return offset;
 	}
 
-	default long getNumberOfLines(LineDelimiter lineDelimiter) {
+	default long getNumberOfLinesIncludingTrailingNonTerminated(LineDelimiter lineDelimiter) {
 		
 		final Value<Long> value = new Value<>();
 		
-		final long numNewlines = getNumberOfNewlineChars(lineDelimiter, value);
+		final long numNewlines = getNumberOfNewlineChars(0L, lineDelimiter, value);
 	
 		final long numLines;
 		
@@ -132,14 +132,27 @@ public interface Text {
 		
 		return numLines;
 	}
-	
-	default long getNumberOfNewlineChars(LineDelimiter lineDelimiter) {
-		return getNumberOfNewlineChars(lineDelimiter, null);
-	}
-	
-	default long getNumberOfNewlineChars(LineDelimiter lineDelimiter, Value<Long> offsetAfterLastNewline) {
 
-		long i = 0;
+    default long getNumberOfLinesWithoutTrailingNonTerminated(LineDelimiter lineDelimiter) {
+        
+        final long numNewlines = getNumberOfNewlineChars(0L, lineDelimiter, null);
+
+        return numNewlines;
+    }
+
+	default long getNumberOfNewlineChars(LineDelimiter lineDelimiter) {
+	    
+		return getNumberOfNewlineChars(0L, lineDelimiter, null);
+	}
+
+    default long getNumberOfNewlineChars(LineDelimiter lineDelimiter, Value<Long> offsetAfterLastNewline) {
+        
+        return getNumberOfNewlineChars(0L, lineDelimiter, offsetAfterLastNewline);
+    }
+	
+	default long getNumberOfNewlineChars(long startOffset, LineDelimiter lineDelimiter, Value<Long> offsetAfterLastNewline) {
+
+		long i = startOffset;
 
 		long numLines = 0;
 		
@@ -148,7 +161,7 @@ public interface Text {
 		for (; i < length();) {
 			
 			final long newlineChars = getNumberOfNewlineCharsForOneLineShift(i, lineDelimiter);
-			
+
 			if (newlineChars > 0) {
 				
 				i += newlineChars;
@@ -170,10 +183,37 @@ public interface Text {
 	}
 
 	default int getNumberOfNewlineCharsForOneLineShift(long offset, LineDelimiter lineDelimiter) {
-		return lineDelimiter.getNumberOfNewlineCharsForOneLineShift(this, offset);
+
+	    return lineDelimiter.getNumberOfNewlineCharsForOneLineShift(this, offset);
 	}
 	
+	default Text getLineWithoutAnyNewline(long offset, LineDelimiter lineDelimiter) {
+	    
+	    final long posOfNewline = findNewline(offset, lineDelimiter);
+	    
+	    if (posOfNewline < 0L) {
+	        throw new IllegalStateException();
+	    }
+	    
+	    return substring(offset, posOfNewline);
+	}
+	
+	default Text getLineWithoutAnyNewlineOrTillEndOfString(long offset, LineDelimiter lineDelimiter) {
+	    
+        final long posOfNewline = findNewline(offset, lineDelimiter);
 
+        final Text result;
+        
+        if (posOfNewline < 0L) {
+            result = offset == 0 ? this : substring(offset);
+        }
+        else {
+            result = substring(offset, posOfNewline);
+        }
+        
+        return result;
+	}
+	    
 	boolean isEmpty();
 	
 	long length();
@@ -185,7 +225,41 @@ public interface Text {
 	Text substring(long beginIndex, long endIndex);
 
 	Text merge(Text other);
+
+	Text merge(String other);
 	
+	default boolean endsWith(String string) {
+	    
+	    Objects.requireNonNull(string);
+	    
+        boolean endsWith;
+        
+	    if (string.isEmpty()) {
+	        endsWith = true;
+	    }
+	    else {
+    	    
+    	    final long textLength = length();
+    	    final int stringLength = string.length();
+    	    
+    	    if (textLength < string.length()) {
+    	        endsWith = false;
+    	    }
+    	    else {
+    	        endsWith = true;
+    
+    	        for (int i = 0; i < stringLength; ++ i) {
+    	            if (charAt(textLength - i - 1) != string.charAt(stringLength - i - 1)) {
+    	                endsWith = false;
+    	                break;
+    	            }
+    	        }
+    	    }
+	    }
+    
+	    return endsWith;
+	}
+
 	default Text toLowerCase() {
 
 		final CharText text = new CharText(length());

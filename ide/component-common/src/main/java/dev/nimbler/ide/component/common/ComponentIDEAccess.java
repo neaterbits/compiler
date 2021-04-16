@@ -2,7 +2,7 @@ package dev.nimbler.ide.component.common;
 
 import java.io.IOException;
 
-public interface ComponentIDEAccess {
+public interface ComponentIDEAccess extends ConfigurationAccess {
 
 	void writeAndOpenFile(
 			String projectName,

@@ -16,10 +16,10 @@ import dev.nimbler.ide.common.ui.controller.EditorsActions;
 import dev.nimbler.ide.common.ui.model.ProjectsModel;
 import dev.nimbler.ide.component.common.IDERegisteredComponents;
 import dev.nimbler.ide.model.text.StringTextModel;
-import dev.nimbler.ide.model.text.UnixLineDelimiter;
 import dev.nimbler.ide.ui.view.UIView;
 import dev.nimbler.ide.ui.view.UIViewAndSubViews;
 import dev.nimbler.ide.util.IOUtil;
+import dev.nimbler.ide.util.ui.text.UnixLineDelimiter;
 
 public final class EditUIController implements EditorsActions {
 

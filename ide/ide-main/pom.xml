@@ -48,8 +48,13 @@
   		<version>${project.version}</version>
   	</dependency>
   	<dependency>
-  		<groupId>${project.groupId}</groupId>
+ 		<groupId>${project.groupId}</groupId>
   		<artifactId>ide-component-tasks-ui</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
+  	<dependency>
+ 		<groupId>${project.groupId}</groupId>
+  		<artifactId>ide-component-console-output</artifactId>
   		<version>${project.version}</version>
   	</dependency>
   	<dependency>

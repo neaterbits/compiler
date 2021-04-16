@@ -36,6 +36,7 @@ import dev.nimbler.ide.common.ui.menus.SubMenuEntry;
 import dev.nimbler.ide.common.ui.menus.TextMenuEntry;
 import dev.nimbler.ide.common.ui.translation.Translateable;
 import dev.nimbler.ide.common.ui.translation.Translator;
+import dev.nimbler.ide.common.ui.view.KeyEventListener;
 import dev.nimbler.ide.component.common.ComponentIDEAccess;
 import dev.nimbler.ide.component.common.instantiation.InstantiationComponentUI;
 import dev.nimbler.ide.component.common.instantiation.Newable;
@@ -48,9 +49,9 @@ import dev.nimbler.ide.ui.model.dialogs.NewableSelection;
 import dev.nimbler.ide.ui.model.dialogs.OpenTypeDialogModel;
 import dev.nimbler.ide.ui.swt.SWTCompositeUIContext;
 import dev.nimbler.ide.ui.swt.SWTDialogUIContext;
+import dev.nimbler.ide.ui.swt.SWTKeyEventListener;
 import dev.nimbler.ide.ui.swt.SWTViewList;
 import dev.nimbler.ide.ui.view.EditorsView;
-import dev.nimbler.ide.ui.view.KeyEventListener;
 import dev.nimbler.ide.ui.view.MapMenuItem;
 import dev.nimbler.ide.ui.view.MenuSelectionListener;
 import dev.nimbler.ide.ui.view.ProjectView;
@@ -164,7 +165,9 @@ public final class SWTUIView implements UIViewAndSubViews {
 		for (DetailsComponentUI<?> detailsComponentUI : uiParameters.getComponentsAccess().getDetailsComponentUIs()) {
 		    
 		    final Control control
-		        = (Control)detailsComponentUI.addCompositeComponentUI(compositeUIContext);
+		        = (Control)detailsComponentUI.addCompositeComponentUI(
+		                                            compositeUIContext,
+		                                            uiParameters.getComponentIDEAccess());
 		    
 		    final TabItem tabItem = new TabItem(detailsTabFolder, SWT.NONE);
 		    

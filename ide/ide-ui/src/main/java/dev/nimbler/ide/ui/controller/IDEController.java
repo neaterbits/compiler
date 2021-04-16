@@ -18,6 +18,7 @@ import dev.nimbler.build.types.resource.SourceFileResource;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;
 import dev.nimbler.ide.common.codeaccess.CodeAccess;
+import dev.nimbler.ide.common.config.Configuration;
 import dev.nimbler.ide.common.model.clipboard.Clipboard;
 import dev.nimbler.ide.common.ui.actions.Action;
 import dev.nimbler.ide.common.ui.actions.ActionAppParameters;
@@ -34,15 +35,16 @@ import dev.nimbler.ide.common.ui.menus.MenuItemEntry;
 import dev.nimbler.ide.common.ui.menus.Menus;
 import dev.nimbler.ide.common.ui.model.ProjectsModel;
 import dev.nimbler.ide.common.ui.translation.Translator;
+import dev.nimbler.ide.common.ui.view.KeyEventListener;
 import dev.nimbler.ide.common.ui.view.View;
 import dev.nimbler.ide.component.common.ComponentIDEAccess;
+import dev.nimbler.ide.component.common.ConfigurationAccess;
 import dev.nimbler.ide.component.common.IDERegisteredComponents;
 import dev.nimbler.ide.ui.UI;
 import dev.nimbler.ide.ui.actions.ActionApplicableParameters;
 import dev.nimbler.ide.ui.actions.ActionExecuteParameters;
 import dev.nimbler.ide.ui.keys.IDEKeyBindings;
 import dev.nimbler.ide.ui.menus.IDEMenus;
-import dev.nimbler.ide.ui.view.KeyEventListener;
 import dev.nimbler.ide.ui.view.MenuSelectionListener;
 import dev.nimbler.ide.ui.view.UIViewAndSubViews;
 import dev.nimbler.ide.ui.view.ViewMenuItem;
@@ -53,6 +55,8 @@ public final class IDEController implements ComponentIDEAccess {
 
 	private final CodeAccess codeAccess;
 	
+	private final ConfigurationAccess configurationAccess;
+
 	private final EditUIController uiController;
 	
 	private final ActionExecuteState actionExecuteState;
@@ -69,11 +73,16 @@ public final class IDEController implements ComponentIDEAccess {
 			UI ui,
 			TextEditorConfig config,
 			IDERegisteredComponents ideComponents,
-			Translator uiTranslator) {
-		
-		Objects.requireNonNull(codeAccess);
-		
-		this.codeAccess = codeAccess;
+			Translator uiTranslator,
+			ConfigurationAccess configurationAccess) {
+
+	    Objects.requireNonNull(codeAccess);
+
+	    Objects.requireNonNull(configurationAccess);
+
+	    this.codeAccess = codeAccess;
+
+		this.configurationAccess = configurationAccess;
 
 		final ProjectsModel projectModel = new ProjectsModel(codeAccess);
 
@@ -88,6 +97,7 @@ public final class IDEController implements ComponentIDEAccess {
 		        keyBindings,
 		        uiModels,
 		        ideComponents,
+		        this,
 		        config);
 		
 		this.menuMap = new HashMap<>();
@@ -318,8 +328,14 @@ public final class IDEController implements ComponentIDEAccess {
 		uiController.showInProjectView(sourceFile, false);
 	}
 
-	/*
 	@Override
+    public <T extends Configuration> T getConfiguration(Class<T> type) {
+
+	    return configurationAccess.getConfiguration(type);
+    }
+
+    /*
+    @Override
 	public File getRootPath() {
 		return buildRoot.getPath();
 	}

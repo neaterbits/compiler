@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.fail;
 
 import org.junit.Test;
 
-import dev.nimbler.ide.model.text.UnixLineDelimiter;
 import dev.nimbler.ide.util.ui.text.CharText;
 import dev.nimbler.ide.util.ui.text.Text;
+import dev.nimbler.ide.util.ui.text.UnixLineDelimiter;
 
 public class LinesFinderTest {
 
