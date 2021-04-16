@@ -60,8 +60,6 @@ final class SWTProjectView extends SWTView implements ProjectView {
 			@Override
 			public void onModelChanged() {
 				
-				System.out.println("### model changed");
-				
 				treeViewer.refresh();
 			}
 		});

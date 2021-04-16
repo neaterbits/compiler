@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.neaterbits.util.PathUtil;
 import com.neaterbits.util.Strings;
@@ -15,16 +16,19 @@ import com.neaterbits.util.Strings;
 import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.types.resource.NamespaceResource;
 import dev.nimbler.build.types.resource.NamespaceResourcePath;
+import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
 import dev.nimbler.build.types.resource.SourceFileHolderResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResource;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;
 import dev.nimbler.ide.common.model.clipboard.Clipboard;
 import dev.nimbler.ide.common.model.codemap.CodeMapModel;
+import dev.nimbler.ide.common.model.source.SourceFileModel;
 import dev.nimbler.ide.common.ui.actions.Action;
 import dev.nimbler.ide.common.ui.actions.ActionAppParameters;
 import dev.nimbler.ide.common.ui.actions.ActionContexts;
 import dev.nimbler.ide.common.ui.actions.ActionExeParameters;
+import dev.nimbler.ide.common.ui.actions.ActionExecutionException;
 import dev.nimbler.ide.common.ui.actions.contexts.ActionContext;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
 import dev.nimbler.ide.common.ui.keys.Key;
@@ -38,7 +42,11 @@ import dev.nimbler.ide.common.ui.model.ProjectsModel;
 import dev.nimbler.ide.common.ui.translation.Translator;
 import dev.nimbler.ide.common.ui.view.View;
 import dev.nimbler.ide.component.common.ComponentIDEAccess;
+import dev.nimbler.ide.component.common.ConfiguredComponent;
+import dev.nimbler.ide.component.common.IDEComponent;
 import dev.nimbler.ide.component.common.IDERegisteredComponents;
+import dev.nimbler.ide.component.common.language.Languages;
+import dev.nimbler.ide.component.common.ui.ComponentUI;
 import dev.nimbler.ide.core.source.SourceFilesModel;
 import dev.nimbler.ide.core.ui.UI;
 import dev.nimbler.ide.core.ui.actions.ActionApplicableParameters;
@@ -55,6 +63,13 @@ import dev.nimbler.ide.util.Value;
 public final class IDEController implements ComponentIDEAccess {
 
 	private final BuildRoot buildRoot;
+	
+	private final IDERegisteredComponents ideComponents;
+	
+	private final Translator translator;
+	
+	private final ConfigurationManager configurationManager;
+	
 	private final EditUIController uiController;
 	
 	private final ActionExecuteState actionExecuteState;
@@ -76,14 +91,20 @@ public final class IDEController implements ComponentIDEAccess {
 			CodeMapModel codeMapModel) {
 
 		Objects.requireNonNull(buildRoot);
+		Objects.requireNonNull(ideComponents);
+		Objects.requireNonNull(uiTranslator);
 		
 		this.buildRoot = buildRoot;
+		this.ideComponents = ideComponents;
+		this.translator = uiTranslator;
+		
+		this.configurationManager = new ConfigurationManager(ideComponents);
 		
 		final ProjectsModel projectModel = new ProjectsModel(buildRoot);
 
 		final KeyBindings keyBindings = IDEKeyBindings.makeKeyBindings();
 
-		final Menus menus = IDEMenus.makeMenues(keyBindings);
+		final Menus menus = IDEMenus.makeMenues(keyBindings, ideComponents);
 		
 		final UIModels uiModels = new UIModels(projectModel);
 		
@@ -134,9 +155,24 @@ public final class IDEController implements ComponentIDEAccess {
 				this,
 				buildRoot,
 				uiController,
-				codeMapModel);
+				codeMapModel,
+				ui.getIOForwardToCaller()) {
 
-		this.actionApplicableParameters = new ActionApplicableParametersImpl(actionExecuteState);
+		    @Override
+		    SourceFileResourcePath getCurrentSourceFileResourcePath() {
+		        
+		        return uiController.getCurrentEditedFile();
+		    }
+
+		    @Override
+		    SourceFileModel getSourceFileModel(SourceFileResourcePath sourceFileResourcePath) {
+		        
+		        return sourceFilesModel.getSourceFileModel(sourceFileResourcePath);
+		    }
+		};
+
+		this.actionApplicableParameters
+		    = new ActionApplicableParametersImpl(actionExecuteState, ideComponents.getLanguages());
 		
 		uiView.addKeyEventListener(new KeyEventListener() {
 			
@@ -163,8 +199,11 @@ public final class IDEController implements ComponentIDEAccess {
 							getFocusedViewActionContexts(),
 							getAllActionContexts(uiView))) {
 					
-					
-						action.execute(makeActionExecuteParameters());
+						try {
+                            action.execute(makeActionExecuteParameters());
+                        } catch (ActionExecutionException ex) {
+                            uiView.displayError("Caught exception from action", ex);
+                        }
 					}
 				}
 				
@@ -184,7 +223,6 @@ public final class IDEController implements ComponentIDEAccess {
 			
 			updateMenuItemsEnabledState(uiView, actionApplicableParameters);
 		});
-	
 	}
 
 	public UIViewAndSubViews getMainView() {
@@ -214,9 +252,10 @@ public final class IDEController implements ComponentIDEAccess {
 		
 		final ActionExecuteParameters parameters = new ActionExecuteParametersImpl(
 				actionExecuteState,
+				uiView.getComponentDialogContext(),
+				uiView.getComponentCompositeContext(),
 				focusedView,
-				uiController.getCurrentEditor(),
-				uiController.getCurrentEditedFile());
+				uiController.getCurrentEditor());
 	
 		return parameters;
 	}
@@ -225,7 +264,12 @@ public final class IDEController implements ComponentIDEAccess {
 		
 		Objects.requireNonNull(menuItem);
 		
-		menuItem.execute(makeActionExecuteParameters());
+		try {
+		    menuItem.execute(makeActionExecuteParameters());
+		}
+		catch (ActionExecutionException ex) {
+		    uiView.displayError("Caught exception while executiong", ex);
+		}
 	}
 	
 	private void updateMenuItemsEnabledState(UIViewAndSubViews uiView, ActionApplicableParameters applicableParameters) {
@@ -319,13 +363,24 @@ public final class IDEController implements ComponentIDEAccess {
 		uiController.showInProjectView(sourceFile, false);
 	}
 
-	
 	@Override
+    public Languages getLanguages() {
+        return actionExecuteState.getComponents().getLanguages();
+    }
+
+    @Override
 	public File getRootPath() {
 		return buildRoot.getPath();
 	}
 
 	@Override
+    public List<ProjectModuleResourcePath> getRootModules() {
+        return buildRoot.getModules().stream()
+                .filter(ProjectModuleResourcePath::isAtRoot)
+                .collect(Collectors.toList());
+    }
+
+    @Override
 	public boolean isValidSourceFolder(String projectName, String sourceFolder) {
 
 		final SourceFolderResourcePath folder = findSourceFolder(projectName, sourceFolder);
@@ -343,4 +398,42 @@ public final class IDEController implements ComponentIDEAccess {
 					: null;
 		});
 	}
+
+    @Override
+    public Translator getTranslator() {
+        return translator;
+    }
+
+    @Override
+    public <T> T readConfigurationFile(
+            Class<? extends ConfiguredComponent> componentType,
+            Class<T> configurationType,
+            ProjectModuleResourcePath module) throws IOException {
+
+        return configurationManager.readComponentConfiguration(componentType, configurationType, module);
+    }
+
+    @Override
+    public void saveConfigurationFile(
+            Class<? extends ConfiguredComponent> componentType, 
+            Object configuration,
+            ProjectModuleResourcePath module) throws IOException {
+
+        configurationManager.saveComponentConfiguration(componentType, configuration, module);
+    }
+
+    @Override
+    public void displayError(String title, Exception ex) {
+        uiView.displayError(title, ex);
+    }
+
+    @Override
+    public <T extends IDEComponent> List<T> findComponents(Class<T> type) {
+        return ideComponents.findComponents(type);
+    }
+
+    @Override
+    public <T extends ComponentUI> List<T> findComponentUIs(Class<T> type) {
+        return ideComponents.findComponentUIs(type);
+    }
 }

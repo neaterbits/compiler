@@ -31,6 +31,10 @@ public final class IDECoreTranslator implements Translator {
 				translation = "&Navigate";
 				break;
 				
+			case "run":
+			    translation = "&Run";
+			    break;
+				
 			default:
 				throw new UnsupportedOperationException();
 			}

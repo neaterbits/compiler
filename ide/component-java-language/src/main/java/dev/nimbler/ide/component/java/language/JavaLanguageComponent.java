@@ -19,7 +19,7 @@ public class JavaLanguageComponent
 	public static final Newable INTERFACE 	= new Newable(NewableType.FILE, "Interface", null);
 	public static final Newable ENUM		= new Newable(NewableType.FILE, "Enum", null);
 
-	private static final LanguageName NAME = new LanguageName("java");
+	public static final LanguageName LANGUAGE_NAME = new LanguageName("java");
 	
 	private static final List<String> FILE_SUFFIXES = Arrays.asList("java");
 	
@@ -40,7 +40,7 @@ public class JavaLanguageComponent
 
 	@Override
 	public LanguageName getLanguageName() {
-		return NAME;
+		return LANGUAGE_NAME;
 	}
 
 	@Override
@@ -57,4 +57,10 @@ public class JavaLanguageComponent
 	public ParseableLanguage getParseableLanguage() {
 		return JAVA_LANGUAGE;
 	}
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getLanguage(Class<T> languageInterface) {
+        return (T)JAVA_LANGUAGE;
+    }
 }

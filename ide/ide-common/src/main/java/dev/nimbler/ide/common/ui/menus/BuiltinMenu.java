@@ -10,7 +10,8 @@ public enum BuiltinMenu implements EnumTranslateable<BuiltinMenu> {
 	SOURCE,
 	REFACTOR,
 	NAVIGATE,
-	SEARCH;
+	SEARCH,
+	RUN;
 
 	@Override
 	public String getTranslationNamespace() {

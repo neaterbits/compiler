@@ -23,7 +23,6 @@ import dev.nimbler.build.strategies.compilemodules.ResolvedModule;
 import dev.nimbler.build.types.resource.ModuleResourcePath;
 import dev.nimbler.build.types.resource.NamespaceResource;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
-import dev.nimbler.build.types.resource.SourceFileHolderResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResource;
 import dev.nimbler.compiler.ast.objects.CompilationUnit;
@@ -33,7 +32,6 @@ import dev.nimbler.compiler.language.java.JavaTypes;
 import dev.nimbler.compiler.model.common.BaseTypeVisitor;
 import dev.nimbler.compiler.model.common.LanguageSpec;
 import dev.nimbler.compiler.model.common.ResolvedTypes;
-import dev.nimbler.compiler.model.common.SourceTokenVisitor;
 import dev.nimbler.compiler.model.common.TypeMemberVisitor;
 import dev.nimbler.compiler.model.objects.ObjectProgramModel;
 import dev.nimbler.compiler.model.objects.ObjectsCompilerModel;
@@ -49,7 +47,7 @@ import dev.nimbler.ide.common.model.source.SourceFileModel;
 import dev.nimbler.ide.component.common.language.compilercommon.CompilerSourceFileModel;
 import dev.nimbler.ide.component.common.language.model.ParseableLanguage;
 import dev.nimbler.ide.component.common.runner.RunnableLanguage;
-import dev.nimbler.ide.util.Value;
+import dev.nimbler.language.bytecode.common.ClassBytecode;
 import dev.nimbler.language.codemap.compiler.CompilerCodeMap;
 import dev.nimbler.language.common.types.MethodVariant;
 import dev.nimbler.language.common.types.Mutability;
@@ -81,7 +79,6 @@ public final class JavaLanguage
 		
 		return namespaceResource;
 	}
-
 	
 	public static File getSystemJarFilePath(String libName) {
 		
@@ -291,19 +288,15 @@ public final class JavaLanguage
                 TypeName[] parameterTypes,
                 int indexInType) {
             
-            if (
-                       name.equals("main")
-                    && methodVariant == MethodVariant.STATIC
-                    && parameterTypes.length == 0) {
-
+            if (isMainMethod(name, methodVariant, parameterTypes.length)) {
                 this.isRunnable = true;
             }
         }
     }
     
-    @Override
+	@Override
     public boolean isSourceFileRunnable(
-            SourceFileHolderResourcePath sourceFile,
+            SourceFileResourcePath sourceFile,
             SourceFileModel sourceFileModel) {
 
         final IsRunnableVisitor visitor = new IsRunnableVisitor();
@@ -311,6 +304,43 @@ public final class JavaLanguage
         sourceFileModel.iterateTypeMembers(visitor);
 
         return visitor.isRunnable;
+    }
+
+    @Override
+    public TypeName getRunnableType(ClassBytecode bytecode) {
+
+        if (!isBytecodeRunnable(bytecode)) {
+            throw new IllegalArgumentException();
+        }
+        
+        return bytecode.getTypeName();
+    }
+
+    @Override
+    public boolean isBytecodeRunnable(ClassBytecode bytecode) {
+
+        boolean isRunnable = false;
+        
+        for (int i = 0; i < bytecode.getMethodCount(); ++ i) {
+            
+            if (isMainMethod(
+                    bytecode.getMethodName(i),
+                    bytecode.getMethodVariant(i),
+                    bytecode.getMethodParameterCount(i))) {
+                
+                isRunnable = true;
+                break;
+            }
+        }
+        
+        return isRunnable;
+    }
+
+    private static boolean isMainMethod(String name, MethodVariant methodVariant, int parameterCount) {
+
+        return     name.equals("main")
+                && methodVariant == MethodVariant.STATIC
+                && parameterCount == 1;
     }
 }
 
