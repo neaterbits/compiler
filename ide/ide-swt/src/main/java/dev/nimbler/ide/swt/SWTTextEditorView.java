@@ -1,6 +1,7 @@
 package dev.nimbler.ide.swt;
 
 import java.util.Objects;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;

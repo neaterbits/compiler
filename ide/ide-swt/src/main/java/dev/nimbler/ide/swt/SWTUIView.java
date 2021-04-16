@@ -168,8 +168,7 @@ public final class SWTUIView implements UIViewAndSubViews {
 		
 		for (DetailsComponentUI<?> detailsComponentUI : uiParameters.getComponentsAccess().getDetailsComponentUIs()) {
 		    
-		    final Control control
-		        = (Control)detailsComponentUI.addCompositeComponentUI(compositeUIContext);
+		    final Control control = (Control)detailsComponentUI.addCompositeComponentUI(compositeUIContext, uiParameters.getComponentIDEAccess());
 		    
 		    final TabItem tabItem = new TabItem(detailsTabFolder, SWT.NONE);
 		    

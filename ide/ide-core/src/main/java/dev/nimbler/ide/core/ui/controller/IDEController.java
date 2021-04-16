@@ -113,6 +113,7 @@ public final class IDEController implements ComponentIDEAccess {
 		        keyBindings,
 		        uiModels,
 		        ideComponents,
+		        this,
 		        config);
 		
 		this.menuMap = new HashMap<>();

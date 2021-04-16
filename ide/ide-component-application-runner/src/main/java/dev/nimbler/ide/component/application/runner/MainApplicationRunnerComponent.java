@@ -51,33 +51,16 @@ public final class MainApplicationRunnerComponent implements RunnerComponent {
             SourceFileResourcePath sourceFile,
             SourceFileModel sourceFileModel,
             TypeName entryPointType,
-            String [] programArguments,
-            String [] vmArguments,
+            String[] programArguments,
+            String[] vmArguments,
             BuildRoot buildRoot) {
-        
-        final ProjectModuleResourcePath module = sourceFile.getModule();
-        
-        final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(module);
-        
-        final List<CompiledModuleFileResourcePath> projectDeps
-                = buildRoot.getProjectDependenciesForProjectModule(module).stream()
-                        .map(dep -> {
-                            final ProjectModuleResourcePath depPath = dep.getModulePath();
-                            
-                            return buildRoot.getCompiledModuleFile(depPath);
-                        })
-                        .collect(Collectors.toList());
-        
-        final List<LibraryResourcePath> libraryDeps
-                = buildRoot.getLibraryDependenciesForProjectModule(module).stream()
-                        .map(LibraryDependency::getModulePath)
-                        .collect(Collectors.toList());
-        
-        return runtimeEnvironment.getCommandLineForRunning(
-                                            projectDeps,
-                                            libraryDeps,
-                                            entryPointType,
-                                            programArguments,
-                                            vmArguments);
+
+        return RunnerComponent.getCommandLineFromArguments(
+                sourceFile,
+                sourceFileModel,
+                entryPointType,
+                programArguments,
+                vmArguments,
+                buildRoot);
     }
 }
