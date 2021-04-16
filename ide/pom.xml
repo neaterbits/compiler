@@ -67,6 +67,7 @@
 		<module>ide-component-search</module>
 		<module>ide-component-build</module>
 		<module>ide-component-compiledfile-debug</module>
+		<module>ide-component-console-output</module>
 	</modules>
 
 	<build>

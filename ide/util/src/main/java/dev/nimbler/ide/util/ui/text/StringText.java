@@ -42,6 +42,14 @@ public final class StringText extends BaseText implements Text {
 	}
 
 	@Override
+    public Text merge(String other) {
+	    
+	    Objects.requireNonNull(other);
+	    
+        return new StringText(asString() + other);
+    }
+
+    @Override
 	public Text substring(long beginIndex) {
 		checkSubstringParams(beginIndex);
 

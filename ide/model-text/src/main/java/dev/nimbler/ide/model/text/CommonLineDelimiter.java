@@ -2,6 +2,8 @@ package dev.nimbler.ide.model.text;
 
 import dev.nimbler.ide.util.ui.text.LineDelimiter;
 import dev.nimbler.ide.util.ui.text.Text;
+import dev.nimbler.ide.util.ui.text.UnixLineDelimiter;
+import dev.nimbler.ide.util.ui.text.WindowsLineDelimiter;
 
 public class CommonLineDelimiter extends LineDelimiter {
 
@@ -30,4 +32,15 @@ public class CommonLineDelimiter extends LineDelimiter {
 	public String asString() {
 		return UnixLineDelimiter.INSTANCE.asString();
 	}
+
+    @Override
+    public int getMaxLength() {
+        return WindowsLineDelimiter.INSTANCE.getMaxLength();
+    }
+
+    @Override
+    public boolean endsWithNewline(Text text) {
+        return     UnixLineDelimiter.INSTANCE.endsWithNewline(text)
+                || WindowsLineDelimiter.INSTANCE.endsWithNewline(text);
+    }
 }

@@ -19,8 +19,8 @@ import dev.nimbler.ide.core.source.SourceFilesModel;
 import dev.nimbler.ide.core.ui.view.UIView;
 import dev.nimbler.ide.core.ui.view.UIViewAndSubViews;
 import dev.nimbler.ide.model.text.StringTextModel;
-import dev.nimbler.ide.model.text.UnixLineDelimiter;
 import dev.nimbler.ide.util.IOUtil;
+import dev.nimbler.ide.util.ui.text.UnixLineDelimiter;
 
 public final class EditUIController implements EditorsActions {
 

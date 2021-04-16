@@ -1,5 +1,8 @@
 package dev.nimbler.ide.core.ui.view;
 
+import dev.nimbler.ide.common.ui.view.CursorPositionListener;
+import dev.nimbler.ide.common.ui.view.KeyEventListener;
+import dev.nimbler.ide.common.ui.view.TextEditorChangeListener;
 import dev.nimbler.ide.common.ui.view.View;
 import dev.nimbler.ide.model.text.TextModel;
 import dev.nimbler.ide.util.ui.text.Text;

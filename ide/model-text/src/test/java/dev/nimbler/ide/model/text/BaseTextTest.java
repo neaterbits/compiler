@@ -264,4 +264,14 @@ public abstract class BaseTextTest {
 
 		assertThat(text.findBackward("unknowntext", 10L, null, true, true, false)).isEqualTo(-1L);
 	}
+	
+	@Test
+	public void testEndsWith() {
+	    assertThat(createText("123").endsWith("1234")).isFalse();
+        assertThat(createText("123").endsWith("123")).isTrue();
+        assertThat(createText("123").endsWith("124")).isFalse();
+        assertThat(createText("123").endsWith("23")).isTrue();
+        assertThat(createText("123").endsWith("3")).isTrue();
+        assertThat(createText("123").endsWith("")).isTrue();
+	}
 }

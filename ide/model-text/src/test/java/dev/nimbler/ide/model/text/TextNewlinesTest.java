@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import dev.nimbler.ide.util.ui.text.LineDelimiter;
 import dev.nimbler.ide.util.ui.text.StringText;
+import dev.nimbler.ide.util.ui.text.UnixLineDelimiter;
+import dev.nimbler.ide.util.ui.text.WindowsLineDelimiter;
 
 public class TextNewlinesTest {
 
@@ -433,7 +435,7 @@ public class TextNewlinesTest {
 
 		final LineDelimiter lineDelimiter = UnixLineDelimiter.INSTANCE;
 
-		assertThat(text.getNumberOfLines(lineDelimiter)).isEqualTo(5);
+		assertThat(text.getNumberOfLinesIncludingTrailingNonTerminated(lineDelimiter)).isEqualTo(5);
 	}
 
 	@Test
@@ -443,7 +445,7 @@ public class TextNewlinesTest {
 
 		final LineDelimiter lineDelimiter = UnixLineDelimiter.INSTANCE;
 
-		assertThat(text.getNumberOfLines(lineDelimiter)).isEqualTo(5);
+		assertThat(text.getNumberOfLinesIncludingTrailingNonTerminated(lineDelimiter)).isEqualTo(5);
 	}
 
 	@Test
@@ -453,7 +455,7 @@ public class TextNewlinesTest {
 
 		final LineDelimiter lineDelimiter = UnixLineDelimiter.INSTANCE;
 
-		assertThat(text.getNumberOfLines(lineDelimiter)).isEqualTo(6);
+		assertThat(text.getNumberOfLinesIncludingTrailingNonTerminated(lineDelimiter)).isEqualTo(6);
 	}
 
 	@Test
@@ -463,7 +465,7 @@ public class TextNewlinesTest {
 
 		final LineDelimiter lineDelimiter = WindowsLineDelimiter.INSTANCE;
 
-		assertThat(text.getNumberOfLines(lineDelimiter)).isEqualTo(5);
+		assertThat(text.getNumberOfLinesIncludingTrailingNonTerminated(lineDelimiter)).isEqualTo(5);
 	}
 
 	@Test
@@ -473,7 +475,7 @@ public class TextNewlinesTest {
 
 		final LineDelimiter lineDelimiter = WindowsLineDelimiter.INSTANCE;
 
-		assertThat(text.getNumberOfLines(lineDelimiter)).isEqualTo(5);
+		assertThat(text.getNumberOfLinesIncludingTrailingNonTerminated(lineDelimiter)).isEqualTo(5);
 	}
 
 	@Test
@@ -483,6 +485,6 @@ public class TextNewlinesTest {
 
 		final LineDelimiter lineDelimiter = WindowsLineDelimiter.INSTANCE;
 
-		assertThat(text.getNumberOfLines(lineDelimiter)).isEqualTo(6);
+		assertThat(text.getNumberOfLinesIncludingTrailingNonTerminated(lineDelimiter)).isEqualTo(6);
 	}
 }

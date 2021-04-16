@@ -17,12 +17,12 @@ import dev.nimbler.ide.common.model.clipboard.ClipboardDataType;
 import dev.nimbler.ide.common.ui.actions.contexts.ActionContext;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
 import dev.nimbler.ide.common.ui.view.ActionContextListener;
+import dev.nimbler.ide.common.ui.view.TextSelectionListener;
 import dev.nimbler.ide.core.ui.actions.contexts.ClipboardPasteableContext;
 import dev.nimbler.ide.core.ui.actions.contexts.ClipboardSelectionContext;
 import dev.nimbler.ide.core.ui.actions.contexts.EditorContext;
 import dev.nimbler.ide.core.ui.actions.contexts.EditorSelectionContext;
 import dev.nimbler.ide.core.ui.view.EditorSourceActionContextProvider;
-import dev.nimbler.ide.core.ui.view.TextSelectionListener;
 import dev.nimbler.ide.core.ui.view.ViewDisposeListener;
 
 abstract class SWTBaseTextEditorView extends SWTEditorView {
@@ -110,8 +110,6 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 		composite.setSelection(tabItem);
 
 		configure(config);
-		
-;
 	}
 	
 	@Override

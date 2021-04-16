@@ -25,7 +25,7 @@ import dev.nimbler.ide.core.source.SourceFilesModel;
 import dev.nimbler.ide.core.ui.actions.contexts.source.SourceTokenContext;
 import dev.nimbler.ide.core.ui.view.EditorSourceActionContextProvider;
 import dev.nimbler.ide.core.ui.view.EditorView;
-import dev.nimbler.ide.core.ui.view.KeyEventListener;
+import dev.nimbler.ide.common.ui.view.KeyEventListener;
 import dev.nimbler.ide.model.text.TextModel;
 import dev.nimbler.ide.util.ui.text.StringText;
 import dev.nimbler.ide.util.ui.text.Text;

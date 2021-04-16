@@ -1,4 +1,4 @@
-package dev.nimbler.ide.core.ui.view;
+package dev.nimbler.ide.common.ui.view;
 
 import dev.nimbler.ide.common.ui.keys.Key;
 import dev.nimbler.ide.common.ui.keys.KeyLocation;

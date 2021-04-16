@@ -1,4 +1,4 @@
-package dev.nimbler.ide.swt;
+package dev.nimbler.ide.ui.swt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +12,9 @@ import dev.nimbler.ide.common.ui.keys.Key;
 import dev.nimbler.ide.common.ui.keys.KeyLocation;
 import dev.nimbler.ide.common.ui.keys.KeyMask;
 import dev.nimbler.ide.common.ui.keys.QualifierKey;
-import dev.nimbler.ide.core.ui.view.KeyEventListener;
+import dev.nimbler.ide.common.ui.view.KeyEventListener;
 
-final class SWTKeyEventListener implements KeyListener {
+public final class SWTKeyEventListener implements KeyListener {
 
 	private final KeyEventListener delegate;
 	
@@ -23,14 +23,14 @@ final class SWTKeyEventListener implements KeyListener {
 		boolean onKey(Key key, KeyMask mask, KeyLocation location);
 	}
 
-	SWTKeyEventListener(KeyEventListener delegate) {
+	public SWTKeyEventListener(KeyEventListener delegate) {
 		
 		Objects.requireNonNull(delegate);
 		
 		this.delegate = delegate;
 	}
 	
-	boolean keyPressed(char character, int keyCode, int keyLocation, int stateMask) {
+	public boolean keyPressed(char character, int keyCode, int keyLocation, int stateMask) {
 		return convertKeyEvent(character, keyCode, keyLocation,stateMask, delegate::onKeyPress);
 	}
 
