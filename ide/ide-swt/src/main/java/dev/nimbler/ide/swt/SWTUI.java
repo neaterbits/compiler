@@ -35,7 +35,8 @@ public class SWTUI implements UI {
 	
 	@Override
 	public ForwardResultToCaller getIOForwardToCaller() {
-		return new ForwardResultToCaller() {
+
+	    return new ForwardResultToCaller() {
 			
 			@Override
 			public void forward(Runnable runnable) {
@@ -51,8 +52,8 @@ public class SWTUI implements UI {
 
 	@Override
 	public UIViewAndSubViews makeUIView(UIParameters uiParameters, Menus menus, MapMenuItem mapMenuItem) {
-	
-		return new SWTUIView(display, uiParameters, menus, mapMenuItem);
+
+	    return new SWTUIView(display, uiParameters, menus, mapMenuItem);
 	}
 
 	private View focusedView = null;

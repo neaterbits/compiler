@@ -49,6 +49,17 @@ final class CharTextSubstring extends BaseText implements Text {
 	}
 
 	@Override
+    public Text merge(String other) {
+
+	    final CharText charText = new CharText(length() + other.length());
+        
+        charText.append(this);
+        charText.append(other);
+        
+        return charText;
+    }
+
+    @Override
 	public Text substring(long beginIndex) {
 
 		checkSubstringParams(beginIndex);

@@ -1,4 +1,4 @@
-package dev.nimbler.ide.swt;
+package dev.nimbler.ide.ui.swt;
 
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.FontDescriptor;

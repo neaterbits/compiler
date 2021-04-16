@@ -1,7 +1,5 @@
 package dev.nimbler.ide.component.common;
 
-import java.util.Objects;
-
 import dev.nimbler.ide.component.common.ui.ComponentUI;
 
 final class IDERegisteredComponent {

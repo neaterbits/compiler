@@ -1,7 +1,4 @@
-package dev.nimbler.ide.model.text;
-
-import dev.nimbler.ide.util.ui.text.LineDelimiter;
-import dev.nimbler.ide.util.ui.text.Text;
+package dev.nimbler.ide.util.ui.text;
 
 public final class UnixLineDelimiter extends LineDelimiter {
 
@@ -36,4 +33,9 @@ public final class UnixLineDelimiter extends LineDelimiter {
 	public String asString() {
 		return "\n";
 	}
+
+    @Override
+    public int getMaxLength() {
+        return 1;
+    }
 }

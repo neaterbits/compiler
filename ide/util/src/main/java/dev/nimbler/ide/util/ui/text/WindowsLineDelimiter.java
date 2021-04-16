@@ -1,7 +1,4 @@
-package dev.nimbler.ide.model.text;
-
-import dev.nimbler.ide.util.ui.text.LineDelimiter;
-import dev.nimbler.ide.util.ui.text.Text;
+package dev.nimbler.ide.util.ui.text;
 
 public final class WindowsLineDelimiter extends LineDelimiter {
 
@@ -25,10 +22,9 @@ public final class WindowsLineDelimiter extends LineDelimiter {
 		else if (text.charAt(offset) == '\r') {
 			
 			if (offset + 1 >= text.length()) {
-				throw new IllegalStateException();
+			    numChars = 0; // only '\r'
 			}
-			
-			if (text.charAt(offset + 1) == '\n') {
+			else if (text.charAt(offset + 1) == '\n') {
 				numChars = 2;
 			}
 			else {
@@ -46,4 +42,9 @@ public final class WindowsLineDelimiter extends LineDelimiter {
 	public String asString() {
 		return "\r\n";
 	}
+
+    @Override
+    public int getMaxLength() {
+        return 2;
+    }
 }
