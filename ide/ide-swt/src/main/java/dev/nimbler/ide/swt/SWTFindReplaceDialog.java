@@ -20,12 +20,12 @@ import org.eclipse.swt.widgets.Text;
 import dev.nimbler.ide.common.ui.SearchDirection;
 import dev.nimbler.ide.common.ui.SearchScope;
 import dev.nimbler.ide.common.ui.translation.Translator;
-import dev.nimbler.ide.core.ui.model.dialogs.FindReplaceDialogModel;
-import dev.nimbler.ide.core.ui.translation.texts.FindReplaceTexts;
-import dev.nimbler.ide.core.ui.view.ButtonListener;
-import dev.nimbler.ide.core.ui.view.TextInputChangeListener;
-import dev.nimbler.ide.core.ui.view.TextInputEnterKeyListener;
-import dev.nimbler.ide.core.ui.view.dialogs.FindReplaceDialog;
+import dev.nimbler.ide.ui.model.dialogs.FindReplaceDialogModel;
+import dev.nimbler.ide.ui.translation.texts.FindReplaceTexts;
+import dev.nimbler.ide.ui.view.ButtonListener;
+import dev.nimbler.ide.ui.view.TextInputChangeListener;
+import dev.nimbler.ide.ui.view.TextInputEnterKeyListener;
+import dev.nimbler.ide.ui.view.dialogs.FindReplaceDialog;
 
 final class SWTFindReplaceDialog extends Dialog implements FindReplaceDialog {
 

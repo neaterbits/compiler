@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Text;
 import dev.nimbler.ide.component.common.instantiation.Named;
 import dev.nimbler.ide.component.common.instantiation.Newable;
 import dev.nimbler.ide.component.common.instantiation.NewableCategory;
-import dev.nimbler.ide.core.ui.model.dialogs.NewableSelection;
+import dev.nimbler.ide.ui.model.dialogs.NewableSelection;
 
 final class CreateNewableDialog extends Dialog {
 

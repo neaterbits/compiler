@@ -12,12 +12,12 @@ import com.neaterbits.util.threads.ForwardResultToCaller;
 import dev.nimbler.ide.common.ui.ViewFocusListener;
 import dev.nimbler.ide.common.ui.menus.Menus;
 import dev.nimbler.ide.common.ui.view.View;
-import dev.nimbler.ide.core.ui.UI;
-import dev.nimbler.ide.core.ui.controller.UIParameters;
-import dev.nimbler.ide.core.ui.view.MapMenuItem;
-import dev.nimbler.ide.core.ui.view.SystemClipboard;
-import dev.nimbler.ide.core.ui.view.UIViewAndSubViews;
+import dev.nimbler.ide.ui.UI;
+import dev.nimbler.ide.ui.controller.UIParameters;
 import dev.nimbler.ide.ui.swt.SWTViewList;
+import dev.nimbler.ide.ui.view.MapMenuItem;
+import dev.nimbler.ide.ui.view.SystemClipboard;
+import dev.nimbler.ide.ui.view.UIViewAndSubViews;
 
 public class SWTUI implements UI {
 

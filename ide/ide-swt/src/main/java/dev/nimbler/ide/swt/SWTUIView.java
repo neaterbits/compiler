@@ -42,21 +42,21 @@ import dev.nimbler.ide.component.common.instantiation.Newable;
 import dev.nimbler.ide.component.common.instantiation.NewableCategory;
 import dev.nimbler.ide.component.common.instantiation.NewableCategoryName;
 import dev.nimbler.ide.component.common.ui.DetailsComponentUI;
-import dev.nimbler.ide.core.ui.controller.UIParameters;
-import dev.nimbler.ide.core.ui.model.dialogs.FindReplaceDialogModel;
-import dev.nimbler.ide.core.ui.model.dialogs.NewableSelection;
-import dev.nimbler.ide.core.ui.model.dialogs.OpenTypeDialogModel;
-import dev.nimbler.ide.core.ui.view.EditorsView;
-import dev.nimbler.ide.core.ui.view.KeyEventListener;
-import dev.nimbler.ide.core.ui.view.MapMenuItem;
-import dev.nimbler.ide.core.ui.view.MenuSelectionListener;
-import dev.nimbler.ide.core.ui.view.ProjectView;
-import dev.nimbler.ide.core.ui.view.UIViewAndSubViews;
-import dev.nimbler.ide.core.ui.view.ViewMenuItem;
-import dev.nimbler.ide.core.ui.view.dialogs.FindReplaceDialog;
+import dev.nimbler.ide.ui.controller.UIParameters;
+import dev.nimbler.ide.ui.model.dialogs.FindReplaceDialogModel;
+import dev.nimbler.ide.ui.model.dialogs.NewableSelection;
+import dev.nimbler.ide.ui.model.dialogs.OpenTypeDialogModel;
 import dev.nimbler.ide.ui.swt.SWTCompositeUIContext;
 import dev.nimbler.ide.ui.swt.SWTDialogUIContext;
 import dev.nimbler.ide.ui.swt.SWTViewList;
+import dev.nimbler.ide.ui.view.EditorsView;
+import dev.nimbler.ide.ui.view.KeyEventListener;
+import dev.nimbler.ide.ui.view.MapMenuItem;
+import dev.nimbler.ide.ui.view.MenuSelectionListener;
+import dev.nimbler.ide.ui.view.ProjectView;
+import dev.nimbler.ide.ui.view.UIViewAndSubViews;
+import dev.nimbler.ide.ui.view.ViewMenuItem;
+import dev.nimbler.ide.ui.view.dialogs.FindReplaceDialog;
 
 public final class SWTUIView implements UIViewAndSubViews {
 

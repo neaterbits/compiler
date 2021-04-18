@@ -6,7 +6,7 @@ import dev.nimbler.ide.component.build.ui.BuildIssuesComponent;
 import dev.nimbler.ide.component.common.ui.ComponentUI;
 import dev.nimbler.ide.component.common.ui.DetailsComponentUI;
 import dev.nimbler.ide.component.compiledfiledebug.ui.CompiledFileViewComponent;
-import dev.nimbler.ide.core.ui.controller.IDECoreTranslator;
+import dev.nimbler.ide.ui.controller.IDECoreTranslator;
 
 final class IDEMainTranslator implements Translator {
 

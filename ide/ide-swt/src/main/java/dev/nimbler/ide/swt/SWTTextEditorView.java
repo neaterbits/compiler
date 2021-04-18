@@ -13,13 +13,13 @@ import org.eclipse.swt.widgets.Text;
 
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
-import dev.nimbler.ide.core.ui.view.CursorPositionListener;
-import dev.nimbler.ide.core.ui.view.EditorSourceActionContextProvider;
-import dev.nimbler.ide.core.ui.view.KeyEventListener;
-import dev.nimbler.ide.core.ui.view.TextEditorChangeListener;
-import dev.nimbler.ide.core.ui.view.TextSelectionListener;
 import dev.nimbler.ide.model.text.TextModel;
 import dev.nimbler.ide.ui.swt.SWTViewList;
+import dev.nimbler.ide.ui.view.CursorPositionListener;
+import dev.nimbler.ide.ui.view.EditorSourceActionContextProvider;
+import dev.nimbler.ide.ui.view.KeyEventListener;
+import dev.nimbler.ide.ui.view.TextEditorChangeListener;
+import dev.nimbler.ide.ui.view.TextSelectionListener;
 import dev.nimbler.ide.util.ui.text.StringText;
 import dev.nimbler.ide.util.ui.text.TextRange;
 

@@ -13,11 +13,11 @@ import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.ide.common.ui.actions.contexts.ActionContext;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
 import dev.nimbler.ide.common.ui.view.ActionContextListener;
-import dev.nimbler.ide.core.ui.view.EditorSourceActionContextProvider;
-import dev.nimbler.ide.core.ui.view.EditorView;
-import dev.nimbler.ide.core.ui.view.EditorsView;
 import dev.nimbler.ide.ui.swt.SWTView;
 import dev.nimbler.ide.ui.swt.SWTViewList;
+import dev.nimbler.ide.ui.view.EditorSourceActionContextProvider;
+import dev.nimbler.ide.ui.view.EditorView;
+import dev.nimbler.ide.ui.view.EditorsView;
 import dev.nimbler.ide.util.ui.text.styling.TextStylingModel;
 
 public final class SWTEditorsView extends SWTView implements EditorsView {

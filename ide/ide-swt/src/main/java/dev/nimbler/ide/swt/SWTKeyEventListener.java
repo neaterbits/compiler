@@ -12,7 +12,7 @@ import dev.nimbler.ide.common.ui.keys.Key;
 import dev.nimbler.ide.common.ui.keys.KeyLocation;
 import dev.nimbler.ide.common.ui.keys.KeyMask;
 import dev.nimbler.ide.common.ui.keys.QualifierKey;
-import dev.nimbler.ide.core.ui.view.KeyEventListener;
+import dev.nimbler.ide.ui.view.KeyEventListener;
 
 final class SWTKeyEventListener implements KeyListener {
 

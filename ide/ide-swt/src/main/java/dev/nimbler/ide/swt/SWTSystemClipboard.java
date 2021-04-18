@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Display;
 import dev.nimbler.ide.common.model.clipboard.ClipboardData;
 import dev.nimbler.ide.common.model.clipboard.ClipboardDataType;
 import dev.nimbler.ide.common.model.clipboard.TextClipboardData;
-import dev.nimbler.ide.core.ui.view.SystemClipboard;
+import dev.nimbler.ide.ui.view.SystemClipboard;
 
 final class SWTSystemClipboard implements SystemClipboard {
 

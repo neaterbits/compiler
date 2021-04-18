@@ -24,11 +24,11 @@ import dev.nimbler.ide.common.ui.actions.contexts.ActionContext;
 import dev.nimbler.ide.common.ui.model.ProjectModelListener;
 import dev.nimbler.ide.common.ui.model.ProjectsModel;
 import dev.nimbler.ide.common.ui.view.ActionContextListener;
-import dev.nimbler.ide.core.ui.view.KeyEventListener;
-import dev.nimbler.ide.core.ui.view.ProjectView;
-import dev.nimbler.ide.core.ui.view.ProjectViewListener;
 import dev.nimbler.ide.ui.swt.SWTView;
 import dev.nimbler.ide.ui.swt.SWTViewList;
+import dev.nimbler.ide.ui.view.KeyEventListener;
+import dev.nimbler.ide.ui.view.ProjectView;
+import dev.nimbler.ide.ui.view.ProjectViewListener;
 
 final class SWTProjectView extends SWTView implements ProjectView {
 

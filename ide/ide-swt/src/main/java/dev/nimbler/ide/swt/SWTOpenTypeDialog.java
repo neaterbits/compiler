@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Text;
 
 import dev.nimbler.ide.common.model.codemap.TypeSuggestion;
 import dev.nimbler.ide.common.model.codemap.TypeSuggestions;
-import dev.nimbler.ide.core.ui.model.dialogs.OpenTypeDialogModel;
+import dev.nimbler.ide.ui.model.dialogs.OpenTypeDialogModel;
 
 final class SWTOpenTypeDialog extends Dialog {
 

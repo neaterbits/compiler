@@ -20,8 +20,8 @@ import dev.nimbler.ide.component.compiledfiledebug.ui.CompiledFileViewComponent;
 import dev.nimbler.ide.component.java.language.JavaLanguage;
 import dev.nimbler.ide.component.java.language.JavaLanguageComponent;
 import dev.nimbler.ide.component.java.ui.JavaUIComponentProvider;
-import dev.nimbler.ide.core.ui.controller.IDEController;
 import dev.nimbler.ide.swt.SWTUI;
+import dev.nimbler.ide.ui.controller.IDEController;
 
 public class IDEMain {
 

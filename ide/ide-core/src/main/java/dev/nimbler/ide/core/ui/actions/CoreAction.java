@@ -1,9 +1,0 @@
-package dev.nimbler.ide.core.ui.actions;
-
-import dev.nimbler.ide.common.ui.actions.Action;
-
-public abstract class CoreAction
-        extends Action<ActionApplicableParameters,
-                       ActionExecuteParameters> {
-
-}

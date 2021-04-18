@@ -63,7 +63,7 @@
 		<module>ui-swt</module>
 		<module>util</module>
 		<module>icons</module>
-		<module>ide-core</module>
+		<module>ide-ui</module>
 		<module>ide-component-search</module>
 		<module>ide-component-build</module>
 		<module>ide-component-compiledfile-debug</module>
