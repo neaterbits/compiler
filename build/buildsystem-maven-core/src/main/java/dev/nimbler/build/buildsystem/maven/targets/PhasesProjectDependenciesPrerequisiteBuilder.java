@@ -40,7 +40,7 @@ final class PhasesProjectDependenciesPrerequisiteBuilder extends PrerequisitesBu
         
         final List<MavenDependency> deps = ModuleBuilderUtil.transitiveProjectDependencies(
                 project,
-                p -> buildRoot.getDependencies(p),
+                p -> buildRoot.getDirectDependenciesOfProject(p),
                 dependency -> buildRoot.getProject(dependency));
 
         return deps.stream()

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import dev.nimbler.build.buildsystem.common.Scope;
 import dev.nimbler.build.common.tasks.ModuleBuilderUtil;
+import dev.nimbler.build.model.BuildRoot.DependencySelector;
 import dev.nimbler.build.types.dependencies.LibraryDependency;
 import dev.nimbler.build.types.dependencies.ProjectDependency;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
@@ -20,14 +21,19 @@ public class StrategiesBuilderUtil {
     public static List<LibraryDependency> transitiveProjectExternalDependencies(TaskBuilderContext context, ProjectModuleResourcePath module) {
 
         final List<LibraryDependency> downloadedDependencies = new ArrayList<>();
+        
+        final DependencySelector dependencySelector = (scope, optional) -> true;
 
         // In same pom file
-        downloadedDependencies.addAll(context.getBuildRoot().getLibraryDependenciesForProjectModule(module));
+        downloadedDependencies.addAll(context.getBuildRoot().getDirectLibraryDependenciesForProjectModule(module, dependencySelector));
 
         // Transitive from module dependencies
         final List<ProjectDependency> moduleDependencies = transitiveProjectDependencies(context, module);
         final List<LibraryDependency> moduleExternalDependencies = moduleDependencies.stream()
-                .flatMap(projectDependency -> context.getBuildRoot().getLibraryDependenciesForProjectModule(projectDependency.getModulePath()).stream())
+                .flatMap(projectDependency ->
+                	context.getBuildRoot().getDirectLibraryDependenciesForProjectModule(
+                					projectDependency.getModulePath(),
+                					dependencySelector).stream())
                 .collect(Collectors.toList());
         
         downloadedDependencies.addAll(moduleExternalDependencies);
@@ -55,7 +61,9 @@ public class StrategiesBuilderUtil {
 
         final List<LibraryDependency> moduleDependencies;
 
-        moduleDependencies = context.getBuildRoot().getDependenciesForExternalLibrary(dependency, Scope.COMPILE, false);
+        moduleDependencies = context.getBuildRoot().getTransitiveDependenciesForExternalLibrary(
+        					dependency,
+        					(scope, optional) -> scope == Scope.COMPILE && !optional);
          
         dependencies.addAll(moduleDependencies);
 

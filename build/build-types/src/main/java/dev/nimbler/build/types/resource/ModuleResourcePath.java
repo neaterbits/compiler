@@ -8,6 +8,10 @@ public abstract class ModuleResourcePath extends DirectoryResourcePath {
 
 	public abstract String getName();
 
+	protected ModuleResourcePath(ModuleResourcePath resourcePath, ModuleResource resource) {
+		super(resourcePath, resource);
+	}
+
 	public ModuleResourcePath(List<? extends Resource> path) {
 		super(path);
 	}

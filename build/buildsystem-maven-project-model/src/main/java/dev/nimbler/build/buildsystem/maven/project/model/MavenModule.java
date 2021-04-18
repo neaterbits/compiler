@@ -1,14 +1,12 @@
 package dev.nimbler.build.buildsystem.maven.project.model;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import dev.nimbler.build.buildsystem.maven.common.model.MavenDependency;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenEntity;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenModuleId;
 
@@ -103,43 +101,6 @@ public class MavenModule extends MavenEntity {
 	public final MavenCommon getCommon() {
         return common;
     }
-
-    public final List<MavenDependency> resolveDependencies() {
-		
-		final List<MavenDependency> resolvedDependencies;
-		
-		if (common.getDependencies() == null) {
-			resolvedDependencies = null;
-		}
-		else {
-			resolvedDependencies = new ArrayList<>(common.getDependencies().size());
-			
-			for (MavenDependency dependency : common.getDependencies()) {
-				final MavenDependency resolved = resolveDependency(dependency, getGroupId(), getVersion());
-				resolvedDependencies.add(resolved);
-			}
-		}
-
-		return resolvedDependencies;
-	}
-	
-	static MavenDependency resolveDependency(MavenDependency dependency, String groupId, String version) {
-
-		final MavenModuleId moduleId = dependency.getModuleId();
-
-		return new MavenDependency(
-				new MavenModuleId(
-						moduleId.getGroupId().replace("${project.groupId}", groupId),
-						moduleId.getArtifactId(),
-						moduleId.getVersion() != null ? moduleId.getVersion().replace("${project.version}", version) : null),
-				
-				dependency.getPackaging(),
-				dependency.getScope(),
-				dependency.getType(),
-				dependency.getOptional(),
-				dependency.getExclusions());
-		
-	}
 
     public final MavenIssueManagement getIssueManagement() {
         return issueManagement;

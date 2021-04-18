@@ -22,7 +22,6 @@ import dev.nimbler.build.buildsystem.common.BuildSystem;
 import dev.nimbler.build.buildsystem.common.BuildSystemRoot;
 import dev.nimbler.build.buildsystem.common.ScanException;
 import dev.nimbler.build.buildsystem.common.http.HTTPDownloader;
-import dev.nimbler.build.buildsystem.maven.MavenBuildRoot;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenDependency;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenModuleId;
 import dev.nimbler.build.buildsystem.maven.effective.DocumentModule;

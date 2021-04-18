@@ -7,7 +7,8 @@ import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSp
 import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.TargetBuilder;
 import com.neaterbits.util.concurrency.scheduling.Constraint;
 
-import dev.nimbler.build.common.tasks.ModuleBuilderUtil;
+import dev.nimbler.build.buildsystem.common.Scope;
+import dev.nimbler.build.model.BuildRoot.DependencySelector;
 import dev.nimbler.build.model.runtimeenvironment.RuntimeEnvironment;
 import dev.nimbler.build.types.resource.LibraryResourcePath;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
@@ -16,6 +17,9 @@ import dev.nimbler.language.common.types.TypeName;
 // Add type names from eg. jar file index
 public final class TargetBuilderAddLibraryTypesToCodeMap extends TargetBuilderSpec<InitialScanContext> {
 
+	private static final DependencySelector DEPENDENCY_SELECTOR
+				= (scope, optional) -> scope != Scope.TEST;
+	
 	@Override
 	protected void buildSpec(TargetBuilder<InitialScanContext> targetBuilder) {
 
@@ -37,9 +41,9 @@ public final class TargetBuilderAddLibraryTypesToCodeMap extends TargetBuilderSp
 					.fromIterating(
 					        null,
 					        (context, module) ->
-					            ModuleBuilderUtil.transitiveProjectExternalDependencies(
-					                                context.getBuildRoot(),
-					                                module).stream()
+					        	context.getBuildRoot().getTransitiveLibraryDependenciesForProjectModule(
+					                                module,
+					                                DEPENDENCY_SELECTOR).stream()
 					            .map(dep -> new LibraryDep(module, dep))
 					            .collect(Collectors.toList()))
 					

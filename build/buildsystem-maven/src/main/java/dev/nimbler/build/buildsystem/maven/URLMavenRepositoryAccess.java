@@ -12,7 +12,6 @@ import java.util.Objects;
 import com.neaterbits.util.IOUtils;
 
 import dev.nimbler.build.buildsystem.common.http.HTTPDownloader;
-import dev.nimbler.build.buildsystem.maven.MavenBuildRoot;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenModuleId;
 import dev.nimbler.build.buildsystem.maven.project.model.BaseMavenRepository;
 import dev.nimbler.build.buildsystem.maven.repositoryaccess.MavenRepositoryAccess;

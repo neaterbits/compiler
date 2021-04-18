@@ -8,16 +8,14 @@ import dev.nimbler.build.types.resource.SourceFolderResourcePath;
 final class BuildProject<PROJECT> {
 
 	private final PROJECT buildSystemProject;
-	private final List<BaseDependency> dependencies;
 	
 	private List<SourceFolderResourcePath> sourceFolders;
 
-	BuildProject(PROJECT buildSystemProject, List<BaseDependency> dependencies) {
+	BuildProject(PROJECT buildSystemProject) {
 
 		Objects.requireNonNull(buildSystemProject);
 		
 		this.buildSystemProject = buildSystemProject;
-		this.dependencies = dependencies;
 	}
 
 	PROJECT getBuildSystemProject() {
@@ -30,9 +28,5 @@ final class BuildProject<PROJECT> {
 
 	void setSourceFolders(List<SourceFolderResourcePath> sourceFolders) {
 		this.sourceFolders = sourceFolders;
-	}
-
-	List<BaseDependency> getDependencies() {
-		return dependencies;
 	}
 }

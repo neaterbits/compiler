@@ -1,17 +1,12 @@
 package dev.nimbler.build.model;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import dev.nimbler.build.buildsystem.common.BuildSystemRoot;
 import dev.nimbler.build.types.ModuleId;
-import dev.nimbler.build.types.dependencies.DependencyType;
-import dev.nimbler.build.types.resource.LibraryResource;
-import dev.nimbler.build.types.resource.LibraryResourcePath;
 import dev.nimbler.build.types.resource.ModuleResource;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
 import dev.nimbler.build.types.resource.compile.CompiledModuleFileResource;
@@ -60,9 +55,9 @@ class BuildRootImplInit {
 
 			final PROJECT pom = entry.getValue();
 
-			final List<BaseDependency> dependencies = findDependencies(pom, projects, moduleIdToResourcePath, buildSystemRoot);
+			// final List<BaseDependency> dependencies = findDependencies(pom, projects, moduleIdToResourcePath, buildSystemRoot);
 
-			final BuildProject<PROJECT> buildProject = new BuildProject<>(pom, dependencies);
+			final BuildProject<PROJECT> buildProject = new BuildProject<>(pom /* , dependencies */);
 
 			final ProjectModuleResourcePath moduleResourcePath = moduleIdToResourcePath.get(mavenModuleId);
 
@@ -74,80 +69,6 @@ class BuildRootImplInit {
 		}
 
 		return buildProjects;
-	}
-
-	private static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY, REPOSITORY>
-	List<BaseDependency> findDependencies(
-			PROJECT project,
-			Map<MODULE_ID, PROJECT> projects,
-			Map<MODULE_ID, ProjectModuleResourcePath> moduleIdToResourcePath,
-			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY, REPOSITORY> buildSystemRoot) {
-
-		final List<BaseDependency> dependencies;
-
-		if (buildSystemRoot.getDependencies(project) != null) {
-
-			dependencies = new ArrayList<>(buildSystemRoot.getDependencies(project).size());
-
-			for (DEPENDENCY buildSystemDependency : buildSystemRoot.resolveDependencies(project)) {
-
-				final MODULE_ID dependencyModuleId = buildSystemRoot.getDependencyModuleId(buildSystemDependency);
-
-				if (dependencyModuleId == null) {
-					throw new IllegalStateException();
-				}
-
-				final ProjectModuleResourcePath dependencyModule = moduleIdToResourcePath.get(dependencyModuleId);
-				final PROJECT dependencyProject = projects.get(dependencyModuleId);
-
-				final BaseDependency dependency;
-
-				if (dependencyModule != null) {
-
-					dependency = new BuildDependency<>(
-							dependencyModule,
-							DependencyType.PROJECT,
-							getCompiledModuleFile(dependencyModule, dependencyProject, buildSystemRoot),
-							targetDirectoryJarFile(dependencyModule, buildSystemDependency, buildSystemRoot),
-							buildSystemDependency);
-				}
-				else {
-					// Library dependency
-					dependency = makeExternalDependency(buildSystemDependency, buildSystemRoot);
-				}
-
-				dependencies.add(dependency);
-			}
-		}
-		else {
-			dependencies = null;
-		}
-
-		return dependencies;
-	}
-
-	static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY, REPOSITORY> BaseDependency makeExternalDependency(
-			DEPENDENCY buildSystemDependency,
-			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY, REPOSITORY> buildSystemRoot) {
-
-		final File repositoryJarFile = buildSystemRoot.repositoryJarFile(buildSystemDependency);
-
-		final LibraryResourcePath resourcePath = new LibraryResourcePath(new LibraryResource(repositoryJarFile));
-
-		return new BuildDependency<>(
-				resourcePath,
-				DependencyType.EXTERNAL,
-				new CompiledModuleFileResourcePath(resourcePath, new CompiledModuleFileResource(repositoryJarFile)),
-				repositoryJarFile,
-				buildSystemDependency);
-	}
-
-	private static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY, REPOSITORY> File targetDirectoryJarFile(
-			ProjectModuleResourcePath dependencyPath,
-			DEPENDENCY mavenDependency,
-			BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY, REPOSITORY> buildSystemRoot) {
-
-		return new File(getTargetDirectory(dependencyPath, buildSystemRoot).getFile(), buildSystemRoot.compiledFileName(mavenDependency));
 	}
 
 	static <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY, REPOSITORY> TargetDirectoryResourcePath getTargetDirectory(

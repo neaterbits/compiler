@@ -2,6 +2,7 @@ package dev.nimbler.build.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -18,6 +19,12 @@ import dev.nimbler.build.types.resource.compile.CompiledModuleFileResourcePath;
 import dev.nimbler.build.types.resource.compile.TargetDirectoryResourcePath;
 
 public interface BuildRoot {
+	
+	@FunctionalInterface
+	public interface DependencySelector {
+		
+		boolean include(Scope scope, boolean optional);
+	}
 
 	File getPath();
 	
@@ -27,11 +34,32 @@ public interface BuildRoot {
 	
 	void setSourceFolders(ProjectModuleResourcePath module, List<SourceFolderResourcePath> sourceFolders);
 
-	List<ProjectDependency> getProjectDependenciesForProjectModule(ProjectModuleResourcePath module);
+	List<ProjectDependency> getDirectProjectDependenciesForProjectModule(ProjectModuleResourcePath module);
 
-	List<LibraryDependency> getLibraryDependenciesForProjectModule(ProjectModuleResourcePath module);
+	List<ProjectDependency> getTransitiveProjectDependenciesForProjectModule(
+			ProjectModuleResourcePath module,
+			DependencySelector selector);
 
-	List<LibraryDependency> getDependenciesForExternalLibrary(LibraryDependency dependency, Scope scope, boolean includeOptionalDependencies);
+	List<LibraryDependency> getDirectLibraryDependenciesForProjectModule(
+			ProjectModuleResourcePath module,
+			DependencySelector selector);
+
+	default List<LibraryDependency> getTransitiveLibraryDependenciesForProjectModule(
+			ProjectModuleResourcePath module,
+			DependencySelector selector) {
+		
+		return getTransitiveLibraryDependenciesForProjectModules(
+				Arrays.asList(module),
+				selector);
+	}
+
+	List<LibraryDependency> getTransitiveLibraryDependenciesForProjectModules(
+			Collection<ProjectModuleResourcePath> modules,
+			DependencySelector selector);
+
+	List<LibraryDependency> getTransitiveDependenciesForExternalLibrary(
+			LibraryDependency dependency,
+			DependencySelector selector);
 
 	TargetDirectoryResourcePath getTargetDirectory(ProjectModuleResourcePath module);
 	
@@ -46,8 +74,6 @@ public interface BuildRoot {
 	void downloadExternalDependencyAndAddToBuildModel(ProjectModuleResourcePath module, LibraryDependency dependency)
 	                            throws IOException, ScanException;
 
-	Scope getDependencyScope(BaseDependency dependency);
-	
 	default <T> T forEachSourceFolder(Function<SourceFolderResourcePath, T> function) {
 		
 		for (ProjectModuleResourcePath module : getModules()) {

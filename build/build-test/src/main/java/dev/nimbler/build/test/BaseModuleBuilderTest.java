@@ -49,7 +49,7 @@ public abstract class BaseModuleBuilderTest extends BaseBuildTest {
 
 		assertThat(ideCommon.getModuleId().getId().contains("build-common")).isTrue();
 
-		final List<ProjectDependency> directDependencies = buildRoot.getProjectDependenciesForProjectModule(ideCommon);
+		final List<ProjectDependency> directDependencies = buildRoot.getDirectProjectDependenciesForProjectModule(ideCommon);
 		
 		assertThat(directDependencies).isNotNull();
 		assertThat(directDependencies.isEmpty()).isFalse();

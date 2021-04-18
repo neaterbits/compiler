@@ -12,6 +12,10 @@ public abstract class DirectoryResourcePath extends FileSystemResourcePath {
 		super(resourcePath, resource);
 	}
 
+	protected DirectoryResourcePath(DirectoryResourcePath resourcePath, FileSystemResource resource) {
+		super(resourcePath, resource);
+	}
+
 	public DirectoryResourcePath(List<? extends Resource> path) {
 		super(path);
 	}

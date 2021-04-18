@@ -2,7 +2,11 @@ package dev.nimbler.build.types.resource;
 
 import java.util.List;
 
-public class ProjectModuleResourcePath extends ModuleResourcePath {
+public final class ProjectModuleResourcePath extends ModuleResourcePath {
+
+	public ProjectModuleResourcePath(ProjectModuleResourcePath resourcePath, ModuleResource resource) {
+		super(resourcePath, resource);
+	}
 
 	public ProjectModuleResourcePath(List<ModuleResource> path) {
 		super(path);

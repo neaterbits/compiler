@@ -17,6 +17,10 @@ public final class EffectiveProject {
         
         this.project = project;
     }
+    
+    MavenProject getMavenProject() {
+    	return project;
+    }
 
     public MavenModuleId getModuleId() {
         return project.getModuleId();

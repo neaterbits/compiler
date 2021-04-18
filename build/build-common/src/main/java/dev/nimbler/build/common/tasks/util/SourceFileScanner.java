@@ -1,7 +1,6 @@
 package dev.nimbler.build.common.tasks.util;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;

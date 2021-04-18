@@ -56,9 +56,11 @@ public interface BuildSystemRoot<
 
 	boolean isOptionalDependency(DEPENDENCY dependency);
 
-	Collection<DEPENDENCY> getDependencies(PROJECT project);
+	Collection<DEPENDENCY> getDirectDependenciesOfProject(PROJECT project);
 
-	Collection<DEPENDENCY> resolveDependencies(PROJECT project);
+	Collection<DEPENDENCY> getDirectDependenciesOfExternal(PROJECT external);
+
+	PROJECT getExternalModule(DEPENDENCY dependency);
 
 	MODULE_ID getDependencyModuleId(DEPENDENCY dependency);
 
@@ -69,8 +71,6 @@ public interface BuildSystemRoot<
 	String compiledFileName(DEPENDENCY dependency);
 
 	void addListener(BuildSystemRootListener listener);
-
-    Collection<DEPENDENCY> getTransitiveExternalDependencies(DEPENDENCY dependency) throws ScanException;
 
 	File getTargetDirectory(File modulePath);
 

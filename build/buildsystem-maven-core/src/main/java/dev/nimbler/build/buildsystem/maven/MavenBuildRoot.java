@@ -12,7 +12,6 @@ import org.w3c.dom.Document;
 
 import dev.nimbler.build.buildsystem.common.BuildSystemRoot;
 import dev.nimbler.build.buildsystem.common.BuildSystemRootListener;
-import dev.nimbler.build.buildsystem.common.ScanException;
 import dev.nimbler.build.buildsystem.common.Scope;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenDependency;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenModuleId;
@@ -36,7 +35,6 @@ import dev.nimbler.build.types.resource.SourceFolderResourcePath;
 public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, MavenProject, MavenDependency, BaseMavenRepository> {
 
 	private final List<MavenProject> projects;
-	private final XMLReaderFactory<Document> xmlReaderFactory;
 	private final MavenProjectsAccess projectsAccess;
 	private final MavenPluginsAccess pluginsAccess;
 	private final PluginsEnvironmentProvider pluginsEnvironmentProvider;
@@ -67,7 +65,6 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 		Objects.requireNonNull(effectivePomReader);
 		
 		this.projects = projects;
-		this.xmlReaderFactory = xmlReaderFactory;
 		this.projectsAccess = projectsAccess;
 		this.pluginsAccess = pluginsAccess;
 		this.pluginsEnvironmentProvider = pluginsEnvironmentProvider;
@@ -190,16 +187,38 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 	}
 
 	@Override
-	public Collection<MavenDependency> getDependencies(MavenProject project) {
+	public Collection<MavenDependency> getDirectDependenciesOfProject(MavenProject project) {
 	    
+		if (!isProjectModule(project.getModuleId())) {
+			throw new IllegalArgumentException();
+		}
+		
 	    final Collection<MavenDependency> dependencies = project.getCommon().getDependencies();
 	    
 	    return dependencies != null ? dependencies : Collections.emptyList();
 	}
 
 	@Override
-	public Collection<MavenDependency> resolveDependencies(MavenProject project) {
-		return project.resolveDependencies();
+	public Collection<MavenDependency> getDirectDependenciesOfExternal(MavenProject external) {
+
+		Objects.requireNonNull(external);
+		
+		if (!isProjectModule(external.getModuleId())) {
+			throw new IllegalArgumentException();
+		}
+		
+		final EffectiveProject effectiveProject = externalDependencies.getEffectiveExternalProject(external.getModuleId());
+
+		return effectiveProject.getDependencies();
+	}
+
+	@Override
+	public MavenProject getExternalModule(MavenDependency dependency) {
+	
+		final EffectiveProject effectiveProject
+			= externalDependencies.getEffectiveExternalProject(dependency.getModuleId());
+
+		return effectiveProject.getMavenProject();
 	}
 
 	@Override
@@ -261,23 +280,6 @@ public final class MavenBuildRoot implements BuildSystemRoot<MavenModuleId, Mave
 		return moduleId.getArtifactId() + '-' + moduleId.getVersion()
 		        + (classifier != null ? "-" + classifier : "")
 				+ (packaging != null ? ('.' + packaging) : ".jar");
-	}
-
-	@Override
-	public Collection<MavenDependency> getTransitiveExternalDependencies(MavenDependency dependency) throws ScanException {
-
-		Objects.requireNonNull(dependency);
-
-		final File pomFile = repositoryAccess.repositoryExternalPomFile(dependency.getModuleId());
-
-		final MavenProject mavenProject = getProjectsAccess().readModule(pomFile, xmlReaderFactory).getProject();
-
-		try {
-			return mavenProject.resolveDependencies();
-		}
-		catch (Exception ex) {
-			throw new ScanException("Failed to resolve dependencies for " + pomFile, ex);
-		}
 	}
 
 	@Override
