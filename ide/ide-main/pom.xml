@@ -13,13 +13,13 @@
   		<version>${project.version}</version>
   	</dependency>
   	<dependency>
-  		<groupId>${buildGroupId}</groupId>
-  		<artifactId>buildsystem-common</artifactId>
-  		<version>${buildVersion}</version>
+  		<groupId>${project.groupId}</groupId>
+  		<artifactId>ide-code</artifactId>
+  		<version>${project.version}</version>
   	</dependency>
   	<dependency>
   		<groupId>${buildGroupId}</groupId>
-  		<artifactId>buildsystem-maven</artifactId>
+  		<artifactId>buildsystem-common</artifactId>
   		<version>${buildVersion}</version>
   	</dependency>
   	<dependency>
@@ -51,6 +51,11 @@
   		<groupId>${project.groupId}</groupId>
   		<artifactId>ide-swt</artifactId>
   		<version>${project.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>${buildGroupId}</groupId>
+  		<artifactId>buildsystem-maven</artifactId>
+  		<version>${buildVersion}</version>
   	</dependency>
   </dependencies>
 </project>

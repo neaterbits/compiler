@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
+import dev.nimbler.ide.common.codeaccess.types.LanguageName;
 import dev.nimbler.ide.common.ui.controller.EditorsListener;
 import dev.nimbler.ide.component.common.instantiation.InstantiationComponent;
 import dev.nimbler.ide.component.common.instantiation.InstantiationComponentUI;
@@ -18,7 +19,6 @@ import dev.nimbler.ide.component.common.instantiation.Newable;
 import dev.nimbler.ide.component.common.instantiation.NewableCategory;
 import dev.nimbler.ide.component.common.instantiation.NewableCategoryName;
 import dev.nimbler.ide.component.common.language.LanguageComponent;
-import dev.nimbler.ide.component.common.language.LanguageName;
 import dev.nimbler.ide.component.common.language.Languages;
 import dev.nimbler.ide.component.common.ui.ComponentUI;
 import dev.nimbler.ide.component.common.ui.DetailsComponentUI;

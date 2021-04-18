@@ -2,9 +2,8 @@ package dev.nimbler.ide.core.ui.controller;
 
 import java.util.Objects;
 
-import dev.nimbler.build.model.BuildRoot;
+import dev.nimbler.ide.common.codeaccess.CodeAccess;
 import dev.nimbler.ide.common.model.clipboard.Clipboard;
-import dev.nimbler.ide.common.model.codemap.CodeMapModel;
 import dev.nimbler.ide.common.ui.controller.EditorsActions;
 import dev.nimbler.ide.component.common.ComponentIDEAccess;
 import dev.nimbler.ide.component.common.IDEComponentsConstAccess;
@@ -18,9 +17,8 @@ final class ActionExecuteState {
 	private final Clipboard clipboard;
 	private final UndoRedoBuffer undoRedoBuffer;
 	private final ComponentIDEAccess componentIDEAccess;
-	private final BuildRoot buildRoot;
+	private final CodeAccess codeAccess;
 	private final EditorsActions editorsActions;
-	private final CodeMapModel codeMap;
 	private FindReplaceDialogModel findReplaceModel;
 
 	ActionExecuteState(
@@ -29,27 +27,24 @@ final class ActionExecuteState {
 			Clipboard clipboard,
 			UndoRedoBuffer undoRedoBuffer,
 			ComponentIDEAccess componentIDEAccess,
-			BuildRoot buildRoot,
-			EditorsActions editorsActions,
-			CodeMapModel codeMap) {
+			CodeAccess codeAccess,
+			EditorsActions editorsActions) {
 	
 		Objects.requireNonNull(components);
 		Objects.requireNonNull(uiDialogs);
 		Objects.requireNonNull(clipboard);
 		Objects.requireNonNull(undoRedoBuffer);
 		Objects.requireNonNull(componentIDEAccess);
-		Objects.requireNonNull(buildRoot);
+		Objects.requireNonNull(codeAccess);
 		Objects.requireNonNull(editorsActions);
-		Objects.requireNonNull(codeMap);
 		
 		this.components = components;
 		this.uiDialogs = uiDialogs;
 		this.clipboard = clipboard;
 		this.undoRedoBuffer = undoRedoBuffer;
 		this.componentIDEAccess = componentIDEAccess;
-		this.buildRoot = buildRoot;
+		this.codeAccess = codeAccess;
 		this.editorsActions = editorsActions;
-		this.codeMap = codeMap;
 	}
 
 	IDEComponentsConstAccess getComponents() {
@@ -72,16 +67,12 @@ final class ActionExecuteState {
 		return componentIDEAccess;
 	}
 
-	BuildRoot getBuildRoot() {
-		return buildRoot;
+	CodeAccess getCodeAccess() {
+		return codeAccess;
 	}
 
 	EditorsActions getEditorsActions() {
 		return editorsActions;
-	}
-
-	CodeMapModel getCodeMap() {
-		return codeMap;
 	}
 
 	FindReplaceDialogModel getFindReplaceModel() {

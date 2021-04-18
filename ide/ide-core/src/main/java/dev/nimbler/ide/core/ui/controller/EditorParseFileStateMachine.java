@@ -6,9 +6,9 @@ import java.util.function.Consumer;
 import com.neaterbits.util.concurrency.statemachine.BaseState;
 import com.neaterbits.util.concurrency.statemachine.StateMachine;
 
+import dev.nimbler.ide.common.codeaccess.SourceFileInfo;
+import dev.nimbler.ide.common.codeaccess.SourceParseAccess;
 import dev.nimbler.ide.common.model.source.SourceFileModel;
-import dev.nimbler.ide.core.source.SourceFileInfo;
-import dev.nimbler.ide.core.source.SourceFilesModel;
 import dev.nimbler.ide.util.ui.text.Text;
 
 final class EditorParseFileStateMachine extends StateMachine<EditorParseFileStateMachine.BaseParseState> {
@@ -18,8 +18,8 @@ final class EditorParseFileStateMachine extends StateMachine<EditorParseFileStat
 		return null;
 	}
 
-	EditorParseFileStateMachine(SourceFileInfo sourceFile, SourceFilesModel sourceFilesModel) {
-		super(new IdleState(sourceFile, sourceFilesModel));
+	EditorParseFileStateMachine(SourceFileInfo sourceFile, SourceParseAccess sourceParseAccess) {
+		super(new IdleState(sourceFile, sourceParseAccess));
 	}
 	
 	void tryParse(Text text, Consumer<SourceFileModel> listener) {
@@ -29,17 +29,17 @@ final class EditorParseFileStateMachine extends StateMachine<EditorParseFileStat
 	static abstract class BaseParseState extends BaseState<BaseParseState> {
 
 		private final SourceFileInfo sourceFile;
-		private final SourceFilesModel sourceFilesModel;
+		private final SourceParseAccess sourceParseAccess;
 
 		abstract BaseParseState tryParse(Text text, Consumer<SourceFileModel> listener);
 
-		BaseParseState(SourceFileInfo sourceFile, SourceFilesModel sourceFilesModel) {
+		BaseParseState(SourceFileInfo sourceFile, SourceParseAccess sourceParseAccess) {
 			this.sourceFile = sourceFile;
-			this.sourceFilesModel = sourceFilesModel;
+			this.sourceParseAccess = sourceParseAccess;
 		}
 
 		public BaseParseState(BaseParseState state) {
-			this(state.sourceFile, state.sourceFilesModel);
+			this(state.sourceFile, state.sourceParseAccess);
 		}
 
 		BaseParseState onParseDone(SourceFileModel sourceFileModel) {
@@ -48,7 +48,7 @@ final class EditorParseFileStateMachine extends StateMachine<EditorParseFileStat
 		
 		final void scheduleParse(Text text) {
 			
-			sourceFilesModel.parseOnChange(sourceFile, text, updated -> {
+			sourceParseAccess.parseOnChange(sourceFile, text, updated -> {
 				schedule(state -> state.onParseDone(updated));
 			});
 		}
@@ -60,8 +60,8 @@ final class EditorParseFileStateMachine extends StateMachine<EditorParseFileStat
 			super(state);
 		}
 
-		public IdleState(SourceFileInfo sourceFile, SourceFilesModel sourceFilesModel) {
-			super(sourceFile, sourceFilesModel);
+		public IdleState(SourceFileInfo sourceFile, SourceParseAccess sourceParseAccess) {
+			super(sourceFile, sourceParseAccess);
 			// TODO Auto-generated constructor stub
 		}
 

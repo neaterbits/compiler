@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>dev.nimbler.ide</groupId>
+		<artifactId>root</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>ide-code</artifactId>
+	
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>ide-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>ide-component-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	
+	  	<dependency>
+	  		<groupId>${buildGroupId}</groupId>
+	  		<artifactId>buildsystem-common</artifactId>
+	  		<version>${buildVersion}</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>${buildGroupId}</groupId>
+	  		<artifactId>build-common</artifactId>
+	  		<version>${buildVersion}</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>${buildGroupId}</groupId>
+	  		<artifactId>build-strategies</artifactId>
+	  		<version>${buildVersion}</version>
+	  	</dependency>
+	
+	  	<dependency>
+	  		<groupId>${languageGroupId}</groupId>
+	  		<artifactId>language-bytecode-common</artifactId>
+	  		<version>${languageVersion}</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>${languageGroupId}</groupId>
+	  		<artifactId>language-codemap</artifactId>
+	  		<version>${languageVersion}</version>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>${exeGroupId}</groupId>
+	  		<artifactId>exe-vm-bytecode-loader</artifactId>
+	  		<version>${exeVersion}</version>
+	  	</dependency>
+	</dependencies>
+</project>

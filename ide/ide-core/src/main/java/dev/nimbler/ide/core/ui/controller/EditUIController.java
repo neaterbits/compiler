@@ -7,15 +7,14 @@ import com.neaterbits.util.PathUtil;
 
 import dev.nimbler.build.types.resource.ResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
-import dev.nimbler.ide.common.model.codemap.CodeMapModel;
+import dev.nimbler.ide.common.codeaccess.SourceFileInfo;
+import dev.nimbler.ide.common.codeaccess.SourceParseAccess;
+import dev.nimbler.ide.common.codeaccess.types.LanguageName;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
 import dev.nimbler.ide.common.ui.controller.EditorActions;
 import dev.nimbler.ide.common.ui.controller.EditorsActions;
 import dev.nimbler.ide.common.ui.model.ProjectsModel;
 import dev.nimbler.ide.component.common.IDERegisteredComponents;
-import dev.nimbler.ide.component.common.language.LanguageName;
-import dev.nimbler.ide.core.source.SourceFileInfo;
-import dev.nimbler.ide.core.source.SourceFilesModel;
 import dev.nimbler.ide.core.ui.view.UIView;
 import dev.nimbler.ide.core.ui.view.UIViewAndSubViews;
 import dev.nimbler.ide.model.text.StringTextModel;
@@ -29,29 +28,30 @@ public final class EditUIController implements EditorsActions {
 	
 	private final EditorsController editorsController;
 	private final ProjectsController projectsController;
-	private final CodeMapModel codeMapModel;
+	// private final CodeMapModel codeMapModel;
 	
 	EditUIController(
 			UIViewAndSubViews uiView,
 			TextEditorConfig config,
 			ProjectsModel projectsModel,
 			IDERegisteredComponents ideComponents,
-			SourceFilesModel sourceFilesModel,
-			CodeMapModel codeMapModel) {
+			SourceParseAccess sourceParseAccess /*,
+			CodeMapModel codeMapModel */) {
 		
 		Objects.requireNonNull(uiView);
 		Objects.requireNonNull(ideComponents);
-		Objects.requireNonNull(codeMapModel);
+		// Objects.requireNonNull(codeMapModel);
 		
 		this.uiView = uiView;
 		this.ideComponents = ideComponents;
 		
-		this.codeMapModel = codeMapModel;
+		// this.codeMapModel = codeMapModel;
 		
 		this.editorsController 	= new EditorsController(
 				uiView.getEditorsView(),
 				config,
-				sourceFilesModel,
+				sourceParseAccess,
+				ideComponents.getLanguages(),
 				ideComponents.getEditorsListeners());
 		
 		this.projectsController = new ProjectsController(projectsModel, uiView.getProjectView(), this);
@@ -98,8 +98,9 @@ public final class EditUIController implements EditorsActions {
 			
 			final SourceFileInfo sourceFile = new SourceFileInfo(
 					sourceFilePath,
+					languageName /*,
 					ideComponents.getLanguages().getLanguageComponent(languageName),
-					codeMapModel);
+					codeMapModel */);
 			
 			
 			editorsController.displayFile(sourceFile, textModel);

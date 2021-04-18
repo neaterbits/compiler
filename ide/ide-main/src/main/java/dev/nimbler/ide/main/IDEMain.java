@@ -5,18 +5,14 @@ import java.io.File;
 import org.eclipse.swt.widgets.Display;
 
 import com.neaterbits.ide.util.swt.SWTAsyncExecutor;
-import com.neaterbits.structuredlog.binary.logging.LogContext;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.PrintlnTargetExecutorLogger;
 import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
 
 import dev.nimbler.build.buildsystem.common.BuildSystem;
 import dev.nimbler.build.buildsystem.common.ScanException;
-import dev.nimbler.build.common.language.CompileableLanguage;
 import dev.nimbler.build.language.java.jdk.JavaRuntimeEnvironment;
 import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.model.BuildRootImpl;
-import dev.nimbler.ide.common.scheduling.IDEScheduler;
-import dev.nimbler.ide.common.scheduling.IDESchedulerImpl;
+import dev.nimbler.ide.code.CodeAccessImpl;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
 import dev.nimbler.ide.component.build.ui.BuildIssuesComponent;
 import dev.nimbler.ide.component.common.IDERegisteredComponents;
@@ -24,14 +20,8 @@ import dev.nimbler.ide.component.compiledfiledebug.ui.CompiledFileViewComponent;
 import dev.nimbler.ide.component.java.language.JavaLanguage;
 import dev.nimbler.ide.component.java.language.JavaLanguageComponent;
 import dev.nimbler.ide.component.java.ui.JavaUIComponentProvider;
-import dev.nimbler.ide.core.model.codemap.CodeMapGatherer;
-import dev.nimbler.ide.core.source.SourceFilesModel;
-import dev.nimbler.ide.core.tasks.InitialScanContext;
-import dev.nimbler.ide.core.tasks.TargetBuilderIDEStartup;
 import dev.nimbler.ide.core.ui.controller.IDEController;
 import dev.nimbler.ide.swt.SWTUI;
-import dev.nimbler.language.codemap.compiler.CompilerCodeMap;
-import dev.nimbler.language.codemap.compiler.IntCompilerCodeMap;
 
 public class IDEMain {
 
@@ -73,40 +63,24 @@ public class IDEMain {
 				
 				final TextEditorConfig config = new TextEditorConfig(4, true);
 				
-				final CompileableLanguage language = new JavaLanguage();
-
-				final CompilerCodeMap compilerCodeMap = new IntCompilerCodeMap();
-				
-				final CodeMapGatherer codeMapGatherer = new CodeMapGatherer(
+				final CodeAccessImpl codeAccess = new CodeAccessImpl(
 						asyncExecutor,
-						language,
-						buildRoot,
-						compilerCodeMap);
-
-				final IDEScheduler ideScheduler = new IDESchedulerImpl(asyncExecutor);
-				
-				final SourceFilesModel sourceFilesModel = new SourceFilesModel(
-						ideScheduler,
 						ideComponents.getLanguages(),
-						codeMapGatherer,
-						compilerCodeMap);
+						buildRoot,
+						new JavaLanguage());
 				
 				final IDEController ideController = new IDEController(
-				        buildRoot,
+				        codeAccess,
 				        ui,
 				        config,
 				        ideComponents,
-				        new IDEMainTranslator(),
-				        sourceFilesModel,
-				        codeMapGatherer.getModel());
+				        new IDEMainTranslator());
 				
 				// Run events on event queue before async jobs send event on event queue
 				ui.runInitialEvents();
 				
-				final LogContext logContext = new LogContext();
-				
 				try {
-				    startIDEScanJobs(logContext, asyncExecutor, buildRoot, language, codeMapGatherer);
+				    codeAccess.startIDEScanJobs();
 				}
 				finally {
 				    ui.main(ideController.getMainView());
@@ -130,25 +104,6 @@ public class IDEMain {
         components.registerComponent(null, new CompiledFileViewComponent());
 		
 		return components;
-	}
-
-	private static void startIDEScanJobs(
-			LogContext logContext,
-			AsyncExecutor asyncExecutor,
-			BuildRoot buildRoot, 
-			CompileableLanguage language,
-			CodeMapGatherer codeMapGatherer) {
-	
-		final TargetBuilderIDEStartup ideStartup = new TargetBuilderIDEStartup();
-		final InitialScanContext context = new InitialScanContext(buildRoot, language, codeMapGatherer);
-		
-		ideStartup.execute(
-		        logContext,
-		        context,
-                "sourcefolders",
-		        new PrintlnTargetExecutorLogger(),
-		        asyncExecutor,
-		        null);
 	}
 	
 	private static void printStackTrace(StackTraceElement [] stackTrace, int num) {

@@ -1,4 +1,4 @@
-package dev.nimbler.ide.core.source;
+package dev.nimbler.ide.code.source;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,10 +12,11 @@ import com.neaterbits.util.concurrency.scheduling.Constraint;
 import dev.nimbler.build.types.resource.ModuleResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.compiler.model.common.ResolvedTypes;
+import dev.nimbler.ide.common.codeaccess.SourceFileInfo;
+import dev.nimbler.ide.common.codeaccess.types.LanguageName;
 import dev.nimbler.ide.common.model.source.SourceFileModel;
 import dev.nimbler.ide.common.scheduling.IDEScheduler;
 import dev.nimbler.ide.component.common.language.LanguageComponent;
-import dev.nimbler.ide.component.common.language.LanguageName;
 import dev.nimbler.ide.component.common.language.Languages;
 import dev.nimbler.ide.util.ui.text.Text;
 import dev.nimbler.language.codemap.compiler.CompilerCodeMap;
@@ -55,13 +56,13 @@ public final class SourceFilesModel {
 		
 		for (Map.Entry<SourceFileResourcePath, SourceFileModel> entry : sourceFileModels.entrySet()) {
 			
-			final SourceFileInfo sourceFileInfo = new SourceFileInfo(entry.getKey(), languageComponent, resolvedTypes);
+			final SourceFileInfo sourceFileInfo = new SourceFileInfo(entry.getKey(), language /* , languageComponent, resolvedTypes */);
 			
 			parsedSourceFiles.put(sourceFileInfo, entry.getValue());
 		}
 	}
 	
-	public void parseOnChange(SourceFileInfo sourceFile, Text text, Consumer<SourceFileModel> onUpdatedModel) {
+	public void parseOnChange(SourceFileInfo sourceFile, Text text, ResolvedTypes resolvedTypes, Consumer<SourceFileModel> onUpdatedModel) {
 
 		// Called from IDE so schedule asynchronously
 		scheduler.scheduleTask(
@@ -70,10 +71,13 @@ public final class SourceFilesModel {
 				Constraint.CPU,
 				sourceFile,
 				file -> {
-					final SourceFileModel sourceFileModel  = file.getLanguage().getParseableLanguage().parseAndResolveChangedFile(
+					
+					final LanguageComponent languageComponent = languages.getLanguageComponent(file.getLanguage());
+					
+					final SourceFileModel sourceFileModel  = languageComponent.getParseableLanguage().parseAndResolveChangedFile(
 							sourceFile.getPath(),
 							text.asString(),
-							sourceFile.getResolvedTypes(),
+							resolvedTypes,
 							codeMap);
 
 					return sourceFileModel;

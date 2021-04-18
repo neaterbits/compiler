@@ -13,8 +13,6 @@ import com.neaterbits.util.Files;
 
 import dev.nimbler.build.common.tasks.util.SourceFileScanner;
 import dev.nimbler.build.common.tasks.util.SourceFileScanner.Namespace;
-import dev.nimbler.build.model.BuildRoot;
-import dev.nimbler.build.model.BuildRootListener;
 import dev.nimbler.build.types.resource.ModuleResource;
 import dev.nimbler.build.types.resource.NamespaceResourcePath;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
@@ -22,22 +20,24 @@ import dev.nimbler.build.types.resource.ResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResource;
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;
+import dev.nimbler.ide.common.codeaccess.ProjectsAccess;
+import dev.nimbler.ide.common.codeaccess.ProjectsAccess.ProjectsListener;
 
 public class ProjectsModel {
 
-	private final BuildRoot buildRoot;
+	private final ProjectsAccess projectsAccess;
 	
 	private final List<ProjectModelListener> modelListeners;
 
-	public ProjectsModel(BuildRoot buildRoot) {
+	public ProjectsModel(ProjectsAccess projectsAccess) {
 
-		Objects.requireNonNull(buildRoot);
+		Objects.requireNonNull(projectsAccess);
 
-		this.buildRoot = buildRoot;
+		this.projectsAccess = projectsAccess;
 		
 		this.modelListeners = new ArrayList<>();
 		
-		buildRoot.addListener(new BuildRootListener() {
+		projectsAccess.addProjectsListener(new ProjectsListener() {
 			
 			@Override
 			public void onSourceFoldersChanged(ProjectModuleResourcePath module) {
@@ -55,7 +55,7 @@ public class ProjectsModel {
 	}
 	
 	public ProjectModuleResourcePath getRoot() {
-		return buildRoot.getModules().stream()
+		return projectsAccess.getModules().stream()
 		.filter(module -> module.isAtRoot())
 		.map(module -> new ProjectModuleResourcePath(new ModuleResource(((ModuleResource)module.getLast()).getModuleId(), module.getFile())))
 		.findFirst()
@@ -105,7 +105,7 @@ public class ProjectsModel {
 	
 	private void findSubModulesAndFolders(ProjectModuleResourcePath modulePath, List<ResourcePath> resources) {
 		
-		final Collection<ProjectModuleResourcePath> modules = buildRoot.getModules();
+		final Collection<ProjectModuleResourcePath> modules = projectsAccess.getModules();
 		
 		for (ProjectModuleResourcePath module : modules) {
 			
@@ -114,7 +114,7 @@ public class ProjectsModel {
 			}
 		}
 		
-		final Collection<SourceFolderResourcePath> sourceFolders = buildRoot.getSourceFolders(modulePath);
+		final Collection<SourceFolderResourcePath> sourceFolders = projectsAccess.getSourceFolders(modulePath);
 	
 		if (sourceFolders != null) {
 			resources.addAll(sourceFolders);

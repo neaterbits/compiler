@@ -1,8 +1,8 @@
-package dev.nimbler.ide.component.common.language;
+package dev.nimbler.ide.common.codeaccess.types;
 
 import java.util.Objects;
 
-public class LanguageName {
+public final class LanguageName {
 
 	private final String name;
 

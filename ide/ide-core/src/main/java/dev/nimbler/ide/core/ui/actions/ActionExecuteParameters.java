@@ -1,9 +1,8 @@
 package dev.nimbler.ide.core.ui.actions;
 
-import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
+import dev.nimbler.ide.common.codeaccess.CodeAccess;
 import dev.nimbler.ide.common.model.clipboard.Clipboard;
-import dev.nimbler.ide.common.model.codemap.CodeMapModel;
 import dev.nimbler.ide.common.ui.actions.ActionExeParameters;
 import dev.nimbler.ide.common.ui.controller.EditorActions;
 import dev.nimbler.ide.common.ui.controller.EditorsActions;
@@ -28,15 +27,13 @@ public interface ActionExecuteParameters extends ActionExeParameters {
 	
 	ComponentIDEAccess getComponentIDEAccess();
 	
-	BuildRoot getBuildRoot();
+	CodeAccess getCodeAccess();
 	
 	EditorsActions getEditorsActions();
 	
 	View getFocusedView();
 	
 	EditorActions getFocusedEditor();
-	
-	CodeMapModel getCodeMap();
 	
 	FindReplaceDialogModel getFindReplaceModel();
 

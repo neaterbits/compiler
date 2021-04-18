@@ -1,4 +1,4 @@
-package dev.nimbler.ide.core.model.codemap;
+package dev.nimbler.ide.code.codemap;
 
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.language.common.types.TypeName;

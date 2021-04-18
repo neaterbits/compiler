@@ -1,4 +1,4 @@
-package dev.nimbler.ide.core.source;
+package dev.nimbler.ide.code.source;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,17 +9,16 @@ import dev.nimbler.compiler.model.common.ISourceToken;
 import dev.nimbler.ide.common.model.source.CodeCompletion;
 import dev.nimbler.ide.common.model.source.CodeProposal;
 import dev.nimbler.ide.common.model.source.SourceFileModel;
-import dev.nimbler.ide.model.text.TextModel;
 
 public class SourceFileModelCodeCompletion implements CodeCompletion {
 
 	private final SourceFileModel sourceFileModel;
 	// private final TextModel textModel;
 
-	public SourceFileModelCodeCompletion(SourceFileModel sourceFileModel, TextModel textModel) {
+	public SourceFileModelCodeCompletion(SourceFileModel sourceFileModel /* , TextModel textModel */) {
 
 		Objects.requireNonNull(sourceFileModel);
-		Objects.requireNonNull(textModel);
+		// Objects.requireNonNull(textModel);
 		
 		this.sourceFileModel = sourceFileModel;
 		// this.textModel = textModel;

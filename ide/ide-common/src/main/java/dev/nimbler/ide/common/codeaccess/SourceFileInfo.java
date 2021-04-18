@@ -1,41 +1,41 @@
-package dev.nimbler.ide.core.source;
+package dev.nimbler.ide.common.codeaccess;
 
 import java.io.File;
 import java.util.Objects;
 
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
-import dev.nimbler.compiler.model.common.ResolvedTypes;
-import dev.nimbler.ide.component.common.language.LanguageComponent;
+import dev.nimbler.ide.common.codeaccess.types.LanguageName;
 
 public class SourceFileInfo {
 
 	private final SourceFileResourcePath path;
-	private final LanguageComponent language;
-	private final ResolvedTypes resolvedTypes; // for parser resolving of referenced types
+	private final LanguageName language;
+	//private final ResolvedTypes resolvedTypes; // for parser resolving of referenced types
 	
-	public SourceFileInfo(SourceFileResourcePath path, LanguageComponent language, ResolvedTypes resolvedTypes) {
+	public SourceFileInfo(SourceFileResourcePath path, LanguageName language /* , ResolvedTypes resolvedTypes */) {
 
 		Objects.requireNonNull(path);
 		Objects.requireNonNull(language);
-		Objects.requireNonNull(resolvedTypes);
+		// Objects.requireNonNull(resolvedTypes);
 		
 		this.path = path;
 		this.language = language;
-		this.resolvedTypes = resolvedTypes;
+		// this.resolvedTypes = resolvedTypes;
 	}
 
 	public SourceFileResourcePath getPath() {
 		return path;
 	}
 
-	public LanguageComponent getLanguage() {
+	public LanguageName getLanguage() {
 		return language;
 	}
 
+	/*
 	public ResolvedTypes getResolvedTypes() {
 		return resolvedTypes;
 	}
-
+*/
 	public File getFile() {
 		return path.getFile();
 	}

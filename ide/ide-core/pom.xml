@@ -21,40 +21,9 @@
 	  		<version>${project.version}</version>
 	  	</dependency>
 	  	<dependency>
-	  		<groupId>${buildGroupId}</groupId>
-	  		<artifactId>buildsystem-common</artifactId>
-	  		<version>${buildVersion}</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>${buildGroupId}</groupId>
-	  		<artifactId>build-common</artifactId>
-	  		<version>${buildVersion}</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>${buildGroupId}</groupId>
-	  		<artifactId>build-strategies</artifactId>
-	  		<version>${buildVersion}</version>
-	  	</dependency>
-	  	<dependency>
 	  		<groupId>${project.groupId}</groupId>
 	  		<artifactId>ide-model-text</artifactId>
 	  		<version>${project.version}</version>
-	  	</dependency>
-	  	
-	  	<dependency>
-	  		<groupId>${languageGroupId}</groupId>
-	  		<artifactId>language-bytecode-common</artifactId>
-	  		<version>${languageVersion}</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>${languageGroupId}</groupId>
-	  		<artifactId>language-codemap</artifactId>
-	  		<version>${languageVersion}</version>
-	  	</dependency>
-	  	<dependency>
-	  		<groupId>${exeGroupId}</groupId>
-	  		<artifactId>exe-vm-bytecode-loader</artifactId>
-	  		<version>${exeVersion}</version>
 	  	</dependency>
 	</dependencies>
 </project>

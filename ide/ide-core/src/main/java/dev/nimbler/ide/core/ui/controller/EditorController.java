@@ -8,6 +8,8 @@ import java.util.Objects;
 import com.neaterbits.util.Strings;
 
 import dev.nimbler.compiler.model.common.ISourceToken;
+import dev.nimbler.ide.common.codeaccess.SourceFileInfo;
+import dev.nimbler.ide.common.codeaccess.SourceParseAccess;
 import dev.nimbler.ide.common.model.source.ISourceTokenProperties;
 import dev.nimbler.ide.common.model.source.SourceFileModel;
 import dev.nimbler.ide.common.ui.SearchDirection;
@@ -20,8 +22,6 @@ import dev.nimbler.ide.common.ui.keys.Key;
 import dev.nimbler.ide.common.ui.keys.KeyLocation;
 import dev.nimbler.ide.common.ui.keys.KeyMask;
 import dev.nimbler.ide.common.ui.keys.QualifierKey;
-import dev.nimbler.ide.core.source.SourceFileInfo;
-import dev.nimbler.ide.core.source.SourceFilesModel;
 import dev.nimbler.ide.core.ui.actions.contexts.source.SourceTokenContext;
 import dev.nimbler.ide.core.ui.view.EditorSourceActionContextProvider;
 import dev.nimbler.ide.core.ui.view.EditorView;
@@ -46,7 +46,7 @@ public final class EditorController implements EditorSourceActionContextProvider
 			TextEditorConfig config,
 			List<EditorsListener> listeners,
 			TextModel textModel,
-			SourceFilesModel sourceFilesModel,
+			SourceParseAccess sourceFilesModel,
 			SourceFileInfo sourceFile,
 			DelegatingSourceFileModel delegatingSourceFileModel) {
 
@@ -131,7 +131,7 @@ public final class EditorController implements EditorSourceActionContextProvider
 	private void updateSourceFileModel(
 			TextModel textModel,
 			List<EditorsListener> listeners,
-			SourceFilesModel sourceFilesModel,
+			SourceParseAccess sourceParseAccess,
 			SourceFileInfo sourceFile,
 			DelegatingSourceFileModel delegatingSourceFileModel) {
 

@@ -3,12 +3,12 @@ package dev.nimbler.ide.component.java.language;
 import java.util.Arrays;
 import java.util.List;
 
+import dev.nimbler.ide.common.codeaccess.types.LanguageName;
 import dev.nimbler.ide.component.common.instantiation.InstantiationComponent;
 import dev.nimbler.ide.component.common.instantiation.Newable;
 import dev.nimbler.ide.component.common.instantiation.NewableCategory;
 import dev.nimbler.ide.component.common.instantiation.NewableType;
 import dev.nimbler.ide.component.common.language.LanguageComponent;
-import dev.nimbler.ide.component.common.language.LanguageName;
 import dev.nimbler.ide.component.common.language.LanguageStyling;
 import dev.nimbler.ide.component.common.language.model.ParseableLanguage;
 

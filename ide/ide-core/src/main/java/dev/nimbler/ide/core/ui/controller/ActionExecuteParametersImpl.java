@@ -2,10 +2,9 @@ package dev.nimbler.ide.core.ui.controller;
 
 import java.util.Objects;
 
-import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
+import dev.nimbler.ide.common.codeaccess.CodeAccess;
 import dev.nimbler.ide.common.model.clipboard.Clipboard;
-import dev.nimbler.ide.common.model.codemap.CodeMapModel;
 import dev.nimbler.ide.common.ui.controller.EditorActions;
 import dev.nimbler.ide.common.ui.controller.EditorsActions;
 import dev.nimbler.ide.common.ui.view.View;
@@ -67,10 +66,10 @@ final class ActionExecuteParametersImpl implements ActionExecuteParameters {
 	}
 
 	@Override
-	public BuildRoot getBuildRoot() {
-		return executeState.getBuildRoot();
+	public CodeAccess getCodeAccess() {
+		return executeState.getCodeAccess();
 	}
-	
+
 	@Override
 	public View getFocusedView() {
 		return focusedView;
@@ -84,11 +83,6 @@ final class ActionExecuteParametersImpl implements ActionExecuteParameters {
 	@Override
 	public EditorActions getFocusedEditor() {
 		return focusedEditor;
-	}
-
-	@Override
-	public CodeMapModel getCodeMap() {
-		return executeState.getCodeMap();
 	}
 
 	@Override

@@ -7,12 +7,14 @@ import java.util.Map;
 import java.util.Objects;
 
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
+import dev.nimbler.ide.common.codeaccess.SourceFileInfo;
+import dev.nimbler.ide.common.codeaccess.SourceParseAccess;
 import dev.nimbler.ide.common.ui.actions.contexts.ActionContext;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
 import dev.nimbler.ide.common.ui.controller.EditorActions;
 import dev.nimbler.ide.common.ui.controller.EditorsListener;
-import dev.nimbler.ide.core.source.SourceFileInfo;
-import dev.nimbler.ide.core.source.SourceFilesModel;
+import dev.nimbler.ide.component.common.language.LanguageComponent;
+import dev.nimbler.ide.component.common.language.Languages;
 import dev.nimbler.ide.core.ui.view.EditorSourceActionContextProvider;
 import dev.nimbler.ide.core.ui.view.EditorView;
 import dev.nimbler.ide.core.ui.view.EditorsView;
@@ -23,7 +25,8 @@ final class EditorsController {
 
 	private final EditorsView editorsView;
 	private final TextEditorConfig config;
-	private final SourceFilesModel sourceFilesModel;
+	private final SourceParseAccess sourceParseAccess;
+	private final Languages languages;
 	private final List<EditorsListener> listeners;
 	
 	private final Map<SourceFileResourcePath, EditorController> editorControllers;
@@ -31,16 +34,19 @@ final class EditorsController {
 	EditorsController(
 	        EditorsView editorsView,
 	        TextEditorConfig config,
-	        SourceFilesModel sourceFilesModel,
+	        SourceParseAccess sourceParseAccess,
+	        Languages languages,
 	        List<EditorsListener> listeners) {
 
 		Objects.requireNonNull(editorsView);
 		Objects.requireNonNull(config);
-		Objects.requireNonNull(sourceFilesModel);
+		Objects.requireNonNull(sourceParseAccess);
+		Objects.requireNonNull(languages);
 		
 		this.editorsView = editorsView;
 		this.config = config;
-		this.sourceFilesModel = sourceFilesModel;
+		this.sourceParseAccess = sourceParseAccess;
+		this.languages = languages;
 		this.listeners = listeners;
 		
 		this.editorControllers = new HashMap<>();
@@ -87,8 +93,10 @@ final class EditorsController {
 		final EditorControllerDelegator editorControllerDelegator = new EditorControllerDelegator();
 		
 		final DelegatingSourceFileModel delegatingSourceFileModel = new DelegatingSourceFileModel();
+		
+		final LanguageComponent languageComponent = languages.getLanguageComponent(sourceFile.getLanguage());
 
-		final TextStylingModel textStylingModel = TextStylingHelper.makeTextStylingModel(sourceFile.getLanguage(), delegatingSourceFileModel);
+		final TextStylingModel textStylingModel = TextStylingHelper.makeTextStylingModel(languageComponent, delegatingSourceFileModel);
 		
 		final EditorView editorView = editorsView.displayFile(sourceFile.getPath(), textStylingModel, editorControllerDelegator);
 		
@@ -97,7 +105,7 @@ final class EditorsController {
 				config,
 				listeners,
 				textModel,
-				sourceFilesModel,
+				sourceParseAccess,
 				sourceFile,
 				delegatingSourceFileModel);
 		

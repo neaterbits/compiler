@@ -7,7 +7,7 @@ import dev.nimbler.build.common.language.CompileableLanguage;
 import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.model.runtimeenvironment.RuntimeEnvironment;
 import dev.nimbler.build.strategies.common.TaskBuilderContext;
-import dev.nimbler.ide.core.model.codemap.CodeMapGatherer;
+import dev.nimbler.ide.code.codemap.CodeMapGatherer;
 
 public final class InitialScanContext extends TaskBuilderContext {
 

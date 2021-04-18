@@ -1,4 +1,4 @@
-package dev.nimbler.ide.core.model.codemap;
+package dev.nimbler.ide.code.codemap;
 
 import java.util.Objects;
 

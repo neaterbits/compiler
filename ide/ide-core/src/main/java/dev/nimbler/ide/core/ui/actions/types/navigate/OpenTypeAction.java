@@ -15,7 +15,7 @@ public class OpenTypeAction extends NavigateAction {
 				
 				@Override
 				public TypeSuggestions getSuggestions(String searchText) {
-					return parameters.getCodeMap().findSuggestions(searchText, true);
+					return parameters.getCodeAccess().getCodeMapModel().findSuggestions(searchText, true);
 				}
 			});
 		

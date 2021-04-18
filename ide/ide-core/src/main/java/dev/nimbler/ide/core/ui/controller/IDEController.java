@@ -9,18 +9,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.util.PathUtil;
 import com.neaterbits.util.Strings;
 
-import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.types.resource.NamespaceResource;
 import dev.nimbler.build.types.resource.NamespaceResourcePath;
 import dev.nimbler.build.types.resource.SourceFileHolderResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResource;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;
+import dev.nimbler.ide.common.codeaccess.CodeAccess;
 import dev.nimbler.ide.common.model.clipboard.Clipboard;
-import dev.nimbler.ide.common.model.codemap.CodeMapModel;
 import dev.nimbler.ide.common.ui.actions.Action;
 import dev.nimbler.ide.common.ui.actions.ActionAppParameters;
 import dev.nimbler.ide.common.ui.actions.ActionContexts;
@@ -39,7 +37,6 @@ import dev.nimbler.ide.common.ui.translation.Translator;
 import dev.nimbler.ide.common.ui.view.View;
 import dev.nimbler.ide.component.common.ComponentIDEAccess;
 import dev.nimbler.ide.component.common.IDERegisteredComponents;
-import dev.nimbler.ide.core.source.SourceFilesModel;
 import dev.nimbler.ide.core.ui.UI;
 import dev.nimbler.ide.core.ui.actions.ActionApplicableParameters;
 import dev.nimbler.ide.core.ui.actions.ActionExecuteParameters;
@@ -54,7 +51,8 @@ import dev.nimbler.ide.util.Value;
 
 public final class IDEController implements ComponentIDEAccess {
 
-	private final BuildRoot buildRoot;
+	private final CodeAccess codeAccess;
+	
 	private final EditUIController uiController;
 	
 	private final ActionExecuteState actionExecuteState;
@@ -67,19 +65,17 @@ public final class IDEController implements ComponentIDEAccess {
 	private View focusedView;
 	
 	public IDEController(
-			BuildRoot buildRoot,
+			CodeAccess codeAccess,
 			UI ui,
 			TextEditorConfig config,
 			IDERegisteredComponents ideComponents,
-			Translator uiTranslator,
-			SourceFilesModel sourceFilesModel,
-			CodeMapModel codeMapModel) {
+			Translator uiTranslator) {
+		
+		Objects.requireNonNull(codeAccess);
+		
+		this.codeAccess = codeAccess;
 
-		Objects.requireNonNull(buildRoot);
-		
-		this.buildRoot = buildRoot;
-		
-		final ProjectsModel projectModel = new ProjectsModel(buildRoot);
+		final ProjectsModel projectModel = new ProjectsModel(codeAccess);
 
 		final KeyBindings keyBindings = IDEKeyBindings.makeKeyBindings();
 
@@ -111,7 +107,7 @@ public final class IDEController implements ComponentIDEAccess {
 			return menuListener;
 		});
 		
-		this.uiController = new EditUIController(uiView, config, projectModel, ideComponents, sourceFilesModel, codeMapModel);
+		this.uiController = new EditUIController(uiView, config, projectModel, ideComponents, codeAccess);
 		
 		final Clipboard clipboard = new ClipboardImpl(ui.getSystemClipboard());
 		
@@ -132,9 +128,8 @@ public final class IDEController implements ComponentIDEAccess {
 					}
 				},
 				this,
-				buildRoot,
-				uiController,
-				codeMapModel);
+				codeAccess,
+				uiController);
 
 		this.actionApplicableParameters = new ActionApplicableParametersImpl(actionExecuteState);
 		
@@ -323,28 +318,23 @@ public final class IDEController implements ComponentIDEAccess {
 		uiController.showInProjectView(sourceFile, false);
 	}
 
-	
+	/*
 	@Override
 	public File getRootPath() {
 		return buildRoot.getPath();
 	}
+	*/
 
 	@Override
 	public boolean isValidSourceFolder(String projectName, String sourceFolder) {
 
-		final SourceFolderResourcePath folder = findSourceFolder(projectName, sourceFolder);
+		final SourceFolderResourcePath folder = codeAccess.findSourceFolder(projectName, sourceFolder);
 		
 		return folder != null;
 	}
-	
+
 	private SourceFolderResourcePath findSourceFolder(String projectName, String sourceFolder) {
-		return buildRoot.forEachSourceFolder(folder -> {
-			
-			final String sourceFolderName = PathUtil.removeDirectoryFromPath(folder.getModule().getFile(), folder.getFile());
-			
-			return folder.getModule().getName().equals(projectName) && sourceFolderName.equals(sourceFolder)
-					? folder
-					: null;
-		});
+
+		return codeAccess.findSourceFolder(projectName, sourceFolder);
 	}
 }

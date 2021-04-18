@@ -1,6 +1,5 @@
 package dev.nimbler.ide.component.common;
 
-import java.io.File;
 import java.io.IOException;
 
 public interface ComponentIDEAccess {
@@ -14,5 +13,5 @@ public interface ComponentIDEAccess {
 
 	boolean isValidSourceFolder(String projectName, String sourceFolder);
 	
-	File getRootPath();
+	// File getRootPath();
 }
