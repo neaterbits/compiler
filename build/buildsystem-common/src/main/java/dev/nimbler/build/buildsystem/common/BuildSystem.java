@@ -10,8 +10,16 @@ public interface BuildSystem {
 
 	boolean isBuildSystemFor(File rootDirectory);
 
+	@FunctionalInterface
+	public interface BuildSystemScanListener {
+		
+		void onModuleFound(ModuleId moduleId, File moduleRoot, ModuleId parentModuleId);
+	}
+	
 	<MODULE_ID extends ModuleId, PROJECT, DEPENDENCY, REPOSITORY>
-	BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY, REPOSITORY> scan(File rootDirectory) throws ScanException;
+	BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY, REPOSITORY> scan(
+			File rootDirectory,
+			BuildSystemScanListener onModuleFound) throws ScanException;
 
 	<CONTEXT extends TaskContext> BuildSpecifier<CONTEXT> getBuildSpecifier();
 }

@@ -3,13 +3,14 @@ package dev.nimbler.ide.main;
 import java.io.File;
 
 import dev.nimbler.build.buildsystem.common.BuildSystem;
+import dev.nimbler.build.buildsystem.common.BuildSystems;
 import dev.nimbler.build.buildsystem.maven.MavenBuildSystem;
 
-public class BuildSystems {
+public class IDEBuildSystems implements BuildSystems {
 
 	private final BuildSystem [] buildSystems;
 	
-	BuildSystems() {
+	IDEBuildSystems() {
 		this.buildSystems = new BuildSystem [] {
 				
 				new MavenBuildSystem()
@@ -17,7 +18,8 @@ public class BuildSystems {
 		};
 	}
 	
-	BuildSystem findBuildSystem(File projectDir) {
+	@Override
+	public BuildSystem findBuildSystem(File projectDir) {
 		
 		for (BuildSystem buildSystem : buildSystems) {
 			

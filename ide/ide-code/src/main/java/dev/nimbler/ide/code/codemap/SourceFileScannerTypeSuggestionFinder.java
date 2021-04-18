@@ -9,7 +9,6 @@ import java.util.Objects;
 import dev.nimbler.build.common.language.CompileableLanguage;
 import dev.nimbler.build.common.tasks.util.SourceFileScanner;
 import dev.nimbler.build.common.tasks.util.SourceFileScanner.Namespace;
-import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.types.resource.NamespaceResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResource;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
@@ -20,15 +19,15 @@ import dev.nimbler.language.common.typesources.TypeSources;
 
 final class SourceFileScannerTypeSuggestionFinder extends TypeSuggestionFinder {
 
-	private final BuildRoot buildRoot;
+	private final Projects projects;
 	private final CompileableLanguage language;
 
-	SourceFileScannerTypeSuggestionFinder(BuildRoot buildRoot, CompileableLanguage language) {
+	SourceFileScannerTypeSuggestionFinder(Projects projects, CompileableLanguage language) {
 
-		Objects.requireNonNull(buildRoot);
+		Objects.requireNonNull(projects);
 		Objects.requireNonNull(language);
 		
-		this.buildRoot = buildRoot;
+		this.projects = projects;
 		this.language = language;
 	}
 	
@@ -45,7 +44,7 @@ final class SourceFileScannerTypeSuggestionFinder extends TypeSuggestionFinder {
 	@Override
 	boolean findSuggestions(TypeNameMatcher typeNameMatcher, Map<TypeName, TypeSuggestion> dst) {
 
-		buildRoot.forEachSourceFolder(sourceFolder -> {
+		projects.forEachSourceFolder(sourceFolder -> {
 				findSuggestions(sourceFolder, typeNameMatcher, dst);
 
 				return null;

@@ -29,23 +29,53 @@ public class ProjectsModel {
 	
 	private final List<ProjectModelListener> modelListeners;
 
+	private final List<ProjectModuleResourcePath> allModules;
+	
 	public ProjectsModel(ProjectsAccess projectsAccess) {
 
 		Objects.requireNonNull(projectsAccess);
 
 		this.projectsAccess = projectsAccess;
 		
+		this.allModules = new ArrayList<>();
+		
 		this.modelListeners = new ArrayList<>();
 		
 		projectsAccess.addProjectsListener(new ProjectsListener() {
 			
 			@Override
+			public void onModuleAdded(ProjectModuleResourcePath module) {
+				
+				Objects.requireNonNull(module);
+
+				allModules.add(module);
+				
+				callOnModelChanged();
+			}
+
+			@Override
+			public void onModuleRemoved(ProjectModuleResourcePath module) {
+
+				Objects.requireNonNull(module);
+
+				allModules.remove(module);
+				
+				callOnModelChanged();
+			}
+
+			@Override
 			public void onSourceFoldersChanged(ProjectModuleResourcePath module) {
-				for (ProjectModelListener projectModelListener : modelListeners) {
-					projectModelListener.onModelChanged();
-				}
+				
+				callOnModelChanged();
 			}
 		});
+	}
+
+	private void callOnModelChanged() {
+
+		for (ProjectModelListener projectModelListener : modelListeners) {
+			projectModelListener.onModelChanged();
+		}
 	}
 	
 	public void addListener(ProjectModelListener listener) {
@@ -55,11 +85,11 @@ public class ProjectsModel {
 	}
 	
 	public ProjectModuleResourcePath getRoot() {
-		return projectsAccess.getModules().stream()
+		return allModules.stream()
 		.filter(module -> module.isAtRoot())
 		.map(module -> new ProjectModuleResourcePath(new ModuleResource(((ModuleResource)module.getLast()).getModuleId(), module.getFile())))
 		.findFirst()
-		.get();
+		.orElse(null);
 	}
 	
 	public List<ResourcePath> getResources(ResourcePath path) {
@@ -105,9 +135,7 @@ public class ProjectsModel {
 	
 	private void findSubModulesAndFolders(ProjectModuleResourcePath modulePath, List<ResourcePath> resources) {
 		
-		final Collection<ProjectModuleResourcePath> modules = projectsAccess.getModules();
-		
-		for (ProjectModuleResourcePath module : modules) {
+		for (ProjectModuleResourcePath module : allModules) {
 			
 			if (module.isDirectSubModuleOf(modulePath)) {
 				resources.add(module);

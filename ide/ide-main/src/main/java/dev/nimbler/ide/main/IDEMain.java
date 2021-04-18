@@ -6,12 +6,11 @@ import org.eclipse.swt.widgets.Display;
 
 import com.neaterbits.ide.util.swt.SWTAsyncExecutor;
 import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
+import com.neaterbits.util.threads.ForwardResultToCaller;
 
-import dev.nimbler.build.buildsystem.common.BuildSystem;
+import dev.nimbler.build.buildsystem.common.BuildSystems;
 import dev.nimbler.build.buildsystem.common.ScanException;
 import dev.nimbler.build.language.java.jdk.JavaRuntimeEnvironment;
-import dev.nimbler.build.model.BuildRoot;
-import dev.nimbler.build.model.BuildRootImpl;
 import dev.nimbler.ide.code.CodeAccessImpl;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
 import dev.nimbler.ide.component.build.ui.BuildIssuesComponent;
@@ -49,24 +48,28 @@ public class IDEMain {
 				final AsyncExecutor asyncExecutor = new SWTAsyncExecutor(display);
 				
 				final SWTUI ui = new SWTUI(display);
-				
-				final BuildSystems buildSystems = new BuildSystems(); 
 
-				final BuildSystem buildSystem = buildSystems.findBuildSystem(projectDir);
-				
-				final BuildRoot buildRoot = new BuildRootImpl<>(
-				                                    projectDir,
-				                                    buildSystem.scan(projectDir),
-				                                    new JavaRuntimeEnvironment());  
-				
+				final ForwardResultToCaller forward = runnable -> display.asyncExec(() -> {
+					
+					try {
+						runnable.run();
+					}
+					catch (Throwable ex) {
+						ex.printStackTrace();
+					}
+				});
+
+				final BuildSystems buildSystems = new IDEBuildSystems(); 
+
 				final IDERegisteredComponents ideComponents = registerComponents();
 				
 				final TextEditorConfig config = new TextEditorConfig(4, true);
 				
 				final CodeAccessImpl codeAccess = new CodeAccessImpl(
 						asyncExecutor,
+						forward,
 						ideComponents.getLanguages(),
-						buildRoot,
+						buildSystems,
 						new JavaLanguage());
 				
 				final IDEController ideController = new IDEController(
@@ -80,7 +83,7 @@ public class IDEMain {
 				ui.runInitialEvents();
 				
 				try {
-				    codeAccess.startIDEScanJobs();
+				    codeAccess.startIDEScanJobs(projectDir, new JavaRuntimeEnvironment());
 				}
 				finally {
 				    ui.main(ideController.getMainView());

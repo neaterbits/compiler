@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.w3c.dom.Document;
@@ -241,7 +242,9 @@ public final class MavenBuildSystem implements BuildSystem {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public <MODULE_ID extends ModuleId, PROJECT, DEPENDENCY, REPOSITORY>
-	BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY, REPOSITORY> scan(File rootDirectory) throws ScanException {
+	BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY, REPOSITORY> scan(
+			File rootDirectory,
+			BuildSystemScanListener listener) throws ScanException {
 
 	    final EffectivePOMReader effectivePOMReader = new EffectivePOMReader(false);
 	    
@@ -250,7 +253,25 @@ public final class MavenBuildSystem implements BuildSystem {
 		final XMLReaderFactory<Document> xmlReaderFactory = effectivePOMReader.getXMLReaderFactory();
 		
 		try {
-			mavenXMLProjects = MavenModulesReader.readModules(rootDirectory, xmlReaderFactory);
+			
+			final Consumer<MavenXMLProject<Document>> readListener =
+					listener != null
+						? mavenXMLProject -> {
+						
+							final MavenProject project = mavenXMLProject.getProject();
+							
+							listener.onModuleFound(
+								EffectivePOMReader.getProjectModuleId(project),
+								project.getRootDirectory(),
+								project.getParentModuleId());
+						}
+						: null;
+			
+			mavenXMLProjects = MavenModulesReader.readModules(
+					rootDirectory,
+					xmlReaderFactory,
+					readListener);
+			
 		} catch (XMLReaderException | IOException ex) {
 			throw new ScanException("Failed to scan project", ex);
 		}

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import dev.nimbler.build.buildsystem.maven.common.model.MavenModuleId;
 import dev.nimbler.build.buildsystem.maven.project.model.MavenProject;
@@ -17,11 +18,12 @@ public class MavenModulesReader {
 
 	static <DOCUMENT> List<MavenXMLProject<DOCUMENT>> readModules(
 								File baseDirectory,
-								XMLReaderFactory<DOCUMENT> xmlReaderFactory) throws XMLReaderException, IOException {
+								XMLReaderFactory<DOCUMENT> xmlReaderFactory,
+								Consumer<MavenXMLProject<DOCUMENT>> listener) throws XMLReaderException, IOException {
 
 		final List<MavenXMLProject<DOCUMENT>> modules = new ArrayList<>();
 		
-		readModules(baseDirectory.toPath(), modules, xmlReaderFactory, true);
+		readModules(baseDirectory.toPath(), modules, xmlReaderFactory, true, listener);
 
 		return modules;
 	}
@@ -30,7 +32,8 @@ public class MavenModulesReader {
 			Path pomDirectory,
 			List<MavenXMLProject<DOCUMENT>> modules,
 			XMLReaderFactory<DOCUMENT> xmlReaderFactory,
-			boolean readAnyParentModules) throws XMLReaderException, IOException {
+			boolean readAnyParentModules,
+			Consumer<MavenXMLProject<DOCUMENT>> listener) throws XMLReaderException, IOException {
 
 		// System.out.println("## read file " + pomDirectory.getPath());
 		
@@ -42,15 +45,19 @@ public class MavenModulesReader {
 			throw new IllegalStateException();
 		}
 		
+		if (listener != null) {
+			listener.accept(mavenProject);
+		}
+		
 		if (!modules.stream().anyMatch(module -> module.getProject().getModuleId().equals(mavenProject.getProject().getModuleId()))) {
     		
     		modules.add(mavenProject);
     		
-    		readSubModules(pomDirectory, mavenProject.getProject(), modules, xmlReaderFactory);
+    		readSubModules(pomDirectory, mavenProject.getProject(), modules, xmlReaderFactory, listener);
     		
     		// Parent modules
     		if (readAnyParentModules) {
-    		    readParentModules(pomDirectory, mavenProject, modules, xmlReaderFactory);
+    		    readParentModules(pomDirectory, mavenProject, modules, xmlReaderFactory, listener);
     		}
 		}
 	}
@@ -59,7 +66,8 @@ public class MavenModulesReader {
                             	        Path pomDirectory,
                             	        MavenXMLProject<DOCUMENT> mavenProject,
                             	        List<MavenXMLProject<DOCUMENT>> modules,
-                            	        XMLReaderFactory<DOCUMENT> xmlReaderFactory) throws XMLReaderException, IOException {
+                            	        XMLReaderFactory<DOCUMENT> xmlReaderFactory,
+                            	        Consumer<MavenXMLProject<DOCUMENT>> listener) throws XMLReaderException, IOException {
 
 	    for (MavenXMLProject<DOCUMENT> cur = mavenProject; cur != null;) {
             
@@ -89,6 +97,10 @@ public class MavenModulesReader {
                     throw new IllegalStateException();
                 }
                 
+                if (listener != null) {
+                	listener.accept(parentPom);
+                }
+                
                 modules.add(parentPom);
                 
                 // read any submodules of the parent pom
@@ -96,7 +108,8 @@ public class MavenModulesReader {
                         parentPomPath,
                         parentPom.getProject(),
                         modules,
-                        xmlReaderFactory);
+                        xmlReaderFactory,
+                        listener);
                 
                 cur = parentPom;
             }
@@ -107,14 +120,15 @@ public class MavenModulesReader {
 	        Path pomDirectory,
 	        MavenProject project,
 	        List<MavenXMLProject<DOCUMENT>> modules,
-	        XMLReaderFactory<DOCUMENT> xmlReaderFactory) throws XMLReaderException, IOException {
+	        XMLReaderFactory<DOCUMENT> xmlReaderFactory,
+	        Consumer<MavenXMLProject<DOCUMENT>> listener) throws XMLReaderException, IOException {
 	
 	    final List<String> subModules = project.getCommon().getModules();
 	        
         if (subModules != null) {
             
             for (String subModule : subModules) {
-                readModules(pomDirectory.resolve(subModule), modules, xmlReaderFactory, false);
+                readModules(pomDirectory.resolve(subModule), modules, xmlReaderFactory, false, listener);
             }
         }
 	}

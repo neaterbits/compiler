@@ -19,7 +19,7 @@ public abstract class BaseBuildTest {
 		
 		final BuildRoot buildRoot;
 		try {
-			buildRoot = new BuildRootImpl<>(rootDir, makeBuildSystem().scan(rootDir), null);
+			buildRoot = new BuildRootImpl<>(rootDir, makeBuildSystem().scan(rootDir, null), null);
 		} catch (ScanException ex) {
 			throw new IllegalStateException(ex);
 		}

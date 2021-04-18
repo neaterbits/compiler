@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
 import dev.nimbler.build.types.resource.ResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.ide.common.ui.actions.contexts.ActionContext;
@@ -60,7 +61,7 @@ final class SWTProjectView extends SWTView implements ProjectView {
 			@Override
 			public void onModelChanged() {
 				
-				System.out.println("### model changed");
+				expandRoot();
 				
 				treeViewer.refresh();
 			}
@@ -89,10 +90,19 @@ final class SWTProjectView extends SWTView implements ProjectView {
 		treeViewer.setInput(projectModel);
 		
 		treeViewer.setSorter(new TreePathViewerSorter());
-		
-		treeViewer.setExpandedElements(new Object [] { projectModel.getRoot() });
 
+		expandRoot();
+		
 		viewList.addView(this, composite);
+	}
+	
+	private void expandRoot() {
+
+		final ProjectModuleResourcePath root = projectModel.getRoot();
+		
+		if (root != null && !treeViewer.getExpandedState(root)) {
+			treeViewer.setExpandedElements(new Object [] { root });
+		}
 	}
 	
 	Composite getComposite() {

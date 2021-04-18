@@ -41,4 +41,9 @@ public class ModuleId {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "ModuleId [id=" + id + "]";
+	}
 }

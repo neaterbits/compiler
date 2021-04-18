@@ -57,7 +57,7 @@ public final class BuildSystemMain {
             OnBuildResult onBuildResult) throws ScanException, ArgumentException {
         
         final BuildSystemRoot<MODULE_ID, PROJECT, DEPENDENCY, REPOSITORY> buildSystemRoot
-            = buildSystem.scan(projectDir);
+            = buildSystem.scan(projectDir, null);
         
         final BuildSpecifier<CONTEXT> buildSpecifier = buildSystem.getBuildSpecifier();
 

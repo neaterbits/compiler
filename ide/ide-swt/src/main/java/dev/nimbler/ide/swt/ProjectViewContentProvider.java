@@ -8,6 +8,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import com.neaterbits.ide.util.swt.TreeContentAdapter;
 
+import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
 import dev.nimbler.build.types.resource.ResourcePath;
 import dev.nimbler.ide.common.ui.model.ProjectsModel;
 
@@ -26,7 +27,6 @@ final class ProjectViewContentProvider extends TreeContentAdapter implements ITr
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
 		viewer.refresh();
-
 	}
 	
 	@Override
@@ -49,7 +49,10 @@ final class ProjectViewContentProvider extends TreeContentAdapter implements ITr
 		final Object [] elements;
 		
 		if (inputElement instanceof ProjectsModel) {
-			elements = new Object [] { projectModel.getRoot() };
+			
+			final ProjectModuleResourcePath root = projectModel.getRoot();
+			
+			elements = root != null ? new Object [] { root } : new Object[0];
 		}
 		else {
 		

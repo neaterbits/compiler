@@ -38,7 +38,8 @@ public class MavenModulesReaderTest {
 
 	    final List<MavenXMLProject<Void>> mavenProjects = MavenModulesReader.readModules(
                 startDirectory,
-                new JavaxXMLStreamReaderFactory());
+                new JavaxXMLStreamReaderFactory(),
+                null);
 
         assertThat(mavenProjects).isNotNull();
         
@@ -64,6 +65,6 @@ public class MavenModulesReaderTest {
 	@Test
 	public void testManyModulesReader() throws XMLReaderException, IOException {
 
-		MavenModulesReader.readModules(new File("../"), new JavaxXMLStreamReaderFactory());
+		MavenModulesReader.readModules(new File("../"), new JavaxXMLStreamReaderFactory(), null);
 	}
 }

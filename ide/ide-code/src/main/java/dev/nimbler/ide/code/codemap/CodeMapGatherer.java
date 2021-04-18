@@ -16,7 +16,6 @@ import com.neaterbits.util.Strings;
 import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
 
 import dev.nimbler.build.common.language.CompileableLanguage;
-import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.model.runtimeenvironment.RuntimeEnvironment;
 import dev.nimbler.build.types.TypeToDependencyFile;
 import dev.nimbler.build.types.compile.FileCompilation;
@@ -47,7 +46,7 @@ import dev.nimbler.language.common.typesources.libs.ClassLibs;
 public final class CodeMapGatherer extends InformationGatherer implements CodeMapModel {
 
 	private final CompileableLanguage language;
-	private final BuildRoot buildRoot;
+	private final Projects projects;
 	
 	private final TypeToDependencyFile moduleAndLibraryToDependencyFile;
 	
@@ -65,15 +64,15 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	public CodeMapGatherer(
 			AsyncExecutor asyncExecutor,
 			CompileableLanguage language,
-			BuildRoot buildRoot,
+			Projects projects,
 			CompilerCodeMap codeMap) {
 
 		Objects.requireNonNull(asyncExecutor);
 		Objects.requireNonNull(language);
-		Objects.requireNonNull(buildRoot);
+		Objects.requireNonNull(projects);
 
 		this.language = language;
-		this.buildRoot = buildRoot;
+		this.projects = projects;
 		
 		this.moduleAndLibraryToDependencyFile = new TypeToDependencyFile();
 		this.systemTypeToDependencyFileByRuntimeEnvironment = new HashMap<>();
@@ -158,7 +157,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		this.typeSuggestionFinders = Arrays.asList(
 				typeMapSuggestionFinder,
 				dependencyFileSuggestionFinder,
-				new SourceFileScannerTypeSuggestionFinder(buildRoot, language));
+				new SourceFileScannerTypeSuggestionFinder(projects, language));
 		
 		this.createType = (typeName, typeSource, typeNo, classByteCode) -> new ClassInfo(
 				typeNo,
@@ -258,7 +257,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	    
         Objects.requireNonNull(from);
 
-        final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
+        final RuntimeEnvironment runtimeEnvironment = projects.getRuntimeEnvironment(from);
 
         return systemTypeToDependencyFileByRuntimeEnvironment.containsKey(runtimeEnvironment);
 	}
@@ -269,7 +268,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	    Objects.requireNonNull(libraryFile);
 	    Objects.requireNonNull(types);
 
-	    final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
+	    final RuntimeEnvironment runtimeEnvironment = projects.getRuntimeEnvironment(from);
 	    
 	    TypeToDependencyFile typeToDependencyFile
 	        = systemTypeToDependencyFileByRuntimeEnvironment.get(runtimeEnvironment);
@@ -288,7 +287,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 	    
 	    Objects.requireNonNull(from);
 	    
-	    final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
+	    final RuntimeEnvironment runtimeEnvironment = projects.getRuntimeEnvironment(from);
 		
 		final long start = System.currentTimeMillis();
 
@@ -335,7 +334,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		
         Objects.requireNonNull(from);
         
-        final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
+        final RuntimeEnvironment runtimeEnvironment = projects.getRuntimeEnvironment(from);
 		
 		final TypeName typeName = language.getTypeName(fileCompilation.getSourcePath());
 		
@@ -377,7 +376,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 		
         Objects.requireNonNull(from);
         
-        final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
+        final RuntimeEnvironment runtimeEnvironment = projects.getRuntimeEnvironment(from);
 	    
 		loadAndAddToCodeMap(typeName, typeSource, type -> {
 					
@@ -416,7 +415,7 @@ public final class CodeMapGatherer extends InformationGatherer implements CodeMa
 
 	    Objects.requireNonNull(from);
         
-        final RuntimeEnvironment runtimeEnvironment = buildRoot.getRuntimeEnvironment(from);
+        final RuntimeEnvironment runtimeEnvironment = projects.getRuntimeEnvironment(from);
 		
 		final LoadClassParameters<File, ClassInfo, Void> parameters = new LoadClassParameters<>(
 				typeMap,

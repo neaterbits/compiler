@@ -97,9 +97,10 @@ public class BuildRootImpl<MODULE_ID extends ModuleId, PROJECT, DEPENDENCY, REPO
 			throw new IllegalArgumentException("No buildproject with name " + module);
 		}
 
-		return buildProject.getSourceFolders();
+		final List<SourceFolderResourcePath> sourceFolders = buildProject.getSourceFolders();
+		
+		return sourceFolders != null ? sourceFolders : Collections.emptyList();
 	}
-
 
 	@Override
 	public List<ProjectDependency> getDirectProjectDependenciesForProjectModule(ProjectModuleResourcePath module) {
@@ -304,9 +305,18 @@ public class BuildRootImpl<MODULE_ID extends ModuleId, PROJECT, DEPENDENCY, REPO
 
 	@Override
 	public void addListener(BuildRootListener listener) {
+
 		Objects.requireNonNull(listener);
 
 		listeners.add(listener);
+	}
+
+	@Override
+	public void removeListener(BuildRootListener listener) {
+
+		Objects.requireNonNull(listener);
+
+		listeners.remove(listener);
 	}
 
 	@Override

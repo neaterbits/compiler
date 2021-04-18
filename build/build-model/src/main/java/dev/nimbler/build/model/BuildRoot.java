@@ -67,6 +67,8 @@ public interface BuildRoot {
 
 	void addListener(BuildRootListener listener);
 	
+	void removeListener(BuildRootListener listener);
+
 	BuildSystemRootScan getBuildSystemRootScan();
 	
 	RuntimeEnvironment getRuntimeEnvironment(ProjectModuleResourcePath module);
