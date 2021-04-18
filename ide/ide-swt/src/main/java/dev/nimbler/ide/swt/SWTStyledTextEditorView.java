@@ -111,7 +111,6 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 		textWidget.setTabs(tabs);
 	}
 
-	
 	@Override
 	void addKeyListener(KeyListener keyListener) {
 		textWidget.addKeyListener(keyListener);
@@ -151,7 +150,6 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	public void addCursorPositionListener(CursorPositionListener cursorPositionListener) {
 
 		textWidget.addCaretListener(event -> cursorPositionListener.onCursorPositionChanged(event.caretOffset));
-		
 	}
 
 	@Override
@@ -169,7 +167,6 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 			}
 		});
 	}
-
 	
 	@Override
 	public void setTextModel(TextModel textModel) {
@@ -240,7 +237,7 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 	@Override
 	public void triggerTextRefresh() {
 
-		
+		textWidget.pack(true);
 	}
 
 	@Override
