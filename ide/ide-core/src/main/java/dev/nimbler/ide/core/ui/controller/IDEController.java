@@ -138,8 +138,26 @@ public final class IDEController implements ComponentIDEAccess {
 
 		this.actionApplicableParameters = new ActionApplicableParametersImpl(actionExecuteState);
 		
+		addKeyEventListener(uiView, keyBindings, menus);
+
+		uiView.getViewList().addActionContextViewListener((view, updatedContexts) -> {
+			updateMenuItemsEnabledState(uiView, actionApplicableParameters);
+		});
+
+		// initial update
+		updateMenuItemsEnabledState(uiView, actionApplicableParameters);
+
+		ui.addFocusListener(view -> {
+			focusedView = view;
+
+			updateMenuItemsEnabledState(uiView, actionApplicableParameters);
+		});
+	}
+
+	private void addKeyEventListener(UIViewAndSubViews uiView, KeyBindings keyBindings, Menus menus) {
+
 		uiView.addKeyEventListener(new KeyEventListener() {
-			
+
 			@Override
 			public boolean onKeyRelease(Key key, KeyMask mask, KeyLocation location) {
 				
@@ -171,20 +189,6 @@ public final class IDEController implements ComponentIDEAccess {
 				return true;
 			}
 		});
-
-		uiView.getViewList().addActionContextViewListener((view, updatedContexts) -> {
-			updateMenuItemsEnabledState(uiView, actionApplicableParameters);
-		});
-
-		// initial update
-		updateMenuItemsEnabledState(uiView, actionApplicableParameters);
-		
-		ui.addFocusListener(view -> {
-			focusedView = view;
-			
-			updateMenuItemsEnabledState(uiView, actionApplicableParameters);
-		});
-	
 	}
 
 	public UIViewAndSubViews getMainView() {
