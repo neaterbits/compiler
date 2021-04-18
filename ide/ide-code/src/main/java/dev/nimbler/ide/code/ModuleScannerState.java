@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.util.threads.ForwardResultToCaller;
+import org.jutils.threads.ForwardResultToCaller;
 
 import dev.nimbler.build.types.ModuleId;
 import dev.nimbler.build.types.resource.ModuleResource;

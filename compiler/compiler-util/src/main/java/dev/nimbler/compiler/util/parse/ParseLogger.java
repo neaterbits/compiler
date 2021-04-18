@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.ArrayStack;
-import com.neaterbits.util.Strings;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.ArrayStack;
+import org.jutils.Strings;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.util.FullContextProvider;
 

@@ -3,9 +3,8 @@ package dev.nimbler.compiler.antlr4;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
-
-import com.neaterbits.util.io.strings.OffsetLengthStringRef;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.io.strings.OffsetLengthStringRef;
+import org.jutils.parse.context.Context;
 
 public class AntlrStringRefs {
 

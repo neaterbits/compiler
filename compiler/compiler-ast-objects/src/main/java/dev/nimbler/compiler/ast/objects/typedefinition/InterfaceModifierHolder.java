@@ -1,7 +1,7 @@
 package dev.nimbler.compiler.ast.objects.typedefinition;
 
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.types.ParseTreeElement;
 import dev.nimbler.compiler.types.typedefinition.InterfaceModifier;

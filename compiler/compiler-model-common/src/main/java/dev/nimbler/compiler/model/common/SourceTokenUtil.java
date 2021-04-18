@@ -2,7 +2,7 @@ package dev.nimbler.compiler.model.common;
 
 import java.util.Objects;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.model.common.util.ScopedNameResolver;
 import dev.nimbler.compiler.types.ParseTreeElement;

@@ -2,7 +2,7 @@ package dev.nimbler.build.buildsystem.maven.project.parse;
 
 import java.io.File;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.build.buildsystem.maven.project.model.MavenProject;
 

@@ -1,6 +1,6 @@
 package dev.nimbler.exe.codegen.common;
 
-import com.neaterbits.util.Bits;
+import org.jutils.Bits;
 
 public class OperandEncoding {
 	/*

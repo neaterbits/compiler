@@ -3,8 +3,8 @@ package dev.nimbler.compiler.parser.listener.stackbased;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.ArrayStack;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.ArrayStack;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.parser.listener.stackbased.state.BaseStackVariableDeclaration;
 import dev.nimbler.compiler.parser.listener.stackbased.state.base.VariablesMap;

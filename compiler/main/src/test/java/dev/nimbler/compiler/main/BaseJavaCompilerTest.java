@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.neaterbits.util.Strings;
-import com.neaterbits.util.coll.MapOfList;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.Strings;
+import org.jutils.coll.MapOfList;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.ast.objects.CompilationCode;
 import dev.nimbler.compiler.ast.objects.CompilationUnit;

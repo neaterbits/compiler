@@ -2,10 +2,9 @@ package dev.nimbler.compiler.antlr4;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.FullContext;
-import com.neaterbits.util.parse.context.ImmutableFullContext;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.FullContext;
+import org.jutils.parse.context.ImmutableFullContext;
 
 public class Antlr4 {
 

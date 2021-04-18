@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.util.FullContextProvider;
 

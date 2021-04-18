@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.ActionLog;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.FunctionActionLog;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.PrerequisitesOrActionBuilder;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.TargetBuilder;
+import org.jutils.concurrency.dependencyresolution.spec.TargetBuilderSpec;
+import org.jutils.concurrency.dependencyresolution.spec.builder.ActionLog;
+import org.jutils.concurrency.dependencyresolution.spec.builder.FunctionActionLog;
+import org.jutils.concurrency.dependencyresolution.spec.builder.PrerequisitesOrActionBuilder;
+import org.jutils.concurrency.dependencyresolution.spec.builder.TargetBuilder;
 
 import dev.nimbler.build.buildsystem.maven.MavenBuildRoot;
 import dev.nimbler.build.buildsystem.maven.phases.Phase;

@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.parser.listener.common;
 
-import com.neaterbits.util.io.strings.Tokenizer;
+import org.jutils.io.strings.Tokenizer;
 
 public interface CreateParserListener<COMPILATION_UNIT> {
 

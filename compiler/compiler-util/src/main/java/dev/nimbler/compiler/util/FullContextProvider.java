@@ -1,7 +1,7 @@
 package dev.nimbler.compiler.util;
 
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.FullContext;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.FullContext;
 
 public interface FullContextProvider {
 

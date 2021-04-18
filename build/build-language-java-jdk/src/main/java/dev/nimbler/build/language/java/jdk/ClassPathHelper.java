@@ -3,7 +3,7 @@ package dev.nimbler.build.language.java.jdk;
 import java.io.File;
 import java.util.List;
 
-import com.neaterbits.util.StringUtils;
+import org.jutils.StringUtils;
 
 class ClassPathHelper {
     

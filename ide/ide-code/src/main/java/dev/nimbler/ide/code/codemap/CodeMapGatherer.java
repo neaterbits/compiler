@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.neaterbits.util.Strings;
-import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
+import org.jutils.Strings;
+import org.jutils.concurrency.scheduling.AsyncExecutor;
 
 import dev.nimbler.build.common.language.CompileableLanguage;
 import dev.nimbler.build.model.runtimeenvironment.RuntimeEnvironment;

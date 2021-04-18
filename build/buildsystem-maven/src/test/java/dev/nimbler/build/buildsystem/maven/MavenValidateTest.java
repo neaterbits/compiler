@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.junit.Test;
+import org.jutils.IOUtils;
 import org.mockito.Mockito;
-
-import com.neaterbits.util.IOUtils;
 
 import dev.nimbler.build.buildsystem.maven.common.model.MavenModuleId;
 import dev.nimbler.build.buildsystem.maven.effective.EffectivePOMsHelper;

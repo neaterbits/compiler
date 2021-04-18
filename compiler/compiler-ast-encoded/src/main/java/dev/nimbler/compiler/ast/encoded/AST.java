@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.io.strings.StringRef;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.io.strings.StringRef;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.encoded.ASTBufferRead.ParseTreeElementRef;
 import dev.nimbler.compiler.parser.listener.common.IterativeParseTreeListener;

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.neaterbits.util.reflection.FieldUtil;
+import org.jutils.reflection.FieldUtil;
 
 class MojoFieldUtil {
 

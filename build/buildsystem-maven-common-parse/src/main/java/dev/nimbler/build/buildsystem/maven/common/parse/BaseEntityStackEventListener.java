@@ -1,6 +1,6 @@
 package dev.nimbler.build.buildsystem.maven.common.parse;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.build.buildsystem.maven.common.model.MavenDependency;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenExclusion;

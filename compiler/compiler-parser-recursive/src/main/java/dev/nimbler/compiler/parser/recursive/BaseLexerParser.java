@@ -2,12 +2,12 @@ package dev.nimbler.compiler.parser.recursive;
 
 import java.util.Objects;
 
-import com.neaterbits.util.io.strings.CharInput;
-import com.neaterbits.util.io.strings.Tokenizer;
-import com.neaterbits.util.parse.IToken;
-import com.neaterbits.util.parse.Lexer;
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.MutableContext;
+import org.jutils.io.strings.CharInput;
+import org.jutils.io.strings.Tokenizer;
+import org.jutils.parse.IToken;
+import org.jutils.parse.Lexer;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.MutableContext;
 
 import dev.nimbler.compiler.parser.recursive.cached.ScratchBuf;
 import dev.nimbler.compiler.parser.recursive.cached.annotations.CachedAnnotation;

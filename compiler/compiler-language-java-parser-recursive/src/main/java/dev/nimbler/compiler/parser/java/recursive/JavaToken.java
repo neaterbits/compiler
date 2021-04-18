@@ -2,12 +2,12 @@ package dev.nimbler.compiler.parser.java.recursive;
 
 import java.util.Objects;
 
-import com.neaterbits.util.StringUtils;
-import com.neaterbits.util.parse.CharType;
-import com.neaterbits.util.parse.CharTypeInteger;
-import com.neaterbits.util.parse.CharTypeWS;
-import com.neaterbits.util.parse.IToken;
-import com.neaterbits.util.parse.TokenType;
+import org.jutils.StringUtils;
+import org.jutils.parse.CharType;
+import org.jutils.parse.CharTypeInteger;
+import org.jutils.parse.CharTypeWS;
+import org.jutils.parse.IToken;
+import org.jutils.parse.TokenType;
 
 public enum JavaToken implements IToken {
 

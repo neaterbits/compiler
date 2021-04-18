@@ -2,8 +2,8 @@ package dev.nimbler.compiler.ast.encoded;
 
 import java.util.Objects;
 
-import com.neaterbits.util.buffers.MapStringStorageBuffer;
-import com.neaterbits.util.io.strings.StringBufferAdder;
+import org.jutils.buffers.MapStringStorageBuffer;
+import org.jutils.io.strings.StringBufferAdder;
 
 import dev.nimbler.compiler.types.ParseTreeElement;
 

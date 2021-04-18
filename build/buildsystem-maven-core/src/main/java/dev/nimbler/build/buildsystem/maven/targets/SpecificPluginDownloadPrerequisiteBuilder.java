@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
 
-import com.neaterbits.util.concurrency.dependencyresolution.spec.PrerequisitesBuilderSpec;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.ActionLog;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.PrerequisitesBuilder;
-import com.neaterbits.util.concurrency.scheduling.Constraint;
+import org.jutils.concurrency.dependencyresolution.spec.PrerequisitesBuilderSpec;
+import org.jutils.concurrency.dependencyresolution.spec.builder.ActionLog;
+import org.jutils.concurrency.dependencyresolution.spec.builder.PrerequisitesBuilder;
+import org.jutils.concurrency.scheduling.Constraint;
 
 import dev.nimbler.build.buildsystem.maven.plugins.access.PluginFinder;
 import dev.nimbler.build.buildsystem.maven.project.model.MavenPlugin;

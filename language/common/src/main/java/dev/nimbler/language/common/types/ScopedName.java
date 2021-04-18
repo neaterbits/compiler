@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.StringUtils;
+import org.jutils.StringUtils;
 
 public final class ScopedName {
 

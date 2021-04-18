@@ -1,8 +1,8 @@
 package dev.nimbler.ide.common.scheduling;
 
-import com.neaterbits.util.concurrency.scheduling.Constraint;
-import com.neaterbits.util.concurrency.scheduling.ScheduleFunction;
-import com.neaterbits.util.concurrency.scheduling.ScheduleListener;
+import org.jutils.concurrency.scheduling.Constraint;
+import org.jutils.concurrency.scheduling.ScheduleFunction;
+import org.jutils.concurrency.scheduling.ScheduleListener;
 
 public interface IDEScheduler {
 

@@ -2,8 +2,8 @@ package dev.nimbler.compiler.resolver.passes;
 
 import java.util.Objects;
 
-import com.neaterbits.util.ArrayStack;
-import com.neaterbits.util.Stack;
+import org.jutils.ArrayStack;
+import org.jutils.Stack;
 
 import dev.nimbler.language.codemap.compiler.CompilerCodeMap;
 import dev.nimbler.language.common.types.TypeName;

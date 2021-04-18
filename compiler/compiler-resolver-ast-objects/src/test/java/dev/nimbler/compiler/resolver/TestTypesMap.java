@@ -3,7 +3,7 @@ package dev.nimbler.compiler.resolver;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 import dev.nimbler.language.common.types.ScopedName;
 import dev.nimbler.language.common.types.TypesMap;

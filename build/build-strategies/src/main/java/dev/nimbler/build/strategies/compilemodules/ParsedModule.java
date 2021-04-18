@@ -3,7 +3,7 @@ package dev.nimbler.build.strategies.compilemodules;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.coll.Coll;
+import org.jutils.coll.Coll;
 
 public class ParsedModule<PARSED_FILE, RESOLVE_ERROR> {
 

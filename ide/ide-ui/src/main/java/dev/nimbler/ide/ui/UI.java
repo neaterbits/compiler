@@ -1,6 +1,6 @@
 package dev.nimbler.ide.ui;
 
-import com.neaterbits.util.threads.ForwardResultToCaller;
+import org.jutils.threads.ForwardResultToCaller;
 
 import dev.nimbler.ide.common.ui.ViewFocusListener;
 import dev.nimbler.ide.common.ui.menus.Menus;

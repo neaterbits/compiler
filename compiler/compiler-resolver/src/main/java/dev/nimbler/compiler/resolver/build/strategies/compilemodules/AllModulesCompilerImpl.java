@@ -7,8 +7,8 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.IntList;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.IntList;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.build.strategies.compilemodules.AllModulesCompiler;
 import dev.nimbler.build.strategies.compilemodules.ParsedModule;

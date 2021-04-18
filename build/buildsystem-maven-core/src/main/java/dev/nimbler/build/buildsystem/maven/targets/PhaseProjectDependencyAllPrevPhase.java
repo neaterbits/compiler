@@ -2,8 +2,8 @@ package dev.nimbler.build.buildsystem.maven.targets;
 
 import java.util.Objects;
 
-import com.neaterbits.util.concurrency.dependencyresolution.spec.PrerequisitesBuilderSpec;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.PrerequisitesBuilder;
+import org.jutils.concurrency.dependencyresolution.spec.PrerequisitesBuilderSpec;
+import org.jutils.concurrency.dependencyresolution.spec.builder.PrerequisitesBuilder;
 
 import dev.nimbler.build.buildsystem.maven.phases.Phase;
 

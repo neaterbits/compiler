@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.types.ReferenceType;
 import dev.nimbler.compiler.types.block.ConstructorInvocation;

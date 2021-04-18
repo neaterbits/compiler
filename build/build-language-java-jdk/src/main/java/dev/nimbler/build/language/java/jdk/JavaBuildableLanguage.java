@@ -2,7 +2,7 @@ package dev.nimbler.build.language.java.jdk;
 
 import java.io.File;
 
-import com.neaterbits.util.PathUtil;
+import org.jutils.PathUtil;
 
 import dev.nimbler.build.common.language.BuildableLanguage;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;

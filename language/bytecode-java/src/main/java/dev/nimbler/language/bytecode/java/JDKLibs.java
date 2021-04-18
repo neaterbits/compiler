@@ -3,7 +3,7 @@ package dev.nimbler.language.bytecode.java;
 import java.io.File;
 import java.util.Arrays;
 
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 import dev.nimbler.language.common.types.TypeName;
 

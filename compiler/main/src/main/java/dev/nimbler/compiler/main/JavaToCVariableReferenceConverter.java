@@ -2,7 +2,7 @@ package dev.nimbler.compiler.main;
 
 import java.util.Arrays;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.objects.expression.ArrayAccessExpression;
 import dev.nimbler.compiler.ast.objects.expression.FieldAccess;

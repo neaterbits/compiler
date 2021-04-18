@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.neaterbits.util.Counter;
-import com.neaterbits.util.Indent;
-import com.neaterbits.util.Value;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.Counter;
+import org.jutils.Indent;
+import org.jutils.Value;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.build.buildsystem.maven.xml.XMLAttribute;
 import dev.nimbler.build.buildsystem.maven.xml.XMLEventListener;

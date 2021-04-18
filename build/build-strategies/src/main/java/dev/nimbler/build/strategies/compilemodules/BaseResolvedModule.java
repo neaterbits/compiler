@@ -2,7 +2,7 @@ package dev.nimbler.build.strategies.compilemodules;
 
 import java.util.List;
 
-import com.neaterbits.util.coll.Coll;
+import org.jutils.coll.Coll;
 
 public abstract class BaseResolvedModule<PARSED_FILE, RESOLVE_ERROR> {
 

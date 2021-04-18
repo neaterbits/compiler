@@ -2,9 +2,9 @@ package dev.nimbler.build.buildsystem.common.parse;
 
 import java.util.Objects;
 
-import com.neaterbits.util.ArrayStack;
-import com.neaterbits.util.Stack;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.ArrayStack;
+import org.jutils.Stack;
+import org.jutils.parse.context.Context;
 
 public abstract class BaseStackEventListener implements TextEventListener {
 

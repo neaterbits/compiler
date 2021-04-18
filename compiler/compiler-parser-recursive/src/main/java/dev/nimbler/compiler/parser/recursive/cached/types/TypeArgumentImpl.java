@@ -2,8 +2,8 @@ package dev.nimbler.compiler.parser.recursive.cached.types;
 
 import java.util.Objects;
 
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.MutableContext;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.MutableContext;
 
 import dev.nimbler.compiler.parser.recursive.cached.names.NamesList;
 

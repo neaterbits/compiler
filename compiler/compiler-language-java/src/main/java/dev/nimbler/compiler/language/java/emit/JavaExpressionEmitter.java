@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.language.java.emit;
 
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 import dev.nimbler.compiler.ast.objects.expression.ArrayCreationExpression;
 import dev.nimbler.compiler.ast.objects.expression.BlockLambdaExpression;

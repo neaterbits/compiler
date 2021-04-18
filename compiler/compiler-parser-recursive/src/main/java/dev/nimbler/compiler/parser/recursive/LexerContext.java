@@ -2,11 +2,11 @@ package dev.nimbler.compiler.parser.recursive;
 
 import java.util.Objects;
 
-import com.neaterbits.util.io.strings.Tokenizer;
-import com.neaterbits.util.parse.Lexer;
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.FullContext;
-import com.neaterbits.util.parse.context.ImmutableFullContext;
+import org.jutils.io.strings.Tokenizer;
+import org.jutils.parse.Lexer;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.FullContext;
+import org.jutils.parse.context.ImmutableFullContext;
 
 final class LexerContext implements FullContext {
 

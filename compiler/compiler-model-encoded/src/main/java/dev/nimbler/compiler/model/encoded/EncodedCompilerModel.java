@@ -2,7 +2,7 @@ package dev.nimbler.compiler.model.encoded;
 
 import java.util.List;
 
-import com.neaterbits.util.io.strings.Tokenizer;
+import org.jutils.io.strings.Tokenizer;
 
 import dev.nimbler.compiler.ast.encoded.EncodedCompilationUnit;
 import dev.nimbler.compiler.model.common.CompilationUnitModel;

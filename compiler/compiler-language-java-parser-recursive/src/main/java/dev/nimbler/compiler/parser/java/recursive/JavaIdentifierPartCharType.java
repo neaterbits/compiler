@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.parser.java.recursive;
 
-import com.neaterbits.util.parse.CharType;
+import org.jutils.parse.CharType;
 
 final class JavaIdentifierPartCharType extends CharType {
 

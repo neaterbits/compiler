@@ -2,7 +2,7 @@ package dev.nimbler.build.buildsystem.maven.xml;
 
 import java.util.List;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 public interface XMLEventListener<T> {
 

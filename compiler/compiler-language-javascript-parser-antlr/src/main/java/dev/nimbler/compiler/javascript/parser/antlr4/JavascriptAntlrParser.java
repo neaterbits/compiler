@@ -2,11 +2,10 @@ package dev.nimbler.compiler.javascript.parser.antlr4;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
+import org.jutils.io.strings.StringSource;
 
 import dev.nimbler.compiler.javascript.JavaScriptLexer;
 import dev.nimbler.compiler.javascript.JavaScriptParser;
-import com.neaterbits.util.io.strings.StringSource;
-
 import dev.nimbler.compiler.antlr4.AntlrParserFactory;
 import dev.nimbler.compiler.antlr4.BaseAntlrParser;
 import dev.nimbler.compiler.javascript.ast.JavascriptProgram;

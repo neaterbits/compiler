@@ -3,8 +3,8 @@ package dev.nimbler.build.buildsystem.maven.targets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.neaterbits.util.StringUtils;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
+import org.jutils.StringUtils;
+import org.jutils.concurrency.dependencyresolution.spec.TargetBuilderSpec;
 
 import dev.nimbler.build.buildsystem.maven.phases.Phases;
 import dev.nimbler.build.buildsystem.maven.phases.UnknownPhaseException;

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.model.common.ParseTreeModel;
 import dev.nimbler.compiler.model.common.passes.MultiPass;

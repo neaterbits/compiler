@@ -4,8 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.neaterbits.util.io.strings.StringSource;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.io.strings.StringSource;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.ast.encoded.EncodedCompilationUnit;
 import dev.nimbler.compiler.ast.objects.ASTParseTreeFactory;

@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.javascript.parser.antlr4.JavascriptAntlrParser;
 import dev.nimbler.compiler.util.parse.ParseError;

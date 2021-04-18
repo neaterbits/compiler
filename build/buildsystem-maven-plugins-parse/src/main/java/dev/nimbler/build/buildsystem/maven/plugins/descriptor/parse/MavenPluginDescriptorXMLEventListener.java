@@ -3,7 +3,7 @@ package dev.nimbler.build.buildsystem.maven.plugins.descriptor.parse;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.build.buildsystem.maven.common.parse.listeners.BaseXMLEventListener;
 import dev.nimbler.build.buildsystem.maven.xml.XMLAttribute;

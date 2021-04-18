@@ -2,7 +2,7 @@ package dev.nimbler.compiler.model.test;
 
 import java.util.Objects;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.parser.listener.common.ParseTreeListener;
 import dev.nimbler.compiler.types.ReferenceType;

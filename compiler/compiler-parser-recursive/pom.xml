@@ -21,9 +21,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.neaterbits.util</groupId>
+			<groupId>${utilGroupId}</groupId>
 			<artifactId>util-parse</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${utilVersion}</version>
 		</dependency>
 	</dependencies>
 </project>

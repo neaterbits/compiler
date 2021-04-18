@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.parser.listener.stackbased.state.base.StackEntry;
 import dev.nimbler.compiler.parser.listener.stackbased.state.setters.AnnotationSetter;

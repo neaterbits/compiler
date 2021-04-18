@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.neaterbits.util.coll.MapOfList;
+import org.jutils.coll.MapOfList;
 
 import dev.nimbler.compiler.util.parse.ParseLogger;
 import dev.nimbler.compiler.util.parse.Parser.CreateParseLogger;

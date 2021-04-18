@@ -20,8 +20,7 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.eclipse.aether.RepositorySystemSession;
-
-import com.neaterbits.util.di.Resolver;
+import org.jutils.di.Resolver;
 
 import dev.nimbler.build.buildsystem.maven.common.model.configuration.MavenConfiguration;
 import dev.nimbler.build.buildsystem.maven.container.PlexusContainerImpl;

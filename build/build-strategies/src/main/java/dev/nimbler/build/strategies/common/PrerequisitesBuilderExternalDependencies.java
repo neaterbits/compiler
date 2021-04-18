@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.concurrency.dependencyresolution.executor.SubPrerequisites;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.PrerequisitesBuilderSpec;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.PrerequisitesBuilder;
-import com.neaterbits.util.concurrency.scheduling.Constraint;
+import org.jutils.concurrency.dependencyresolution.executor.SubPrerequisites;
+import org.jutils.concurrency.dependencyresolution.spec.PrerequisitesBuilderSpec;
+import org.jutils.concurrency.dependencyresolution.spec.builder.PrerequisitesBuilder;
+import org.jutils.concurrency.scheduling.Constraint;
 
 import dev.nimbler.build.types.compile.ExternalModuleDependencyList;
 import dev.nimbler.build.types.dependencies.LibraryDependency;

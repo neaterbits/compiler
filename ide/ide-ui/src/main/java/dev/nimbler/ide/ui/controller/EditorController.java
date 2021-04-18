@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 import dev.nimbler.compiler.model.common.ISourceToken;
 import dev.nimbler.ide.common.codeaccess.SourceFileInfo;

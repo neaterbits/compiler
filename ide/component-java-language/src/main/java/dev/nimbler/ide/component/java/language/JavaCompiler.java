@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 import dev.nimbler.build.types.compile.BuildIssue;
 import dev.nimbler.build.types.compile.Compiler;

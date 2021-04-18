@@ -9,14 +9,15 @@ import java.util.function.Function;
 
 import javax.xml.bind.JAXBException;
 
-import com.neaterbits.structuredlog.binary.logging.LogContext;
-import com.neaterbits.structuredlog.xml.model.Log;
-import com.neaterbits.structuredlog.xml.model.LogIO;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.TargetBuildResult;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.BinaryTargetExecutorLogger;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.DelegatingTargetExecutorLogger;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.StructuredTargetExecutorLogger;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.TargetExecutorLogger;
+import org.jutils.concurrency.dependencyresolution.executor.TargetBuildResult;
+import org.jutils.concurrency.dependencyresolution.executor.logger.BinaryTargetExecutorLogger;
+import org.jutils.concurrency.dependencyresolution.executor.logger.DelegatingTargetExecutorLogger;
+import org.jutils.concurrency.dependencyresolution.executor.logger.StructuredTargetExecutorLogger;
+import org.jutils.concurrency.dependencyresolution.executor.logger.TargetExecutorLogger;
+
+import org.jutils.structuredlog.binary.logging.LogContext;
+import org.jutils.structuredlog.xml.model.Log;
+import org.jutils.structuredlog.xml.model.LogIO;
 
 import dev.nimbler.build.buildsystem.common.ArgumentException;
 import dev.nimbler.build.buildsystem.common.BuildSystemMain;

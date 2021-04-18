@@ -3,7 +3,7 @@ package dev.nimbler.compiler.language.java.compile;
 import java.io.IOException;
 import java.util.List;
 
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.language.java.compile.CompileFileCollector.CompileFile;
 import dev.nimbler.compiler.resolver.util.CompilerLanguage;

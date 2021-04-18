@@ -2,7 +2,7 @@ package dev.nimbler.language.codemap;
 
 import java.util.Arrays;
 
-import com.neaterbits.util.IntSet;
+import org.jutils.IntSet;
 
 public final class VTableScratchArea {
 

@@ -1,7 +1,7 @@
 package dev.nimbler.ide.core.tasks;
 
-import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.TargetBuilder;
+import org.jutils.concurrency.dependencyresolution.spec.TargetBuilderSpec;
+import org.jutils.concurrency.dependencyresolution.spec.builder.TargetBuilder;
 
 public final class TargetBuilderIDEStartup extends TargetBuilderSpec<InitialScanContext> {
 

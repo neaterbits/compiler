@@ -13,10 +13,10 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.ArrayStack;
-import com.neaterbits.util.IntList;
-import com.neaterbits.util.Stack;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.ArrayStack;
+import org.jutils.IntList;
+import org.jutils.Stack;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.build.strategies.compilemodules.ParsedWithCachedRefs;
 import dev.nimbler.build.strategies.compilemodules.PossibleTypeRefs;

@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.ast.encoded;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 public interface ContextGetter {
 

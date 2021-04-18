@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.objects.block.ClassMethod;
 import dev.nimbler.compiler.ast.objects.expression.ArrayAccessExpression;

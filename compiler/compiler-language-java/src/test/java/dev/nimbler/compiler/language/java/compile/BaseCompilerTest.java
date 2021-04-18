@@ -2,7 +2,7 @@ package dev.nimbler.compiler.language.java.compile;
 
 import java.io.IOException;
 
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.ast.objects.ASTParseTreeFactory.GetBuiltinTypeNo;
 import dev.nimbler.compiler.ast.objects.CompilationUnit;

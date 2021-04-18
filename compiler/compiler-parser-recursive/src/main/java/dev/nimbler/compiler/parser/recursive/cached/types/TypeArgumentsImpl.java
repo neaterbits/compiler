@@ -2,7 +2,7 @@ package dev.nimbler.compiler.parser.recursive.cached.types;
 
 import java.util.Objects;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.parser.recursive.cached.ScratchBuf;
 import dev.nimbler.compiler.parser.recursive.cached.ScratchEntity;

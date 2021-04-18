@@ -2,7 +2,7 @@ package dev.nimbler.build.common.tasks;
 
 import java.util.List;
 
-import com.neaterbits.util.concurrency.scheduling.task.TaskList;
+import org.jutils.concurrency.scheduling.task.TaskList;
 
 import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;

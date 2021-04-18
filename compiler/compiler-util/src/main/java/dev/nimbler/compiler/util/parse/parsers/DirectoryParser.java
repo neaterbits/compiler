@@ -12,8 +12,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.Files;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.Files;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.util.FileSpec;
 import dev.nimbler.compiler.util.FileSystemFileSpec;

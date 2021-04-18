@@ -2,7 +2,7 @@ package dev.nimbler.language.common.typesources;
 
 import java.util.Collection;
 
-import com.neaterbits.util.EnumMask;
+import org.jutils.EnumMask;
 
 public class TypeSources extends EnumMask<TypeSource> {
 

@@ -3,8 +3,8 @@ package dev.nimbler.build.strategies.compilemodules;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.coll.Coll;
-import com.neaterbits.util.concurrency.scheduling.task.TaskContext;
+import org.jutils.coll.Coll;
+import org.jutils.concurrency.scheduling.task.TaskContext;
 
 public final class AllModulesBuildContext<PARSED_FILE, CODE_MAP, RESOLVE_ERROR> extends TaskContext {
     

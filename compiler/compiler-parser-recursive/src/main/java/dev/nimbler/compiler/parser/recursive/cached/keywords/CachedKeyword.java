@@ -2,7 +2,7 @@ package dev.nimbler.compiler.parser.recursive.cached.keywords;
 
 import java.util.Objects;
 
-import com.neaterbits.util.parse.IToken;
+import org.jutils.parse.IToken;
 
 public final class CachedKeyword<TOKEN extends IToken> {
 

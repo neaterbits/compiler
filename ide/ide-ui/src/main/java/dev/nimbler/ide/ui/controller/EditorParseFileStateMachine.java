@@ -3,8 +3,8 @@ package dev.nimbler.ide.ui.controller;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.neaterbits.util.concurrency.statemachine.BaseState;
-import com.neaterbits.util.concurrency.statemachine.StateMachine;
+import org.jutils.concurrency.statemachine.BaseState;
+import org.jutils.concurrency.statemachine.StateMachine;
 
 import dev.nimbler.ide.common.codeaccess.SourceFileInfo;
 import dev.nimbler.ide.common.codeaccess.SourceParseAccess;

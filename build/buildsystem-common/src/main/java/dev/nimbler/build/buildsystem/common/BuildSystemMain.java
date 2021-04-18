@@ -4,12 +4,13 @@ import java.io.File;
 import java.util.List;
 import java.util.function.Function;
 
-import com.neaterbits.structuredlog.binary.logging.LogContext;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.TargetBuildResult;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.TargetExecutorLogger;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
-import com.neaterbits.util.concurrency.scheduling.QueueAsyncExecutor;
-import com.neaterbits.util.concurrency.scheduling.task.TaskContext;
+import org.jutils.concurrency.dependencyresolution.executor.TargetBuildResult;
+import org.jutils.concurrency.dependencyresolution.executor.logger.TargetExecutorLogger;
+import org.jutils.concurrency.dependencyresolution.spec.TargetBuilderSpec;
+import org.jutils.concurrency.scheduling.QueueAsyncExecutor;
+import org.jutils.concurrency.scheduling.task.TaskContext;
+
+import org.jutils.structuredlog.binary.logging.LogContext;
 
 import dev.nimbler.build.types.Build;
 import dev.nimbler.build.types.ModuleId;

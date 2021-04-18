@@ -4,8 +4,7 @@ import java.util.Collection;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
-import com.neaterbits.ide.util.swt.TreeContentAdapter;
+import org.jutils.swt.TreeContentAdapter;
 
 import dev.nimbler.ide.component.common.instantiation.Newable;
 import dev.nimbler.ide.component.common.instantiation.NewableCategory;

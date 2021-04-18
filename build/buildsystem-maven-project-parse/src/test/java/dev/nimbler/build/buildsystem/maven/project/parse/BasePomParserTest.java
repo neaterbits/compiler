@@ -3,9 +3,8 @@ package dev.nimbler.build.buildsystem.maven.project.parse;
 import java.io.File;
 import java.io.IOException;
 
+import org.jutils.IOUtils;
 import org.w3c.dom.Document;
-
-import com.neaterbits.util.IOUtils;
 
 import dev.nimbler.build.buildsystem.maven.project.model.MavenProject;
 import dev.nimbler.build.buildsystem.maven.project.model.xml.MavenXMLProject;

@@ -3,7 +3,7 @@ package dev.nimbler.build.strategies.common;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.util.concurrency.scheduling.task.TaskContext;
+import org.jutils.concurrency.scheduling.task.TaskContext;
 
 import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;

@@ -2,7 +2,7 @@ package dev.nimbler.build.common.tasks;
 
 import java.util.Objects;
 
-import com.neaterbits.util.concurrency.scheduling.task.TaskContext;
+import org.jutils.concurrency.scheduling.task.TaskContext;
 
 public abstract class BuildSystemContext<BUILD_SYSTEM_ROOT> extends TaskContext {
 

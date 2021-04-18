@@ -2,7 +2,7 @@ package dev.nimbler.build.types.resource;
 
 import java.io.File;
 
-import com.neaterbits.util.StringUtils;
+import org.jutils.StringUtils;
 
 public final class NamespaceResource extends SourceFileHolderResource {
 

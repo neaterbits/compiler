@@ -2,7 +2,7 @@ package dev.nimbler.compiler.ast.objects.generics;
 
 import java.util.Objects;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.objects.ASTIterator;
 import dev.nimbler.compiler.ast.objects.ASTRecurseMode;

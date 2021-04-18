@@ -2,10 +2,10 @@ package dev.nimbler.build.buildsystem.maven.targets;
 
 import java.util.Objects;
 
-import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.FunctionActionLog;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.TargetBuilder;
-import com.neaterbits.util.concurrency.scheduling.Constraint;
+import org.jutils.concurrency.dependencyresolution.spec.TargetBuilderSpec;
+import org.jutils.concurrency.dependencyresolution.spec.builder.FunctionActionLog;
+import org.jutils.concurrency.dependencyresolution.spec.builder.TargetBuilder;
+import org.jutils.concurrency.scheduling.Constraint;
 
 import dev.nimbler.build.buildsystem.maven.project.model.MavenProject;
 

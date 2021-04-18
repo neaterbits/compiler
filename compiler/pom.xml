@@ -19,7 +19,7 @@
 		<languageGroupId>dev.nimbler.language</languageGroupId>
 		<languageVersion>0.0.1-SNAPSHOT</languageVersion>
 
-		<utilGroupId>com.neaterbits.util</utilGroupId>
+		<utilGroupId>org.jutils</utilGroupId>
 		<utilVersion>0.0.1-SNAPSHOT</utilVersion>
 
 		<assertjVersion>1.7.1</assertjVersion>

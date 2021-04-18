@@ -2,7 +2,7 @@ package dev.nimbler.ide.common.ui.keys;
 
 import java.util.Collection;
 
-import com.neaterbits.util.EnumMask;
+import org.jutils.EnumMask;
 
 public final class KeyMask extends EnumMask<QualifierKey> {
 

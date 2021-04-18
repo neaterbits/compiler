@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.neaterbits.util.Hash;
-import com.neaterbits.util.Hash.GetCompareValue;
+import org.jutils.Hash;
+import org.jutils.Hash.GetCompareValue;
 
 /**
  * Maps from callable names and parameter types to signature no

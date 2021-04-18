@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.parser.recursive.cached.keywords;
 
-import com.neaterbits.util.parse.IToken;
+import org.jutils.parse.IToken;
 
 import dev.nimbler.compiler.parser.recursive.cached.ScratchBuf;
 import dev.nimbler.compiler.parser.recursive.cached.ScratchEntity;

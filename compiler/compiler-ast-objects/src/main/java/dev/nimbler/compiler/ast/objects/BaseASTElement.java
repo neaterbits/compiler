@@ -4,10 +4,10 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.neaterbits.util.ArrayStack;
-import com.neaterbits.util.Stack;
-import com.neaterbits.util.StackView;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.ArrayStack;
+import org.jutils.Stack;
+import org.jutils.StackView;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.objects.list.ASTList;
 import dev.nimbler.compiler.ast.objects.list.ASTNode;

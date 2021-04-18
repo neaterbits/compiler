@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.neaterbits.util.concurrency.scheduling.Constraint;
+import org.jutils.concurrency.scheduling.Constraint;
 
 import dev.nimbler.build.types.resource.ModuleResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;

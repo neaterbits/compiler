@@ -3,10 +3,9 @@ package dev.nimbler.ide.main;
 import java.io.File;
 
 import org.eclipse.swt.widgets.Display;
-
-import com.neaterbits.ide.util.swt.SWTAsyncExecutor;
-import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
-import com.neaterbits.util.threads.ForwardResultToCaller;
+import org.jutils.concurrency.scheduling.AsyncExecutor;
+import org.jutils.swt.SWTAsyncExecutor;
+import org.jutils.threads.ForwardResultToCaller;
 
 import dev.nimbler.build.buildsystem.common.BuildSystems;
 import dev.nimbler.build.buildsystem.common.ScanException;

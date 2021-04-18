@@ -2,7 +2,7 @@ package dev.nimbler.build.buildsystem.common.parse;
 
 import java.util.Objects;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 public abstract class StackText extends StackBase {
 

@@ -3,7 +3,7 @@ package dev.nimbler.ide.ui.controller;
 import java.io.IOException;
 import java.util.Objects;
 
-import com.neaterbits.util.PathUtil;
+import org.jutils.PathUtil;
 
 import dev.nimbler.build.types.resource.ResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;

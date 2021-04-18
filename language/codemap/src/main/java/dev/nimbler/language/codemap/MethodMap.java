@@ -11,8 +11,8 @@ import static dev.nimbler.language.codemap.Encode.getMethodVariant;
 
 import java.util.Objects;
 
-import com.neaterbits.util.Hash;
-import com.neaterbits.util.Hash.GetCompareValue;
+import org.jutils.Hash;
+import org.jutils.Hash.GetCompareValue;
 
 import dev.nimbler.language.codemap.CodeMap.MethodFilter;
 import dev.nimbler.language.common.types.MethodVariant;

@@ -15,8 +15,8 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.ImmutableFullContext;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.ImmutableFullContext;
 
 import dev.nimbler.build.buildsystem.maven.xml.XMLAttribute;
 import dev.nimbler.build.buildsystem.maven.xml.XMLEventListener;

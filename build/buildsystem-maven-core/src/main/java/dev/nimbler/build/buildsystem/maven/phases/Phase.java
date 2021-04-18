@@ -2,7 +2,7 @@ package dev.nimbler.build.buildsystem.maven.phases;
 
 import java.util.Objects;
 
-import com.neaterbits.util.concurrency.scheduling.Constraint;
+import org.jutils.concurrency.scheduling.Constraint;
 
 public final class Phase {
 

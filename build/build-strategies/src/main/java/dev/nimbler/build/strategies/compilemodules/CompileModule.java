@@ -4,7 +4,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.coll.Coll;
+import org.jutils.coll.Coll;
 
 import dev.nimbler.build.types.dependencies.LibraryDependency;
 import dev.nimbler.build.types.dependencies.ProjectDependency;

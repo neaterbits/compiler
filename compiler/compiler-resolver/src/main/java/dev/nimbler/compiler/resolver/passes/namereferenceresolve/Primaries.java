@@ -2,8 +2,8 @@ package dev.nimbler.compiler.resolver.passes.namereferenceresolve;
 
 import java.util.Objects;
 
-import com.neaterbits.util.ArrayStack;
-import com.neaterbits.util.Stack;
+import org.jutils.ArrayStack;
+import org.jutils.Stack;
 
 class Primaries {
 

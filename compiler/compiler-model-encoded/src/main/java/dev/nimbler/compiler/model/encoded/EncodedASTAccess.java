@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.model.encoded;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.encoded.EncodedCompilationUnit;
 import dev.nimbler.compiler.model.common.SourceTokenUtil.ASTAccess;

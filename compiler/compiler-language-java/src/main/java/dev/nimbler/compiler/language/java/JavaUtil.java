@@ -2,7 +2,7 @@ package dev.nimbler.compiler.language.java;
 
 import java.util.Arrays;
 
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 import dev.nimbler.language.common.types.TypeName;
 

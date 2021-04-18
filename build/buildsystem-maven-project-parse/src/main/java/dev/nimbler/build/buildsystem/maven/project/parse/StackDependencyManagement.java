@@ -2,7 +2,7 @@ package dev.nimbler.build.buildsystem.maven.project.parse;
 
 import java.util.List;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.build.buildsystem.common.parse.StackBase;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenDependency;

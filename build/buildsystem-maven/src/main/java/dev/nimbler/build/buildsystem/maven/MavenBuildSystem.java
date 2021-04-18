@@ -14,9 +14,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.jutils.concurrency.scheduling.task.TaskContext;
 import org.w3c.dom.Document;
-
-import com.neaterbits.util.concurrency.scheduling.task.TaskContext;
 
 import dev.nimbler.build.buildsystem.common.BuildSpecifier;
 import dev.nimbler.build.buildsystem.common.BuildSystem;

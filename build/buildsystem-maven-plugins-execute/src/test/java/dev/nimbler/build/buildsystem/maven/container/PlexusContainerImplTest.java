@@ -5,8 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.junit.Test;
-
-import com.neaterbits.util.di.Components;
+import org.jutils.di.Components;
 
 public class PlexusContainerImplTest {
 

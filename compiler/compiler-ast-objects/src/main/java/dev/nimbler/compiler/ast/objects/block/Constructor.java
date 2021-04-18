@@ -2,7 +2,7 @@ package dev.nimbler.compiler.ast.objects.block;
 
 import java.util.List;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.objects.CompilationCodeVisitor;
 import dev.nimbler.compiler.ast.objects.typedefinition.ConstructorName;

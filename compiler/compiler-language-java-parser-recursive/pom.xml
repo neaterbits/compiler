@@ -42,15 +42,15 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.neaterbits.util</groupId>
+			<groupId>${utilGroupId}</groupId>
 			<artifactId>util-parse</artifactId>
-			<version>${project.version}</version>
+			<version>${utilVersion}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>com.neaterbits.util</groupId>
+			<groupId>${utilGroupId}</groupId>
 			<artifactId>util-io-buffers</artifactId>
-			<version>${project.version}</version>
+			<version>${utilVersion}</version>
 		</dependency>
 		
 		<!-- Test dependencies -->

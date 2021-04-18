@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.ActionParameters;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.ActionResult;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.FunctionActionLog;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.TargetBuilder;
-import com.neaterbits.util.concurrency.scheduling.Constraint;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.concurrency.dependencyresolution.spec.TargetBuilderSpec;
+import org.jutils.concurrency.dependencyresolution.spec.builder.ActionParameters;
+import org.jutils.concurrency.dependencyresolution.spec.builder.ActionResult;
+import org.jutils.concurrency.dependencyresolution.spec.builder.FunctionActionLog;
+import org.jutils.concurrency.dependencyresolution.spec.builder.TargetBuilder;
+import org.jutils.concurrency.scheduling.Constraint;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 

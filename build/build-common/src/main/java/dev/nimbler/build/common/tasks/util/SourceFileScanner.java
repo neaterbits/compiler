@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import com.neaterbits.util.Files;
-import com.neaterbits.util.PathUtil;
-import com.neaterbits.util.StringUtils;
+import org.jutils.Files;
+import org.jutils.PathUtil;
+import org.jutils.StringUtils;
 
 import dev.nimbler.build.types.resource.NamespaceResource;
 import dev.nimbler.build.types.resource.ResourcePath;

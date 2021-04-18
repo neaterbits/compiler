@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.io.strings.StringSource;
-import com.neaterbits.util.io.strings.Tokenizer;
+import org.jutils.io.strings.StringSource;
+import org.jutils.io.strings.Tokenizer;
 
 import dev.nimbler.compiler.ast.objects.ASTParseTreeFactory;
 import dev.nimbler.compiler.ast.objects.CompilationUnit;

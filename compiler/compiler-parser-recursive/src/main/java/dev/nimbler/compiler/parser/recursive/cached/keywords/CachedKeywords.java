@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.parser.recursive.cached.keywords;
 
-import com.neaterbits.util.parse.IToken;
+import org.jutils.parse.IToken;
 
 public interface CachedKeywords<TOKEN extends IToken> {
 

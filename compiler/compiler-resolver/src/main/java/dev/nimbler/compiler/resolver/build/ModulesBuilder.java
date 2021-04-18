@@ -6,11 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.structuredlog.binary.logging.LogContext;
-import com.neaterbits.util.Value;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.TargetBuildResult;
-import com.neaterbits.util.concurrency.scheduling.QueueAsyncExecutor;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.Value;
+import org.jutils.concurrency.dependencyresolution.executor.TargetBuildResult;
+import org.jutils.concurrency.scheduling.QueueAsyncExecutor;
+import org.jutils.parse.ParserException;
+
+import org.jutils.structuredlog.binary.logging.LogContext;
 
 import dev.nimbler.build.strategies.compilemodules.AllModulesBuildContext;
 import dev.nimbler.build.strategies.compilemodules.AllModulesCompiler;

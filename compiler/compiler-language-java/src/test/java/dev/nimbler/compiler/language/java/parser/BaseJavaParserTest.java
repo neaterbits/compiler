@@ -7,8 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.ast.objects.BaseASTElement;
 import dev.nimbler.compiler.ast.objects.CompilationCode;

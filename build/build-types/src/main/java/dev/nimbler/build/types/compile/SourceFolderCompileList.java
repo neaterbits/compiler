@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.concurrency.dependencyresolution.executor.CollectedObject;
+import org.jutils.concurrency.dependencyresolution.executor.CollectedObject;
 
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;
 

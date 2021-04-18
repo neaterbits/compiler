@@ -16,7 +16,7 @@
 	
 		<assertjVersion>1.7.1</assertjVersion>
 	
-		<utilGroupId>com.neaterbits.util</utilGroupId>
+		<utilGroupId>org.jutils</utilGroupId>
 		<utilBaseVersion>0.0.1-SNAPSHOT</utilBaseVersion>
 		<utilDiVersion>0.0.1-SNAPSHOT</utilDiVersion>
 		<utilConcurrencyVersion>0.0.1-SNAPSHOT</utilConcurrencyVersion>

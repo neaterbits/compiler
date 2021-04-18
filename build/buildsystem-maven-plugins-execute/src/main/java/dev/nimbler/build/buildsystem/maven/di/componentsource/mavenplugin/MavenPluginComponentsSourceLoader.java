@@ -6,9 +6,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 
-import com.neaterbits.util.di.componentsource.BaseComponentsSourceLoader;
-import com.neaterbits.util.di.componentsource.ComponentsSource;
-import com.neaterbits.util.di.componentsource.ComponentsSourceException;
+import org.jutils.di.componentsource.BaseComponentsSourceLoader;
+import org.jutils.di.componentsource.ComponentsSource;
+import org.jutils.di.componentsource.ComponentsSourceException;
 
 import dev.nimbler.build.buildsystem.maven.plugins.descriptor.model.MavenPluginDescriptor;
 import dev.nimbler.build.buildsystem.maven.plugins.descriptor.model.MojoDescriptor;

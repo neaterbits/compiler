@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.util;
 
-import com.neaterbits.util.Hash;
+import org.jutils.Hash;
 
 public final class IntKeyIntValueHash {
 

@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.build.strategies.compilemodules.ParsedWithCachedRefs;
 import dev.nimbler.compiler.language.java.compile.CodeMapCompiledAndMappedFiles;

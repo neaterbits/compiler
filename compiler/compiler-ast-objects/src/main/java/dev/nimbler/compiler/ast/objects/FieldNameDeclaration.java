@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.ast.objects;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.objects.block.ASTName;
 import dev.nimbler.compiler.ast.objects.typedefinition.FieldName;

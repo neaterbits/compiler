@@ -1,6 +1,6 @@
 package dev.nimbler.ide.util.ui.text.styling;
 
-import com.neaterbits.util.EnumMask;
+import org.jutils.EnumMask;
 
 public class TextStyles extends EnumMask<TextStyle> {
 	

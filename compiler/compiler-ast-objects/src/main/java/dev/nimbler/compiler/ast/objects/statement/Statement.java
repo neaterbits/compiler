@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.ast.objects.statement;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.objects.CompilationCode;
 import dev.nimbler.compiler.ast.objects.CompilationCodeVisitor;

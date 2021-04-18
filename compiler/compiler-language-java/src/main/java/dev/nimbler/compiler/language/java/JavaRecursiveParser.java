@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.neaterbits.util.io.strings.StringSourceInputStream;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.io.strings.StringSourceInputStream;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.parser.java.recursive.JavaRecursiveParserHelper;
 import dev.nimbler.compiler.parser.listener.common.CreateParserListener;

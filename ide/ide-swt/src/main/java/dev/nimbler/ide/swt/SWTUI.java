@@ -6,8 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-
-import com.neaterbits.util.threads.ForwardResultToCaller;
+import org.jutils.threads.ForwardResultToCaller;
 
 import dev.nimbler.ide.common.ui.ViewFocusListener;
 import dev.nimbler.ide.common.ui.menus.Menus;

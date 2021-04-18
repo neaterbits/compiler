@@ -2,10 +2,10 @@ package dev.nimbler.ide.core.tasks;
 
 import java.util.List;
 
-import com.neaterbits.util.concurrency.dependencyresolution.spec.TargetBuilderSpec;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.ActionResult;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.TargetBuilder;
-import com.neaterbits.util.concurrency.scheduling.Constraint;
+import org.jutils.concurrency.dependencyresolution.spec.TargetBuilderSpec;
+import org.jutils.concurrency.dependencyresolution.spec.builder.ActionResult;
+import org.jutils.concurrency.dependencyresolution.spec.builder.TargetBuilder;
+import org.jutils.concurrency.scheduling.Constraint;
 
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;

@@ -1,6 +1,6 @@
 package dev.nimbler.build.strategies.compilemodules;
 
-import com.neaterbits.util.IntList;
+import org.jutils.IntList;
 
 /**
  * Types and ref information extracted from files when parsed.

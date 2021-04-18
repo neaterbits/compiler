@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.neaterbits.structuredlog.binary.logging.LogContext;
-import com.neaterbits.util.PathUtil;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.PrintlnTargetExecutorLogger;
-import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
-import com.neaterbits.util.concurrency.scheduling.Constraint;
-import com.neaterbits.util.concurrency.scheduling.ScheduleFunction;
-import com.neaterbits.util.threads.ForwardResultToCaller;
+import org.jutils.PathUtil;
+import org.jutils.concurrency.dependencyresolution.executor.logger.PrintlnTargetExecutorLogger;
+import org.jutils.concurrency.scheduling.AsyncExecutor;
+import org.jutils.concurrency.scheduling.Constraint;
+import org.jutils.concurrency.scheduling.ScheduleFunction;
+import org.jutils.threads.ForwardResultToCaller;
+
+import org.jutils.structuredlog.binary.logging.LogContext;
 
 import dev.nimbler.build.buildsystem.common.BuildSystem;
 import dev.nimbler.build.buildsystem.common.BuildSystems;

@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.main;
 
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 import dev.nimbler.compiler.ast.objects.FieldNameDeclaration;
 import dev.nimbler.compiler.ast.objects.block.FunctionName;

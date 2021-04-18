@@ -2,7 +2,7 @@ package dev.nimbler.compiler.parser.recursive.cached.expressions;
 
 import java.util.Objects;
 
-import com.neaterbits.util.io.strings.StringRef;
+import org.jutils.io.strings.StringRef;
 
 import dev.nimbler.compiler.types.ParseTreeElement;
 import dev.nimbler.compiler.util.Base;

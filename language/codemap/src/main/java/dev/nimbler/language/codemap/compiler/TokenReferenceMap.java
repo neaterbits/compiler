@@ -1,8 +1,8 @@
 package dev.nimbler.language.codemap.compiler;
 
-import com.neaterbits.util.Bits;
-import com.neaterbits.util.Hash;
-import com.neaterbits.util.Hash.GetCompareValue;
+import org.jutils.Bits;
+import org.jutils.Hash;
+import org.jutils.Hash.GetCompareValue;
 
 import dev.nimbler.language.codemap.ArrayAllocation;
 

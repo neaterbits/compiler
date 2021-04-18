@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.neaterbits.util.ArrayStack;
-import com.neaterbits.util.Stack;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.ArrayStack;
+import org.jutils.Stack;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.objects.ASTVisitor;
 import dev.nimbler.compiler.ast.objects.BaseASTElement;

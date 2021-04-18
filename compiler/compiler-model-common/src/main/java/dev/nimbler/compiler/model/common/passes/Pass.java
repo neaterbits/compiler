@@ -2,7 +2,7 @@ package dev.nimbler.compiler.model.common.passes;
 
 import java.io.IOException;
 
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 public abstract class Pass<INPUT, OUTPUT> {
 

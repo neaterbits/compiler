@@ -1,6 +1,6 @@
 package dev.nimbler.build.buildsystem.maven.common.parse.listeners;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 public interface EntityEventListener {
 

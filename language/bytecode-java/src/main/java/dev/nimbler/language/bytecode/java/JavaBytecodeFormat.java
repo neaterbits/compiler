@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 import dev.nimbler.language.bytecode.common.BytecodeFormat;
 import dev.nimbler.language.bytecode.common.ClassByteCodeWithTypeSource;

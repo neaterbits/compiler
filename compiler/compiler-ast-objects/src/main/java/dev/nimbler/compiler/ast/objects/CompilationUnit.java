@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.util.IdentityKey;
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.FullContext;
+import org.jutils.IdentityKey;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.FullContext;
 
 import dev.nimbler.compiler.ast.objects.list.ASTList;
 import dev.nimbler.compiler.util.FullContextProvider;

@@ -16,8 +16,7 @@ import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.eclipse.sisu.plexus.Hints;
-
-import com.neaterbits.util.di.Components;
+import org.jutils.di.Components;
 
 public final class PlexusContainerImpl extends BaseContainerImpl implements PlexusContainer {
     

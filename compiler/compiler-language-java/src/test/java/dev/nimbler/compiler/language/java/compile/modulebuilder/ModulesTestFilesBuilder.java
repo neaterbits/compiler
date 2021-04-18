@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.IOUtils;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.IOUtils;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.build.strategies.compilemodules.CompileModule;
 import dev.nimbler.build.strategies.compilemodules.ParsedWithCachedRefs;

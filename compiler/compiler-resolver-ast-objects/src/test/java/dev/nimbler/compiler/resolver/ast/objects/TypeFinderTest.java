@@ -3,8 +3,7 @@ package dev.nimbler.compiler.resolver.ast.objects;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
-
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 import dev.nimbler.compiler.util.TypeResolveMode;
 

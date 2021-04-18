@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.parser.listener.stackbased.state.base.ListStackEntry;
 import dev.nimbler.compiler.util.parse.ParseLogger;

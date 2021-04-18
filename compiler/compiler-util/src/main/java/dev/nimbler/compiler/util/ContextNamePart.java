@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.util;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 public final class ContextNamePart {
     

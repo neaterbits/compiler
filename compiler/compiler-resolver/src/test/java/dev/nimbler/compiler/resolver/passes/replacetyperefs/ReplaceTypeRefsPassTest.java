@@ -10,10 +10,9 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.jutils.parse.ParserException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-
-import com.neaterbits.util.parse.ParserException;
 
 import dev.nimbler.compiler.model.common.CompilationUnitModel;
 import dev.nimbler.compiler.model.common.TypeReferenceVisitor;

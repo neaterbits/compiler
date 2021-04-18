@@ -6,9 +6,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.neaterbits.util.io.strings.StringSource;
-import com.neaterbits.util.io.strings.StringSourceInputStream;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.io.strings.StringSource;
+import org.jutils.io.strings.StringSourceInputStream;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.util.FullContextProvider;
 import dev.nimbler.compiler.util.StringSourceFullContextProvider;

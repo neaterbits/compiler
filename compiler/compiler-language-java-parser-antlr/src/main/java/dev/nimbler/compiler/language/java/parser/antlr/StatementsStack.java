@@ -3,8 +3,7 @@ package dev.nimbler.compiler.language.java.parser.antlr;
 import java.util.Objects;
 
 import org.antlr.v4.runtime.Token;
-
-import com.neaterbits.util.ArrayStack;
+import org.jutils.ArrayStack;
 
 final class StatementsStack {
 

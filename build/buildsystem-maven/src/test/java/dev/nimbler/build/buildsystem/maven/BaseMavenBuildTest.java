@@ -3,15 +3,14 @@ package dev.nimbler.build.buildsystem.maven;
 import java.io.File;
 import java.io.IOException;
 
+import org.jutils.Files;
+import org.jutils.IOUtils;
+import org.jutils.concurrency.dependencyresolution.executor.logger.PrintlnTargetExecutorLogger;
+import org.jutils.concurrency.dependencyresolution.executor.logger.TargetExecutorLogState;
+import org.jutils.concurrency.dependencyresolution.executor.logger.TargetExecutorLogger;
+import org.jutils.concurrency.dependencyresolution.model.TargetDefinition;
 import org.mockito.Mockito;
 import org.w3c.dom.Document;
-
-import com.neaterbits.util.Files;
-import com.neaterbits.util.IOUtils;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.PrintlnTargetExecutorLogger;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.TargetExecutorLogState;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.logger.TargetExecutorLogger;
-import com.neaterbits.util.concurrency.dependencyresolution.model.TargetDefinition;
 
 import dev.nimbler.build.buildsystem.common.ArgumentException;
 import dev.nimbler.build.buildsystem.common.BuildSystemMain;

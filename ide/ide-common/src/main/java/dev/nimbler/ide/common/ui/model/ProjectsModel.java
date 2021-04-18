@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.neaterbits.util.Files;
+import org.jutils.Files;
 
 import dev.nimbler.build.common.tasks.util.SourceFileScanner;
 import dev.nimbler.build.common.tasks.util.SourceFileScanner.Namespace;

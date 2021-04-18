@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
-import com.neaterbits.util.io.buffers.StringBuffers;
-import com.neaterbits.util.io.loadstream.SimpleLoadStream;
-import com.neaterbits.util.io.strings.CharInput;
-import com.neaterbits.util.parse.Lexer;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.io.buffers.StringBuffers;
+import org.jutils.io.loadstream.SimpleLoadStream;
+import org.jutils.io.strings.CharInput;
+import org.jutils.parse.Lexer;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.parser.listener.common.CreateParserListener;
 import dev.nimbler.compiler.parser.listener.common.IterativeParseTreeListener;

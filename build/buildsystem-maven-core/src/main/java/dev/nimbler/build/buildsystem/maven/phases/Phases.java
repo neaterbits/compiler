@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.concurrency.scheduling.Constraint;
+import org.jutils.concurrency.scheduling.Constraint;
 
 import dev.nimbler.build.buildsystem.maven.phases.Phase.PrevPhase;
 

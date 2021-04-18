@@ -2,7 +2,7 @@ package dev.nimbler.ide.common.model.source;
 
 import java.util.Collection;
 
-import com.neaterbits.util.EnumMask;
+import org.jutils.EnumMask;
 
 final class SourceElementMask extends EnumMask<SourceElementFlag> {
 

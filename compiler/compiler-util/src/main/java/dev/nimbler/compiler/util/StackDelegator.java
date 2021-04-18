@@ -3,7 +3,7 @@ package dev.nimbler.compiler.util;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.neaterbits.util.Stack;
+import org.jutils.Stack;
 
 public class StackDelegator<T> implements Stack<T> {
 

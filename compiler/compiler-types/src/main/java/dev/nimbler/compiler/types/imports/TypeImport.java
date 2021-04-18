@@ -3,7 +3,7 @@ package dev.nimbler.compiler.types.imports;
 import java.util.Arrays;
 import java.util.Objects;
 
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 public class TypeImport {
 	

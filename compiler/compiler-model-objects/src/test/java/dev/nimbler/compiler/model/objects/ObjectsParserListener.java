@@ -2,9 +2,9 @@ package dev.nimbler.compiler.model.objects;
 
 import java.util.Collection;
 
-import com.neaterbits.util.io.strings.StringSource;
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.ImmutableContext;
+import org.jutils.io.strings.StringSource;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.ImmutableContext;
 
 import dev.nimbler.compiler.ast.objects.ASTParseTreeFactory;
 import dev.nimbler.compiler.ast.objects.parser.iterative.UntypedIterativeOOParserListener;

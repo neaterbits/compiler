@@ -5,13 +5,12 @@ import static dev.nimbler.compiler.antlr4.AntlrStringRefs.stringRef;
 import java.util.List;
 
 import org.antlr.v4.runtime.Token;
-
-import com.neaterbits.util.Strings;
-import com.neaterbits.util.io.strings.OffsetLengthStringRef;
-import com.neaterbits.util.io.strings.StringSource;
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.FullContext;
-import com.neaterbits.util.parse.context.ImmutableFullContext;
+import org.jutils.Strings;
+import org.jutils.io.strings.OffsetLengthStringRef;
+import org.jutils.io.strings.StringSource;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.FullContext;
+import org.jutils.parse.context.ImmutableFullContext;
 
 import dev.nimbler.compiler.antlr4.Antlr4;
 import dev.nimbler.compiler.antlr4.ModelParserListener;

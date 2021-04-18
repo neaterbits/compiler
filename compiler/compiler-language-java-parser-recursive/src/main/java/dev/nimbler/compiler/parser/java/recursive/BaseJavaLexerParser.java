@@ -3,10 +3,10 @@ package dev.nimbler.compiler.parser.java.recursive;
 import java.io.IOException;
 import java.util.Objects;
 
-import com.neaterbits.util.io.strings.CharInput;
-import com.neaterbits.util.io.strings.Tokenizer;
-import com.neaterbits.util.parse.Lexer;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.io.strings.CharInput;
+import org.jutils.io.strings.Tokenizer;
+import org.jutils.parse.Lexer;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.parser.listener.common.IterativeParseTreeListener;
 import dev.nimbler.compiler.parser.recursive.BaseLexerParser;

@@ -14,7 +14,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<utilGroupId>com.neaterbits.util</utilGroupId>
+		<utilGroupId>org.jutils</utilGroupId>
 		<utilVersion>0.0.1-SNAPSHOT</utilVersion>
 
 	</properties>

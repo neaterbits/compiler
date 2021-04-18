@@ -2,8 +2,8 @@ package dev.nimbler.build.strategies.common;
 
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.concurrency.dependencyresolution.spec.PrerequisitesBuilderSpec;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.PrerequisitesBuilder;
+import org.jutils.concurrency.dependencyresolution.spec.PrerequisitesBuilderSpec;
+import org.jutils.concurrency.dependencyresolution.spec.builder.PrerequisitesBuilder;
 
 import dev.nimbler.build.types.compile.ProjectModuleDependencyList;
 import dev.nimbler.build.types.dependencies.ProjectDependency;

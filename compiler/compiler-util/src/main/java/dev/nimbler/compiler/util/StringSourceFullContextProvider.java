@@ -2,10 +2,10 @@ package dev.nimbler.compiler.util;
 
 import java.util.Objects;
 
-import com.neaterbits.util.io.strings.StringSource;
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.FullContext;
-import com.neaterbits.util.parse.context.ImmutableFullContext;
+import org.jutils.io.strings.StringSource;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.FullContext;
+import org.jutils.parse.context.ImmutableFullContext;
 
 public final class StringSourceFullContextProvider implements FullContextProvider {
     

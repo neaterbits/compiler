@@ -2,10 +2,10 @@ package dev.nimbler.ide.common.scheduling;
 
 import java.util.Objects;
 
-import com.neaterbits.util.concurrency.scheduling.AsyncExecutor;
-import com.neaterbits.util.concurrency.scheduling.Constraint;
-import com.neaterbits.util.concurrency.scheduling.ScheduleFunction;
-import com.neaterbits.util.concurrency.scheduling.ScheduleListener;
+import org.jutils.concurrency.scheduling.AsyncExecutor;
+import org.jutils.concurrency.scheduling.Constraint;
+import org.jutils.concurrency.scheduling.ScheduleFunction;
+import org.jutils.concurrency.scheduling.ScheduleListener;
 
 public class IDESchedulerImpl implements IDEScheduler {
 

@@ -4,8 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.junit.Test;
-
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 public class TestSourceFile {
 

@@ -4,9 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 
-import com.neaterbits.util.di.Instantiation;
-import com.neaterbits.util.di.componentsource.BaseComponentsSource;
-import com.neaterbits.util.di.componentsource.ComponentsSourceException;
+import org.jutils.di.Instantiation;
+import org.jutils.di.componentsource.BaseComponentsSource;
+import org.jutils.di.componentsource.ComponentsSourceException;
 
 import dev.nimbler.build.buildsystem.maven.plugins.descriptor.model.MavenPluginDescriptor;
 import dev.nimbler.build.buildsystem.maven.plugins.descriptor.model.MojoDescriptor;

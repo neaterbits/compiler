@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.Indent;
-import com.neaterbits.util.coll.MapOfList;
+import org.jutils.Indent;
+import org.jutils.coll.MapOfList;
 
 import dev.nimbler.build.buildsystem.maven.CachedDependencies;
 import dev.nimbler.build.buildsystem.maven.EffectiveProject;

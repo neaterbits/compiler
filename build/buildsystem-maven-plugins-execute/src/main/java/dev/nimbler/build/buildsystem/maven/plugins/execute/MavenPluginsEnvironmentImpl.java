@@ -12,16 +12,15 @@ import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-
-import com.neaterbits.util.di.AmbiguousRequirementException;
-import com.neaterbits.util.di.ClassLoaderScanner;
-import com.neaterbits.util.di.Resolver;
-import com.neaterbits.util.di.UnknownFieldException;
-import com.neaterbits.util.di.UnresolvedRequirementException;
-import com.neaterbits.util.di.UnsupportedTypeException;
-import com.neaterbits.util.di.componentsource.ComponentsSourceException;
-import com.neaterbits.util.di.componentsource.ComponentsSourceLoader;
-import com.neaterbits.util.di.componentsource.jsr330.JSR330ClassComponentsSourceLoader;
+import org.jutils.di.AmbiguousRequirementException;
+import org.jutils.di.ClassLoaderScanner;
+import org.jutils.di.Resolver;
+import org.jutils.di.UnknownFieldException;
+import org.jutils.di.UnresolvedRequirementException;
+import org.jutils.di.UnsupportedTypeException;
+import org.jutils.di.componentsource.ComponentsSourceException;
+import org.jutils.di.componentsource.ComponentsSourceLoader;
+import org.jutils.di.componentsource.jsr330.JSR330ClassComponentsSourceLoader;
 
 import dev.nimbler.build.buildsystem.maven.di.componentsource.plexus.PlexusComponentsSourceLoader;
 import dev.nimbler.build.buildsystem.maven.plugins.MavenPluginInfo;

@@ -4,8 +4,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.neaterbits.util.ArrayUtils;
-import com.neaterbits.util.StringUtils;
+import org.jutils.ArrayUtils;
+import org.jutils.StringUtils;
 
 import dev.nimbler.build.buildsystem.maven.xml.model.DocumentModel;
 

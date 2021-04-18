@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 public abstract class ScratchEntity<PART, TO_PROCESS, LIST> implements ScratchList<TO_PROCESS> {
 

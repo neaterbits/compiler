@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import com.neaterbits.util.io.strings.StringRef;
-import com.neaterbits.util.parse.IToken;
-import com.neaterbits.util.parse.ParserException;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.io.strings.StringRef;
+import org.jutils.parse.IToken;
+import org.jutils.parse.ParserException;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.parser.java.recursive.JavaTypeArgumentsLexerParser.ParseFunction;
 import dev.nimbler.compiler.parser.listener.common.ParseTreeListener;

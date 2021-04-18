@@ -6,9 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Test;
-
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.FullContext;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.FullContext;
 
 import dev.nimbler.compiler.ast.objects.CompilationUnit;
 import dev.nimbler.compiler.ast.objects.Import;

@@ -3,11 +3,6 @@ package dev.nimbler.compiler.language.java.parser.antlr.antlr4;
 import dev.nimbler.compiler.java.Java8BaseListener;
 import dev.nimbler.compiler.java.Java8Parser;
 import dev.nimbler.compiler.java.Java8Parser.*;
-import com.neaterbits.util.Strings;
-import com.neaterbits.util.io.strings.StringRef;
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.FullContext;
-
 import dev.nimbler.compiler.antlr4.Antlr4;
 import dev.nimbler.compiler.language.java.parser.antlr.JavaParserListener;
 import dev.nimbler.compiler.language.java.parser.antlr.JavaPrimitiveType;
@@ -43,6 +38,10 @@ import java.util.stream.Collectors;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.jutils.Strings;
+import org.jutils.io.strings.StringRef;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.FullContext;
 
 public class Java8AntlrParserListener<COMPILATION_UNIT> extends Java8BaseListener {
 

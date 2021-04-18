@@ -2,9 +2,9 @@ package dev.nimbler.compiler.parser.java.recursive;
 
 import java.util.Objects;
 
-import com.neaterbits.util.io.strings.StringRef;
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.MutableContext;
+import org.jutils.io.strings.StringRef;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.MutableContext;
 
 import dev.nimbler.compiler.types.ReferenceType;
 import dev.nimbler.compiler.util.ContextRef;

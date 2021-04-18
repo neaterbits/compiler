@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.parser.recursive.cached.types;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 // Interface for getting type arguments, either generic type or reference type
 // eg. Function<SOME_GENERIC_TYPE, Map<String, SOME_OTHER_GENERIC_TYPE>

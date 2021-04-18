@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.parser.listener.stackbased.state;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 public interface VariableNameSetter {
 

@@ -1,6 +1,6 @@
 package dev.nimbler.build.buildsystem.maven.common.parse.configuration;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.build.buildsystem.maven.common.model.configuration.PlexusConfigurationMap;
 

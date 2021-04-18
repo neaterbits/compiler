@@ -73,9 +73,9 @@
 	</dependency>
 
   	<dependency>
-  		<groupId>com.neaterbits.util</groupId>
+  		<groupId>${utilGroupId}</groupId>
   		<artifactId>util-di</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
+  		<version>${utilDiVersion}</version>
   		<scope>test</scope>
   	</dependency>
 

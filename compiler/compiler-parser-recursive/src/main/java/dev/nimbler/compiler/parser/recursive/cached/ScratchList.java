@@ -2,7 +2,7 @@ package dev.nimbler.compiler.parser.recursive.cached;
 
 import java.io.IOException;
 
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 public interface ScratchList<TO_PROCESS> {
 

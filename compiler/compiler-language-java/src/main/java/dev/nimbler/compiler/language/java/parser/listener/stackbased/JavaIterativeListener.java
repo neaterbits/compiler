@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.language.java.parser.listener.stackbased;
 
-import com.neaterbits.util.io.strings.StringSource;
+import org.jutils.io.strings.StringSource;
 
 import dev.nimbler.compiler.ast.objects.parser.iterative.UntypedIterativeOOParserListener;
 import dev.nimbler.compiler.parser.listener.common.ContextAccess;

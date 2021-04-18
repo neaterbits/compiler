@@ -2,8 +2,8 @@ package dev.nimbler.compiler.model.encoded;
 
 import java.util.Map;
 
-import com.neaterbits.util.buffers.MapStringStorageBuffer;
-import com.neaterbits.util.io.strings.Tokenizer;
+import org.jutils.buffers.MapStringStorageBuffer;
+import org.jutils.io.strings.Tokenizer;
 
 import dev.nimbler.compiler.ast.encoded.ASTBuffer;
 import dev.nimbler.compiler.ast.encoded.ASTBufferRead;

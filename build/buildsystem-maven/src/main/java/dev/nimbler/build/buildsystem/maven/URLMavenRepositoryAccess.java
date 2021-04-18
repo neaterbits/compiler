@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.IOUtils;
+import org.jutils.IOUtils;
 
 import dev.nimbler.build.buildsystem.common.http.HTTPDownloader;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenModuleId;

@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.concurrency.dependencyresolution.executor.CollectedObject;
+import org.jutils.concurrency.dependencyresolution.executor.CollectedObject;
 
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
 

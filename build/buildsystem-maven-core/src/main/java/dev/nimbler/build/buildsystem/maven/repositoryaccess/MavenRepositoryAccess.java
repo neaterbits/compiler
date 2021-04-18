@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-import com.neaterbits.util.StringUtils;
+import org.jutils.StringUtils;
 
 import dev.nimbler.build.buildsystem.maven.common.model.MavenDependency;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenModuleId;

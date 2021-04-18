@@ -5,12 +5,12 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.coll.MapOfList;
-import com.neaterbits.util.concurrency.dependencyresolution.executor.SubPrerequisites;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.PrerequisitesBuilderSpec;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.FunctionActionLog;
-import com.neaterbits.util.concurrency.dependencyresolution.spec.builder.PrerequisitesBuilder;
-import com.neaterbits.util.concurrency.scheduling.Constraint;
+import org.jutils.coll.MapOfList;
+import org.jutils.concurrency.dependencyresolution.executor.SubPrerequisites;
+import org.jutils.concurrency.dependencyresolution.spec.PrerequisitesBuilderSpec;
+import org.jutils.concurrency.dependencyresolution.spec.builder.FunctionActionLog;
+import org.jutils.concurrency.dependencyresolution.spec.builder.PrerequisitesBuilder;
+import org.jutils.concurrency.scheduling.Constraint;
 
 import dev.nimbler.build.buildsystem.maven.phases.Phases;
 import dev.nimbler.build.buildsystem.maven.plugins.access.PluginFinder;

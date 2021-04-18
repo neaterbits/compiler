@@ -1,6 +1,6 @@
 package dev.nimbler.build.buildsystem.maven.plexus.components.parse;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.build.buildsystem.maven.common.parse.configuration.BasePlexusConfigurationStackEventListener;
 import dev.nimbler.build.buildsystem.maven.plexus.components.model.PlexusComponent;

@@ -4,9 +4,8 @@ import java.net.URL;
 import java.util.Objects;
 
 import org.eclipse.sisu.plexus.Strategies;
-
-import com.neaterbits.util.di.Instantiation;
-import com.neaterbits.util.di.componentsource.BaseComponentsSource;
+import org.jutils.di.Instantiation;
+import org.jutils.di.componentsource.BaseComponentsSource;
 
 import dev.nimbler.build.buildsystem.maven.plexus.components.model.PlexusComponent;
 import dev.nimbler.build.buildsystem.maven.plexus.components.model.PlexusComponentSet;

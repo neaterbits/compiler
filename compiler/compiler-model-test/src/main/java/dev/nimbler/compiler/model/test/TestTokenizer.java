@@ -2,8 +2,8 @@ package dev.nimbler.compiler.model.test;
 
 import java.util.Objects;
 
-import com.neaterbits.util.buffers.MapStringStorageBuffer;
-import com.neaterbits.util.io.strings.Tokenizer;
+import org.jutils.buffers.MapStringStorageBuffer;
+import org.jutils.io.strings.Tokenizer;
 
 public final class TestTokenizer implements Tokenizer {
 

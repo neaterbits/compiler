@@ -16,7 +16,7 @@
 		<buildGroupId>dev.nimbler.build</buildGroupId>
 		<buildVersion>0.0.1-SNAPSHOT</buildVersion>
 
-		<utilGroupId>com.neaterbits.util</utilGroupId>
+		<utilGroupId>org.jutils</utilGroupId>
 		<utilVersion>0.0.1-SNAPSHOT</utilVersion>
 
 		<compilerGroupId>dev.nimbler.compiler</compilerGroupId>

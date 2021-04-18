@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.neaterbits.util.Counter;
-import com.neaterbits.util.Strings;
-import com.neaterbits.util.ValueMap;
+import org.jutils.Counter;
+import org.jutils.Strings;
+import org.jutils.ValueMap;
 
 import dev.nimbler.language.bytecode.common.BaseClassFile;
 import dev.nimbler.language.bytecode.common.ClassBytecode;

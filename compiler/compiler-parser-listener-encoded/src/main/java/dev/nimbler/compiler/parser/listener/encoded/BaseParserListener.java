@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.neaterbits.util.buffers.MapStringStorageBuffer;
-import com.neaterbits.util.io.strings.Tokenizer;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.buffers.MapStringStorageBuffer;
+import org.jutils.io.strings.Tokenizer;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.ast.encoded.AST;
 import dev.nimbler.compiler.ast.encoded.ASTBuffer;

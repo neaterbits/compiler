@@ -3,7 +3,7 @@ package dev.nimbler.compiler.parser.listener.stackbased.state.base;
 import java.util.List;
 import java.util.Objects;
 
-import com.neaterbits.util.ArrayStack;
+import org.jutils.ArrayStack;
 
 public final class ListStack extends ArrayStack<StackEntry> {
 

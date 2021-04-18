@@ -1,6 +1,6 @@
 package dev.nimbler.language.codemap;
 
-import com.neaterbits.util.Bits;
+import org.jutils.Bits;
 
 import dev.nimbler.language.common.types.MethodVariant;
 import dev.nimbler.language.common.types.Mutability;

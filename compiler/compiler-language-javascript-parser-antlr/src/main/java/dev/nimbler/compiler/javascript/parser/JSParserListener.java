@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.javascript.parser;
 
-import com.neaterbits.util.io.strings.StringSource;
+import org.jutils.io.strings.StringSource;
 
 import dev.nimbler.compiler.antlr4.ModelParserListener;
 import dev.nimbler.compiler.ast.objects.parser.iterative.BaseIterativeOOParserListener;

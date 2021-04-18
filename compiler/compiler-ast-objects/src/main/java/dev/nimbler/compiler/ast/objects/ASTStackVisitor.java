@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.ast.objects;
 
-import com.neaterbits.util.StackView;;
+import org.jutils.StackView;;
 
 public interface ASTStackVisitor<T, STACK extends StackView<T>> {
 

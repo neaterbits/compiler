@@ -8,9 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.jutils.IOUtils;
 import org.w3c.dom.Document;
-
-import com.neaterbits.util.IOUtils;
 
 import dev.nimbler.build.buildsystem.maven.common.model.MavenDependency;
 import dev.nimbler.build.buildsystem.maven.common.model.MavenModuleId;

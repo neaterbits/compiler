@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.util.Strings;
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.Strings;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.build.common.language.CompileableLanguage;
 import dev.nimbler.build.common.tasks.util.SourceFileScanner;

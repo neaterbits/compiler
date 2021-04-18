@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.ast.objects.parser.iterative;
 
-import com.neaterbits.util.io.strings.StringSource;
+import org.jutils.io.strings.StringSource;
 
 import dev.nimbler.compiler.parser.listener.common.ContextAccess;
 import dev.nimbler.compiler.parser.listener.stackbased.ParseTreeFactory;

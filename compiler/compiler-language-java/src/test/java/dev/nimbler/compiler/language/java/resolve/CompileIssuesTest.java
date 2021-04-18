@@ -6,8 +6,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.junit.Test;
-
-import com.neaterbits.util.parse.ParserException;
+import org.jutils.parse.ParserException;
 
 import dev.nimbler.compiler.ast.objects.BaseASTElement;
 import dev.nimbler.compiler.ast.objects.expression.PrimaryList;

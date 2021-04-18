@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.language.java;
 
-import com.neaterbits.util.io.strings.StringSource;
+import org.jutils.io.strings.StringSource;
 
 import dev.nimbler.compiler.ast.objects.ASTParseTreeFactory;
 import dev.nimbler.compiler.ast.objects.CompilationUnit;

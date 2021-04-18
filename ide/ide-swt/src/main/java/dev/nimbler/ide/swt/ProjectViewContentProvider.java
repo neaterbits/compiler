@@ -5,8 +5,7 @@ import java.util.Objects;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
-import com.neaterbits.ide.util.swt.TreeContentAdapter;
+import org.jutils.swt.TreeContentAdapter;
 
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
 import dev.nimbler.build.types.resource.ResourcePath;

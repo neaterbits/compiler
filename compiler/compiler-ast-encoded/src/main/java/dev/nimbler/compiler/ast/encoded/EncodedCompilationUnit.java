@@ -2,9 +2,9 @@ package dev.nimbler.compiler.ast.encoded;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.util.buffers.MapStringStorageBuffer;
-import com.neaterbits.util.parse.context.Context;
-import com.neaterbits.util.parse.context.ImmutableContext;
+import org.jutils.buffers.MapStringStorageBuffer;
+import org.jutils.parse.context.Context;
+import org.jutils.parse.context.ImmutableContext;
 
 import dev.nimbler.compiler.ast.encoded.ASTBufferRead.ParseTreeElementRef;
 import dev.nimbler.compiler.parser.listener.common.ContextAccess;

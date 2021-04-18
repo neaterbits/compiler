@@ -1,6 +1,6 @@
 package dev.nimbler.compiler.parser.listener.common;
 
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.parse.context.Context;
 
 public interface IterativeParseTreeListener<COMPILATION_UNIT> extends InfixParseTreeListener<COMPILATION_UNIT> {
 

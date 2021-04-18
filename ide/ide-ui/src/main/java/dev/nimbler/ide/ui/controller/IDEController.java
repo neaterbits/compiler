@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.neaterbits.util.Strings;
+import org.jutils.Strings;
 
 import dev.nimbler.build.types.resource.NamespaceResource;
 import dev.nimbler.build.types.resource.NamespaceResourcePath;

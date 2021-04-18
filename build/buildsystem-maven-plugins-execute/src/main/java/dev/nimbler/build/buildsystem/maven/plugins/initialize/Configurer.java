@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
-import com.neaterbits.util.StringUtils;
+import org.jutils.StringUtils;
 
 import dev.nimbler.build.buildsystem.maven.common.model.configuration.MavenConfiguration;
 import dev.nimbler.build.buildsystem.maven.common.model.configuration.PlexusConfigurationMap;

@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import com.neaterbits.util.Bits;
-import com.neaterbits.util.ValueMap;
+import org.jutils.Bits;
+import org.jutils.ValueMap;
 
 import dev.nimbler.language.codemap.MethodOverrideMap.GetExtendedTypesEncoded;
 import dev.nimbler.language.common.types.MethodVariant;

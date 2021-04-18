@@ -6,11 +6,10 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.jutils.parse.ParserException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-
-import com.neaterbits.util.parse.ParserException;
 
 import dev.nimbler.compiler.model.common.ParseTreeModel;
 import dev.nimbler.compiler.model.common.TypeVisitor;

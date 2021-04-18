@@ -2,7 +2,7 @@ package dev.nimbler.compiler.model.common;
 
 import java.util.Objects;
 
-import com.neaterbits.util.ArrayStack;
+import org.jutils.ArrayStack;
 
 import dev.nimbler.language.common.types.TypeName;
 import dev.nimbler.language.common.types.TypeVariant;

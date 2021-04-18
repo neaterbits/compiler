@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.neaterbits.util.io.strings.StringSource;
-import com.neaterbits.util.parse.context.Context;
+import org.jutils.io.strings.StringRef;
+import org.jutils.io.strings.StringSource;
+import org.jutils.parse.context.Context;
 
 import dev.nimbler.compiler.parser.listener.common.ContextAccess;
 import dev.nimbler.compiler.parser.listener.common.ParseTreeListener;
@@ -146,8 +147,6 @@ import dev.nimbler.compiler.util.name.Names;
 import dev.nimbler.compiler.util.parse.FieldAccessType;
 import dev.nimbler.compiler.util.parse.ParseLogger;
 import dev.nimbler.language.common.types.ScopedName;
-
-import com.neaterbits.util.io.strings.StringRef;
 
 public abstract class BaseParserListener<
 

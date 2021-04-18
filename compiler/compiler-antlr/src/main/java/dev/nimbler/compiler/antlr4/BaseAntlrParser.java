@@ -20,9 +20,8 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
-
-import com.neaterbits.util.io.strings.StringSource;
-import com.neaterbits.util.io.strings.StringSourceInputStream;
+import org.jutils.io.strings.StringSource;
+import org.jutils.io.strings.StringSourceInputStream;
 
 import dev.nimbler.compiler.util.parse.BaseParser;
 import dev.nimbler.compiler.util.parse.ParseError;
