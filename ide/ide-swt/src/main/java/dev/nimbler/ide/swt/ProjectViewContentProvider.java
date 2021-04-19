@@ -33,11 +33,11 @@ final class ProjectViewContentProvider extends TreeContentAdapter implements ITr
 		
 		final ResourcePath resourcePath = (ResourcePath)element;
 		
-		System.out.println("## getParent: " + element);
+		// System.out.println("## getParent: " + element);
 
 		final ResourcePath parentPath = resourcePath.isAtRoot() ? null : resourcePath.getParentPath();
 		
-		System.out.println("## getParent, result " + parentPath);
+		// System.out.println("## getParent, result " + parentPath);
 		
 		return parentPath;
 	}

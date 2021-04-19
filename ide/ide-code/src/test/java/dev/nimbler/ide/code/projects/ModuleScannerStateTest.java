@@ -1,4 +1,4 @@
-package dev.nimbler.ide.code;
+package dev.nimbler.ide.code.projects;
 
 import java.io.File;
 

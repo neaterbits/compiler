@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.ide.common.codeaccess.types.LanguageName;
+import dev.nimbler.ide.common.tasks.TasksListener;
 import dev.nimbler.ide.common.ui.controller.EditorsListener;
 import dev.nimbler.ide.component.common.instantiation.InstantiationComponent;
 import dev.nimbler.ide.component.common.instantiation.InstantiationComponentUI;
@@ -69,13 +70,24 @@ public final class IDERegisteredComponents implements IDEComponentsConstAccess {
 		};
 	}
 	
-	public List<EditorsListener> getEditorsListeners() {
-
+	@SuppressWarnings("unchecked")
+	private <T> List<T> getUIListeners(Class<T> type) {
+		
 	    return components.stream()
 	            .map(c -> c.getComponentUI())
-	            .filter(c -> c instanceof EditorsListener)
-	            .map(c -> (EditorsListener)c)
+	            .filter(c -> type.isAssignableFrom(c.getClass()))
+	            .map(c -> (T)c)
 	            .collect(Collectors.toList());
+	}
+	
+	public List<EditorsListener> getEditorsListeners() {
+
+	    return getUIListeners(EditorsListener.class);
+	}
+	
+	public List<TasksListener> getTasksListeners() {
+		
+		return getUIListeners(TasksListener.class);
 	}
 
 	@Override

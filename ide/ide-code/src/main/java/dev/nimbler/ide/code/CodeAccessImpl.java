@@ -6,31 +6,25 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.jutils.PathUtil;
-import org.jutils.concurrency.dependencyresolution.executor.logger.PrintlnTargetExecutorLogger;
 import org.jutils.concurrency.scheduling.AsyncExecutor;
-import org.jutils.concurrency.scheduling.Constraint;
-import org.jutils.concurrency.scheduling.ScheduleFunction;
 import org.jutils.threads.ForwardResultToCaller;
 
-import org.jutils.structuredlog.binary.logging.LogContext;
-
-import dev.nimbler.build.buildsystem.common.BuildSystem;
 import dev.nimbler.build.buildsystem.common.BuildSystems;
-import dev.nimbler.build.buildsystem.common.ScanException;
 import dev.nimbler.build.common.language.CompileableLanguage;
 import dev.nimbler.build.model.BuildRoot;
-import dev.nimbler.build.model.BuildRootImpl;
 import dev.nimbler.build.model.runtimeenvironment.RuntimeEnvironment;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;
 import dev.nimbler.ide.code.codemap.CodeMapGatherer;
+import dev.nimbler.ide.code.projects.ProjectsImpl;
 import dev.nimbler.ide.code.source.SourceFilesModel;
+import dev.nimbler.ide.code.tasks.TaskManagerImpl;
 import dev.nimbler.ide.common.codeaccess.CodeAccess;
 import dev.nimbler.ide.common.codeaccess.SourceFileInfo;
 import dev.nimbler.ide.common.model.codemap.CodeMapModel;
 import dev.nimbler.ide.common.model.source.SourceFileModel;
-import dev.nimbler.ide.common.scheduling.IDEScheduler;
-import dev.nimbler.ide.common.scheduling.IDESchedulerImpl;
+import dev.nimbler.ide.common.tasks.TaskName;
+import dev.nimbler.ide.common.tasks.TasksListener;
 import dev.nimbler.ide.component.common.language.Languages;
 import dev.nimbler.ide.core.tasks.InitialScanContext;
 import dev.nimbler.ide.core.tasks.TargetBuilderIDEStartup;
@@ -40,16 +34,15 @@ import dev.nimbler.language.codemap.compiler.IntCompilerCodeMap;
 
 public final class CodeAccessImpl implements CodeAccess {
 
-	private final AsyncExecutor asyncExecutor;
-	private final ForwardResultToCaller forwardResultToCaller;
 	private final CodeMapGatherer codeMapGatherer;
 	private final SourceFilesModel sourceFilesModel;
 	private final CompileableLanguage language;
 
 	private final BuildSystems buildSystems; 
 	
-	private final ProjectsListeners projectsListeners;
 	private final ProjectsImpl projects;
+	
+	private final TaskManagerImpl tasks;
 
 	public CodeAccessImpl(
 			AsyncExecutor asyncExecutor,
@@ -63,15 +56,14 @@ public final class CodeAccessImpl implements CodeAccess {
 		Objects.requireNonNull(languages);
 		Objects.requireNonNull(buildSystems);
 
-		this.asyncExecutor = asyncExecutor;
-		this.forwardResultToCaller = forwardResultToCaller;
 		this.language = language;
 		this.buildSystems = buildSystems;
 
 		final CompilerCodeMap compilerCodeMap = new IntCompilerCodeMap();
 		
-		this.projectsListeners = new ProjectsListeners();
-		this.projects = new ProjectsImpl(projectsListeners);
+		this.tasks = new TaskManagerImpl(asyncExecutor, forwardResultToCaller);
+		
+		this.projects = new ProjectsImpl(tasks);
 		
 		this.codeMapGatherer = new CodeMapGatherer(
 				asyncExecutor,
@@ -79,9 +71,7 @@ public final class CodeAccessImpl implements CodeAccess {
 				projects,
 				compilerCodeMap);
 
-		final IDEScheduler ideScheduler = new IDESchedulerImpl(asyncExecutor);
-		
-		this.sourceFilesModel = new SourceFilesModel(ideScheduler, languages, codeMapGatherer, compilerCodeMap);
+		this.sourceFilesModel = new SourceFilesModel(tasks, languages, codeMapGatherer, compilerCodeMap);
 	}
 
 	// ProjectsAccess
@@ -91,13 +81,6 @@ public final class CodeAccessImpl implements CodeAccess {
 		return codeMapGatherer;
 	}
 
-	/*
-	@Override
-	public Collection<ProjectModuleResourcePath> getModules() {
-		return buildRoot.getModules();
-	}
-	*/
-
 	@Override
 	public List<SourceFolderResourcePath> getSourceFolders(ProjectModuleResourcePath module) {
 		return projects.getSourceFolders(module);
@@ -106,7 +89,7 @@ public final class CodeAccessImpl implements CodeAccess {
 	@Override
 	public void addProjectsListener(ProjectsListener listener) {
 
-		projectsListeners.addListener(listener);
+		projects.addListener(listener);
 	}
 
 	@Override
@@ -130,70 +113,45 @@ public final class CodeAccessImpl implements CodeAccess {
 	
 	public void startIDEScanJobs(File projectDir, RuntimeEnvironment runtimeEnvironment) {
 		
-		scanBuildSystem(
-				projectDir,
-				runtimeEnvironment,
-				this::scan);
+		final TaskName task = projects.scheduleBuildSystemScan(buildSystems, projectDir, runtimeEnvironment);
+		
+		try {
+			scanSourceFolders(projectDir, task);
+		}
+		catch (Throwable ex) {
+			ex.printStackTrace();
+			throw ex;
+		}
 	}
 	
-	private void scan(BuildRoot buildRoot) {
+	private void scanSourceFolders(File projectDir, TaskName buildSystemScan) {
 		
-		final LogContext logContext = new LogContext();
-	
 		final TargetBuilderIDEStartup ideStartup = new TargetBuilderIDEStartup();
-		final InitialScanContext context = new InitialScanContext(buildRoot, language, codeMapGatherer);
 		
-		ideStartup.execute(
-		        logContext,
-		        context,
-                "sourcefolders",
-		        new PrintlnTargetExecutorLogger(),
-		        asyncExecutor,
-		        null);
+		tasks.scheduleTargets(
+				"scan_source_folders_" + projectDir.getPath(),
+				"Scan source folders at '" + projectDir.getPath() + "'", 
+				ideStartup,
+				"sourcefolders",
+				() -> {
+					final BuildRoot buildRoot = projects.findBuildRoot(projectDir);
+
+					final InitialScanContext context = new InitialScanContext(buildRoot, language, codeMapGatherer);
+					
+					return context;
+				},
+				buildSystemScan);
 	}
 	
-	private void scanBuildSystem(File projectDir, RuntimeEnvironment runtimeEnvironment, Consumer<BuildRoot> onComplete) {
-		
-		final ScheduleFunction<Object, BuildRoot> function = obj -> {
-			
-			final BuildSystem buildSystem = buildSystems.findBuildSystem(projectDir);
+	@Override
+	public void addTasksListener(TasksListener listener) {
 
-			final ModuleScannerState scannerState = new ModuleScannerState(projectsListeners, forwardResultToCaller);
-			
-			BuildRoot buildRoot;
-
-			try {
-				buildRoot = new BuildRootImpl<>(
-				                                    projectDir,
-				                                    buildSystem.scan(projectDir, scannerState::onModuleScanned),
-				                                    runtimeEnvironment);
-			} catch (ScanException e) {
-
-				buildRoot = null;
-			}
-			
-			return buildRoot;
-		};
-		
-		asyncExecutor.schedule(
-				Constraint.IO,
-				null,
-				function,
-				(param, buildRoot) -> {
-
-					
-					// Add build root on GUI thread
-					forwardResultToCaller.forward(() -> {
-
-						projects.addBuildRoot(buildRoot);
-						
-						if (onComplete != null) {
-							onComplete.accept(buildRoot);
-						}
-					});
-				});
-		
-
+		tasks.addListener(listener);
 	}
 
+	@Override
+	public void triggerCompleteUpdate() {
+		
+		tasks.triggerCompleteUpdate();
+	}
 }

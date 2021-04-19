@@ -1,22 +1,17 @@
-package dev.nimbler.ide.code;
+package dev.nimbler.ide.code.projects;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import dev.nimbler.build.model.BuildRootListener;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
+import dev.nimbler.ide.code.BaseListeners;
 import dev.nimbler.ide.common.codeaccess.ProjectsAccess.ProjectsListener;
 
-final class ProjectsListeners {
-
-	private final List<ProjectsListener> listeners;
+public final class ProjectsListeners extends BaseListeners<ProjectsListener> {
 
 	private final BuildRootListener buildRootListener;
 	
-	ProjectsListeners() {
-
-		this.listeners = new ArrayList<>();
+	public ProjectsListeners() {
 
 		this.buildRootListener = new BuildRootListener() {
 
@@ -32,7 +27,7 @@ final class ProjectsListeners {
 			
 			@Override
 			public void onSourceFoldersChanged(ProjectModuleResourcePath module) {
-				listeners.forEach(l -> l.onSourceFoldersChanged(module));
+				forEach(l -> l.onSourceFoldersChanged(module));
 			}
 		};
 	}
@@ -41,28 +36,14 @@ final class ProjectsListeners {
 		
 		Objects.requireNonNull(module);
 
-		listeners.forEach(l -> l.onModuleAdded(module));
+		forEach(l -> l.onModuleAdded(module));
 	}
 
 	void onModuleRemoved(ProjectModuleResourcePath module) {
 
 		Objects.requireNonNull(module);
 
-		listeners.forEach(l -> l.onModuleRemoved(module));
-	}
-
-	void addListener(ProjectsListener listener) {
-		
-		Objects.requireNonNull(listener);
-		
-		listeners.add(listener);
-	}
-
-	void removeListener(ProjectsListener listener) {
-		
-		Objects.requireNonNull(listener);
-		
-		listeners.remove(listener);
+		forEach(l -> l.onModuleRemoved(module));
 	}
 
 	BuildRootListener getBuildRootListener() {

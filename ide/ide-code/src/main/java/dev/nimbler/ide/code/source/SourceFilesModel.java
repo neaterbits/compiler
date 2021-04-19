@@ -12,10 +12,10 @@ import org.jutils.concurrency.scheduling.Constraint;
 import dev.nimbler.build.types.resource.ModuleResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.compiler.model.common.ResolvedTypes;
+import dev.nimbler.ide.code.tasks.TaskManager;
 import dev.nimbler.ide.common.codeaccess.SourceFileInfo;
 import dev.nimbler.ide.common.codeaccess.types.LanguageName;
 import dev.nimbler.ide.common.model.source.SourceFileModel;
-import dev.nimbler.ide.common.scheduling.IDEScheduler;
 import dev.nimbler.ide.component.common.language.LanguageComponent;
 import dev.nimbler.ide.component.common.language.Languages;
 import dev.nimbler.ide.util.ui.text.Text;
@@ -23,20 +23,20 @@ import dev.nimbler.language.codemap.compiler.CompilerCodeMap;
 
 public final class SourceFilesModel {
 
-	private final IDEScheduler scheduler;
+	private final TaskManager taskManager;
 	private final Languages languages;
 	private final ResolvedTypes resolvedTypes;
 	private final CompilerCodeMap codeMap;
 	
 	private final Map<SourceFileInfo, SourceFileModel> parsedSourceFiles;
 	
-	public SourceFilesModel(IDEScheduler scheduler, Languages languages, ResolvedTypes resolvedTypes, CompilerCodeMap codeMap) {
+	public SourceFilesModel(TaskManager taskManager, Languages languages, ResolvedTypes resolvedTypes, CompilerCodeMap codeMap) {
 		
-		Objects.requireNonNull(scheduler);
+		Objects.requireNonNull(taskManager);
 		Objects.requireNonNull(languages);
 		Objects.requireNonNull(resolvedTypes);
 		
-		this.scheduler = scheduler;
+		this.taskManager = taskManager;
 		this.languages = languages;
 		this.resolvedTypes = resolvedTypes;
 		this.codeMap = codeMap;
@@ -65,7 +65,7 @@ public final class SourceFilesModel {
 	public void parseOnChange(SourceFileInfo sourceFile, Text text, ResolvedTypes resolvedTypes, Consumer<SourceFileModel> onUpdatedModel) {
 
 		// Called from IDE so schedule asynchronously
-		scheduler.scheduleTask(
+		taskManager.scheduleTask(
 				"parse",
 				"Parse file " + sourceFile.getFile().getName(),
 				Constraint.CPU,

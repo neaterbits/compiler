@@ -68,6 +68,7 @@
 		<module>ide-component-build</module>
 		<module>ide-component-compiledfile-debug</module>
 		<module>ide-code</module>
+		<module>ide-component-tasks-ui</module>
 	</modules>
 
 	<build>

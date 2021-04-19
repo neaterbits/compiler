@@ -11,6 +11,7 @@ import dev.nimbler.build.buildsystem.common.BuildSystems;
 import dev.nimbler.build.buildsystem.common.ScanException;
 import dev.nimbler.build.language.java.jdk.JavaRuntimeEnvironment;
 import dev.nimbler.ide.code.CodeAccessImpl;
+import dev.nimbler.ide.common.tasks.TasksListener;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
 import dev.nimbler.ide.component.build.ui.BuildIssuesComponent;
 import dev.nimbler.ide.component.common.IDERegisteredComponents;
@@ -18,6 +19,7 @@ import dev.nimbler.ide.component.compiledfiledebug.ui.CompiledFileViewComponent;
 import dev.nimbler.ide.component.java.language.JavaLanguage;
 import dev.nimbler.ide.component.java.language.JavaLanguageComponent;
 import dev.nimbler.ide.component.java.ui.JavaUIComponentProvider;
+import dev.nimbler.ide.component.tasks.ui.TasksUIComponent;
 import dev.nimbler.ide.swt.SWTUI;
 import dev.nimbler.ide.ui.controller.IDEController;
 
@@ -78,11 +80,18 @@ public class IDEMain {
 				        ideComponents,
 				        new IDEMainTranslator());
 				
+				ideComponents.getTasksListeners().forEach(codeAccess::addTasksListener);
+				
 				// Run events on event queue before async jobs send event on event queue
 				ui.runInitialEvents();
 				
 				try {
 				    codeAccess.startIDEScanJobs(projectDir, new JavaRuntimeEnvironment());
+				}
+				catch (Exception ex) {
+					System.err.println("Exception while staring scan jobs at " + ex.getMessage());
+					
+					ex.printStackTrace();
 				}
 				finally {
 				    ui.main(ideController.getMainView());
@@ -101,6 +110,7 @@ public class IDEMain {
 
 		final IDERegisteredComponents components = new IDERegisteredComponents();
 		
+        components.registerComponent(null, new TasksUIComponent());
 		components.registerComponent(new JavaLanguageComponent(), new JavaUIComponentProvider());
         components.registerComponent(null, new BuildIssuesComponent());
         components.registerComponent(null, new CompiledFileViewComponent());
