@@ -75,7 +75,7 @@ public final class IDERegisteredComponents implements IDEComponentsConstAccess {
 		
 	    return components.stream()
 	            .map(c -> c.getComponentUI())
-	            .filter(c -> type.isAssignableFrom(c.getClass()))
+	            .filter(c -> c != null && type.isAssignableFrom(c.getClass()))
 	            .map(c -> (T)c)
 	            .collect(Collectors.toList());
 	}
@@ -96,6 +96,42 @@ public final class IDERegisteredComponents implements IDEComponentsConstAccess {
                 .map(registered -> registered.getComponentUI())
                 .filter(c -> c instanceof DetailsComponentUI<?>)
                 .map(c -> (DetailsComponentUI<?>)c)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public <T extends IDEComponent> List<T> findComponents(Class<T> type) {
+
+        Objects.requireNonNull(type);
+        
+        return components.stream()
+                .map(registered -> registered.getComponent())
+                .filter(c -> c != null && type.isAssignableFrom(c.getClass()))
+                .map(c -> {
+                    
+                    @SuppressWarnings("unchecked")
+                    final T casted = (T)c;
+                    
+                    return casted;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public <T extends ComponentUI> List<T> findComponentUIs(Class<T> type) {
+
+        Objects.requireNonNull(type);
+        
+        return components.stream()
+                .map(registered -> registered.getComponentUI())
+                .filter(c -> c != null && type.isAssignableFrom(c.getClass()))
+                .map(c -> {
+                    
+                    @SuppressWarnings("unchecked")
+                    final T casted = (T)c;
+                    
+                    return casted;
+                })
                 .collect(Collectors.toList());
     }
 

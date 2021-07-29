@@ -24,4 +24,12 @@ public class Value<T> {
 	public void set(T value) {
 		this.value = value;
 	}
+
+	public boolean isNotNull() {
+	    return value != null;
+	}
+
+	public void setNull() {
+	    this.value = null;
+	}
 }

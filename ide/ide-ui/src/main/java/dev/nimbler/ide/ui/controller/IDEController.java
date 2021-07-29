@@ -13,6 +13,7 @@ import org.jutils.Strings;
 
 import dev.nimbler.build.types.resource.NamespaceResource;
 import dev.nimbler.build.types.resource.NamespaceResourcePath;
+import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
 import dev.nimbler.build.types.resource.SourceFileHolderResourcePath;
 import dev.nimbler.build.types.resource.SourceFileResource;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
@@ -20,10 +21,12 @@ import dev.nimbler.build.types.resource.SourceFolderResourcePath;
 import dev.nimbler.ide.common.codeaccess.CodeAccess;
 import dev.nimbler.ide.common.config.Configuration;
 import dev.nimbler.ide.common.model.clipboard.Clipboard;
+import dev.nimbler.ide.common.model.source.SourceFileModel;
 import dev.nimbler.ide.common.ui.actions.Action;
 import dev.nimbler.ide.common.ui.actions.ActionAppParameters;
 import dev.nimbler.ide.common.ui.actions.ActionContexts;
 import dev.nimbler.ide.common.ui.actions.ActionExeParameters;
+import dev.nimbler.ide.common.ui.actions.ActionExecutionException;
 import dev.nimbler.ide.common.ui.actions.contexts.ActionContext;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
 import dev.nimbler.ide.common.ui.keys.Key;
@@ -48,6 +51,10 @@ import dev.nimbler.ide.ui.menus.IDEMenus;
 import dev.nimbler.ide.ui.view.MenuSelectionListener;
 import dev.nimbler.ide.ui.view.UIViewAndSubViews;
 import dev.nimbler.ide.ui.view.ViewMenuItem;
+import dev.nimbler.ide.component.common.ConfiguredComponent;
+import dev.nimbler.ide.component.common.IDEComponent;
+import dev.nimbler.ide.component.common.language.Languages;
+import dev.nimbler.ide.component.common.ui.ComponentUI;
 import dev.nimbler.ide.util.IOUtil;
 import dev.nimbler.ide.util.Value;
 
@@ -57,6 +64,12 @@ public final class IDEController implements ComponentIDEAccess {
 	
 	private final ConfigurationAccess configurationAccess;
 
+	private final IDERegisteredComponents ideComponents;
+	
+	private final Translator translator;
+	
+	private final ConfigurationManager configurationManager;
+	
 	private final EditUIController uiController;
 	
 	private final ActionExecuteState actionExecuteState;
@@ -76,6 +89,9 @@ public final class IDEController implements ComponentIDEAccess {
 			Translator uiTranslator,
 			ConfigurationAccess configurationAccess) {
 
+        Objects.requireNonNull(ideComponents);
+        Objects.requireNonNull(uiTranslator);
+
 	    Objects.requireNonNull(codeAccess);
 
 	    Objects.requireNonNull(configurationAccess);
@@ -85,10 +101,15 @@ public final class IDEController implements ComponentIDEAccess {
 		this.configurationAccess = configurationAccess;
 
 		final ProjectsModel projectModel = new ProjectsModel(codeAccess);
+		
+		this.ideComponents = ideComponents;
+		this.translator = uiTranslator;
+		
+		this.configurationManager = new ConfigurationManager(ideComponents);
 
 		final KeyBindings keyBindings = IDEKeyBindings.makeKeyBindings();
 
-		final Menus menus = IDEMenus.makeMenues(keyBindings);
+		final Menus menus = IDEMenus.makeMenues(keyBindings, ideComponents);
 		
 		final UIModels uiModels = new UIModels(projectModel);
 		
@@ -120,28 +141,45 @@ public final class IDEController implements ComponentIDEAccess {
 		this.uiController = new EditUIController(uiView, config, projectModel, ideComponents, codeAccess);
 		
 		final Clipboard clipboard = new ClipboardImpl(ui.getSystemClipboard());
+
+		final UndoRedoBuffer undoRedoBuffer = new UndoRedoBuffer() {
+            
+            @Override
+            public boolean hasUndoEntries() {
+                return true;
+            }
+            
+            @Override
+            public boolean hasRedoEntries() {
+                return false;
+            }
+        };
 		
 		this.actionExecuteState = new ActionExecuteState(
 				ideComponents,
 				uiView,
 				clipboard,
-				new UndoRedoBuffer() {
-					
-					@Override
-					public boolean hasUndoEntries() {
-						return true;
-					}
-					
-					@Override
-					public boolean hasRedoEntries() {
-						return false;
-					}
-				},
+				undoRedoBuffer,
 				this,
 				codeAccess,
-				uiController);
+				uiController,
+				ui.getIOForwardToCaller()) {
 
-		this.actionApplicableParameters = new ActionApplicableParametersImpl(actionExecuteState);
+		    @Override
+		    SourceFileResourcePath getCurrentSourceFileResourcePath() {
+		        
+		        return uiController.getCurrentEditedFile();
+		    }
+
+		    @Override
+		    SourceFileModel getSourceFileModel(SourceFileResourcePath sourceFileResourcePath) {
+		        
+		        return codeAccess.getSourceFileModel(sourceFileResourcePath);
+		    }
+		};
+
+		this.actionApplicableParameters
+		    = new ActionApplicableParametersImpl(actionExecuteState, ideComponents.getLanguages());
 		
 		addKeyEventListener(uiView, keyBindings, menus);
 
@@ -186,8 +224,11 @@ public final class IDEController implements ComponentIDEAccess {
 							getFocusedViewActionContexts(),
 							getAllActionContexts(uiView))) {
 					
-					
-						action.execute(makeActionExecuteParameters());
+						try {
+                            action.execute(makeActionExecuteParameters());
+                        } catch (ActionExecutionException ex) {
+                            uiView.displayError("Caught exception from action", ex);
+                        }
 					}
 				}
 				
@@ -223,9 +264,10 @@ public final class IDEController implements ComponentIDEAccess {
 		
 		final ActionExecuteParameters parameters = new ActionExecuteParametersImpl(
 				actionExecuteState,
+				uiView.getComponentDialogContext(),
+				uiView.getComponentCompositeContext(),
 				focusedView,
-				uiController.getCurrentEditor(),
-				uiController.getCurrentEditedFile());
+				uiController.getCurrentEditor());
 	
 		return parameters;
 	}
@@ -234,7 +276,12 @@ public final class IDEController implements ComponentIDEAccess {
 		
 		Objects.requireNonNull(menuItem);
 		
-		menuItem.execute(makeActionExecuteParameters());
+		try {
+		    menuItem.execute(makeActionExecuteParameters());
+		}
+		catch (ActionExecutionException ex) {
+		    uiView.displayError("Caught exception while executiong", ex);
+		}
 	}
 	
 	private void updateMenuItemsEnabledState(UIViewAndSubViews uiView, ActionApplicableParameters applicableParameters) {
@@ -334,14 +381,24 @@ public final class IDEController implements ComponentIDEAccess {
 	    return configurationAccess.getConfiguration(type);
     }
 
+    public Languages getLanguages() {
+        return actionExecuteState.getComponents().getLanguages();
+    }
+
     /*
     @Override
 	public File getRootPath() {
 		return buildRoot.getPath();
 	}
-	*/
+    */
 
 	@Override
+    public List<ProjectModuleResourcePath> getRootModules() {
+	    
+	    return actionExecuteState.getCodeAccess().getRootModules();
+    }
+
+    @Override
 	public boolean isValidSourceFolder(String projectName, String sourceFolder) {
 
 		final SourceFolderResourcePath folder = codeAccess.findSourceFolder(projectName, sourceFolder);
@@ -353,4 +410,42 @@ public final class IDEController implements ComponentIDEAccess {
 
 		return codeAccess.findSourceFolder(projectName, sourceFolder);
 	}
+
+    @Override
+    public Translator getTranslator() {
+        return translator;
+    }
+
+    @Override
+    public <T> T readConfigurationFile(
+            Class<? extends ConfiguredComponent> componentType,
+            Class<T> configurationType,
+            ProjectModuleResourcePath module) throws IOException {
+
+        return configurationManager.readComponentConfiguration(componentType, configurationType, module);
+    }
+
+    @Override
+    public void saveConfigurationFile(
+            Class<? extends ConfiguredComponent> componentType, 
+            Object configuration,
+            ProjectModuleResourcePath module) throws IOException {
+
+        configurationManager.saveComponentConfiguration(componentType, configuration, module);
+    }
+
+    @Override
+    public void displayError(String title, Exception ex) {
+        uiView.displayError(title, ex);
+    }
+
+    @Override
+    public <T extends IDEComponent> List<T> findComponents(Class<T> type) {
+        return ideComponents.findComponents(type);
+    }
+
+    @Override
+    public <T extends ComponentUI> List<T> findComponentUIs(Class<T> type) {
+        return ideComponents.findComponentUIs(type);
+    }
 }

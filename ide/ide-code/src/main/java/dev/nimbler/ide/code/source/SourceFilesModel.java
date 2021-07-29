@@ -27,8 +27,24 @@ public final class SourceFilesModel {
 	private final Languages languages;
 	private final ResolvedTypes resolvedTypes;
 	private final CompilerCodeMap codeMap;
+
+	private static class ParsedSourceFile {
+
+	    @SuppressWarnings("unused")
+        private final SourceFileInfo sourceFileInfo;
+	    private final SourceFileModel sourceFileModel;
+
+	    ParsedSourceFile(SourceFileInfo sourceFileInfo, SourceFileModel sourceFileModel) {
+	        
+	        Objects.requireNonNull(sourceFileInfo);
+	        Objects.requireNonNull(sourceFileModel);
+	        
+            this.sourceFileInfo = sourceFileInfo;
+            this.sourceFileModel = sourceFileModel;
+        }
+	}
 	
-	private final Map<SourceFileInfo, SourceFileModel> parsedSourceFiles;
+	private final Map<SourceFileResourcePath, ParsedSourceFile> parsedSourceFiles;
 	
 	public SourceFilesModel(TaskManager taskManager, Languages languages, ResolvedTypes resolvedTypes, CompilerCodeMap codeMap) {
 		
@@ -42,6 +58,17 @@ public final class SourceFilesModel {
 		this.codeMap = codeMap;
 		this.parsedSourceFiles = new HashMap<>();
 	}
+	
+	public SourceFileModel getSourceFileModel(SourceFileResourcePath sourceFileResourcePath) {
+	    
+	    Objects.requireNonNull(sourceFileResourcePath);
+	    
+	    final ParsedSourceFile parsedSourceFile = parsedSourceFiles.get(sourceFileResourcePath);
+	
+	    return parsedSourceFile != null
+	            ? parsedSourceFile.sourceFileModel
+                : null;
+	}
 
 	public void parseModuleOnStartup(
 			ModuleResourcePath modulePath,
@@ -52,13 +79,13 @@ public final class SourceFilesModel {
 		
 		final Map<SourceFileResourcePath, SourceFileModel> sourceFileModels
 				= languageComponent.getParseableLanguage().parseModule(modulePath, dependencies, sourceFiles, resolvedTypes, codeMap);
-
 		
 		for (Map.Entry<SourceFileResourcePath, SourceFileModel> entry : sourceFileModels.entrySet()) {
 			
-			final SourceFileInfo sourceFileInfo = new SourceFileInfo(entry.getKey(), language /* , languageComponent, resolvedTypes */);
-			
-			parsedSourceFiles.put(sourceFileInfo, entry.getValue());
+ 			final SourceFileInfo sourceFileInfo = new SourceFileInfo(entry.getKey(), language /* , languageComponent, resolvedTypes */);
+			final ParsedSourceFile parsedSourceFile = new ParsedSourceFile(sourceFileInfo, entry.getValue());
+
+			parsedSourceFiles.put(sourceFileInfo.getPath(), parsedSourceFile);
 		}
 	}
 	
@@ -84,7 +111,9 @@ public final class SourceFilesModel {
 				},
 				(file, sourceFileModel) -> {
 
-					parsedSourceFiles.put(sourceFile, sourceFileModel);
+		            final ParsedSourceFile parsedSourceFile = new ParsedSourceFile(sourceFile, sourceFileModel);
+
+					parsedSourceFiles.put(sourceFile.getPath(), parsedSourceFile);
 					
 					onUpdatedModel.accept(sourceFileModel);
 				});

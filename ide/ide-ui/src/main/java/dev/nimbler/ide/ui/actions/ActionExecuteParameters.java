@@ -1,6 +1,5 @@
 package dev.nimbler.ide.ui.actions;
 
-import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.ide.common.codeaccess.CodeAccess;
 import dev.nimbler.ide.common.model.clipboard.Clipboard;
 import dev.nimbler.ide.common.ui.actions.ActionExeParameters;
@@ -17,8 +16,6 @@ public interface ActionExecuteParameters extends ActionExeParameters {
 
 	IDEComponentsConstAccess getComponents();
 
-	SourceFileResourcePath getCurrentEditedFile();
-	
 	UIDialogs getUIDialogs();
 
 	Clipboard getClipboard();

@@ -1,5 +1,7 @@
 package dev.nimbler.ide.component.common.ui;
 
-public interface ComponentUI {
+import dev.nimbler.ide.component.common.ComponentRelated;
+
+public interface ComponentUI extends ComponentRelated {
 	
 }

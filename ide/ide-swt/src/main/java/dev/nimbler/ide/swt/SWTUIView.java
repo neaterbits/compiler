@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.jutils.swt.SWTDialogs;
 
 import dev.nimbler.build.types.resource.NamespaceResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;
@@ -42,6 +43,8 @@ import dev.nimbler.ide.component.common.instantiation.InstantiationComponentUI;
 import dev.nimbler.ide.component.common.instantiation.Newable;
 import dev.nimbler.ide.component.common.instantiation.NewableCategory;
 import dev.nimbler.ide.component.common.instantiation.NewableCategoryName;
+import dev.nimbler.ide.component.common.ui.ComponentCompositeContext;
+import dev.nimbler.ide.component.common.ui.ComponentDialogContext;
 import dev.nimbler.ide.component.common.ui.DetailsComponentUI;
 import dev.nimbler.ide.ui.controller.UIParameters;
 import dev.nimbler.ide.ui.model.dialogs.FindReplaceDialogModel;
@@ -58,6 +61,7 @@ import dev.nimbler.ide.ui.view.ProjectView;
 import dev.nimbler.ide.ui.view.UIViewAndSubViews;
 import dev.nimbler.ide.ui.view.ViewMenuItem;
 import dev.nimbler.ide.ui.view.dialogs.FindReplaceDialog;
+import dev.nimbler.ide.util.Value;
 
 public final class SWTUIView implements UIViewAndSubViews {
 
@@ -201,7 +205,17 @@ public final class SWTUIView implements UIViewAndSubViews {
 		return viewList;
 	}
 
-	private static Menu buildMenus(Shell shell, Menus menus, MapMenuItem mapMenuItems, Translator translator) {
+	@Override
+    public ComponentDialogContext getComponentDialogContext() {
+        return dialogUIContext;
+    }
+
+    @Override
+    public ComponentCompositeContext getComponentCompositeContext() {
+        return compositeUIContext;
+    }
+
+    private static Menu buildMenus(Shell shell, Menus menus, MapMenuItem mapMenuItems, Translator translator) {
 	
 		final Menu rootMenu = new Menu(shell, SWT.BAR);
 		
@@ -210,18 +224,17 @@ public final class SWTUIView implements UIViewAndSubViews {
 		return rootMenu;
 	}
 	
-	private static void buildMenuList(Shell shell, Menu menu, MenuListEntry list, MapMenuItem mapMenuItems, Translator translator) {
-
-		final StringBuilder sb = new StringBuilder();
+	private static void buildMenuList(
+	        Shell shell,
+	        Menu menu,
+	        MenuListEntry list,
+	        MapMenuItem mapMenuItems,
+	        Translator translator) {
 
 		for (MenuEntry entry : list.getEntries()) {
 			
 			final MenuItem menuItem;
 
-			final TextMenuEntry textMenuEntry;
-			
-			sb.setLength(0);
-			
 			if (entry instanceof SubMenuEntry) {
 				
 				menuItem = new MenuItem(menu, SWT.CASCADE);
@@ -229,58 +242,106 @@ public final class SWTUIView implements UIViewAndSubViews {
 				final Menu subMenu = new Menu(shell, SWT.DROP_DOWN);
 				menuItem.setMenu(subMenu);
 				
-				buildMenuList(shell, subMenu, (SubMenuEntry)entry, mapMenuItems, translator);
+				final SubMenuEntry subMenuEntry = (SubMenuEntry)entry;
 				
-				textMenuEntry = (TextMenuEntry)entry;
+				buildMenuList(shell, subMenu, subMenuEntry, mapMenuItems, translator);
+
+				setText(menuItem, subMenuEntry, null, translator);
 			}
 			else if (entry instanceof SeparatorMenuEntry){
 				menuItem = new MenuItem(menu, SWT.SEPARATOR);
-				
-				textMenuEntry = null;
 			}
 			else {
 				menuItem = new MenuItem(menu, SWT.PUSH);
+				
+				// Maintain menu state in closure
+				final Value<MenuItem> menuVisibleState = new Value<>(menuItem);
+
+				final MenuItemEntry<?, ?> menuItemEntry = (MenuItemEntry<?, ?>)entry;
+				
+				final Value<ViewMenuItem> viewMenuItemValue = new Value<>();
 				
 				final ViewMenuItem viewMenuItem = new ViewMenuItem() {
 					@Override
 					public void setEnabled(boolean enabled) {
 						menuItem.setEnabled(enabled);
 					}
+
+                    @Override
+                    public void setVisible(boolean visible) {
+                        
+                        if (visible != menuVisibleState.isNotNull()) {
+
+                            if (visible) {
+                                final MenuItem visibleItem = new MenuItem(menu, SWT.PUSH);
+                                
+                                initMenuItem(
+                                        menuItemEntry,
+                                        visibleItem,
+                                        mapMenuItems,
+                                        viewMenuItemValue.get(),
+                                        translator);
+                                
+                                menuVisibleState.set(visibleItem);
+                            }
+                            else {
+                                menuVisibleState.get().dispose();
+                                menuVisibleState.setNull();
+                            }
+                        }
+                    }
 				};
-
-
-				final MenuItemEntry<?, ?> menuItemEntry = (MenuItemEntry<?, ?>)entry;
 				
-				textMenuEntry = menuItemEntry;
-				
-				final KeyCombination keyCombination = menuItemEntry.getKeyCombination();
+				viewMenuItemValue.set(viewMenuItem);
 
-				if (keyCombination != null) {
-							
-					final int accelerator = applyKeyShortcut(keyCombination, sb);
-
-					menuItem.setAccelerator(accelerator);
-				}
-				
-				final MenuSelectionListener listener = mapMenuItems.apply((MenuItemEntry<?, ?>)entry, viewMenuItem);
-				
-				menuItem.addSelectionListener(new SelectionAdapter() {
-
-					@Override
-					public void widgetSelected(SelectionEvent event) {
-						listener.onMenuItemSelected(menuItemEntry);
-					}
-				});
-			}
-
-			if (textMenuEntry != null) {
-				final String text = sb.length() == 0
-						? translator.translate(textMenuEntry)
-						: translator.translate(textMenuEntry) + '\t' + sb.toString();
-				
-				menuItem.setText(text);
+				initMenuItem(menuItemEntry, menuItem, mapMenuItems, viewMenuItem, translator);
 			}
 		}
+	}
+	
+	private static void initMenuItem(
+	        MenuItemEntry<?, ?> menuItemEntry,
+	        MenuItem menuItem,
+	        MapMenuItem mapMenuItems,
+	        ViewMenuItem viewMenuItem,
+	        Translator translator) {
+	    
+	    final StringBuilder sb = new StringBuilder();
+
+        final KeyCombination keyCombination = menuItemEntry.getKeyCombination();
+
+        if (keyCombination != null) {
+                    
+            final int accelerator = applyKeyShortcut(keyCombination, sb);
+
+            menuItem.setAccelerator(accelerator);
+        }
+        
+        final MenuSelectionListener listener = mapMenuItems.apply(menuItemEntry, viewMenuItem);
+        
+        menuItem.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                listener.onMenuItemSelected(menuItemEntry);
+            }
+        });
+        
+        setText(menuItem, menuItemEntry, sb.toString(), translator);
+	}
+
+	
+	private static void setText(
+	        MenuItem menuItem,
+	        TextMenuEntry textMenuEntry,
+	        String accellerator,
+	        Translator translator) {
+
+	    final String text = accellerator == null || accellerator.length() == 0
+                ? translator.translate(textMenuEntry)
+                : translator.translate(textMenuEntry) + '\t' + accellerator;
+
+        menuItem.setText(text);
 	}
 	
 	private static int applyKeyShortcut(KeyCombination keyCombination, StringBuilder sb) {
@@ -413,5 +474,10 @@ public final class SWTUIView implements UIViewAndSubViews {
     boolean isClosed() {
         
         return window.isDisposed();
+    }
+
+    @Override
+    public void displayError(String title, Exception ex) {
+        SWTDialogs.displayError(window, title, ex);
     }
 }

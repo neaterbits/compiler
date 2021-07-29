@@ -28,9 +28,10 @@ final class SWTStyledTextEditorView extends SWTBaseTextEditorView {
 			TextEditorConfig config,
 			TextStylingModel textStylingModel,
 			SourceFileResourcePath sourceFile,
-			EditorSourceActionContextProvider editorSourceActionContextProvider) {
+			EditorSourceActionContextProvider editorSourceActionContextProvider,
+			Runnable disposeListener) {
 		
-		super(composite, config, sourceFile, editorSourceActionContextProvider);
+		super(composite, config, sourceFile, editorSourceActionContextProvider, disposeListener);
 
 		this.styled = new SWTStyledText(composite, SWT.NONE);
 		

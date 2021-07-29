@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.jutils.concurrency.scheduling.Constraint;
 import org.jutils.concurrency.scheduling.ScheduleFunction;
@@ -15,9 +16,13 @@ import dev.nimbler.build.buildsystem.common.BuildSystems;
 import dev.nimbler.build.buildsystem.common.ScanException;
 import dev.nimbler.build.model.BuildRoot;
 import dev.nimbler.build.model.BuildRootImpl;
+import dev.nimbler.build.model.BuildRoot.DependencySelector;
 import dev.nimbler.build.model.runtimeenvironment.RuntimeEnvironment;
+import dev.nimbler.build.types.dependencies.LibraryDependency;
+import dev.nimbler.build.types.dependencies.ProjectDependency;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;
+import dev.nimbler.build.types.resource.compile.TargetDirectoryResourcePath;
 import dev.nimbler.ide.code.codemap.Projects;
 import dev.nimbler.ide.code.tasks.TaskManager;
 import dev.nimbler.ide.common.codeaccess.ProjectsAccess.ProjectsListener;
@@ -67,6 +72,13 @@ public final class ProjectsImpl implements Projects {
 		
 		buildRoots.remove(buildRoot);
 	}
+	
+    public List<ProjectModuleResourcePath> getRootModules() {
+
+        return buildRoots.stream().flatMap(root -> root.getModules().stream())
+                .filter(ProjectModuleResourcePath::isAtRoot)
+                .collect(Collectors.toList());
+    }
 
 	public void addListener(ProjectsListener listener) {
 		projectsListeners.addListener(listener);
@@ -81,6 +93,24 @@ public final class ProjectsImpl implements Projects {
 
 		return forEachBuildRoot(buildRoot -> buildRoot.getRuntimeEnvironment(module));
 	}
+
+	public TargetDirectoryResourcePath getTargetDirectory(ProjectModuleResourcePath module) {
+	    return findBuildRoot(module).getTargetDirectory(module);
+	}
+
+    public List<ProjectDependency> getTransitiveProjectDependenciesForProjectModule(
+            ProjectModuleResourcePath module,
+            DependencySelector selector) {
+        
+        return findBuildRoot(module).getTransitiveProjectDependenciesForProjectModule(module, selector);
+    }
+
+    public List<LibraryDependency> getTransitiveLibraryDependenciesForProjectModule(
+            ProjectModuleResourcePath module,
+            DependencySelector selector) {
+        
+        return findBuildRoot(module).getTransitiveLibraryDependenciesForProjectModule(module, selector);
+    }
 
 	@Override
 	public <T> T forEachSourceFolder(Function<SourceFolderResourcePath, T> function) {

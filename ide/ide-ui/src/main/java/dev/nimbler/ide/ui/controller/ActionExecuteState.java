@@ -2,15 +2,21 @@ package dev.nimbler.ide.ui.controller;
 
 import java.util.Objects;
 
+import org.jutils.threads.ForwardResultToCaller;
+
 import dev.nimbler.ide.common.codeaccess.CodeAccess;
 import dev.nimbler.ide.common.model.clipboard.Clipboard;
+
+import dev.nimbler.build.types.resource.SourceFileResourcePath;
+import dev.nimbler.ide.common.model.codemap.CodeMapModel;
+import dev.nimbler.ide.common.model.source.SourceFileModel;
 import dev.nimbler.ide.common.ui.controller.EditorsActions;
 import dev.nimbler.ide.component.common.ComponentIDEAccess;
 import dev.nimbler.ide.component.common.IDEComponentsConstAccess;
 import dev.nimbler.ide.ui.model.dialogs.FindReplaceDialogModel;
 import dev.nimbler.ide.ui.view.UIDialogs;
 
-final class ActionExecuteState {
+abstract class ActionExecuteState {
 
 	private final IDEComponentsConstAccess components;
 	private final UIDialogs uiDialogs;
@@ -19,7 +25,13 @@ final class ActionExecuteState {
 	private final ComponentIDEAccess componentIDEAccess;
 	private final CodeAccess codeAccess;
 	private final EditorsActions editorsActions;
+	private final ForwardResultToCaller forwardResultToCaller;
+	
 	private FindReplaceDialogModel findReplaceModel;
+
+    abstract SourceFileResourcePath getCurrentSourceFileResourcePath();
+
+    abstract SourceFileModel getSourceFileModel(SourceFileResourcePath sourceFileResourcePath);
 
 	ActionExecuteState(
 			IDEComponentsConstAccess components,
@@ -28,7 +40,8 @@ final class ActionExecuteState {
 			UndoRedoBuffer undoRedoBuffer,
 			ComponentIDEAccess componentIDEAccess,
 			CodeAccess codeAccess,
-			EditorsActions editorsActions) {
+			EditorsActions editorsActions,
+			ForwardResultToCaller forwardResultToCaller) {
 	
 		Objects.requireNonNull(components);
 		Objects.requireNonNull(uiDialogs);
@@ -37,6 +50,7 @@ final class ActionExecuteState {
 		Objects.requireNonNull(componentIDEAccess);
 		Objects.requireNonNull(codeAccess);
 		Objects.requireNonNull(editorsActions);
+		Objects.requireNonNull(forwardResultToCaller);
 		
 		this.components = components;
 		this.uiDialogs = uiDialogs;
@@ -45,9 +59,10 @@ final class ActionExecuteState {
 		this.componentIDEAccess = componentIDEAccess;
 		this.codeAccess = codeAccess;
 		this.editorsActions = editorsActions;
+		this.forwardResultToCaller = forwardResultToCaller;
 	}
 
-	IDEComponentsConstAccess getComponents() {
+    IDEComponentsConstAccess getComponents() {
 		return components;
 	}
 
@@ -75,7 +90,15 @@ final class ActionExecuteState {
 		return editorsActions;
 	}
 
-	FindReplaceDialogModel getFindReplaceModel() {
+	CodeMapModel getCodeMap() {
+		return codeAccess.getCodeMapModel();
+	}
+
+	ForwardResultToCaller getForwardResultToCaller() {
+        return forwardResultToCaller;
+    }
+
+    FindReplaceDialogModel getFindReplaceModel() {
 		return findReplaceModel;
 	}
 

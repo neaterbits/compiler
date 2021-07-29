@@ -6,13 +6,13 @@ public interface Translateable {
 	
 	String getTranslationId();
 	
-	public static Translateable fromComponent(String translationId, Class<?> componentType) {
+	public static Translateable makeTranslateable(String translationNamespace, String translationId) {
 	    
-	    return new Translateable() {
+        return new Translateable() {
             
             @Override
             public String getTranslationNamespace() {
-                return Translator.getComponentNamespace(componentType);
+                return translationNamespace;
             }
             
             @Override
@@ -20,5 +20,10 @@ public interface Translateable {
                 return translationId;
             }
         };
+	}
+	
+	public static Translateable fromComponent(String translationId, Class<?> componentType) {
+	    
+	    return makeTranslateable(Translator.getComponentNamespace(componentType), translationId);
 	}
 }

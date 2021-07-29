@@ -13,6 +13,7 @@ import dev.nimbler.build.language.java.jdk.JavaRuntimeEnvironment;
 import dev.nimbler.ide.code.CodeAccessImpl;
 import dev.nimbler.ide.common.config.Configuration;
 import dev.nimbler.ide.common.ui.config.TextEditorConfig;
+import dev.nimbler.ide.component.application.runner.MainApplicationRunnerComponent;
 import dev.nimbler.ide.component.build.ui.BuildIssuesComponent;
 import dev.nimbler.ide.component.common.ConfigurationAccess;
 import dev.nimbler.ide.component.common.IDERegisteredComponents;
@@ -22,6 +23,8 @@ import dev.nimbler.ide.component.console.output.ui.ConsoleOutputComponent;
 import dev.nimbler.ide.component.java.language.JavaLanguage;
 import dev.nimbler.ide.component.java.language.JavaLanguageComponent;
 import dev.nimbler.ide.component.java.ui.JavaUIComponentProvider;
+import dev.nimbler.ide.component.runners.RunnersComponent;
+import dev.nimbler.ide.component.runners.ui.RunnersComponentUI;
 import dev.nimbler.ide.swt.SWTUI;
 import dev.nimbler.ide.ui.controller.IDEController;
 import dev.nimbler.ide.util.ui.text.LineDelimiter;
@@ -118,8 +121,12 @@ public class IDEMain {
 		components.registerComponent(new JavaLanguageComponent(), new JavaUIComponentProvider());
         components.registerComponent(null, new BuildIssuesComponent());
         components.registerComponent(null, new CompiledFileViewComponent());
+
         components.registerComponent(null, new ConsoleOutputComponent());
 		
+		components.registerComponent(new RunnersComponent(), new RunnersComponentUI());
+		components.registerComponent(new MainApplicationRunnerComponent(), null);
+        
 		return components;
 	}
 	

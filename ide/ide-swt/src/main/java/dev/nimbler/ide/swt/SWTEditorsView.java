@@ -1,11 +1,15 @@
 package dev.nimbler.ide.swt;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 
@@ -29,12 +33,34 @@ public final class SWTEditorsView extends SWTView implements EditorsView {
 	// private final Composite composite;
 	
 	private final Map<SourceFileResourcePath, SWTEditorView> editorViews;
+    private final List<SourceFileResourcePath> editedFiles;
+	
+	private SourceFileResourcePath currentEditedFile;
+	
 	
 	public SWTEditorsView(SWTViewList viewList, Composite composite, TextEditorConfig config) {
 		
 		this.viewList = viewList;
 		this.config = config;
 		this.tabFolder = new TabFolder(composite, SWT.NONE);
+		
+		this.editedFiles = new ArrayList<>();
+		
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                
+                final int selectionIndex = tabFolder.getSelectionIndex();
+                
+                if (selectionIndex < 0) {
+                    SWTEditorsView.this.currentEditedFile = null;
+                }
+                else {
+                    SWTEditorsView.this.currentEditedFile = editedFiles.get(selectionIndex);
+                }
+            }
+        });
 		
 		viewList.addView(this, tabFolder);
 
@@ -50,9 +76,15 @@ public final class SWTEditorsView extends SWTView implements EditorsView {
 	}
 
 	@Override
-	public EditorView displayFile(SourceFileResourcePath sourceFile, TextStylingModel textStylingModel, EditorSourceActionContextProvider editorSourceActionContextProvider) {
+	public EditorView displayFile(
+	        final SourceFileResourcePath sourceFile,
+	        TextStylingModel textStylingModel,
+	        EditorSourceActionContextProvider editorSourceActionContextProvider) {
 
 		Objects.requireNonNull(sourceFile);
+		
+		this.currentEditedFile = sourceFile;
+		editedFiles.add(sourceFile);
 		
 		SWTEditorView editorView = editorViews.get(sourceFile);
 		
@@ -64,7 +96,8 @@ public final class SWTEditorsView extends SWTView implements EditorsView {
 					config,
 					textStylingModel,
 					sourceFile,
-					editorSourceActionContextProvider);
+					editorSourceActionContextProvider,
+					() -> onClosedFile(sourceFile));
 			
 			editorViews.put(sourceFile, editorView);
 		}
@@ -86,23 +119,21 @@ public final class SWTEditorsView extends SWTView implements EditorsView {
 
 	@Override
 	public SourceFileResourcePath getCurrentEditedFile() {
-		
-		final int selectionIndex = tabFolder.getSelectionIndex();
-		
-		final SourceFileResourcePath file;
-		
-		if (selectionIndex < 0) {
-			file = null;
-		}
-		else {
-			file = (SourceFileResourcePath)tabFolder.getItem(selectionIndex).getData();
-			
-			if (file == null) {
-				throw new IllegalStateException();
-			}
-		}
+	    
+	    return currentEditedFile;
+	}
+	
+	private void onClosedFile(SourceFileResourcePath sourceFile) {
+	    
+	    if (sourceFile == currentEditedFile) {
+	        this.currentEditedFile = null;
+	    }
+	    
+	    if (!editedFiles.contains(sourceFile)) {
+	        throw new IllegalStateException();
+	    }
 
-		return file;
+	    editedFiles.remove(sourceFile);
 	}
 
 	@Override

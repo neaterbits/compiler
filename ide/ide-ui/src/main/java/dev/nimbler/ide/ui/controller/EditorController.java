@@ -135,28 +135,27 @@ public final class EditorController implements EditorSourceActionContextProvider
 			SourceFileInfo sourceFile,
 			DelegatingSourceFileModel delegatingSourceFileModel) {
 
-		System.out.println("## updateSourceFileModel");
-		
-		parseStateMachine.tryParse(
-				textModel.getText(),
-				updatedModel -> {
-
-					if (updatedModel == null) {
-						throw new IllegalStateException();
-					}
-					
-					sourceFileModel = updatedModel;
-
-					if (listeners != null) {
-						listeners.forEach(l -> l.onSourceFileModelChanged(updatedModel));
-					}
-					
-					delegatingSourceFileModel.setDelegate(updatedModel);
-					
-					// Refresh text styling
-					editorView.triggerStylingRefresh();
-				});
-		
+	    if (Boolean.FALSE) {
+    		parseStateMachine.tryParse(
+    				textModel.getText(),
+    				updatedModel -> {
+    
+    					if (updatedModel == null) {
+    						throw new IllegalStateException();
+    					}
+    					
+    					sourceFileModel = updatedModel;
+    
+    					if (listeners != null) {
+    						listeners.forEach(l -> l.onSourceFileModelChanged(updatedModel));
+    					}
+    					
+    					delegatingSourceFileModel.setDelegate(updatedModel);
+    					
+    					// Refresh text styling
+    					editorView.triggerStylingRefresh();
+    				});
+	    }
 	}
 	
 	@Override
