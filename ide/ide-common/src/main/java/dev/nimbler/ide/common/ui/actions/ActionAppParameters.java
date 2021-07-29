@@ -1,5 +1,8 @@
 package dev.nimbler.ide.common.ui.actions;
 
-public interface ActionAppParameters {
+import dev.nimbler.ide.common.codeaccess.CodeAccess;
 
+public interface ActionAppParameters extends ActionSourceFileParameters {
+
+    CodeAccess getCodeAccess();
 }

@@ -13,5 +13,6 @@ public interface LanguageComponent extends IDEComponent {
 	LanguageStyling getStyling();
 	
 	ParseableLanguage getParseableLanguage();
-	
+
+	<T> T getLanguage(Class<T> languageInterface);
 }

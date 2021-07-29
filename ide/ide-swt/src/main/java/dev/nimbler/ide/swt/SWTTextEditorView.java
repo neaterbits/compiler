@@ -36,9 +36,10 @@ final class SWTTextEditorView extends SWTBaseTextEditorView {
 			TabFolder composite,
 			TextEditorConfig config,
 			SourceFileResourcePath sourceFile,
-			EditorSourceActionContextProvider editorSourceActionContextProvider) {
+			EditorSourceActionContextProvider editorSourceActionContextProvider,
+			Runnable disposeListener) {
 
-		super(composite, config, sourceFile, editorSourceActionContextProvider);
+		super(composite, config, sourceFile, editorSourceActionContextProvider, disposeListener);
 
 		this.textWidget = new Text(composite, SWT.MULTI|SWT.BORDER);
 		

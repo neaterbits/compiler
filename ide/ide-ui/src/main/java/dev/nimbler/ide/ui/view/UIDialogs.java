@@ -31,5 +31,6 @@ public interface UIDialogs {
 			ComponentIDEAccess ideAccess);
 
 	void askFindReplace(FindReplaceDialogModel lastModel, Consumer<FindReplaceDialog> onCreated);
-	
+
+	void displayError(String title, Exception ex);
 }

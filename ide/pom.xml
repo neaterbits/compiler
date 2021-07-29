@@ -70,6 +70,9 @@
 		<module>ide-code</module>
 		<module>ide-component-tasks-ui</module>
 		<module>ide-component-console-output</module>
+		<module>ide-component-application-runner</module>
+		<module>ide-component-java-runtime-environment</module>
+		<module>ide-component-runners</module>
 	</modules>
 
 	<build>

@@ -12,9 +12,14 @@ import org.jutils.threads.ForwardResultToCaller;
 import dev.nimbler.build.buildsystem.common.BuildSystems;
 import dev.nimbler.build.common.language.CompileableLanguage;
 import dev.nimbler.build.model.BuildRoot;
+import dev.nimbler.build.model.BuildRoot.DependencySelector;
 import dev.nimbler.build.model.runtimeenvironment.RuntimeEnvironment;
+import dev.nimbler.build.types.dependencies.LibraryDependency;
+import dev.nimbler.build.types.dependencies.ProjectDependency;
 import dev.nimbler.build.types.resource.ProjectModuleResourcePath;
+import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;
+import dev.nimbler.build.types.resource.compile.TargetDirectoryResourcePath;
 import dev.nimbler.ide.code.codemap.CodeMapGatherer;
 import dev.nimbler.ide.code.projects.ProjectsImpl;
 import dev.nimbler.ide.code.source.SourceFilesModel;
@@ -82,11 +87,40 @@ public final class CodeAccessImpl implements CodeAccess {
 	}
 
 	@Override
+    public List<ProjectModuleResourcePath> getRootModules() {
+        return projects.getRootModules();
+    }
+
+    @Override
 	public List<SourceFolderResourcePath> getSourceFolders(ProjectModuleResourcePath module) {
 		return projects.getSourceFolders(module);
 	}
 
 	@Override
+    public RuntimeEnvironment getRuntimeEnvironment(ProjectModuleResourcePath module) {
+        return projects.getRuntimeEnvironment(module);
+    }
+
+    @Override
+    public TargetDirectoryResourcePath getTargetDirectory(ProjectModuleResourcePath module) {
+        return projects.getTargetDirectory(module);
+    }
+
+    @Override
+    public List<ProjectDependency> getTransitiveProjectDependenciesForProjectModule(ProjectModuleResourcePath module,
+            DependencySelector selector) {
+
+        return projects.getTransitiveProjectDependenciesForProjectModule(module, selector);
+    }
+
+    @Override
+    public List<LibraryDependency> getTransitiveLibraryDependenciesForProjectModule(ProjectModuleResourcePath module,
+            DependencySelector selector) {
+
+        return projects.getTransitiveLibraryDependenciesForProjectModule(module, selector);
+    }
+
+    @Override
 	public void addProjectsListener(ProjectsListener listener) {
 
 		projects.addListener(listener);
@@ -99,6 +133,11 @@ public final class CodeAccessImpl implements CodeAccess {
 	}
 
 	@Override
+    public SourceFileModel getSourceFileModel(SourceFileResourcePath sourceFileResourcePath) {
+        return sourceFilesModel.getSourceFileModel(sourceFileResourcePath);
+    }
+
+    @Override
 	public SourceFolderResourcePath findSourceFolder(String projectName, String sourceFolder) {
 		
 		return projects.forEachSourceFolder(folder -> {

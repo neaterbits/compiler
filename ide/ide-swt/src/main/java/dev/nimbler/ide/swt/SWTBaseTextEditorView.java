@@ -50,7 +50,8 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 			TabFolder composite,
 			TextEditorConfig config,
 			SourceFileResourcePath sourceFile,
-			EditorSourceActionContextProvider editorSourceActionContextProvider) {
+			EditorSourceActionContextProvider editorSourceActionContextProvider,
+            Runnable disposeListener) {
 
 		this.composite = composite;
 
@@ -59,9 +60,10 @@ abstract class SWTBaseTextEditorView extends SWTEditorView {
 		this.editorSourceActionContextProvider = editorSourceActionContextProvider;
 		
 		this.tabItem = new TabItem(composite, SWT.NONE);
+		
+		tabItem.addDisposeListener(e -> disposeListener.run());
 
 		tabItem.setText(sourceFile.getName());
-		tabItem.setData(sourceFile);
 		
 		Objects.requireNonNull(config);
 		

@@ -41,4 +41,9 @@ public final class LanguageName {
 			return false;
 		return true;
 	}
+
+    @Override
+    public String toString() {
+        return "LanguageName [name=" + name + "]";
+    }
 }

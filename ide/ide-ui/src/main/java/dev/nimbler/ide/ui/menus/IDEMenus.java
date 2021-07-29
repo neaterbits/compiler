@@ -1,15 +1,19 @@
 package dev.nimbler.ide.ui.menus;
 
+import java.util.List;
+
 import dev.nimbler.ide.common.ui.keys.KeyBindings;
 import dev.nimbler.ide.common.ui.menus.BuiltinMenu;
 import dev.nimbler.ide.common.ui.menus.Menus;
 import dev.nimbler.ide.ui.actions.BuiltinAction;
+import dev.nimbler.ide.component.common.IDEComponentsConstAccess;
+import dev.nimbler.ide.component.common.ui.MenuComponentUI;
 
 public class IDEMenus {
 
-	public static Menus makeMenues(KeyBindings keyBindings) {
+	public static Menus makeMenues(KeyBindings keyBindings, IDEComponentsConstAccess componentsAccess) {
 		
-		final MenuBuilder builder = new MenuBuilder(keyBindings);
+		final MenuBuilderImpl builder = new MenuBuilderImpl(keyBindings);
 		
 		builder
 			.addSubMenu(BuiltinMenu.FILE, b -> b
@@ -41,7 +45,14 @@ public class IDEMenus {
 					.addBuiltinAction(BuiltinAction.MOVE))
 			.addSubMenu(BuiltinMenu.NAVIGATE, b -> b
 					.addBuiltinAction(BuiltinAction.TYPE_HIERARCHY)
-			);
+			)
+			.addSubMenu(BuiltinMenu.RUN, b -> { });
+
+		final List<MenuComponentUI> menuUIs = componentsAccess.findComponentUIs(MenuComponentUI.class);
+		
+		for (MenuComponentUI menuComponentUI : menuUIs) {
+		    menuComponentUI.addToMenu(componentsAccess, builder);
+		}
 
 		return new Menus(builder.build());
 	}

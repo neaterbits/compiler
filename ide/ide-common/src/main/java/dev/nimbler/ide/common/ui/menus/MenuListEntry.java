@@ -1,5 +1,6 @@
 package dev.nimbler.ide.common.ui.menus;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +14,14 @@ public abstract class MenuListEntry extends TextMenuEntry {
 
 		Objects.requireNonNull(entries);
 		
-		this.entries = entries;
+		this.entries = new ArrayList<>(entries);
+	}
+	
+	void add(List<MenuEntry> list) {
+	    
+	    Objects.requireNonNull(list);
+	    
+	    entries.addAll(list);
 	}
 
 	public final List<MenuEntry> getEntries() {

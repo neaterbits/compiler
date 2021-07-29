@@ -27,7 +27,7 @@ public final class NewDialogAction extends NewAction {
 					newableSelection.getCategory(),
 					newableSelection.getNewable());
 			
-			final SourceFileResourcePath currentEditedFile = parameters.getCurrentEditedFile();
+			final SourceFileResourcePath currentEditedFile = parameters.getCurrentSourceFileResourcePath();
 			
 			parameters.getUIDialogs().openNewableDialog(
 					componentUI,
