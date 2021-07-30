@@ -9,10 +9,20 @@ import dev.nimbler.ide.util.ui.text.TextBuilder;
 final class GetTextRangeIterator implements DiffTextOffsetsIterator<GetTextRangeIterator.GetTextRangeState> {
 
 	static class GetTextRangeState {
+
+	    // Start of range into current text
 		private final long start;
+
+		// Start of range into current text
 		private final long length;
+		
+		// The initial text that we apply diffs to
 		private final Text initialText;
+
+		// Builder to collect the text
 		private final TextBuilder textBuilder;
+		
+		private long appended;
 
 		GetTextRangeState(long start, long length, Text initialText, TextBuilder textBuilder) {
 			
@@ -22,7 +32,13 @@ final class GetTextRangeIterator implements DiffTextOffsetsIterator<GetTextRange
 			this.textBuilder = textBuilder;
 		}
 		
-		void appendIfInRange(long textPartIndex, Text text, long count, long rangeStart, long rangeLength) {
+		// Append a text to the text builder if is within the current range
+		void appendIfInRange(
+		        long textPartIndex,
+		        Text text,
+		        long count,
+		        long rangeStart,
+		        long rangeLength) {
 			
 			final long textPartEndIndex = textPartIndex + count - 1;
 			
@@ -141,25 +157,59 @@ final class GetTextRangeIterator implements DiffTextOffsetsIterator<GetTextRange
 						indexIntoPart + intersectingLength);
 				
 				textBuilder.append(subString);
+				
+				appended += subString.length();
 			}
 		}
-	}
+    }
+
+   @Override
+   public boolean onInitialModelText(
+           long offsetIntoWholeText,
+           long offsetIntoInitial,
+           long lengthOfInitialText,
+           GetTextRangeState state) {
+	        
+       // Retrieve from initial text
+       final Text text = state.initialText.substring(
+                offsetIntoInitial,
+                offsetIntoInitial + lengthOfInitialText);
+        
+        // ... and append to builder if intersects
+        state.appendIfInRange(
+                offsetIntoWholeText,
+                text,
+                lengthOfInitialText,
+                state.start,
+                state.length);
+        
+        return true;
+    }
 
 	@Override
 	public boolean onDiffTextOffset(long offsetIntoWholeText, DiffTextOffset offset, GetTextRangeState state) {
 		
-		state.appendIfInRange(offsetIntoWholeText, offset.getText(), offset.getNewLength(), state.start, state.length);
+	    // append if intersects
+		state.appendIfInRange(
+		        offsetIntoWholeText,
+		        offset.getText(),
+		        offset.getNewLength(),
+		        state.start,
+		        state.length);
 	
-		return true;
-	}
+		// exit iteration if retrieved text for range
+		final boolean continueIteration;
 
-	@Override
-	public boolean onInitialModelText(long offsetIntoWholeText, long offsetIntoInitial, long lengthOfInitialText, GetTextRangeState state) {
-		
-		final Text text = state.initialText.substring(offsetIntoInitial, offsetIntoInitial + lengthOfInitialText);
-		
-		state.appendIfInRange(offsetIntoWholeText, text, lengthOfInitialText, state.start, state.length);
-		
-		return true;
+		if (state.appended > state.length) {
+		    throw new IllegalStateException();
+		}
+		else if (state.appended == state.length) {
+		    continueIteration = false;
+		}
+		else {
+		    continueIteration = true;
+		}
+
+		return continueIteration;
 	}
 }

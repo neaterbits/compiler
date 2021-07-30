@@ -9,20 +9,24 @@ import dev.nimbler.ide.model.text.difftextmodel.ApplyTextEditResult.ProcessResul
 /**
  * Helper class for applying text edits to the diff text model.
  */
-class DiffTextOffsetIntersection {
+class DiffTextOffsetIntersectionHelper {
 
     /**
      * Algorithm for applying a {@link TextEdit} to current edits
      * 
      * @param textEdit the {@link TextEdit} to apply
-     * @param offsetIntoSortedArray
-     * @param priorEditPos offset into complete text of prior edit
-     * @param priorEdit the prior edit
+     * @param offsetIntoSortedArray offset of the change into sorted array of diffs
+     * @param priorEditPos offset into complete current text (with diffs applied) of prior edit
+     * @param priorEdit the prior edit in position order, or null if no prior edit
      * 
      * @return an {@link ApplyTextEditResult} containing add and remove {@link DiffTextChange} operations
      *         that have to be applied to the sorted array
      */
-	static ApplyTextEditResult applyTextEdit(PosEdit textEdit, int offsetIntoSortedArray, long priorEditPos, DiffTextOffset priorEdit) {
+	static ApplyTextEditResult applyTextEdit(
+	        PosEdit textEdit,
+	        int offsetIntoSortedArray,
+	        long priorEditPos,
+	        DiffTextOffset priorEdit) {
 		
 	    Objects.requireNonNull(priorEdit);
 	    

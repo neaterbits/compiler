@@ -32,7 +32,6 @@ final class SortedArray<T> {
 		this.componentType = componentType;
 		this.initialCapacity = initialCapacity;
 	}
-
 	
 	@SuppressWarnings("unchecked")
 	void insertAt(int index, T object) {

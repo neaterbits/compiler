@@ -18,22 +18,30 @@ final class GetTextIterator implements DiffTextOffsetsIterator<GetTextIterator.G
 		}
 	}
 
-	@Override
+    @Override
+    public boolean onInitialModelText(
+            long offsetIntoWholeText,
+            long offsetIntoInitial,
+            long lengthOfInitialText,
+            GetTextState state) {
+        
+        System.out.println("## onInitialModelText offset=" + offsetIntoInitial + ", length=" + lengthOfInitialText);
+        
+        final Text initialText = state.initialText.substring(
+                                                    offsetIntoInitial,
+                                                    offsetIntoInitial + lengthOfInitialText);
+        
+        state.textBuilder.append(initialText);
+        
+        return true;
+    }
+
+    @Override
 	public boolean onDiffTextOffset(long offsetIntoWholeText, DiffTextOffset offset, GetTextState state) {
 
 		System.out.println("## onDiffText offset=" + offset.getText().asString() + ", length=" + offset.getNewLength());
 
 		state.textBuilder.append(offset.getText());
-		
-		return true;
-	}
-
-	@Override
-	public boolean onInitialModelText(long offsetIntoWholeText, long offsetIntoInitial, long lengthOfInitialText, GetTextState state) {
-		
-		System.out.println("## onInitialModelText offset=" + offsetIntoInitial + ", length=" + lengthOfInitialText);
-		
-		state.textBuilder.append(state.initialText.substring(offsetIntoInitial, offsetIntoInitial + lengthOfInitialText));
 		
 		return true;
 	}

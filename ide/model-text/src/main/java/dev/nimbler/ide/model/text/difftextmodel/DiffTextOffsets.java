@@ -70,7 +70,7 @@ class DiffTextOffsets {
 					curPos = priorEdit.getEdit().getStartPos();
 				}
 				
-				final ApplyTextEditResult applyResult = DiffTextOffsetIntersection.applyTextEdit(edit, i, curPos, priorEdit);
+				final ApplyTextEditResult applyResult = DiffTextOffsetIntersectionHelper.applyTextEdit(edit, i, curPos, priorEdit);
 				
 				switch (applyResult.getProcessResult()) {
 				case COMPLETELY:
@@ -96,14 +96,17 @@ class DiffTextOffsets {
 	}
 
 	/**
-	 * Retrieve complete text by applying all texts to an initial text.
+	 * Retrieve complete text by applying all text diffs to an initial text.
 	 * 
 	 * @param curTextLength the current complete length
-	 * @param initialText the initial text we are creating a diff against
+	 * @param initialText the initial text we are applying the diffs towards
 	 * @param initialOffsets the initial text line offsets
 	 * 
 	 * @return text with all diffs applied
 	 */
+	
+	private static final GetTextIterator GET_TEXT_ITERATOR = new GetTextIterator();
+	
 	Text getText(long curTextLength, Text initialText, LinesOffsets initialOffsets) {
 
 		final Text result;
@@ -119,16 +122,16 @@ class DiffTextOffsets {
 
 			final TextBuilder textBuilder = new CharText(curTextLength);
 			
-			iterateOffsets(curTextLength, initialOffsets, new GetTextIterator.GetTextState(initialText, textBuilder), new GetTextIterator());
+			iterateOffsets(curTextLength, initialOffsets, new GetTextIterator.GetTextState(initialText, textBuilder), GET_TEXT_ITERATOR);
 			
 			result = textBuilder.toText();
 		}
 
 		return result;
 	}
-	
-	
 
+	private static final GetTextRangeIterator GET_TEXT_RANGE_ITERATOR = new GetTextRangeIterator();
+	
 	Text getTextRange(long start, long length, long curTextLength, Text initialText, LinesOffsets initialOffsets) {
 
 		final Text result;
@@ -142,7 +145,7 @@ class DiffTextOffsets {
 		
 			final GetTextRangeState state = new GetTextRangeState(start, length, initialText, textBuilder);
 			
-			iterateOffsets(curTextLength, initialOffsets, state, new GetTextRangeIterator());
+			iterateOffsets(curTextLength, initialOffsets, state, GET_TEXT_RANGE_ITERATOR);
 			
 			result = textBuilder.toText();
 		}
@@ -190,7 +193,9 @@ class DiffTextOffsets {
 		
 		if (continueIteration) {
 			
-			for (int i = 0; i < offsets.length(); ++ i) {
+		    final int numOffsets = offsets.length();
+		    
+			for (int i = 0; i < numOffsets; ++ i) {
 				
 				final DiffTextOffset offset = offsets.get(i);
 				
@@ -216,7 +221,8 @@ class DiffTextOffsets {
 				final long lengthOfInitialText;
 
 				if (offset.getDistanceToNextTextEdit() < 0) {
-					lengthOfInitialText = curTextLength - curPos;
+
+				    lengthOfInitialText = curTextLength - curPos;
 
 					if (DEBUG) {
 						System.out.println("lengthOfInitialText " + lengthOfInitialText + " from curTextLength=" + curTextLength + ", curPos=" + curPos);
