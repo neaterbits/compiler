@@ -43,6 +43,9 @@ public final class CharText extends CharArray64Bit implements Text, TextBuilder 
 
 	@Override
 	public char charAt(long index) {
+	    
+	    BaseText.checkCharAtParams(this, index);
+        
 		return arrays[getArraysIndex(index)][getSubArrayIndex(index)];
 	}
 
@@ -65,8 +68,8 @@ public final class CharText extends CharArray64Bit implements Text, TextBuilder 
         
         return result;
     }
+	@Override
 
-    @Override
 	public Text substring(long beginIndex) {
 		
 		BaseText.checkSubstringParams(this, beginIndex);
@@ -171,6 +174,29 @@ public final class CharText extends CharArray64Bit implements Text, TextBuilder 
 	}
 
 	@Override
+    public boolean equals(Object obj) {
+
+	    final boolean equals;
+	    
+	    if (obj instanceof CharText) {
+
+	        final CharText text = (CharText)obj;
+
+	        if (length() != text.length()) {
+	            equals = false;
+	        }
+	        else {
+	            equals = super.equals(obj);
+	        }
+	    }
+	    else {
+	        equals = BaseText.equals(this, obj);
+	    }
+
+	    return equals;
+	}
+
+    @Override
 	public String toString() {
 		return "\"" + asString() + "\"";
 	}

@@ -34,6 +34,9 @@ public final class StringText extends BaseText implements Text {
 
 	@Override
 	public char charAt(long index) {
+	    
+	    checkCharAtParams(this, index);
+	    
 		return string.charAt(checkIndex(index));
 	}
 
@@ -67,6 +70,24 @@ public final class StringText extends BaseText implements Text {
 	}
 
 	@Override
+    public boolean equals(Object obj) {
+
+	    final boolean equals;
+	    
+	    if (obj instanceof StringText) {
+	        
+	        final StringText stringText = (StringText)obj;
+	        
+	        return string.equals(stringText.string);
+	    }
+	    else {
+	        equals = super.equals(obj);
+	    }
+	    
+	    return equals;
+    }
+
+    @Override
 	public String asString() {
 		return string;
 	}

@@ -1,5 +1,7 @@
 package dev.nimbler.ide.util.ui.text;
 
+import java.util.Arrays;
+
 public final class LongArray extends Array64Bit<long[][], long[]> {
 	
 	public LongArray(long initialCapacity, int subArrayInitialCapacity) {
@@ -34,6 +36,12 @@ public final class LongArray extends Array64Bit<long[][], long[]> {
 	long[] createSubArray(int length) {
 		return new long[length];
 	}
+
+	@Override
+    boolean subArrayEquals(long[] subArray1, long[] subArray2) {
+
+        return Arrays.equals(subArray1, subArray2);
+    }
 
 	public long get(long idx) {
 		return arrays[getArraysIndex(idx)][getSubArrayIndex(idx)];

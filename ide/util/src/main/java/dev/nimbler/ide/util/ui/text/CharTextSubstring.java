@@ -30,9 +30,7 @@ final class CharTextSubstring extends BaseText implements Text {
 	@Override
 	public char charAt(long index) {
 		
-		if (index >= length()) {
-			throw new IllegalArgumentException();
-		}
+	    BaseText.checkCharAtParams(this, index);
 		
 		return charText.charAt(beginIndex + index);
 	}

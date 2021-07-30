@@ -36,10 +36,59 @@ abstract class BaseText implements Text {
 			throw new IllegalArgumentException();
 		}
 	}
+	
+	static void checkCharAtParams(Text text, long index) {
 
+	    if (index < 0L) {
+            throw new IllegalArgumentException();
+        }
+        
+        if (index >= text.length()) {
+            throw new IllegalArgumentException();
+        }
+	}
 
 	@Override
 	public String toString() {
 		return "\"" + asString() + "\"";
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	    
+	    return equals(this, obj);
+	}
+
+    static boolean equals(Text thisText, Object obj) {
+
+	    boolean equals;
+	    
+	    if (obj == null) {
+	        equals = false;
+	    }
+	    else if (!(obj instanceof Text)) {
+	        equals = false;
+	    }
+	    else {
+	        final Text thatText = (Text)obj;
+	        
+	        final long length = thisText.length();
+	        
+	        if (length != thatText.length()) {
+	            equals = false;
+	        }
+	        else {
+	            equals = true;
+	            
+	            for (long i = 0; i < length; ++ i) {
+	                if (thisText.charAt(i) != thatText.charAt(i)) {
+	                    equals = false;
+	                    break;
+	                }
+	            }
+	        }
+	    }
+	    
+	    return equals;
 	}
 }

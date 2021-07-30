@@ -44,6 +44,8 @@ abstract class Array64Bit<ARRAYS, SUBARRAY> {
 	
 	abstract SUBARRAY createSubArray(int length);
 	
+	abstract boolean subArrayEquals(SUBARRAY subArray1, SUBARRAY subArray2);
+	
 	/**
 	 * Create a new 64 bit array.
 	 * 
@@ -190,4 +192,61 @@ abstract class Array64Bit<ARRAYS, SUBARRAY> {
 		
 		return aIdx << 32 | saIdx;
 	}
+
+    @Override
+    public boolean equals(Object obj) {
+    
+        boolean equals;
+
+        if (obj == null) {
+            equals = false;
+        }
+        else if (!(obj instanceof Array64Bit)) {
+            equals = false;
+        }
+        else {
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            final Array64Bit<Object, Object> array = (Array64Bit)obj;
+
+            if (getLength() != array.getLength()) {
+                equals = false;
+            }
+            else {
+                final int arraysLength = getArraysLength(arrays);
+
+                if (arraysLength != array.getArraysLength(array.arrays)) {
+                    equals = false;
+                }
+                else {
+                    equals = true;
+                    
+                    for (int i = 0; i < arraysLength; ++ i) {
+                    
+                        final SUBARRAY sub1 = getSubArray(arrays, i);
+                        final Object sub2Obj = array.getSubArray(array.arrays, i);
+                        
+                        @SuppressWarnings("unchecked")
+                        final SUBARRAY sub2 = (SUBARRAY)sub2Obj;
+                        
+                        if (!sub1.getClass().equals(sub2Obj.getClass())) {
+                            equals = false;
+                            break;
+                        }
+                        
+                        if (getSubArrayLength(sub1) != array.getSubArrayLength(sub2)) {
+                            equals = false;
+                            break;
+                        }
+                        
+                        if (!subArrayEquals(sub1, (SUBARRAY)sub2)) {
+                            equals = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return equals;
+    }
 }

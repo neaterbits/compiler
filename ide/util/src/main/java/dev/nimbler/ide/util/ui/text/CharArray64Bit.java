@@ -1,5 +1,7 @@
 package dev.nimbler.ide.util.ui.text;
 
+import java.util.Arrays;
+
 /**
  * 64 bit array for char type
  */
@@ -41,4 +43,10 @@ public class CharArray64Bit extends Array64Bit<char[][], char[]>{
 	final char[] createSubArray(int length) {
 		return new char[length];
 	}
+
+    @Override
+    final boolean subArrayEquals(char[] subArray1, char[] subArray2) {
+
+        return Arrays.equals(subArray1, subArray2);
+    }
 }
