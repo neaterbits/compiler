@@ -3,6 +3,9 @@ package dev.nimbler.ide.model.text.difftextmodel;
 import dev.nimbler.ide.util.ui.text.Text;
 import dev.nimbler.ide.util.ui.text.TextBuilder;
 
+/**
+ * Iterator for retrieving text from diff text model
+ */
 final class GetTextIterator implements DiffTextOffsetsIterator<GetTextIterator.GetTextState> {
 	
 	static class GetTextState {

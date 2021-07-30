@@ -1,6 +1,10 @@
 package dev.nimbler.ide.util.ui.text;
 
-public class CharText extends CharArray64Bit implements Text, TextBuilder  {
+/**
+ * {@link Text} implementation that stores text in a 64 bit char array. Allows for strings longer than
+ * Integer.MAX_VALUE, e.g. caching a 10GB file in-memory.
+ */
+public final class CharText extends CharArray64Bit implements Text, TextBuilder  {
 
 	private boolean toTextCalled;
 	
@@ -94,7 +98,7 @@ public class CharText extends CharArray64Bit implements Text, TextBuilder  {
 		for (int i = 0; i < numArrays; ++ i) {
 			
 			if (i < numArrays - 1) {
-				sb.append(arrays[i], 0, maxArraySize);
+				sb.append(arrays[i], 0, maxSubArraySize);
 			}
 			else {
 				final int lastArrayLength = getSubArrayIndex(length);

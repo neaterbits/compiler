@@ -63,15 +63,15 @@ public final class LongArray extends Array64Bit<long[][], long[]> {
 		
 		final long [] subArray = arrays[arraysIndex];
 
-		final int numArrays = (int)(((getLength() - 1) / maxArraySize) + 1);
+		final int numArrays = (int)(((getLength() - 1) / maxSubArraySize) + 1);
 		
 		final int num = arraysIndex == numArrays - 1
-				? (int)(getLength() % maxArraySize)
-				: maxArraySize;
+				? (int)(getLength() % maxSubArraySize)
+				: maxSubArraySize;
 		
 		final int subArrayIndex = binarySearch(subArray, num, value);
 		
-		return arraysIndex * maxArraySize + subArrayIndex;
+		return arraysIndex * maxSubArraySize + subArrayIndex;
 	}
 	
 	@FunctionalInterface

@@ -4,6 +4,10 @@ import java.util.function.Function;
 
 import dev.nimbler.ide.util.ui.text.LineDelimiter;
 
+/**
+ * Iterator for computing line at offset from diff text model
+ */
+
 final class GetLineAtOffsetIterator extends LineCountingIterator<GetLineAtOffsetIterator.GetLineAtOffsetState> {
 
 	static class GetLineAtOffsetState extends LineCountingIterator.LinesCounterState {

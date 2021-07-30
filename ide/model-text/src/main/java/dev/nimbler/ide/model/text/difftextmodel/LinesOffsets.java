@@ -4,6 +4,12 @@ import java.util.Objects;
 
 import dev.nimbler.ide.util.ui.text.LongArray;
 
+/**
+ * Immutable storage of offsets to lines and their lengths. Also keeps number of lines and the number of characters in the text.
+ * Does not keep the text itself.
+ * 
+ */
+
 final class LinesOffsets {
 
 	private final long numLines;
@@ -38,6 +44,13 @@ final class LinesOffsets {
 		return textLength;
 	}
 
+	/**
+	 * Get the offset of the beginning of a line
+	 * 
+	 * @param lineIndex line number, counting from 0
+	 * 
+	 * @return offset of start of line, counting from 0
+	 */
 	long getOffsetForLine(long lineIndex) {
 		
 		if (lineIndex < 0) {
@@ -51,6 +64,13 @@ final class LinesOffsets {
 		return offsets.get(lineIndex);
 	}
 	
+	/**
+	 * Get the line offset of the line containing the character at given offset
+	 * 
+	 * @param offset character offset, counting from 0
+	 * 
+	 * @return line index, counting from 0
+	 */
 	long getLineAtOffset(long offset) {
 		
 		if (offset < 0) {
@@ -66,6 +86,13 @@ final class LinesOffsets {
 		return index;
 	}
 
+	/**
+	 * Get length of line including newline at given index
+	 * 
+	 * @param lineIndex index of line, counting from 0
+	 * 
+	 * @return offset into text, counting from 0
+	 */
 	long getLengthOfLineWithAnyNewline(long lineIndex) {
 
 		if (lineIndex < 0) {

@@ -13,15 +13,26 @@ import dev.nimbler.ide.util.ui.text.LineDelimiter;
 import dev.nimbler.ide.util.ui.text.Text;
 import dev.nimbler.ide.util.ui.text.TextRange;
 
+/**
+ * A text model based on maintaining the diffs from an initial text.
+ * This allows for large file edits where the e.g. the initial text can be an mmap()ed file
+ * so that we do not have to keep the file in-memory, only the edit diffs are kept in-memory.
+ */
 public final class DiffTextModel extends TextModel {
 
+    // all edits in chronological order
 	private final List<TextEdit> edits;
 	
+	// the initial text we are storing diffs from
 	private final Text initialText;
+
+	// offsets to all lines and their length in the initial text
 	private LinesOffsets initialOffsets;
 	
+	// text edits sorted by where they appear in the text
 	private final DiffTextOffsets diffOffsets;
 	
+	// current length of the edited text
 	private long curTextLength;
 	
 	public DiffTextModel(LineDelimiter lineDelimiter, Text text) {

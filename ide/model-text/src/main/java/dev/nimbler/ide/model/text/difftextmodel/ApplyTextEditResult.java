@@ -4,16 +4,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-class ApplyTextEditResult {
+import dev.nimbler.ide.model.text.TextEdit;
 
+/**
+ * Class for the result of applying a {@link TextEdit} to the diff text model
+ */
+final class ApplyTextEditResult {
+
+    /**
+     * Processing result enum
+     */
 	enum ProcessResult {
+	    
+	    /**
+	     * {@link TextEdit} was completely applied
+	     */
 		COMPLETELY,
+		
+		/**
+		 * {@link TextEdit} was partly applied
+		 */
 		PARTLY,
+		
+		/**
+		 * {@link TextEdit} was not applied at all
+		 */
 		NONE;
 	}
 	
 	private final ProcessResult processResult;
+	
+	/**
+	 * List of {@link DiffTextOffset} objects that should be removed
+	 */
 	private List<DiffTextChange> removedOffsets;
+	
+	/**
+	 * List of {@link DiffTextOffset} objects that should be added
+	 */
 	private List<DiffTextChange> addedOffsets;
 
 	ApplyTextEditResult(ProcessResult processResult) {
@@ -23,6 +51,11 @@ class ApplyTextEditResult {
 		this.processResult = processResult;
 	}
 
+	/**
+	 * Get the {@link ProcessResult} of how was applied
+	 * 
+	 * @return the {@link ProcessResult}
+	 */
 	ProcessResult getProcessResult() {
 		return processResult;
 	}
@@ -58,6 +91,11 @@ class ApplyTextEditResult {
 		this.addedOffsets = checkAdd(addedOffsets, offset);
 	}
 
+	/**
+	 * Apply the computed result to an array of {@link DiffTextOffset} objects
+	 * 
+	 * @param array the array of {@link DiffTextOffset} objects
+	 */
 	final void applyToArray(SortedArray<DiffTextOffset> array) {
 		
 		Objects.requireNonNull(array);

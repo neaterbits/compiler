@@ -3,6 +3,9 @@ package dev.nimbler.ide.model.text.difftextmodel;
 import dev.nimbler.ide.util.ui.text.Text;
 import dev.nimbler.ide.util.ui.text.TextBuilder;
 
+/**
+ * Iterator for retrieving a text range from diff text model
+ */
 final class GetTextRangeIterator implements DiffTextOffsetsIterator<GetTextRangeIterator.GetTextRangeState> {
 
 	static class GetTextRangeState {

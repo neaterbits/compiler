@@ -1,25 +1,57 @@
 package dev.nimbler.ide.model.text.difftextmodel;
 
+/**
+ * Enumeration for position relative to a block of text (e.g. a line or offset)
+ */
 enum Pos {
+    
+    /**
+     * Before the block of text
+     */
 	BEFORE,
+	
+	/**
+	 * At the first character of block of text
+	 */
 	AT_START,
+	
+	/**
+	 * Strictly within the block of text
+	 */
 	WITHIN,
+	
+	/**
+	 * At the last character of the block of text
+	 */
 	AT_END,
+	
+	/**
+	 * After the block of text
+	 */
 	AFTER;
 	
-	static Pos getPos(long offset, long length, long posOffset) {
+    /**
+     * Compute the {@link Pos} enum value based on block offsets
+     * 
+     * @param blockOffset offset of the start of the block of text, within larger text
+     * @param blockLength length of the block of text
+     * @param posOffset offset to the position to relate, within larger text that block is part of
+     * 
+     * @return the computed {@link Pos} enum value
+     */
+	static Pos getPos(long blockOffset, long blockLength, long posOffset) {
 		
 		final Pos pos;
 		
-		final long endOffset = offset + length - 1;
+		final long endOffset = blockOffset + blockLength - 1;
 		
-		if (posOffset < offset) {
+		if (posOffset < blockOffset) {
 			pos = Pos.BEFORE;
 		}
 		else if (posOffset == endOffset) {
 			pos = Pos.AT_END;
 		}
-		else if (posOffset == offset) {
+		else if (posOffset == blockOffset) {
 			pos = Pos.AT_START;
 		}
 		else if (posOffset > endOffset) {
@@ -31,6 +63,4 @@ enum Pos {
 	
 		return pos;
 	}
-
-
 }

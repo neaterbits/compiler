@@ -2,9 +2,17 @@ package dev.nimbler.ide.util.ui.text;
 
 import java.util.function.Function;
 
+/**
+ * Base class for arrays with 64 bit indices, provides some helper methods.
+ * Implemented with arrays of arrays.
+ * 
+ * @param <ARRAYS> arrays of arrays type, e.g. long[][]
+ * @param <SUBARRAY> array of the type to store, e.g. long[] for storing a 64-bit array of longs
+ */
+
 abstract class Array64Bit<ARRAYS, SUBARRAY> {
 
-	final int maxArraySize;
+	final int maxSubArraySize;
 	
 	ARRAYS arrays;
 	private final int subArrayInitialCapacity;
@@ -12,8 +20,22 @@ abstract class Array64Bit<ARRAYS, SUBARRAY> {
 	
 	private long length;
 
+	/**
+	 * Get length of arrays-of-arrays, necessary here since no generic method exists.
+	 * 
+	 * @param arrays the arrays-of-arrays object.
+	 * 
+	 * @return length of arrays-of-arrays object
+	 */
 	abstract int getArraysLength(ARRAYS arrays);
 	
+    /**
+     * Get length of sub-array, necessary here since no generic method exists.
+     * 
+     * @param subArray the sub array object.
+     * 
+     * @return length of sub array object
+     */
 	abstract int getSubArrayLength(SUBARRAY subArray);
 	
 	abstract SUBARRAY getSubArray(ARRAYS arrays, int index);
@@ -22,14 +44,29 @@ abstract class Array64Bit<ARRAYS, SUBARRAY> {
 	
 	abstract SUBARRAY createSubArray(int length);
 	
+	/**
+	 * Create a new 64 bit array.
+	 * 
+	 * @param initialCapacity the initial capacity of the overall array
+	 * @param subArrayInitialCapacity initial capacity for each sub array allocated
+	 * @param createArrays function to create arrays-of-arrays
+	 */
 	Array64Bit(long initialCapacity, int subArrayInitialCapacity, Function<Integer, ARRAYS> createArrays) {
 		this(initialCapacity, subArrayInitialCapacity, Integer.MAX_VALUE, createArrays);
 	}
 	
-	Array64Bit(long initialCapacity, int subArrayInitialCapacity, int maxArraySize, Function<Integer, ARRAYS> createArrays) {
+    /**
+     * Create a new 64 bit array.
+     * 
+     * @param initialCapacity the initial capacity of the overall array
+     * @param subArrayInitialCapacity initial capacity for each sub array allocated
+     * @param maxSubArraySize max size of each sub array
+     * @param createArrays function to create arrays-of-arrays
+     */
+	Array64Bit(long initialCapacity, int subArrayInitialCapacity, int maxSubArraySize, Function<Integer, ARRAYS> createArrays) {
 	
 		this.subArrayInitialCapacity = subArrayInitialCapacity;
-		this.maxArraySize = maxArraySize;
+		this.maxSubArraySize = maxSubArraySize;
 		this.createArrays = createArrays;
 		
 		long remaining = initialCapacity;
@@ -46,7 +83,7 @@ abstract class Array64Bit<ARRAYS, SUBARRAY> {
 		
 		while (remaining != 0) {
 
-			final long length = Math.min(remaining, maxArraySize);
+			final long length = Math.min(remaining, maxSubArraySize);
 			
 			setSubArray(arrays, idx ++, createSubArray((int)length));
 			
@@ -56,7 +93,7 @@ abstract class Array64Bit<ARRAYS, SUBARRAY> {
 
 	protected Array64Bit(Array64Bit<ARRAYS, SUBARRAY> toCopy) {
 		this.subArrayInitialCapacity = toCopy.subArrayInitialCapacity;
-		this.maxArraySize = toCopy.maxArraySize;
+		this.maxSubArraySize = toCopy.maxSubArraySize;
 		this.createArrays = toCopy.createArrays;
 	
 		this.length = toCopy.length;
@@ -76,27 +113,27 @@ abstract class Array64Bit<ARRAYS, SUBARRAY> {
 		return length;
 	}
 
-	static final int getArraysNumEntries(long length, int maxArraySize) {
-		return (int)((length - 1) / maxArraySize) + 1;
+	static final int getArraysNumEntries(long length, int maxSubArraySize) {
+		return (int)((length - 1) / maxSubArraySize) + 1;
 	}
 
 	final int getArraysNumEntries(long length) {
-		return getArraysNumEntries(length, maxArraySize);
+		return getArraysNumEntries(length, maxSubArraySize);
 	}
 
 	final int getArraysIndex(long index) {
-		final long arraysIdx = index / maxArraySize;
+		final long arraysIdx = index / maxSubArraySize;
 		
 		return (int)arraysIdx;
 	}
 	
 	final int getSubArrayIndex(long index) {
-		return (int)(index % maxArraySize);
+		return (int)(index % maxSubArraySize);
 	}
 
 	private int computeSubArrayAllocLength(long subArrayIdx) {
 		
-		if (subArrayIdx > maxArraySize) {
+		if (subArrayIdx > maxSubArraySize) {
 			throw new IllegalArgumentException();
 		}
 		
@@ -104,7 +141,7 @@ abstract class Array64Bit<ARRAYS, SUBARRAY> {
 				? subArrayIdx * 4
 				: subArrayInitialCapacity;
 		
-		return (int)Math.min(length, maxArraySize);
+		return (int)Math.min(length, maxSubArraySize);
 	}
 
 	private ARRAYS copyOfArrays(ARRAYS arrays, int newLength) {
@@ -127,8 +164,8 @@ abstract class Array64Bit<ARRAYS, SUBARRAY> {
 
 	final long prepareArraysForSet(long idx) {
 
-		final int arraysIdx = (int)(idx / maxArraySize);
-		final int subArrayIdx = (int)(idx % maxArraySize);
+		final int arraysIdx = (int)(idx / maxSubArraySize);
+		final int subArrayIdx = (int)(idx % maxSubArraySize);
 		
 		if (arraysIdx >= getArraysLength(arrays)) {
 			

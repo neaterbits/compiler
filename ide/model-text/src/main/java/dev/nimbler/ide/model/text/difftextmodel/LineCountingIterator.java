@@ -4,6 +4,11 @@ import java.util.Objects;
 
 import dev.nimbler.ide.util.ui.text.LineDelimiter;
 
+/**
+ * Base class for iterators that count lines.
+ * 
+ * @param <T> type of iterator state object.
+ */
 class LineCountingIterator<T extends LineCountingIterator.LinesCounterState> extends CountingIterator<T> {
 
 	static class LinesCounterState extends CounterState {

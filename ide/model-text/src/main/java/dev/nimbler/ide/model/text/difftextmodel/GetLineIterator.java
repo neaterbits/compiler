@@ -5,6 +5,9 @@ import dev.nimbler.ide.util.ui.text.LineDelimiter;
 import dev.nimbler.ide.util.ui.text.Text;
 import dev.nimbler.ide.util.ui.text.TextBuilder;
 
+/**
+ * Iterator for retrieving a line from diff text model
+ */
 final class GetLineIterator extends LineCountingIterator<TextGetLineState> {
 
 	static class TextGetLineState extends LineCountingIterator.LinesCounterState {

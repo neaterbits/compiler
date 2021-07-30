@@ -8,14 +8,25 @@ import dev.nimbler.ide.model.text.TextEdit;
 import dev.nimbler.ide.util.ui.text.LineDelimiter;
 import dev.nimbler.ide.util.ui.text.Text;
 
+/**
+ * Stores a {@link TextEdit} with the current distance to the next text edit (in number of characters, including line delimiter).
+ * 
+ */
 final class DiffTextOffset {
 
+    // text edit that caused the diff
 	private final TextEdit textEdit;
+	
+	// distance in characters (including line delimiter) to the next edit
 	private final long distanceToNextTextEdit;
 	
 	DiffTextOffset(TextEdit textEdit, long distanceToNextTextEdit) {
 
 		Objects.requireNonNull(textEdit);
+		
+		if (distanceToNextTextEdit <= 0L) {
+		    throw new IllegalArgumentException();
+		}
 		
 		this.textEdit = textEdit;
 		this.distanceToNextTextEdit = distanceToNextTextEdit;
@@ -23,10 +34,20 @@ final class DiffTextOffset {
 
 	// offset as seen from latest edit
 	
+	/**
+	 * Retrieves the TextEdit that caused the diff to be added to the {@link DiffTextModel}.
+	 * 
+	 * @return a {@link TextEdit}
+	 */
 	TextEdit getTextEdit() {
 		return textEdit;
 	}
 
+	/**
+	 * Return distance to next text edit in number of characters - including line delimiter.
+	 * 
+	 * @return distance to next edit
+	 */
 	long getDistanceToNextTextEdit() {
 		return distanceToNextTextEdit;
 	}
@@ -39,6 +60,14 @@ final class DiffTextOffset {
 		return textEdit.getNewText();
 	}
 	
+	/**
+	 * Retrieve a line from the text edit, indexed from the beginning of the line text.
+	 * 
+	 * @param lineIndex offset of line, counting from 0
+	 * @param lineDelimiter the line delimiter
+	 * 
+	 * @return a text object for the line
+	 */
 	Text getLine(long lineIndex, LineDelimiter lineDelimiter) {
 		
 		System.out.println("## getLine " + lineIndex + " from \"" + textEdit.getNewText().asString() + "\"");

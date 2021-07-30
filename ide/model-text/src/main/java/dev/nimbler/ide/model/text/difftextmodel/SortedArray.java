@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * Generic array wrapper class for dynamically resized array of objects
+ * 
+ * @param <T> type of objects stored in array
+ */
 final class SortedArray<T> {
 
 	private final Class<T> componentType;
@@ -119,6 +124,11 @@ final class SortedArray<T> {
 		}
 	}
 	
+	/**
+	 * Remove all objects at specified indices and compress array.
+	 * 
+	 * @param indices the indices to remove.
+	 */
 	void removeMultiple(int ... indices) {
 
 		int delta = 0;

@@ -15,6 +15,11 @@ import dev.nimbler.ide.util.ui.text.LineDelimiter;
 import dev.nimbler.ide.util.ui.text.Text;
 import dev.nimbler.ide.util.ui.text.TextBuilder;
 
+/**
+ * Stores diff text edits in offset order, i.e. edits earlier in the edited text
+ * appear earlier.
+ * 
+ */
 class DiffTextOffsets {
 
 	private static final boolean DEBUG = true;
@@ -25,6 +30,12 @@ class DiffTextOffsets {
 		this.offsets = new SortedArray<>(DiffTextOffset.class);
 	}
 
+	/**
+	 * Create a {@link DiffTextOffsets} from initial edits an line offsets.
+	 * 
+	 * @param edits initial edits
+	 * @param initialOffsets line offsets into initial text
+	 */
 	DiffTextOffsets(List<TextEdit> edits, LinesOffsets initialOffsets) {
 		
 		this();
@@ -32,6 +43,12 @@ class DiffTextOffsets {
 		edits.forEach(edit -> applyTextEdit(edit, initialOffsets));
 	}
 
+	/**
+	 * Apply a new text edit to the diff text offsets and update state model
+	 * 
+	 * @param edit the {@link TextEdit} to apply
+	 * @param initialOffsets the line offsets of the initial text
+	 */
 	void applyTextEdit(TextEdit edit, LinesOffsets initialOffsets) {
 		
 		Objects.requireNonNull(edit);
@@ -78,6 +95,15 @@ class DiffTextOffsets {
 		}
 	}
 
+	/**
+	 * Retrieve complete text by applying all texts to an initial text.
+	 * 
+	 * @param curTextLength the current complete length
+	 * @param initialText the initial text we are creating a diff against
+	 * @param initialOffsets the initial text line offsets
+	 * 
+	 * @return text with all diffs applied
+	 */
 	Text getText(long curTextLength, Text initialText, LinesOffsets initialOffsets) {
 
 		final Text result;
