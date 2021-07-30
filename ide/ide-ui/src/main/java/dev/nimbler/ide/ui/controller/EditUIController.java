@@ -3,6 +3,7 @@ package dev.nimbler.ide.ui.controller;
 import java.io.IOException;
 import java.util.Objects;
 
+import org.jutils.IOUtils;
 import org.jutils.PathUtil;
 
 import dev.nimbler.build.types.resource.ResourcePath;
@@ -18,7 +19,6 @@ import dev.nimbler.ide.component.common.IDERegisteredComponents;
 import dev.nimbler.ide.model.text.StringTextModel;
 import dev.nimbler.ide.ui.view.UIView;
 import dev.nimbler.ide.ui.view.UIViewAndSubViews;
-import dev.nimbler.ide.util.IOUtil;
 import dev.nimbler.ide.util.ui.text.UnixLineDelimiter;
 
 public final class EditUIController implements EditorsActions {
@@ -85,7 +85,7 @@ public final class EditUIController implements EditorsActions {
 		
 		String text = null;
 		try {
-			text = IOUtil.readAll(sourceFilePath.getFile());
+			text = IOUtils.readUnicode(sourceFilePath.getFile());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

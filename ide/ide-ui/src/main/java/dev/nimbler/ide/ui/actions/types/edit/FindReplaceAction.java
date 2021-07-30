@@ -1,5 +1,7 @@
 package dev.nimbler.ide.ui.actions.types.edit;
 
+import org.jutils.Value;
+
 import dev.nimbler.ide.common.ui.actions.ActionContexts;
 import dev.nimbler.ide.ui.actions.ActionApplicableParameters;
 import dev.nimbler.ide.ui.actions.ActionExecuteParameters;
@@ -7,7 +9,6 @@ import dev.nimbler.ide.ui.actions.CoreAction;
 import dev.nimbler.ide.ui.actions.contexts.EditorContext;
 import dev.nimbler.ide.ui.model.dialogs.FindReplaceDialogModel;
 import dev.nimbler.ide.ui.view.dialogs.FindReplaceDialog;
-import dev.nimbler.ide.util.Value;
 import dev.nimbler.ide.util.ui.text.StringText;
 
 public final class FindReplaceAction extends CoreAction {

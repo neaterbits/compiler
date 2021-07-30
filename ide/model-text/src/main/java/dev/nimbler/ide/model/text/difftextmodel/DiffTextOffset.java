@@ -2,8 +2,9 @@ package dev.nimbler.ide.model.text.difftextmodel;
 
 import java.util.Objects;
 
+import org.jutils.Value;
+
 import dev.nimbler.ide.model.text.TextEdit;
-import dev.nimbler.ide.util.Value;
 import dev.nimbler.ide.util.ui.text.LineDelimiter;
 import dev.nimbler.ide.util.ui.text.Text;
 
