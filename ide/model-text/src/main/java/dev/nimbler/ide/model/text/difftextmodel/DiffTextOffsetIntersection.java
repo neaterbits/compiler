@@ -66,6 +66,7 @@ class DiffTextOffsetIntersection {
 			case AT_START:
 			case WITHIN:
 			case AT_END:
+			case AT_START_AT_END:
 				// Must split prior edit
 				applyTextEditResult = merge(textEdit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.COMPLETELY);
 				break;

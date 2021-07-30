@@ -26,6 +26,11 @@ enum Pos {
 	AT_END,
 	
 	/**
+	 * Both at start and at end (block length 1)
+	 */
+	AT_START_AT_END,
+	
+	/**
 	 * After the block of text
 	 */
 	AFTER;
@@ -41,6 +46,18 @@ enum Pos {
      */
 	static Pos getPos(long blockOffset, long blockLength, long posOffset) {
 		
+	    if (blockOffset < 0) {
+	        throw new IllegalArgumentException();
+	    }
+	    
+	    if (blockLength <= 0) {
+            throw new IllegalArgumentException();
+	    }
+
+	    if (posOffset < 0) {
+            throw new IllegalArgumentException();
+	    }
+	    
 		final Pos pos;
 		
 		final long endOffset = blockOffset + blockLength - 1;
@@ -48,11 +65,13 @@ enum Pos {
 		if (posOffset < blockOffset) {
 			pos = Pos.BEFORE;
 		}
+        else if (posOffset == blockOffset) {
+            pos = posOffset == endOffset
+                    ? Pos.AT_START_AT_END
+                    : Pos.AT_START;
+        }
 		else if (posOffset == endOffset) {
 			pos = Pos.AT_END;
-		}
-		else if (posOffset == blockOffset) {
-			pos = Pos.AT_START;
 		}
 		else if (posOffset > endOffset) {
 			pos = Pos.AFTER;
