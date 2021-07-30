@@ -19,6 +19,7 @@ public abstract class TextEdit {
 	
 	public final TextEdit merge(TextEdit other) {
 		
+	    // Must overlap
 		if (startPos + getNewLength() < other.startPos) {
 			throw new IllegalArgumentException();
 		}
@@ -53,6 +54,11 @@ public abstract class TextEdit {
 		return textEdit;
 	}
 	
+    public static TextEdit merge(TextEdit text1, long startPos1, TextEdit text2, long startPos2) {
+
+        return TextEditMerge.merge(text1, startPos1, text2, startPos2);
+    }
+
 	public TextEdit(long startPos) {
 		this.startPos = startPos;
 	}
@@ -64,4 +70,16 @@ public abstract class TextEdit {
 	static long getChangeInNumberOfLines(Text text, LineDelimiter lineDelimiter) {
 		return text.getNumberOfNewlineChars(lineDelimiter);
 	}
+
+    @Override
+    public String toString() {
+
+        return getClass().getSimpleName()
+                
+                + " [getOldLength()=" + getOldLength()
+                + ", getNewLength()=" + getNewLength()
+                + ", getOldText()=" + getOldText()
+                + ", getNewText()=" + getNewText()
+                + ", getStartPos()=" + getStartPos() + "]";
+    }
 }
