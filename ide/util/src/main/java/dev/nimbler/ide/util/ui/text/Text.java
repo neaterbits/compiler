@@ -2,7 +2,7 @@ package dev.nimbler.ide.util.ui.text;
 
 import java.util.Objects;
 
-import dev.nimbler.ide.util.Value;
+import org.jutils.Value;
 
 public interface Text {
 

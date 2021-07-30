@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.jutils.IOUtils;
 import org.jutils.Strings;
+import org.jutils.Value;
 
 import dev.nimbler.build.types.resource.NamespaceResource;
 import dev.nimbler.build.types.resource.NamespaceResourcePath;
@@ -48,8 +50,6 @@ import dev.nimbler.ide.ui.menus.IDEMenus;
 import dev.nimbler.ide.ui.view.MenuSelectionListener;
 import dev.nimbler.ide.ui.view.UIViewAndSubViews;
 import dev.nimbler.ide.ui.view.ViewMenuItem;
-import dev.nimbler.ide.util.IOUtil;
-import dev.nimbler.ide.util.Value;
 
 public final class IDEController implements ComponentIDEAccess {
 
@@ -317,7 +317,7 @@ public final class IDEController implements ComponentIDEAccess {
 			throw new IOException("Source file already exists: " + file.getPath());
 		}
 		
-		IOUtil.writeAll(file, text);
+		IOUtils.writeUnicode(file, text);
 		
 		final SourceFileResourcePath sourceFile = new SourceFileResourcePath(
 				sourceFileHolderPath,
