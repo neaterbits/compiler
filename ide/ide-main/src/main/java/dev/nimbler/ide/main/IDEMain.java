@@ -23,6 +23,8 @@ import dev.nimbler.ide.component.console.output.ui.ConsoleOutputComponent;
 import dev.nimbler.ide.component.java.language.JavaLanguage;
 import dev.nimbler.ide.component.java.language.JavaLanguageComponent;
 import dev.nimbler.ide.component.java.ui.JavaUIComponentProvider;
+import dev.nimbler.ide.component.runner.test.TestRunnerComponent;
+import dev.nimbler.ide.component.runner.test.ui.TestRunnerUI;
 import dev.nimbler.ide.component.runners.RunnersComponent;
 import dev.nimbler.ide.component.runners.ui.RunnersComponentUI;
 import dev.nimbler.ide.swt.SWTUI;
@@ -112,7 +114,7 @@ public class IDEMain {
 			printStackTrace(ex.getStackTrace(), 5);
 		}
 	}
-	
+
 	private static IDERegisteredComponents registerComponents() {
 
 		final IDERegisteredComponents components = new IDERegisteredComponents();
@@ -126,7 +128,8 @@ public class IDEMain {
 		
 		components.registerComponent(new RunnersComponent(), new RunnersComponentUI());
 		components.registerComponent(new MainApplicationRunnerComponent(), null);
-        
+		components.registerComponent(new TestRunnerComponent(), new TestRunnerUI());
+
 		return components;
 	}
 	

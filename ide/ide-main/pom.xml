@@ -64,6 +64,11 @@
   	</dependency>
   	<dependency>
   		<groupId>${project.groupId}</groupId>
+  		<artifactId>ide-component-test-runner</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>${project.groupId}</groupId>
   		<artifactId>ide-component-runners</artifactId>
   		<version>${project.version}</version>
   	</dependency>

@@ -17,6 +17,7 @@ import dev.nimbler.ide.common.model.source.SourceFileModel;
 import dev.nimbler.ide.component.common.language.LanguageStyleOffset;
 import dev.nimbler.ide.component.common.language.LanguageStyleable;
 import dev.nimbler.ide.component.common.language.LanguageStyling;
+import dev.nimbler.ide.core.ui.controller.LanguageTextStyling;
 import dev.nimbler.ide.util.ui.text.StringText;
 import dev.nimbler.ide.util.ui.text.Text;
 import dev.nimbler.ide.util.ui.text.styling.TextColor;

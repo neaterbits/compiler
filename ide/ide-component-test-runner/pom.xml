@@ -7,8 +7,7 @@
 		<artifactId>root</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-
-	<artifactId>ide-component-application-runner</artifactId>
+	<artifactId>ide-component-test-runner</artifactId>
 
 	<dependencies>
 		<dependency>
@@ -16,5 +15,24 @@
 			<artifactId>ide-component-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>ide-ui-swt</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${languageGroupId}</groupId>
+			<artifactId>language-bytecode-java</artifactId>
+			<version>${languageVersion}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junitVersion}</version>
+		</dependency>
+
 	</dependencies>
 </project>

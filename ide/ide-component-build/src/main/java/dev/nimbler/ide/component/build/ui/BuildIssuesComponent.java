@@ -14,6 +14,8 @@ public final class BuildIssuesComponent implements DetailsComponentUI<Control> {
 
         final SWTCompositeUIContext uiContext = (SWTCompositeUIContext)context;
         
-        return new SWTBuildIssuesView(uiContext.getViewList(), uiContext.getComposite()).getControl();
+        return new SWTBuildIssuesView(
+                uiContext.getViewList(),
+                uiContext.getComposite()).getControl();
     }
 }

@@ -1,13 +1,13 @@
 package dev.nimbler.ide.component.runners.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Arrays;
 
 import javax.xml.bind.JAXB;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
@@ -21,8 +21,6 @@ import dev.nimbler.build.types.resource.SourceFileResource;
 import dev.nimbler.build.types.resource.SourceFileResourcePath;
 import dev.nimbler.build.types.resource.SourceFolderResource;
 import dev.nimbler.build.types.resource.SourceFolderResourcePath;
-import dev.nimbler.ide.component.runners.model.RunConfiguration;
-import dev.nimbler.ide.component.runners.model.RunnersConfiguration;
 import dev.nimbler.language.common.types.TypeName;
 
 public class RunnerConfigurationTest {
