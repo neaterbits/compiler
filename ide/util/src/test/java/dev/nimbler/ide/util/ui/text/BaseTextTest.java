@@ -353,4 +353,39 @@ public abstract class BaseTextTest {
         assertThat(text("123").endsWith("3")).isTrue();
         assertThat(text("123").endsWith("")).isTrue();
     }
+
+    @Test
+    public void testTrailingWithMoreThanLengthThrowsException() {
+
+        try {
+            text("123").trailing(4L);
+            
+            fail("Expected exception");
+        }
+        catch (IllegalArgumentException ex) {
+            
+        }
+    }
+
+    @Test
+    public void testTrailingWithNegativeLengthThrowsException() {
+
+        try {
+            text("123").trailing(-1L);
+            
+            fail("Expected exception");
+        }
+        catch (IllegalArgumentException ex) {
+            
+        }
+    }
+
+    @Test
+    public void testTrailing() {
+        
+        assertThat(text("123").trailing(0L)).isEqualTo(text(""));
+        assertThat(text("123").trailing(1L)).isEqualTo(text("3"));
+        assertThat(text("123").trailing(2L)).isEqualTo(text("23"));
+        assertThat(text("123").trailing(3L)).isEqualTo(text("123"));
+    }
 }

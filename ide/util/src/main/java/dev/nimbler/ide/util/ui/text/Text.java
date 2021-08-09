@@ -295,6 +295,22 @@ public interface Text {
     
 	    return endsWith;
 	}
+	
+	default Text trailing(long count) {
+	    
+	    final long length = length();
+
+	    if (length < 0) {
+	           throw new IllegalArgumentException();
+	    }
+	    else if (length < count) {
+	        throw new IllegalArgumentException();
+	    }
+	    
+        final long startIdx = length - count;
+	    
+	    return substring(startIdx, startIdx + count);
+	}
 
 	default Text toLowerCase() {
 
