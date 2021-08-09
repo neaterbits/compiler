@@ -333,7 +333,17 @@ public abstract class BaseTextTest {
 
         assertThat(text.findBackward("unknowntext", 10L, null, true, true, false)).isEqualTo(-1L);
     }
-    
+
+    @Test
+    public void testStartsWith() {
+        assertThat(text("123").startsWith("1234")).isFalse();
+        assertThat(text("123").startsWith("123")).isTrue();
+        assertThat(text("123").startsWith("124")).isFalse();
+        assertThat(text("123").startsWith("12")).isTrue();
+        assertThat(text("123").startsWith("1")).isTrue();
+        assertThat(text("123").startsWith("")).isTrue();
+    }
+
     @Test
     public void testEndsWith() {
         assertThat(text("123").endsWith("1234")).isFalse();

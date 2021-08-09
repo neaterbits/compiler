@@ -227,7 +227,39 @@ public interface Text {
 	Text merge(Text other);
 
 	Text merge(String other);
-	
+
+   default boolean startsWith(String string) {
+        
+        Objects.requireNonNull(string);
+        
+        boolean startsWith;
+        
+        if (string.isEmpty()) {
+            startsWith = true;
+        }
+        else {
+            
+            final long textLength = length();
+            final int stringLength = string.length();
+            
+            if (textLength < string.length()) {
+                startsWith = false;
+            }
+            else {
+                startsWith = true;
+    
+                for (int i = 0; i < stringLength; ++ i) {
+                    if (charAt(i) != string.charAt(i)) {
+                        startsWith = false;
+                        break;
+                    }
+                }
+            }
+        }
+    
+        return startsWith;
+    }
+
 	default boolean endsWith(String string) {
 	    
 	    Objects.requireNonNull(string);
