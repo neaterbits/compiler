@@ -116,9 +116,6 @@ final class SortedArray<T> {
 			
 			final int from = startIndex + i;
 			final int to = startIndex + i + delta;
-			System.out.println("## move from " + from + " to " + to + " delta " + delta);
-			
-			 //+ " lastIndex " + lastIndex + " index " + index);
 
 			array[to] = array[from];
 		}
@@ -218,8 +215,6 @@ final class SortedArray<T> {
 				final int prevIndex = getIndex.apply(toAdd.get(i - 1));
 				
 				final int diff = index - prevIndex - 1;
-				
-				System.out.println("## move from prevIndex " + prevIndex + " to " + index);
 				
 				move(prevIndex - delta + 1, delta, diff);
 			}

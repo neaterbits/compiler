@@ -228,7 +228,12 @@ public interface Text {
 
 	Text merge(String other);
 
-   default boolean startsWith(String string) {
+	default boolean startsWith(String string) {
+
+       return startsWith(new StringText(string));
+	}
+
+	default boolean startsWith(Text string) {
         
         Objects.requireNonNull(string);
         
@@ -238,9 +243,8 @@ public interface Text {
             startsWith = true;
         }
         else {
-            
             final long textLength = length();
-            final int stringLength = string.length();
+            final long stringLength = string.length();
             
             if (textLength < string.length()) {
                 startsWith = false;
