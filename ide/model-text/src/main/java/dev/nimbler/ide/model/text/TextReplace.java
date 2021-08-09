@@ -36,5 +36,16 @@ public final class TextReplace extends TextChange {
 		return    updatedText.getNumberOfNewlineChars(lineDelimiter)
 				- getOldText().getNumberOfNewlineChars(lineDelimiter);
 	}
+
+    @Override
+    public TextEdit revert() {
+
+        return new TextReplace(
+                getStartPos(),
+                getNewLength(),
+                getNewText(),
+                getOldText());
+    }
+	
 }
 

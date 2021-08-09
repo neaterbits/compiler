@@ -47,6 +47,15 @@ public final class TextAdd extends TextEdit {
 	}
 
 	@Override
+    public TextEdit revert() {
+	    
+        return new TextRemove(
+                getStartPos(),
+                getNewLength(),
+                getAddedText());
+    }
+
+    @Override
 	public String toString() {
 		return "TextAdd [text=" + text + "]";
 	}

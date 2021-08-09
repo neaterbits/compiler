@@ -23,4 +23,10 @@ public final class TextRemove extends TextChange {
 	public long getChangeInNumberOfLines(LineDelimiter lineDelimiter) {
 		return getChangeInNumberOfLines(getOldText(), lineDelimiter);
 	}
+
+    @Override
+    public TextEdit revert() {
+
+        return new TextAdd(getStartPos(), getOldText());
+    }
 }

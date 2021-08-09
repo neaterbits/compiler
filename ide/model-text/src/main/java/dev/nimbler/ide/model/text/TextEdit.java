@@ -17,6 +17,8 @@ public abstract class TextEdit {
 	
 	public abstract Text getNewText();
 	
+	public abstract TextEdit revert();
+	
 	public final TextEdit merge(TextEdit other) {
 		
 	    // Must overlap
