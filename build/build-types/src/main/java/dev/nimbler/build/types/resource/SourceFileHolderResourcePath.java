@@ -1,7 +1,8 @@
 package dev.nimbler.build.types.resource;
 
 public abstract class SourceFileHolderResourcePath extends SourcePath {
-	public SourceFileHolderResourcePath(FileSystemResourcePath resourcePath) {
+
+    public SourceFileHolderResourcePath(FileSystemResourcePath resourcePath) {
 		super(resourcePath);
 	}
 
