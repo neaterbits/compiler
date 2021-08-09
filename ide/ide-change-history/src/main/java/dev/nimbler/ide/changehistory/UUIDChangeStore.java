@@ -20,16 +20,14 @@ import dev.nimbler.ide.changehistory.filestorage.FileStorageFactory;
 import dev.nimbler.ide.changehistory.filestorage.zip.ZipFileStorageFactory;
 
 /**
- * Stores changes in directory of directories, utilizing UUIDs for directory names.
- * 
- * So
+ * Stores changes in directory of directories, utilizing UUIDs for directory names. So
  * 
  * <basePath>/<top level dirs named by UUID>/<sub dirs named by UUID>/<files for one history change>
  *
  * Subdirs have at most changesPerDirectory number of entries.
  */
 
-final class UUIDChangeStore implements ChangeStore {
+final class UUIDChangeStore extends BaseChangeStore implements ChangeStore {
 
     private static final String CHANGE_FILE_NAME = "changes.txt";
     
@@ -104,11 +102,10 @@ final class UUIDChangeStore implements ChangeStore {
             throw new IllegalStateException();
         }
 
-        // Write the change to the changed file
         writeChange(
                 change.getChangeReason(),
                 subDirectoryUUID,
-                (UUIDReasonChangeRefImpl)change.getHistoricRef());
+                (UUIDReasonChangeRefImpl)change.getHistoryRef());
         
         return makeChangeOutputFactory(subDirPath);
     }
@@ -151,43 +148,10 @@ final class UUIDChangeStore implements ChangeStore {
             
             changeRefs.add(changeRef);
         });
-        
-        final int length = changeRefs.size();
 
-        boolean done = false;
-        
-        if (chronological) {
-            for (int i = 0; i < length && !done; ++ i) {
-                done = callIterator(iterator, changeRefs.get(i));
-            }
-        }
-        else {
-            for (int i = length - 1; i >= 0 && !done; -- i) {
-                done = callIterator(iterator, changeRefs.get(i));
-            }
-        }
+        iterate(changeRefs, chronological, iterator);
     }
 
-    private static boolean callIterator(ChangeStoreIterator iterator, UUIDHistoryChangeRefImpl ref) {
-        
-        final boolean done;
-        
-        switch (iterator.onChange(ref, ref.getHistoryChangeRef())) {
-        case CONTINUE:
-            done = false;
-            break;
-
-        case EXIT:
-            done = true;
-            break;
-
-        default:
-            throw new IllegalStateException();
-        }
-        
-        return done;
-    }
-    
     @Override
     public FileRetrieval createPrevStateChangeInput(ChangeRef changeRef) throws IOException {
 

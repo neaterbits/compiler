@@ -22,9 +22,12 @@ class ComplexChangeSerializationHelper {
     static void serialize(
             SourceFileComplexChange complexChange,
             ChangeHistoryStorageFactory changeOutputFactory,
-            Path ideBasePath) throws IOException, XMLStreamException {
+            Path ideBasePath,
+            boolean serializePrevState) throws IOException, XMLStreamException {
 
-        serializePrevState(complexChange, changeOutputFactory, ideBasePath);
+        if (serializePrevState) {
+            serializePrevState(complexChange, changeOutputFactory, ideBasePath);
+        }
 
         if (complexChange.getChangeReason() == ChangeReason.REFACTOR) {
 

@@ -11,7 +11,7 @@ import dev.nimbler.ide.model.text.TextEdit;
 
 final class SourceFileComplexChange extends BaseComplexChange<SourceFileResourcePath> {
     
-    private final ChangeRef historicRef;
+    private final ChangeRef historyRef;
 
     SourceFileComplexChange(
             ChangeReason change,
@@ -32,10 +32,10 @@ final class SourceFileComplexChange extends BaseComplexChange<SourceFileResource
             }
         }
         
-        this.historicRef = historicRef;
+        this.historyRef = historicRef;
     }
 
-    ChangeRef getHistoricRef() {
-        return historicRef;
+    ChangeRef getHistoryRef() {
+        return historyRef;
     }
 }

@@ -12,7 +12,6 @@ import dev.nimbler.ide.changehistory.filestorage.FileStorageFactory;
 public final class ZipFileStorageFactory implements FileStorageFactory {
 
     private static final String PREV_STATE_NAME = "prevstate.zip";
-
     private static final String EDITS_NAME = "edits.zip";
 
     private static class ZipFileStorage implements FileStorage {
@@ -32,7 +31,7 @@ public final class ZipFileStorageFactory implements FileStorageFactory {
 
         @Override
         public void close() throws Exception {
-            
+
             zipFileWriter.close();
         }
     }
@@ -54,6 +53,7 @@ public final class ZipFileStorageFactory implements FileStorageFactory {
         
         @Override
         public void close() throws Exception {
+
             zipFileReader.close();
         }
     }

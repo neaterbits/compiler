@@ -2,7 +2,7 @@ package dev.nimbler.ide.changehistory;
 
 import java.util.UUID;
 
-final class UUIDHistoryChangeRefImpl extends UUIDReasonChangeRefImpl {
+final class UUIDHistoryChangeRefImpl extends UUIDReasonChangeRefImpl implements HistoryChangeRef {
 
     private final UUIDChangeRefImpl historyChangeRef;
     
@@ -17,7 +17,8 @@ final class UUIDHistoryChangeRefImpl extends UUIDReasonChangeRefImpl {
         this.historyChangeRef = historyChangeRef;
     }
 
-    UUIDChangeRefImpl getHistoryChangeRef() {
+    @Override
+    public ChangeRef getHistoryChangeRef() {
         return historyChangeRef;
     }
 }
