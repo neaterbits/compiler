@@ -70,6 +70,7 @@
 		<module>ide-code</module>
 		<module>ide-component-tasks-ui</module>
 		<module>ide-component-console-output</module>
+		<module>ide-undo-redo-buffer</module>
 		<module>ide-change-history</module>
 	</modules>
 
