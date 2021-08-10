@@ -388,4 +388,39 @@ public abstract class BaseTextTest {
         assertThat(text("123").trailing(2L)).isEqualTo(text("23"));
         assertThat(text("123").trailing(3L)).isEqualTo(text("123"));
     }
+
+    @Test
+    public void testInitialWithMoreThanLengthThrowsException() {
+
+        try {
+            text("123").initial(4L);
+            
+            fail("Expected exception");
+        }
+        catch (IllegalArgumentException ex) {
+            
+        }
+    }
+
+    @Test
+    public void testInitialWithNegativeLengthThrowsException() {
+
+        try {
+            text("123").initial(-1L);
+            
+            fail("Expected exception");
+        }
+        catch (IllegalArgumentException ex) {
+            
+        }
+    }
+
+    @Test
+    public void testInitial() {
+        
+        assertThat(text("123").initial(0L)).isEqualTo(text(""));
+        assertThat(text("123").initial(1L)).isEqualTo(text("1"));
+        assertThat(text("123").initial(2L)).isEqualTo(text("12"));
+        assertThat(text("123").initial(3L)).isEqualTo(text("123"));
+    }
 }

@@ -295,7 +295,21 @@ public interface Text {
     
 	    return endsWith;
 	}
-	
+
+	default Text initial(long count) {
+
+        final long length = length();
+
+        if (length < 0) {
+               throw new IllegalArgumentException();
+        }
+        else if (length < count) {
+            throw new IllegalArgumentException();
+        }
+
+        return substring(0, count);
+    }
+
 	default Text trailing(long count) {
 	    
 	    final long length = length();
