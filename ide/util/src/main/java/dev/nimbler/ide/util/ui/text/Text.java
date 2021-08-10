@@ -301,6 +301,67 @@ public interface Text {
 	    return endsWith;
 	}
 
+    default boolean substringMatches(long startIndex, String string) {
+
+        return substringMatches(startIndex, new StringText(string));
+    }
+
+    default boolean substringMatches(long startIndex, Text string) {
+
+        
+        final long count = string.length();
+        return count <= length()
+                ? substringMatches(startIndex, string, count)
+                : false;
+    }
+
+    default boolean substringMatches(long startIndex, String string, int count) {
+
+        return substringMatches(startIndex, new StringText(string), count);
+    }
+
+    default boolean substringMatches(long startIndex, Text string, long count) {
+        
+        Objects.requireNonNull(string);
+        
+        boolean matches;
+        final long textLength = length();
+
+        if (startIndex < 0) {
+            throw new IllegalArgumentException();
+        }
+        else if (startIndex >= textLength) {
+            throw new IllegalArgumentException();
+        }
+        else if (count < 0) {
+            throw new IllegalArgumentException();
+        }
+        else if (count > string.length()) {
+            throw new IllegalArgumentException();
+        }
+        else if (string.isEmpty()) {
+            matches = true;
+        }
+        else {
+            
+            if (textLength < count + startIndex) {
+                matches = false;
+            }
+            else {
+                matches = true;
+    
+                for (int i = 0; i < count; ++ i) {
+                    if (charAt(startIndex + i) != string.charAt(i)) {
+                        matches = false;
+                        break;
+                    }
+                }
+            }
+        }
+    
+        return matches;
+    }
+
 	default Text initial(long count) {
 
         final long length = length();
