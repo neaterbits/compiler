@@ -15,7 +15,23 @@ public abstract class TextEdit {
 	
 	public abstract Text getNewText();
 	
+    public static TextEdit merge(TextEdit text1, long startPos1, TextEdit text2, long startPos2) {
+
+        return TextEditMergeHelper.merge(text1, startPos1, text2, startPos2);
+    }
+
 	static long getChangeInNumberOfLines(Text text, LineDelimiter lineDelimiter) {
 		return text.getNumberOfNewlineChars(lineDelimiter);
 	}
+
+    @Override
+    public String toString() {
+
+        return getClass().getSimpleName()
+                
+                + " [getOldLength()=" + getOldLength()
+                + ", getNewLength()=" + getNewLength()
+                + ", getOldText()=" + getOldText()
+                + ", getNewText()=" + getNewText() + "]";
+    }
 }

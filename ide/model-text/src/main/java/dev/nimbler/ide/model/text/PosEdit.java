@@ -21,44 +21,15 @@ public final class PosEdit {
         this.startPos = startPos;
         this.edit = edit;
     }
+
+    public static PosEdit merge(TextEdit text1, long startPos1, TextEdit text2, long startPos2) {
+
+        return new PosEdit(startPos1, TextEdit.merge(text1, startPos1, text2, startPos2));
+    }
     
-    public final PosEdit merge(PosEdit other) {
+    public PosEdit merge(PosEdit other) {
         
-        if (startPos + getNewLength() < other.startPos) {
-            throw new IllegalArgumentException();
-        }
-        
-        final long totalOldLength = getOldLength() + other.getOldLength();
-        final long totalNewLength = getNewLength() + other.getNewLength();
-        
-        final PosEdit edit;
-        
-        if (totalOldLength == 0) {
-            if (totalNewLength == 0) {
-                edit = null;
-            }
-            else {
-                edit = new PosEdit(startPos, new TextAdd(getNewText().merge(other.getNewText())));
-            }
-        }
-        else {
-            if (totalNewLength == 0) {
-                edit = new PosEdit(
-                        startPos,
-                        new TextRemove(totalOldLength, getOldText().merge(other.getOldText())));
-            }
-            else {
-                edit = new PosEdit(
-                        startPos,
-                        new TextReplace(
-                            totalOldLength,
-                            getOldText().merge(other.getOldText()),
-                            getNewText().merge(other.getNewText())));
-                        
-            }
-        }
-        
-        return edit;
+        return merge(edit, startPos, other.edit, other.startPos);
     }
 
     public long getStartPos() {
