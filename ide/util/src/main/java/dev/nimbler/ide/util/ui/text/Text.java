@@ -265,6 +265,11 @@ public interface Text {
     }
 
 	default boolean endsWith(String string) {
+
+	    return endsWith(new StringText(string));
+	}
+
+	default boolean endsWith(Text string) {
 	    
 	    Objects.requireNonNull(string);
 	    
@@ -276,7 +281,7 @@ public interface Text {
 	    else {
     	    
     	    final long textLength = length();
-    	    final int stringLength = string.length();
+    	    final long stringLength = string.length();
     	    
     	    if (textLength < string.length()) {
     	        endsWith = false;
