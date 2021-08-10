@@ -5,8 +5,8 @@ import dev.nimbler.ide.util.ui.text.Text;
 
 public final class TextRemove extends TextChange {
 
-	public TextRemove(long startPos, long length, Text changedText) {
-		super(startPos, length, changedText);
+	public TextRemove(long length, Text changedText) {
+		super(length, changedText);
 	}
 	
 	@Override

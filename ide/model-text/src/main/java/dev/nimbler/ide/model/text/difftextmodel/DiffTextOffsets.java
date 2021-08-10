@@ -3,7 +3,7 @@ package dev.nimbler.ide.model.text.difftextmodel;
 import java.util.List;
 import java.util.Objects;
 
-import dev.nimbler.ide.model.text.TextEdit;
+import dev.nimbler.ide.model.text.PosEdit;
 import dev.nimbler.ide.model.text.difftextmodel.CountingIterator.CounterState;
 import dev.nimbler.ide.model.text.difftextmodel.GetLineAtOffsetIterator.GetLineAtOffsetState;
 import dev.nimbler.ide.model.text.difftextmodel.GetLineIterator.TextGetLineState;
@@ -36,7 +36,7 @@ class DiffTextOffsets {
 	 * @param edits initial edits
 	 * @param initialOffsets line offsets into initial text
 	 */
-	DiffTextOffsets(List<TextEdit> edits, LinesOffsets initialOffsets) {
+	DiffTextOffsets(List<PosEdit> edits, LinesOffsets initialOffsets) {
 		
 		this();
 		
@@ -46,10 +46,10 @@ class DiffTextOffsets {
 	/**
 	 * Apply a new text edit to the diff text offsets and update state model
 	 * 
-	 * @param edit the {@link TextEdit} to apply
+	 * @param edit the {@link PosEdit} to apply
 	 * @param initialOffsets the line offsets of the initial text
 	 */
-	void applyTextEdit(TextEdit edit, LinesOffsets initialOffsets) {
+	void applyTextEdit(PosEdit edit, LinesOffsets initialOffsets) {
 		
 		Objects.requireNonNull(edit);
 		Objects.requireNonNull(initialOffsets);
@@ -66,8 +66,8 @@ class DiffTextOffsets {
 				
 				final DiffTextOffset priorEdit = offsets.get(i);
 				
-				if (i == 0 && priorEdit.getTextEdit().getStartPos() > 0) {
-					curPos = priorEdit.getTextEdit().getStartPos();
+				if (i == 0 && priorEdit.getEdit().getStartPos() > 0) {
+					curPos = priorEdit.getEdit().getStartPos();
 				}
 				
 				final ApplyTextEditResult applyResult = DiffTextOffsetIntersection.applyTextEdit(edit, i, curPos, priorEdit);
@@ -168,7 +168,7 @@ class DiffTextOffsets {
 		
 		boolean continueIteration = true;
 
-		final long initialStartPos = initialOffset.getTextEdit().getStartPos();
+		final long initialStartPos = initialOffset.getEdit().getStartPos();
 		
 		// if not a diff at start pos, then get that from initial text
 		if (initialStartPos > 0L) {
@@ -194,23 +194,23 @@ class DiffTextOffsets {
 				
 				final DiffTextOffset offset = offsets.get(i);
 				
-				final TextEdit textEdit = offset.getTextEdit();
+				final PosEdit edit = offset.getEdit();
 				
 				if (!iterator.onDiffTextOffset(curPos, offset, state)) {
 					break;
 				}
 				
 				// Skipping in initial text that has been removed
-				initialTextPos += textEdit.getOldLength();
+				initialTextPos += edit.getOldLength();
 
 				if (DEBUG) {
-					System.out.println("added " + textEdit.getOldLength() + " to initialTextPos, updated to " + initialTextPos);
+					System.out.println("added " + edit.getOldLength() + " to initialTextPos, updated to " + initialTextPos);
 				}
 
-				curPos += textEdit.getNewLength();
+				curPos += edit.getNewLength();
 
 				if (DEBUG) {
-					System.out.println("added " + textEdit.getNewLength() + " to curPos, updated to " + curPos);
+					System.out.println("added " + edit.getNewLength() + " to curPos, updated to " + curPos);
 				}
 
 				final long lengthOfInitialText;

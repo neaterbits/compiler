@@ -2,6 +2,7 @@ package dev.nimbler.ide.model.text.difftextmodel;
 
 import java.util.Objects;
 
+import dev.nimbler.ide.model.text.PosEdit;
 import dev.nimbler.ide.model.text.TextEdit;
 
 /**
@@ -24,12 +25,12 @@ final class DiffTextChange {
 	/**
 	 * Construct a {@link DiffTextChange} from a new {@link TextEdit}
 	 * 
-	 * @param textEdit the {@link TextEdit} for the diff
+	 * @param edit the {@link PosEdit} for the diff
 	 * @param offsetIntoSortedArray index to insert at into 
 	 * @param distanceToNext number of characters to start of next {@link DiffTextModel} in sorted array of {@link DiffTextOffset}
 	 */
-	DiffTextChange(TextEdit textEdit, int offsetIntoSortedArray, long distanceToNext) {
-		this(new DiffTextOffset(textEdit, distanceToNext), offsetIntoSortedArray);
+	DiffTextChange(PosEdit edit, int offsetIntoSortedArray, long distanceToNext) {
+		this(new DiffTextOffset(edit, distanceToNext), offsetIntoSortedArray);
 	}
 
 	/**

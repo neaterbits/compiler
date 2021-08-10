@@ -9,8 +9,7 @@ public abstract class TextChange extends TextEdit {
 	private final long length;
 	private final Text changedText;
 
-	public TextChange(long startPos, long length, Text changedText) {
-		super(startPos);
+	public TextChange(long length, Text changedText) {
 		
 		Objects.requireNonNull(changedText);
 	
@@ -24,7 +23,7 @@ public abstract class TextChange extends TextEdit {
 	}
 
 	@Override
-	public Text getOldText() {
+	public final Text getOldText() {
 		return changedText;
 	}
 }

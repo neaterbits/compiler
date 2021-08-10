@@ -9,8 +9,7 @@ public final class TextAdd extends TextEdit {
 
 	private final Text text;
 	
-	public TextAdd(long startPos, Text text) {
-		super(startPos);
+	public TextAdd(Text text) {
 
 		Objects.requireNonNull(text);
 		

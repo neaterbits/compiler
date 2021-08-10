@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import dev.nimbler.ide.model.text.PosEdit;
 import dev.nimbler.ide.model.text.TextAdd;
-import dev.nimbler.ide.model.text.TextEdit;
 import dev.nimbler.ide.model.text.TextModel;
 import dev.nimbler.ide.model.text.TextRemove;
 import dev.nimbler.ide.model.text.TextReplace;
@@ -21,7 +21,7 @@ import dev.nimbler.ide.util.ui.text.TextRange;
 public final class DiffTextModel extends TextModel {
 
     // all edits in chronological order
-	private final List<TextEdit> edits;
+	private final List<PosEdit> edits;
 	
 	// the initial text we are storing diffs from
 	private final Text initialText;
@@ -67,14 +67,14 @@ public final class DiffTextModel extends TextModel {
 	@Override
 	public void replaceTextRange(long startPos, long replaceLength, Text text) {
 
-		final TextEdit textEdit;
+		final PosEdit edit;
 		
 		if (replaceLength == 0) {
 			if (text.isEmpty()) {
 				throw new IllegalArgumentException();
 			}
 			else {
-				textEdit = new TextAdd(startPos, text);
+				edit = new PosEdit(startPos, new TextAdd(text));
 			}
 		}
 		else {
@@ -82,19 +82,19 @@ public final class DiffTextModel extends TextModel {
 			final Text changedText = getTextRange(startPos, replaceLength);
 			
 			if (text.isEmpty()) {
-				textEdit = new TextRemove(startPos, replaceLength, changedText);
+				edit = new PosEdit(startPos, new TextRemove(replaceLength, changedText));
 			}
 			else {
-				textEdit = new TextReplace(startPos, replaceLength, changedText, text);
+				edit = new PosEdit(startPos, new TextReplace(replaceLength, changedText, text));
 			}
 		}
 		
-		edits.add(textEdit);
+		edits.add(edit);
 		
 		curTextLength -= replaceLength;
 		curTextLength += text.length();
 		
-		diffOffsets.applyTextEdit(textEdit, initialOffsets);
+		diffOffsets.applyTextEdit(edit, initialOffsets);
 	}
 
 	@Override

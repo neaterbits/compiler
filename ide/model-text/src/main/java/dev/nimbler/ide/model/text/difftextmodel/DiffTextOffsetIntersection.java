@@ -2,6 +2,7 @@ package dev.nimbler.ide.model.text.difftextmodel;
 
 import java.util.Objects;
 
+import dev.nimbler.ide.model.text.PosEdit;
 import dev.nimbler.ide.model.text.TextEdit;
 import dev.nimbler.ide.model.text.difftextmodel.ApplyTextEditResult.ProcessResult;
 
@@ -21,7 +22,7 @@ class DiffTextOffsetIntersection {
      * @return an {@link ApplyTextEditResult} containing add and remove {@link DiffTextChange} operations
      *         that have to be applied to the sorted array
      */
-	static ApplyTextEditResult applyTextEdit(TextEdit textEdit, int offsetIntoSortedArray, long priorEditPos, DiffTextOffset priorEdit) {
+	static ApplyTextEditResult applyTextEdit(PosEdit textEdit, int offsetIntoSortedArray, long priorEditPos, DiffTextOffset priorEdit) {
 		
 	    Objects.requireNonNull(priorEdit);
 	    
@@ -43,13 +44,13 @@ class DiffTextOffsetIntersection {
 	}
 
 	private static ApplyTextEditResult applyTextEdit(
-			TextEdit textEdit,
+			PosEdit edit,
 			int offsetIntoSortedArray,
 			long priorEditPos,
 			DiffTextOffset priorEdit,
 			Pos startPos,
 			Pos endPos) {
-		
+	    
 		final ApplyTextEditResult applyTextEditResult;
 		
 		switch (startPos) {
@@ -58,9 +59,9 @@ class DiffTextOffsetIntersection {
 			case BEFORE:
 				applyTextEditResult = new ApplyTextEditResult(ProcessResult.COMPLETELY);
 
-				final long distanceToNext = priorEditPos - (textEdit.getStartPos() + textEdit.getNewLength());
+				final long distanceToNext = priorEditPos - (edit.getStartPos() + edit.getNewLength());
 				
-				applyTextEditResult.addAddedOffset(new DiffTextChange(textEdit, offsetIntoSortedArray, distanceToNext));
+				applyTextEditResult.addAddedOffset(new DiffTextChange(edit, offsetIntoSortedArray, distanceToNext));
 				break;
 				
 			case AT_START:
@@ -68,11 +69,11 @@ class DiffTextOffsetIntersection {
 			case AT_END:
 			case AT_START_AT_END:
 				// Must split prior edit
-				applyTextEditResult = merge(textEdit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.COMPLETELY);
+				applyTextEditResult = merge(edit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.COMPLETELY);
 				break;
 				
 			case AFTER:
-				applyTextEditResult = merge(textEdit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.PARTLY);
+				applyTextEditResult = merge(edit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.PARTLY);
 				break;
 				
 			default:
@@ -85,11 +86,11 @@ class DiffTextOffsetIntersection {
 			case AT_START:
 			case WITHIN:
 			case AT_END:
-				applyTextEditResult = merge(textEdit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.COMPLETELY);
+				applyTextEditResult = merge(edit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.COMPLETELY);
 				break;
 				
 			case AFTER:
-				applyTextEditResult = merge(textEdit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.PARTLY);
+				applyTextEditResult = merge(edit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.PARTLY);
 				break;
 				
 			default:
@@ -101,10 +102,10 @@ class DiffTextOffsetIntersection {
 			switch (endPos) {
 			case WITHIN:
 			case AT_END:
-				applyTextEditResult = merge(textEdit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.COMPLETELY);
+				applyTextEditResult = merge(edit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.COMPLETELY);
 				break;
 			case AFTER:
-				applyTextEditResult = merge(textEdit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.PARTLY);
+				applyTextEditResult = merge(edit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.PARTLY);
 				break;
 				
 			default:
@@ -116,11 +117,11 @@ class DiffTextOffsetIntersection {
 			switch (endPos) {
 			
 			case AT_END:
-				applyTextEditResult = merge(textEdit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.COMPLETELY);
+				applyTextEditResult = merge(edit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.COMPLETELY);
 				break;
 
 			case AFTER:
-				applyTextEditResult = merge(textEdit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.PARTLY);
+				applyTextEditResult = merge(edit, offsetIntoSortedArray, priorEditPos, priorEdit, ProcessResult.PARTLY);
 				break;
 				
 			default:
@@ -141,7 +142,7 @@ class DiffTextOffsetIntersection {
 	}
 	
 	private static ApplyTextEditResult merge(
-			TextEdit textEdit,
+			PosEdit edit,
 			int offsetIdx,
 			long priorEditPos,
 			DiffTextOffset priorEdit,
@@ -149,7 +150,7 @@ class DiffTextOffsetIntersection {
 
 		final ApplyTextEditResult applyTextEditResult = new ApplyTextEditResult(processResult);
 		
-		final TextEdit merged = textEdit.merge(priorEdit.getTextEdit());
+		final PosEdit merged = edit.merge(priorEdit.getEdit());
 		
 		if (merged == null) {
 			throw new IllegalStateException();

@@ -9,8 +9,8 @@ public final class TextReplace extends TextChange {
 
 	private final Text updatedText;
 	
-	public TextReplace(long startPos, long replacedLength, Text changedText, Text updatedText) {
-		super(startPos, replacedLength, changedText);
+	public TextReplace(long replacedLength, Text changedText, Text updatedText) {
+		super(replacedLength, changedText);
 		
 		Objects.requireNonNull(updatedText);
 		

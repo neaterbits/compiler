@@ -4,31 +4,32 @@ import java.util.Objects;
 
 import org.jutils.Value;
 
+import dev.nimbler.ide.model.text.PosEdit;
 import dev.nimbler.ide.model.text.TextEdit;
 import dev.nimbler.ide.util.ui.text.LineDelimiter;
 import dev.nimbler.ide.util.ui.text.Text;
 
 /**
- * Stores a {@link TextEdit} with the current distance to the next text edit (in number of characters, including line delimiter).
+ * Stores a {@link PosEdit} with the current distance to the next text edit (in number of characters, including line delimiter).
  * 
  */
 final class DiffTextOffset {
 
     // text edit that caused the diff
-	private final TextEdit textEdit;
+	private final PosEdit edit;
 	
 	// distance in characters (including line delimiter) to the next edit
 	private final long distanceToNextTextEdit;
 	
-	DiffTextOffset(TextEdit textEdit, long distanceToNextTextEdit) {
+	DiffTextOffset(PosEdit edit, long distanceToNextTextEdit) {
 
-		Objects.requireNonNull(textEdit);
+		Objects.requireNonNull(edit);
 		
 		if (distanceToNextTextEdit <= 0L) {
 		    throw new IllegalArgumentException();
 		}
 		
-		this.textEdit = textEdit;
+		this.edit = edit;
 		this.distanceToNextTextEdit = distanceToNextTextEdit;
 	}
 
@@ -39,8 +40,8 @@ final class DiffTextOffset {
 	 * 
 	 * @return a {@link TextEdit}
 	 */
-	TextEdit getTextEdit() {
-		return textEdit;
+	PosEdit getEdit() {
+		return edit;
 	}
 
 	/**
@@ -53,11 +54,11 @@ final class DiffTextOffset {
 	}
 
 	long getNewLength() {
-		return textEdit.getNewLength();
+		return edit.getNewLength();
 	}
 	
 	Text getText() {
-		return textEdit.getNewText();
+		return edit.getNewText();
 	}
 	
 	/**
@@ -70,9 +71,9 @@ final class DiffTextOffset {
 	 */
 	Text getLine(long lineIndex, LineDelimiter lineDelimiter) {
 		
-		System.out.println("## getLine " + lineIndex + " from \"" + textEdit.getNewText().asString() + "\"");
+		System.out.println("## getLine " + lineIndex + " from \"" + edit.getNewText().asString() + "\"");
 		
-		final Text text = textEdit.getNewText();
+		final Text text = edit.getNewText();
 		
 		long lineOffset = 0L;
 		
@@ -101,7 +102,7 @@ final class DiffTextOffset {
 
 	long getOffsetForLine(long lineIndex, LineDelimiter lineDelimiter) {
 		
-		final Text text = textEdit.getNewText();
+		final Text text = edit.getNewText();
 		
 		long lineOffset = 0L;
 		
@@ -114,13 +115,13 @@ final class DiffTextOffset {
 	
 	long getLineAtOffset(long offset, LineDelimiter lineDelimiter) {
 
-		final Text text = textEdit.getNewText();
+		final Text text = edit.getNewText();
 
 		return text.findLineIndexAtPos(offset, lineDelimiter);
 	}
 	
 	long getChangeInNumberOfLines(LineDelimiter lineDelimiter) {
-		return textEdit.getChangeInNumberOfLines(lineDelimiter);
+		return edit.getChangeInNumberOfLines(lineDelimiter);
 	}
 	
 	long getLastLineInChunk(long startLineInChunk, LineDelimiter lineDelimiter) {
@@ -154,6 +155,6 @@ final class DiffTextOffset {
 
 	@Override
 	public String toString() {
-		return "DiffTextOffset [textEdit=" + textEdit + ", distanceToNextTextEdit=" + distanceToNextTextEdit + "]";
+		return "DiffTextOffset [textEdit=" + edit + ", distanceToNextTextEdit=" + distanceToNextTextEdit + "]";
 	}
 }
