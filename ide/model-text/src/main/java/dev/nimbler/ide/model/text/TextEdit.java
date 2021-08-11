@@ -19,6 +19,17 @@ public abstract class TextEdit {
 
         return TextEditMergeHelper.merge(text1, startPos1, text2, startPos2);
     }
+    
+    public static boolean isMergeable(TextEdit text1, long startPos1, TextEdit text2, long startPos2) {
+
+        return TextEditMergeHelper.isMergeable(text1, startPos1, text2, startPos2);
+    }
+
+    public boolean isMergeable(long startPos1, TextEdit text2, long startPos2) {
+
+        return TextEditMergeHelper.isMergeable(this, startPos1, text2, startPos2);
+    }
+    
 
 	static long getChangeInNumberOfLines(Text text, LineDelimiter lineDelimiter) {
 		return text.getNumberOfNewlineChars(lineDelimiter);

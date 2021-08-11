@@ -1,5 +1,7 @@
 package dev.nimbler.ide.model.text.difftextmodel;
 
+import org.jutils.Pos;
+
 import dev.nimbler.ide.util.ui.text.Text;
 import dev.nimbler.ide.util.ui.text.TextBuilder;
 
@@ -8,6 +10,8 @@ import dev.nimbler.ide.util.ui.text.TextBuilder;
  */
 final class GetTextRangeIterator implements DiffTextOffsetsIterator<GetTextRangeIterator.GetTextRangeState> {
 
+    private static final Boolean DEBUG = Boolean.FALSE;
+    
 	static class GetTextRangeState {
 		private final long start;
 		private final long length;
@@ -32,8 +36,10 @@ final class GetTextRangeIterator implements DiffTextOffsetsIterator<GetTextRange
 			final Pos startPos = Pos.getPos(rangeStart, rangeLength, textPartIndex);
 			final Pos endPos = Pos.getPos(rangeStart, rangeLength, textPartEndIndex);
 			
-			System.out.println("## startPos=" + startPos + ", endPos=" + endPos + ", textPartIndex=" + textPartIndex + ", textPartEndIndex=" + textPartEndIndex);
-			
+			if (DEBUG) {
+			    System.out.println("## startPos=" + startPos + ", endPos=" + endPos + ", textPartIndex=" + textPartIndex + ", textPartEndIndex=" + textPartEndIndex);
+			}
+
 			switch (startPos) {
 			case BEFORE:
 				switch (endPos) {

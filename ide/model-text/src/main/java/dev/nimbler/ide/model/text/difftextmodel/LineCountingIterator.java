@@ -11,6 +11,8 @@ import dev.nimbler.ide.util.ui.text.LineDelimiter;
  */
 class LineCountingIterator<T extends LineCountingIterator.LinesCounterState> extends CountingIterator<T> {
 
+    private static final Boolean DEBUG = Boolean.FALSE;
+    
 	static class LinesCounterState extends CounterState {
 
 		final LineDelimiter lineDelimiter;
@@ -45,7 +47,9 @@ class LineCountingIterator<T extends LineCountingIterator.LinesCounterState> ext
 	@Override
 	public final boolean onDiffTextOffset(long offsetIntoWholeText, DiffTextOffset offset, T state) {
 
-		System.out.println("## onDiffTextOffset " + offsetIntoWholeText+ "/" + offset.getChangeInNumberOfLines(state.lineDelimiter));
+	    if (DEBUG) {
+	        System.out.println("## onDiffTextOffset " + offsetIntoWholeText+ "/" + offset.getChangeInNumberOfLines(state.lineDelimiter));
+	    }
 
 		final boolean continueIteration = onDiffTextOffset(offsetIntoWholeText, offset, state.getCounter(), state);
 		
@@ -57,12 +61,16 @@ class LineCountingIterator<T extends LineCountingIterator.LinesCounterState> ext
 	@Override
 	public final boolean onInitialModelText(long offsetIntoWholeText, long offsetIntoInitial, long lengthOfInitialText, T state) {
 
-		System.out.println("## onInitialModeText " + offsetIntoInitial + "/" + lengthOfInitialText + "/" + state.initialOffsets.getTextLength());
-		
+	    if (DEBUG) {
+	        System.out.println("## onInitialModeText " + offsetIntoInitial + "/" + lengthOfInitialText + "/" + state.initialOffsets.getTextLength());
+	    }
+
 		final long startLineIndexInInitial = state.initialOffsets.getLineAtOffset(offsetIntoInitial);
-		
-		System.out.println("## startLineIndexInInitial=" + startLineIndexInInitial);
-		
+
+		if (DEBUG) {
+		    System.out.println("## startLineIndexInInitial=" + startLineIndexInInitial);
+		}
+
 		final long endOfInitialPos = offsetIntoInitial + lengthOfInitialText - 1;
 		
 		final long lastLineIndexInInitial = state.initialOffsets.getLineAtOffset(endOfInitialPos);

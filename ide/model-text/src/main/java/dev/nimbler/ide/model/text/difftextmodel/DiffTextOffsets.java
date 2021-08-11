@@ -1,5 +1,7 @@
 package dev.nimbler.ide.model.text.difftextmodel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +25,7 @@ import dev.nimbler.ide.util.ui.text.TextBuilder;
  */
 class DiffTextOffsets {
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	private SortedArray<DiffTextOffset> offsets;
 	
@@ -41,61 +43,321 @@ class DiffTextOffsets {
 		
 		this();
 		
-		edits.forEach(edit -> applyTextEdit(edit, initialOffsets));
+		edits.forEach(edit -> applyTextEditWithMerge(edit, initialOffsets));
+	}
+	
+	// For unit tests
+	UnmodifiableSortedArray<DiffTextOffset> getOffsetArray() {
+
+	    return offsets;
 	}
 
-	/**
-	 * Apply a new text edit to the diff text offsets and update state model
-	 * 
-	 * @param edit the {@link PosEdit} to apply
-	 * @param initialOffsets the line offsets of the initial text
-	 */
-	void applyTextEdit(PosEdit edit, LinesOffsets initialOffsets) {
-		
-		Objects.requireNonNull(edit);
-		Objects.requireNonNull(initialOffsets);
+    /**
+     * Apply a new text edit to the diff text offsets and update state model
+     * 
+     * @param edit the {@link PosEdit} to apply
+     * @param initialOffsets the line offsets of the initial text
+     */
+    void applyTextEditWithMerge(PosEdit edit, LinesOffsets initialOffsets) {
+        
+        Objects.requireNonNull(edit);
+        Objects.requireNonNull(initialOffsets);
 
-		boolean applied = false;
+        boolean doneMerging = false;
 
-		long curPos = 0;
-		
-		if (offsets.isEmpty()) {
-			offsets.insertAt(0, new DiffTextOffset(edit.getTextEdit(), edit.getStartPos(), -1));
-		}
-		else {
-			for (int i = 0; i < offsets.length() && !applied; ++ i) {
-				
-				final DiffTextOffset priorEdit = offsets.get(i);
-				
-				if (i == 0 && priorEdit.getOriginalStartPos() > 0) {
-					curPos = priorEdit.getOriginalStartPos();
-				}
-				
-				final ApplyTextEditResult applyResult = DiffTextOffsetIntersection.applyTextEdit(edit, i, curPos, priorEdit);
-				
-				switch (applyResult.getProcessResult()) {
-				case COMPLETELY:
-					// Applied into model completely
-					System.out.println("## applied");
-					applyResult.applyToArray(offsets);
-					applied = true;
-					break;
-					
-				case PARTLY:
-					throw new UnsupportedOperationException();
-					
-				case NONE:
-					break;
-					
-				default:
-					throw new UnsupportedOperationException();
-				}
-				
-				curPos += priorEdit.getNewLength() + priorEdit.getDistanceToNextTextEdit();
-			}
-		}
-	}
+        // The merging DiffTextOffset, we should always be able to merge to just one item
+        DiffTextOffset lastMerged = null;
 
+        long curSortedArrayStartPos = 0;
+        long lastSortedArrayStartPos = DiffTextOffset.NO_DISTANCE;
+        
+        final TextEdit textEdit = edit.getTextEdit();
+        
+        if (offsets.isEmpty()) {
+            offsets.insertAt(0, new DiffTextOffset(textEdit, edit.getStartPos()));
+        }
+        else {
+            // A list of diff texts to remove
+            final List<DiffTextOffset> mergedOffsetsToReplace = new ArrayList<>();
+            
+            int indexIntoSortedArrayOfOffsetsToReplace = -1;
+            int curSortedArrayIndex = -1;
+
+            for (int i = 0; i < offsets.length() && !doneMerging; ++ i) {
+                
+                final DiffTextOffset priorEditOffset = offsets.get(i);
+
+                if (i == 0 && priorEditOffset.getOriginalStartPos() > 0) {
+                    curSortedArrayStartPos = priorEditOffset.getOriginalStartPos();
+                }
+
+                // Merge from either user edit or last merge (which user edit has been merged with)
+                final TextEdit curEditToMerge;
+                final long curEditToMergeStartPos;
+
+                if (lastMerged == null) {
+                    curEditToMerge = edit.getTextEdit();
+                    curEditToMergeStartPos = edit.getStartPos();
+                }
+                else {
+                    curEditToMerge = lastMerged.getEdit();
+
+                    // lastMerged is created from merging other entries and
+                    // therefore has up to date originalStartPos
+                    curEditToMergeStartPos = lastMerged.getOriginalStartPos();
+                }
+
+                final DiffTextOffset merged = merge(
+                        curEditToMerge,
+                        curEditToMergeStartPos,
+                        priorEditOffset,
+                        curSortedArrayStartPos);
+
+                if (merged != null) {
+                    
+                    // Merge was doable so can replace in sorted array
+                    if (lastMerged == null) {
+                        // Started merging so cache where to replace in sorted array
+                        indexIntoSortedArrayOfOffsetsToReplace = i;
+                    }
+
+                    mergedOffsetsToReplace.add(priorEditOffset);
+                    
+                    // Merge with the merged DiffTextOffset
+                    lastMerged = merged;
+                }
+                else {
+                    // Not mergeable so done merging, if was able to merge at all
+                    doneMerging = true;
+                    curSortedArrayIndex = i;
+                }
+
+                lastSortedArrayStartPos = curSortedArrayStartPos;
+
+                curSortedArrayStartPos += priorEditOffset.getEdit().getNewLength();
+                
+                if (i < offsets.length() - 1) {
+                    curSortedArrayStartPos += priorEditOffset.getDistanceToNextTextEdit();
+                }
+            }
+
+            // Done merging, now replace the merged offsets
+            if (lastMerged != null) {
+
+                // Was able to merge
+                offsets.replace(
+                        indexIntoSortedArrayOfOffsetsToReplace,
+                        mergedOffsetsToReplace.size(),
+                        Arrays.asList(lastMerged));
+            }
+            else {
+                // Not able to merge so just add at index
+                addNonMerged(
+                        edit,
+                        curSortedArrayIndex,
+                        lastSortedArrayStartPos,
+                        curSortedArrayStartPos);
+            }
+        }
+    }
+
+    private void addNonMerged(
+            PosEdit edit,
+            int indexIntoSortedArrayOfOffsetsToReplace,
+            long lastSortedArrayStartPos,
+            long curSortedArrayStartPos) {
+        
+        final DiffTextOffset offset;
+
+        final long editStartPos = edit.getStartPos();
+        final TextEdit textEdit = edit.getTextEdit();
+
+        if (indexIntoSortedArrayOfOffsetsToReplace >= offsets.length()) {
+            throw new IllegalStateException();
+        }
+        else if (indexIntoSortedArrayOfOffsetsToReplace == offsets.length() - 1) {
+            // Append to array
+            offset = new DiffTextOffset(edit.getTextEdit(), editStartPos);
+        }
+        else {
+            
+            if (curSortedArrayStartPos <= editStartPos) {
+                throw new IllegalStateException();
+            }
+
+            // Must compute distance to next entry for this one
+            offset = new DiffTextOffset(
+                    textEdit,
+                    editStartPos,
+                    curSortedArrayStartPos - editStartPos);
+        }
+        
+        if (indexIntoSortedArrayOfOffsetsToReplace > 0) {
+            // Update distance to next for last entry
+            
+            if (lastSortedArrayStartPos == DiffTextOffset.NO_DISTANCE) {
+                throw new IllegalStateException();
+            }
+            
+            final int lastIndex = indexIntoSortedArrayOfOffsetsToReplace - 1;
+            
+            final DiffTextOffset lastOffset = offsets.get(lastIndex);
+            
+            if (editStartPos <= lastSortedArrayStartPos) {
+                throw new IllegalStateException();
+            }
+            
+            final DiffTextOffset lastOffsetUpdate = new DiffTextOffset(
+                    lastOffset.getEdit(),
+                    lastOffset.getOriginalStartPos(),
+                    editStartPos - lastSortedArrayStartPos);
+            
+            offsets.set(lastIndex, lastOffsetUpdate);
+        }
+
+        offsets.insertAt(indexIntoSortedArrayOfOffsetsToReplace, offset);
+    }
+    
+    private DiffTextOffset merge(
+            
+            // Current edit to merge, i.e. user edit or user edit merged with other edits
+            TextEdit curEditToMerge,
+            long curEditToMergeStartPos,
+            
+            // Edit to merge with
+            DiffTextOffset fromSortedArray,
+            long fromSortedArrayStartPos) {
+
+        System.out.println("## merge " + curEditToMerge + "/" + curEditToMergeStartPos
+                + " with " + fromSortedArray + "/" + fromSortedArrayStartPos);
+        
+        final DiffTextOffset merged;
+        
+        if (curEditToMergeStartPos < fromSortedArrayStartPos) {
+
+            // Must increase fromSortedArrayStartPos because the new merge would move it
+            // eg. adding the text "123" at pos 0, then add "321" at the same pos would merge [0, "321"] to [2, "123"]
+
+            merged = mergeCurEditBeforePrior(
+                    curEditToMerge,
+                    curEditToMergeStartPos,
+                    fromSortedArray,
+                    fromSortedArrayStartPos + curEditToMerge.getNewLength() - curEditToMerge.getOldLength());
+        }
+        else {
+            
+            merged = mergePriorEditBeforeCur(curEditToMerge, curEditToMergeStartPos, fromSortedArray, fromSortedArrayStartPos);
+        }
+
+        return merged;
+    }
+    
+    private static DiffTextOffset mergeCurEditBeforePrior(
+            // Current edit to merge, i.e. user edit or user edit merged with other edits
+            TextEdit curEditToMerge,
+            long curEditToMergeStartPos,
+            
+            // Edit to merge with
+            DiffTextOffset fromSortedArray,
+            long fromSortedArrayStartPos) {
+        
+        final DiffTextOffset merged;
+        
+        if (curEditToMerge.isMergeable(
+                curEditToMergeStartPos,
+                fromSortedArray.getEdit(),
+                fromSortedArrayStartPos)) {
+
+            System.out.format("## mergeable cur %s -> from %s\n",
+                    textEditString(curEditToMergeStartPos, curEditToMerge),
+                    textEditString(fromSortedArrayStartPos, fromSortedArray.getEdit()));
+
+            if (curEditToMergeStartPos > fromSortedArrayStartPos) {
+                throw new IllegalStateException();
+            }
+
+            final TextEdit mergedTextEdit = TextEdit.merge(curEditToMerge, curEditToMergeStartPos,
+                    fromSortedArray.getEdit(), fromSortedArrayStartPos);
+
+            if (fromSortedArray.isLastTextEdit()) {
+
+                merged = new DiffTextOffset(mergedTextEdit, curEditToMergeStartPos);
+            } else {
+                final long updatedDistanceToNext = fromSortedArray.getDistanceToNextTextEdit()
+                        + (mergedTextEdit.getNewLength() - mergedTextEdit.getOldLength())
+                        + (fromSortedArrayStartPos - curEditToMergeStartPos);
+
+                merged = new DiffTextOffset(mergedTextEdit, curEditToMergeStartPos, updatedDistanceToNext);
+            }
+        }
+        else if (fromSortedArray.getEdit().isMergeable(
+                fromSortedArrayStartPos,
+                curEditToMerge,
+                curEditToMergeStartPos)) {
+            throw new IllegalStateException();
+        }
+        else {
+            merged = null;
+        }
+
+        return merged;
+    }
+
+    private static DiffTextOffset mergePriorEditBeforeCur(
+            // Current edit to merge, i.e. user edit or user edit merged with other edits
+            TextEdit curEditToMerge,
+            long curEditToMergeStartPos,
+            
+            // Edit to merge with
+            DiffTextOffset fromSortedArray,
+            long fromSortedArrayStartPos) {
+        
+        final DiffTextOffset merged;
+        
+        if (fromSortedArray.getEdit().isMergeable(
+                fromSortedArrayStartPos,
+                curEditToMerge,
+                curEditToMergeStartPos)) {
+
+            System.out.format("## mergeable from %s -> cur %s\n",
+                    textEditString(fromSortedArrayStartPos, fromSortedArray.getEdit()),
+                    textEditString(curEditToMergeStartPos, curEditToMerge));
+
+            final TextEdit mergedTextEdit = TextEdit.merge(fromSortedArray.getEdit(), fromSortedArrayStartPos,
+                    curEditToMerge, curEditToMergeStartPos);
+
+            if (fromSortedArray.isLastTextEdit()) {
+                merged = new DiffTextOffset(mergedTextEdit, fromSortedArrayStartPos);
+            } else {
+                final long updatedDistanceToNext = fromSortedArray.getDistanceToNextTextEdit()
+                        + mergedTextEdit.getNewLength() - mergedTextEdit.getOldLength();
+
+                merged = new DiffTextOffset(mergedTextEdit, fromSortedArrayStartPos, updatedDistanceToNext);
+            }
+
+        }
+        else if (curEditToMerge.isMergeable(
+                curEditToMergeStartPos,
+                fromSortedArray.getEdit(),
+                fromSortedArrayStartPos)) {
+         
+            throw new IllegalStateException();
+        }
+        else {
+            merged = null;
+        }
+        
+        return merged;
+    }
+
+    private static String textEditString(long startPos, TextEdit textEdit) {
+
+        return String.format("[%d, '%s' -> '%s']",
+                startPos,
+                textEdit.getOldText().asString(),
+                textEdit.getNewText().asString());
+    }
+    
 	/**
 	 * Retrieve complete text by applying all texts to an initial text.
 	 * 
@@ -111,13 +373,8 @@ class DiffTextOffsets {
 		
 		if (offsets.isEmpty()) {
 			result = initialText;
-
-			System.out.println("## has no offsets " + offsets);
 		}
 		else {
-		
-			System.out.println("## has offsets " + offsets + " length " + curTextLength);
-
 			final TextBuilder textBuilder = new CharText(curTextLength);
 			
 			iterateOffsets(curTextLength, initialOffsets, new GetTextIterator.GetTextState(initialText, textBuilder), new GetTextIterator());
@@ -128,8 +385,6 @@ class DiffTextOffsets {
 		return result;
 	}
 	
-	
-
 	Text getTextRange(long start, long length, long curTextLength, Text initialText, LinesOffsets initialOffsets) {
 
 		final Text result;
@@ -182,7 +437,6 @@ class DiffTextOffsets {
 			if (DEBUG) {
 				System.out.println("found initial start pos curPos=" + curPos);
 			}
-
 		}
 		else {
 			curPos = 0L;
@@ -216,7 +470,7 @@ class DiffTextOffsets {
 
 				final long lengthOfInitialText;
 
-				if (offset.getDistanceToNextTextEdit() < 0) {
+				if (offset.isLastTextEdit()) {
 					lengthOfInitialText = curTextLength - curPos;
 
 					if (DEBUG) {
@@ -357,4 +611,9 @@ class DiffTextOffsets {
 		
 		return result;
 	}
+
+    @Override
+    public String toString() {
+        return "DiffTextOffsets [offsets=" + offsets + "]";
+    }
 }

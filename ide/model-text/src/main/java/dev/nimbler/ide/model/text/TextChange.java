@@ -26,4 +26,21 @@ public abstract class TextChange extends TextEdit {
 	public final Text getOldText() {
 		return changedText;
 	}
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(changedText, length);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final TextChange other = (TextChange) obj;
+        return Objects.equals(changedText, other.changedText) && length == other.length;
+    }
 }

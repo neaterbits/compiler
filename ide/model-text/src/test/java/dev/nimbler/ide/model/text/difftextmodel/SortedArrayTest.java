@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.Function;
 
 import org.junit.Test;
@@ -266,5 +267,238 @@ public class SortedArrayTest {
 		assertThat(array.get(3)).isEqualTo(567);
 		assertThat(array.get(4)).isEqualTo(678);
 		assertThat(array.get(5)).isEqualTo(789);
+	}
+	
+	@Test
+	public void testReplaceWithCount0ThrowsException() {
+	    
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class);
+
+        try {
+            array.replace(0, 0, Arrays.asList(1, 2, 3));
+            
+            fail("Expected exception");
+        }
+        catch (IllegalArgumentException ex) {
+        }
+        
+        assertThat(array.isEmpty()).isTrue();
+	}
+
+    @Test
+    public void testReplaceWithNullCollectionThrowsException() {
+        
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class);
+
+        try {
+            array.replace(0, 0, null);
+            
+            fail("Expected exception");
+        }
+        catch (NullPointerException ex) {
+        }
+
+        assertThat(array.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testReplaceWithEmptyCollectionThrowsException() {
+        
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class);
+
+        try {
+            array.replace(0, 0, Collections.emptyList());
+            
+            fail("Expected exception");
+        }
+        catch (IllegalArgumentException ex) {
+        }
+
+        assertThat(array.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testReplaceAtStartOfReallocated() {
+
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class, 4);
+        
+        array.insertAt(0, 1);
+        array.insertAt(1, 2);
+        array.insertAt(2, 3);
+        array.insertAt(3, 4);
+        
+        assertThat(array.length()).isEqualTo(4);
+        
+        array.replace(0, 2, Arrays.asList(4, 5, 6));
+        
+        assertThat(array.get(0)).isEqualTo(4);
+        assertThat(array.get(1)).isEqualTo(5);
+        assertThat(array.get(2)).isEqualTo(6);
+        assertThat(array.get(3)).isEqualTo(3);
+        assertThat(array.get(4)).isEqualTo(4);
+        
+        assertThat(array.length()).isEqualTo(5);
+    }
+
+    @Test
+    public void testReplaceAtMidOfReallocated() {
+
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class, 4);
+        
+        array.insertAt(0, 1);
+        array.insertAt(1, 2);
+        array.insertAt(2, 3);
+        array.insertAt(3, 4);
+        
+        assertThat(array.length()).isEqualTo(4);
+        
+        array.replace(1, 2, Arrays.asList(4, 5, 6));
+        
+        assertThat(array.get(0)).isEqualTo(1);
+        assertThat(array.get(1)).isEqualTo(4);
+        assertThat(array.get(2)).isEqualTo(5);
+        assertThat(array.get(3)).isEqualTo(6);
+        assertThat(array.get(4)).isEqualTo(4);
+        
+        assertThat(array.length()).isEqualTo(5);
+    }
+
+    @Test
+    public void testReplaceAtEndOfReallocated() {
+
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class, 4);
+        
+        array.insertAt(0, 1);
+        array.insertAt(1, 2);
+        array.insertAt(2, 3);
+        array.insertAt(3, 4);
+        
+        assertThat(array.length()).isEqualTo(4);
+        
+        array.replace(2, 2, Arrays.asList(4, 5, 6));
+        
+        assertThat(array.get(0)).isEqualTo(1);
+        assertThat(array.get(1)).isEqualTo(2);
+        assertThat(array.get(2)).isEqualTo(4);
+        assertThat(array.get(3)).isEqualTo(5);
+        assertThat(array.get(4)).isEqualTo(6);
+        
+        assertThat(array.length()).isEqualTo(5);
+    }
+
+    @Test
+    public void testReplaceAtMidOfReallocatedReplaceMoreThanAdded() {
+
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class, 4);
+        
+        array.insertAt(0, 1);
+        array.insertAt(1, 2);
+        array.insertAt(2, 3);
+        array.insertAt(3, 4);
+        array.insertAt(4, 5);
+        
+        assertThat(array.length()).isEqualTo(5);
+        
+        array.replace(1, 3, Arrays.asList(5, 6));
+        
+        assertThat(array.get(0)).isEqualTo(1);
+        assertThat(array.get(1)).isEqualTo(5);
+        assertThat(array.get(2)).isEqualTo(6);
+        assertThat(array.get(3)).isEqualTo(5);
+        
+        assertThat(array.length()).isEqualTo(4);
+    }
+
+    @Test
+    public void testReplaceAtStartOfNonReallocated() {
+
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class, 10);
+        
+        array.insertAt(0, 1);
+        array.insertAt(1, 2);
+        array.insertAt(2, 3);
+        array.insertAt(3, 4);
+        
+        assertThat(array.length()).isEqualTo(4);
+        
+        array.replace(0, 2, Arrays.asList(4, 5, 6));
+        
+        assertThat(array.get(0)).isEqualTo(4);
+        assertThat(array.get(1)).isEqualTo(5);
+        assertThat(array.get(2)).isEqualTo(6);
+        assertThat(array.get(3)).isEqualTo(3);
+        assertThat(array.get(4)).isEqualTo(4);
+        
+        assertThat(array.length()).isEqualTo(5);
+    }
+
+    @Test
+    public void testReplaceAtMidOfNonReallocated() {
+
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class, 10);
+        
+        array.insertAt(0, 1);
+        array.insertAt(1, 2);
+        array.insertAt(2, 3);
+        array.insertAt(3, 4);
+
+        assertThat(array.length()).isEqualTo(4);
+        
+        array.replace(1, 2, Arrays.asList(4, 5, 6));
+        
+        assertThat(array.get(0)).isEqualTo(1);
+        assertThat(array.get(1)).isEqualTo(4);
+        assertThat(array.get(2)).isEqualTo(5);
+        assertThat(array.get(3)).isEqualTo(6);
+        assertThat(array.get(4)).isEqualTo(4);
+        
+        assertThat(array.length()).isEqualTo(5);
+    }
+
+    @Test
+    public void testReplaceAtEndOfNonReallocated() {
+
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class, 10);
+        
+        array.insertAt(0, 1);
+        array.insertAt(1, 2);
+        array.insertAt(2, 3);
+        array.insertAt(3, 4);
+        
+        assertThat(array.length()).isEqualTo(4);
+        
+        array.replace(2, 2, Arrays.asList(4, 5, 6));
+        
+        assertThat(array.get(0)).isEqualTo(1);
+        assertThat(array.get(1)).isEqualTo(2);
+        assertThat(array.get(2)).isEqualTo(4);
+        assertThat(array.get(3)).isEqualTo(5);
+        assertThat(array.get(4)).isEqualTo(6);
+        
+        assertThat(array.length()).isEqualTo(5);
+    }
+
+    @Test
+    public void testReplaceAtMidOfNonReallocatedReplaceMoreThanAdded() {
+
+        final SortedArray<Integer> array = new SortedArray<>(Integer.class, 10);
+        
+        array.insertAt(0, 1);
+        array.insertAt(1, 2);
+        array.insertAt(2, 3);
+        array.insertAt(3, 4);
+        array.insertAt(4, 5);
+        
+        assertThat(array.length()).isEqualTo(5);
+        
+        array.replace(1, 3, Arrays.asList(5, 6));
+        
+        assertThat(array.get(0)).isEqualTo(1);
+        assertThat(array.get(1)).isEqualTo(5);
+        assertThat(array.get(2)).isEqualTo(6);
+        assertThat(array.get(3)).isEqualTo(5);
+        
+        assertThat(array.length()).isEqualTo(4);
+    }
 }
-}
+

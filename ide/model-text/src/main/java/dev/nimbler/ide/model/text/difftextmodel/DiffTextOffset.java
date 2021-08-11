@@ -14,6 +14,8 @@ import dev.nimbler.ide.util.ui.text.Text;
  */
 final class DiffTextOffset {
 
+    static final long NO_DISTANCE = -1L;
+    
     // text edit that caused the diff
 	private final TextEdit edit;
 	
@@ -21,7 +23,16 @@ final class DiffTextOffset {
 	
 	// distance in characters (including line delimiter) to the next edit
 	private final long distanceToNextTextEdit;
-	
+
+	DiffTextOffset(TextEdit edit, long originalStartPos) {
+
+        Objects.requireNonNull(edit);
+
+        this.edit = edit;
+        this.originalStartPos = originalStartPos;
+        this.distanceToNextTextEdit = NO_DISTANCE;
+	}
+
 	DiffTextOffset(TextEdit edit, long originalStartPos, long distanceToNextTextEdit) {
 
 		Objects.requireNonNull(edit);
@@ -29,7 +40,7 @@ final class DiffTextOffset {
 		if (distanceToNextTextEdit <= 0L) {
 		    throw new IllegalArgumentException();
 		}
-		
+
 		this.edit = edit;
 		this.originalStartPos = originalStartPos;
 		this.distanceToNextTextEdit = distanceToNextTextEdit;
@@ -56,6 +67,16 @@ final class DiffTextOffset {
 	long getOriginalStartPos() {
        return originalStartPos;
     }
+	
+	/**
+	 * Returns whether last text edit
+	 * 
+	 * @return whether last text edit
+	 */
+	boolean isLastTextEdit() {
+	    
+	    return distanceToNextTextEdit == NO_DISTANCE;
+	}
 
 	/**
 	 * Return distance to next text edit in number of characters - including line delimiter.
@@ -63,6 +84,11 @@ final class DiffTextOffset {
 	 * @return distance to next edit
 	 */
 	long getDistanceToNextTextEdit() {
+	    
+	    if (distanceToNextTextEdit == NO_DISTANCE) {
+	        throw new IllegalStateException();
+	    }
+	    
 		return distanceToNextTextEdit;
 	}
 
@@ -168,6 +194,6 @@ final class DiffTextOffset {
 
 	@Override
 	public String toString() {
-		return "DiffTextOffset [textEdit=" + edit + ", distanceToNextTextEdit=" + distanceToNextTextEdit + "]";
+		return "DiffTextOffset [e=" + edit + ", d=" + distanceToNextTextEdit + "]";
 	}
 }

@@ -10,6 +10,8 @@ import dev.nimbler.ide.util.ui.text.TextBuilder;
  */
 final class GetLineIterator extends LineCountingIterator<TextGetLineState> {
 
+    private static final Boolean DEBUG = Boolean.FALSE;
+    
 	static class TextGetLineState extends LineCountingIterator.LinesCounterState {
 		
 		private final long lineIndex;
@@ -41,8 +43,10 @@ final class GetLineIterator extends LineCountingIterator<TextGetLineState> {
 	@Override
 	boolean onDiffTextOffset(long offsetIntoWholeText, DiffTextOffset offset, long startLineInChunkRelativeToWholeText, TextGetLineState state) {
 		
-		System.out.println("## onDiffTextOffset startLine=" + startLineInChunkRelativeToWholeText);
-		
+	    if (DEBUG) {
+	        System.out.println("## onDiffTextOffset startLine=" + startLineInChunkRelativeToWholeText);
+	    }
+   
 		final boolean continueIteration;
 		
 		final long lastLineInChunkRelativeToWholeText =   startLineInChunkRelativeToWholeText
@@ -54,7 +58,9 @@ final class GetLineIterator extends LineCountingIterator<TextGetLineState> {
 		else if (state.lineIndex >= startLineInChunkRelativeToWholeText
 				&& state.lineIndex <= lastLineInChunkRelativeToWholeText) {
 			
-			System.out.println("## append");
+		    if (DEBUG) {
+		        System.out.println("## append");
+		    }
 		
 			final long lineIndexInChunk = state.lineIndex - startLineInChunkRelativeToWholeText;
 			
@@ -67,7 +73,9 @@ final class GetLineIterator extends LineCountingIterator<TextGetLineState> {
 			continueIteration = true;
 		}
 		else {
-			System.out.println("## exit");
+		    if (DEBUG) {
+		        System.out.println("## exit");
+		    }
 			
 			continueIteration = false;
 		}
@@ -86,8 +94,10 @@ final class GetLineIterator extends LineCountingIterator<TextGetLineState> {
 			long lastLineInChunkRelativeToWholeText,
 			TextGetLineState state) {
 
-		System.out.println("## onInitialModelText offsetIntoInitial=" + chunkOffsetIntoInitial + ", startLine=" + startLineInChunkRelativeToWholeText
+	    if (DEBUG) {
+	        System.out.println("## onInitialModelText offsetIntoInitial=" + chunkOffsetIntoInitial + ", startLine=" + startLineInChunkRelativeToWholeText
 				+ ", lastLine=" + lastLineInChunkRelativeToWholeText + ", lineIndex=" + state.lineIndex);
+	    }
 
 		if (lastLineInChunkRelativeToWholeText < startLineInChunkRelativeToWholeText) {
 			throw new IllegalStateException();
@@ -110,9 +120,12 @@ final class GetLineIterator extends LineCountingIterator<TextGetLineState> {
 			
 			if (nextLineIndex >= state.initialOffsets.getNumLines()) {
 				
-				System.out.println("## onInitialModelText last line index=" + lineIndexIntoChunk + ", lineOffset="
+			    if (DEBUG) {
+			        System.out.println("## onInitialModelText last line index=" + lineIndexIntoChunk + ", lineOffset="
 							+ lineOffset + ", endIndex=" + (lineOffset + lengthOfInitialTextChunk));
-					// Last line in text, just add remaining
+			    }
+
+				// Last line in text, just add remaining
 				text = state.initialText.substring(
 						Math.max(chunkOffsetIntoInitial, lineOffset),
 						chunkOffsetIntoInitial + lengthOfInitialTextChunk);
@@ -121,8 +134,10 @@ final class GetLineIterator extends LineCountingIterator<TextGetLineState> {
 			
 				final long offsetOfNextLine = state.initialOffsets.getOffsetForLine(nextLineIndex);
 	
-				System.out.println("## onInitialModelText prior line index=" + lineIndexIntoChunk + ", lineOffset=" + lineOffset + ", offsetOfNextLine=" + offsetOfNextLine);
-	
+				if (DEBUG) {
+				    System.out.println("## onInitialModelText prior line index=" + lineIndexIntoChunk + ", lineOffset=" + lineOffset + ", offsetOfNextLine=" + offsetOfNextLine);
+				}
+   
 				text = state.initialText.substring(
 						Math.max(chunkOffsetIntoInitial, lineOffset),
 						Math.min(lineOffset + lengthOfInitialTextChunk, offsetOfNextLine));
@@ -136,8 +151,10 @@ final class GetLineIterator extends LineCountingIterator<TextGetLineState> {
 			continueIteration = false;
 		}
 
-		System.out.println("## continueIteration " + continueIteration);
-		
+		if (DEBUG) {
+		    System.out.println("## continueIteration " + continueIteration);
+		}
+
 		return continueIteration;
 	}
 }

@@ -94,7 +94,7 @@ public final class DiffTextModel extends TextModel {
 		curTextLength -= replaceLength;
 		curTextLength += text.length();
 		
-		diffOffsets.applyTextEdit(edit, initialOffsets);
+		diffOffsets.applyTextEditWithMerge(edit, initialOffsets);
 	}
 
 	@Override
