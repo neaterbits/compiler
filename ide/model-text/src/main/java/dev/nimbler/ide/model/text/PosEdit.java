@@ -32,6 +32,11 @@ public final class PosEdit {
         return merge(edit, startPos, other.edit, other.startPos);
     }
 
+    public PosEdit merge(TextEdit other, long otherStartPos) {
+        
+        return merge(edit, startPos, other, otherStartPos);
+    }
+
     public long getStartPos() {
         return startPos;
     }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import dev.nimbler.ide.model.text.PosEdit;
+import dev.nimbler.ide.model.text.TextEdit;
 import dev.nimbler.ide.model.text.difftextmodel.CountingIterator.CounterState;
 import dev.nimbler.ide.model.text.difftextmodel.GetLineAtOffsetIterator.GetLineAtOffsetState;
 import dev.nimbler.ide.model.text.difftextmodel.GetLineIterator.TextGetLineState;
@@ -59,15 +60,15 @@ class DiffTextOffsets {
 		long curPos = 0;
 		
 		if (offsets.isEmpty()) {
-			offsets.insertAt(0, new DiffTextOffset(edit, -1));
+			offsets.insertAt(0, new DiffTextOffset(edit.getTextEdit(), edit.getStartPos(), -1));
 		}
 		else {
 			for (int i = 0; i < offsets.length() && !applied; ++ i) {
 				
 				final DiffTextOffset priorEdit = offsets.get(i);
 				
-				if (i == 0 && priorEdit.getEdit().getStartPos() > 0) {
-					curPos = priorEdit.getEdit().getStartPos();
+				if (i == 0 && priorEdit.getOriginalStartPos() > 0) {
+					curPos = priorEdit.getOriginalStartPos();
 				}
 				
 				final ApplyTextEditResult applyResult = DiffTextOffsetIntersection.applyTextEdit(edit, i, curPos, priorEdit);
@@ -168,7 +169,7 @@ class DiffTextOffsets {
 		
 		boolean continueIteration = true;
 
-		final long initialStartPos = initialOffset.getEdit().getStartPos();
+		final long initialStartPos = initialOffset.getOriginalStartPos();
 		
 		// if not a diff at start pos, then get that from initial text
 		if (initialStartPos > 0L) {
@@ -194,23 +195,23 @@ class DiffTextOffsets {
 				
 				final DiffTextOffset offset = offsets.get(i);
 				
-				final PosEdit edit = offset.getEdit();
+				final TextEdit textEdit = offset.getEdit();
 				
 				if (!iterator.onDiffTextOffset(curPos, offset, state)) {
 					break;
 				}
 				
 				// Skipping in initial text that has been removed
-				initialTextPos += edit.getOldLength();
+				initialTextPos += textEdit.getOldLength();
 
 				if (DEBUG) {
-					System.out.println("added " + edit.getOldLength() + " to initialTextPos, updated to " + initialTextPos);
+					System.out.println("added " + textEdit.getOldLength() + " to initialTextPos, updated to " + initialTextPos);
 				}
 
-				curPos += edit.getNewLength();
+				curPos += textEdit.getNewLength();
 
 				if (DEBUG) {
-					System.out.println("added " + edit.getNewLength() + " to curPos, updated to " + curPos);
+					System.out.println("added " + textEdit.getNewLength() + " to curPos, updated to " + curPos);
 				}
 
 				final long lengthOfInitialText;

@@ -4,24 +4,25 @@ import java.util.Objects;
 
 import org.jutils.Value;
 
-import dev.nimbler.ide.model.text.PosEdit;
 import dev.nimbler.ide.model.text.TextEdit;
 import dev.nimbler.ide.util.ui.text.LineDelimiter;
 import dev.nimbler.ide.util.ui.text.Text;
 
 /**
- * Stores a {@link PosEdit} with the current distance to the next text edit (in number of characters, including line delimiter).
+ * Stores a {@link TextEdit} with the current distance to the next text edit (in number of characters, including line delimiter).
  * 
  */
 final class DiffTextOffset {
 
     // text edit that caused the diff
-	private final PosEdit edit;
+	private final TextEdit edit;
+	
+	private final long originalStartPos;
 	
 	// distance in characters (including line delimiter) to the next edit
 	private final long distanceToNextTextEdit;
 	
-	DiffTextOffset(PosEdit edit, long distanceToNextTextEdit) {
+	DiffTextOffset(TextEdit edit, long originalStartPos, long distanceToNextTextEdit) {
 
 		Objects.requireNonNull(edit);
 		
@@ -30,6 +31,7 @@ final class DiffTextOffset {
 		}
 		
 		this.edit = edit;
+		this.originalStartPos = originalStartPos;
 		this.distanceToNextTextEdit = distanceToNextTextEdit;
 	}
 
@@ -40,9 +42,20 @@ final class DiffTextOffset {
 	 * 
 	 * @return a {@link TextEdit}
 	 */
-	PosEdit getEdit() {
+	TextEdit getEdit() {
 		return edit;
 	}
+
+	/**
+	 * Return the original startpos into text when edit was done,
+	 * startpos relative to current text might have changed due to further edits
+	 *  
+	 * @return original startpos
+	 */
+	
+	long getOriginalStartPos() {
+       return originalStartPos;
+    }
 
 	/**
 	 * Return distance to next text edit in number of characters - including line delimiter.
@@ -53,7 +66,7 @@ final class DiffTextOffset {
 		return distanceToNextTextEdit;
 	}
 
-	long getNewLength() {
+    long getNewLength() {
 		return edit.getNewLength();
 	}
 	

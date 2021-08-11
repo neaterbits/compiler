@@ -61,7 +61,7 @@ class DiffTextOffsetIntersection {
 
 				final long distanceToNext = priorEditPos - (edit.getStartPos() + edit.getNewLength());
 				
-				applyTextEditResult.addAddedOffset(new DiffTextChange(edit, offsetIntoSortedArray, distanceToNext));
+				applyTextEditResult.addAddedOffset(new DiffTextChange(edit.getTextEdit(), offsetIntoSortedArray, edit.getStartPos(), distanceToNext));
 				break;
 				
 			case AT_START:
@@ -150,7 +150,7 @@ class DiffTextOffsetIntersection {
 
 		final ApplyTextEditResult applyTextEditResult = new ApplyTextEditResult(processResult);
 		
-		final PosEdit merged = edit.merge(priorEdit.getEdit());
+		final PosEdit merged = edit.merge(priorEdit.getEdit(), priorEditPos);
 		
 		if (merged == null) {
 			throw new IllegalStateException();
@@ -158,7 +158,7 @@ class DiffTextOffsetIntersection {
 		
 		final long distanceToNext = priorEditPos - (merged.getStartPos() + merged.getNewLength());
 
-		applyTextEditResult.addAddedOffset(new DiffTextChange(merged, offsetIdx, distanceToNext));
+		applyTextEditResult.addAddedOffset(new DiffTextChange(merged.getTextEdit(), offsetIdx, merged.getStartPos(), distanceToNext));
 		
 		applyTextEditResult.addRemovedOffset(new DiffTextChange(priorEdit, offsetIdx));
 		
