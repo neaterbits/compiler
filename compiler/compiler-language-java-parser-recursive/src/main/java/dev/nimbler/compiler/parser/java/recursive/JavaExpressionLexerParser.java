@@ -163,7 +163,7 @@ abstract class JavaExpressionLexerParser<COMPILATION_UNIT> extends BaseJavaLexer
                         if (primaryOrUnaryStatus == OperatorStatus.NOT_FOUND) {
                             
                             if (operatorStatus == OperatorStatus.REQUIRES_PRIMARY) {
-                                throw new ParserException("Missing primary");
+                                throw lexer.parserError("Missing primary");
                             }
                         }
                     }

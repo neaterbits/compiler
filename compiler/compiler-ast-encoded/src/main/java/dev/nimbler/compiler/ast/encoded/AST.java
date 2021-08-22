@@ -181,6 +181,26 @@ public class AST {
             size = ELSE_BLOCK_SIZE;
             break;
 
+        case SWITCH_CASE_STATEMENT:
+            size = SWITCH_STATEMENT_SIZE;
+            break;
+            
+        case CONSTANT_SWITCH_CASE_LABEL:
+            size = CONSTANT_SWITCH_CASE_LABEL_SIZE;
+            break;
+
+        case ENUM_SWITCH_CASE_LABEL:
+            size = ENUM_SWITCH_CASE_LABEL_SIZE;
+            break;
+            
+        case DEFAULT_SWITCH_CASE_LABEL:
+            size = DEFAULT_SWITCH_CASE_LABEL_SIZE;
+            break;
+            
+        case BREAK_STATEMENT:
+            size = BREAK_STATEMENT_SIZE;
+            break;
+
         case NAME_REFERENCE:
             size = NAME_REFERENCE_SIZE;
             break;
@@ -1670,6 +1690,206 @@ public class AST {
         listener.onElseStatementEnd(elseStartContext, endContext);
     }
 
+    private static final int SWITCH_STATEMENT_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+
+    public static void encodeSwitchStatementStart(StringASTBuffer astBuffer, long switchKeyword, int switchKeywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.SWITCH_CASE_STATEMENT);
+
+        astBuffer.writeStringRef(switchKeyword);
+        astBuffer.writeContextRef(switchKeywordContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeSwitchStatementStart(
+            ASTBufferRead astBuffer,
+            int switchStartContext,
+            ContextGetter contextGetter,
+            int index,
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
+
+        final int switchKeywordContext;
+
+        if (contextGetter != null) {
+            switchKeywordContext = astBuffer.getContextRef(index + STRING_REF_SIZE);
+        }
+        else {
+            switchKeywordContext = ContextRef.NONE;
+        }
+
+        listener.onSwitchStatementStart(switchStartContext, astBuffer.getStringRef(index), switchKeywordContext);
+    }
+
+    public static void encodeSwitchStatementEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.SWITCH_CASE_STATEMENT);
+
+    }
+
+    public static <COMPILATION_UNIT> void decodeSwitchStatementEnd(
+            ASTBufferRead astBuffer,
+            int switchStartContext,
+            Context endContext,
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
+
+        listener.onSwitchStatementEnd(switchStartContext, endContext);
+    }
+    
+    public static void encodeSwitchCaseGroupStart(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementStart(ParseTreeElement.SWITCH_CASE_GROUP);
+    }
+
+    public static <COMPILATION_UNIT> void decodeSwitchCaseGroupStart(
+            ASTBufferRead astBuffer,
+            int switchCaseGroupStartContext,
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
+
+        listener.onJavaSwitchBlockStatementGroupStart(switchCaseGroupStartContext);
+    }
+    
+    public static void encodeSwitchCaseGroupEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.SWITCH_CASE_GROUP);
+    }
+
+    public static <COMPILATION_UNIT> void decodeSwitchCaseGroupEnd(
+            ASTBufferRead astBuffer,
+            int switchCaseGroupStartContext,
+            Context endContext,
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
+
+        listener.onJavaSwitchBlockStatementGroupEnd(switchCaseGroupStartContext, endContext);
+    }
+    
+    private static final int CONSTANT_SWITCH_CASE_LABEL_SIZE = STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    public static void encodeConstantSwitchLabelStart(StringASTBuffer astBuffer, long keyword, int keywordContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.CONSTANT_SWITCH_CASE_LABEL);
+        
+        astBuffer.writeStringRef(keyword);
+        astBuffer.writeContextRef(keywordContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeConstantSwitchLabelStart(
+            ASTBufferRead astBuffer,
+            int constantSwitchLabelStartContext,
+            int index,
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
+
+        listener.onConstantSwitchLabelStart(
+                constantSwitchLabelStartContext,
+                astBuffer.getStringRef(index),
+                astBuffer.getContextRef(index + STRING_REF_SIZE));
+    }
+
+    public static void encodeConstantSwitchLabelEnd(StringASTBuffer astBuffer) {
+
+        astBuffer.writeElementEnd(ParseTreeElement.CONSTANT_SWITCH_CASE_LABEL);
+    }
+    
+    public static <COMPILATION_UNIT> void decodeConstantSwitchLabelEnd(
+            ASTBufferRead astBuffer,
+            int constantSwitchLabelStartContext,
+            Context endContext,
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
+
+        listener.onConstantSwitchLabelEnd(constantSwitchLabelStartContext, endContext);
+    }
+    
+    private static final int ENUM_SWITCH_CASE_LABEL_SIZE = 
+              STRING_REF_SIZE + CONTEXT_REF_SIZE
+            + STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    public static void encodeEnumSwitchLabel(
+            StringASTBuffer astBuffer,
+            long keyword, int keywordContext,
+            long constantName, int constantNameContext) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.ENUM_SWITCH_CASE_LABEL);
+        
+        astBuffer.writeStringRef(keyword);
+        astBuffer.writeContextRef(keywordContext);
+
+        astBuffer.writeStringRef(constantName);
+        astBuffer.writeContextRef(constantNameContext);
+    }
+
+    public static <COMPILATION_UNIT> void decodeEnumSwitchLabel(
+            ASTBufferRead astBuffer,
+            int enumSwitchLabelContext,
+            int index,
+            IterativeParseTreeListener<COMPILATION_UNIT> listener) {
+
+        listener.onEnumSwitchLabel(
+                enumSwitchLabelContext,
+                
+                astBuffer.getStringRef(index),
+                astBuffer.getContextRef(index + STRING_REF_SIZE),
+
+                astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE),
+                astBuffer.getContextRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE + STRING_REF_SIZE));
+    }
+
+    private static final int DEFAULT_SWITCH_CASE_LABEL_SIZE = STRING_REF_SIZE;
+  
+    public static void encodeDefaultSwitchLabel(StringASTBuffer astBuffer, long keyword) {
+
+        astBuffer.writeLeafElement(ParseTreeElement.DEFAULT_SWITCH_CASE_LABEL);
+  
+        astBuffer.writeStringRef(keyword);
+    }
+
+    public static <COMPILATION_UNIT> void decodeDefaultSwitchLabel(
+          ASTBufferRead astBuffer,
+          int defaultSwitchLabelContext,
+          int index,
+          IterativeParseTreeListener<COMPILATION_UNIT> listener) {
+
+        listener.onDefaultSwitchLabel(defaultSwitchLabelContext, astBuffer.getStringRef(index));
+    }
+
+    private static final int BREAK_STATEMENT_SIZE = 
+            STRING_REF_SIZE + CONTEXT_REF_SIZE
+          + STRING_REF_SIZE + CONTEXT_REF_SIZE;
+    
+    public static void encodeBreakStatement(StringASTBuffer astBuffer,
+            long keyword, int keywordContext,
+            long label, int labelContext) {
+
+        astBuffer.writeElementStart(ParseTreeElement.BREAK_STATEMENT);
+  
+        astBuffer.writeStringRef(keyword);
+        astBuffer.writeContextRef(keywordContext);
+
+        if (label != StringRef.STRING_NONE) {
+            astBuffer.writeStringRef(label);
+            astBuffer.writeContextRef(labelContext);
+        }
+        else {
+            astBuffer.writeNoStringRef();
+            astBuffer.writeNoContextRef();
+        }
+    }
+
+    public static <COMPILATION_UNIT> void decodeBreakStatement(
+          ASTBufferRead astBuffer,
+          int breakStatementContext,
+          Context endContext,
+          int index,
+          IterativeParseTreeListener<COMPILATION_UNIT> listener) {
+
+        listener.onBreakStatement(
+                breakStatementContext,
+                
+                astBuffer.getStringRef(index),
+                astBuffer.getContextRef(index + STRING_REF_SIZE),
+
+                astBuffer.getStringRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE),
+                astBuffer.getContextRef(index + STRING_REF_SIZE + CONTEXT_REF_SIZE + STRING_REF_SIZE),
+                endContext);
+    }
+    
     private static final int UNARY_EXPRESSION_SIZE = 1 + 1;
 
     public static void encodeUnaryExpressionStart(StringASTBuffer astBuffer, Operator operator) {

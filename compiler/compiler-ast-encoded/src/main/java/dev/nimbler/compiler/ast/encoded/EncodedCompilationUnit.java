@@ -661,6 +661,83 @@ public final class EncodedCompilationUnit {
                 }
                 break;
             }
+            
+            case SWITCH_CASE_STATEMENT: {
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeSwitchStatementStart(astBuffer, startContext, contextGetter, ref.index, listener);
+                }
+                else {
+                    AST.decodeSwitchStatementEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case SWITCH_CASE_GROUP: {
+
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeSwitchCaseGroupStart(astBuffer, startContext, listener);
+                }
+                else {
+                    AST.decodeSwitchCaseGroupEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+            
+            case CONSTANT_SWITCH_CASE_LABEL: {
+
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeConstantSwitchLabelStart(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    AST.decodeConstantSwitchLabelEnd(astBuffer, startContext, getEndContext(startContext), listener);
+                }
+                break;
+            }
+
+            case ENUM_SWITCH_CASE_LABEL: {
+
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeEnumSwitchLabel(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+            }
+
+            case DEFAULT_SWITCH_CASE_LABEL: {
+
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeDefaultSwitchLabel(astBuffer, startContext, ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+            }
+            
+            case BREAK_STATEMENT: {
+
+                final int startContext = getStartContext(parseTreeRef);
+
+                if (ref.isStart) {
+                    AST.decodeBreakStatement(astBuffer, startContext, getEndContext(startContext), ref.index, listener);
+                }
+                else {
+                    throw new IllegalStateException();
+                }
+                break;
+            }
 
             case EXPRESSION_BINARY_OPERATOR: {
 

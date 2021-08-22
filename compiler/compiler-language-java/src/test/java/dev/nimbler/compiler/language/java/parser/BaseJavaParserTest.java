@@ -38,14 +38,21 @@ import dev.nimbler.compiler.ast.objects.generics.ReferenceTypeArgument;
 import dev.nimbler.compiler.ast.objects.generics.TypeArgument;
 import dev.nimbler.compiler.ast.objects.generics.WildcardTypeArgument;
 import dev.nimbler.compiler.ast.objects.list.ASTList;
+import dev.nimbler.compiler.ast.objects.statement.BreakStatement;
 import dev.nimbler.compiler.ast.objects.statement.CatchBlock;
 import dev.nimbler.compiler.ast.objects.statement.ConditionBlock;
+import dev.nimbler.compiler.ast.objects.statement.ConstantSwitchCaseLabel;
+import dev.nimbler.compiler.ast.objects.statement.DefaultSwitchCaseLabel;
+import dev.nimbler.compiler.ast.objects.statement.EnumSwitchCaseLabel;
 import dev.nimbler.compiler.ast.objects.statement.ExpressionStatement;
 import dev.nimbler.compiler.ast.objects.statement.ForStatement;
 import dev.nimbler.compiler.ast.objects.statement.IfElseIfElseStatement;
 import dev.nimbler.compiler.ast.objects.statement.IteratorForStatement;
 import dev.nimbler.compiler.ast.objects.statement.ReturnStatement;
 import dev.nimbler.compiler.ast.objects.statement.Statement;
+import dev.nimbler.compiler.ast.objects.statement.SwitchCaseGroup;
+import dev.nimbler.compiler.ast.objects.statement.SwitchCaseLabel;
+import dev.nimbler.compiler.ast.objects.statement.SwitchCaseStatement;
 import dev.nimbler.compiler.ast.objects.statement.ThrowStatement;
 import dev.nimbler.compiler.ast.objects.statement.TryCatchFinallyStatement;
 import dev.nimbler.compiler.ast.objects.statement.TryWithResourcesStatement;
@@ -3980,6 +3987,488 @@ public abstract class BaseJavaParserTest {
         final ExpressionStatement expressionStatement = (ExpressionStatement)finallyBlock.getStatements().get(0);
         final PrimaryList list = (PrimaryList)expressionStatement.getExpression();
         assertThat(list.getPrimaries().size()).isEqualTo(3);
+    }
+
+    @Test
+    public void testSwitchCaseNumericLabels() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    int a = 1, b;"
+                + "    switch (a) {"
+                + "      case 123:"
+                + "         b = 1;"
+                + "         break;"
+                + "      case 234:"
+                + "         b = 2;"
+                + "         break;"
+                + "      case 345:"
+                + "         b = 3;"
+                + "         break;"
+                + "      case 456:"
+                + "         b = 4;"
+                + "         break;"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+        
+        final SwitchCaseStatement switchCaseStatement
+            = (SwitchCaseStatement)method.getBlock().getStatements().get(1);
+        
+        assertThat(switchCaseStatement).isNotNull();
+
+        assertThat(switchCaseStatement.getGroups().size()).isEqualTo(4);
+
+        assertThat(switchCaseStatement.getGroups().get(0).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(0).getLabels().get(0), 123);
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(0));
+        
+        assertThat(switchCaseStatement.getGroups().get(1).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(1).getLabels().get(0), 234);
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(1));
+        
+        assertThat(switchCaseStatement.getGroups().get(2).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(2).getLabels().get(0), 345);
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(2));
+
+        assertThat(switchCaseStatement.getGroups().get(3).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(3).getLabels().get(0), 456);
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(3));
+    }
+
+    @Test
+    public void testSwitchCaseStringLabels() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    int a = 1, b;"
+                + "    switch (a) {"
+                + "      case \"abc\":"
+                + "         b = 1;"
+                + "         break;"
+                + "      case \"def\":"
+                + "         b = 2;"
+                + "         break;"
+                + "      case \"ghi\":"
+                + "         b = 3;"
+                + "         break;"
+                + "      case \"jkl\":"
+                + "         b = 4;"
+                + "         break;"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+        
+        final SwitchCaseStatement switchCaseStatement
+            = (SwitchCaseStatement)method.getBlock().getStatements().get(1);
+        
+        assertThat(switchCaseStatement).isNotNull();
+        
+        assertThat(switchCaseStatement.getGroups().size()).isEqualTo(4);
+        assertThat(switchCaseStatement.getGroups().get(0).getLabels().size()).isEqualTo(1);
+        
+        assertThat(switchCaseStatement.getGroups().get(0).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(0).getLabels().get(0), "\"abc\"");
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(0));
+        
+        assertThat(switchCaseStatement.getGroups().get(1).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(1).getLabels().get(0), "\"def\"");
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(1));
+        
+        assertThat(switchCaseStatement.getGroups().get(2).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(2).getLabels().get(0), "\"ghi\"");
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(2));
+
+        assertThat(switchCaseStatement.getGroups().get(3).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(3).getLabels().get(0), "\"jkl\"");
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(3));
+    }
+
+    @Test
+    public void testSwitchCaseCharacterLabels() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    int a = 1, b;"
+                + "    switch (a) {"
+                + "      case 'a':"
+                + "         b = 1;"
+                + "         break;"
+                + "      case 'b':"
+                + "         b = 2;"
+                + "         break;"
+                + "      case 'c':"
+                + "         b = 3;"
+                + "         break;"
+                + "      case 'd':"
+                + "         b = 4;"
+                + "         break;"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+        
+        final SwitchCaseStatement switchCaseStatement
+            = (SwitchCaseStatement)method.getBlock().getStatements().get(1);
+        
+        assertThat(switchCaseStatement).isNotNull();
+        
+        assertThat(switchCaseStatement.getGroups().size()).isEqualTo(4);
+        assertThat(switchCaseStatement.getGroups().get(0).getLabels().size()).isEqualTo(1);
+        
+        assertThat(switchCaseStatement.getGroups().get(0).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(0).getLabels().get(0), 'a');
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(0));
+        
+        assertThat(switchCaseStatement.getGroups().get(1).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(1).getLabels().get(0), 'b');
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(1));
+        
+        assertThat(switchCaseStatement.getGroups().get(2).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(2).getLabels().get(0), 'c');
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(2));
+
+        assertThat(switchCaseStatement.getGroups().get(3).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(3).getLabels().get(0), 'd');
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(3));
+    }
+    
+    @Test
+    public void testSwitchEnumNumericLabels() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    switch (a) {"
+                + "      case ENUM_A:"
+                + "         b = 1;"
+                + "         break;"
+                + "      case ENUM_B:"
+                + "         b = 2;"
+                + "         break;"
+                + "      case ENUM_C:"
+                + "         b = 3;"
+                + "         break;"
+                + "      case ENUM_D:"
+                + "         b = 4;"
+                + "         break;"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(1);
+        
+        final SwitchCaseStatement switchCaseStatement
+            = (SwitchCaseStatement)method.getBlock().getStatements().get(0);
+        
+        assertThat(switchCaseStatement).isNotNull();
+
+        assertThat(switchCaseStatement.getGroups().size()).isEqualTo(4);
+
+        assertThat(switchCaseStatement.getGroups().get(0).getLabels().size()).isEqualTo(1);
+        checkEnumSwitchCaseLabel(switchCaseStatement.getGroups().get(0).getLabels().get(0), "ENUM_A");
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(0));
+        
+        assertThat(switchCaseStatement.getGroups().get(1).getLabels().size()).isEqualTo(1);
+        checkEnumSwitchCaseLabel(switchCaseStatement.getGroups().get(1).getLabels().get(0), "ENUM_B");
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(1));
+        
+        assertThat(switchCaseStatement.getGroups().get(2).getLabels().size()).isEqualTo(1);
+        checkEnumSwitchCaseLabel(switchCaseStatement.getGroups().get(2).getLabels().get(0), "ENUM_C");
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(2));
+
+        assertThat(switchCaseStatement.getGroups().get(3).getLabels().size()).isEqualTo(1);
+        checkEnumSwitchCaseLabel(switchCaseStatement.getGroups().get(3).getLabels().get(0), "ENUM_D");
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(3));
+    }
+    
+    @Test
+    public void testSwitchDefaultNumericLabels() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    int a = 1, b;"
+                + "    switch (a) {"
+                + "      case 123:"
+                + "         b = 1;"
+                + "         break;"
+                + "      case 234:"
+                + "         b = 2;"
+                + "         break;"
+                + "      default:"
+                + "         b = 3;"
+                + "         break;"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+        
+        final SwitchCaseStatement switchCaseStatement
+            = (SwitchCaseStatement)method.getBlock().getStatements().get(1);
+        
+        assertThat(switchCaseStatement).isNotNull();
+
+        assertThat(switchCaseStatement.getGroups().size()).isEqualTo(3);
+
+        assertThat(switchCaseStatement.getGroups().get(0).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(0).getLabels().get(0), 123);
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(0));
+        
+        assertThat(switchCaseStatement.getGroups().get(1).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(1).getLabels().get(0), 234);
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(1));
+        
+        assertThat(switchCaseStatement.getGroups().get(2).getLabels().size()).isEqualTo(1);
+        final DefaultSwitchCaseLabel defaultLabel
+            = (DefaultSwitchCaseLabel)switchCaseStatement.getGroups().get(2).getLabels().get(0);
+        assertThat(defaultLabel).isNotNull();
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(2));
+    }
+
+    @Test
+    public void testSwitchMultipleCaseNumericLabels() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    int a = 1, b;"
+                + "    switch (a) {"
+                + "      case 123:"
+                + "      case 234:"
+                + "      case 345:"
+                + "         b = 3;"
+                + "         break;"
+                + "      default:"
+                + "         b = 4;"
+                + "         break;"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+        
+        final SwitchCaseStatement switchCaseStatement
+            = (SwitchCaseStatement)method.getBlock().getStatements().get(1);
+        
+        assertThat(switchCaseStatement).isNotNull();
+
+        assertThat(switchCaseStatement.getGroups().size()).isEqualTo(2);
+
+        assertThat(switchCaseStatement.getGroups().get(0).getLabels().size()).isEqualTo(3);
+
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(0).getLabels().get(0), 123);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(0).getLabels().get(1), 234);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(0).getLabels().get(2), 345);
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(0));
+
+        assertThat(switchCaseStatement.getGroups().get(1).getLabels().size()).isEqualTo(1);
+        final DefaultSwitchCaseLabel defaultLabel
+            = (DefaultSwitchCaseLabel)switchCaseStatement.getGroups().get(1).getLabels().get(0);
+        assertThat(defaultLabel).isNotNull();
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(1));
+    }
+    
+    @Test
+    public void testSwitchCaseMultipleDefaultNumericLabels() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    int a = 1, b;"
+                + "    switch (a) {"
+                + "      case 123:"
+                + "         b = 1;"
+                + "         break;"
+                + "      case 234:"
+                + "      case 345:"
+                + "      default:"
+                + "         b = 4;"
+                + "         break;"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+        
+        final SwitchCaseStatement switchCaseStatement
+            = (SwitchCaseStatement)method.getBlock().getStatements().get(1);
+        
+        assertThat(switchCaseStatement).isNotNull();
+
+        assertThat(switchCaseStatement.getGroups().size()).isEqualTo(2);
+
+        assertThat(switchCaseStatement.getGroups().get(0).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(0).getLabels().get(0), 123);
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(0));
+        
+
+        assertThat(switchCaseStatement.getGroups().get(1).getLabels().size()).isEqualTo(3);
+
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(1).getLabels().get(0), 234);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(1).getLabels().get(1), 345);
+
+        final DefaultSwitchCaseLabel defaultLabel
+            = (DefaultSwitchCaseLabel)switchCaseStatement.getGroups().get(1).getLabels().get(2);
+        assertThat(defaultLabel).isNotNull();
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(1));
+    }
+
+    @Test
+    public void testSwitchCaseBreakLabel() throws IOException, ParserException {
+     
+        final String source = "package com.test;\n"
+                
+                + "class TestClass {"
+                + "  void someMethod() {"
+                + "    int a = 1, b;"
+                + "    switch (a) {"
+                + "      case 123:"
+                + "         b = 1;"
+                + "         break a_label;"
+                + "      default:"
+                + "         b = 4;"
+                + "         break;"
+                + "    }"
+                + "  }"
+                + "}";
+        
+        final CompilationUnit compilationUnit = parse(source);
+        assertThat(compilationUnit.getCode()).isNotNull();
+        
+        final ClassMethod method = checkBasicMethod(compilationUnit, "TestClass", "someMethod");
+        
+        assertThat(method.getBlock()).isNotNull();
+        assertThat(method.getBlock().getStatements().size()).isEqualTo(2);
+        
+        final SwitchCaseStatement switchCaseStatement
+            = (SwitchCaseStatement)method.getBlock().getStatements().get(1);
+        
+        assertThat(switchCaseStatement).isNotNull();
+
+        assertThat(switchCaseStatement.getGroups().size()).isEqualTo(2);
+
+        assertThat(switchCaseStatement.getGroups().get(0).getLabels().size()).isEqualTo(1);
+        checkSwitchCaseLabel(switchCaseStatement.getGroups().get(0).getLabels().get(0), 123);
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(0), "a_label");
+        
+        final DefaultSwitchCaseLabel defaultLabel
+            = (DefaultSwitchCaseLabel)switchCaseStatement.getGroups().get(1).getLabels().get(0);
+        assertThat(defaultLabel).isNotNull();
+        checkSwitchCaseExpressionAndBreak(switchCaseStatement.getGroups().get(1));
+    }
+    
+    private static void checkSwitchCaseLabel(SwitchCaseLabel label, int value) {
+        
+        final ConstantSwitchCaseLabel constantLabel = (ConstantSwitchCaseLabel)label;
+        final IntegerLiteral integerLiteral = (IntegerLiteral)constantLabel.getConstant();
+
+        assertThat(integerLiteral.getValue()).isEqualTo(value);
+        assertThat(integerLiteral.getBase()).isEqualTo(Base.DECIMAL);
+        assertThat(integerLiteral.getBits()).isEqualTo(32);
+    }
+
+    private static void checkSwitchCaseLabel(SwitchCaseLabel label, String value) {
+        
+        final ConstantSwitchCaseLabel constantLabel = (ConstantSwitchCaseLabel)label;
+        
+        final StringLiteral stringLiteral = (StringLiteral)constantLabel.getConstant();
+
+        assertThat(stringLiteral.getValue()).isEqualTo(value);
+    }
+
+    private static void checkSwitchCaseLabel(SwitchCaseLabel label, char value) {
+        
+        final ConstantSwitchCaseLabel constantLabel = (ConstantSwitchCaseLabel)label;
+
+        final CharacterLiteral characterLiteral = (CharacterLiteral)constantLabel.getConstant();
+
+        assertThat(characterLiteral.getValue()).isEqualTo(value);
+    }
+
+    private static void checkEnumSwitchCaseLabel(SwitchCaseLabel label, String value) {
+        
+        final EnumSwitchCaseLabel enumLabel = (EnumSwitchCaseLabel)label;
+        
+        assertThat(enumLabel.getEnumConstant()).isEqualTo(value);
+    }
+    
+    private static void checkSwitchCaseExpressionAndBreak(SwitchCaseGroup group) {
+        
+        assertThat(group.getBlock().getStatements().size()).isEqualTo(2);
+        final ExpressionStatement expressionStatement = (ExpressionStatement)group.getBlock().getStatements().get(0);
+        assertThat(expressionStatement.getExpression()).isNotNull();
+        
+        final BreakStatement breakStatement = (BreakStatement)group.getBlock().getStatements().get(1);
+        assertThat(breakStatement.getLabel()).isNull();
+    }
+
+    private static void checkSwitchCaseExpressionAndBreak(SwitchCaseGroup group, String breakLabel) {
+        
+        assertThat(group.getBlock().getStatements().size()).isEqualTo(2);
+        final ExpressionStatement expressionStatement = (ExpressionStatement)group.getBlock().getStatements().get(0);
+        assertThat(expressionStatement.getExpression()).isNotNull();
+        
+        final BreakStatement breakStatement = (BreakStatement)group.getBlock().getStatements().get(1);
+        assertThat(breakStatement.getLabel()).isEqualTo(breakLabel);
     }
 
     @SuppressWarnings("unchecked")

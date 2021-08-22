@@ -2,7 +2,9 @@ package dev.nimbler.compiler.parser.java.recursive;
 
 import java.io.IOException;
 
+import org.jutils.ArrayUtils;
 import org.jutils.io.strings.CharInput;
+import org.jutils.io.strings.StringRef;
 import org.jutils.io.strings.Tokenizer;
 import org.jutils.parse.Lexer;
 import org.jutils.parse.ParserException;
@@ -14,6 +16,7 @@ import dev.nimbler.compiler.parser.recursive.cached.names.NamesList;
 import dev.nimbler.compiler.parser.recursive.cached.types.TypeArgumentsList;
 import dev.nimbler.compiler.types.ReferenceType;
 import dev.nimbler.compiler.types.statement.ASTMutability;
+import dev.nimbler.compiler.util.Base;
 import dev.nimbler.compiler.util.ContextRef;
 import dev.nimbler.compiler.util.name.Names;
 
@@ -47,6 +50,8 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
 
             // Statements
             JavaToken.IF,
+            JavaToken.SWITCH,
+            JavaToken.BREAK,
 
             JavaToken.WHILE,
             JavaToken.FOR,
@@ -64,13 +69,18 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             JavaToken.LBRACE,
             JavaToken.LPAREN
     };
-    
+
     private boolean parseStatement() throws ParserException, IOException {
-        
-        boolean foundStatement = true;
-        
+
         final JavaToken statementToken = lexer.lexSkipWSAndComment(STATEMENT_TOKENS);
-        
+
+        return parseStatement(statementToken);
+    }
+
+    private boolean parseStatement(JavaToken statementToken) throws ParserException, IOException {
+
+        boolean foundStatement = true;
+
         switch (statementToken) {
         case BYTE:
         case SHORT:
@@ -93,6 +103,23 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             parseIfElseIfElse(getStringRef(), ifKeywordContext);
             break;
         }
+        
+        case SWITCH: {
+
+            final int switchKeywordContext = writeCurContext();
+            
+            parseSwitchCase(getStringRef(), switchKeywordContext);
+            break;
+        }
+        
+        case BREAK: {
+
+            final int breakContext = writeCurContext();
+            
+            parseBreak(breakContext, getStringRef(), breakContext);
+            break;
+        }
+            
         
         case WHILE: {
             final int whileKeywordContext = writeCurContext(); 
@@ -344,7 +371,208 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             }
         }
     }
+    
+    // 'case', 'default' or '}' at end of switch-case 
+    private static final JavaToken [] SWITCH_CASE_TOKENS = {
+            JavaToken.CASE,
+            JavaToken.DEFAULT,
+            JavaToken.RBRACE
+    };
+    
+    private static final JavaToken [] STATEMENT_AND_SWITCH_CASE_TOKENS
+    = ArrayUtils.merge(STATEMENT_TOKENS, SWITCH_CASE_TOKENS);
 
+    private void parseSwitchCase(long switchKeyword, int switchKeywordContext) throws IOException, ParserException {
+
+        final int switchStartContext = writeContext(switchKeywordContext);
+        
+        listener.onSwitchStatementStart(switchStartContext, switchKeyword, switchKeywordContext);
+
+        if (lexer.lexSkipWS(JavaToken.LPAREN) != JavaToken.LPAREN) {
+            throw lexer.parserError("Expected '(' before switch");
+        }
+        
+        if (!parseExpression()) {
+            throw lexer.parserError("Expected switch expression");
+        }
+        
+        if (lexer.lexSkipWS(JavaToken.RPAREN) != JavaToken.RPAREN) {
+            throw lexer.parserError("Expected ')' after switch");
+        }
+
+        if (lexer.lexSkipWS(JavaToken.LBRACE) != JavaToken.LBRACE) {
+            throw lexer.parserError("Expected '{' after switch ()");
+        }
+        
+        final int switchBlockStartContext = writeCurContext();
+
+        listener.onJavaSwitchBlockStart(switchBlockStartContext);
+
+        parseSwitchBlock();
+            
+        listener.onJavaSwitchBlockEnd(switchBlockStartContext, getLexerContext());
+
+        listener.onSwitchStatementEnd(switchStartContext, getLexerContext());
+    }
+    
+    private void parseSwitchBlock() throws IOException, ParserException {
+        
+        boolean lbrace = false;
+        
+        int groupLabelCount = 0;
+        int statementCount = 0;
+
+        int labelsStartContext = ContextRef.NONE;
+        
+        do {
+            final JavaToken caseDefaultStatement = lexer.lexSkipWS(STATEMENT_AND_SWITCH_CASE_TOKENS);
+
+            switch (caseDefaultStatement) {
+            case CASE:
+            case DEFAULT:
+
+                final int caseOrDefaultContext = writeCurContext();
+
+                final int caseOrDefaultKeywordContext = writeCurContext();
+                
+                // End of last block
+                if (statementCount > 0) {
+                    listener.onJavaSwitchBlockStatementGroupEnd(groupLabelCount, getLexerContext());
+
+                    // Switched to new group
+                    statementCount = 0;
+                }
+
+                if (groupLabelCount == 0) {
+                    
+                    labelsStartContext = caseOrDefaultContext;
+                    
+                    listener.onJavaSwitchBlockStatementGroupStart(labelsStartContext);
+
+                    listener.onSwitchLabelsStart(labelsStartContext);
+                }
+                
+                ++ groupLabelCount;
+                
+                if (caseDefaultStatement == JavaToken.CASE) {
+                    parseCaseLabel(caseOrDefaultContext, getStringRef(), caseOrDefaultKeywordContext);
+                }
+                else {
+                    listener.onDefaultSwitchLabel(caseOrDefaultContext, getStringRef());
+                }
+
+                if (lexer.lexSkipWS(JavaToken.COLON) != JavaToken.COLON) {
+                    throw lexer.unexpectedToken();
+                }
+                break;
+
+            case RBRACE:
+                listener.onJavaSwitchBlockStatementGroupEnd(groupLabelCount, getLexerContext());
+                listener.onSwitchLabelsEnd(labelsStartContext, getLexerContext());
+
+                lbrace = true;
+                break;
+
+            default:
+                if (groupLabelCount > 0) {
+                    listener.onSwitchLabelsEnd(labelsStartContext, getLexerContext());
+
+                    groupLabelCount = 0;
+                }
+                else {
+                    // Initial statement with no labels is a parse error 
+                    if (statementCount == 0) {
+                        throw lexer.parserError("Statement without label within switch");
+                    }
+                }
+                
+                parseStatement(caseDefaultStatement);
+                
+                ++ statementCount;
+                break;
+            }
+        }
+        while (!lbrace);
+    }
+
+    private static final JavaToken [] CASE_LABEL_TOKENS = new JavaToken [] {
+            JavaToken.DECIMAL_LITERAL,
+            JavaToken.STRING_LITERAL,
+            JavaToken.CHARACTER_LITERAL,
+            JavaToken.IDENTIFIER
+    };
+    
+    private void parseCaseLabel(int caseStartContext, long caseKeyword, int caseKeywordContext) throws IOException, ParserException {
+     
+        final JavaToken caseExpressionToken = lexer.lexSkipWS(CASE_LABEL_TOKENS);
+        
+        final int labelStartContext = writeCurContext();
+
+        switch (caseExpressionToken) {
+        case DECIMAL_LITERAL:
+            listener.onConstantSwitchLabelStart(caseStartContext, caseKeyword, caseKeywordContext);
+            
+            listener.onIntegerLiteral(
+                    labelStartContext,
+                    tokenizer.asInteger(getStringRef()),
+                    Base.DECIMAL,
+                    true,
+                    32);
+            
+            listener.onConstantSwitchLabelEnd(caseStartContext, getLexerContext());
+            break;
+            
+        case STRING_LITERAL:
+            listener.onConstantSwitchLabelStart(caseStartContext, caseKeyword, caseKeywordContext);
+            
+            listener.onStringLiteral(labelStartContext, getStringRef());
+            
+            listener.onConstantSwitchLabelEnd(caseStartContext, getLexerContext());
+            break;
+            
+        case CHARACTER_LITERAL:
+            listener.onConstantSwitchLabelStart(caseStartContext, caseKeyword, caseKeywordContext);
+
+            listener.onCharacterLiteral(labelStartContext, tokenizer.asCharacter(getStringRef(), 1));
+
+            listener.onConstantSwitchLabelEnd(caseStartContext, getLexerContext());
+            break;
+
+        case IDENTIFIER:
+            listener.onEnumSwitchLabel(
+                    caseStartContext,
+                    caseKeyword, caseKeywordContext,
+                    getStringRef(), writeCurContext());
+            break;
+            
+        default:
+            throw lexer.unexpectedToken();
+        }
+    }
+
+    private void parseBreak(int startContext, long breakKeyword, int breakKeywordContext) throws IOException, ParserException {
+        
+        // Identifier for label?
+        
+        final long breakLabel;
+        final int breakLabelContext;
+        
+        if (lexer.lexSkipWS(JavaToken.IDENTIFIER) == JavaToken.IDENTIFIER) {
+            breakLabel = getStringRef();
+            breakLabelContext = writeCurContext();
+        }
+        else {
+            breakLabel = StringRef.STRING_NONE;
+            breakLabelContext = ContextRef.NONE;
+        }
+        
+        listener.onBreakStatement(
+                startContext,
+                breakKeyword, breakKeywordContext,
+                breakLabel, breakLabelContext,
+                getLexerContext());
+    }
+        
     private void parseWhile(long whileKeyword, int whileKeywordContext) throws IOException, ParserException {
         
         final int whileStartContext = writeContext(whileKeywordContext);
@@ -838,7 +1066,7 @@ public abstract class JavaStatementsLexerParser<COMPILATION_UNIT>
             throw lexer.unexpectedToken();
         }
     }
-    
+
     private void parseBlockStatements() throws ParserException, IOException {
         
         boolean done = false;

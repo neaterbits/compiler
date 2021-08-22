@@ -155,7 +155,7 @@ public enum ParseTreeElement {
 
     ARRAY_CREATION_EXPRESSION(false),
 
-	CONSTANT_SWITCH_CASE_LABEL(true),
+	CONSTANT_SWITCH_CASE_LABEL(false),
 	DEFAULT_SWITCH_CASE_LABEL(true),
 	ENUM_SWITCH_CASE_LABEL(true),
 
@@ -188,6 +188,8 @@ public enum ParseTreeElement {
 
 	SWITCH_CASE_STATEMENT(false),
 	SWITCH_CASE_GROUP(false),
+    SWITCH_CASE_LABEL(false),
+    SWITCH_DEFAULT_LABEL(false),
 
 	THROW_STATEMENT(false),
 

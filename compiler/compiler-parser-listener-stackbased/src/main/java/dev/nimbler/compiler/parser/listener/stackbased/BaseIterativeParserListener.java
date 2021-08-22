@@ -1,5 +1,6 @@
 package dev.nimbler.compiler.parser.listener.stackbased;
 
+import org.jutils.io.strings.StringRef;
 import org.jutils.io.strings.StringSource;
 import org.jutils.parse.context.Context;
 
@@ -661,7 +662,13 @@ public abstract class BaseIterativeParserListener<
 		final KEYWORD keywordObject = parseTreeFactory.createKeyword(getOtherContext(keywordContext), stringSource.asString(keyword));
 		
 		final STATEMENT breakStatement
-		    = parseTreeFactory.createBreakStatement(context, keywordObject, stringSource.asString(label));
+		    = parseTreeFactory.createBreakStatement(
+		            context,
+		            keywordObject,
+		            
+		            label != StringRef.STRING_NONE
+		                ? stringSource.asString(label)
+                        : null);
 		
 		statementSetter.addStatement(breakStatement);
 		

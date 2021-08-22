@@ -1,4 +1,4 @@
-    package dev.nimbler.compiler.language.java.parser;
+package dev.nimbler.compiler.language.java.parser;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

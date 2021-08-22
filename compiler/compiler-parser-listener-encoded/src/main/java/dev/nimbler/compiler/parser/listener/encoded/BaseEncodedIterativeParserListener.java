@@ -94,39 +94,30 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
         
         writeStartElementContextRef(switchStatementStartContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeSwitchStatementStart(astBuffer, keyword, keywordContext);
     }
 
     @Override
     public final void onJavaSwitchBlockStart(int javaSwitchBlockStartContext) {
-
-        writeStartElementContextRef(javaSwitchBlockStartContext);
         
-        throw new UnsupportedOperationException();
     }
 
     @Override
     public final void onJavaSwitchBlockStatementGroupStart(int javaSwitchBlockStatementGroupStartContext) {
 
         writeStartElementContextRef(javaSwitchBlockStatementGroupStartContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeSwitchCaseGroupStart(astBuffer);
     }
 
     @Override
     public final void onSwitchLabelsStart(int switchLabelsStartContext) {
 
-        writeStartElementContextRef(switchLabelsStartContext);
-        
-        throw new UnsupportedOperationException();
     }
 
     @Override
     public final void onSwitchLabelsEnd(int switchLabelsStartContext, Context endContext) {
 
-        writeEndElementContext(switchLabelsStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -134,7 +125,7 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
 
         writeEndElementContext(javaSwitchBlockStatementGroupStartContext, endContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeSwitchCaseGroupEnd(astBuffer);
     }
 
     @Override
@@ -144,7 +135,7 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
 
         writeStartElementContextRef(constantSwitchLabelStartContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeConstantSwitchLabelStart(astBuffer, keyword, keywordContext);
     }
 
     @Override
@@ -152,7 +143,7 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
         
         writeEndElementContext(constantSwitchLabelStartContext, endContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeConstantSwitchLabelEnd(astBuffer);
     }
 
     @Override
@@ -163,23 +154,20 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
         
         writeStartElementContextRef(enumSwitchLabelStartContext);
 
-        throw new UnsupportedOperationException();
+        AST.encodeEnumSwitchLabel(astBuffer, keyword, keywordContext, constantName, constantNameContext);
     }
 
     @Override
     public final void onDefaultSwitchLabel(int leafContext, long keyword) {
 
         writeLeafElementContextRef(leafContext);
-        
-        throw new UnsupportedOperationException();
+
+        AST.encodeDefaultSwitchLabel(astBuffer, keyword);
     }
 
     @Override
     public final void onJavaSwitchBlockEnd(int javaSwitchBlockStartContext, Context endContext) {
 
-        writeEndElementContext(javaSwitchBlockStartContext, endContext);
-        
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -187,7 +175,7 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
 
         writeEndElementContext(switchStatementStartContext, endContext);
         
-        throw new UnsupportedOperationException();
+        AST.encodeSwitchStatementEnd(astBuffer);
     }
 
     @Override
@@ -200,10 +188,8 @@ public abstract class BaseEncodedIterativeParserListener<COMPILATION_UNIT>
             Context endContext) {
 
         writeStartElementContextRef(breakStatementStartContext);
-        
-        if (Boolean.TRUE) {
-            throw new UnsupportedOperationException();
-        }
+
+        AST.encodeBreakStatement(astBuffer, keyword, keywordContext, label, labelContext);
 
         writeEndElementContext(breakStatementStartContext, endContext);
     }
